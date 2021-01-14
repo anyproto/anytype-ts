@@ -703,6 +703,7 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
+		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const type = this.schemaField(details.type);
 		const ret: any = {
@@ -712,7 +713,7 @@ class DataUtil {
 
 		switch (type) {
 			default:
-				switch (details.layout) {
+				switch (block.layout) {
 					default:
 					case I.ObjectLayout.Page:
 						ret.withIcon = details.iconEmoji || details.iconImage;

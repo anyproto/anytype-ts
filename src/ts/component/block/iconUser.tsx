@@ -23,13 +23,11 @@ class BlockIconUser extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		
 		return (
-			<React.Fragment>
-				<IconObject 
-					object={details}
-					onClick={this.onClick} 
-					size={128}
-				/>
-			</React.Fragment>
+			<IconObject 
+				object={details}
+				onClick={this.onClick} 
+				size={128}
+			/>
 		);
 	};
 	

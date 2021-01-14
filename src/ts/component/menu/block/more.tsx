@@ -27,26 +27,33 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
 		const items = this.getItems();
-		const layouts = this.getLayouts();
-		const layout = layouts.find((it: any) => { return it.id == block.layout; });
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		let sectionPage = null;
+		if (block.isPage()) {
+			const layouts = this.getLayouts();
+			const layout = layouts.find((it: any) => { return it.id == block.layout; });
+
+			sectionPage = (
+				<React.Fragment>
+					<div className="sectionName">Layout</div>
+					<MenuItemVertical 
+						id="object-layout" 
+						icon={layout ? layout.icon : ''} 
+						name={layout ? layout.name : 'Select layout'}
+						menuId="select"
+						onClick={this.onLayout} 
+						arrow={true}
+					/>
+					<div className="line" />
+				</React.Fragment>
+			);
+		};
 
 		return (
 			<div>
-				{block.isPage() ? (
-					<div className="section">
-						<div className="name">Layout</div>
-						<MenuItemVertical 
-							id="object-layout" 
-							icon={layout ? layout.icon : ''} 
-							name={layout ? layout.name : 'Select layout'}
-							menuId="select"
-							onClick={this.onLayout} 
-							arrow={true}
-						/>
-					</div>
-				) : ''}
+				{sectionPage}
 
 				<div className="section">
 					{items.map((action: any, i: number) => (
@@ -312,23 +319,24 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onLayout (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		commonStore.menuOpen('select', { 
 			element: '#item-object-layout',
-			offsetX: 224,
-			offsetY: 4,
+			offsetX: 208,
+			offsetY: -36,
 			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				options: this.getLayouts(),
 				value: block.layout,
 				onSelect: (e: any, item: any) => {
 					DataUtil.pageSetLayout(rootId, item.id);
+					close();
 				}
 			}
 		});
