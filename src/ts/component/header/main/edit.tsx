@@ -12,6 +12,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -97,20 +98,23 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onMore (e: any) {
 		const { rootId, match } = this.props;
 
-		commonStore.menuOpen('blockMore', { 
-			element: '#button-header-more',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 8,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rootId: rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				match: match,
-			}
-		});
+		commonStore.menuCloseAll();
+		window.setTimeout(() => {
+			commonStore.menuOpen('blockMore', { 
+				element: '#button-header-more',
+				type: I.MenuType.Vertical,
+				offsetX: 0,
+				offsetY: 8,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				data: {
+					rootId: rootId,
+					blockId: rootId,
+					blockIds: [ rootId ],
+					match: match,
+				}
+			});
+		}, Constant.delay.menu);
 	};
 
 	onAdd (e: any) {
@@ -147,17 +151,20 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onSync (e: any) {
 		const { rootId } = this.props;
 
-		commonStore.menuOpen('threadList', {
-			type: I.MenuType.Vertical, 
-			element: '#button-header-sync',
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rootId: rootId,
-			}
-		});
+		commonStore.menuCloseAll();
+		window.setTimeout(() => {
+			commonStore.menuOpen('threadList', {
+				type: I.MenuType.Vertical, 
+				element: '#button-header-sync',
+				offsetX: 0,
+				offsetY: 0,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				data: {
+					rootId: rootId,
+				}
+			});
+		}, Constant.delay.menu);
 	};
 
 	onNavigation (e: any, expanded: boolean) {
@@ -190,21 +197,24 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onRelation () {
 		const { rootId } = this.props;
 
-		commonStore.menuOpen('blockRelationList', { 
-			element: '#button-header-relation',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			fixedY: 38,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			className: 'fixed',
-			data: {
-				relationKey: '',
-				readOnly: false,
-				rootId: rootId,
-			},
-		});
+		commonStore.menuCloseAll();
+		window.setTimeout(() => {
+			commonStore.menuOpen('blockRelationList', { 
+				element: '#button-header-relation',
+				type: I.MenuType.Vertical,
+				offsetX: 0,
+				offsetY: 0,
+				fixedY: 38,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				className: 'fixed',
+				data: {
+					relationKey: '',
+					readOnly: false,
+					rootId: rootId,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 	
 };

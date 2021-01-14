@@ -578,6 +578,13 @@ class Dispatcher {
 		let type1 = this.eventType(c1.getValueCase());
 		let type2 = this.eventType(c2.getValueCase());
 
+		if ((type1 == 'blockShow') && (type2 != 'blockShow')) {
+			return -1;
+		};
+		if ((type2 == 'blockShow') && (type1 != 'blockShow')) {
+			return 1;
+		};
+
 		if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
 			return -1;
 		};
