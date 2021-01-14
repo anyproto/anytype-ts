@@ -40,7 +40,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						<MenuItemVertical 
 							id="object-layout" 
 							icon={layout ? layout.icon : ''} 
-							name={layout ? layout.name : 'Select type'}
+							name={layout ? layout.name : 'Select layout'}
 							menuId="select"
 							onClick={this.onLayout} 
 							arrow={true}
@@ -185,6 +185,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
 			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
 			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
+			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
 		];
 	};
 	

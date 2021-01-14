@@ -72,7 +72,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Sync id="button-sync" rootId={rootId} onClick={this.onSync} />
+					<Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} />
 					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
@@ -149,7 +149,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		commonStore.menuOpen('threadList', {
 			type: I.MenuType.Vertical, 
-			element: '#button-sync',
+			element: '#button-header-sync',
 			offsetX: 0,
 			offsetY: 0,
 			vertical: I.MenuDirection.Bottom,
