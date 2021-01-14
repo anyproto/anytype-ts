@@ -25,6 +25,32 @@
 	.iconFile.presentation { background-image: url('~img/icon/file/presentation.svg') !important; }
 	.iconFile.table { background-image: url('~img/icon/file/table.svg') !important; }
 
+	.iconUser { 
+		border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 
+		background-color: $colorLightGrey; width: 100%; height: 100%; font-weight: 400;
+	}
+	.iconUser {
+		.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
+		.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; }
+	}
+
+	.iconUser.c20 { line-height: 20px; font-size: 12px; }
+	.iconUser.c40 { line-height: 40px; font-size: 18px; }
+	.iconUser.c48 { line-height: 48px; font-size: 18px; }
+	.iconUser.c64 { line-height: 62px; font-size: 22px; }
+	.iconUser.c96 { line-height: 96px; font-size: 44px; }
+	.iconUser.c128 { line-height: 128px; font-size: 72px; }
+
+	.iconUser.grey { background-color: $colorLightGrey; }
+	.iconUser.black { background-color: $colorBlack; }
+	.iconUser.brown { background-color: $colorDarkGrey; }
+	.iconUser.orange { background-color: $colorOrange; }
+	.iconUser.red { background-color: $colorRed; }
+	.iconUser.purple { background-color: $colorPurple; }
+	.iconUser.blue { background-color: $colorBlue; }
+	.iconUser.teal { background-color: $colorTeal; }
+	.iconUser.green { background-color: $colorLime; }
+
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 	.iconEmoji {
 		.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
@@ -109,29 +135,3 @@
 .iconObject.isTask.canEdit {
 	.iconCheckbox { cursor: pointer; }
 }
-
-.iconUser { 
-	border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 
-	background-color: $colorLightGrey; width: 100%; height: 100%;
-}
-.iconUser {
-	.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
-	.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; }
-}
-
-.iconUser.c20 { line-height: 20px; font-size: 12px; }
-.iconUser.c40 { line-height: 40px; font-size: 18px; }
-.iconUser.c48 { line-height: 48px; font-size: 18px; }
-.iconUser.c64 { line-height: 62px; font-size: 22px; }
-.iconUser.c96 { line-height: 96px; font-size: 44px; }
-.iconUser.c128 { line-height: 128px; font-size: 72px; }
-
-.iconUser.grey { background-color: $colorLightGrey; }
-.iconUser.black { background-color: $colorBlack; }
-.iconUser.brown { background-color: $colorDarkGrey; }
-.iconUser.orange { background-color: $colorOrange; }
-.iconUser.red { background-color: $colorRed; }
-.iconUser.purple { background-color: $colorPurple; }
-.iconUser.blue { background-color: $colorBlue; }
-.iconUser.teal { background-color: $colorTeal; }
-.iconUser.green { background-color: $colorLime; }
