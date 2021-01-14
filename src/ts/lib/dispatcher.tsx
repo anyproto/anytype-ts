@@ -8,6 +8,7 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
+const SORT_IDS = [ 'blockShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
 const { app } = window.require('electron').remote;
@@ -578,34 +579,14 @@ class Dispatcher {
 		let type1 = this.eventType(c1.getValueCase());
 		let type2 = this.eventType(c2.getValueCase());
 
-		if ((type1 == 'blockShow') && (type2 != 'blockShow')) {
-			return -1;
+		for (let id of SORT_IDS) {
+			if ((type1 == id) && (type2 != id)) {
+				return -1;
+			};
+			if ((type2 == id) && (type1 != id)) {
+				return 1;
+			};
 		};
-		if ((type2 == 'blockShow') && (type1 != 'blockShow')) {
-			return 1;
-		};
-
-		if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
-			return -1;
-		};
-		if ((type2 == 'blockAdd') && (type1 != 'blockAdd')) {
-			return 1;
-		};
-
-		if ((type1 == 'blockDelete') && (type2 != 'blockDelete')) {
-			return -1;
-		};
-		if ((type2 == 'blockDelete') && (type1 != 'blockDelete')) {
-			return 1;
-		};
-
-		if ((type1 == 'blockSetChildrenIds') && (type2 != 'blockSetChildrenIds')) {
-			return -1;
-		};
-		if ((type2 == 'blockSetChildrenIds') && (type1 != 'blockSetChildrenIds')) {
-			return 1;
-		};
-
 		return 0;
 	};
 
