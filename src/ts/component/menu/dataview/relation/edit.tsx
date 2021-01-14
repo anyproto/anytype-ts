@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, translate } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -93,7 +93,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				<MenuItemVertical 
 					id="relation-type" 
 					icon={'relation ' + DataUtil.relationClass(this.format)} 
-					name={Constant.relationName[this.format]} 
+					name={translate('relationName' + this.format)} 
 					onClick={this.onRelationType} 
 					arrow={!relation}
 				/>

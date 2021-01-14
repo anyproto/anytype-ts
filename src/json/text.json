@@ -36,6 +36,20 @@
 	"day6": { "en": "Friday" },
 	"day7": { "en": "Saturday" },
 
+	"relationName0": { "en": "Description" },
+	"relationName1": { "en": "Title" },
+	"relationName2": { "en": "Number" },
+	"relationName3": { "en": "Status" },
+	"relationName4": { "en": "Date" },
+	"relationName5": { "en": "File & Media" },
+	"relationName6": { "en": "Checkbox" },
+	"relationName7": { "en": "Icon" },
+	"relationName8": { "en": "URL" },
+	"relationName9": { "en": "E-mail" },
+	"relationName10": { "en": "Phone" },
+	"relationName11": { "en": "Tag" },
+	"relationName100": { "en": "Object" },
+
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
 
