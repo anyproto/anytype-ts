@@ -163,6 +163,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				fixedY: 38,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
+				className: 'fixed',
 				data: {
 					rootId: rootId,
 				}
