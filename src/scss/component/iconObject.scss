@@ -12,19 +12,9 @@
 	.smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	.smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
 	.smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+	.smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
 	.smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
 	.smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
-
-	.iconFile { background-repeat: no-repeat; background-position: center center; background-size: 100%; }
-	.iconFile.other { background-image: url('~img/icon/file/other.svg') !important; }
-	.iconFile.image { background-image: url('~img/icon/file/image.svg') !important; }
-	.iconFile.video { background-image: url('~img/icon/file/video.svg') !important; }
-	.iconFile.text { background-image: url('~img/icon/file/text.svg') !important; }
-	.iconFile.archive { background-image: url('~img/icon/file/archive.svg') !important; }
-	.iconFile.audio { background-image: url('~img/icon/file/audio.svg') !important; }
-	.iconFile.pdf { background-image: url('~img/icon/file/pdf.svg') !important; }
-	.iconFile.presentation { background-image: url('~img/icon/file/presentation.svg') !important; }
-	.iconFile.table { background-image: url('~img/icon/file/table.svg') !important; }
 
 	.iconUser { 
 		border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 

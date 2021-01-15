@@ -89,13 +89,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		let iconSearch = null;
 		let iconHome = (
 			<div className="iconObject c48">
-				<Icon className="home big" />
+				<div className="iconEmoji c48">
+					<Icon className="home big" />
+				</div>
 			</div>
 		);
 
 		if (showIcon) {
 			if (isRoot) {
-				iconSearch = <Icon key="icon-home" className="home" />;
+				iconSearch = <Icon key="icon-home" className="home big" />;
 			} else {
 				iconSearch = <IconObject object={details} />;
 			};

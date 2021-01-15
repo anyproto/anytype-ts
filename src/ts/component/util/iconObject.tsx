@@ -37,6 +37,18 @@ const Size = {
 	128: 64,
 };
 
+const File = {
+	other: require('img/icon/file/other.svg'),
+	image: require('img/icon/file/image.svg'),
+	video: require('img/icon/file/video.svg'),
+	text: require('img/icon/file/text.svg'),
+	archive: require('img/icon/file/archive.svg'),
+	audio: require('img/icon/file/audio.svg'),
+	pdf: require('img/icon/file/pdf.svg'),
+	presentation: require('img/icon/file/presentation.svg'),
+	table: require('img/icon/file/table.svg'),
+};
+
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
@@ -110,15 +122,15 @@ class IconObject extends React.Component<Props, {}> {
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					cn.push('isFile');
-					icn = icn.concat([ 'iconFile', Util.fileIcon(object), 'c' + iconSize ]);
-					icon = <div className={icn.join(' ')} />;
+					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+					icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 
 			case 'file':
 				cn.push('isFile');
-				icn = icn.concat([ 'iconFile', Util.fileIcon(object), 'c' + iconSize ]);
-				icon = <div className={icn.join(' ')} />;
+				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
+				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				break;
 		};
 
@@ -140,14 +152,14 @@ class IconObject extends React.Component<Props, {}> {
 				default:
 				case 'page':
 					if (layout == I.ObjectLayout.Page) {
-						s = size;
+						s = 40;
 					};
 					break;
 
 				case 'set':
 				case 'file':
 				case 'image':
-					s = size;
+					s = 40;
 					break;
 
 			};
