@@ -147,7 +147,7 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	onAdd () {
-		const { param, getId } = this.props;
+		const { param, getId, close } = this.props;
 		const { data } = param;
 		const node = $('#' + getId());
 
@@ -157,6 +157,9 @@ class MenuObjectValues extends React.Component<Props> {
 			width: 0,
 			offsetX: node.outerWidth(),
 			vertical: I.MenuDirection.Center,
+			onClose: () => {
+				close();
+			},
 			data: {
 				...data,
 				rebind: this.rebind,

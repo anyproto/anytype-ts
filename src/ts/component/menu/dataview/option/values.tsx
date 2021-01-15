@@ -143,15 +143,19 @@ class MenuOptionValues extends React.Component<Props> {
 	};
 
 	onAdd () {
-		const { param, getId } = this.props;
+		const { param, getId, close } = this.props;
 		const { data } = param;
+		const node = $('#' + getId());
 
 		commonStore.menuOpen('dataviewOptionList', {
 			...param,
 			element: '#' + getId() + ' #item-add',
 			width: 0,
-			offsetX: param.width,
+			offsetX: node.outerWidth(),
 			vertical: I.MenuDirection.Center,
+			onClose: () => {
+				close();
+			},
 			data: {
 				...data,
 				rebind: this.rebind,

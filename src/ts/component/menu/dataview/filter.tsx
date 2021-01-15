@@ -84,11 +84,15 @@ class MenuFilter extends React.Component<Props, {}> {
 
 			let value = null;
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
+			let Item = null;
+			let cn = [];
+			let list = [];
 
 			switch (relation.format) {
-				
-				case I.RelationType.Object:
-					const Item = (item: any) => {
+
+				case I.RelationType.Tag:
+				case I.RelationType.Status:
+					Item = (item: any) => {
 						return (
 							<div className="element">
 								<IconObject object={item} />
@@ -96,9 +100,45 @@ class MenuFilter extends React.Component<Props, {}> {
 							</div>
 						);
 					};
-					const cn = [ 'select', 'isList' ];
+					cn = [ 'select', 'isList' ];
 
-					let list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
+					list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
+					list = list.filter((it: any) => { return !it._detailsEmpty_; });
+
+					if (list.length) {
+						cn.push('withValues');
+					};
+
+					value = (
+						<div id={id} className={cn.join(' ')} onClick={(e: any) => { this.onTag(e, item); }}>
+							{list.length ? (
+								<React.Fragment>
+									{list.map((item: any, i: number) => {
+										return <Item key={i} {...item} />;
+									})}
+								</React.Fragment>
+							) : (
+								<React.Fragment>
+									<div className="name">Add options</div>
+									<Icon className="arrow light" />
+								</React.Fragment>
+							)}
+						</div>
+					);
+					break;
+				
+				case I.RelationType.Object:
+					Item = (item: any) => {
+						return (
+							<div className="element">
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</div>
+						);
+					};
+					cn = [ 'select', 'isList' ];
+
+					list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
 					list = list.filter((it: any) => { return !it._detailsEmpty_; });
 
 					if (list.length) {
@@ -467,6 +507,34 @@ class MenuFilter extends React.Component<Props, {}> {
 		});
 	};
 
+	onTag (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const id = [ 'item', item.id, 'value' ].join('-');
+
+		commonStore.menuOpen('dataviewOptionValues', { 
+			element: '#' + getId() + ' #' + id,
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			className: 'fromFilter',
+			data: { 
+				rootId: rootId,
+				blockId: blockId,
+				value: item.value || [], 
+				types: relation.objectTypes,
+				relation: observable.box(relation),
+				onChange: (value: any) => {
+					this.onChange(item.id, 'value', value);
+				},
+			},
+		});
+	};
+
 	onObject (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -489,7 +557,6 @@ class MenuFilter extends React.Component<Props, {}> {
 				types: relation.objectTypes,
 				relation: observable.box(relation),
 				onChange: (value: any) => {
-					console.log('VALUE', value);
 					this.onChange(item.id, 'value', value);
 				},
 			},

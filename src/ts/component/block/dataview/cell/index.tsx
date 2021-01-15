@@ -111,6 +111,7 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
+		const win = $(window);
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const cell = $('#' + id).addClass('isEditing');
 		const element = cell.find('.cellContent');
@@ -137,6 +138,7 @@ class Cell extends React.Component<Props, {}> {
 			if (menuId) {
 				$(scrollContainer).addClass('over');
 			};
+			win.trigger('resize');
 		};
 
 		let setOff = () => {
@@ -207,7 +209,7 @@ class Cell extends React.Component<Props, {}> {
 				menuId = 'dataviewMedia';
 				break;
 
-			case I.RelationType.Status:		
+			case I.RelationType.Status:
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
