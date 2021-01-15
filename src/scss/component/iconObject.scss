@@ -12,6 +12,7 @@
 	.smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	.smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
 	.smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+	.smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
 	.smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
 
 	.iconFile { background-repeat: no-repeat; background-position: center center; background-size: 100%; }
@@ -27,7 +28,7 @@
 
 	.iconUser { 
 		border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 
-		background-color: $colorLightGrey; width: 100%; height: 100%; font-weight: 400;
+		background-color: $colorLightGrey; width: 100%; height: 100%; font-weight: 500; font-family: 'Lcg';
 	}
 	.iconUser {
 		.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
@@ -36,8 +37,9 @@
 
 	.iconUser.c20 { line-height: 20px; font-size: 12px; }
 	.iconUser.c40 { line-height: 40px; font-size: 18px; }
-	.iconUser.c48 { line-height: 48px; font-size: 18px; }
-	.iconUser.c64 { line-height: 62px; font-size: 22px; }
+	.iconUser.c48 { line-height: 48px; font-size: 28px; }
+	.iconUser.c56 { line-height: 56px; font-size: 34px; }
+	.iconUser.c64 { line-height: 64px; font-size: 34px; }
 	.iconUser.c96 { line-height: 96px; font-size: 44px; }
 	.iconUser.c128 { line-height: 128px; font-size: 72px; }
 
@@ -65,13 +67,6 @@
 		.icon.home.big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 
 		.iconImage { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; left: 0px; top: 0px; margin: 0px; }
-		.iconBlank { width: 100%; height: 100%; }
-
-		.iconBlank.c18 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
-		.iconBlank.c20, .iconBlank.c22 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
-		.iconBlank.c24, .iconBlank.c28, .iconBlank.c32 { 
-			@include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; 
-		}
 	}
 
 	.iconEmoji.c20 { width: 20px; height: 20px; line-height: 20px; }
@@ -122,6 +117,7 @@
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c40 { width: 40px; height: 40px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 100%; overflow: hidden; background-color: #f3f2ec; }
+.iconObject.c48.isPage, .iconObject.c48.isFile { border-radius: 0px; background-color: unset; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 100%; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }

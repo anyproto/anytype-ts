@@ -1,10 +1,9 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 
 interface Props {
 	getList?(): void;
@@ -41,8 +40,19 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
-			const details = blockStore.getDetails(root, content.targetBlockId);
-			const { _detailsEmpty_, name, iconEmoji, iconImage } = details;
+			const object = blockStore.getDetails(root, content.targetBlockId);
+			const { _detailsEmpty_, name, iconEmoji, iconImage } = object;
+			const type = DataUtil.schemaField(object.type);
+			const objectType: any = type ? dbStore.getObjectType(object.type) : null;
+			const cn = [ 'item' ];
+
+			let layout = I.ObjectLayout.Page;
+			if (undefined !== object.layout) {
+				layout = object.layout;
+			} else 
+			if (objectType && (undefined !== objectType.layout)) {
+				layout = objectType.layout;
+			};
 
 			if (_detailsEmpty_) {
 				return (
@@ -53,7 +63,7 @@ class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			let icon = <IconObject size={48} object={details} />;
+			let icon = <IconObject size={48} object={object} />;
 			let showMenu = true;
 
 			if (content.style == I.LinkStyle.Dataview) {
@@ -70,20 +80,22 @@ class ListIndex extends React.Component<Props, {}> {
 				showMenu = false;
 			};
 
+			if (layout == I.ObjectLayout.Task) {
+				cn.push('isTask');
+				icon = <IconObject size={20} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
+			};
+
 			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onClick={(e: any) => { onSelect(e, item); }} 
-					onContextMenu={(e: any) => { 
-						if (showMenu) {
-							onMore(e, item); 
-						};
-					}}
-				>
+				<div id={'item-' + item.id} className={cn.join(' ')}>
 					{icon}
 					<div className="name">{name}</div>
 					{showMenu ? <Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} /> : ''}
+					<div className="type">{objectType ? objectType.name : ''}</div>
+					<div className="click" onClick={(e: any) => { onSelect(e, item); }} onContextMenu={(e: any) => { 
+						if (showMenu) {
+							onMore(e, item); 
+						};
+					}} />
 				</div>
 			);
 		});
@@ -119,6 +131,13 @@ class ListIndex extends React.Component<Props, {}> {
 				onSortEnd={this.onSortEnd} 
 			/>
 		);
+	};
+
+	onCheckbox (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		DataUtil.pageSetDone(item.id, !item.done);
 	};
 	
 	onSortEnd (result: any) {

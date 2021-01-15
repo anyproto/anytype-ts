@@ -20,7 +20,7 @@ interface Props {
 	tooltipY?: I.MenuDirection;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
-	onCheckbox?(): void;
+	onCheckbox?(e: any): void;
 	onClick?(e: any): void;
 };
 
@@ -58,8 +58,7 @@ class IconObject extends React.Component<Props, {}> {
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', type, 'c' + size ];
 		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
-		const iconSize = Size[size];
-
+		
 		let layout = I.ObjectLayout.Page;
 		if (undefined !== object.layout) {
 			layout = object.layout;
@@ -75,6 +74,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
+		let iconSize = this.iconSize(type, layout, size);
 		let icon = null;
 		let icn = [];
 
@@ -84,8 +84,9 @@ class IconObject extends React.Component<Props, {}> {
 					default:
 					case I.ObjectLayout.Page:
 						cn.push('isPage');
-						icn.push('c' + size);
-						icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+						if (iconEmoji || iconImage) {
+							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+						};
 						break;
 
 					case I.ObjectLayout.Contact:
@@ -121,15 +122,43 @@ class IconObject extends React.Component<Props, {}> {
 				break;
 		};
 
+		if (!icon) {
+			return null;
+		};
+
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>{icon}</div>
 		);
 	};
 
+	iconSize (type: string, layout: I.ObjectLayout, size: number) {
+		type = type || 'page';
+		let s = Size[size];
+
+		if (size ==  48) {
+			switch (type) {
+				default:
+				case 'page':
+					if (layout == I.ObjectLayout.Page) {
+						s = size;
+					};
+					break;
+
+				case 'set':
+				case 'file':
+				case 'image':
+					s = size;
+					break;
+
+			};
+		};
+		return s;
+	};
+
 	onCheckbox (e: any) {
 		const { canEdit, onCheckbox } = this.props;
 		if (canEdit && onCheckbox) {
-			onCheckbox();
+			onCheckbox(e);
 		};
 	};
 	

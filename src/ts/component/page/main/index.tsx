@@ -268,14 +268,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - 130 - height });
 
-		if (items.length > cnt) {
-			items.each((i: number, item: any) => {
-				item = $(item);
-				if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
-					item.addClass('last');
-				};
-			});
-		};
+		items.each((i: number, item: any) => {
+			item = $(item);
+			const icon = item.find('.iconObject');
+
+			if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
+				item.addClass('last');
+			};
+			if (icon.length) {
+				item.addClass('withIcon');
+			};
+		});
 	};
 
 	getList () {
