@@ -104,9 +104,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				element: '#button-header-more',
 				type: I.MenuType.Vertical,
 				offsetX: 0,
-				offsetY: 8,
+				offsetY: 0,
+				fixedY: 38,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
+				className: 'fixed',
 				data: {
 					rootId: rootId,
 					blockId: rootId,
@@ -158,6 +160,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				element: '#button-header-sync',
 				offsetX: 0,
 				offsetY: 0,
+				fixedY: 38,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				data: {

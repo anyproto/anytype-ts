@@ -15,6 +15,7 @@
 	}
 	.menu.noAnimation { transition: none; }
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
+	.menu.fixed { position: fixed; }
 	.menu * { user-select: none; }
 	
 	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */
