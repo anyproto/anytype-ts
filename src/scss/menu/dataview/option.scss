@@ -17,5 +17,11 @@
 		.wrap { padding: 8px 16px; }
 		.input { border: 1px solid $colorLightGrey; font-size: 12px; padding: 0px 8px; }
 		.item:hover::before { opacity: 0.15; }
-	}	
+	}
+
+	.menu.menuDataviewOptionValues.fromFilter {
+		.item {
+			.icon.dnd { display: none; }
+		}
+	}
 }

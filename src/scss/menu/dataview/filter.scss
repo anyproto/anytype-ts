@@ -20,9 +20,10 @@
 			.select:last-child { margin: 0px; }
 
 			.select {
-				.element { display: inline-block; margin-right: 6px; }
+				.element { display: inline-block; margin-right: 6px; line-height: 20px; }
 				.element {
 					.name { max-width: calc(100% - 24px); }
+					.tagItem { vertical-align: top; margin-top: 1px; }
 				}
 			}
 			.select.isList { margin: 0px; }

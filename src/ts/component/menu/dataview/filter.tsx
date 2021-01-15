@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input, Checkbox, IconObject } from 'ts/component';
+import { Icon, Select, Input, Checkbox, IconObject, Tag } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -92,18 +92,20 @@ class MenuFilter extends React.Component<Props, {}> {
 
 				case I.RelationType.Tag:
 				case I.RelationType.Status:
+					cn = [ 'select', 'isList' ];
+
 					Item = (item: any) => {
 						return (
 							<div className="element">
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
 							</div>
 						);
 					};
-					cn = [ 'select', 'isList' ];
 
-					list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
-					list = list.filter((it: any) => { return !it._detailsEmpty_; });
+					list = (item.value || []).map((id: string, i: number) => { 
+						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+					});
+					list = list.filter((it: any) => { return it && it.id; });
 
 					if (list.length) {
 						cn.push('withValues');
@@ -114,7 +116,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							{list.length ? (
 								<React.Fragment>
 									{list.map((item: any, i: number) => {
-										return <Item key={i} {...item} />;
+										return <Item key={item.id} {...item} />;
 									})}
 								</React.Fragment>
 							) : (
