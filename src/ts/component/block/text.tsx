@@ -69,6 +69,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
@@ -86,8 +87,7 @@ class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.Title:
 				placeHolder = Constant.default.name;
 				
-				const check = DataUtil.checkDetails(rootId);
-				if (check.isObjectTask) {
+				if (root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheck };
 				};
 				break;

@@ -160,10 +160,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { content } = block;
 		const object = blockStore.getDetails(rootId, content.targetBlockId);
 		const type = DataUtil.schemaField(object.type);
-		const check = DataUtil.checkDetails(rootId);
 
 		let items = [];
-		if (check.isObjectSet) {
+		if (block.isObjectSet()) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },

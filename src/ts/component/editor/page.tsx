@@ -103,7 +103,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									/*readOnly={check.isObjectReadOnly}*/
+									readOnly={root.isObjectReadOnly()}
 								/>
 							)
 						})}
@@ -340,9 +340,8 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
 
-		if (!root || check.isObjectReadOnly) {
+		if (!root || root.isObjectReadOnly()) {
 			return;
 		};
 		
@@ -355,6 +354,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const check = DataUtil.checkDetails(rootId);
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
@@ -374,10 +374,10 @@ class EditorPage extends React.Component<Props, {}> {
 			offset = 394;
 		};
 
-		if (check.isObjectContact) {
+		if (root.isObjectContact()) {
 		};
 
-		if (check.isObjectTask) {
+		if (root.isObjectTask()) {
 		};
 
 		// Find hovered block by mouse coords
@@ -1625,7 +1625,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
 		
-		if (!root || check.isObjectSet) {
+		if (!root || root.isObjectSet()) {
 			return;
 		};
 

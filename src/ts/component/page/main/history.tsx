@@ -53,16 +53,12 @@ class PageMainHistory extends React.Component<Props, State> {
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper', check.className ];
-		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
+		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
 		
-		if (root && check.isObjectContact) {
+		if (root && root.isObjectContact()) {
 			icon.type = I.BlockType.IconUser;
-		} else {
-			icon.type = I.BlockType.IconPage;
 		};
 
-		icon = new M.Block(icon);
-		
 		const Section = (item: any) => (
 			<React.Fragment>
 				<div className="section">

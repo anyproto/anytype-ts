@@ -43,8 +43,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const details = blockStore.getDetails(breadcrumbs, rootId);
-		const check = DataUtil.checkDetails(rootId);
-		const readOnly = check.isObjectReadOnly;
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (commonStore.popupIsOpen('navigation')) {
@@ -68,8 +66,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					{!readOnly ? (
-						<Icon className={[ 'plus', 'big', (check.isObjectSet ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					{!root.isObjectReadOnly() ? (
+						<Icon className={[ 'plus', 'big', (root.isObjectSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 					) : ''}
 				</div>
 
@@ -125,9 +123,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
-		const check = DataUtil.checkDetails(rootId);
 
-		if (!root || check.isObjectSet) {
+		if (!root || root.isObjectSet()) {
 			return;
 		};
 		

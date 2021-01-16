@@ -93,7 +93,7 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						{!check.isObjectTask ? (
+						{!root.isObjectTask() ? (
 							<div id="cover-button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
 								<Icon />
 								<div className="txt">{translate('editorControlIcon')}</div>
@@ -153,10 +153,10 @@ class BlockCover extends React.Component<Props, State> {
 
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
-		const check = DataUtil.checkDetails(rootId);
+		const root = blockStore.getLeaf(rootId, rootId);
 		
 		focus.clear(true);
-		check.isObjectContact ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {
