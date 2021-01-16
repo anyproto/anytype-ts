@@ -41,18 +41,10 @@ class ListIndex extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
 			const object = blockStore.getDetails(root, content.targetBlockId);
-			const { _detailsEmpty_, name, iconEmoji, iconImage } = object;
+			const { _detailsEmpty_, name, layout, iconEmoji, iconImage } = object;
 			const type = DataUtil.schemaField(object.type);
 			const objectType: any = type ? dbStore.getObjectType(object.type) : null;
 			const cn = [ 'item' ];
-
-			let layout = I.ObjectLayout.Page;
-			if (undefined !== object.layout) {
-				layout = object.layout;
-			} else 
-			if (objectType && (undefined !== objectType.layout)) {
-				layout = objectType.layout;
-			};
 
 			if (_detailsEmpty_) {
 				return (
