@@ -165,7 +165,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					);
 					break;
 
-				case I.RelationType.Object:
+				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
 							id={id}
