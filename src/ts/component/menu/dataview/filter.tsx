@@ -327,11 +327,19 @@ class MenuFilter extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
 				ret = [ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionIn') }, 
+					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotIn') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				];
+				break;
+
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
+				ret = [ 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionIn') }, 
 					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotIn') },
 					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 

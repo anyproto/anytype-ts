@@ -295,7 +295,7 @@
 	"blockNameNewRelation": { "en": "New Relation" },
 	"blockDescriptionNewRelation": { "en": "..." },
 
-	"filterConditionEqual": { "en": "is" },
+	"filterConditionEqual": { "en": "is exactly" },
 	"filterConditionNotEqual": { "en": "is not" },
 	"filterConditionGreater": { "en": "is greater" },
 	"filterConditionLess": { "en": "is less" },

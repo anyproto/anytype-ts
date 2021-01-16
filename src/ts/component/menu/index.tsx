@@ -170,7 +170,13 @@ class Menu extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+
 		win.on('resize.menu', () => { this.position(); });
+
+		if (commonStore.popupIsOpen()) {
+			node.addClass('fromPopup');
+		};
 	};
 	
 	componentWillUnmount () {
