@@ -801,7 +801,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { onBlur } = this.props;
-	
+
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);

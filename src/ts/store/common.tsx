@@ -189,6 +189,9 @@ class CommonStore {
 	menuOpen (id: string, param: I.MenuParam) {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
+
+		console.log('menuOpen', id);
+		console.trace();
 		
 		if (!param.element) {
 			console.error('[menuOpen] Element is not defined');

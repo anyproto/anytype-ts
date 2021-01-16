@@ -570,24 +570,27 @@ class EditorPage extends React.Component<Props, {}> {
 
 			// Open action menu
 			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-				commonStore.menuOpen('blockAction', { 
-					element: '#block-' + ids[0],
-					type: I.MenuType.Vertical,
-					offsetX: Constant.size.blockMenu,
-					offsetY: 0,
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Left,
-					data: {
-						blockId: ids[0],
-						blockIds: ids,
-						rootId: rootId,
-						dataset: dataset,
-					},
-					onClose: () => {
-						selection.clear(true);
-						focus.apply();
-					}
-				});
+				commonStore.menuClose('blockContext');
+				window.setTimeout(() => {
+					commonStore.menuOpen('blockAction', { 
+						element: '#block-' + ids[0],
+						type: I.MenuType.Vertical,
+						offsetX: Constant.size.blockMenu,
+						offsetY: 0,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						data: {
+							blockId: ids[0],
+							blockIds: ids,
+							rootId: rootId,
+							dataset: dataset,
+						},
+						onClose: () => {
+							selection.clear(true);
+							focus.apply();
+						}
+					});
+				}, Constant.delay.menu);
 			});
 		};
 
@@ -716,24 +719,28 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Open action menu
 		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-			commonStore.menuOpen('blockAction', { 
-				element: '#block-' + focused,
-				type: I.MenuType.Vertical,
-				offsetX: Constant.size.blockMenu,
-				offsetY: 0,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					blockId: focused,
-					blockIds: DataUtil.selectionGet(focused, true, this.props),
-					rootId: rootId,
-					dataset: dataset,
-				},
-				onClose: () => {
-					selection.clear(true);
-					focus.apply();
-				}
-			});
+			commonStore.menuClose('blockContext');
+			window.setTimeout(() => {
+				commonStore.menuOpen('blockAction', { 
+					element: '#block-' + focused,
+					type: I.MenuType.Vertical,
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: focused,
+						blockIds: DataUtil.selectionGet(focused, true, this.props),
+						rootId: rootId,
+						dataset: dataset,
+					},
+					onClose: () => {
+						selection.clear(true);
+						focus.set(focused, range);
+						focus.apply();
+					}
+				});
+			}, Constant.delay.menu);
 		});
 
 		// Mark-up
