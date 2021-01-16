@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { blockStore, commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -21,6 +21,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		this.onClick = this.onClick.bind(this);
 		this.onLayout = this.onLayout.bind(this);
+		this.onType = this.onType.bind(this);
 	};
 
 	render () {
@@ -29,14 +30,30 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { blockId, rootId } = data;
 		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
+		const object = blockStore.getDetails(rootId, rootId);
 
 		let sectionPage = null;
 		if (block.isPage()) {
+			const objectType = dbStore.getObjectType(object.type);
 			const layouts = this.getLayouts();
 			const layout = layouts.find((it: any) => { return it.id == block.layout; });
 
 			sectionPage = (
 				<React.Fragment>
+					{objectType ? (
+						<React.Fragment>
+							<div className="sectionName">Type</div>
+							<MenuItemVertical 
+								id="object-type" 
+								object={objectType}
+								name={objectType.name}
+								menuId="select"
+								onClick={this.onType} 
+								arrow={true}
+							/>
+						</React.Fragment>
+					) : ''}
+
 					<div className="sectionName">Layout</div>
 					<MenuItemVertical 
 						id="object-layout" 
@@ -336,6 +353,40 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				value: block.layout,
 				onSelect: (e: any, item: any) => {
 					DataUtil.pageSetLayout(rootId, item.id);
+					close();
+				}
+			}
+		});
+	};
+
+	onType (e: any) {
+		const { objectTypes } = dbStore;
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const object = blockStore.getDetails(rootId, rootId);
+		const options = objectTypes.map((it: I.ObjectType) => {
+			return { ...it, object: it, id: DataUtil.schemaField(it.url), withSmile: true };
+		});
+
+		options.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
+
+		commonStore.menuOpen('select', { 
+			element: '#item-object-type',
+			offsetX: 208,
+			offsetY: -36,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options: options,
+				value: object.type,
+				onSelect: (e: any, item: any) => {
+					console.log(item);
 					close();
 				}
 			}

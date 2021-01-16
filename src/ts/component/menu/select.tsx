@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
+import { Filter, MenuItemVertical } from 'ts/component';
 import { I, Util, Key, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -18,17 +18,28 @@ class MenuSelect extends React.Component<Props, {}> {
 	_isMounted: boolean = false;	
 	n: number = 0;
 	cache: any = null;
+	ref: any = null;
 	
 	constructor (props: any) {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options, value } = data;
+		const { value } = data;
+		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+
+		let options = data.options || [];
+		if (data.filter) {
+			options = options.filter((it: any) => {
+				return it.name.match(filter);
+			});
+		};
+
 		const idx = options.findIndex((it: I.Option) => { return it.id == value; });
 		const scrollTo = Math.min(idx + LIMIT - 1, options.length - 1);
 
@@ -57,6 +68,8 @@ class MenuSelect extends React.Component<Props, {}> {
 		
 		return (
 			<div className="items">
+				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={this.onFilterChange} />
+
 				<InfiniteLoader
 					rowCount={options.length}
 					loadMoreRows={() => {}}
@@ -106,10 +119,12 @@ class MenuSelect extends React.Component<Props, {}> {
 			window.setTimeout(() => { this.setActive(active, true); }, 210);
 		};
 
+		this.focus();
 		this.resize();
 	};
 
 	componentDidUpdate () {
+		this.focus();
 		this.resize();
 	};
 	
@@ -131,6 +146,14 @@ class MenuSelect extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	focus () {
+		window.setTimeout(() => { 
+			if (this.ref) {
+				this.ref.focus(); 
+			};
+		}, 15);
 	};
 	
 	getItems () {
@@ -228,6 +251,10 @@ class MenuSelect extends React.Component<Props, {}> {
 		if (onSelect) {
 			onSelect(e, item);
 		};
+	};
+
+	onFilterChange (v: string) {
+		this.props.param.data.filter = v;
 	};
 
 	resize () {

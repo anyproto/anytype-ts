@@ -596,18 +596,11 @@ class Dispatcher {
 		blockStore.detailsSet(rootId, details);
 
 		const object = blockStore.getDetails(rootId, rootId);
-		const objectType: any = dbStore.getObjectType(object.type) || {};
 
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
-				it.layout = I.ObjectLayout.Page;
-				if (undefined !== object.layout) {
-					it.layout = object.layout;
-				} else 
-				if (undefined !== objectType.layout) {
-					it.layout = objectType.layout;
-				};
+				it.layout = object.layout;
 			};
 
 			if (it.type == I.BlockType.Dataview) {

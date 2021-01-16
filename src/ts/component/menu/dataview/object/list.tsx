@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Input, MenuItemVertical } from 'ts/component';
-import { I, C, Util, Key, keyboard, translate } from 'ts/lib';
+import { Filter, MenuItemVertical } from 'ts/component';
+import { I, C, Util, Key, keyboard } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -41,8 +40,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 	};
 	
 	render () {
@@ -85,9 +82,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<div className="filter">
-					<Input id="filter-input" ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onFilterChange} />
-				</div>
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter objects..." onChange={this.onFilterChange} />
 
 				<div className="items">
 					<InfiniteLoader
@@ -235,7 +230,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		});
 	};
 
-	onFilterChange (e: any, v: string) {
+	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
 	};
 
@@ -318,20 +313,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		onChange(value);
 
 		position();
-	};
-
-	onFocus () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#filter-input');
-
-		input.attr({ placeHolder: 'Filter objects...' });
-	};
-
-	onBlur () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#filter-input');
-
-		input.attr({ placeHolder: translate('commonFilterClick') });
 	};
 
 	resize () {

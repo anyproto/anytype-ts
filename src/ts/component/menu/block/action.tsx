@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, MenuItemVertical } from 'ts/component';
+import { Filter, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, Action, translate } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -66,9 +66,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<div className="filter">
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
-				</div>
+				<Filter ref={(ref: any) => { this.ref = ref; }} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
@@ -123,7 +121,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.focus = false;
 	};
 	
-	onFilterChange (e: any, v: string) {
+	onFilterChange (v: string) {
 		this.n = 0;
 		this.setState({ filter: v });
 	};

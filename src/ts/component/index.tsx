@@ -52,6 +52,7 @@ import Drag from './util/drag';
 import Marker from './util/marker';
 import Pin from './util/pin';
 import Sync from './util/sync';
+import Filter from './util/filter';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -89,6 +90,7 @@ export {
 	InputWithFile,
 	Pin,
 	Sync,
+	Filter,
 	Checkbox,
 	Textarea,
 	Button,

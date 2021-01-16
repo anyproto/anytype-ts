@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, Tag, Input } from 'ts/component';
-import { I, C, Util, DataUtil, translate, keyboard, Key } from 'ts/lib';
+import { Icon, Tag, Filter } from 'ts/component';
+import { I, C, Util, DataUtil, keyboard, Key } from 'ts/lib';
 import arrayMove from 'array-move';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -35,8 +34,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 	};
 	
 	render () {
@@ -76,9 +73,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<div className="filter">
-					<Input id="filter-input" ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.onFilterChange} />
-				</div>
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter objects..." onChange={this.onFilterChange} />
 
 				<div className="items">
 					<InfiniteLoader
@@ -174,22 +169,8 @@ class MenuOptionList extends React.Component<Props, State> {
 		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
-	onFilterChange (e: any, v: string) {
+	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
-	};
-
-	onFocus () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#filter-input');
-
-		input.attr({ placeHolder: 'Filter options...' });
-	};
-
-	onBlur () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#filter-input');
-
-		input.attr({ placeHolder: translate('commonFilterClick') });
 	};
 
 	onClick (e: any, item: any) {
