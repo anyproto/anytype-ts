@@ -63,7 +63,7 @@ class ListIndex extends React.Component<Props, {}> {
 				showMenu = false;
 			} else 
 			if (content.style == I.LinkStyle.Archive) {
-				icon = <IconObject size={48} className="isArchive" object={{ iconEmoji: ':wastebasket:' }} />
+				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />
 				showMenu = false;
 			} else 
 			if (layout == I.ObjectLayout.Task) {

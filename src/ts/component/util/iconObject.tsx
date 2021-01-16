@@ -68,7 +68,7 @@ class IconObject extends React.Component<Props, {}> {
 		const { object, className, size, canEdit, onClick } = this.props;
 		const { id, name, iconEmoji, iconImage, iconClass, done, layout } = object || {};
 		const type = DataUtil.schemaField(object.type);
-		const cn = [ 'iconObject', type, 'c' + size ];
+		const cn = [ 'iconObject', 'c' + size ];
 		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
 		
 		if (className) {
