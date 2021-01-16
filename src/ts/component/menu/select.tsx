@@ -30,21 +30,13 @@ class MenuSelect extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
-		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-
-		let options = data.options || [];
-		if (data.filter) {
-			options = options.filter((it: any) => {
-				return it.name.match(filter);
-			});
-		};
-
-		const idx = options.findIndex((it: I.Option) => { return it.id == value; });
-		const scrollTo = Math.min(idx + LIMIT - 1, options.length - 1);
+		const { filter, value } = data;
+		const items = this.getItems();
+		const idx = items.findIndex((it: I.Option) => { return it.id == value; });
+		const scrollTo = Math.min(idx + LIMIT - 1, items.length - 1);
 
 		const rowRenderer = (param: any) => {
-			const item = options[param.index];
+			const item = items[param.index];
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -69,11 +61,14 @@ class MenuSelect extends React.Component<Props, {}> {
 		return (
 			<div className="items">
 				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={this.onFilterChange} />
+				{!items.length ? (
+					<div className="item empty">No options found</div>
+				) : ''}
 
 				<InfiniteLoader
-					rowCount={options.length}
+					rowCount={items.length}
 					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => index < options.length}
+					isRowLoaded={({ index }) => index < items.length}
 				>
 					{({ onRowsRendered, registerChild }) => (
 						<AutoSizer className="scrollArea">
@@ -83,7 +78,7 @@ class MenuSelect extends React.Component<Props, {}> {
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
-									rowCount={options.length}
+									rowCount={items.length}
 									rowHeight={HEIGHT}
 									rowRenderer={rowRenderer}
 									onRowsRendered={onRowsRendered}
@@ -101,7 +96,8 @@ class MenuSelect extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options, value, noKeys } = data;
+		const { value, noKeys } = data;
+		const items = this.getItems();
 		
 		this._isMounted = true;
 		if (!noKeys) {
@@ -111,10 +107,10 @@ class MenuSelect extends React.Component<Props, {}> {
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (options[i] || {}).id; },
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		const active = options.find((it: any) => { return it.id == value });
+		const active = items.find((it: any) => { return it.id == value });
 		if (active && !active.isInitial) {
 			window.setTimeout(() => { this.setActive(active, true); }, 210);
 		};
@@ -159,9 +155,13 @@ class MenuSelect extends React.Component<Props, {}> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options } = data;
-		
-		return options || [];
+		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+
+		let items = data.options || [];
+		if (data.filter) {
+			items = items.filter((it: any) => { return it.name.match(filter); });
+		};
+		return items || [];
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
@@ -261,7 +261,8 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { position, getId } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const length = Math.max(items.length, 1);
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();

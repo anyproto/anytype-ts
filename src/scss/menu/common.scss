@@ -104,6 +104,8 @@
 				.icon.blank { margin: 0px; }
 			}
 		}
+
+		.item.empty { color: $colorDarkGrey; }
 		
 		.item.withDescription { padding: 8px 16px; height: 56px; }
 		.item.withDescription {
