@@ -44,6 +44,7 @@ export interface MenuItem {
 	className?: string;
 	isActive?: boolean;
 	menuId?: string;
+	asPage?: boolean;
 	withDescription?: boolean;
 	withCaption?: boolean;
 	style?: any;

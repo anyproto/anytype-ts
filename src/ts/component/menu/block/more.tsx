@@ -366,7 +366,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 		const options = objectTypes.map((it: I.ObjectType) => {
-			return { ...it, object: it, id: DataUtil.schemaField(it.url), withSmile: true };
+			return { ...it, object: it, id: DataUtil.schemaField(it.url), asPage: true };
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -386,7 +386,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				options: options,
 				value: object.type,
 				onSelect: (e: any, item: any) => {
-					console.log(item);
+					C.BlockObjectTypeSet(rootId, item.url);
 					close();
 				}
 			}
