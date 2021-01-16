@@ -99,8 +99,9 @@ class HeaderMainSet extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
+		const check = DataUtil.checkDetails(rootId);
 
-		if (!root || root.isObjectSet()) {
+		if (!root || check.isObjectSet) {
 			return;
 		};
 		

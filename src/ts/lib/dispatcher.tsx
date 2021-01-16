@@ -236,10 +236,6 @@ class Dispatcher {
 						id: data.getId(),
 						details: details,
 					});
-
-					if (undefined !== details.layout) {
-						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
-					};
 					break;
 
 				case 'blockSetFields':

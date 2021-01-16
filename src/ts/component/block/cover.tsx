@@ -60,13 +60,14 @@ class BlockCover extends React.Component<Props, State> {
 		this.onOut = this.onOut.bind(this);
 	};
 	
-	render() {
+	render () {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType, coverId,  } = details;
 		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
 		const root = blockStore.getLeaf(rootId, rootId);
+		const check = DataUtil.checkDetails(rootId);
 		
 		let elements = null;
 		if (editing) {
@@ -92,7 +93,7 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						{!root.isObjectTask() ? (
+						{!check.isObjectTask ? (
 							<div id="cover-button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
 								<Icon />
 								<div className="txt">{translate('editorControlIcon')}</div>
@@ -152,14 +153,10 @@ class BlockCover extends React.Component<Props, State> {
 
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-		
-		if (!root) {
-			return;
-		};
+		const check = DataUtil.checkDetails(rootId);
 		
 		focus.clear(true);
-		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
+		check.isObjectContact ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {

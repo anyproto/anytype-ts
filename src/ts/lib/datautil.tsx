@@ -357,8 +357,6 @@ class DataUtil {
 	};
 	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
-
 		C.BlockSetDetails(rootId, [ 
 			{ key: 'layout', value: layout },
 		], callBack);
@@ -703,36 +701,77 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const type = this.schemaField(details.type);
 		const ret: any = {
 			withCover: (details.coverType != I.CoverType.None) && details.coverId,
 			withIcon: false,
+			className: [],
+
+			isObjectPage: false,
+			isObjectContact: false,
+			isObjectTask: false,
+			isObjectSet: false,
+			isObjectFile: false,
+			isObjectImage: false,
+			isObjectReadOnly: false,
 		};
 
 		switch (type) {
 			default:
-				switch (block.layout) {
+				switch (details.layout) {
 					default:
 					case I.ObjectLayout.Page:
+						ret.isObjectPage = true;
 						ret.withIcon = details.iconEmoji || details.iconImage;
+						ret.className.push('isPage');
 						break;
 
 					case I.ObjectLayout.Contact:
+						ret.isObjectContact = true;
 						ret.withIcon = true;
+						ret.className.push('isContact');
 						break;
 
 					case I.ObjectLayout.Task:
+						ret.isObjectTask = true;
+						ret.className.push('isTask');
+						break;
+
+					case I.ObjectLayout.Set:
+						ret.isObjectSet = true;
+						ret.withIcon = details.iconEmoji || details.iconImage;
+						ret.className.push('isSet');
 						break;
 				};
 				break;
 
 			case 'image':
-			case 'file':
+				ret.isObjectImage = true;
 				ret.withIcon = true;
+				ret.className.push('isImage');
+				break;
+
+			case 'file':
+				ret.isObjectFile = true;
+				ret.withIcon = true;
+				ret.className.push('isFile');
 				break;
 		};
+
+		ret.isObjectReadOnly = ret.isObjectSet || ret.isObjectFile;
+
+		if (ret.withIcon && ret.withCover) {
+			ret.className.push('withIconAndCover');
+		} else
+		if (ret.withIcon) {
+			ret.className.push('withIcon');
+		} else
+		if (ret.withCover) {
+			ret.className.push('withCover');
+		};
+
+		ret.className = ret.className.join(' ');
 
 		return ret;
 	};

@@ -66,9 +66,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 		const check = DataUtil.checkDetails(rootId);
-		const readOnly = root.isReadOnly();
 
-		let cn = [ 'editorWrapper' ];
+		let cn = [ 'editorWrapper', check.className ];
 		let header = (
 			<EditorHeaderPage 
 				{...this.props} 
@@ -80,26 +79,6 @@ class EditorPage extends React.Component<Props, {}> {
 			/>
 		);
 
-		if (root.isObjectContact()) {
-			cn.push('isContact');
-		} else 
-		if (root.isObjectSet()) {
-			cn.push('isSet');
-		} else
-		if (root.isObjectTask()) {
-			cn.push('isTask');
-		};
-		
-		if (check.withIcon && check.withCover) {
-			cn.push('withIconAndCover');
-		} else
-		if (check.withIcon) {
-			cn.push('withIcon');
-		} else
-		if (check.withCover) {
-			cn.push('withCover');
-		};
-		
 		return (
 			<div className={cn.join(' ')}>
 				<Controls {...this.props} readOnly={false} />
@@ -124,7 +103,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={readOnly}
+									readOnly={check.isObjectReadOnly}
 								/>
 							)
 						})}
@@ -360,7 +339,9 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root || root.isReadOnly()) {
+		const check = DataUtil.checkDetails(rootId);
+
+		if (!root || check.isObjectReadOnly) {
 			return;
 		};
 		
@@ -376,7 +357,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const check = DataUtil.checkDetails(rootId);
 		const buttonOffset = 10;
 
 		let offset = 140;
@@ -393,10 +373,10 @@ class EditorPage extends React.Component<Props, {}> {
 			offset = 394;
 		};
 
-		if (root.isObjectContact()) {
+		if (check.isObjectContact) {
 		};
 
-		if (root.isObjectTask()) {
+		if (check.isObjectTask) {
 		};
 
 		// Find hovered block by mouse coords
@@ -1642,8 +1622,9 @@ class EditorPage extends React.Component<Props, {}> {
 	onLastClick (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const check = DataUtil.checkDetails(rootId);
 		
-		if (!root || root.isObjectSet()) {
+		if (!root || check.isObjectSet) {
 			return;
 		};
 

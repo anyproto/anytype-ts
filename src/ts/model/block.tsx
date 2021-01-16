@@ -6,7 +6,6 @@ class Block implements I.Block {
 	id: string = '';
 	parentId: string = '';
 	type: I.BlockType = I.BlockType.Empty;
-	layout: I.ObjectLayout = I.ObjectLayout.Page;
 	childrenIds: string[] = [];
 	align: I.BlockAlign = I.BlockAlign.Left;
 	bgColor: string = '';
@@ -19,7 +18,6 @@ class Block implements I.Block {
 		self.id = String(props.id || '');
 		self.parentId = String(props.parentId || '');
 		self.type = props.type;
-		self.layout = Number(props.layout) || I.ObjectLayout.Page;
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
@@ -27,7 +25,6 @@ class Block implements I.Block {
 		self.childrenIds = props.childrenIds || [];
 
 		decorate(self, {
-			layout: observable,
 			childrenIds: observable,
 			align: observable,
 			bgColor: observable,
@@ -105,30 +102,6 @@ class Block implements I.Block {
 
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
-	};
-	
-	isObjectPage (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Page);
-	};
-
-	isObjectContact (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Contact);
-	};
-
-	isObjectTask (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Task);
-	};
-
-	isObjectSet (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Set);
-	};
-
-	isPageFile (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.File);
-	};
-
-	isReadOnly (): boolean {
-		return this.isObjectSet() || this.isPageFile();
 	};
 	
 	isLayout (): boolean {

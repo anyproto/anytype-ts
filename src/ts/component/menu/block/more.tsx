@@ -36,7 +36,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			const objectType = dbStore.getObjectType(object.type);
 			const layouts = this.getLayouts();
-			const layout = layouts.find((it: any) => { return it.id == block.layout; });
+			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 
 			sectionPage = (
 				<React.Fragment>
@@ -160,9 +160,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { content } = block;
 		const object = blockStore.getDetails(rootId, content.targetBlockId);
 		const type = DataUtil.schemaField(object.type);
+		const check = DataUtil.checkDetails(rootId);
 
 		let items = [];
-		if (block.isObjectSet()) {
+		if (check.isObjectSet) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
@@ -339,7 +340,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const object = blockStore.getDetails(rootId, rootId);
 
 		commonStore.menuOpen('select', { 
 			element: '#item-object-layout',
@@ -350,7 +351,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: this.getLayouts(),
-				value: block.layout,
+				value: object.layout,
 				onSelect: (e: any, item: any) => {
 					DataUtil.pageSetLayout(rootId, item.id);
 					close();

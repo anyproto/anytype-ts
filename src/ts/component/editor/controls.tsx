@@ -38,6 +38,7 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const title = blockStore.getLeaf(rootId, 'title') || {};
+		const check = DataUtil.checkDetails(rootId);
 
 		if (readOnly) {
 			return null;
@@ -53,7 +54,7 @@ class Controls extends React.Component<Props, {}> {
 				onMouseOut={this.onOut}
 			>
 				<div className="buttons">
-					{!root.isObjectTask() ? (
+					{!check.isObjectTask ? (
 						<div id="button-add-icon" className="btn addIcon" onClick={this.onAddIcon}>
 							<Icon />
 							<div className="txt">{translate('editorControlIcon')}</div>
@@ -79,14 +80,10 @@ class Controls extends React.Component<Props, {}> {
 	
 	onAddIcon (e: any) {
 		const { rootId } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
-		
-		if (!root) {
-			return;
-		};
+		const check = DataUtil.checkDetails(rootId);
 		
 		focus.clear(true);
-		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
+		check.isObjectContact ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {
