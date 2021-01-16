@@ -103,7 +103,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={check.isObjectReadOnly}
+									/*readOnly={check.isObjectReadOnly}*/
 								/>
 							)
 						})}
@@ -289,14 +289,15 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	close (id: string) {
-		const { rootId, isPopup } = this.props;
+		const { isPopup } = this.props;
 		if (isPopup || !id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
-			dbStore.relationsRemove(rootId, id);
+			dbStore.relationsRemove(id, id);
+			dbStore.relationsRemove(id, 'dataview');
 			authStore.threadRemove(id);
 		});
 	};
