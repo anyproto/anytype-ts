@@ -1630,7 +1630,6 @@ class EditorPage extends React.Component<Props, {}> {
 	onLastClick (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
 		
 		if (!root || root.isObjectSet()) {
 			return;

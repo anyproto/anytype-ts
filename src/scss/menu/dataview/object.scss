@@ -32,7 +32,7 @@
 	.menu.menuDataviewObjectValues {
 		.item { padding: 4px 16px 4px 10px; }
 		.item {
-			.name { @include text-overflow-nw; width: calc(100% - 132px) !important; }
+			.name { @include text-overflow-nw; }
 
 			.icon.delete { 
 				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 

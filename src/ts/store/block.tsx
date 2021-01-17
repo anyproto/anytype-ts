@@ -150,7 +150,6 @@ class BlockStore {
 		if (!block) {
 			return;
 		};
-
 		set(block, param);
 	};
 

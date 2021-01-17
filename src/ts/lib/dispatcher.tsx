@@ -230,14 +230,15 @@ class Dispatcher {
 					break;
 
 				case 'blockSetDetails':
+					id = data.getId();
 					const details = Decode.decodeStruct(data.getDetails());
 
 					blockStore.detailsUpdate(rootId, {
-						id: data.getId(),
+						id: id,
 						details: details,
 					});
 
-					if (undefined !== details.layout) {
+					if ((id == rootId) && (undefined !== details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
 					};
 					break;

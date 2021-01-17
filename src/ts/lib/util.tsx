@@ -439,10 +439,10 @@ class Util {
 
 	fileIcon (obj: any): string {
 		const name = String(obj.name || '');
-		const mime = String(obj.mime || obj.fileMimeType || '');
-		const a: string[] = name.split('.');
-		const e = a[a.length - 1];
+		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
 
+		let a: string[] = name.split('.');
+		let e = a[a.length - 1];
 		let t: string[] = [];
 		let icon = '';
 
@@ -494,7 +494,7 @@ class Util {
 				icon = 'table';
 			};
 		};
-		
+
 		return String(icon || 'other');
 	};
 	

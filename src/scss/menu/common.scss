@@ -119,7 +119,13 @@
 		.item.withCaption { display: flex; }
 		.item.withCaption {
 			.iconObject, .icon.dnd { flex-shrink: 0; }
-			.name, .clickable { width: 100%; margin-right: 6px; }
+			.name { width: 100%; margin-right: 6px; }
+
+			.clickable { width: calc(100% - 108px); margin-right: 6px; display: flex; }
+			.clickable {
+				.name { margin: 0px; width: 100%; }
+			}
+
 			.caption { 
 				width: 80px; @include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
 				flex-shrink: 0;
