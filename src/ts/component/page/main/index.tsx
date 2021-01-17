@@ -98,7 +98,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				Storage.set('hello', 1);
 				hello.addClass('hide');
-			}, 2000);
+			}, 5000);
 		};
 	};
 	

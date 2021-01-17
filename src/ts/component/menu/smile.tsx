@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, IconObject } from 'ts/component';
+import { Input, IconObject, IconEmoji } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -58,11 +58,16 @@ class MenuSmile extends React.Component<Props, State> {
 			return null;
 		};
 
-		const Item = (item: any) => (
-			<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
-				<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(item.smile, item.skin) }} />
-			</div>
-		);
+		const Item = (item: any) => {
+			const str = `:${item.smile}::skin-${item.skin}:`;
+			return (
+				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
+					<div className="iconObject c32" data-code={str}>
+						<IconEmoji className="c32" size={28} icon={str} />
+					</div>
+				</div>
+			);
+		};
 		
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -127,7 +132,7 @@ class MenuSmile extends React.Component<Props, State> {
 										}}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
-										overscanRowCount={20}
+										overscanRowCount={10}
 									/>
 								)}
 							</AutoSizer>
@@ -186,7 +191,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const { filter } = this.state;
 		const reg = new RegExp(filter, 'gi');
 		const lastIds = Storage.get('lastSmileIds') || [];
-		
+
 		let sections = Util.objectCopy(EmojiData.categories);
 		
 		sections = sections.map((s: any) => {
