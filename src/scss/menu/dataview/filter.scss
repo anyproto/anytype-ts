@@ -6,6 +6,7 @@
 		.item { padding: 4px 40px 4px 10px; line-height: 28px; position: relative; white-space: nowrap; }
 		.item {
 			.icon.dnd { vertical-align: top; margin-top: 4px; }
+			.icon.delete { opacity: 1; }
 			.input { 
 				flex-shrink: 2; border-radius: 4px; border: solid 1px #d2d0c2; padding: 0px 6px; height: 28px; width: 160px; 
 				user-select: text;

@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { transition: none; padding: 8px 0px 0px 0px; overflow: hidden; }
+		.content { transition: none; padding: 0px; overflow: hidden; }
 		.items { height: 100%; }
 		.item.empty { margin-top: 4px; }
 
@@ -10,6 +10,11 @@
 		.item.initial {
 			.name { text-transform: uppercase; @include text-very-small; }
 		}
+	}
+
+	.menu.menuSelect.withFilter {
+		.content { padding: 8px 0px 0px 0px; }
+		.items { height: calc(100% - 34px); }
 	}
 	
 	.menu.menuSelect.skip { width: 320px; }

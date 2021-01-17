@@ -33,7 +33,12 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { filter, value } = data;
 		const items = this.getItems();
 		const idx = items.findIndex((it: I.Option) => { return it.id == value; });
-		const scrollTo = Math.min(idx + LIMIT - 1, items.length - 1);
+		const withFilter = items.length > LIMIT;
+
+		let scrollTo = idx + 1; 
+		if (idx > LIMIT) {
+			scrollTo = Math.min(idx + LIMIT - 3, items.length - 1);
+		};
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -59,37 +64,41 @@ class MenuSelect extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="items">
-				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={this.onFilterChange} />
+			<React.Fragment>
+				{withFilter ?
+					<Filter ref={(ref: any) => { this.ref = ref; }} onChange={this.onFilterChange} />
+				: ''}
 				{!items.length ? (
 					<div className="item empty">No options found</div>
 				) : ''}
 
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => index < items.length}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									scrollToIndex={scrollTo}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			</div>
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={({ index }) => index < items.length}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={registerChild}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+										scrollToIndex={scrollTo}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			</React.Fragment>
 		);
 	};
 	
@@ -260,11 +269,17 @@ class MenuSelect extends React.Component<Props, {}> {
 	resize () {
 		const { position, getId } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
+		const obj = $('#' + getId());
+		const content = obj.find('.content');
 		const length = Math.max(items.length, 1);
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, length * HEIGHT + 58));
+		const offset = length > LIMIT ? 58 : 16;
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		content.css({ height: height });
+
+		if (length > LIMIT) {
+			obj.addClass('withFilter');
+		};
 		position();
 	};
 
