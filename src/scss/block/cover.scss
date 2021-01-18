@@ -50,6 +50,7 @@
 			font-weight: 500; font-size: 14px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; opacity: 0;
 			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out; text-align: center;
 		}
+		.btn.withIcon { line-height: 22px; }
 		.btn.active { opacity: 1; }
 		.btn:last-child { margin: 0px; }
 		

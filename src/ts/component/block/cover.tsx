@@ -73,7 +73,7 @@ class BlockCover extends React.Component<Props, State> {
 		if (editing) {
 			elements = (
 				<React.Fragment>
-					<div key="btn-drag" className="btn black drag">
+					<div key="btn-drag" className="btn black drag withIcon">
 						<Icon />
 						<div className="txt">{translate('blockCoverDrag')}</div>
 					</div>
@@ -94,13 +94,13 @@ class BlockCover extends React.Component<Props, State> {
 				<React.Fragment>
 					<div className="buttons">
 						{!root.isObjectTask() ? (
-							<div id="cover-button-add-icon" className="btn white addIcon" onClick={this.onAddIcon}>
+							<div id="cover-button-add-icon" className="btn white addIcon withIcon" onClick={this.onAddIcon}>
 								<Icon />
 								<div className="txt">{translate('editorControlIcon')}</div>
 							</div>
 						) : ''}
 
-						<div id="cover-button-edit-cover" className="btn white addCover" onClick={this.onMenu}>
+						<div id="cover-button-edit-cover" className="btn white addCover withIcon" onClick={this.onMenu}>
 							<Icon />
 							<div className="txt">{translate('blockCoverUpdate')}</div>
 						</div>

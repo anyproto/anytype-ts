@@ -34,17 +34,9 @@ class PageMainSet extends React.Component<Props, State> {
 		});
 
 		const Item = (item: any) => {
-			let icon = null;
-			let id = DataUtil.schemaField(item.url);
-			
-			if (item.iconEmoji) {
-				icon = <IconObject object={{ iconEmoji: item.iconEmoji }} />;
-			} else {
-				icon = <Icon className={id} />;
-			};
 			return (
 				<div className="item" onClick={(e: any) => { this.setCreate(item); }}>
-					{icon}
+					<IconObject object={{ layout: I.ObjectLayout.ObjectType, iconEmoji: item.iconEmoji }} />
 					<div className="name">{item.name}</div>
 				</div>
 			);

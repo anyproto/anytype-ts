@@ -45,7 +45,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							<div className="sectionName">Type</div>
 							<MenuItemVertical 
 								id="object-type" 
-								object={objectType}
+								object={{...objectType, layout: I.ObjectLayout.ObjectType }}
 								name={objectType.name}
 								menuId="select"
 								onClick={this.onType} 
@@ -366,7 +366,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 		const options = objectTypes.map((it: I.ObjectType) => {
-			return { ...it, object: it, id: DataUtil.schemaField(it.url), asPage: true };
+			return { 
+				...it, 
+				object: it, 
+				id: DataUtil.schemaField(it.url), 
+				layout: I.ObjectLayout.ObjectType,
+			};
 		});
 
 		options.sort((c1: any, c2: any) => {

@@ -49,6 +49,14 @@ const File = {
 	table: require('img/icon/file/table.svg'),
 };
 
+const Obj = {
+	page: require('img/icon/object/page.svg'),
+	contact: require('img/icon/object/contact.svg'),
+	task: require('img/icon/object/task.svg'),
+	set: require('img/icon/object/set.svg'),
+	file: require('img/icon/object/file.svg'),
+};
+
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
@@ -69,7 +77,6 @@ class IconObject extends React.Component<Props, {}> {
 		const { id, name, iconEmoji, iconImage, iconClass, done, layout } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', 'c' + size ];
-		const objectType: any = type ? (dbStore.getObjectType(object.type) || {}) : {};
 		
 		if (className) {
 			cn.push(className);
@@ -103,6 +110,19 @@ class IconObject extends React.Component<Props, {}> {
 						cn.push('isTask');
 						icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
 						icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} onClick={this.onCheckbox} />;
+						break;
+
+					case I.ObjectLayout.ObjectType:
+						cn.push('isObjectType');
+						object.id = DataUtil.schemaField(object.url);
+
+						if (object.iconEmoji) {
+							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+						} else 
+						if (Obj[object.id]) {
+							icn = icn.concat([ 'icon', 'c' + iconSize ]);
+							icon = <img src={Obj[object.id]} className={icn.join(' ')} />;
+						};
 						break;
 				};
 				break;
