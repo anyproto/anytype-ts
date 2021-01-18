@@ -36,7 +36,7 @@ class PageMainSet extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			return (
 				<div className="item" onClick={(e: any) => { this.setCreate(item); }}>
-					<IconObject object={{ layout: I.ObjectLayout.ObjectType, iconEmoji: item.iconEmoji }} />
+					<IconObject object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 					<div className="name">{item.name}</div>
 				</div>
 			);

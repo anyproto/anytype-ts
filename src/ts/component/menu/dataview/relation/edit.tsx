@@ -176,11 +176,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
+			it.layout = I.ObjectLayout.ObjectType;
 			return { 
 				...it, 
 				object: it, 
 				id: DataUtil.schemaField(it.url), 
-				layout: I.ObjectLayout.ObjectType,
 			};
 		});
 

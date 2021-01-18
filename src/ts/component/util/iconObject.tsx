@@ -55,6 +55,7 @@ const Obj = {
 	task: require('img/icon/object/task.svg'),
 	set: require('img/icon/object/set.svg'),
 	file: require('img/icon/object/file.svg'),
+	image: require('img/icon/object/image.svg'),
 };
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
@@ -74,7 +75,6 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		const { object, className, size, canEdit, onClick } = this.props;
-		const { id, name, iconEmoji, iconImage, iconClass, done, layout } = object || {};
 		const type = DataUtil.schemaField(object.type);
 		const cn = [ 'iconObject', 'c' + size ];
 		
@@ -85,6 +85,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
+		let { id, name, iconEmoji, iconImage, iconClass, done, layout, url } = object || {};
 		let iconSize = this.iconSize(type, layout, size);
 		let icon = null;
 		let icn = [];
@@ -114,14 +115,13 @@ class IconObject extends React.Component<Props, {}> {
 
 					case I.ObjectLayout.ObjectType:
 						cn.push('isObjectType');
-						object.id = DataUtil.schemaField(object.url);
-
+						id = DataUtil.schemaField(url);
 						if (object.iconEmoji) {
 							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						} else 
-						if (Obj[object.id]) {
-							icn = icn.concat([ 'icon', 'c' + iconSize ]);
-							icon = <img src={Obj[object.id]} className={icn.join(' ')} />;
+						if (Obj[id]) {
+							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+							icon = <img src={Obj[id]} className={icn.join(' ')} />;
 						};
 						break;
 				};
@@ -151,7 +151,7 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')} onClick={onClick}>{icon}</div>
+			<div id={this.props.id} className={cn.join(' ')} onClick={onClick}>{icon}</div>
 		);
 	};
 
@@ -185,7 +185,7 @@ class IconObject extends React.Component<Props, {}> {
 			onCheckbox(e);
 		};
 	};
-	
+
 };
 
 export default IconObject;

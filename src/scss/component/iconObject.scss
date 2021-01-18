@@ -6,15 +6,15 @@
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
 
-	.smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
-	.smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
-	.smileImage.c22, .iconImage.c22, .iconFile.c22, .iconCheckbox.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
-	.smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
-	.smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
-	.smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
-	.smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
-	.smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
-	.smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
+	.iconCommon.c18, .smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+	.iconCommon.c20, .smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+	.iconCommon.c22, .smileImage.c22, .iconImage.c22, .iconFile.c22, .iconCheckbox.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
+	.iconCommon.c24, .smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+	.iconCommon.c28, .smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
+	.iconCommon.c32, .smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+	.iconCommon.c40, .smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
+	.iconCommon.c48, .smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
+	.iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
 
 	.iconUser { 
 		border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 

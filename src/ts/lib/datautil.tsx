@@ -421,7 +421,7 @@ class DataUtil {
 
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', lang: 'Image' },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },

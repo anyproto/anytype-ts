@@ -366,11 +366,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 		const options = objectTypes.map((it: I.ObjectType) => {
+			it.layout = I.ObjectLayout.ObjectType;
 			return { 
 				...it, 
 				object: it, 
 				id: DataUtil.schemaField(it.url), 
-				layout: I.ObjectLayout.ObjectType,
 			};
 		});
 
@@ -389,7 +389,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: options,
-				value: object.type,
+				value: DataUtil.schemaField(object.type),
 				onSelect: (e: any, item: any) => {
 					C.BlockObjectTypeSet(rootId, item.url);
 					close();
