@@ -56,12 +56,12 @@
 		.btn.white { background: rgba(255,255,255,0.7); }
 		.btn.white:hover, .btn.white.active { background: rgba(255,255,255,0.9); }
 		
-		.btn.black { color: #fff; background: rgba(0,0,0,0.5); }
+		.btn.black { color: #fff; background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 		
 		.btn {
-			.icon { width: 16px; height: 16px; margin: -2px 6px 0px 0px; }
-			.txt { line-height: 18px; }
+			.icon { width: 18px; height: 18px; background-size: 16px 16px; margin: 0px 6px 0px 0px; vertical-align: middle; }
+			.txt { line-height: 18px; vertical-align: middle; }
 		}
 		
 		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }
