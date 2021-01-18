@@ -303,10 +303,11 @@
 	"filterConditionLessOrEqual": { "en": "is less or equal" },
 	"filterConditionLike": { "en": "contains" },
 	"filterConditionNotLike": { "en": "doesn't contain" },
-	"filterConditionIn": { "en": "is any of" },
-	"filterConditionNotIn": { "en": "is none of" },
 	"filterConditionEmpty": { "en": "is empty" },
 	"filterConditionNotEmpty": { "en": "is not empty" },
+	"filterConditionAllIn": { "en": "has all of" },
+	"filterConditionInArray": { "en": "has any of" },
+	"filterConditionNotInArray": { "en": "has none of" },
 
 	"inputWithFileTextUrl": { "en": "Paste a link" },
 

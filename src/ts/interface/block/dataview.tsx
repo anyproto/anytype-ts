@@ -43,6 +43,7 @@ export enum FilterCondition {
 	NotIn			 = 9,
 	Empty			 = 10,
 	NotEmpty		 = 11,
+	AllIn			 = 12,
 };
 
 export interface Sort {
