@@ -297,7 +297,7 @@ function createWindow () {
 	});
 
 	ipcMain.on('pathOpen', async (e, path) => {
-		shell.openItem(path).catch((error) => {
+		shell.openPath(path).catch((error) => {
 			console.log(error);
 		});
 	});
@@ -399,7 +399,7 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Show work directory',
-					click: () => { shell.openItem(app.getPath('userData')); }
+					click: () => { shell.openPath(app.getPath('userData')); }
 				},
 				{
 					label: 'Import',
