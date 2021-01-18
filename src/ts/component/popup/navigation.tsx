@@ -777,8 +777,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: I.PageInfo, config: any) {
-		const objectType: any = dbStore.getObjectType(it.details.type) || {};
-		if (it.details.isArchived || (!config.allowDataview && (objectType.layout == I.ObjectLayout.Set))) {
+		if (it.details.isArchived || (!config.allowDataview && (it.details.layout == I.ObjectLayout.Set))) {
 			return false;
 		};
 		return true;
