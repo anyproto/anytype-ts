@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, DataUtil, Util } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -17,14 +17,27 @@ const $ = require('jquery');
 const raf = require('raf');
 const Tabs = [
 	{ 
-		id: 'type', 'name': 'Types', children: [
-			{ id: 'market', 'name': 'Marketplace' },
-			{ id: 'library', 'name': 'Library' },
-			{ id: 'archive', 'name': 'Archive' },
-		] 
+		id: 'type', name: 'Types', active: 'library',
+		children: [
+			{ id: 'market', name: 'Marketplace' },
+			{ id: 'library', name: 'Library' },
+			//{ id: 'archive', name: 'Archive' },
+		]
 	},
-	{ id: 'template', 'name': 'Templates', children: [] },
-	{ id: 'relation', 'name': 'Relations', children: [] },
+	{ 
+		id: 'template', 'name': 'Templates', active: 'library', 
+		children: [
+			{ id: 'market', name: 'Marketplace' },
+			{ id: 'library', name: 'Library' },
+		], 
+	},
+	{ 
+		id: 'relation', 'name': 'Relations', active: 'library', 
+		children: [
+			{ id: 'market', name: 'Marketplace' },
+			{ id: 'library', name: 'Library' },
+		], 
+	},
 ];
 
 class PopupStore extends React.Component<Props, State> {
@@ -46,29 +59,45 @@ class PopupStore extends React.Component<Props, State> {
 		const { objectTypes } = dbStore;
 		const { tab, subTab } = this.state;
 		const tabItem = Tabs.find((it: any) => { return it.id == tab; });
+		
+		let relations = [];
+		objectTypes.map((it: I.ObjectType) => {
+			relations = relations.concat(it.relations);
+		});
+		relations = Util.arrayUniqueObjects(relations, 'relationKey');
+		relations.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
 
 		let content = null;
+		let subContent = null;
+		let Type = null;
+
 		switch (tab) {
 
 			default:
 			case 'type':
-				const Type = (item: any) => (
-					<div className="item isType">
+				Type = (item: any) => (
+					<div className={[ 'item', 'isType', subTab ].join(' ')}>
 						<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 						<div className="info">
 							<div className="name">{item.name}</div>
-							<div className="descr">An invoice, bill or tab is a commercial documents...</div>
+							<div className="descr">An invoice, bill or tab is a commercial documents... An invoice, bill or tab is a commercial documents... An invoice, bill or tab is a commercial documents...</div>
 							<div className="line" />
 						</div>
 						<Button className="blank c28" text="Add" />
 					</div>
 				);
 
-				let subContent = null;
 				switch (subTab) {
 
 					default:
 					case 'market':
+						break;
+
+					case 'library':
 						subContent = (
 							<React.Fragment>
 								{objectTypes.map((item: any, i: number) => (
@@ -76,9 +105,6 @@ class PopupStore extends React.Component<Props, State> {
 								))}
 							</React.Fragment>
 						);
-						break;
-
-					case 'library':
 						break;
 
 					case 'archive':
@@ -114,6 +140,62 @@ class PopupStore extends React.Component<Props, State> {
 				break;
 
 			case 'relation':
+				Type = (item: any) => (
+					<div className={[ 'item', 'isType', subTab ].join(' ')}>
+						<div className="iconObject c64">
+							<div className={[ 'iconCommon', 'c32', 'icon', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
+						</div>
+						<div className="info">
+							<div className="name">{item.name} ({item.relationKey})</div>
+							<div className="line" />
+						</div>
+						<Button className="blank c28" text="Add" />
+					</div>
+				);
+
+				switch (subTab) {
+
+					default:
+					case 'market':
+						break;
+
+					case 'library':
+						subContent = (
+							<React.Fragment>
+								{relations.map((item: any, i: number) => (
+									<Type key={i} {...item} />
+								))}
+							</React.Fragment>
+						);
+						break;
+
+					case 'archive':
+						break;
+
+				};
+
+				content = (
+					<React.Fragment>
+						<div className="mid">
+							<Title text="All objects are connected" />
+							<Label text="Our beautifully-designed templates come with hundreds" />
+
+							<Button text="Create a new type" className="orange" />
+						</div>
+
+						<div className="tabs">
+							{tabItem.children.map((item: any, i: number) => (
+								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
+									{item.name}
+								</div>
+							))}
+						</div>
+
+						<div className="items">
+							{subContent}
+						</div>
+					</React.Fragment>
+				);
 				break;
 
 		};
@@ -188,7 +270,7 @@ class PopupStore extends React.Component<Props, State> {
 
 	onTab (e: any, item: any) {
 		const tabItem = Tabs.find((it: any) => { return it.id == item.id; });
-		this.setState({ tab: item.id, subTab: tabItem.children[0].id });
+		this.setState({ tab: item.id, subTab: tabItem.active });
 	};
 
 	onSubTab (e: any, item: any) {

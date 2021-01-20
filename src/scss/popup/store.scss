@@ -44,21 +44,27 @@
 
 			.items {
 				.item.isType { 
-					display: inline-block; vertical-align: top; width: calc(50% - 16px); position: relative; padding-left: 80px; height: 64px; 
-					margin: 0px 32px 32px 0px;
+					display: inline-block; vertical-align: top; width: calc(50% - 16px); position: relative; height: 64px; 
+					margin: 0px 32px 32px 0px; cursor: pointer; padding: 0px 0px 0px 80px;
 				}
 				.item.isType:nth-child(2n + 2) { margin-right: 0px; }
 
 				.item.isType {
 					.iconObject { position: absolute; left: 0px; top: 0px; }
+
 					.info { height: 100%; position: relative; }
 					.info {
-						.name { font-weight: 500; margin-bottom: 2px; }
-						.descr { @include text-small; color: $colorDarkGrey; }
+						.name { font-weight: 500; margin-bottom: 2px; @include text-overflow-nw; }
+						.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 						.line { width: 100%; height: 1px; background: #eae9e0; position: absolute; left: 0px; bottom: -16px; }
 					}
 
-					.button { height: 28px; line-height: 24px; position: absolute; right: 0px; top: 50%; margin-top: -14px; }
+					.button { height: 28px; line-height: 24px; position: absolute; right: 0px; top: 50%; margin-top: -14px; display: none; }
+				}
+
+				.item.isType.market {
+					.info { padding-right: 80px; }
+					.button { display: block; }
 				}
 			}
 		}

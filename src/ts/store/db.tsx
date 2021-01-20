@@ -1,6 +1,8 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
 import { I, M, DataUtil } from 'ts/lib';
 
+const Constant = require('json/constant.json');
+
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
 	public relationMap: Map<string, any> = observable.map(new Map());
@@ -9,7 +11,20 @@ class DbStore {
 
 	@computed
 	get objectTypes (): I.ObjectType[] {
-		return Array.from(this.objectTypeMap.values());
+		let types =  Array.from(this.objectTypeMap.values());
+
+		types.sort((c1: I.ObjectType, c2: I.ObjectType) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
+
+		types = types.map((it: I.ObjectType) => {
+			it.name = it.name || Constant.default.name;
+			return it;
+		});
+
+		return types;
 	};
 
 	@action
