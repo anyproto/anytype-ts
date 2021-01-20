@@ -81,7 +81,7 @@ class PopupStore extends React.Component<Props, State> {
 			default:
 			case 'type':
 				Type = (item: any) => (
-					<div className={[ 'item', 'isType', subTab ].join(' ')}>
+					<div className={[ 'item', 'isType', subTab ].join(' ')} onClick={(e: any) => { this.onObjectType(e, item); }}>
 						<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 						<div className="info">
 							<div className="name">{item.name}</div>
@@ -116,7 +116,7 @@ class PopupStore extends React.Component<Props, State> {
 							<Title text="Type every object" />
 							<Label text="Our beautifully-designed templates come with hundreds" />
 
-							<Button text="Create a new type" className="orange" />
+							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onObjectType(e, { id: 'create' }); }} />
 						</div>
 
 						<div className="tabs">
@@ -270,6 +270,12 @@ class PopupStore extends React.Component<Props, State> {
 
 	onSubTab (e: any, item: any) {
 		this.setState({ subTab: item.id });
+	};
+
+	onObjectType (e: any, item: any) {
+		const { history } = this.props;
+
+		history.push('/main/objectType/' + item.id);
 	};
 	
 };
