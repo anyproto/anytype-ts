@@ -21,9 +21,9 @@ const Tabs = [
 		children: [
 			{ id: 'market', name: 'Marketplace' },
 			{ id: 'library', name: 'Library' },
-			//{ id: 'archive', name: 'Archive' },
 		]
 	},
+	/*
 	{ 
 		id: 'template', 'name': 'Templates', active: 'library', 
 		children: [
@@ -31,6 +31,7 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		], 
 	},
+	*/
 	{ 
 		id: 'relation', 'name': 'Relations', active: 'library', 
 		children: [
@@ -107,9 +108,6 @@ class PopupStore extends React.Component<Props, State> {
 						);
 						break;
 
-					case 'archive':
-						break;
-
 				};
 
 				content = (
@@ -169,9 +167,6 @@ class PopupStore extends React.Component<Props, State> {
 						);
 						break;
 
-					case 'archive':
-						break;
-
 				};
 
 				content = (
@@ -201,7 +196,7 @@ class PopupStore extends React.Component<Props, State> {
 		};
 
 		return (
-			<div className="wrapper">
+			<div className={[ 'wrapper', tab ].join(' ')}>
 				<div className="head">
 					<div className="tabs">
 						{Tabs.map((item: any, i: number) => (

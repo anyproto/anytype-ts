@@ -68,5 +68,13 @@
 				}
 			}
 		}
+
+		.wrapper.relation {
+			.mid { margin-bottom: 115px; }
+			.mid {
+				.label { margin: 0px; }
+				.button { display: none; }
+			}
+		}
 	}
 }
