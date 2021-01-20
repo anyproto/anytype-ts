@@ -76,6 +76,7 @@ import 'scss/popup/help.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
+import 'scss/popup/store.scss';
 import 'scss/popup/editor/page.scss';
 
 import 'emoji-mart/css/emoji-mart.css';

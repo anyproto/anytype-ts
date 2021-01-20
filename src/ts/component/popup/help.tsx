@@ -97,11 +97,11 @@ class PopupHelp extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+		win.unbind('resize.help').on('resize.help', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('keydown.navigation resize.navigation');
+		$(window).unbind('resize.help');
 	};
 
 	resize () {
@@ -110,8 +110,9 @@ class PopupHelp extends React.Component<Props, {}> {
 		};
 
 		raf(() => {
+			const { getId } = this.props;
 			const win = $(window);
-			const obj = $('#popupHelp #innerWrap');
+			const obj = $(`#${getId()} #innerWrap`);
 			const width = Math.max(732, Math.min(960, win.width() - 128));
 
 			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });

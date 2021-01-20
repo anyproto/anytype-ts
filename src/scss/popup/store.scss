@@ -1,0 +1,46 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupStore {
+		.content { height: 100%; padding-top: 40px; }
+		.wrapper { height: 100%; }
+
+		.head { width: 100%; height: 40px; padding: 8px 0px; text-align: center; position: absolute; top: 0px; left: 0px; }
+		.head {
+			.tabs { 
+				white-space: nowrap; background: #eae9e0; display: inline-block; height: 28px; padding: 2px; border-radius: 6px;
+			}
+			.tabs {
+				.item { 
+					display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
+					font-weight: 500; cursor: pointer; transition: $transitionFast;
+				}
+				.item.active { background: #fff; }
+				.item:last-child { margin: 0px; }
+			}
+		}
+
+		.body { width: 100%; height: 100%; padding: 96px 96px 56px 96px; }
+		.body {
+			.mid { text-align: center; margin-bottom: 57px; }
+			.mid {
+				.title { margin-bottom: 8px; }
+				.label { @include text-paragraph; margin-bottom: 18px; }
+				.button { width: 208px; border-radius: 8px; }
+				.button {
+					.txt { @include text-paragraph; font-weight: 500; }
+				}
+			}
+
+			.tabs { white-space: nowrap; }
+			.tabs {
+				.item { 
+					display: inline-block; margin-right: 20px; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
+					color: $colorDarkGrey; transition: $transitionFast;
+				}
+				.item.active { color: $colorBlack; }
+				.item:last-child { margin: 0px; }
+			}
+		}
+	}
+}

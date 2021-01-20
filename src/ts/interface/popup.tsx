@@ -9,4 +9,5 @@ export interface Popup {
 	param: PopupParam;
 	position? (): void;
 	close? (): void;
+	getId?(): string;
 };
