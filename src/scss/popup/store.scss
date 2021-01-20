@@ -38,7 +38,7 @@
 					display: inline-block; margin-right: 20px; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
 					color: $colorDarkGrey; transition: $transitionFast;
 				}
-				.item.active { color: $colorBlack; }
+				.item:hover, .item.active { color: $colorBlack; }
 				.item:last-child { margin: 0px; }
 			}
 
