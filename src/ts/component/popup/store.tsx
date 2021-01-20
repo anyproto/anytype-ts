@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject } from 'ts/component';
 import { I, DataUtil, Util } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { dbStore, blockStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
@@ -58,8 +58,10 @@ class PopupStore extends React.Component<Props, State> {
 	
 	render () {
 		const { objectTypes } = dbStore;
+		const { profile } = blockStore;
 		const { tab, subTab } = this.state;
 		const tabItem = Tabs.find((it: any) => { return it.id == tab; });
+		const details = blockStore.getDetails(profile, profile);
 		
 		let relations = [];
 		objectTypes.map((it: I.ObjectType) => {
@@ -74,18 +76,22 @@ class PopupStore extends React.Component<Props, State> {
 
 		let content = null;
 		let subContent = null;
-		let Type = null;
+		let Item = null;
 
 		switch (tab) {
 
 			default:
 			case 'type':
-				Type = (item: any) => (
+				Item = (item: any) => (
 					<div className={[ 'item', 'isType', subTab ].join(' ')} onClick={(e: any) => { this.onObjectType(e, item); }}>
 						<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 						<div className="info">
 							<div className="name">{item.name}</div>
 							<div className="descr">An invoice, bill or tab is a commercial documents... An invoice, bill or tab is a commercial documents... An invoice, bill or tab is a commercial documents...</div>
+							<div className="author">
+								<IconObject object={details} size={16} />
+								{details.name}
+							</div>
 							<div className="line" />
 						</div>
 						<Button className="blank c28" text="Add" />
@@ -102,7 +108,7 @@ class PopupStore extends React.Component<Props, State> {
 						subContent = (
 							<React.Fragment>
 								{objectTypes.map((item: any, i: number) => (
-									<Type key={i} {...item} />
+									<Item key={i} {...item} />
 								))}
 							</React.Fragment>
 						);
@@ -138,13 +144,17 @@ class PopupStore extends React.Component<Props, State> {
 				break;
 
 			case 'relation':
-				Type = (item: any) => (
-					<div className={[ 'item', 'isType', subTab ].join(' ')}>
-						<div className="iconObject c64">
-							<div className={[ 'iconCommon', 'c32', 'icon', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
+				Item = (item: any) => (
+					<div className={[ 'item', 'isRelation', subTab ].join(' ')}>
+						<div className="iconObject c48 isRelation">
+							<div className={[ 'iconCommon', 'c30', 'icon', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 						</div>
 						<div className="info">
 							<div className="name">{item.name} ({item.relationKey})</div>
+							<div className="author">
+								<IconObject object={details} size={16} />
+								{details.name}
+							</div>
 							<div className="line" />
 						</div>
 						<Button className="blank c28" text="Add" />
@@ -161,7 +171,7 @@ class PopupStore extends React.Component<Props, State> {
 						subContent = (
 							<React.Fragment>
 								{relations.map((item: any, i: number) => (
-									<Type key={i} {...item} />
+									<Item key={i} {...item} />
 								))}
 							</React.Fragment>
 						);
@@ -255,7 +265,7 @@ class PopupStore extends React.Component<Props, State> {
 			const { getId, position } = this.props;
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const width = Math.min(1152, Math.max(960, win.width() - 128));
+			const width = 1152; //Math.min(1152, Math.max(960, win.width() - 128));
 			const height = Math.max(648, win.height() - 128);
 
 			obj.css({ width: width, height: height });
