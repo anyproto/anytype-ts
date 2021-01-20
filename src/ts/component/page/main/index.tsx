@@ -24,6 +24,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onStore = this.onStore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
@@ -56,7 +57,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
-							<Icon id="button-account" menuId="account" className="profile" tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
+							<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
 							<IconObject object={details} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
@@ -132,6 +135,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 			});
 		};
 	};
+
+	onStore (e: any) {
+	};
 	
 	onAdd (e: any) {
 		const { history } = this.props;
@@ -143,7 +149,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				element: '#button-add',
 				type: I.MenuType.Vertical,
 				offsetX: 0,
-				offsetY: -40,
+				offsetY: 4,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				width: 176,

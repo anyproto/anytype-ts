@@ -6,11 +6,18 @@
 	.title { color: #fff; position: relative; height: 48px; }
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
-		.icon { width: 40px; height: 40px; vertical-align: top; margin-right: 8px; border-radius: 100%; cursor: pointer; }
-		.icon:hover, .icon.active { background-color: rgba(0, 0, 0, 0.2); }
+		.icon { 
+			width: 44px; height: 44px; vertical-align: middle; margin-right: 16px; border-radius: 100%; cursor: pointer; 
+			background-color: rgba(0,0,0,0.3); background-size: 20px 20px;
+		}
+		.icon:hover, .icon.active { background-color: rgba(0, 0, 0, 0.5); }
 		.icon:last-child { margin-right: 0px; }
-		.iconObject { cursor: pointer; user-select: none; }
-		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); display: none; }
+
+		.iconObject { cursor: pointer; user-select: none; display: inline-block; vertical-align: middle; }
+
+		.icon.account { background-image: url('~img/icon/account.svg'); display: none; }
+		.icon.add { background-image: url('~img/icon/plus/object.svg'); }
+		.icon.store { background-image: url('~img/icon/store.svg'); }
 	}
 
 	@keyframes shimmer {
@@ -73,15 +80,6 @@
 		.item.active {
 			.icon.more { opacity: 1; transition: none; background-image: url('~img/icon/index/more1.svg'); }
 		}
-		
-		.item.add { background: rgba(255,255,255,0.65); transition: background 0.2s ease-in-out; margin-right: 0px; }
-		.item.add {
-			.icon { 
-				width: 16px; height: 16px; background-image: url('~img/icon/plus/document.svg');
-				position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; 
-			}
-		}
-		.item.add:hover { background-color: rgba(255,255,255,0.8); }
 	}
 	
 }

@@ -88,21 +88,12 @@ class ListIndex extends React.Component<Props, {}> {
 			);
 		});
 		
-		const ItemAdd = SortableElement((item: any) => {
-			return (
-				<div id="button-add" className="item add" onClick={onAdd}>
-					<Icon />
-				</div>
-			);
-		});
-		
 		const List = SortableContainer((item: any) => {
 			return (
 				<React.Fragment>
 					{item.list.map((item: any, i: number) => (
 						<Item key={item.id} {...item} index={i} />
 					))}
-					<ItemAdd index={length + 1} disabled={true} />
 				</React.Fragment>
 			);
 		});
