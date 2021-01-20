@@ -13,15 +13,17 @@ class DbStore {
 	get objectTypes (): I.ObjectType[] {
 		let types =  Array.from(this.objectTypeMap.values());
 
-		types.sort((c1: I.ObjectType, c2: I.ObjectType) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-
 		types = types.map((it: I.ObjectType) => {
 			it.name = it.name || Constant.default.name;
 			return it;
+		});
+
+		types.sort((c1: I.ObjectType, c2: I.ObjectType) => {
+			const n1 = c1.name.toLowerCase();
+			const n2 = c2.name.toLowerCase();
+			if (n1 > n2) return 1;
+			if (n1 < n2) return -1;
+			return 0;
 		});
 
 		return types;

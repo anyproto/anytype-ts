@@ -14,7 +14,7 @@ interface Props extends RouteComponentProps<any> {
 const $ = require('jquery');
 
 @observer
-class HeaderMainSet extends React.Component<Props, {}> {
+class HeaderMainObjectType extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -22,17 +22,22 @@ class HeaderMainSet extends React.Component<Props, {}> {
 		this.onHome = this.onHome.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
+		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
+		const { match } = this.props;
 		const cn = [ 'header', 'headerMainEdit' ];
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');
 		};
+
+		console.log();
 
 		return (
 			<div id="header" className={cn.join(' ')}>
@@ -53,6 +58,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
+					<Icon id="button-header-more" tooltip="Menu big" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -72,6 +78,54 @@ class HeaderMainSet extends React.Component<Props, {}> {
 		this.props.history.goForward();
 	};
 	
+	onMore (e: any) {
+		const { rootId, match } = this.props;
+		
+		commonStore.menuOpen('blockMore', { 
+			element: '#button-header-more',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 8,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId: rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
+				match: match,
+			}
+		});
+	};
+
+	onAdd (e: any) {
+		const { rootId } = this.props;
+		const { focused } = focus;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const fb = blockStore.getLeaf(rootId, focused);
+
+		if (!root || root.isObjectSet()) {
+			return;
+		};
+		
+		let targetId = '';
+		let position = I.BlockPosition.Bottom;
+		
+		if (fb) {
+			if (fb.isTextTitle()) {
+				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
+				if (first) {
+					targetId = first.id;
+					position = I.BlockPosition.Top;
+				};
+			} else 
+			if (fb.isFocusable()) {
+				targetId = fb.id;
+			};
+		};
+		
+		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
+	};
+
 	onNavigation (e: any, expanded: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -101,4 +155,4 @@ class HeaderMainSet extends React.Component<Props, {}> {
 	
 };
 
-export default HeaderMainSet;
+export default HeaderMainObjectType;

@@ -19,7 +19,7 @@ const Tabs = [
 	{ 
 		id: 'type', name: 'Types', active: 'library',
 		children: [
-			{ id: 'market', name: 'Marketplace' },
+			{ id: 'market', name: 'Marketplace', disabled: true },
 			{ id: 'library', name: 'Library' },
 		]
 	},
@@ -35,7 +35,7 @@ const Tabs = [
 	{ 
 		id: 'relation', 'name': 'Relations', active: 'library', 
 		children: [
-			{ id: 'market', name: 'Marketplace' },
+			{ id: 'market', name: 'Marketplace', disabled: true },
 			{ id: 'library', name: 'Library' },
 		], 
 	},
@@ -121,7 +121,7 @@ class PopupStore extends React.Component<Props, State> {
 
 						<div className="tabs">
 							{tabItem.children.map((item: any, i: number) => (
-								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
+								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : ''), (item.disabled ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
 									{item.name}
 								</div>
 							))}
@@ -180,7 +180,7 @@ class PopupStore extends React.Component<Props, State> {
 
 						<div className="tabs">
 							{tabItem.children.map((item: any, i: number) => (
-								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
+								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : ''), (item.disabled ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
 									{item.name}
 								</div>
 							))}
@@ -269,7 +269,9 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	onSubTab (e: any, item: any) {
-		this.setState({ subTab: item.id });
+		if (!item.disabled) {
+			this.setState({ subTab: item.id });
+		};
 	};
 
 	onObjectType (e: any, item: any) {

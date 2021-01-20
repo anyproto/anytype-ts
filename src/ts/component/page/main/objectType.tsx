@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
+import { Icon, Title, Label, IconObject, HeaderMainObjectType as Header } from 'ts/component';
 import { I, C, DataUtil, translate } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 
@@ -17,7 +17,7 @@ class PageMainObjectType extends React.Component<Props, {}> {
 
 	render () {
 		const { objectTypes } = dbStore;
-
+		
 		
 
 		return (
