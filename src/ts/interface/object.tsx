@@ -15,6 +15,7 @@ export enum ObjectLayout {
 export interface ObjectType {
 	url: string;
 	name: string;
+	description?: string;
 	layout: ObjectLayout;
 	iconEmoji: string;
 	relations: Relation[];

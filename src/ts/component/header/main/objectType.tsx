@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -32,12 +32,13 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 
 	render () {
 		const { match } = this.props;
+		const { objectTypes } = dbStore;
 		const cn = [ 'header', 'headerMainEdit' ];
+		const objectType = objectTypes.find((it: I.ObjectType) => { return DataUtil.schemaField(it.url) == match.params.id; });
+
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');
 		};
-
-		console.log();
 
 		return (
 			<div id="header" className={cn.join(' ')}>
@@ -51,8 +52,8 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<Icon className="new-set" />
-							<div className="name">New set</div>
+							<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
+							<div className="name">{objectType.name}</div>
 						</div>
 					</div>
 				</div>

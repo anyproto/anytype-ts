@@ -145,7 +145,7 @@ class PopupStore extends React.Component<Props, State> {
 
 			case 'relation':
 				Item = (item: any) => (
-					<div className={[ 'item', 'isRelation', subTab ].join(' ')}>
+					<div className={[ 'item', 'isRelation', subTab ].join(' ')} onClick={(e: any) => { this.onRelation(e, item); }}>
 						<div className="iconObject c48 isRelation">
 							<div className={[ 'iconCommon', 'c30', 'icon', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 						</div>
@@ -286,8 +286,15 @@ class PopupStore extends React.Component<Props, State> {
 
 	onObjectType (e: any, item: any) {
 		const { history } = this.props;
+		const id = DataUtil.schemaField(item.url);
 
-		history.push('/main/objectType/' + item.id);
+		history.push('/main/objectType/' + id);
+	};
+
+	onRelation (e: any, item: any) {
+		const { history } = this.props;
+
+		history.push('/main/relation/' + item.id);
 	};
 	
 };
