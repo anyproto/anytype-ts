@@ -57,7 +57,6 @@ class Page extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const { config } = commonStore;
 		
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;

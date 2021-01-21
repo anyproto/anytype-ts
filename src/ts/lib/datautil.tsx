@@ -763,6 +763,14 @@ class DataUtil {
 		return ret;
 	};
 
+	sortByName (c1: any, c2: any) {
+		const n1 = c1.name.toLowerCase();
+		const n2 = c2.name.toLowerCase();
+		if (n1 > n2) return 1;
+		if (n1 < n2) return -1;
+		return 0;
+	};
+
 };
 
 export default new DataUtil();

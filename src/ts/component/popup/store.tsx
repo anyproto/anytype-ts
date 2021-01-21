@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject } from 'ts/component';
+import { Title, Label, Button, IconObject, Icon } from 'ts/component';
 import { I, DataUtil, Util } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 
@@ -147,7 +147,7 @@ class PopupStore extends React.Component<Props, State> {
 				Item = (item: any) => (
 					<div className={[ 'item', 'isRelation', subTab ].join(' ')} onClick={(e: any) => { this.onRelation(e, item); }}>
 						<div className="iconObject c48 isRelation">
-							<div className={[ 'iconCommon', 'c30', 'icon', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
+							<Icon className={[ 'iconCommon', 'c30', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 						</div>
 						<div className="info">
 							<div className="name">{item.name} ({item.relationKey})</div>

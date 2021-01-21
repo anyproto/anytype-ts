@@ -18,14 +18,7 @@ class DbStore {
 			return it;
 		});
 
-		types.sort((c1: I.ObjectType, c2: I.ObjectType) => {
-			const n1 = c1.name.toLowerCase();
-			const n2 = c2.name.toLowerCase();
-			if (n1 > n2) return 1;
-			if (n1 < n2) return -1;
-			return 0;
-		});
-
+		types.sort(DataUtil.sortByName);
 		return types;
 	};
 
