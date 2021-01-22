@@ -18,7 +18,6 @@
 				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
 			}
 		}
-		.cellHead:first-child { padding-left: 14px; }
 		.cellHead.last {
 			.icon.plus { margin: 0px; }
 		}
@@ -50,7 +49,6 @@
 			}
 				
 			.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
-			.cell:first-child { padding-left: 14px; }
 
 			.cell.isEditing {
 				.cellContent { min-width: 300px; padding: 14px; }

@@ -63,7 +63,42 @@ class PageMainObjectType extends React.Component<Props, {}> {
 
 					<div className="section set">
 						<div className="title">Set of objects</div>
-						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
+						<div className="content">
+							<table>
+								<thead>
+									<tr className="row">
+										<th className="cellHead">
+											<div className="name">Name</div>
+										</th>
+										<th className="cellHead">
+											<div className="name">Updated</div>
+										</th>
+										<th className="cellHead">
+											<div className="name">Owner</div>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr className="row">
+										<td className="cell">
+											<div className="cellContent">
+												<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
+												<div className="name">Joseph Wolf</div>
+											</div>
+										</td>
+										<td className="cell">
+											<div className="cellContent">Apr 11, 2020</div>
+										</td>
+										<td className="cell">
+											<div className="cellContent">
+												<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
+												<div className="name">Joseph Wolf</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
