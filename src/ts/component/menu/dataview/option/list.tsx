@@ -49,10 +49,29 @@ class MenuOptionList extends React.Component<Props, State> {
 			return null;
 		};
 
-		console.log(JSON.stringify(items, null, 5));
-
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			
+			let content = null;
+			if (item.id == 'add') {
+				content =  (
+					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+						<Icon className="plus" />
+						<div className="name">Create option "{filter}"</div>
+					</div>
+				);
+			} else 
+			if (item.isSection) {
+				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
+			} else {
+				content = (
+					<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+						<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
+						<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+					</div>
+				);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -62,17 +81,7 @@ class MenuOptionList extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-						{item.id == 'add' ? (
-							<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }}>
-								<Icon className="plus" />
-								<div className="name">Create option "{filter}"</div>
-							</div>
-						) : (
-							<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }}>
-								<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
-								<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
-							</div>
-						)}
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -259,13 +268,32 @@ class MenuOptionList extends React.Component<Props, State> {
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 
 		let items = relation.selectDict || [];
+		let sections: any = {};
+		let ret = [];
+
+		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
+		sections[I.OptionScope.Relation] = { id: I.OptionScope.Local, name: 'Everywhere', children: [] };
+		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Format', children: [] };
 
 		if (data.filter) {
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
-			items.unshift({ id: 'add' });
+			ret.unshift({ id: 'add' });
 		};
 
-		return items;
+		for (let item of items) {
+			if (!sections[item.scope]) {
+				continue;
+			};
+			sections[item.scope].children.push(item);
+		};
+
+		for (let i in sections) {
+			let section = sections[i];
+			ret.push({ id: section.id, name: section.name, isSection: true });
+			ret = ret.concat(section.children);
+		};
+
+		return ret;
 	};
 
 	onKeyDown (e: any) {

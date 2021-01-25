@@ -3,7 +3,7 @@ import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, F
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { ObjectLayout, ObjectType, ObjectTypePerObject, RelationType, Relation, SelectOption } from './object';
+import { ObjectLayout, ObjectType, ObjectTypePerObject, RelationType, Relation, OptionScope, SelectOption } from './object';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import {
@@ -68,6 +68,7 @@ export {
 	ObjectType,
 	ObjectTypePerObject,
 	Relation,
+	OptionScope,
 	SelectOption,
 	
 	PageInfo,

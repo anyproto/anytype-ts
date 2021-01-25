@@ -57,8 +57,15 @@ export interface Relation {
 	timeFormat?: I.TimeFormat;
 };
 
+export enum OptionScope {
+    Local	 = 0,
+	Relation = 1,
+	Format	 = 2,
+}
+
 export interface SelectOption {
 	id: string;
 	text: string;
 	color: string;
+	scope: I.OptionScope;
 };

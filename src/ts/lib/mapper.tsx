@@ -198,6 +198,7 @@ const Mapper = {
 				id: obj.getId(),
 				text: obj.getText(),
 				color: obj.getColor(),
+				scope: obj.getScope(),
 			};
 		},
 

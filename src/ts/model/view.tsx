@@ -83,6 +83,7 @@ class SelectOption implements I.SelectOption {
 	id: string = '';
 	text: string = '';
 	color: string = '';
+	scope: I.OptionScope = I.OptionScope.Local;
 
 	constructor (props: I.SelectOption) {
 		let self = this;
@@ -90,6 +91,7 @@ class SelectOption implements I.SelectOption {
 		self.id = String(props.id || '');
 		self.text = String(props.text || '');
 		self.color = String(props.color || '');
+		self.scope = Number(props.scope) || I.OptionScope.Local;
 
 		decorate(self, {
 			text: observable,
