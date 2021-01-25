@@ -170,6 +170,7 @@ class Cell extends React.Component<Props, {}> {
 				blockId: block.id,
 				value: value, 
 				relation: observable.box(relation),
+				record: record,
 				onChange: (value: any) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);

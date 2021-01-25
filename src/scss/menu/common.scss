@@ -53,11 +53,10 @@
 				margin-top: -10px; cursor: pointer; opacity: 0;
 			}
 			.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
+
+			.line { height: 1px; margin: 4px 0px 0px 0px; background: $colorLightGrey; display: block; }
 		}
 		.filter.active { .icon.clear { opacity: 1; } }
-		.filter::after {
-			content: ""; height: 1px; margin: 8px 0px 0px 0px; background: $colorLightGrey; display: block;
-		}
 
 		.inputWrap { padding: 0px 16px 8px 16px; }
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }

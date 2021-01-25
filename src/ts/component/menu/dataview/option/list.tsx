@@ -195,10 +195,10 @@ class MenuOptionList extends React.Component<Props, State> {
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, rootId, blockId } = data;
+		const { filter, rootId, blockId, record } = data;
 		const relation = data.relation.get();
 
-		C.BlockDataviewRelationSelectOptionAdd(rootId, blockId, relation.relationKey, { text: filter });
+		C.BlockDataviewRecordRelationOptionAdd(rootId, blockId, relation.relationKey, record.id, { text: filter });
 	};
 	
 	onEdit (e: any, item: any) {

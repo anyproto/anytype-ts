@@ -91,13 +91,13 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	onRemove (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId, onChange } = data;
+		const { option, rootId, blockId, record, onChange } = data;
 		const relation = data.relation.get();
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
-		C.BlockDataviewRelationSelectOptionDelete(rootId, blockId, relation.relationKey, option.id);
+		C.BlockDataviewRecordRelationOptionDelete(rootId, blockId, relation.relationKey, record.id, option.id);
 
 		let value = Util.objectCopy(data.value || []);
 		value = value.filter((it: any) => { return it != option.id; });
@@ -119,7 +119,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId } = data;
+		const { option, rootId, blockId, record } = data;
 		const relation = data.relation.get();
 		const idx = relation.selectDict.findIndex((it: any) => { return it.id == option.id; });
 
@@ -127,7 +127,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		option.color = this.color;
 
 		relation.selectDict[idx] = option;
-		C.BlockDataviewRelationSelectOptionUpdate(rootId, blockId, relation.relationKey, relation.selectDict[idx]);
+		C.BlockDataviewRecordRelationOptionUpdate(rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);
 
 		const nd = { relation: observable.box(relation) };
 		this.props.param.data.option = option;

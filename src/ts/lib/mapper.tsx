@@ -512,7 +512,7 @@ const Mapper = {
 		},
 
 		SelectOption: (obj: any) => {
-			const item = new Relation.Relation.SelectOption();
+			const item = new Relation.Relation.Option();
 
 			item.setId(obj.id);
 			item.setText(obj.text);

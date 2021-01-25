@@ -45,6 +45,7 @@ class Filter extends React.Component<Props, {}> {
 					/>
 					<Icon className="clear" onClick={this.onClear} />
 				</div>
+				<div className="line" />
 			</div>
 		);
 	};
