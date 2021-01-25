@@ -442,7 +442,7 @@ class Util {
 		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
 
 		let a: string[] = name.split('.');
-		let e = a[a.length - 1];
+		let e = String(obj.fileExt || a[a.length - 1] || '');
 		let t: string[] = [];
 		let icon = '';
 

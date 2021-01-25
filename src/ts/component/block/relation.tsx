@@ -21,6 +21,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render (): any {

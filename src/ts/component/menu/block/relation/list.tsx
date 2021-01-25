@@ -18,6 +18,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -63,6 +64,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							scrollContainer={Util.getEditorScrollContainer('menu')}
 							pageContainer={Util.getEditorPageContainer('menu')}
 							readOnly={readOnly}
+							optionCommand={this.optionCommand}
 						/>
 					</div>
 				</div>
@@ -128,6 +130,22 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		C.BlockSetDetails(rootId, [ 
 			{ key: key, value: value },
 		]);
+	};
+
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+		switch (code) {
+			case 'add':
+				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
+				break;
+
+			case 'update':
+				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
+				break;
+
+			case 'delete':
+				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
+				break;
+		};
 	};
 
 };
