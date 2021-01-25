@@ -438,9 +438,8 @@ class Util {
 	};
 
 	fileIcon (obj: any): string {
-		const name = String(obj.name || '');
 		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
-		const e = String(obj.fileExt || '').replace(/./g, '');
+		const e = String(obj.fileExt || '');
 
 		let t: string[] = [];
 		let icon = '';
