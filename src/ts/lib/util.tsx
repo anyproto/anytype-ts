@@ -440,11 +440,17 @@ class Util {
 	fileIcon (obj: any): string {
 		const name = String(obj.name || '');
 		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
+		const e = String(obj.fileExt || '').replace(/./g, '');
 
-		let a: string[] = name.split('.');
-		let e = String(obj.fileExt || a[a.length - 1] || '');
 		let t: string[] = [];
 		let icon = '';
+
+		if (mime) {
+			let a: string[] = mime.split(';');
+			if (a.length) {
+				t = a[0].split('/');
+			};
+		};
 
 		if ([ 'm4v' ].indexOf(e) >= 0) {
 			icon = 'video';
@@ -462,17 +468,6 @@ class Util {
 			icon = 'table';
 		};
 		
-		if (icon) {
-			return icon;
-		};
-		
-		if (mime) {
-			let a: string[] = mime.split(';');
-			if (a.length) {
-				t = a[0].split('/');
-			};
-		};
-
 		if (t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
