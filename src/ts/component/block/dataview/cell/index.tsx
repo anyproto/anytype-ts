@@ -13,6 +13,7 @@ interface Props extends I.Cell {
 	relationKey?: string;
 	storeId?: string;
 	menuClassName?: string;
+	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
 const $ = require('jquery');
@@ -100,7 +101,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer, scrollContainer } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -171,6 +172,7 @@ class Cell extends React.Component<Props, {}> {
 				value: value, 
 				relation: observable.box(relation),
 				record: record,
+				optionCommand: optionCommand,
 				onChange: (value: any) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);

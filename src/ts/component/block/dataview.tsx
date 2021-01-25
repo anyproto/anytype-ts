@@ -32,6 +32,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -95,6 +96,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						onRowAdd={this.onRowAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
+						optionCommand={this.optionCommand}
 					/>
 				</div>
 			</div>
@@ -199,6 +201,22 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		dbStore.recordUpdate(rootId, block.id, obj);
 		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);
+	};
+
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+		switch (code) {
+			case 'add':
+				C.BlockDataviewRecordRelationOptionAdd(rootId, blockId, relationKey, recordId, option, callBack);
+				break;
+
+			case 'update':
+				C.BlockDataviewRecordRelationOptionUpdate(rootId, blockId, relationKey, recordId, option, callBack);
+				break;
+
+			case 'delete':
+				C.BlockDataviewRecordRelationOptionDelete(rootId, blockId, relationKey, recordId, option.id, callBack);
+				break;
+		};
 	};
 
 	resize () {

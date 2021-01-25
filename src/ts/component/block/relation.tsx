@@ -78,6 +78,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								onCellChange={this.onCellChange}
 								scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
+								optionCommand={this.optionCommand}
 							/>
 						</div>
 					</div>
@@ -208,6 +209,22 @@ class BlockRelation extends React.Component<Props, {}> {
 
 		options.unshift({ id: 'add', icon: 'add', name: 'Add new' });
 		return options;
+	};
+
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+		switch (code) {
+			case 'add':
+				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
+				break;
+
+			case 'update':
+				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
+				break;
+
+			case 'delete':
+				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
+				break;
+		};
 	};
 
 };

@@ -80,6 +80,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 					rowCount={items.length}
 					loadMoreRows={() => {}}
 					isRowLoaded={({ index }) => index < items.length}
+					threshold={LIMIT}
 				>
 					{({ onRowsRendered, registerChild }) => (
 						<AutoSizer className="scrollArea">

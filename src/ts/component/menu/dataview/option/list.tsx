@@ -17,7 +17,7 @@ interface State {
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
-const LIMIT = 20;
+const LIMIT = 40;
 
 @observer
 class MenuOptionList extends React.Component<Props, State> {
@@ -44,6 +44,12 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { n } = this.state;
 		const value = data.value || [];
 		const items = this.getItems();
+
+		if (!this.cache) {
+			return null;
+		};
+
+		console.log(JSON.stringify(items, null, 5));
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -94,7 +100,7 @@ class MenuOptionList extends React.Component<Props, State> {
 										rowHeight={HEIGHT}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
+										overscanRowCount={10}
 										scrollToIndex={n}
 									/>
 								)}
@@ -126,6 +132,12 @@ class MenuOptionList extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { n } = this.state;
 		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 
 		this.props.position();
 		this.resize();
@@ -195,10 +207,10 @@ class MenuOptionList extends React.Component<Props, State> {
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, rootId, blockId, record } = data;
+		const { filter, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
 
-		C.BlockDataviewRecordRelationOptionAdd(rootId, blockId, relation.relationKey, record.id, { text: filter });
+		optionCommand('add', rootId, blockId, relation.relationKey, record.id, { text: filter });
 	};
 	
 	onEdit (e: any, item: any) {
