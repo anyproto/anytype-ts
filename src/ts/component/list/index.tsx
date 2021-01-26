@@ -60,7 +60,6 @@ class ListIndex extends React.Component<Props, {}> {
 
 			if (content.style == I.LinkStyle.Dataview) {
 				icon = <IconObject size={48} object={object} />;
-				showMenu = false;
 			} else 
 			if (content.style == I.LinkStyle.Archive) {
 				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />
