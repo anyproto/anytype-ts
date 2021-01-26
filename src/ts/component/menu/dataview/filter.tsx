@@ -185,7 +185,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							ref={refGet} 
 							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 							placeHolder="dd.mm.yyyy hh:mm:ss"
-							mask="99.99.9999 99:99:99"
+							maskOptions={{ mask: '99.99.9999 99:99:99' }}
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 							onBlur={() => { this.id = ''; }}
 							onSelect={(e: any) => { this.onSelect(e, item); }}
