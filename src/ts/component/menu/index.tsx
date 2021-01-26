@@ -224,7 +224,7 @@ class Menu extends React.Component<Props, {}> {
 			};
 			
 			if (!el || !el.length) {
-				console.error('[Menu.position]', id, 'element not found', element);
+				console.log('[Menu.position]', id, 'element not found', element);
 				return;
 			};
 

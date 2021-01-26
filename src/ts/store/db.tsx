@@ -14,8 +14,10 @@ class DbStore {
 		let types =  Array.from(this.objectTypeMap.values());
 
 		types = types.map((it: I.ObjectType) => {
-			it.name = it.name || Constant.default.name;
-			return it;
+			return {
+				...it,
+				name: it.name || Constant.default.name,
+			};
 		});
 
 		types.sort(DataUtil.sortByName);

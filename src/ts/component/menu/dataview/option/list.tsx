@@ -142,12 +142,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { n } = this.state;
 		const items = this.getItems();
 
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
-		});
-
 		this.props.position();
 		this.resize();
 		this.setActive(items[n]);
