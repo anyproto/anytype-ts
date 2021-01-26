@@ -266,7 +266,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
 
 		let height = size.height + size.margin;
-		if (list.length + 1 > cnt) {
+		if (list.length > cnt) {
 			height *= 2;
 		};
 		height += 20;
