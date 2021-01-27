@@ -23,6 +23,10 @@ const Shutdown = () => {
 	return {};
 };
 
+const Export = () => {
+	return {};
+};
+
 const LinkPreview = (response: any) => {
 	return {
 		linkPreview: response.hasLinkpreview() ? Mapper.From.LinkPreview(response.getLinkpreview()) : {},

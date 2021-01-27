@@ -38,6 +38,7 @@
 				.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
 				.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
 				.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
+				.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				
 				.label { display: inline-block; vertical-align: top; }
 				.icon.arrow { 
@@ -149,6 +150,11 @@
 
 		.tabImportNotion {
 			.label, .path { margin-bottom: 10px; }
+			.label.last { margin: 0px; }
+			.button { margin-top: 25px; }
+		}
+
+		.tabExportMarkdown {
 			.label.last { margin: 0px; }
 			.button { margin-top: 25px; }
 		}

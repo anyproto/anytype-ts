@@ -39,6 +39,17 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('linkPreview', request, callBack);
 };
 
+const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Export.Request();
+
+	request.setPath(path);
+	request.setDocidsList(ids);
+	request.setFormat(format);
+	request.setZip(zip);
+
+	dispatcher.request('export', request, callBack);
+};
+
 const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
@@ -850,6 +861,7 @@ export {
 	LinkPreview,
 	UploadFile,
 	ProcessCancel,
+	Export,
 
 	WalletCreate,
 	WalletRecover,

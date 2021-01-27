@@ -420,6 +420,7 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('import', this.onImport);
+		ipcRenderer.on('export', this.onExport);
 
 		ipcRenderer.on('command', this.onCommand);
 
@@ -485,6 +486,12 @@ class App extends React.Component<Props, State> {
 	onImport () {
 		commonStore.popupOpen('settings', {
 			data: { page: 'importIndex' }
+		});
+	};
+
+	onExport () {
+		commonStore.popupOpen('settings', {
+			data: { page: 'exportMarkdown' }
 		});
 	};
 
