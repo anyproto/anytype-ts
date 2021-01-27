@@ -72,7 +72,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		const obj = $('#menuThreadList');
+		const { getId } = this.props;
+		const obj = $('#' + getId());
 		const clear = () => {
 			window.clearTimeout(this.timeoutClose);
 			window.clearTimeout(this.timeoutMenu);
@@ -138,6 +139,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				offsetX: 272,
 				offsetY: 0,
 				fixedY: top,
+				className: 'fixed',
 				data: {
 					...data,
 					accountId: id,
