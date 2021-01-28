@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, IconUser } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { authStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil, translate, Util } from 'ts/lib';
@@ -36,7 +36,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				className="item" 
 				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
 			>
-				<IconUser className="c18" {...item} />
+				<IconObject object={{ ...item, type: '/profile' }} />
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
@@ -89,6 +89,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 		obj.unbind('mouseenter').on('mouseenter', () => { 
 			clear();
 		});
+		/*
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			const status = $('#menuThreadStatus');
 			if (status.length) {
@@ -99,6 +100,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 			};
 			leave();
 		});
+		*/
 	};
 
 	componentWillUnmount () {
@@ -138,6 +140,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				offsetX: 272,
 				offsetY: 0,
 				fixedY: top,
+				className: 'fixed',
 				data: {
 					...data,
 					accountId: id,
