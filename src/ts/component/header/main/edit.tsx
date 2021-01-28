@@ -12,6 +12,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -41,7 +42,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const readOnly = root.isReadOnly();
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
@@ -66,13 +66,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					{!readOnly ? (
-						<Icon className={[ 'plus', 'big', (root.isPageSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					{!root.isObjectReadOnly() ? (
+						<Icon className={[ 'plus', 'big', (root.isObjectSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 					) : ''}
 				</div>
 
 				<div className="side right">
-					<Sync id="button-sync" rootId={rootId} onClick={this.onSync} />
+					<Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} />
 					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
@@ -97,20 +97,25 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onMore (e: any) {
 		const { rootId, match } = this.props;
 
-		commonStore.menuOpen('blockMore', { 
-			element: '#button-header-more',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 8,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rootId: rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				match: match,
-			}
-		});
+		commonStore.menuCloseAll();
+		window.setTimeout(() => {
+			commonStore.menuOpen('blockMore', { 
+				element: '#button-header-more',
+				type: I.MenuType.Vertical,
+				offsetX: 0,
+				offsetY: 0,
+				fixedY: 38,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				className: 'fixed',
+				data: {
+					rootId: rootId,
+					blockId: rootId,
+					blockIds: [ rootId ],
+					match: match,
+				}
+			});
+		}, Constant.delay.menu);
 	};
 
 	onAdd (e: any) {
@@ -119,7 +124,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
-		if (!root || root.isPageSet()) {
+		if (!root || root.isObjectSet()) {
 			return;
 		};
 		
@@ -147,17 +152,22 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onSync (e: any) {
 		const { rootId } = this.props;
 
-		commonStore.menuOpen('threadList', {
-			type: I.MenuType.Vertical, 
-			element: '#button-sync',
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rootId: rootId,
-			}
-		});
+		commonStore.menuCloseAll();
+		window.setTimeout(() => {
+			commonStore.menuOpen('threadList', {
+				type: I.MenuType.Vertical, 
+				element: '#button-header-sync',
+				offsetX: 0,
+				offsetY: 0,
+				fixedY: 38,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				className: 'fixed',
+				data: {
+					rootId: rootId,
+				}
+			});
+		}, Constant.delay.menu);
 	};
 
 	onNavigation (e: any, expanded: boolean) {
@@ -190,21 +200,24 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	onRelation () {
 		const { rootId } = this.props;
 
-		commonStore.menuOpen('blockRelationList', { 
-			element: '#button-header-relation',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			fixedY: 38,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			className: 'fixed',
-			data: {
-				relationKey: '',
-				readOnly: false,
-				rootId: rootId,
-			},
-		});
+		commonStore.menuCloseAll();
+		window.setTimeout(() => {
+			commonStore.menuOpen('blockRelationList', { 
+				element: '#button-header-relation',
+				type: I.MenuType.Vertical,
+				offsetX: 0,
+				offsetY: 0,
+				fixedY: 38,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				className: 'fixed',
+				data: {
+					relationKey: '',
+					readOnly: false,
+					rootId: rootId,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 	
 };

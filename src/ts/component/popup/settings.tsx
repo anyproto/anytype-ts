@@ -112,7 +112,7 @@ class PopupSettings extends React.Component<Props, State> {
 				let covers2 = [];
 
 				for (let i = 1; i <= 11; ++i) {
-					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.BgImage });
+					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
 				for (let c of colors) {
@@ -120,7 +120,7 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 
 				if (coverImage) {
-					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Image });
+					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
 				};
 
 				Item = (item: any) => (
@@ -353,8 +353,8 @@ class PopupSettings extends React.Component<Props, State> {
 
 				this.setState({ loading: false });
 				commonStore.coverSetUploadedImage(message.hash);
-				commonStore.coverSet('', message.hash, I.CoverType.Image);
-				DataUtil.pageSetCover(root, I.CoverType.Image, message.hash);
+				commonStore.coverSet('', message.hash, I.CoverType.Upload);
+				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
 			});
 		});
 	};

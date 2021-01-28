@@ -9,7 +9,7 @@
 			.name { padding: 5px 16px; margin: 0px; }
 		}
 		.item {
-			.name { @include text-overflow-nw; width: calc(100% - 26px); }
+			.name { @include text-overflow-nw; width: 100%; }
 		}
 	}
 }

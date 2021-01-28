@@ -14,7 +14,7 @@ class HeadHandle extends React.Component<Props, {}> {
 
 		const Handle = SortableHandle(() => (
 			<div>
-				<Icon className={'relation c-' + DataUtil.relationClass(format)} />
+				<Icon className={'relation ' + DataUtil.relationClass(format)} />
 				<div className="name">{name}</div>
 			</div>
 		));

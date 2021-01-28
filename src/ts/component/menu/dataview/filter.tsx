@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input, Checkbox } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { Icon, Select, Input, Checkbox, IconObject, Tag } from 'ts/component';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
 
@@ -35,21 +36,36 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onFocusDate = this.onFocusDate.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onObject = this.onObject.bind(this);
 	};
 	
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const filterCnt = view.filters.length;
+
+		for (let filter of view.filters) {
+			const { relationKey, condition, value } = filter;
+		};
 
 		const operatorOptions: I.Option[] = [
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
-		const relationOptions: I.Option[] = view.relations.map((it: I.ViewRelation) => {
-			return { id: it.relationKey, name: it.name, icon: 'relation c-' + DataUtil.relationClass(it.format) };
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation.format != I.RelationType.File; 
+		});
+		const relationOptions: I.Option[] = relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: it.relationKey, 
+				name: relation.name, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+			};
 		});
 
 		const Handle = SortableHandle(() => (
@@ -57,7 +73,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == item.relationKey; });
+			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 			if (!relation) {
 				return null;
 			};
@@ -68,9 +84,87 @@ class MenuFilter extends React.Component<Props, {}> {
 
 			let value = null;
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
+			let Item = null;
+			let cn = [];
+			let list = [];
 
 			switch (relation.format) {
+
+				case I.RelationType.Tag:
+				case I.RelationType.Status:
+					cn = [ 'select', 'isList' ];
+
+					Item = (item: any) => {
+						return (
+							<div className="element">
+								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+							</div>
+						);
+					};
+
+					list = (item.value || []).map((id: string, i: number) => { 
+						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+					});
+					list = list.filter((it: any) => { return it && it.id; });
+
+					if (list.length) {
+						cn.push('withValues');
+					};
+
+					value = (
+						<div id={id} className={cn.join(' ')} onClick={(e: any) => { this.onTag(e, item); }}>
+							{list.length ? (
+								<React.Fragment>
+									{list.map((item: any, i: number) => {
+										return <Item key={item.id} {...item} />;
+									})}
+								</React.Fragment>
+							) : (
+								<React.Fragment>
+									<div className="name">Add options</div>
+									<Icon className="arrow light" />
+								</React.Fragment>
+							)}
+						</div>
+					);
+					break;
 				
+				case I.RelationType.Object:
+					Item = (item: any) => {
+						return (
+							<div className="element">
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</div>
+						);
+					};
+					cn = [ 'select', 'isList' ];
+
+					list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
+					list = list.filter((it: any) => { return !it._detailsEmpty_; });
+
+					if (list.length) {
+						cn.push('withValues');
+					};
+
+					value = (
+						<div id={id} className={cn.join(' ')} onClick={(e: any) => { this.onObject(e, item); }}>
+							{list.length ? (
+								<React.Fragment>
+									{list.map((item: any, i: number) => {
+										return <Item key={i} {...item} />;
+									})}
+								</React.Fragment>
+							) : (
+								<React.Fragment>
+									<div className="name">Add objects</div>
+									<Icon className="arrow light" />
+								</React.Fragment>
+							)}
+						</div>
+					);
+					break;
+
 				case I.RelationType.Checkbox:
 					value = (
 						<Checkbox 
@@ -91,7 +185,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							ref={refGet} 
 							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 							placeHolder="dd.mm.yyyy hh:mm:ss"
-							mask="99.99.9999 99:99:99"
+							maskOptions={{ mask: '99.99.9999 99:99:99' }}
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 							onBlur={() => { this.id = ''; }}
 							onSelect={(e: any) => { this.onSelect(e, item); }}
@@ -128,6 +222,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						<Select 
 							id={[ 'filter', 'operator', item.id ].join('-')} 
 							className="operator" 
+							arrowClassName="light"
 							options={operatorOptions} 
 							value={item.operator} 
 							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
@@ -137,8 +232,22 @@ class MenuFilter extends React.Component<Props, {}> {
 					) : (
 						<div className="txt">Where</div>
 					)}
-					<Select id={[ 'filter', 'relation', item.id ].join('-')} className="relation" options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
-					<Select id={[ 'filter', 'condition', item.id ].join('-')} options={conditionOptions} value={item.condition} onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} />
+					<Select 
+						id={[ 'filter', 'relation', item.id ].join('-')} 
+						className="relation" 
+						arrowClassName="light"
+						options={relationOptions}
+						value={item.relationKey} 
+						onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+					/>
+					<Select 
+						id={[ 'filter', 'condition', item.id ].join('-')} 
+						className="condition" 
+						arrowClassName="light"
+						options={conditionOptions} 
+						value={item.condition} 
+						onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
+					/>
 					{value}
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
@@ -147,7 +256,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
-				<Icon className="dnd" />
 				<Icon className="plus" />
 				<div className="name">New filter</div>
 			</div>
@@ -219,12 +327,24 @@ class MenuFilter extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Object: 
-			case I.RelationType.Select: 
 				ret = [ 
 					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
 					{ id: I.FilterCondition.In,			 name: translate('filterConditionIn') }, 
 					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotIn') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				];
+				break;
+
+			case I.RelationType.Object: 
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
+				ret = [ 
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
+					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
 					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				];
@@ -354,7 +474,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const value = Util.parseDate(this.refObj[item.id].getValue());
 		
 		this.onChange(item.id, 'value', value);
-		this.calendarOpen(item.id, value);
+		this.onCalendar(item.id, value);
 	};
 
 	onFocusDate (e: any, item: any) {
@@ -366,7 +486,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			menu.param.data.value = value;
 			commonStore.menuUpdate('dataviewCalendar', menu.param);
 		} else {
-			this.calendarOpen(item.id, value);
+			this.onCalendar(item.id, value);
 		};
 	};
 
@@ -378,7 +498,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 	};
 
-	calendarOpen (id: number, value: number) {
+	onCalendar (id: number, value: number) {
 		commonStore.menuOpen('dataviewCalendar', {
 			element: `#menuDataviewFilter #item-${id}-value`,
 			offsetX: 0,
@@ -395,6 +515,62 @@ class MenuFilter extends React.Component<Props, {}> {
 				value: value, 
 				onChange: (value: number) => {
 					this.onChange(id, 'value', value);
+				},
+			},
+		});
+	};
+
+	onTag (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const id = [ 'item', item.id, 'value' ].join('-');
+
+		commonStore.menuOpen('dataviewOptionValues', { 
+			element: '#' + getId() + ' #' + id,
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			className: 'fromFilter',
+			data: { 
+				rootId: rootId,
+				blockId: blockId,
+				value: item.value || [], 
+				types: relation.objectTypes,
+				relation: observable.box(relation),
+				onChange: (value: any) => {
+					this.onChange(item.id, 'value', value);
+				},
+			},
+		});
+	};
+
+	onObject (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const id = [ 'item', item.id, 'value' ].join('-');
+
+		commonStore.menuOpen('dataviewObjectValues', { 
+			element: '#' + getId() + ' #' + id,
+			offsetX: 0,
+			offsetY: 4,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			className: 'fromFilter',
+			data: { 
+				rootId: rootId,
+				blockId: blockId,
+				value: item.value || [], 
+				types: relation.objectTypes,
+				relation: observable.box(relation),
+				onChange: (value: any) => {
+					this.onChange(item.id, 'value', value);
 				},
 			},
 		});

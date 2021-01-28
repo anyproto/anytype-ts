@@ -89,13 +89,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		let iconSearch = null;
 		let iconHome = (
 			<div className="iconObject c48">
-				<Icon className="home big" />
+				<div className="iconEmoji c48">
+					<Icon className="home big" />
+				</div>
 			</div>
 		);
 
 		if (showIcon) {
 			if (isRoot) {
-				iconSearch = <Icon key="icon-home" className="home" />;
+				iconSearch = <Icon key="icon-home" className="home big" />;
 			} else {
 				iconSearch = <IconObject object={details} />;
 			};
@@ -190,7 +192,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
-					coverType = I.CoverType.BgImage;
+					coverType = I.CoverType.Image;
 				};
 				withScale = false;
 			} else {
@@ -775,8 +777,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: I.PageInfo, config: any) {
-		const objectType: any = dbStore.getObjectType(it.details.type) || {};
-		if (it.details.isArchived || (!config.allowDataview && (objectType.layout == I.ObjectLayout.Set))) {
+		if (it.details.isArchived || (!config.allowDataview && (it.details.layout == I.ObjectLayout.Set))) {
 			return false;
 		};
 		return true;

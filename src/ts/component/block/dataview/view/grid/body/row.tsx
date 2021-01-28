@@ -19,11 +19,11 @@ class BodyRow extends React.Component<Props, {}> {
 		const { index, getView, onRowOver } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-
+		
 		return (
 			<tr id={'row-' + index} onMouseOver={(e: any) => { onRowOver(index); }} className="row">
 				{relations.map((relation: any, i: number) => (
-					<Cell key={'grid-cell-' + view.id + relation.relationKey} {...this.props} index={index} relation={relation} />
+					<Cell key={'grid-cell-' + view.id + relation.relationKey} {...this.props} index={index} relationKey={relation.relationKey} />
 				))}
 				<td className="cell last">&nbsp;</td>
 			</tr>

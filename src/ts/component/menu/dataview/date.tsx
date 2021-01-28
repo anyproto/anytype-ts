@@ -80,7 +80,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const { getView, relationKey } = data;
 
 		const view = getView();
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		const relation = view.getRelation(relationKey);;
 		
 		const dateOptions = this.getOptions('dateFormat');
 		const dateFormat = dateOptions.find((it: any) => { return it.id == relation.dateFormat; }) || dateOptions[0];
@@ -144,7 +144,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 
 	onKeyDown (e: any) {
@@ -199,7 +199,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 		const view = getView();
-		const relation = view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		const relation = view.getRelation(relationKey);
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const options = this.getOptions(item.key);
 		const value = options.find((it: any) => { return it.id == relation[item.key]; }) || options[0];

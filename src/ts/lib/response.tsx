@@ -337,17 +337,17 @@ const BlockDataviewRelationAdd = (response: any) => {
 	};
 };
 
-const BlockDataviewRelationSelectOptionAdd = (response: any) => {
+const BlockDataviewRecordRelationOptionAdd = (response: any) => {
 	return {
 		option: Mapper.From.SelectOption(response.getOption()),
 	};
 };
 
-const BlockDataviewRelationSelectOptionUpdate = (response: any) => {
+const BlockDataviewRecordRelationOptionUpdate = (response: any) => {
 	return {};
 };
 
-const BlockDataviewRelationSelectOptionDelete = (response: any) => {
+const BlockDataviewRecordRelationOptionDelete = (response: any) => {
 	return {};
 };
 
@@ -469,9 +469,9 @@ export {
 
 	BlockDataviewRelationAdd,
 
-	BlockDataviewRelationSelectOptionAdd,
-	BlockDataviewRelationSelectOptionUpdate,
-	BlockDataviewRelationSelectOptionDelete,
+	BlockDataviewRecordRelationOptionAdd,
+	BlockDataviewRecordRelationOptionUpdate,
+	BlockDataviewRecordRelationOptionDelete,
 
 	BlockListMove,
 	BlockListMoveToNewPage,

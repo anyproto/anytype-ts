@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
+import { Filter, MenuItemVertical } from 'ts/component';
 import { I, Util, Key, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -18,22 +18,30 @@ class MenuSelect extends React.Component<Props, {}> {
 	_isMounted: boolean = false;	
 	n: number = 0;
 	cache: any = null;
+	ref: any = null;
 	
 	constructor (props: any) {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options, value } = data;
-		const idx = options.findIndex((it: I.Option) => { return it.id == value; });
-		const scrollTo = Math.min(idx + LIMIT - 1, options.length - 1);
+		const { filter, value } = data;
+		const items = this.getItems();
+		const idx = items.findIndex((it: I.Option) => { return it.id == value; });
+		const withFilter = items.length > LIMIT;
+
+		let scrollTo = idx + 1; 
+		if (idx > LIMIT) {
+			scrollTo = Math.min(idx + LIMIT - 3, items.length - 1);
+		};
 
 		const rowRenderer = (param: any) => {
-			const item = options[param.index];
+			const item = items[param.index];
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -56,39 +64,49 @@ class MenuSelect extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={options.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => index < options.length}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={options.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									scrollToIndex={scrollTo}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			</div>
+			<React.Fragment>
+				{withFilter ?
+					<Filter ref={(ref: any) => { this.ref = ref; }} onChange={this.onFilterChange} />
+				: ''}
+				{!items.length ? (
+					<div className="item empty">No options found</div>
+				) : ''}
+
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={({ index }) => index < items.length}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={registerChild}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+										scrollToIndex={scrollTo}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
+			</React.Fragment>
 		);
 	};
 	
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options, value, noKeys } = data;
+		const { value, noKeys } = data;
+		const items = this.getItems();
 		
 		this._isMounted = true;
 		if (!noKeys) {
@@ -98,18 +116,20 @@ class MenuSelect extends React.Component<Props, {}> {
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (options[i] || {}).id; },
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		const active = options.find((it: any) => { return it.id == value });
+		const active = items.find((it: any) => { return it.id == value });
 		if (active && !active.isInitial) {
 			window.setTimeout(() => { this.setActive(active, true); }, 210);
 		};
 
+		this.focus();
 		this.resize();
 	};
 
 	componentDidUpdate () {
+		this.focus();
 		this.resize();
 	};
 	
@@ -132,13 +152,25 @@ class MenuSelect extends React.Component<Props, {}> {
 	unbind () {
 		$(window).unbind('keydown.menu');
 	};
+
+	focus () {
+		window.setTimeout(() => { 
+			if (this.ref) {
+				this.ref.focus(); 
+			};
+		}, 15);
+	};
 	
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { options } = data;
-		
-		return options || [];
+		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+
+		let items = data.options || [];
+		if (data.filter) {
+			items = items.filter((it: any) => { return it.name.match(filter); });
+		};
+		return items || [];
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
@@ -146,7 +178,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -230,13 +262,24 @@ class MenuSelect extends React.Component<Props, {}> {
 		};
 	};
 
-	resize () {
-		const { id, position } = this.props;
-		const items = this.getItems();
-		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+	onFilterChange (v: string) {
+		this.props.param.data.filter = v;
+	};
 
-		obj.css({ height: height });
+	resize () {
+		const { position, getId } = this.props;
+		const items = this.getItems();
+		const obj = $('#' + getId());
+		const content = obj.find('.content');
+		const length = Math.max(items.length, 1);
+		const offset = length > LIMIT ? 58 : 16;
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, length * HEIGHT + offset));
+
+		content.css({ height: height });
+
+		if (length > LIMIT) {
+			obj.addClass('withFilter');
+		};
 		position();
 	};
 

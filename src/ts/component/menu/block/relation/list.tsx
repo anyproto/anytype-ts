@@ -18,6 +18,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -30,7 +31,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const idPrefix = 'menuBlockRelationListCell';
 
 		let relations = dbStore.getRelations(rootId, rootId).filter((it: I.Relation) => { return !it.isHidden; });
-		if (filter) {
+		if (data.filter) {
 			relations = relations.filter((it: I.Relation) => { return it.name.match(filter); });
 		};
 
@@ -40,12 +41,12 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 			return (
 				<div className="item sides" onClick={(e: any) => { this.onSelect(e, relation); }}>
 					<div className="info">
-						<Icon className={'relation c-' + DataUtil.relationClass(relation.format)} />
+						<Icon className={'relation ' + DataUtil.relationClass(relation.format)} />
 						{relation.name}
 					</div>
 					<div
 						id={id} 
-						className={[ 'cell', 'c-' + DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
+						className={[ 'cell', DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
 						onClick={(e: any) => { this.onCellClick(e, relation.relationKey, 0); }}
 					>
 						<Cell 
@@ -60,8 +61,10 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
-							pageContainer={$('#menuBlockRelationList')}
+							scrollContainer={Util.getEditorScrollContainer('menu')}
+							pageContainer={Util.getEditorPageContainer('menu')}
 							readOnly={readOnly}
+							optionCommand={this.optionCommand}
 						/>
 					</div>
 				</div>
@@ -77,12 +80,17 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		$('body').addClass('over');
+	};
+
 	componentDidUpdate () {
 		this.props.position();
 	};
 
 	componentWillUnmount () {
 		commonStore.menuCloseAll();
+		$('body').removeClass('over');
 	};
 
 	onSelect (e: any, item: any) {
@@ -122,6 +130,22 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		C.BlockSetDetails(rootId, [ 
 			{ key: key, value: value },
 		]);
+	};
+
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+		switch (code) {
+			case 'add':
+				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
+				break;
+
+			case 'update':
+				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
+				break;
+
+			case 'delete':
+				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
+				break;
+		};
 	};
 
 };

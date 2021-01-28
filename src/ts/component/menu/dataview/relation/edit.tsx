@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, translate } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -32,6 +32,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	render () {
 		const relation = this.getRelation();
+		const viewRelation = this.getViewRelation();
 		const { objectTypes } = dbStore;
 
 		let opts = null;
@@ -57,7 +58,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<div className="item">
 								<Icon className="clock" />
 								<div className="name">Include time</div>
-								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+								<Switch value={viewRelation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 							</div>
 
 							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
@@ -69,8 +70,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<div className="line" />
 
 							<div className="sectionName">Object type</div>
-							<div id="item-object-type" className="item" onClick={this.onObjectType}>
-							</div>
 							<MenuItemVertical 
 								id="object-type" 
 								name={objectType ? objectType.name : 'Select object type'} 
@@ -93,8 +92,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
 					id="relation-type" 
-					icon={'relation c-' + DataUtil.relationClass(this.format)} 
-					name={Constant.relationName[this.format]} 
+					icon={'relation ' + DataUtil.relationClass(this.format)} 
+					name={translate('relationName' + this.format)} 
 					onClick={this.onRelationType} 
 					arrow={!relation}
 				/>
@@ -118,6 +117,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	componentDidMount() {
 		const relation = this.getRelation();
+
 		if (relation) {
 			this.format = relation.format;
 			this.forceUpdate();
@@ -147,7 +147,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	onRelationType (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const relation = this.getRelation();
+		const relation = this.getViewRelation();
 		
 		if (relation) {
 			return;
@@ -176,7 +176,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
-			return { ...it, object: it, id: DataUtil.schemaField(it.url) };
+			it.layout = I.ObjectLayout.ObjectType;
+			return { 
+				...it, 
+				object: it, 
+				id: DataUtil.schemaField(it.url), 
+			};
 		});
 
 		options.sort((c1: any, c2: any) => {
@@ -220,7 +225,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 		const view = getView();
-		const relation = this.getRelation();
+		const relation = this.getViewRelation();
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
 		relation.includeTime = v;
@@ -304,7 +309,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		const relation = this.getRelation();
+		const relation = this.getViewRelation();
 		const newRelation: any = { name: name, format: this.format };
 
 		if (this.format == I.RelationType.Object) {
@@ -312,7 +317,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
-
 		close();
 	};
 
@@ -330,18 +334,25 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const relation = this.getRelation();
+		const relation = this.getViewRelation();
 		
 		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view);
 	};
 
-	getRelation (): I.ViewRelation {
+	getRelation (): I.Relation {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, relationKey } = data;
+
+		return dbStore.getRelation(rootId, blockId, relationKey);
+	};
+
+	getViewRelation (): I.ViewRelation {
 		const { param } = this.props;
 		const { data } = param;
 		const { relationKey, getView } = data;
-		const view = getView();
 
-		return view.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+		return getView().getRelation(relationKey);
 	};
 
 };

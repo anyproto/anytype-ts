@@ -15,7 +15,6 @@ interface Props {
 	multiple?: boolean;
 	readOnly?: boolean;
 	accept?: string;
-	mask?: string;
 	maskOptions?: any;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
@@ -115,16 +114,15 @@ class Input extends React.Component<Props, State> {
 	};
 
 	initMask () {
-		let { mask, maskOptions } = this.props;
-		if (!mask || !this._isMounted) {
+		let { maskOptions } = this.props;
+		if (!maskOptions || !this._isMounted) {
 			return;
 		};
 
 		maskOptions = maskOptions || {};
-		maskOptions.positionCaretOnClick = 'ignore';
 
 		const node = $(ReactDOM.findDOMNode(this));
-		new Inputmask(mask, { ...maskOptions }).mask(node.get(0));
+		new Inputmask(maskOptions.mask, maskOptions).mask(node.get(0));
 	};
 
 	onChange (e: any) {
@@ -187,7 +185,7 @@ class Input extends React.Component<Props, State> {
 				return;
 			};
 			
-			$(ReactDOM.findDOMNode(this)).focus(); 
+			$(ReactDOM.findDOMNode(this)).get(0).focus({ preventScroll: true }); 
 		});
 	};
 	
@@ -248,7 +246,7 @@ class Input extends React.Component<Props, State> {
 		this.focus();
 		
 		let node = $(ReactDOM.findDOMNode(this));
-		node.get(0).setSelectionRange(range.from, range.to);
+		window.setTimeout(() => { node.get(0).setSelectionRange(range.from, range.to); });
 	};
 	
 	addClass (v: string) {

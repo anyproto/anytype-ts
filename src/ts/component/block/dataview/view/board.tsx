@@ -24,17 +24,6 @@ class ViewBoard extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, getView } = this.props;
-		const view = getView();
-		const group = view.relations.find((item: I.Relation) => { return item.relationKey == GROUP; });
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-
-		if (!group) {
-			return null;
-		};
-
-		const data = dbStore.getData(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
 		const columns = this.getColumns();
 		
 		return (

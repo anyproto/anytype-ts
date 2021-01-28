@@ -61,7 +61,22 @@ class Util {
 	objectLength (o: any) {
 		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
 	};
-	
+
+	objectClear (o: any) {
+		for (let k in o) {
+			if ('object' == typeof(o[k])) {
+				o[k] = this.objectClear(o[k]);
+				if (!this.objectLength(o[k])) {
+					delete(o[k]);
+				};
+			} else 
+			if (!o[k]) {
+				delete(o[k]);
+			};
+		};
+		return o;
+	};
+
 	objectCompare (o1: any, o2: any): boolean {
 		o1 = o1 || {};
 		o2 = o2 || {};
@@ -423,13 +438,18 @@ class Util {
 	};
 
 	fileIcon (obj: any): string {
-		const name = String(obj.name || '');
-		const mime = String(obj.mime || obj.fileMimeType || '');
-		const a: string[] = name.split('.');
-		const e = a[a.length - 1];
+		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
+		const e = String(obj.fileExt || '');
 
 		let t: string[] = [];
 		let icon = '';
+
+		if (mime) {
+			let a: string[] = mime.split(';');
+			if (a.length) {
+				t = a[0].split('/');
+			};
+		};
 
 		if ([ 'm4v' ].indexOf(e) >= 0) {
 			icon = 'video';
@@ -447,17 +467,6 @@ class Util {
 			icon = 'table';
 		};
 		
-		if (icon) {
-			return icon;
-		};
-		
-		if (mime) {
-			let a: string[] = mime.split(';');
-			if (a.length) {
-				t = a[0].split('/');
-			};
-		};
-
 		if (t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
@@ -479,7 +488,7 @@ class Util {
 				icon = 'table';
 			};
 		};
-		
+
 		return String(icon || 'other');
 	};
 	
@@ -706,18 +715,36 @@ class Util {
 	};
 
 	intercept (obj: any, change: any) {
-		if (change.name == 'relations') {
-			return change;
-		};
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getEditorScrollContainer (isPopup: boolean) {
-		return isPopup ? $('#popupEditorPage .selection') : $(window);
+	getEditorScrollContainer (type: string) {
+		switch (type) {
+			default:
+			case 'page':
+				return 'body';
+
+			case 'popup':
+				return '#popupEditorPage .selection';
+
+			case 'menu':
+				return '#menuBlockRelationList .content';
+
+		};
 	};
 
-	getEditorPageContainer (isPopup: boolean) {
-		return isPopup ? $('#popupEditorPage') : $('.pageMainEdit');
+	getEditorPageContainer (type: string) {
+		switch (type) {
+			default:
+			case 'page':
+				return '.pageMainEdit';
+
+			case 'popup':
+				return '#popupEditorPage';
+
+			case 'menu':
+				return '#menuBlockRelationList';
+		};
 	};
 
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Input, MenuItemVertical } from 'ts/component';
-import { I, C, Util, Key, keyboard, translate } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { Filter, MenuItemVertical } from 'ts/component';
+import { I, C, Util, Key, keyboard } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -17,6 +17,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 20;
+const MENU_ID = 'dataviewObjectValues';
 
 @observer
 class MenuDataviewObjectList extends React.Component<Props, State> {
@@ -81,9 +82,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<div className="filter">
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} onChange={this.onFilterChange} />
-				</div>
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter objects..." onChange={this.onFilterChange} />
 
 				<div className="items">
 					<InfiniteLoader
@@ -120,11 +119,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.load();
-
-		window.setTimeout(() => {
-			this.ref.focus();
-		}, 15);
+		this.focus();
+		this.load(false);
 	};
 
 	componentDidUpdate () {
@@ -137,7 +133,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		if (filter != this.filter) {
 			this.offset = 0;
 			this.filter = filter;
-			this.load();
+			this.load(true);
 			return;
 		};
 
@@ -148,19 +144,34 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		});
 
 		this.resize();
+		this.focus();
 		this.setActive(items[n]);
-
-		window.setTimeout(() => {
-			this.ref.focus();
-		}, 15);
 	};
 	
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
 		this._isMounted = false;
 		this.unbind();
+		
+		if (rebind) {
+			rebind();
+		};
+	};
+
+	focus () {
+		window.setTimeout(() => { 
+			if (this.ref) {
+				this.ref.focus(); 
+			};
+		}, 15);
 	};
 
 	rebind () {
+		this.unbind();
+
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
@@ -175,25 +186,32 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		const { n } = this.state;
-		this.props.setActiveItem((item ? item : items[n]), scroll);
+		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
-	load (callBack?: (message: any) => void) {
+	load (clear: boolean, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters = [
-			{ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types },
-		];
+
+		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		if (types && types.length) {
+			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
+		};
 
 		this.setState({ loading: true });
 
 		C.ObjectSearch(filters, sorts, filter, this.offset, 1000000, (message: any) => {
 			if (callBack) {
 				callBack(message);
+			};
+
+			if (clear) {
+				this.items = [];
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
@@ -208,26 +226,11 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
 			this.offset += LIMIT;
-			this.load(resolve);
+			this.load(false, resolve);
 		});
 	};
 
-	filterItems (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		
-		if (!filter) {
-			return this.items;
-		};
-
-		const reg = new RegExp(filter.split(' ').join('[^\s]*|') + '[^\s]*', 'i');
-		return this.items.filter((it: any) => { return it.name.match(reg); });
-	};
-
-	onFilterChange (e: any, v: string) {
-		//this.filter = v;
-		//this.setState({ n: 0 });
+	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
 	};
 
@@ -305,16 +308,18 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		value = Util.arrayUnique(value);
 
 		data.value = value;
+
+		commonStore.menuUpdateData(MENU_ID, { value: value });
 		onChange(value);
 
 		position();
 	};
 
 	resize () {
-		const { id, position } = this.props;
+		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 16));
+		const obj = $('#' + getId() + ' .content');
+		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();

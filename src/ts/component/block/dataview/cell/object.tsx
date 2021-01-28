@@ -108,8 +108,8 @@ class CellObject extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		let value = record[relation.relationKey];
-		if (!value || ('object' != typeof(value))) {
-			value = [];
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
 		};
 		return Util.objectCopy(value);
 	};

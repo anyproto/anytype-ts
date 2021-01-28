@@ -8,6 +8,7 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
+const SORT_IDS = [ 'blockShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
 const { app } = window.require('electron').remote;
@@ -169,7 +170,7 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
-			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(event.toObject(), null, 3)); };
+			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(Util.objectClear(event.toObject()), null, 3)); };
 
 			if (debugThread && (type == 'threadStatus')) {
 				log();
@@ -229,10 +230,17 @@ class Dispatcher {
 					break;
 
 				case 'blockSetDetails':
+					id = data.getId();
+					const details = Decode.decodeStruct(data.getDetails());
+
 					blockStore.detailsUpdate(rootId, {
-						id: data.getId(),
-						details: Decode.decodeStruct(data.getDetails()),
+						id: id,
+						details: details,
 					});
+
+					if ((id == rootId) && (undefined !== details.layout)) {
+						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+					};
 					break;
 
 				case 'blockSetFields':
@@ -525,10 +533,6 @@ class Dispatcher {
 					const item = dbStore.getRelation(rootId, id, relation.relationKey);
 
 					item ? dbStore.relationUpdate(rootId, id, relation) : dbStore.relationAdd(rootId, id, relation);
-
-					viewId = dbStore.getMeta(rootId, id).viewId;
-					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					set(view, { relations: DataUtil.viewGetRelations(rootId, id, view) });
 					break;
 
 				case 'blockDataviewRelationDelete':
@@ -539,10 +543,6 @@ class Dispatcher {
 					};
 
 					dbStore.relationRemove(rootId, id, data.getRelationkey());
-
-					viewId = dbStore.getMeta(rootId, id).viewId;
-					view = block.content.views.find((it: any) => { return it.id == viewId; });
-					set(view, { relations: DataUtil.viewGetRelations(rootId, id, view) });
 					break;
 
 				case 'processNew':
@@ -586,27 +586,14 @@ class Dispatcher {
 		let type1 = this.eventType(c1.getValueCase());
 		let type2 = this.eventType(c2.getValueCase());
 
-		if ((type1 == 'blockAdd') && (type2 != 'blockAdd')) {
-			return -1;
+		for (let id of SORT_IDS) {
+			if ((type1 == id) && (type2 != id)) {
+				return -1;
+			};
+			if ((type2 == id) && (type1 != id)) {
+				return 1;
+			};
 		};
-		if ((type2 == 'blockAdd') && (type1 != 'blockAdd')) {
-			return 1;
-		};
-
-		if ((type1 == 'blockDelete') && (type2 != 'blockDelete')) {
-			return -1;
-		};
-		if ((type2 == 'blockDelete') && (type1 != 'blockDelete')) {
-			return 1;
-		};
-
-		if ((type1 == 'blockSetChildrenIds') && (type2 != 'blockSetChildrenIds')) {
-			return -1;
-		};
-		if ((type2 == 'blockSetChildrenIds') && (type1 != 'blockSetChildrenIds')) {
-			return 1;
-		};
-
 		return 0;
 	};
 
@@ -616,12 +603,11 @@ class Dispatcher {
 		blockStore.detailsSet(rootId, details);
 
 		const object = blockStore.getDetails(rootId, rootId);
-		const objectType: any = dbStore.getObjectType(object.type) || {};
 
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
 				it.type = I.BlockType.Page;
-				it.layout = objectType ? objectType.layout : I.ObjectLayout.Page;
+				it.layout = object.layout;
 			};
 
 			if (it.type == I.BlockType.Dataview) {
@@ -690,7 +676,7 @@ class Dispatcher {
 				};
 
 				if (debug) {
-					console.log('[Dispatcher.callback]', type, JSON.stringify(response.toObject(), null, 3));
+					console.log('[Dispatcher.callback]', type, JSON.stringify(Util.objectClear(response.toObject()), null, 3));
 				};
 
 				if (message.event) {

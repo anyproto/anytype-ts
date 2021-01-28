@@ -10,10 +10,8 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		const { id, icon, object, inner, name, menuId, description, caption, color, arrow, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
-		
+		let { id, icon, object, inner, name, menuId, description, caption, color, arrow, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
 		let cn = [ 'item' ];
-		let objectType: any = null;
 
 		if (className) {
 			cn.push(className);
@@ -36,7 +34,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		if (menuId && commonStore.menuIsOpen(menuId)) {
 			cn.push('active');
 		};
-		
+
 		let element = null;
 		if (object) {
 			element = <IconObject object={object} size={iconSize} />;

@@ -6,6 +6,7 @@
 		.item { padding: 4px 40px 4px 10px; line-height: 28px; position: relative; white-space: nowrap; }
 		.item {
 			.icon.dnd { vertical-align: top; margin-top: 4px; }
+			.icon.delete { opacity: 1; }
 			.input { 
 				flex-shrink: 2; border-radius: 4px; border: solid 1px #d2d0c2; padding: 0px 6px; height: 28px; width: 160px; 
 				user-select: text;
@@ -14,9 +15,20 @@
 			.icon.checkbox { width: 24px; height: 24px; margin-top: 3px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-			.select { flex-shrink: 0; vertical-align: top; }
+			.select { vertical-align: top; max-width: 150px; overflow: hidden; }
 			.select.operator { width: auto; }
 			.select.operator .name { overflow: visible; }
+			.select:last-child { margin: 0px; }
+
+			.select {
+				.element { display: inline-block; margin-right: 6px; line-height: 20px; }
+				.element {
+					.name { max-width: calc(100% - 24px); }
+					.tagItem { vertical-align: top; margin-top: 1px; }
+				}
+			}
+			.select.isList { margin: 0px; }
+			.select.isList.withValues { padding-right: 0px; }
 
 			.txt { height: 28px; line-height: 28px; margin-right: 8px; display: inline-block; vertical-align: top; }
 		}

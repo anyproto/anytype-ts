@@ -28,7 +28,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const sections = this.getSections();
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType } = details;
-		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
+		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 
 		const Section = (item: any) => (
 			<div className="section">
@@ -86,7 +86,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 					return;
 				};
 
-				DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash, 0, -0.5);
+				DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash, 0, -0.5);
 
 				if (onUpload) {
 					onUpload();
@@ -158,31 +158,31 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			{ name: 'Solid colors', children: DataUtil.coverColors() },
 
 			{ name: 'Art Institute of Chicago – Impressionism', children: [
-				{ type: I.CoverType.BgImage, id: 'the-crystal-pallace', name: 'Camille Pissarro - The Crystal Palace' },
-				{ type: I.CoverType.BgImage, id: 'the-little-pond', name: 'Childe Hassam - The Little Pond' },
-				{ type: I.CoverType.BgImage, id: 'walk-at-pourville', name: 'Claude Monet Cliff Walk at Pourville' },
-				{ type: I.CoverType.BgImage, id: 'poppy-field', name: 'Claude Monet Poppy Field' },
-				{ type: I.CoverType.BgImage, id: 'ballet', name: 'Edgar Degas Ballet at the Paris Opéra' },
-				{ type: I.CoverType.BgImage, id: 'flower-girl', name: 'George Hitchcock Flower Girl in Holland' },
-				{ type: I.CoverType.BgImage, id: 'fruits-midi', name: 'Pierre-Auguste Renoir Fruits of the Midi' },
-				{ type: I.CoverType.BgImage, id: 'autumn', name: 'Wilson H. Irvine Autumn' },
+				{ type: I.CoverType.Image, id: 'the-crystal-pallace', name: 'Camille Pissarro - The Crystal Palace' },
+				{ type: I.CoverType.Image, id: 'the-little-pond', name: 'Childe Hassam - The Little Pond' },
+				{ type: I.CoverType.Image, id: 'walk-at-pourville', name: 'Claude Monet Cliff Walk at Pourville' },
+				{ type: I.CoverType.Image, id: 'poppy-field', name: 'Claude Monet Poppy Field' },
+				{ type: I.CoverType.Image, id: 'ballet', name: 'Edgar Degas Ballet at the Paris Opéra' },
+				{ type: I.CoverType.Image, id: 'flower-girl', name: 'George Hitchcock Flower Girl in Holland' },
+				{ type: I.CoverType.Image, id: 'fruits-midi', name: 'Pierre-Auguste Renoir Fruits of the Midi' },
+				{ type: I.CoverType.Image, id: 'autumn', name: 'Wilson H. Irvine Autumn' },
 			] as any[] },
 
 			{ name: 'Art Institute of Chicago – Pop Art', children: [
-				{ type: I.CoverType.BgImage, id: 'big-electric-chair', name: 'Andy Warhol Big Electric Chair' },
-				{ type: I.CoverType.BgImage, id: 'flowers', name: 'Andy Warhol Flowers' },
-				{ type: I.CoverType.BgImage, id: 'sunday-morning', name: 'David Hockney Sunday Morning' },
-				{ type: I.CoverType.BgImage, id: 'japan', name: 'David Hockney Inland Sea, Japan' },
-				{ type: I.CoverType.BgImage, id: 'grass', name: 'James Rosenquist Spaghetti and Grass' },
-				{ type: I.CoverType.BgImage, id: 'butter', name: 'James Rosenquist Whipped Butter for Eugene Ruchin' },
-				{ type: I.CoverType.BgImage, id: 'medication', name: 'Roy Lichtenstein Artist’s Studio "Foot Medication"' },
-				{ type: I.CoverType.BgImage, id: 'landscape3', name: 'Roy Lichtenstein Landscape 3' },
+				{ type: I.CoverType.Image, id: 'big-electric-chair', name: 'Andy Warhol Big Electric Chair' },
+				{ type: I.CoverType.Image, id: 'flowers', name: 'Andy Warhol Flowers' },
+				{ type: I.CoverType.Image, id: 'sunday-morning', name: 'David Hockney Sunday Morning' },
+				{ type: I.CoverType.Image, id: 'japan', name: 'David Hockney Inland Sea, Japan' },
+				{ type: I.CoverType.Image, id: 'grass', name: 'James Rosenquist Spaghetti and Grass' },
+				{ type: I.CoverType.Image, id: 'butter', name: 'James Rosenquist Whipped Butter for Eugene Ruchin' },
+				{ type: I.CoverType.Image, id: 'medication', name: 'Roy Lichtenstein Artist’s Studio "Foot Medication"' },
+				{ type: I.CoverType.Image, id: 'landscape3', name: 'Roy Lichtenstein Landscape 3' },
 			] as any[] },
 
 			{ name: 'Art Institute of Chicago – Surrealism', children: [
-				{ type: I.CoverType.BgImage, id: 'third-sleep', name: 'Kay Sage In the Third Sleep' },
-				{ type: I.CoverType.BgImage, id: 'banquet', name: 'René Magritte The Banquet' },
-				{ type: I.CoverType.BgImage, id: 'chemist', name: 'Salvador Dalí A Chemist Lifting with Extreme Precaution the Cuticle of a Grand Piano' },
+				{ type: I.CoverType.Image, id: 'third-sleep', name: 'Kay Sage In the Third Sleep' },
+				{ type: I.CoverType.Image, id: 'banquet', name: 'René Magritte The Banquet' },
+				{ type: I.CoverType.Image, id: 'chemist', name: 'Salvador Dalí A Chemist Lifting with Extreme Precaution the Cuticle of a Grand Piano' },
 			] as any[] },
 
 			{ name: 'Gradients', children: [

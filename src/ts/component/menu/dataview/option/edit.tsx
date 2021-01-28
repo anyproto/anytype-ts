@@ -7,6 +7,8 @@ import { commonStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
+const $ = require('jquery');
+
 @observer
 class MenuOptionEdit extends React.Component<Props, {}> {
 	
@@ -39,7 +41,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 				<div className="line" />
 				{colors.map((action: any, i: number) => {
 					let inner = <div className={'inner bgColor bgColor-' + action.className} />;
-					return <MenuItemVertical id={i} key={i} {...action} icon="color" inner={inner} className={action.value == option.color ? 'active' : ''} onClick={(e: any) => { this.onColor(e, action); }} />;
+					return <MenuItemVertical id={i} key={i} {...action} icon="color" inner={inner} isActive={action.value == option.color} onClick={(e: any) => { this.onColor(e, action); }} />;
 				})}
 			</div>
 		);
@@ -51,6 +53,27 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const { option } = data;
 
 		this.color = option.color;
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
+		this.unbind();
+		
+		if (rebind) {
+			rebind();
+		};
+	};
+
+	rebind () {
+		this.unbind();
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
 	};
 
 	onSubmit (e: any) {
@@ -68,46 +91,49 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	onRemove (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId, onChange } = data;
+		const { option, rootId, blockId, record, onChange, optionCommand } = data;
 		const relation = data.relation.get();
 		const { menus } = commonStore;
 		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
-		C.BlockDataviewRelationSelectOptionDelete(rootId, blockId, relation.relationKey, option.id);
+		optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option.id);
 
 		let value = Util.objectCopy(data.value || []);
 		value = value.filter((it: any) => { return it != option.id; });
 		value = Util.arrayUnique(value);
 
-		onChange(value);
+		this.props.param.data.value = value;
 
-		if (menu) {
-			menu.param.data.value = value;
-			menu.param.data.relation = observable.box(relation);
-			commonStore.menuUpdate('dataviewOptionList', menu.param);
+		const nd = { 
+			value: value, 
+			relation: observable.box(relation),
 		};
+		commonStore.menuUpdateData('dataviewOptionList', nd);
+		commonStore.menuUpdateData('dataviewOptionValues', nd);
 		
+		onChange(value);
 		close();
 	};
 
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { option, rootId, blockId } = data;
+		const { option, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
-		const idx = relation.selectDict.findIndex((it: any) => { return it.text == option.text; });
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewOptionList'; });
+		const idx = relation.selectDict.findIndex((it: any) => { return it.id == option.id; });
 
-		relation.selectDict[idx].text = this.ref.getValue();
-		relation.selectDict[idx].color = this.color;
-		C.BlockDataviewRelationSelectOptionUpdate(rootId, blockId, relation.relationKey, relation.selectDict[idx]);
+		option.text = this.ref.getValue();
+		option.color = this.color;
 
-		if (menu) {
-			menu.param.data.relation = observable.box(relation);
-			commonStore.menuUpdate('dataviewOptionList', menu.param);
-		};
+		relation.selectDict[idx] = option;
+		optionCommand('update', rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);
+
+		const nd = { relation: observable.box(relation) };
+		this.props.param.data.option = option;
+
+		commonStore.menuUpdateData('dataviewOptionList', nd);
+		commonStore.menuUpdateData('dataviewOptionValues', nd);
 	};
 	
 };

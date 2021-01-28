@@ -89,7 +89,7 @@ class CommonStore {
 	};
 
 	coverSetDefault () {
-		this.coverSet('c' + Constant.default.cover, '', I.CoverType.BgImage);
+		this.coverSet('c' + Constant.default.cover, '', I.CoverType.Image);
 	};
 	
 	@action
@@ -189,7 +189,7 @@ class CommonStore {
 	menuOpen (id: string, param: I.MenuParam) {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
-		
+
 		if (!param.element) {
 			console.error('[menuOpen] Element is not defined');
 			return;
@@ -208,19 +208,30 @@ class CommonStore {
 
 	@action
 	menuUpdate (id: string, param: any) {
-		const item = this.menuList.find((item: I.Menu) => { return item.id == id; });
-		if (!item) {
-			return;
+		const item = this.menuGet(id);
+		if (item) {
+			set(item, observable({ param: Object.assign(item.param, param) }));
 		};
-
-		set(item, observable({ param: Object.assign(item.param, param) }));
 	};
-	
+
+	@action
+	menuUpdateData (id: string, data: any) {
+		const item = this.menuGet(id);
+		if (item) {
+			item.param.data = Object.assign(item.param.data, data);
+			this.menuUpdate(id, item.param);
+		};
+	};
+
+	menuGet (id: string): I.Menu {
+		return this.menuList.find((item: I.Menu) => { return item.id == id; });
+	};
+
 	menuIsOpen (id?: string): boolean {
 		if (!id) {
 			return this.menuList.length > 0;
 		};
-		return this.menuList.find((item: I.Menu) => { return item.id == id; }) ? true : false;
+		return this.menuGet(id) ? true : false;
 	};
 
 	menuIsOpenList (ids: string[]) {
@@ -234,7 +245,7 @@ class CommonStore {
 	
 	@action
 	menuClose (id: string, callBack?: () => void) {
-		const item: I.Menu = this.menuList.find((item: I.Menu) => { return item.id == id; });
+		const item = this.menuGet(id);
 
 		if (!item) {
 			if (callBack) {

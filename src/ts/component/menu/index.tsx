@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, keyboard, Util } from 'ts/lib';
+import { Dimmer } from 'ts/component';
 import { commonStore } from 'ts/store';
 
 import MenuHelp from './help';
@@ -34,6 +35,7 @@ import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewObjectType from './dataview/object/type';
 import MenuDataviewObjectList from './dataview/object/list';
+import MenuDataviewObjectValues from './dataview/object/values';
 import MenuDataviewFilter from './dataview/filter';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
@@ -41,6 +43,7 @@ import MenuDataviewViewEdit from './dataview/view/edit';
 import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
+import MenuDataviewOptionValues from './dataview/option/values';
 import MenuDataviewDate from './dataview/date';
 import MenuDataviewMedia from './dataview/media';
 import MenuDataviewText from './dataview/text';
@@ -62,13 +65,14 @@ class Menu extends React.Component<Props, {}> {
 		
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
-		this.setActiveItem = this.setActiveItem.bind(this);
+		this.setHover = this.setHover.bind(this);
+		this.getId = this.getId.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
 		const { id, param } = this.props;
-		const { type, vertical, horizontal } = param;
+		const { type, vertical, horizontal, passThrough } = param;
 		
 		const Components: any = {
 			help:					 MenuHelp,
@@ -102,8 +106,10 @@ class Menu extends React.Component<Props, {}> {
 			dataviewRelationType:	 MenuDataviewRelationType,
 			dataviewObjectType:		 MenuDataviewObjectType,
 			dataviewObjectList:		 MenuDataviewObjectList,
+			dataviewObjectValues:	 MenuDataviewObjectValues,
 			dataviewOptionList:		 MenuDataviewOptionList,
 			dataviewOptionEdit:		 MenuDataviewOptionEdit,
+			dataviewOptionValues:	 MenuDataviewOptionValues,
 			dataviewFilter:			 MenuDataviewFilter,
 			dataviewSort:			 MenuDataviewSort,
 			dataviewViewList:		 MenuDataviewViewList,
@@ -114,7 +120,7 @@ class Menu extends React.Component<Props, {}> {
 			dataviewText:			 MenuDataviewText,
 		};
 		
-		const menuId = Util.toCamelCase('menu-' + id);
+		const menuId = this.getId();
 		const Component = Components[id];
 		const cn = [ 
 			'menu', 
@@ -123,6 +129,7 @@ class Menu extends React.Component<Props, {}> {
 			'v' + vertical,
 			'h' + horizontal
 		];
+		const cd = [];
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>
@@ -131,12 +138,25 @@ class Menu extends React.Component<Props, {}> {
 		if (param.className) {
 			cn.push(param.className);
 		};
+
+		if (passThrough) {
+			cd.push('through');
+		};
 		
 		return (
-			<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
-				<div className="content">
-					<Component {...this.props} setActiveItem={this.setActiveItem} position={this.position} close={this.close} />
+			<div className="menuWrap">
+				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
+					<div className="content">
+						<Component 
+							{...this.props} 
+							setHover={this.setHover} 
+							getId={this.getId} 
+							position={this.position} 
+							close={this.close} 
+						/>
+					</div>
 				</div>
+				<Dimmer onClick={() => { commonStore.menuClose(id); }} className={cd.join(' ')} />
 			</div>
 		);
 	};
@@ -148,7 +168,13 @@ class Menu extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+
 		win.on('resize.menu', () => { this.position(); });
+
+		if (commonStore.popupIsOpen()) {
+			node.addClass('fromPopup');
+		};
 	};
 	
 	componentWillUnmount () {
@@ -174,8 +200,10 @@ class Menu extends React.Component<Props, {}> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
-			node.addClass('show');
-			window.setTimeout(() => { node.css({ transform: 'none' }); }, 210);
+			const menu = node.find('.menu');
+
+			menu.addClass('show');
+			window.setTimeout(() => { menu.css({ transform: 'none' }); }, 210);
 		});
 	};
 	
@@ -196,17 +224,18 @@ class Menu extends React.Component<Props, {}> {
 			};
 			
 			if (!el || !el.length) {
-				console.error('[Menu.position]', id, 'element not found', element);
+				console.log('[Menu.position]', id, 'element not found', element);
 				return;
 			};
 
 			const win = $(window);
 			const node = $(ReactDOM.findDOMNode(this));
+			const menu = node.find('.menu');
 			const ww = win.width();
 			const wh = win.scrollTop() + win.height();
 			const offset = el.offset();
-			const width = param.width ? param.width : node.outerWidth();
-			const height = node.outerHeight();
+			const width = param.width ? param.width : menu.outerWidth();
+			const height = menu.outerHeight();
 			const ew = el.outerWidth();
 			const eh = el.outerHeight();
 
@@ -265,7 +294,7 @@ class Menu extends React.Component<Props, {}> {
 				css.width = param.width;
 			};
 
-			node.css(css);
+			menu.css(css);
 			
 			if (isSub) {
 				const coords = keyboard.coords;
@@ -300,15 +329,17 @@ class Menu extends React.Component<Props, {}> {
 		};
 	};
 	
-	setActiveItem (item?: any, scroll?: boolean) {
-		const node = $(Util.toCamelCase('#menu-' + this.props.id));
-		node.find('.item.hover').removeClass('hover');
+	setHover (item?: any, scroll?: boolean) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const menu = node.find('.menu');
+
+		menu.find('.item.hover').removeClass('hover');
 
 		if (!item) {
 			return;
 		};
 
-		const el = node.find('#item-' + item.id).addClass('hover');
+		const el = menu.find('#item-' + item.id).addClass('hover');
 		if (el.length && scroll) {
 			const content = node.find('.content');
 			const st = content.scrollTop();
@@ -320,7 +351,11 @@ class Menu extends React.Component<Props, {}> {
 			content.stop(true, true).animate({ scrollTop: top }, 100);
 		};
 	};
-	
+
+	getId (): string {
+		return Util.toCamelCase('menu-' + this.props.id);
+	};
+
 };
 
 export default Menu;

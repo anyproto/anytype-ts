@@ -13,6 +13,7 @@ interface Props extends I.Cell {
 	relationKey?: string;
 	storeId?: string;
 	menuClassName?: string;
+	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
 const $ = require('jquery');
@@ -44,7 +45,7 @@ class Cell extends React.Component<Props, {}> {
 		const canEdit = this.canEdit();
 		const cn = [ 
 			'cellContent', 
-			'c-' + DataUtil.relationClass(relation.format), 
+			DataUtil.relationClass(relation.format), 
 			(this.canEdit() ? 'canEdit' : ''), 
 			(relationKey == 'name' ? 'isName' : ''),
 		];
@@ -58,8 +59,9 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Date:
 				CellComponent = CellText;
 				break;
-				
-			case I.RelationType.Select:
+
+			case I.RelationType.Status:	
+			case I.RelationType.Tag:
 				CellComponent = CellSelect;
 				break;
 				
@@ -99,7 +101,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -110,7 +112,7 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
-		const body = $('body');
+		const win = $(window);
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const cell = $('#' + id).addClass('isEditing');
 		const element = cell.find('.cellContent');
@@ -118,8 +120,10 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
-		const page = $(pageContainer);
-		const menuIds = [ 'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewOptionList', 'dataviewMedia', 'dataviewCalendar' ];
+		const menuIds = [ 
+			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionValues', 
+			'dataviewOptionList', 'dataviewOptionEdit', 'dataviewMedia', 'dataviewCalendar',
+		];
 
 		let menuId = '';
 		let setOn = () => {
@@ -133,8 +137,9 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.onClick();
 			};
 			if (menuId) {
-				body.addClass('over');
+				$(scrollContainer).addClass('over');
 			};
+			win.trigger('resize');
 		};
 
 		let setOff = () => {
@@ -144,10 +149,9 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.setEditing(false);
 			};
 			if (menuId) {
-				body.removeClass('over');
+				$(scrollContainer).removeClass('over');
 			};
 		};
-
 
 		let param: I.MenuParam = { 
 			element: element,
@@ -167,6 +171,8 @@ class Cell extends React.Component<Props, {}> {
 				blockId: block.id,
 				value: value, 
 				relation: observable.box(relation),
+				record: record,
+				optionCommand: optionCommand,
 				onChange: (value: any) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
@@ -205,8 +211,9 @@ class Cell extends React.Component<Props, {}> {
 
 				menuId = 'dataviewMedia';
 				break;
-					
-			case I.RelationType.Select:
+
+			case I.RelationType.Status:
+			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
 				});
@@ -215,7 +222,7 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 				});
 
-				menuId = 'dataviewOptionList';
+				menuId = 'dataviewOptionValues';
 				break;
 					
 			case I.RelationType.Object:
@@ -228,7 +235,7 @@ class Cell extends React.Component<Props, {}> {
 					types: relation.objectTypes,
 				});
 
-				menuId = 'dataviewObjectList';
+				menuId = 'dataviewObjectValues';
 				break;
 
 			case I.RelationType.Description:
@@ -297,6 +304,7 @@ class Cell extends React.Component<Props, {}> {
 				break;
 					
 			case I.RelationType.Checkbox:
+				cell.removeClass('isEditing');
 				break; 
 		};
 
@@ -304,8 +312,8 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.menuCloseAll(menuIds);
 			window.setTimeout(() => {
 				commonStore.menuOpen(menuId, param); 
-				page.unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
-			}, 10);
+				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
+			}, 1);
 		} else {
 			setOn();
 		};

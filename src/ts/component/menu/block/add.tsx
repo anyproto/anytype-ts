@@ -80,7 +80,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
+		const { getId } = this.props;
 		const items = this.getItems();
 		
 		this._isMounted = true;
@@ -88,7 +88,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		this.checkFilter();
 		this.setActive(items[this.n]);
 		
-		const menu = $('#' + Util.toCamelCase('menu-' + id));
+		const menu = $('#' + getId());
 		menu.unbind('mouseleave').on('mouseleave', () => {
 			window.clearTimeout(this.timeout);
 		});
@@ -149,7 +149,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {

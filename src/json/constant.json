@@ -42,7 +42,7 @@
 
 	"limit": {
 		"dataview": {
-			"records": 40,
+			"records": 50,
 			"views": 100000,
 			"viewName": 24
 		}
@@ -98,33 +98,18 @@
 		}
 	},
 
-	"relationName": {
-		"0": "Description",
-		"1": "Title",
-		"2": "Number",
-		"3": "Tag",
-		"4": "Date",
-		"5": "File & Media",
-		"6": "Checkbox",
-		"7": "Icon",
-		"8": "URL",
-		"9": "E-mail",
-		"10": "Phone",
-		"100": "Object"
-	},
-	
-	"textColor": {
-		"grey": "Grey",
-		"yellow": "Yellow",
-		"orange": "Amber",
-		"red": "Red",
-		"pink": "Pink",
-		"purple": "Purple",
-		"blue": "Blue",
-		"ice": "Sky",
-		"teal": "Teal",
-		"lime": "Green"
-	},
+	"textColor": [
+		"grey",
+		"yellow",
+		"orange",
+		"red",
+		"pink",
+		"purple",
+		"blue",
+		"ice",
+		"teal",
+		"lime"
+	],
 	
 	"monthDays": {
 		"1": 31,

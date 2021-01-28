@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, IconObject } from 'ts/component';
+import { Input, IconObject, IconEmoji } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -54,11 +54,16 @@ class MenuSmile extends React.Component<Props, State> {
 		const sections = this.getSections();
 		const items = this.getItems();
 
+		if (!this.cache) {
+			return null;
+		};
+
 		const Item = (item: any) => {
+			const str = `:${item.smile}::skin-${item.skin}:`;
 			return (
 				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
-					<div className="iconObject">
-						<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(item.smile, item.skin) }} />
+					<div className="iconObject c32" data-code={str}>
+						<IconEmoji className="c32" size={28} icon={str} />
 					</div>
 				</div>
 			);
@@ -103,7 +108,7 @@ class MenuSmile extends React.Component<Props, State> {
 				) : ''}
 				
 				<form className={[ 'filter', (!noHead ? 'withHead' : '') ].join(' ')} onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
+					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
 				</form>
 				
 				<div className="items">
@@ -127,7 +132,7 @@ class MenuSmile extends React.Component<Props, State> {
 										}}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
-										overscanRowCount={20}
+										overscanRowCount={10}
 									/>
 								)}
 							</AutoSizer>
@@ -147,28 +152,27 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const items = this.getItems();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT_SECTION,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
-		});
-
 		this.skin = Number(Storage.get('skin')) || 1; 
+
+		if (!this.cache) {
+			const items = this.getItems();
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT_SECTION,
+				keyMapper: (i: number) => { return (items[i] || {}).id; },
+			});
+			this.forceUpdate();
+		};
 
 		window.setTimeout(() => {
 			if (this.ref) {
 				this.ref.focus();
-				keyboard.setFocus(true);
 			};
 		}, 15);
 	};
 	
 	componentDidUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
-		
-		keyboard.setFocus(true);
 		
 		if (this.id) {
 			node.find('#item-' + this.id).addClass('active');
@@ -187,7 +191,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const { filter } = this.state;
 		const reg = new RegExp(filter, 'gi');
 		const lastIds = Storage.get('lastSmileIds') || [];
-		
+
 		let sections = Util.objectCopy(EmojiData.categories);
 		
 		sections = sections.map((s: any) => {

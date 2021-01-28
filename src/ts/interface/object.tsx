@@ -1,17 +1,21 @@
 import { I } from 'ts/lib';
 
 export enum ObjectLayout {
-	Page	 = 0,
-	Contact	 = 1,
-	Task	 = 2,
-	Set		 = 3,
-	ObjectType = 4,
-	File	 = 5,
+	Page		 = 0,
+	Contact		 = 1,
+	Task		 = 2,
+	Set			 = 3,
+	ObjectType	 = 4,
+	Relation	 = 5,
+	File		 = 6,
+	Dashboard	 = 7,
+	Database	 = 8,
 };
 
 export interface ObjectType {
 	url: string;
 	name: string;
+	description?: string;
 	layout: ObjectLayout;
 	iconEmoji: string;
 	relations: Relation[];
@@ -26,7 +30,7 @@ export enum RelationType {
 	Description	 = 0, 
 	Title		 = 1, 
 	Number		 = 2, 
-	Select		 = 3, 
+	Status		 = 3, 
 	Date		 = 4, 
 	File		 = 5,
 	Checkbox	 = 6, 
@@ -34,6 +38,7 @@ export enum RelationType {
 	Url			 = 8,
 	Email		 = 9,
 	Phone		 = 10,
+	Tag		 = 11,
 	Object		 = 100,
 };
 
@@ -41,7 +46,7 @@ export interface Relation {
 	relationKey: string;
 	format: RelationType;
 	name: string;
-	dataSource: string;
+	dataSource: number;
 	isHidden: boolean;
 	isReadOnly: boolean;
 	isMultiple: boolean;
@@ -52,8 +57,15 @@ export interface Relation {
 	timeFormat?: I.TimeFormat;
 };
 
+export enum OptionScope {
+    Local	 = 0,
+	Relation = 1,
+	Format	 = 2,
+}
+
 export interface SelectOption {
 	id: string;
 	text: string;
 	color: string;
+	scope: I.OptionScope;
 };

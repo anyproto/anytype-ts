@@ -3,20 +3,12 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
 import { I, C, DataUtil, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
-interface State {
-	objectTypes: I.ObjectType[];
-};
-
 @observer
-class PageMainSet extends React.Component<Props, State> {
-
-	state = {
-		objectTypes: [] as I.ObjectType[],
-	};
+class PageMainSet extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -25,26 +17,12 @@ class PageMainSet extends React.Component<Props, State> {
 	};
 
 	render () {
-		let { objectTypes } = this.state;
-
-		objectTypes.sort((c1: I.ObjectType, c2: I.ObjectType) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
+		const { objectTypes } = dbStore;
 
 		const Item = (item: any) => {
-			let icon = null;
-			let id = DataUtil.schemaField(item.url);
-			
-			if (item.iconEmoji) {
-				icon = <IconObject object={{ iconEmoji: item.iconEmoji }} />;
-			} else {
-				icon = <Icon className={id} />;
-			};
 			return (
 				<div className="item" onClick={(e: any) => { this.setCreate(item); }}>
-					{icon}
+					<IconObject object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -71,14 +49,8 @@ class PageMainSet extends React.Component<Props, State> {
 		);
 	};
 
-	componentDidMount () {
-		C.ObjectTypeList((message: any) => {
-			this.setState({ objectTypes: message.objectTypes });
-		});
-	};
-
 	onAdd (e: any) {
-		const { objectTypes } = this.state;
+		const { objectTypes } = dbStore;
 
 		commonStore.menuOpen('dataviewObjectType', { 
 			element: '#button-add',

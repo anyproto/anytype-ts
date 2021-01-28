@@ -26,7 +26,7 @@ class Column extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
 		const view = getView();
-		const group = view.relations.find((item: I.Relation) => { return item.relationKey == groupId; });
+		const group = view.getRelation(groupId);
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
@@ -57,7 +57,7 @@ class Column extends React.Component<Props, {}> {
 						id={'board-head-' + item.index} 
 						rootId={rootId}
 						block={block}
-						relation={group} 
+						relationKey={groupId} 
 						viewType={I.ViewType.Board}
 						getRecord={() => { return head; }}
 						readOnly={true} 

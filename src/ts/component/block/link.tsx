@@ -19,6 +19,7 @@ class BlockLink extends React.Component<Props, {}> {
 		this.onClick = this.onClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 	};
 
@@ -48,7 +49,8 @@ class BlockLink extends React.Component<Props, {}> {
 					size={24} 
 					canEdit={!readOnly} 
 					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
+					onUpload={this.onUpload}
+					onCheckbox={this.onCheckbox}
 				/>
 				<div className="name" onClick={this.onClick}>
 					<div className="txt">{name}</div>
@@ -97,6 +99,15 @@ class BlockLink extends React.Component<Props, {}> {
 		const { targetBlockId } = content;
 		
 		DataUtil.pageSetIcon(targetBlockId, '', hash);
+	};
+
+	onCheckbox () {
+		const { rootId, block } = this.props;
+		const { content } = block;
+		const { targetBlockId } = content;
+		const details = blockStore.getDetails(rootId, targetBlockId);
+
+		DataUtil.pageSetDone(targetBlockId, !details.done);
 	};
 	
 };

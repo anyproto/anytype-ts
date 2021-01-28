@@ -32,6 +32,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		this.onRowAdd = this.onRowAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
+		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -86,8 +87,8 @@ class BlockDataview extends React.Component<Props, {}> {
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
-						pageContainer={Util.getEditorPageContainer(isPopup)}
-						scrollContainer={Util.getEditorScrollContainer(isPopup)}
+						scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
 						readOnly={readOnly} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
@@ -95,6 +96,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						onRowAdd={this.onRowAdd}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
+						optionCommand={this.optionCommand}
 					/>
 				</div>
 			</div>
@@ -113,27 +115,15 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { rootId, block } = this.props;
-
 		$(window).unbind('resize.dataview');
-		dbStore.relationsRemove(rootId, block.id);
 	};
 
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const win = $(window);
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
-
 		const cb = (message: any) => {
-			if (viewChange) {
-				const view = this.getView();
-				const relations = DataUtil.viewGetRelations(rootId, block.id, view);
-
-				set(view, { relations: relations });
-			};
-
 			if (callBack) {
 				callBack(message);
 			};
@@ -148,7 +138,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
 
 		commonStore.menuCloseAll();
-		win.trigger('resize.editor');
+		$(window).trigger('resize.editor');
 	};
 
 	getRecord (index: number) {
@@ -182,8 +172,8 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
-		const view = this.getView();
-		const relation = view.relations.find((it: any) => { return it.relationKey == relationKey; });
+		const { rootId, block } = this.props;
+		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
 		if (!relation || relation.isReadOnly) {
 			return;
@@ -211,6 +201,22 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		dbStore.recordUpdate(rootId, block.id, obj);
 		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, record);
+	};
+
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+		switch (code) {
+			case 'add':
+				C.BlockDataviewRecordRelationOptionAdd(rootId, blockId, relationKey, recordId, option, callBack);
+				break;
+
+			case 'update':
+				C.BlockDataviewRecordRelationOptionUpdate(rootId, blockId, relationKey, recordId, option, callBack);
+				break;
+
+			case 'delete':
+				C.BlockDataviewRecordRelationOptionDelete(rootId, blockId, relationKey, recordId, option.id, callBack);
+				break;
+		};
 	};
 
 	resize () {

@@ -4,9 +4,9 @@ import { decorate, observable, intercept } from 'mobx';
 class Block implements I.Block {
 	
 	id: string = '';
+	layout: I.ObjectLayout = I.ObjectLayout.Page;
 	parentId: string = '';
 	type: I.BlockType = I.BlockType.Empty;
-	layout: I.ObjectLayout = I.ObjectLayout.Page;
 	childrenIds: string[] = [];
 	align: I.BlockAlign = I.BlockAlign.Left;
 	bgColor: string = '';
@@ -18,8 +18,8 @@ class Block implements I.Block {
 		
 		self.id = String(props.id || '');
 		self.parentId = String(props.parentId || '');
-		self.type = props.type;
 		self.layout = Number(props.layout) || I.ObjectLayout.Page;
+		self.type = props.type;
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
@@ -27,6 +27,7 @@ class Block implements I.Block {
 		self.childrenIds = props.childrenIds || [];
 
 		decorate(self, {
+			layout: observable,
 			childrenIds: observable,
 			align: observable,
 			bgColor: observable,
@@ -105,31 +106,31 @@ class Block implements I.Block {
 	isPage (): boolean { 
 		return (this.type == I.BlockType.Page);
 	};
-	
-	isPagePage (): boolean { 
+
+	isObjectPage (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Page);
 	};
 
-	isPageContact (): boolean { 
+	isObjectContact (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Contact);
 	};
 
-	isPageTask (): boolean { 
+	isObjectTask (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
 
-	isPageSet (): boolean { 
+	isObjectSet (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
-	isPageFile (): boolean { 
+	isObjectFile (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.File);
 	};
 
-	isReadOnly (): boolean {
-		return this.isPageSet() || this.isPageFile();
+	isObjectReadOnly (): boolean { 
+		return this.isObjectSet() || this.isObjectFile();
 	};
-	
+
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};

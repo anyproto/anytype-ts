@@ -641,12 +641,12 @@ const BlockRelationList = (contextId: string, callBack?: (message: any) => void)
 	dispatcher.request('blockRelationList', request, callBack);
 };
 
-const BlockRelationSetKey = (contextId: string, blockId: string, key: string, callBack?: (message: any) => void) => {
+const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.SetKey.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setKey(key);
+	request.setKey(relationKey);
 
 	dispatcher.request('blockRelationSetKey', request, callBack);
 };
@@ -661,11 +661,11 @@ const BlockRelationAdd = (contextId: string, blockId: string, relation: any, cal
 	dispatcher.request('blockRelationAdd', request, callBack);
 };
 
-const BlockRelationRemove = (contextId: string, key: string, callBack?: (message: any) => void) => {
+const BlockRelationRemove = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Remove.Request();
 	
 	request.setContextid(contextId);
-	request.setRelationkey(key);
+	request.setRelationkey(relationKey);
 
 	dispatcher.request('blockRelationRemove', request, callBack);
 };
@@ -710,47 +710,59 @@ const BlockDataviewRelationUpdate = (contextId: string, blockId: string, relatio
 	dispatcher.request('blockDataviewRelationUpdate', request, callBack);
 };
 
-const BlockDataviewRelationDelete = (contextId: string, blockId: string, key: string, callBack?: (message: any) => void) => {
+const BlockDataviewRelationDelete = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationDelete.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationkey(key);
+	request.setRelationkey(relationKey);
 
 	dispatcher.request('blockDataviewRelationDelete', request, callBack);
 };
 
-const BlockDataviewRelationSelectOptionAdd = (contextId: string, blockId: string, key: string, option: I.SelectOption, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RelationSelectOptionAdd.Request();
+const BlockDataviewRecordRelationOptionAdd = (contextId: string, blockId: string, relationKey: string, recordId: string, option: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RecordRelationOptionAdd.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationkey(key);
+	request.setRelationkey(relationKey);
+	request.setRecordid(recordId);
 	request.setOption(Mapper.To.SelectOption(option));
 
-	dispatcher.request('blockDataviewRelationSelectOptionAdd', request, callBack);
+	dispatcher.request('blockDataviewRecordRelationOptionAdd', request, callBack);
 };
 
-const BlockDataviewRelationSelectOptionUpdate = (contextId: string, blockId: string, key: string, option: I.SelectOption, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RelationSelectOptionUpdate.Request();
+const BlockDataviewRecordRelationOptionUpdate = (contextId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RecordRelationOptionUpdate.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationkey(key);
+	request.setRelationkey(relationKey);
+	request.setRecordid(recordId);
 	request.setOption(Mapper.To.SelectOption(option));
 
-	dispatcher.request('blockDataviewRelationSelectOptionUpdate', request, callBack);
+	dispatcher.request('blockDataviewRecordRelationOptionUpdate', request, callBack);
 };
 
-const BlockDataviewRelationSelectOptionDelete = (contextId: string, blockId: string, key: string, optionId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RelationSelectOptionDelete.Request();
+const BlockDataviewRecordRelationOptionDelete = (contextId: string, blockId: string, relationKey: string, recordId: string, optionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RecordRelationOptionDelete.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
-	request.setRelationkey(key);
+	request.setRelationkey(relationKey);
+	request.setRecordid(recordId);
 	request.setOptionid(optionId);
 
-	dispatcher.request('blockDataviewRelationSelectOptionDelete', request, callBack);
+	dispatcher.request('blockDataviewRecordRelationOptionDelete', request, callBack);
+};
+
+const BlockObjectTypeSet = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.ObjectType.Set.Request();
+	
+	request.setContextid(contextId);
+	request.setObjecttypeurl(url);
+
+	dispatcher.request('blockObjectTypeSet', request, callBack);
 };
 
 const HistoryShow = (pageId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -841,6 +853,36 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], fullText: string, of
 	dispatcher.request('objectSearch', request, callBack);
 };
 
+const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationOptionAdd.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relationKey);
+	request.setOption(Mapper.To.SelectOption(option));
+
+	dispatcher.request('objectRelationOptionAdd', request, callBack);
+};
+
+const ObjectRelationOptionUpdate = (contextId: string, relationKey: string, option: I.SelectOption, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationOptionUpdate.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relationKey);
+	request.setOption(Mapper.To.SelectOption(option));
+
+	dispatcher.request('objectRelationOptionUpdate', request, callBack);
+};
+
+const ObjectRelationOptionDelete = (contextId: string, relationKey: string, optionId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationOptionDelete.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relationKey);
+	request.setOptionid(optionId);
+
+	dispatcher.request('objectRelationOptionDelete', request, callBack);
+};
+
 export {
 	VersionGet,
 
@@ -918,9 +960,9 @@ export {
 	BlockDataviewRelationUpdate,
 	BlockDataviewRelationDelete,
 
-	BlockDataviewRelationSelectOptionAdd,
-	BlockDataviewRelationSelectOptionUpdate,
-	BlockDataviewRelationSelectOptionDelete,
+	BlockDataviewRecordRelationOptionAdd,
+	BlockDataviewRecordRelationOptionUpdate,
+	BlockDataviewRecordRelationOptionDelete,
 
 	BlockDataviewRecordCreate,
 	BlockDataviewRecordUpdate,
@@ -931,6 +973,8 @@ export {
 	BlockRelationAdd,
 	BlockRelationUpdate,
 	BlockRelationRemove,
+
+	BlockObjectTypeSet,
 
 	HistoryVersions,	
 	HistoryShow,
@@ -945,5 +989,8 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectRelationOptionAdd,
+    ObjectRelationOptionUpdate,
+    ObjectRelationOptionDelete,
 
 };

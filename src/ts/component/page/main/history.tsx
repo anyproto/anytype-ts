@@ -5,6 +5,7 @@ import { HeaderMainHistory as Header, Block, Loader, Icon } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { I, M, C, Util, dispatcher, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { DataUtil } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> { };
 
@@ -47,39 +48,17 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
+		const check = DataUtil.checkDetails(rootId);
 		const length = childrenIds.length;
-
-		const withIcon = details.iconEmoji || details.iconImage;
-		const withCover = (details.coverType != I.CoverType.None) && details.coverId;
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
-		let cn = [ 'editorWrapper' ];
-		let icon: any = { id: rootId + '-icon', childrenIds: [], fields: {}, content: {} };
+		let cn = [ 'editorWrapper', check.className ];
+		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
 		
-		if (root && root.isPageContact()) {
-			cn.push('isContact');
+		if (root && root.isObjectContact()) {
 			icon.type = I.BlockType.IconUser;
-		} else {
-			icon.type = I.BlockType.IconPage;
 		};
 
-		if (root && root.isPageSet()) {
-			cn.push('isDataview');
-		};
-		
-		icon = new M.Block(icon);
-		
-		if (withIcon && withCover) {
-			cn.push('withIconAndCover');
-		} else
-		if (withIcon) {
-			cn.push('withIcon');
-		} else
-		if (withCover) {
-			cn.push('withCover');
-		};
-		
 		const Section = (item: any) => (
 			<React.Fragment>
 				<div className="section">
@@ -121,10 +100,10 @@ class PageMainHistory extends React.Component<Props, State> {
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
-							{withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
+							{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
 							<div className="editor">
 								<div className="blocks">
-									{withIcon ? (
+									{check.withIcon ? (
 										<Block 
 											key={icon.id} 
 											{...this.props} 

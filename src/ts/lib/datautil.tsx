@@ -99,7 +99,8 @@ class DataUtil {
 			case I.RelationType.Title:		 c = 'title'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Select:		 c = 'select'; break;
+			case I.RelationType.Status:		 c = 'select isStatus'; break;
+			case I.RelationType.Tag:		 c = 'select isTag'; break;
 			case I.RelationType.File:		 c = 'file'; break;
 			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
 			case I.RelationType.Icon:		 c = 'icon'; break;
@@ -107,6 +108,16 @@ class DataUtil {
 			case I.RelationType.Email:		 c = 'email'; break;
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
+		};
+		return 'c-' + c;
+	};
+
+	tagClass (v: I.RelationType): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.RelationType.Status:		 c = 'isStatus'; break;
+			case I.RelationType.Tag:		 c = 'isTag'; break;
 		};
 		return c;
 	};
@@ -336,7 +347,23 @@ class DataUtil {
 			{ key: 'coverScale', value: scale },
 		], callBack);
 	};
+
+	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
+		done = Boolean(done);
+		
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'done', value: done },
+		], callBack);
+	};
 	
+	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
+		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
+
+		C.BlockSetDetails(rootId, [ 
+			{ key: 'layout', value: layout },
+		], callBack);
+	};
+
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		if (!block) {
 			return;
@@ -394,7 +421,7 @@ class DataUtil {
 
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'picture', lang: 'Image' },
+			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
@@ -477,8 +504,8 @@ class DataUtil {
 		let items: any[] = [
 			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
 		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'color-' + i, name: Constant.textColor[i], value: i, className: i, isTextColor: true });
+		for (let color of Constant.textColor) {
+			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
 		};
 		return items;
 	};
@@ -487,8 +514,8 @@ class DataUtil {
 		let items: any[] = [
 			{ id: 'color-default', name: 'Default', value: '', className: 'default', isBgColor: true }
 		];
-		for (let i in Constant.textColor) {
-			items.push({ id: 'bgColor-' + i, name: Constant.textColor[i], value: i, className: i, isBgColor: true });
+		for (let color of Constant.textColor) {
+			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
 		};
 		return items;
 	};
@@ -600,7 +627,7 @@ class DataUtil {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
 			return new M.ViewRelation({
 				...vr,
-				...relation,
+				relationKey: relation.relationKey,
 				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
 			});
 		});
@@ -614,12 +641,13 @@ class DataUtil {
 				return;
 			};
 
-			let rel = view.relations.find((it: I.ViewRelation) => { return it.relationKey == message.relationKey; });
+			let rel = view.getRelation(message.relationKey);
 			if (rel) {
 				rel.isVisible = true;
 			} else {
 				relation.relationKey = message.relationKey;
 				relation.isVisible = true;
+				relation.width = Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default;
 
 				view.relations.push(relation);
 			};
@@ -633,7 +661,7 @@ class DataUtil {
 			if (message.error.code || !view) {
 				return;
 			};
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			//C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
@@ -642,70 +670,105 @@ class DataUtil {
 			if (message.error.code || !view) {
 				return;
 			};
+			
+			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
-	dataviewOpen (e: any, data: any, type: string) {
+	objectOpen (e: any, object: any) {
 		e.stopPropagation();
 		e.preventDefault();
 
-		type = this.schemaField(type);
+		const type = this.schemaField(object.type);
 
 		switch (type) {
 			default:
-				this.pageOpenPopup(data.id);
+				this.pageOpenPopup(object.id);
 				break;
 
 			case 'image':
 				commonStore.popupOpen('preview', {
 					data: {
 						type: I.FileType.Image,
-						url: commonStore.imageUrl(data.id, Constant.size.image),
+						url: commonStore.imageUrl(object.id, Constant.size.image),
 					}
 				});
 				break;
 
 			case 'file':
-				ipcRenderer.send('urlOpen', commonStore.fileUrl(data.id));
+				ipcRenderer.send('urlOpen', commonStore.fileUrl(object.id));
 				break;
 		};
 	};
 
 	checkDetails (rootId: string) {
 		const details = blockStore.getDetails(rootId, rootId);
+		const { layout, iconEmoji, iconImage, coverType, coverId } = details;
 		const type = this.schemaField(details.type);
-		const objectType: any = dbStore.getObjectType(details.type) || {};
-
 		const ret: any = {
-			withCover: (details.coverType != I.CoverType.None) && details.coverId,
+			withCover: (coverType != I.CoverType.None) && coverId,
 			withIcon: false,
+			className: [],
 		};
 
 		switch (type) {
 			default:
-				switch (objectType.layout) {
+				switch (layout) {
 					default:
 					case I.ObjectLayout.Page:
-						ret.withIcon = details.iconEmoji || details.iconImage;
+						ret.withIcon = iconEmoji || iconImage;
+						ret.className.push('isPage');
 						break;
 
 					case I.ObjectLayout.Contact:
 						ret.withIcon = true;
+						ret.className.push('isContact');
 						break;
 
 					case I.ObjectLayout.Task:
+						ret.className.push('isTask');
+						break;
+
+					case I.ObjectLayout.Set:
+						ret.withIcon = iconEmoji || iconImage;
+						ret.className.push('isSet');
 						break;
 				};
 				break;
 
 			case 'image':
+				ret.withIcon = true;
+				ret.className.push('isImage');
+				break;
+
 			case 'file':
 				ret.withIcon = true;
+				ret.className.push('isFile');
 				break;
 		};
 
+		if (ret.withIcon && ret.withCover) {
+			ret.className.push('withIconAndCover');
+		} else
+		if (ret.withIcon) {
+			ret.className.push('withIcon');
+		} else
+		if (ret.withCover) {
+			ret.className.push('withCover');
+		};
+
+		ret.className = ret.className.join(' ');
+
 		return ret;
+	};
+
+	sortByName (c1: any, c2: any) {
+		const n1 = c1.name.toLowerCase();
+		const n2 = c2.name.toLowerCase();
+		if (n1 > n2) return 1;
+		if (n1 < n2) return -1;
+		return 0;
 	};
 
 };

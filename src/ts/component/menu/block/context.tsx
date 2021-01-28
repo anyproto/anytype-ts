@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, Mark, Util, DataUtil, focus } from 'ts/lib';
+import { I, C, Mark, Util, DataUtil, focus, keyboard } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -129,6 +129,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			offsetY: 15,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
+			onClose: () => {
+				keyboard.disableContext(false);
+			},
 			data: {
 				rootId: rootId,
 				blockId: blockId,
@@ -258,6 +261,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				'blockBackground',
 			]);
 
+			keyboard.disableContext(true);
 			window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
 		};
