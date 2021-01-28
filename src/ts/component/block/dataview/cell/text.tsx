@@ -20,29 +20,37 @@ class CellText extends React.Component<Props, State> {
 	state = {
 		editing: false,
 	};
+	range: I.TextRange = {
+		from: 0,
+		to: 0,
+	};
 	ref: any = null;
 
 	constructor (props: any) {
 		super(props);
 
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyUpDate = this.onKeyUpDate.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
-		this.onUpload = this.onUpload.bind(this);
+		this.onIconSelect = this.onIconSelect.bind(this);
+		this.onIconUpload = this.onIconUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getRecord, canEdit } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 
-		const type = DataUtil.schemaField(record.type);
+		let viewRelation: any = {};
+		if (getView) {
+			viewRelation = getView().getRelation(relation.relationKey);
+		};
 
 		let Name = null;
 		let EditorComponent = null;
@@ -58,30 +66,44 @@ class CellText extends React.Component<Props, State> {
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
 				let placeHolder = [ 'dd.mm.yyyy' ];
-				if (relation.includeTime) {
+				
+				if (viewRelation.includeTime) {
 					mask.push('99:99');
 					placeHolder.push('hh:mm');
 				};
+
+				let maskOptions = {
+					mask: mask.join(' '),
+					separator: '.',
+					hourFormat: 12,
+					alias: 'datetime',
+				};
+
 				EditorComponent = (item: any) => (
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						id="input" 
 						{...item} 
-						mask={mask.join(' ')} 
+						maskOptions={maskOptions} 
 						placeHolder={placeHolder.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
+						onSelect={this.onSelect}
 					/>
 				);
 			} else {
 				EditorComponent = (item: any) => (
-					<Input ref={(ref: any) => { this.ref = ref; }} id="input" {...item} />
+					<Input 
+						ref={(ref: any) => { this.ref = ref; }} 
+						id="input" 
+						{...item} 
+						onSelect={this.onSelect}
+					/>
 				);
 			};
 			Name = (item: any) => (
 				<EditorComponent 
 					value={item.name} 
 					className="name" 
-					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
 					onFocus={this.onFocus} 
 					onBlur={this.onBlur}
@@ -95,9 +117,10 @@ class CellText extends React.Component<Props, State> {
 			);
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [ DataUtil.dateFormat(relation.dateFormat) ];
-				if (relation.includeTime) {
-					format.push(DataUtil.timeFormat(relation.timeFormat));
+				let format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
+
+				if (viewRelation.includeTime) {
+					format.push(DataUtil.timeFormat(viewRelation.timeFormat));
 				};
 
 				value = value ? Util.date(format.join(' '), Number(value)) : '';
@@ -108,6 +131,7 @@ class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == 'name') {
 			let size = 20;
+
 			switch (viewType) {
 				case I.ViewType.List:
 					size = 24;
@@ -127,15 +151,16 @@ class CellText extends React.Component<Props, State> {
 				<React.Fragment>
 					<IconObject 
 						id={[ relation.relationKey, record.id ].join('-')} 
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload}
+						onSelect={this.onIconSelect} 
+						onUpload={this.onIconUpload}
+						onCheckbox={this.onCheckbox}
 						size={size} 
 						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { DataUtil.dataviewOpen(e, record, type); }} />
+					<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpen(e, record); }} />
 				</React.Fragment>
 			);
 		} else 
@@ -156,7 +181,6 @@ class CellText extends React.Component<Props, State> {
 
 		if (editing) {
 			let value = String(record[relation.relationKey] || '');
-			let input = cell.find('#input');
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
@@ -164,18 +188,23 @@ class CellText extends React.Component<Props, State> {
 			};
 
 			if (this.ref) {
-				this.ref.focus();
 				this.ref.setValue(value);
-			};
 
-			if (input.length) {
-				let length = value.length;
-				input.get(0).setSelectionRange(length, length);
+				if (this.ref.setRange) {
+					this.ref.setRange(this.range);
+				};
 			};
 
 			cell.addClass('isEditing');
 		} else {
 			cell.removeClass('isEditing');
+		};
+	};
+
+	onSelect (e: any) {
+		this.range = {
+			from: e.currentTarget.selectionStart,
+			to: e.currentTarget.selectionEnd,
 		};
 	};
 
@@ -186,9 +215,6 @@ class CellText extends React.Component<Props, State> {
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
 		};
-	};
-
-	onKeyDown (e: any, value: string) {
 	};
 
 	onKeyUp (e: any, value: string) {
@@ -252,18 +278,25 @@ class CellText extends React.Component<Props, State> {
 		};
 	};
 
-	onSelect (icon: string) {
+	onIconSelect (icon: string) {
 		const { index, getRecord } = this.props;
 		const record = getRecord(index);
 
 		DataUtil.pageSetIcon(record.id, icon, '');
 	};
 
-	onUpload (hash: string) {
+	onIconUpload (hash: string) {
 		const { index, getRecord } = this.props;
 		const record = getRecord(index);
 
 		DataUtil.pageSetIcon(record.id, '', hash);
+	};
+
+	onCheckbox () {
+		const { index, getRecord, onCellChange } = this.props;
+		const record = getRecord(index);
+
+		onCellChange(record.id, 'done', !record.done);
 	};
 
 };

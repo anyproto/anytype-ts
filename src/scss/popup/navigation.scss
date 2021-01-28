@@ -40,9 +40,6 @@
 			}
 
 			.item.active { background-color: rgba(172, 169, 150, 0.15); }
-			.item.active {
-				.iconObject { background-color: $colorLightGrey; }
-			}
 		}
 
 		.innerWrap.expanded {
@@ -67,7 +64,6 @@
 				.item.active { background: none; border-color: $colorOrange !important; box-shadow: 0px 0px 0px 1px $colorOrange inset; }
 				.item.active {
 					.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
-					.iconObject { background: #f7f5f0; }
 				}
 
 				.item.empty { line-height: 78px; cursor: default; }

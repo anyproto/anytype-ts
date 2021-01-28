@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -20,12 +20,12 @@ class MenuRelationType extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-		
-		let relations: any[] = [
+		const relations: any[] = [
 			{ format: I.RelationType.Description },
 			{ format: I.RelationType.Title },
 			{ format: I.RelationType.Number },
-			{ format: I.RelationType.Select },
+			{ format: I.RelationType.Status },
+			{ format: I.RelationType.Tag },
 			{ format: I.RelationType.Date },
 			{ format: I.RelationType.File },
 			{ format: I.RelationType.Checkbox },
@@ -33,15 +33,13 @@ class MenuRelationType extends React.Component<Props, {}> {
 			{ format: I.RelationType.Email },
 			{ format: I.RelationType.Phone },
 			{ format: I.RelationType.Object },
-		].map((it: any) => {
-			return { ...it, name: Constant.relationName[it.format] };
-		});
+		];
 
 		const Item = (item: any) => {
 			return (
 				<div className={[ 'item', (item.format == value ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onSelect(e, item); }}>
-					<Icon className={'relation c-' + DataUtil.relationClass(item.format)} />
-					<div className="name">{item.name}</div>
+					<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
+					<div className="name">{translate('relationName' + item.format)}</div>
 				</div>
 			);
 		};

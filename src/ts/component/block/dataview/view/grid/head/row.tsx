@@ -27,8 +27,9 @@ class HeadRow extends React.Component<Props, {}> {
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 
-						index={i} 
+						{...this.props}
 						{...relation}
+						index={i} 
 						onResizeStart={onResizeStart} 
 					/>
 				))}

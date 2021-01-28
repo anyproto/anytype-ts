@@ -1,5 +1,7 @@
 import { observable, action, computed, set, intercept, decorate } from 'mobx';
-import { I, DataUtil } from 'ts/lib';
+import { I, M, DataUtil } from 'ts/lib';
+
+const Constant = require('json/constant.json');
 
 class DbStore {
 	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
@@ -9,7 +11,17 @@ class DbStore {
 
 	@computed
 	get objectTypes (): I.ObjectType[] {
-		return Array.from(this.objectTypeMap.values());
+		let types =  Array.from(this.objectTypeMap.values());
+
+		types = types.map((it: I.ObjectType) => {
+			return {
+				...it,
+				name: it.name || Constant.default.name,
+			};
+		});
+
+		types.sort(DataUtil.sortByName);
+		return types;
 	};
 
 	@action
@@ -46,7 +58,8 @@ class DbStore {
 
 	@action
 	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
-		this.relationMap.set(this.getId(rootId, blockId), observable(list));
+		list = list.map((it: I.Relation) => { return new M.Relation(it); });
+		this.relationMap.set(this.getId(rootId, blockId), observable.array(list));
 	};
 
 	@action

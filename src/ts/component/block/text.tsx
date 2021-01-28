@@ -69,6 +69,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
@@ -85,6 +86,10 @@ class BlockText extends React.Component<Props, {}> {
 		switch (style) {
 			case I.TextStyle.Title:
 				placeHolder = Constant.default.name;
+				
+				if (root.isObjectTask()) {
+					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheck };
+				};
 				break;
 			case I.TextStyle.Quote:
 				additional = (
@@ -796,7 +801,7 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { onBlur } = this.props;
-	
+
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
@@ -874,6 +879,9 @@ class BlockText extends React.Component<Props, {}> {
 		const currentTo = range.to;
 
 		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || block.isTextTitle()) {
+			if (!keyboard.isContextDisabled) {
+				commonStore.menuClose('blockContext');
+			};
 			return;
 		};
 
@@ -924,7 +932,7 @@ class BlockText extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeoutClick);
 
 		this.clicks++;
-		if (this.clicks == 3) {
+		if (selection && (this.clicks == 3)) {
 			e.preventDefault();
 			e.stopPropagation();
 			

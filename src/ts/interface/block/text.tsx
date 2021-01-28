@@ -13,6 +13,7 @@ export enum TextStyle {
 	Bulleted	 = 9,
 	Numbered	 = 10,
 	Toggle		 = 11,
+	Description	 = 12,
 };
 
 export enum MarkType {

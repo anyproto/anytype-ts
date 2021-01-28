@@ -127,10 +127,9 @@ class ViewGrid extends React.Component<Props, {}> {
 		let width = 0;
 
 		for (let relation of view.relations) {
-			if (!relation.isVisible) {
-				continue;
+			if (relation.isVisible) {
+				width += relation.width;
 			};
-			width += relation.width;
 		};
 
 		if (width < mw) {
@@ -163,9 +162,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			width += relation.width;
 		};
 
-		if (width > mw) {
-			lastHead.css({ width: 48 });
-		};
+		lastHead.css({ width: (width > mw ? 48 : 'auto') });
 	};
 
 	onResizeStart (e: any, id: string) {

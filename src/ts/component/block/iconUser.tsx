@@ -23,13 +23,11 @@ class BlockIconUser extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		
 		return (
-			<React.Fragment>
-				<IconObject 
-					object={details}
-					onClick={this.onClick} 
-					size={96}
-				/>
-			</React.Fragment>
+			<IconObject 
+				object={details}
+				onClick={this.onClick} 
+				size={128}
+			/>
 		);
 	};
 	
@@ -37,9 +35,9 @@ class BlockIconUser extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		
 		commonStore.menuOpen('select', { 
-			element: '#block-' + rootId + '-icon',
+			element: '#block-' + rootId + '-icon .iconObject',
 			type: I.MenuType.Vertical,
-			offsetX: Constant.size.blockMenu,
+			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,

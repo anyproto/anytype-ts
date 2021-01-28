@@ -66,9 +66,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 		const check = DataUtil.checkDetails(rootId);
-		const readOnly = root.isReadOnly();
 
-		let cn = [ 'editorWrapper' ];
+		let cn = [ 'editorWrapper', check.className ];
 		let header = (
 			<EditorHeaderPage 
 				{...this.props} 
@@ -80,26 +79,9 @@ class EditorPage extends React.Component<Props, {}> {
 			/>
 		);
 
-		if (root.isPageContact()) {
-			cn.push('isContact');
-		} else 
-		if (root.isPageSet()) {
-			cn.push('isDataview');
-		};
-		
-		if (check.withIcon && check.withCover) {
-			cn.push('withIconAndCover');
-		} else
-		if (check.withIcon) {
-			cn.push('withIcon');
-		} else
-		if (check.withCover) {
-			cn.push('withCover');
-		};
-		
 		return (
 			<div className={cn.join(' ')}>
-				<Controls {...this.props} readOnly={readOnly} />
+				<Controls {...this.props} readOnly={false} />
 				
 				<div className="editor">
 					<div className="blocks">
@@ -121,7 +103,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={readOnly}
+									readOnly={root.isObjectReadOnly()}
 								/>
 							)
 						})}
@@ -307,14 +289,15 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	close (id: string) {
-		const { rootId, isPopup } = this.props;
+		const { isPopup } = this.props;
 		if (isPopup || !id) {
 			return;
 		};
 		
 		C.BlockClose(id, (message: any) => {
 			blockStore.blocksClear(id);
-			dbStore.relationsRemove(rootId, id);
+			dbStore.relationsRemove(id, id);
+			dbStore.relationsRemove(id, 'dataview');
 			authStore.threadRemove(id);
 		});
 	};
@@ -357,7 +340,8 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		if (!root || root.isReadOnly()) {
+
+		if (!root || root.isObjectReadOnly()) {
 			return;
 		};
 		
@@ -370,22 +354,32 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const check = DataUtil.checkDetails(rootId);
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const check = DataUtil.checkDetails(rootId);
+		const buttonOffset = 10;
 
-		let offset = 144;
+		let offset = 140;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
-		
-		if (check.withCover && check.withIcon) {
-			offset = 328;
+
+		if (check.withIcon && check.withCover) {
+			offset = 366;
 		} else
 		if (check.withIcon) {
-			offset = 194;
+			offset = 256;
+		} else
+		if (check.withCover) {
+			offset = 394;
 		};
-		
+
+		if (root.isObjectContact()) {
+		};
+
+		if (root.isObjectTask()) {
+		};
+
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
@@ -423,11 +417,11 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset) && (pageY <= st + rectContainer.height + offset)) {
+		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + buttonOffset) && (pageY <= st + rectContainer.height + offset + buttonOffset)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let ay = pageY - rectContainer.y - 10 - st;
+			let ay = pageY - rectContainer.y - buttonOffset - st;
 			
 			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');
@@ -576,24 +570,27 @@ class EditorPage extends React.Component<Props, {}> {
 
 			// Open action menu
 			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-				commonStore.menuOpen('blockAction', { 
-					element: '#block-' + ids[0],
-					type: I.MenuType.Vertical,
-					offsetX: Constant.size.blockMenu,
-					offsetY: 0,
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Left,
-					data: {
-						blockId: ids[0],
-						blockIds: ids,
-						rootId: rootId,
-						dataset: dataset,
-					},
-					onClose: () => {
-						selection.clear(true);
-						focus.apply();
-					}
-				});
+				commonStore.menuClose('blockContext');
+				window.setTimeout(() => {
+					commonStore.menuOpen('blockAction', { 
+						element: '#block-' + ids[0],
+						type: I.MenuType.Vertical,
+						offsetX: Constant.size.blockMenu,
+						offsetY: 0,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						data: {
+							blockId: ids[0],
+							blockIds: ids,
+							rootId: rootId,
+							dataset: dataset,
+						},
+						onClose: () => {
+							selection.clear(true);
+							focus.apply();
+						}
+					});
+				}, Constant.delay.menu);
 			});
 		};
 
@@ -625,7 +622,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 
-	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
+	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any) {
 		const { dataset, rootId } = this.props;
 		const { focused } = focus;
 		const { selection } = dataset || {};
@@ -639,6 +636,8 @@ class EditorPage extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
 		const menuOpen = commonStore.menuIsOpen();
+
+		range = range || {};
 
 		this.uiHide();
 		
@@ -720,24 +719,28 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Open action menu
 		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-			commonStore.menuOpen('blockAction', { 
-				element: '#block-' + focused,
-				type: I.MenuType.Vertical,
-				offsetX: Constant.size.blockMenu,
-				offsetY: 0,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					blockId: focused,
-					blockIds: DataUtil.selectionGet(focused, true, this.props),
-					rootId: rootId,
-					dataset: dataset,
-				},
-				onClose: () => {
-					selection.clear(true);
-					focus.apply();
-				}
-			});
+			commonStore.menuClose('blockContext');
+			window.setTimeout(() => {
+				commonStore.menuOpen('blockAction', { 
+					element: '#block-' + focused,
+					type: I.MenuType.Vertical,
+					offsetX: Constant.size.blockMenu,
+					offsetY: 0,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: {
+						blockId: focused,
+						blockIds: DataUtil.selectionGet(focused, true, this.props),
+						rootId: rootId,
+						dataset: dataset,
+					},
+					onClose: () => {
+						selection.clear(true);
+						focus.set(focused, range);
+						focus.apply();
+					}
+				});
+			}, Constant.delay.menu);
 		});
 
 		// Mark-up
@@ -1628,7 +1631,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
-		if (!root || root.isPageSet()) {
+		if (!root || root.isObjectSet()) {
 			return;
 		};
 

@@ -2,7 +2,7 @@
 
 .button { 
 	display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none; cursor: pointer;
-	height: 40px; line-height: 38px; padding: 0px 16px; border-radius: 4px; transition: $transitionFast;
+	height: 40px; line-height: 38px; padding: 0px 16px; border-radius: 8px; transition: $transitionFast;
 	font-size: 14px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: 0.2px;
 }
 .button.orange { background: $colorOrange; color: #fff; }
@@ -14,10 +14,10 @@
 .button.grey.filled { background: $colorLightGrey; color: #fff; box-shadow: 0px 0px; }
 .button.grey:hover { box-shadow: 0px 0px; }
 
-.button.blank { line-height: 36px; background: none; border: solid 1px #d5d3c8; }
-.button.blank:hover { background: #d5d3c8; }
+.button.blank { line-height: 36px; background: none; border: solid 1px #dfddd0; }
+.button.blank:hover { border-color: $colorBlack; }
 
-.button.c28 { height: 28px; line-height: 26px; }
+.button.c28 { height: 28px; line-height: 26px; border-radius: 6px; }
 
 input.button { line-height: 1; }
 

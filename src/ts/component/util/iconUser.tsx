@@ -11,7 +11,6 @@ interface Props {
 	avatar?: string;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
-	onClick?(e: any): void;
 	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
@@ -37,7 +36,7 @@ class IconUser extends React.Component<Props, {}> {
 	};
 
 	render () {
-		let  { className, avatar, name, color, icon, onClick } = this.props;
+		let  { className, avatar, name, color, icon } = this.props;
 		
 		let cn = [ 'iconUser' ];
 		let text = name || '';
@@ -57,7 +56,7 @@ class IconUser extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} className={cn.join(' ')}>
+			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} className={cn.join(' ')}>
 				{icon ? <img src={icon} className="image" /> : ''}
 				<div className="txt">{this.shortName(text)}</div>
 			</div>

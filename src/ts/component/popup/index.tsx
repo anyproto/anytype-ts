@@ -14,6 +14,7 @@ import PopupEditorPage from './editor/page';
 import PopupFeedback from './feedback';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
+import PopupStore from './store';
 
 interface Props extends I.Popup {
 	history: any;
@@ -31,6 +32,7 @@ class Popup extends React.Component<Props, {}> {
 
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
+		this.getId = this.getId.bind(this);
 	};
 
 	render () {
@@ -47,9 +49,10 @@ class Popup extends React.Component<Props, {}> {
 			editorPage: PopupEditorPage,
 			feedback: PopupFeedback,
 			shortcut: PopupShortcut,
+			store: PopupStore,
 		};
 		
-		const popupId = Util.toCamelCase('popup-' + id);
+		const popupId = this.getId();
 		const Component = Components[id];
 		const cn = [ 'popup', popupId ];
 		
@@ -61,7 +64,12 @@ class Popup extends React.Component<Props, {}> {
 			<div id={popupId} className={cn.join(' ')}>
 				<div id="innerWrap" className="innerWrap">
 					<div className="content">
-						<Component {...this.props} position={this.position} close={this.close} />
+						<Component 
+							{...this.props} 
+							position={this.position} 
+							close={this.close}
+							getId={this.getId} 
+						/>
 					</div>
 				</div>
 				<Dimmer onClick={this.close} />
@@ -124,6 +132,10 @@ class Popup extends React.Component<Props, {}> {
 	close () {
 		commonStore.menuCloseAll();
 		commonStore.popupClose(this.props.id);
+	};
+
+	getId (): string {
+		return Util.toCamelCase('popup-' + this.props.id);
 	};
 
 };

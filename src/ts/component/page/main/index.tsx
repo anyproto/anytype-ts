@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconUser, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
+import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
 import { commonStore, blockStore} from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
@@ -24,6 +24,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onStore = this.onStore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
@@ -56,8 +57,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
 						
 						<div className="rightMenu">
-							<Icon id="button-account" menuId="account" className="profile" tooltip="Accounts" onClick={this.onAccount} />
-							<IconUser className="c64" avatar={details.iconImage} name={details.name} tooltip="Your profile" onClick={this.onProfile} />
+							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
+							<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
+							<IconObject object={details} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -98,7 +101,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				Storage.set('hello', 1);
 				hello.addClass('hide');
-			}, 2000);
+			}, 5000);
 		};
 	};
 	
@@ -132,6 +135,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 			});
 		};
 	};
+
+	onStore (e: any) {
+		commonStore.popupOpen('store', {});
+	};
 	
 	onAdd (e: any) {
 		const { history } = this.props;
@@ -143,7 +150,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				element: '#button-add',
 				type: I.MenuType.Vertical,
 				offsetX: 0,
-				offsetY: -40,
+				offsetY: 4,
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				width: 176,
@@ -184,6 +191,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 
 	onMore (e: any, item: any) {
+		e.preventDefault();
 		e.stopPropagation();
 
 		const { match } = this.props;
@@ -258,7 +266,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
 
 		let height = size.height + size.margin;
-		if (list.length + 1 > cnt) {
+		if (list.length > cnt) {
 			height *= 2;
 		};
 		height += 20;
@@ -267,14 +275,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - 130 - height });
 
-		if (items.length > cnt) {
-			items.each((i: number, item: any) => {
-				item = $(item);
-				if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
-					item.addClass('last');
-				};
-			});
-		};
+		items.each((i: number, item: any) => {
+			item = $(item);
+			const icon = item.find('.iconObject');
+
+			if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
+				item.addClass('last');
+			};
+			if (icon.length) {
+				item.addClass('withIcon');
+			};
+		});
 	};
 
 	getList () {

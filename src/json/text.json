@@ -9,7 +9,7 @@
 	"commonTitle": { "en": "anytype" },
 	"commonSearch": { "en": "Search..." },
 	"commonSearchButton": { "en": "Search" },
-	"commonFilter": { "en": "Click to filter..." },
+	"commonFilterClick": { "en": "Click to filter" },
 	"commonFilterEmpty": { "en": "No items match filter" },
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
@@ -35,6 +35,20 @@
 	"day5": { "en": "Thursday" },
 	"day6": { "en": "Friday" },
 	"day7": { "en": "Saturday" },
+
+	"relationName0": { "en": "Description" },
+	"relationName1": { "en": "Title" },
+	"relationName2": { "en": "Number" },
+	"relationName3": { "en": "Status" },
+	"relationName4": { "en": "Date" },
+	"relationName5": { "en": "File & Media" },
+	"relationName6": { "en": "Checkbox" },
+	"relationName7": { "en": "Icon" },
+	"relationName8": { "en": "URL" },
+	"relationName9": { "en": "E-mail" },
+	"relationName10": { "en": "Phone" },
+	"relationName11": { "en": "Tag" },
+	"relationName100": { "en": "Object" },
 
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
@@ -99,7 +113,7 @@
 	"indexHi": { "en": "Hi, %s" },
 
 	"editorControlIcon": { "en": "Add icon" },
-	"editorControlCover": { "en": "Add cover image" },
+	"editorControlCover": { "en": "Add cover" },
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
@@ -281,7 +295,7 @@
 	"blockNameNewRelation": { "en": "New Relation" },
 	"blockDescriptionNewRelation": { "en": "..." },
 
-	"filterConditionEqual": { "en": "is" },
+	"filterConditionEqual": { "en": "is exactly" },
 	"filterConditionNotEqual": { "en": "is not" },
 	"filterConditionGreater": { "en": "is greater" },
 	"filterConditionLess": { "en": "is less" },
@@ -289,10 +303,11 @@
 	"filterConditionLessOrEqual": { "en": "is less or equal" },
 	"filterConditionLike": { "en": "contains" },
 	"filterConditionNotLike": { "en": "doesn't contain" },
-	"filterConditionIn": { "en": "is any of" },
-	"filterConditionNotIn": { "en": "is none of" },
 	"filterConditionEmpty": { "en": "is empty" },
 	"filterConditionNotEmpty": { "en": "is not empty" },
+	"filterConditionAllIn": { "en": "has all of" },
+	"filterConditionInArray": { "en": "has any of" },
+	"filterConditionNotInArray": { "en": "has none of" },
 
 	"inputWithFileTextUrl": { "en": "Paste a link" },
 
@@ -306,6 +321,17 @@
 	"tooltip1": { "en": "Anytype node is not connected" },
 	"tooltip2": { "en": "Downloading or uploading data to some node" },
 	"tooltip3": { "en": "Backed up on one node at least" },
-	"tooltip4": { "en": "Failed to sync, trying again..." }
+	"tooltip4": { "en": "Failed to sync, trying again..." },
+
+	"textColor-grey": { "en": "Grey" },
+	"textColor-yellow": { "en": "Yellow" },
+	"textColor-orange": { "en": "Amber" },
+	"textColor-red": { "en": "Red" },
+	"textColor-pink": { "en": "Pink" },
+	"textColor-purple": { "en": "Purple" },
+	"textColor-blue": { "en": "Blue" },
+	"textColor-ice": { "en": "Sky" },
+	"textColor-teal": { "en": "Teal" },
+	"textColor-lime": { "en": "Green" }
 
 }

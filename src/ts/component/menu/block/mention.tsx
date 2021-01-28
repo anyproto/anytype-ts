@@ -80,6 +80,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 					rowCount={items.length}
 					loadMoreRows={() => {}}
 					isRowLoaded={({ index }) => index < items.length}
+					threshold={LIMIT}
 				>
 					{({ onRowsRendered, registerChild }) => (
 						<AutoSizer className="scrollArea">
@@ -108,7 +109,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.load();
+		this.load(false);
 	};
 
 	componentDidUpdate () {
@@ -117,7 +118,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		if (this.filter != filter.text) {
-			this.load();
+			this.load(true);
 			this.filter = filter.text;
 			this.setState({ n: 0 });
 			return;
@@ -139,6 +140,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	rebind () {
+		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
@@ -155,10 +157,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		const { n } = this.state;
-		this.props.setActiveItem((item ? item : items[n]), scroll);
+		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
-	load (callBack?: (message: any) => void) {
+	load (clear: boolean, callBack?: (message: any) => void) {
 		const { filter } = commonStore;
 		const filters = [];
 		const sorts = [
@@ -170,6 +172,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 		C.ObjectSearch(filters, sorts, filter.text, 0, 1000000, (message: any) => {
 			if (callBack) {
 				callBack(message);
+			};
+
+			if (clear) {
+				this.items = [];
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
@@ -282,9 +288,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const { id, position } = this.props;
+		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + Util.toCamelCase('menu-' + id) + ' .content');
+		const obj = $('#' + getId() + ' .content');
 		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });

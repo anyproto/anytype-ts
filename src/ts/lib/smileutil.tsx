@@ -5,6 +5,7 @@ const EmojiData = require('json/emoji.json');
 const MAX_SIZE = 0x4000;
 const SKINS = [ '1F3FA', '1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF' ];
 const DIV = 65039;
+const DIV_UNI = '-200d-';
 
 class SmileUtil {
 
@@ -83,7 +84,6 @@ class SmileUtil {
 				uni = skinItem.unified;
 			};
 		};
-
 		return this.unifiedToNative(uni);
 	};
 
@@ -100,16 +100,24 @@ class SmileUtil {
 	};
 
 	srcFromColons (colons: string, skin: number) {
-		let parts = colons.split('::');
-		if (parts.length > 1) {
-			parts[1] = parts[1].replace('skin-tone-', 'type-');
-		} else
-		if (skin) {
-			parts.push('type-' + skin);
+		const parts = colons.split('::');
+		const id = String(parts[0] || '').replace(/:/g, '');
+		const item = EmojiData.emojis[id];
+
+		if (!item) {
+			return '';
 		};
 
-		let src = parts.join('-').replace(/:/g, '').replace(/_/g, '-');
-		return `./img/emoji/${src}.png`;
+		skin = skin || Number(String(parts[1] || '').replace(/skin-([\d]+):/, '$1')) || 0;
+
+		let code: any = String(item.unified || item.b || '').toLowerCase().replace(/-fe0f$/, '');
+		if (item.skin_variations && (skin > 1)) {
+			code = code.split(DIV_UNI);
+			code[0] = [ code[0], SKINS[(skin - 1)].toLowerCase() ].join('-');
+			code = code.join(DIV_UNI);
+		};
+
+		return `./img/emoji/${code}.png`;
 	};
 
 	data (icon: string) {

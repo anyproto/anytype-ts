@@ -36,7 +36,9 @@ class Controls extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId, readOnly } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
 		const title = blockStore.getLeaf(rootId, 'title') || {};
+		const check = DataUtil.checkDetails(rootId);
 
 		if (readOnly) {
 			return null;
@@ -51,17 +53,17 @@ class Controls extends React.Component<Props, {}> {
 				onMouseOver={this.onOver}
 				onMouseOut={this.onOut}
 			>
-				<div className="sides">
-					<div className="side left">
+				<div className="buttons">
+					{!root.isObjectTask() ? (
 						<div id="button-add-icon" className="btn addIcon" onClick={this.onAddIcon}>
 							<Icon />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
+					) : ''}
 
-						<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
-							<Icon />
-							<div className="txt">{translate('editorControlCover')}</div>
-						</div>
+					<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
+						<Icon />
+						<div className="txt">{translate('editorControlCover')}</div>
 					</div>
 				</div>
 			</div>
@@ -80,12 +82,8 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
-		if (!root) {
-			return;
-		};
-		
 		focus.clear(true);
-		root.isPageContact() ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {
@@ -181,7 +179,7 @@ class Controls extends React.Component<Props, {}> {
 				return;
 			};
 			
-			DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
+			DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
 

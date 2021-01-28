@@ -51,10 +51,11 @@
 			background: none; width: 100px; vertical-align: top;
 		}
 
-		.select { border: 0px; padding: 0px; height: 28px; vertical-align: top; @include text-paragraph; font-weight: 500; }
+		.select { 
+			border: 0px; padding: 0px; height: 28px; vertical-align: top; @include text-paragraph; font-weight: 500; padding: 4px 20px 4px 6px;
+		}
 		.select {
-			.current { padding: 4px 20px 4px 6px; }
-			.arrow { background-image: url('~img/arrow/select/big.svg'); }
+			.icon.arrow { background-image: url('~img/arrow/select/big.svg'); }
 		}
 	}
 }

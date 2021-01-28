@@ -14,6 +14,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { dialog } = window.require('electron').remote;
 
 @observer
 class BlockCover extends React.Component<Props, State> {
@@ -35,6 +36,7 @@ class BlockCover extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onAddIcon = this.onAddIcon.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
@@ -58,18 +60,20 @@ class BlockCover extends React.Component<Props, State> {
 		this.onOut = this.onOut.bind(this);
 	};
 	
-	render() {
+	render () {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverType, coverId,  } = details;
-		const canEdit = !readOnly && coverType && ([ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0);
+		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
+		const root = blockStore.getLeaf(rootId, rootId);
+		const check = DataUtil.checkDetails(rootId);
 		
 		let elements = null;
 		if (editing) {
 			elements = (
 				<React.Fragment>
-					<div key="btn-drag" className="btn black drag">
+					<div key="btn-drag" className="btn black drag withIcon">
 						<Icon />
 						<div className="txt">{translate('blockCoverDrag')}</div>
 					</div>
@@ -89,7 +93,14 @@ class BlockCover extends React.Component<Props, State> {
 			elements = (
 				<React.Fragment>
 					<div className="buttons">
-						<div id="button-cover-edit" className={[ 'btn', 'white', 'addCover', (commonStore.menuIsOpen('blockCover') ? 'active' : '') ].join(' ')} onClick={this.onMenu}>
+						{!root.isObjectTask() ? (
+							<div id="cover-button-add-icon" className="btn white addIcon withIcon" onClick={this.onAddIcon}>
+								<Icon />
+								<div className="txt">{translate('editorControlIcon')}</div>
+							</div>
+						) : ''}
+
+						<div id="cover-button-edit-cover" className="btn white addCover withIcon" onClick={this.onMenu}>
 							<Icon />
 							<div className="txt">{translate('blockCoverUpdate')}</div>
 						</div>
@@ -139,13 +150,65 @@ class BlockCover extends React.Component<Props, State> {
 		this._isMounted = false;
 		$(window).unbind('resize.cover');
 	};
+
+	onAddIcon (e: any) {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		focus.clear(true);
+		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
+	};
+	
+	onAddIconPage () {
+		const { rootId } = this.props;
+		
+		commonStore.menuOpen('smile', { 
+			element: '#cover-button-add-icon',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 17,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				onSelect: (icon: string) => {
+					DataUtil.pageSetIcon(rootId, icon, '');
+				},
+				onUpload (hash: string) {
+					DataUtil.pageSetIcon(rootId, '', hash);
+				},
+			}
+		});
+	};
+	
+	onAddIconUser () {
+		const { rootId } = this.props;
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [ { name: '', extensions: Constant.extension.image } ]
+		};
+		
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+			
+			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				
+				DataUtil.pageSetIcon(rootId, '', message.hash);
+			});
+		});
+	};
 	
 	onMenu (e: any) {
 		const { rootId } = this.props;
 		
 		focus.clear(true);
 		commonStore.menuOpen('blockCover', {
-			element: '#button-cover-edit',
+			element: '#cover-button-edit-cover',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 17,
@@ -199,7 +262,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverId, coverType } = details;
-		const canEdit = coverType && [ I.CoverType.Image, I.CoverType.BgImage ].indexOf(coverType) >= 0;
+		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (!node.hasClass('wrap')) {
@@ -231,11 +294,11 @@ class BlockCover extends React.Component<Props, State> {
 				el.onload = cb;
 			};
 			
-			if (coverType == I.CoverType.Image) {
+			if (coverType == I.CoverType.Upload) {
 				el.src = commonStore.imageUrl(coverId, Constant.size.cover);
 			};
 
-			if (coverType == I.CoverType.BgImage) {
+			if (coverType == I.CoverType.Image) {
 				el.src = Util.coverSrc(coverId);
 			};
 		};
@@ -394,7 +457,7 @@ class BlockCover extends React.Component<Props, State> {
 			};
 			
 			this.loaded = false;
-			DataUtil.pageSetCover(rootId, I.CoverType.Image, message.hash);
+			DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
 	

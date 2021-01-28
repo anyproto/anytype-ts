@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { MenuItemVertical } from 'ts/component';
+import { I, C, keyboard, Key, DataUtil, focus, crumbs } from 'ts/lib';
+import { blockStore, commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -21,16 +20,63 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onLayout = this.onLayout.bind(this);
+		this.onType = this.onType.bind(this);
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
 		const items = this.getItems();
+		const block = blockStore.getLeaf(rootId, blockId);
+		const object = blockStore.getDetails(rootId, rootId);
+
+		let sectionPage = null;
+		if (block.isPage()) {
+			const objectType = dbStore.getObjectType(object.type);
+			const layouts = this.getLayouts();
+			const layout = layouts.find((it: any) => { return it.id == object.layout; });
+
+			sectionPage = (
+				<React.Fragment>
+					{objectType ? (
+						<React.Fragment>
+							<div className="sectionName">Type</div>
+							<MenuItemVertical 
+								id="object-type" 
+								object={{...objectType, layout: I.ObjectLayout.ObjectType }}
+								name={objectType.name}
+								menuId="select"
+								onClick={this.onType} 
+								arrow={true}
+							/>
+						</React.Fragment>
+					) : ''}
+
+					<div className="sectionName">Layout</div>
+					<MenuItemVertical 
+						id="object-layout" 
+						icon={layout ? layout.icon : ''} 
+						name={layout ? layout.name : 'Select layout'}
+						menuId="select"
+						onClick={this.onLayout} 
+						arrow={true}
+					/>
+					<div className="line" />
+				</React.Fragment>
+			);
+		};
 
 		return (
 			<div>
-				{items.map((action: any, i: number) => (
-					<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
-				))}
+				{sectionPage}
+
+				<div className="section">
+					{items.map((action: any, i: number) => (
+						<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
+					))}
+				</div>
 			</div>
 		);
 	};
@@ -56,7 +102,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -112,10 +158,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const { content } = block;
-		const details = blockStore.getDetails(rootId, content.targetBlockId);
+		const object = blockStore.getDetails(rootId, content.targetBlockId);
+		const type = DataUtil.schemaField(object.type);
 
 		let items = [];
-		if (block.isPageSet()) {
+		if (block.isObjectSet()) {
 			items = [
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
@@ -133,7 +180,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 			
-			if (details.isArchived) {
+			if (object.isArchived) {
 				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
 			} else {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
@@ -142,8 +189,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isLinkPage()) {
 			items = [
 				{ id: 'move', icon: 'move', name: 'Move to' },
-				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' }
 			];
+			if (type != 'profile') {
+				items.push({ id: 'archiveIndex', icon: 'remove', name: 'Archive' });
+			};
 		} else {
 			items = [
 				{ id: 'move', icon: 'move', name: 'Move to' },
@@ -153,6 +202,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		return items;
+	};
+
+	getLayouts () {
+		return [
+			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
+			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
+			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
+			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
+		];
 	};
 	
 	onOver (e: any, item: any) {
@@ -275,6 +333,69 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (close) {
 			this.props.close();
 		};
+	};
+
+	onLayout (e: any) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const object = blockStore.getDetails(rootId, rootId);
+
+		commonStore.menuOpen('select', { 
+			element: '#item-object-layout',
+			offsetX: 208,
+			offsetY: -36,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options: this.getLayouts(),
+				value: object.layout,
+				onSelect: (e: any, item: any) => {
+					DataUtil.pageSetLayout(rootId, item.id);
+					close();
+				}
+			}
+		});
+	};
+
+	onType (e: any) {
+		const { objectTypes } = dbStore;
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const object = blockStore.getDetails(rootId, rootId);
+		const options = objectTypes.map((it: I.ObjectType) => {
+			it.layout = I.ObjectLayout.ObjectType;
+			return { 
+				...it, 
+				object: it, 
+				id: DataUtil.schemaField(it.url), 
+			};
+		});
+
+		options.sort((c1: any, c2: any) => {
+			if (c1.name > c2.name) return 1;
+			if (c1.name < c2.name) return -1;
+			return 0;
+		});
+
+		commonStore.menuOpen('select', { 
+			element: '#item-object-type',
+			offsetX: 208,
+			offsetY: -36,
+			type: I.MenuType.Vertical,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				options: options,
+				value: DataUtil.schemaField(object.type),
+				onSelect: (e: any, item: any) => {
+					C.BlockObjectTypeSet(rootId, item.url);
+					close();
+				}
+			}
+		});
 	};
 
 };

@@ -43,6 +43,7 @@ export enum FilterCondition {
 	NotIn			 = 9,
 	Empty			 = 10,
 	NotEmpty		 = 11,
+	AllIn			 = 12,
 };
 
 export interface Sort {
@@ -57,7 +58,8 @@ export interface Filter {
 	value: any;
 };
 
-export interface ViewRelation extends I.Relation {
+export interface ViewRelation {
+	relationKey: string;
 	isVisible: boolean;
 	width: number;
 	includeTime: boolean;
@@ -69,16 +71,17 @@ export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
 	readOnly: boolean;
-	scrollContainer?: any;
-	pageContainer?: any;
+	scrollContainer?: string;
+	pageContainer?: string;
 	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
 	getRecord(index: number): any;
-	getView(): View;
+	getView?(): View;
 	onRowAdd?: (e: any) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?: (id: string, key: string, value: any) => void;
+	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
 export interface View {
@@ -88,6 +91,7 @@ export interface View {
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
+	getRelation?:(relationKey: string) => I.ViewRelation;
 };
 
 export interface Cell {
@@ -100,7 +104,9 @@ export interface Cell {
 	viewType: I.ViewType;
 	readOnly?: boolean;
 	canEdit?: boolean;
-	pageContainer?: any;
+	scrollContainer?: string;
+	pageContainer?: string;
+	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(data: any): void;
 	onClick?(e: any): void;

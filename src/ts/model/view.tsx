@@ -35,13 +35,17 @@ class View implements I.View {
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
+	getRelation (relationKey: string) {
+		return this.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+	};
+
 };
 
 class Relation implements I.Relation {
 
 	relationKey: string = '';
 	name: string = '';
-	dataSource: string = '';
+	dataSource: number = 0;
 	objectTypes: string[] = [];
 	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
@@ -49,18 +53,27 @@ class Relation implements I.Relation {
 	isMultiple: boolean = false;
 	selectDict: any[] = [] as any[];
 
-	constructor (props: I.ViewRelation) {
+	constructor (props: I.Relation) {
 		let self = this;
 
 		self.relationKey = String(props.relationKey || '');
 		self.name = String(props.name || '');
-		self.dataSource = String(props.dataSource || '');
+		self.dataSource = Number(props.dataSource) || 0;
 		self.objectTypes = props.objectTypes || [];
 		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.isMultiple = Boolean(props.isMultiple);
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
+
+		decorate(self, {
+			name: observable,
+			format: observable,
+			objectTypes: observable,
+			selectDict: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
@@ -70,6 +83,7 @@ class SelectOption implements I.SelectOption {
 	id: string = '';
 	text: string = '';
 	color: string = '';
+	scope: I.OptionScope = I.OptionScope.Local;
 
 	constructor (props: I.SelectOption) {
 		let self = this;
@@ -77,6 +91,7 @@ class SelectOption implements I.SelectOption {
 		self.id = String(props.id || '');
 		self.text = String(props.text || '');
 		self.color = String(props.color || '');
+		self.scope = Number(props.scope) || I.OptionScope.Local;
 
 		decorate(self, {
 			text: observable,
@@ -87,8 +102,9 @@ class SelectOption implements I.SelectOption {
 	};
 };
 
-class ViewRelation extends Relation implements I.ViewRelation {
+class ViewRelation implements I.ViewRelation {
 
+	relationKey: string = '';
 	width: number = 0;
 	isVisible: boolean = false;
 	includeTime: boolean = false;
@@ -96,10 +112,9 @@ class ViewRelation extends Relation implements I.ViewRelation {
 	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 
 	constructor (props: I.ViewRelation) {
-		super(props);
-
 		let self = this;
 
+		self.relationKey = String(props.relationKey || '');
 		self.width = Number(props.width) || 0;
 		self.isVisible = Boolean(props.isVisible);
 		self.includeTime = Boolean(props.includeTime);
@@ -107,8 +122,6 @@ class ViewRelation extends Relation implements I.ViewRelation {
 		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 
 		decorate(self, {
-			name: observable,
-			selectDict: observable,
 			width: observable,
 			isVisible: observable,
 			includeTime: observable, 
@@ -176,4 +189,4 @@ export {
 	ViewRelation,
 	Filter,
 	Sort,
-}
+};

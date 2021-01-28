@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, translate } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical } from 'ts/component';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -87,8 +87,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
 					id="relation-type" 
-					icon={'relation c-' + DataUtil.relationClass(this.format)} 
-					name={Constant.relationName[this.format]} 
+					icon={'relation ' + DataUtil.relationClass(this.format)} 
+					name={translate('relationName' + this.format)} 
 					onClick={this.onRelationType} 
 					arrow={!relation}
 				/>
@@ -143,7 +143,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		};
 
 		this.menuOpen('dataviewRelationType', { 
-			element: '#relation-type',
+			element: '#item-relation-type',
 			offsetX: 224,
 			offsetY: 4,
 			type: I.MenuType.Vertical,

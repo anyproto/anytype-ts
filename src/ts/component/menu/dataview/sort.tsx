@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Select } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -27,18 +27,27 @@ class MenuSort extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const sortCnt = view.sorts.length;
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'Ascending' },
 			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
-		const relationOptions: any[] = [];
-		for (let relation of view.relations) {
-			relationOptions.push({ id: relation.relationKey, name: relation.name, icon: 'relation c-' + DataUtil.relationClass(relation.format) });
-		};
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation.format != I.RelationType.File; 
+		});
+		const relationOptions: any[] = relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				name: relation.name, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+			};
+		});
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -55,7 +64,6 @@ class MenuSort extends React.Component<Props, {}> {
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
-				<Icon className="dnd" />
 				<Icon className="plus" />
 				<div className="name">New sort</div>
 			</div>

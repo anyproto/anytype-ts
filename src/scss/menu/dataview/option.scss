@@ -1,13 +1,15 @@
 @import "~scss/_vars";
 
 .menus {
+	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
-		.content { max-height: 250px; }
-		.label { color: $colorDarkGrey; @include text-common; padding: 0px 16px; }
-		.item { padding: 5px 10px; }
-		.item:hover::before { opacity: 0.15; }
+		.content { transition: none; padding-bottom: 0px; }
+		.content {
+			.wrap { height: 100%; display: flex; flex-direction: column; }
+		}
+
+		.items { height: calc(100% - 34px); }
 		.tagItem { vertical-align: top; margin-top: 1px; }
-		.icon.more { position: absolute; right: 14px; top: 50%; margin-top: -10px; }
 	}
 	
 	.menu.menuDataviewOptionEdit { width: 224px; }
@@ -15,5 +17,16 @@
 		.wrap { padding: 8px 16px; }
 		.input { border: 1px solid $colorLightGrey; font-size: 12px; padding: 0px 8px; }
 		.item:hover::before { opacity: 0.15; }
-	}	
+	}
+
+	.menu.menuDataviewOptionValues.fromFilter {
+		.item {
+			.icon.dnd { display: none; }
+		}
+	}
+	.menu.menuDataviewOptionList.fromFilter {
+		.item {
+			.icon.more { display: none; }
+		}
+	}
 }

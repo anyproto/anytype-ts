@@ -18,6 +18,7 @@ import HeaderMainEdit from './header/main/edit';
 import HeaderMainEditPopup from './header/main/editPopup';
 import HeaderMainHistory from './header/main/history';
 import HeaderMainSet from './header/main/set';
+import HeaderMainObjectType from './header/main/objectType';
 import HeaderHelpIndex from './header/help/index';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
@@ -52,6 +53,7 @@ import Drag from './util/drag';
 import Marker from './util/marker';
 import Pin from './util/pin';
 import Sync from './util/sync';
+import Filter from './util/filter';
 
 import Icon from './util/icon';
 import IconUser from './util/iconUser';
@@ -78,6 +80,7 @@ export {
 	HeaderMainEditPopup,
 	HeaderMainHistory,
 	HeaderMainSet,
+	HeaderMainObjectType,
 	HeaderHelpIndex,
 	FooterAuth,
 	FooterMainIndex,
@@ -89,6 +92,7 @@ export {
 	InputWithFile,
 	Pin,
 	Sync,
+	Filter,
 	Checkbox,
 	Textarea,
 	Button,

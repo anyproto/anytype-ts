@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
-			text-align: left; color: #6c6a5f; padding: 14px 14px 14px 4px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+			text-align: left; color: #6c6a5f; padding: 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
 			@include text-overflow-nw; cursor: grab;
 		}
 		.cellHead {
@@ -15,10 +15,9 @@
 			}
 			.resize { width: 20px; height: 20px; position: absolute; right: 0px; top: 14px; cursor: col-resize; z-index: 1; }
 			.resize {
-				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 9px; }
+				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
 			}
 		}
-		.cellHead:first-child { padding-left: 14px; }
 		.cellHead.last {
 			.icon.plus { margin: 0px; }
 		}
@@ -38,14 +37,18 @@
 				}
 			}
 
+			.cell.c-object, .cell.c-file { padding-right: 0px; }
+			.cellContent.c-object {
+				.wrap { white-space: nowrap; }
+			}
+
 			tr.active {
 				.cellContent.isName {
 					.icon.expand { opacity: 1; }
 				}
 			}
 				
-			.cell { padding: 14px 14px 14px 4px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
-			.cell:first-child { padding-left: 14px; }
+			.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 
 			.cell.isEditing {
 				.cellContent { min-width: 300px; padding: 14px; }
@@ -53,8 +56,14 @@
 			.cell.isEditing.c-select { 
 				.cellContent { padding-bottom: 8px; }
 			}
+			.cell.isEditing.c-object { 
+				.cellContent { padding-bottom: 12px; }
+			}
 			.cell.isEditing.c-description { 
 				.cellContent { display: none; }
+			}
+			.cell.isEditing.c-checkbox { 
+				.cellContent { min-width: unset; }
 			}
 
 			.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }

@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 100px; width: 704px; margin: 0px auto; }
+.editorWrapper { padding-top: 112px; width: 704px; margin: 0px auto; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
@@ -18,74 +18,72 @@
 	
 	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.sides { display: flex; width: 100%; position: absolute; bottom: 0px; }
-		.side { width: 50%; }
-		.side.right { text-align: right; }
+		.buttons { position: absolute; bottom: 0px; opacity: 0; transition: $transitionFast; }
 		
 		.btn { 
-			font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast; opacity: 0;
-			margin-right: 24px;
+			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast;
+			margin-right: 10px; height: 28px; line-height: 26px; padding: 0px 10px; border-radius: 6px;
 		}
-		.btn:hover { color: $colorBlack; }
 		.btn:last-child { margin: 0px; }
+		.btn:hover { background: #f3f2ec; }
 		.btn {
 			.icon { width: 16px; height: 16px; margin-right: 6px; }
 		}
-		
 		.btn.addIcon {
 			.icon { background-image: url('~img/icon/add/icon0.svg'); }
 		}
-		.btn.addIcon:hover {
-			.icon { background-image: url('~img/icon/add/icon1.svg'); }
-		}
-		
 		.btn.addCover {
 			.icon { background-image: url('~img/icon/add/cover0.svg'); }
 		}
-		.btn.addCover:hover {
-			.icon { background-image: url('~img/icon/add/cover1.svg'); }
-		}
 	}
 	.editorControls:hover {
-		.btn { opacity: 1; }
+		.buttons { opacity: 1; }
 	}
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
+/* Page */
+
+.editorWrapper.withIcon { padding-top: 122px; }
 .editorWrapper.withIcon {
-	.editorControls { height: 156px; }
+	.editorControls { height: 188px; }
 	.editorControls {
+		.buttons { padding-left: 116px; }
 		.btn.addIcon { display: none; }
 	}
-	.editorControls.align0 {
-		.side.left { padding-left: 80px; }
+	.editorControls.align1 {
+		.buttons { left: 50%; padding-left: 68px; }
 	}
 }
 
-.editorWrapper.withCover { padding-top: 288px; }
+.editorWrapper.withCover { padding-top: 356px; }
 .editorWrapper.withCover {
-	.editorControls { height: 326px; }
-	.editorControls {
-		.btn.addCover { display: none; }
-	}
+	.editorControls { display: none; }
 }
 
-.editorWrapper.withIconAndCover { padding-top: 224px; }
+.editorWrapper.withIconAndCover { padding-top: 232px; }
 .editorWrapper.withIconAndCover {
 	.editorControls { display: none; }
 }
 
-.editorWrapper.isContact.withIcon { padding-top: 56px; }
+/* Contact */
+
+.editorWrapper.isContact.withIcon { padding-top: 122px; }
 .editorWrapper.isContact.withIcon {
-	.editorControls { height: 112px; }
+	.editorControls { height: 240px; }
 	.editorControls { 
-		.side.left { padding-left: 112px; }
+		.buttons { padding-left: 148px; }
+	}
+	.editorControls.align1 {
+		.buttons { left: 50%; padding-left: 84px; }
 	}
 }
-.editorWrapper.isContact.withIconAndCover { padding-top: 190px; }
+.editorWrapper.isContact.withIconAndCover { padding-top: 208px; }
 
-.editorWrapper.isDataview { width: calc(100% - 192px); }
-.editorWrapper.isDataview {
+/* Set */
+
+.editorWrapper.isSet { width: calc(100% - 192px); }
+.editorWrapper.isSet {
 	.blocks { margin-left: 0px; }
 	.blocks {
 		.block {

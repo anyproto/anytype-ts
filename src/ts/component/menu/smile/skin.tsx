@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
-import { Input } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { IconObject } from 'ts/component';
+import { I, SmileUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -26,9 +26,7 @@ class MenuSmileSkin extends React.Component<Props, {}> {
 		
 		const Item = (item: any) => (
 			<div className="item" onClick={(e: any) => { this.onClick(item.skin); }}>
-				<div className="smile">
-					<Emoji native={true} emoji={':' + smileId + '::skin-tone-' + item.skin + ':'} set="apple" size={32} />
-				</div>
+				<IconObject size={32} object={{ iconEmoji: SmileUtil.nativeById(smileId, item.skin) }} />
 			</div>
 		);
 		

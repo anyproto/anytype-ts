@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage, analytics, keyboard, DataUtil } from 'ts/lib';
+import { Util, Storage, analytics, keyboard } from 'ts/lib';
 import { authStore, commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -19,6 +20,7 @@ import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
+import PageMainObjectType from './main/objectType';
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -41,6 +43,7 @@ const Components: any = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
+	'main/objectType':		 PageMainObjectType,
 };
 
 interface Props extends RouteComponentProps<any> {};

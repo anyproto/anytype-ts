@@ -3,31 +3,17 @@
 .select { 
 	border-radius: 4px; border: solid 1px #d2d0c2; display: inline-block; vertical-align: middle;
 	letter-spacing: 0.08px; transition: $transitionFast; position: relative; cursor: pointer; font-family: 'Inter';
-	white-space: nowrap;
+	white-space: nowrap; padding: 3px 26px 3px 6px; line-height: 20px !important;
 }
 .select:hover, .select.active { background: #f3f2ef; }
 
 .select {
 	.icon { transition: none; }
 	.icon.arrow {
-		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px; height: 20px; position: absolute; top: 50%;
-		background-image: url('~img/arrow/select/dark.svg'); 
+		margin: -10px 0px 0px 0px !important; right: 0px !important; width: 20px !important; height: 20px !important; position: absolute; top: 50%;
+		background-image: url('~img/arrow/select/dark.svg') !important; 
 	}
-	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg'); }
-	.current { padding: 3px 26px 3px 6px; width: 100%; line-height: 20px; }
-	.current {
-		.name { @include text-overflow-nw; }
-	}
-	.options { 
-		min-width: 176px; border-radius: 8px; box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.3); background: #fff; position: absolute;
-		left: 0px; top: 28px; z-index: 1; display: none; padding: 8px 0px;
-	}
-	.options {
-		.option { cursor: pointer; padding: 5px 16px; }
-		.option {
-			.name { width: auto; }
-			.icon { margin: 0px 4px 0px 0px; transition: none; }
-		}
-		.option:hover, .option.active { background: #f3f2ef !important; }
-	}
+	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
+	
+	.name { @include text-overflow-nw; }
 }

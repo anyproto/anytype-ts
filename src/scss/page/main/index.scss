@@ -6,11 +6,18 @@
 	.title { color: #fff; position: relative; height: 48px; }
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
-		.icon { width: 40px; height: 40px; vertical-align: top; margin-right: 8px; border-radius: 100%; cursor: pointer; }
-		.icon:hover, .icon.active { background-color: rgba(0, 0, 0, 0.2); }
+		.icon { 
+			width: 44px; height: 44px; vertical-align: middle; margin-right: 16px; border-radius: 100%; cursor: pointer; 
+			background-color: rgba(0,0,0,0.3); background-size: 20px 20px;
+		}
+		.icon:hover, .icon.active { background-color: rgba(0, 0, 0, 0.5); }
 		.icon:last-child { margin-right: 0px; }
-		.icon.user { width: 48px; height: 48px; line-height: 48px; user-select: none; }
-		.icon.profile { background-size: 18px 18px; background-image: url('~img/icon/profile.svg'); display: none; }
+
+		.iconObject { cursor: pointer; user-select: none; display: inline-block; vertical-align: middle; }
+
+		.icon.account { background-image: url('~img/icon/account.svg'); display: none; }
+		.icon.add { background-image: url('~img/icon/plus/object.svg'); }
+		.icon.store { background-image: url('~img/icon/store.svg'); }
 	}
 
 	@keyframes shimmer {
@@ -34,25 +41,39 @@
 	#documents { display: flex; flex-wrap: wrap; overflow: auto; }
 	#documents {
 		.item { 
-			width: 208px; height: 112px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
+			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
 		}
 		
 		.item {
+			.click { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+
+			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-paragraph; height: 22px; width: 100%; word-break: break-word; position: absolute; left: 0px; bottom: 16px; 
-				padding: 0px 16px; @include text-overflow-nw;  
+				@include text-common; line-height: 20px; max-height: 60px; width: 100%; word-break: break-word; margin-bottom: 1px;
+				-webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; display: -webkit-box;
 			}
+			.type { @include text-small; color: $colorDarkGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
+			
 			.icon.more { 
 				background-image: url('~img/icon/index/more0.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;
-				right: 16px; top: 16px; opacity: 0;
+				right: 16px; top: 16px; opacity: 0; z-index: 1; transition: none;
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
 
-			.line { width: 88px; height: 10px; background-color: #dfddd0; position: absolute; left: 16px; bottom: 16px; }
+			.line { width: 88px; height: 10px; background-color: #dfddd0; }
+		}
+		.item.withIcon {
+			.name { -webkit-line-clamp: 1; }
 		}
 		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }
+
+		.item.isTask { padding-left: 40px; }
+		.item.isTask {
+			.iconObject { position: absolute; left: 16px; top: 16px; z-index: 1; margin: 0px; }
+			.name { -webkit-line-clamp: 3; }
+		}
 		
 		.item:hover {
 			.icon.more { opacity: 1; }
@@ -60,15 +81,6 @@
 		.item.active {
 			.icon.more { opacity: 1; transition: none; background-image: url('~img/icon/index/more1.svg'); }
 		}
-		
-		.item.add { background: rgba(255,255,255,0.65); transition: background 0.2s ease-in-out; margin-right: 0px; }
-		.item.add {
-			.icon { 
-				width: 16px; height: 16px; background-image: url('~img/icon/plus/document.svg');
-				position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; 
-			}
-		}
-		.item.add:hover { background-color: rgba(255,255,255,0.8); }
 	}
 	
 }

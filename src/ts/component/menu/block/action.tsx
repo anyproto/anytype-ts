@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, MenuItemVertical } from 'ts/component';
+import { Filter, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, Action, translate } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -66,9 +66,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<div className="filter">
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilter')} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
-				</div>
+				<Filter ref={(ref: any) => { this.ref = ref; }} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
@@ -79,8 +77,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
-		const menu = $('#' + Util.toCamelCase('menu-' + id));
+		const { getId } = this.props;
+		const menu = $('#' + getId());
 		
 		this._isMounted = true;
 		this.rebind();
@@ -101,7 +99,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		this.rebind();
-		this.props.setActiveItem(items[this.n]);
+		this.props.setHover(items[this.n]);
 		this.props.position();
 	};
 	
@@ -116,14 +114,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
 		
 		this.focus = true;
-		this.props.setActiveItem();
+		this.props.setHover();
 	};
 	
 	onFilterBlur (e: any) {
 		this.focus = false;
 	};
 	
-	onFilterChange (e: any, v: string) {
+	onFilterChange (v: string) {
 		this.n = 0;
 		this.setState({ filter: v });
 	};
@@ -303,7 +301,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setActiveItem(items[this.n], scroll);
+		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -433,6 +431,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			isSub: true,
+			passThrough: true,
 			data: {
 				blockId: blockId,
 				blockIds: blockIds,

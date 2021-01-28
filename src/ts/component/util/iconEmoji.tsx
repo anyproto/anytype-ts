@@ -27,11 +27,6 @@ interface State {
 };
 
 const Constant = require('json/constant.json');
-const Blank = {
-	small: require('img/blank/smile/small.svg'),
-	medium: require('img/blank/smile/medium.svg'),
-	big: require('img/blank/smile/big.svg'),
-};
 const IconSrc = {
 	newSet: require('img/icon/set/new.svg'),
 };
@@ -61,7 +56,7 @@ class IconEmoji extends React.Component<Props, State> {
 	
 	render () {
 		const { id, size, native, asImage, className, canEdit, menuId, iconClass } = this.props;
-		let icon = String(this.state.icon || this.props.icon || '');
+		const icon = String(this.state.icon || this.props.icon || '');
 		const hash = String(this.state.hash || this.props.hash || '');
 		
 		let cn = [ 'iconEmoji' ];
@@ -75,15 +70,7 @@ class IconEmoji extends React.Component<Props, State> {
 			cn.push('active');
 		};
 
-		let blank = Blank.small;
-		if (className.match(/c(20|22|24)/)) {
-			blank = Blank.medium;
-		};
-		if (className.match(/c(28|32|48|64)/)) {
-			blank = Blank.big;
-		};
-		
-		let element = <img src={blank} className={[ 'iconBlank', 'c' + size ].join(' ')} />;
+		let element = null;
 		let skin = 0;
 
 		if (icon) {
@@ -112,6 +99,10 @@ class IconEmoji extends React.Component<Props, State> {
 		} else 
 		if (iconClass) {
 			element = <img src={IconSrc[iconClass]} className={[ 'icon', iconClass ].join(' ')} />
+		};
+
+		if (!element) {
+			return null;
 		};
 		
 		return (
