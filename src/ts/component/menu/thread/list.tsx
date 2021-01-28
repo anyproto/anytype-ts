@@ -28,7 +28,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const thread = authStore.threadGet(rootId);
 		const { accounts, cafe } = thread;
-		const { status } = cafe;
+		const { status } = cafe || {};
 
 		const Item = (item: any) => (
 			<div 
@@ -72,11 +72,14 @@ class MenuThreadList extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		const obj = $('#menuThreadList');
+		const { getId } = this.props;
+		const obj = $('#' + getId());
+		
 		const clear = () => {
 			window.clearTimeout(this.timeoutClose);
 			window.clearTimeout(this.timeoutMenu);
 		};
+
 		const leave = () => {
 			clear();
 			this.timeoutClose = window.setTimeout(() => {
@@ -86,10 +89,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 			}, 1000);
 		};
 
-		obj.unbind('mouseenter').on('mouseenter', () => { 
-			clear();
-		});
-		/*
+		obj.unbind('mouseenter').on('mouseenter', () => { clear(); });
+
 		obj.unbind('mouseleave').on('mouseleave', () => {
 			const status = $('#menuThreadStatus');
 			if (status.length) {
@@ -100,7 +101,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 			};
 			leave();
 		});
-		*/
 	};
 
 	componentWillUnmount () {
@@ -141,6 +141,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				offsetY: 0,
 				fixedY: top,
 				className: 'fixed',
+				noDimmer: true,
 				data: {
 					...data,
 					accountId: id,

@@ -72,7 +72,7 @@ class Menu extends React.Component<Props, {}> {
 
 	render () {
 		const { id, param } = this.props;
-		const { type, vertical, horizontal, passThrough } = param;
+		const { type, vertical, horizontal, passThrough, noDimmer } = param;
 		
 		const Components: any = {
 			help:					 MenuHelp,
@@ -144,7 +144,7 @@ class Menu extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className="menuWrap">
+			<div id={menuId + '-wrap'} className="menuWrap">
 				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 					<div className="content">
 						<Component 
@@ -156,7 +156,9 @@ class Menu extends React.Component<Props, {}> {
 						/>
 					</div>
 				</div>
-				<Dimmer onClick={() => { commonStore.menuClose(id); }} className={cd.join(' ')} />
+				{!noDimmer ? (
+					<Dimmer onClick={() => { commonStore.menuClose(id); }} className={cd.join(' ')} />
+				) : ''}
 			</div>
 		);
 	};

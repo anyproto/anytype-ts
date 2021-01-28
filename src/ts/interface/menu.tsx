@@ -16,6 +16,7 @@ export interface MenuParam {
 	passThrough?: boolean;
 	className?: string;
 	noAnimation?: boolean;
+	noDimmer?: boolean;
 	noFlip?: boolean;
 	onClose?(): void;
 	onOpen?(): void;
