@@ -486,7 +486,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 					this.setState({ loading: true });
 
-					C.Export(files[0], [ root ], format, true, (message: any) => {	
+					C.Export(files[0], [], format, true, (message: any) => {	
 						this.setState({ loading: false });
 
 						if (message.error.code) {
