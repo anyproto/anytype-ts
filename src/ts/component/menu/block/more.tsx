@@ -168,6 +168,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
 			];
+
+			if (object.isArchived) {
+				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
+			} else {
+				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
+			};
 		} else
 		if (block.isPage()) {
 			items = [
