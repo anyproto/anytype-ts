@@ -10,14 +10,14 @@
 		"start:electron-wait-webpack": "cross-env wait-for-localhost $SERVER_PORT && ./node_modules/.bin/electron .",
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-addon": "ANYTYPE_USE_ADDON=1 npm-run-all start:dev",
-		"build": "webpack --mode=production --env.NODE_ENV=production  -p --config webpack.config.js",
+		"build": "webpack --mode=production --env.NODE_ENV=production --config webpack.config.js",
 		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js",
-		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",
-		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
-		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
-		"publish:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
-		"publish:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
-		"publish:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always"
+		"dist:mac": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",
+		"dist:win": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
+		"dist:linux": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
+		"publish:mac": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
+		"publish:linux": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
+		"publish:win": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always"
 	},
 	"postinstall": "electron-builder install-app-deps",
 	"repository": {
@@ -68,7 +68,7 @@
 		"uglifyjs-webpack-plugin": "^2.2.0",
 		"url-loader": "^2.3.0",
 		"wait-for-localhost-cli": "^1.1.0",
-		"webpack": "^5.19.0",
+		"webpack": "^4.44.2",
 		"webpack-cli": "^3.3.12",
 		"webpack-dev-server": "^3.11.0"
 	},

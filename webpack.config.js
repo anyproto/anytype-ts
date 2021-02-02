@@ -73,11 +73,11 @@ module.exports = (env) => {
 				},
 				{
 					test: /\.(eot|ttf|otf|woff|woff2)$/,
-					loader: 'url-loader?name=[path][name].[ext]'
+					loader: 'url-loader'
 				},
 				{
 					test: /\.(jpe?g|png|gif|svg)$/,
-					loader: 'url-loader?name=[path][name].[ext]'
+					loader: 'url-loader'
 				},
 				{
 					test: /\.s?css/,
