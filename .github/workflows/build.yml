@@ -29,9 +29,15 @@ jobs:
           node-version: 15.3.0
 
       - name: Update Addon
+        if: matrix.os != 'windows-latest'
+        run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
+
+      - name: Update Addon
+        if: matrix.os == 'windows-latest'
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}} > update.log
 
       - name: Update Result
+        if: matrix.os == 'windows-latest'
         run: more update.log
         shell: cmd
 
