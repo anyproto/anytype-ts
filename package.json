@@ -11,7 +11,7 @@
 		"start:dev": "npm-run-all --parallel start:watch start:electron-wait-webpack",
 		"start:dev-addon": "ANYTYPE_USE_ADDON=1 npm-run-all start:dev",
 		"build": "webpack --mode=production --env.NODE_ENV=production  -p --config webpack.config.js",
-		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js && rm dist/bundle-back.js",
+		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js",
 		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",
 		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
 		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",

@@ -13,3 +13,4 @@ tools
 dist/*.node
 *.txt
 src/json/schema
+dist/bundle-back.js
