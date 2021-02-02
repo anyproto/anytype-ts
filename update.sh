@@ -67,4 +67,6 @@ rm -rf dist/lib/protos
 mv -fv protobuf/* dist/lib/
 rm -rf protobuf
 rm -rf $FILE
-printf "Done\n"
+printf "Done\n\n"
+
+du -a dist/lib
