@@ -62,7 +62,7 @@ else
 fi;
 
 rm -rf dist/lib/pb
-rm -rf dist/lib/vendor
+rm -rf dist/lib/pkg
 rm -rf dist/lib/protos
 mv -fv protobuf/* dist/lib/
 rm -rf protobuf
