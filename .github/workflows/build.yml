@@ -32,7 +32,8 @@ jobs:
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}} > update.log
 
       - name: Update Result
-        run: cat update.log
+        run: more update.log
+        shell: cmd
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli

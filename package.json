@@ -19,6 +19,7 @@
 		"publish:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
 		"publish:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always"
 	},
+	"postinstall": "electron-builder install-app-deps",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/anytypeio/js-anytype.git"
@@ -67,7 +68,7 @@
 		"uglifyjs-webpack-plugin": "^2.2.0",
 		"url-loader": "^2.3.0",
 		"wait-for-localhost-cli": "^1.1.0",
-		"webpack": "^4.44.2",
+		"webpack": "^5.19.0",
 		"webpack-cli": "^3.3.12",
 		"webpack-dev-server": "^3.11.0"
 	},
