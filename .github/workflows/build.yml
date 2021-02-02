@@ -29,7 +29,10 @@ jobs:
           node-version: 14.0.0
 
       - name: Update Addon
-        run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
+        run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}} > update.log
+
+      - name: Update Result
+        run: cat update.log
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli
