@@ -19,7 +19,6 @@
 		"publish:linux": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
 		"publish:win": "webpack --mode=production --env.NODE_ENV=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always"
 	},
-	"postinstall": "electron-builder install-app-deps",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/anytypeio/js-anytype.git"
