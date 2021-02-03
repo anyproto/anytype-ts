@@ -38,7 +38,7 @@ jobs:
 
       - name: Update Result
         if: matrix.os == 'windows-latest'
-        run: more update.log
+        run: dir dist
         shell: cmd
 
       - name: Install Webpack
