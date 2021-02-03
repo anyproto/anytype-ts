@@ -33,6 +33,7 @@ jobs:
         run: npm install --save-dev webpack-cli
 
       - name: Update Addon
+        shell: bash  
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
 
       - name: Update Result
