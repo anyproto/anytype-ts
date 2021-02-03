@@ -33,12 +33,7 @@ jobs:
         run: npm install --save-dev webpack-cli
 
       - name: Update Addon
-        if: matrix.os != 'windows-latest'
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
-
-      - name: Update Addon Windows
-        if: matrix.os == 'windows-latest'
-        run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}} > update.log
 
       - name: Update Result
         if: matrix.os == 'windows-latest'
