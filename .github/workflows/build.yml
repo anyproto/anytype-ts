@@ -1,9 +1,9 @@
 name: Release
 
-on: 
-  push:
-    tags:        
-      - v*
+on: push
+#  push:
+#    tags:        
+#      - v*
 
 jobs:
   release:
@@ -46,6 +46,7 @@ jobs:
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
+          DEBUG: electron-builder
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
