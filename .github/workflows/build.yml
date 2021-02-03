@@ -33,14 +33,16 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
 
-      - name: Update Addon
+      - name: Update Addon Windows
         if: matrix.os == 'windows-latest'
         run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}} > update.log
 
       - name: Update Result
         if: matrix.os == 'windows-latest'
-        run: dir dist\lib
         shell: cmd
+        run: |
+          gc update.log
+          dir dist\lib
 
       - name: Install Webpack
         run: npm install --save-dev webpack-cli
