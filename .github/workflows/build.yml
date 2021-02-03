@@ -45,6 +45,8 @@ jobs:
         shell: cmd
         run: |
           type update.log
+          dir
+          dir dist
           dir dist\lib
 
       - name: Update Deps
