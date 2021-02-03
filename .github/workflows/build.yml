@@ -1,9 +1,10 @@
 name: Release
 
-on: 
-  push:
-    tags:        
-      - v*
+on: push
+#on: 
+#  push:
+#    tags:        
+#      - v*
 
 jobs:
   release:
@@ -38,7 +39,7 @@ jobs:
 
       - name: Update Result
         if: matrix.os == 'windows-latest'
-        run: more update.log
+        run: dir dist\lib
         shell: cmd
 
       - name: Install Webpack
