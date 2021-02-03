@@ -41,7 +41,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
-          gc update.log
+          more update.log
           dir dist\lib
 
       - name: Install Webpack
