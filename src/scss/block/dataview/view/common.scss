@@ -22,6 +22,10 @@
 				.cellContent.c-file {
 					.inputWithFile { display: none; }
 				}
+
+				.cellContent.c-object {
+					.element { width: 100%; }
+				}
 			}
 		}
 	}
