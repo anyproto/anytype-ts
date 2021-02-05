@@ -93,13 +93,13 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		
-		commonStore.menuOpen('dataviewRelationEdit', { 
+		commonStore.menuOpen('dataviewRelationSuggest', { 
 			type: I.MenuType.Vertical,
 			element: '#relation-add',
 			offsetX: 8,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Center,
 			data: data
 		});
 	};
