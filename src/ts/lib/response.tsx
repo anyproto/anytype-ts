@@ -337,6 +337,12 @@ const BlockDataviewRelationAdd = (response: any) => {
 	};
 };
 
+const BlockDataviewRelationListAvailable = (response: any) => {
+	return {
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+	};
+};
+
 const BlockDataviewRecordRelationOptionAdd = (response: any) => {
 	return {
 		option: Mapper.From.SelectOption(response.getOption()),
@@ -468,6 +474,7 @@ export {
 	BlockDataviewRecordDelete,
 
 	BlockDataviewRelationAdd,
+	BlockDataviewRelationListAvailable,
 
 	BlockDataviewRecordRelationOptionAdd,
 	BlockDataviewRecordRelationOptionUpdate,

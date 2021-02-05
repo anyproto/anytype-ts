@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, Util, Key, keyboard } from 'ts/lib';
+import { Filter, Icon } from 'ts/component';
+import { I, C, Util, DataUtil, Key, keyboard } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -37,7 +37,6 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
-		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
@@ -55,8 +54,6 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const objectType: any = dbStore.getObjectType(item.type) || {};
-
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -66,16 +63,16 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<MenuItemVertical 
-						id={item.id}
-						object={item}
-						name={item.name}
+					<div 
+						id={'item-' + item.relationKey} 
+						className="item" 
+						style={param.style}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withCaption={true}
-						caption={objectType.name}
-						style={param.style}
-					/>
+					>
+						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
+						<div className="name">{item.name}</div>
+					</div>
 				</CellMeasurer>
 			);
 		};
@@ -120,7 +117,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 		this.rebind();
 		this.resize();
 		this.focus();
-		this.load(false);
+		this.load();
 	};
 
 	componentDidUpdate () {
@@ -133,7 +130,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 		if (filter != this.filter) {
 			this.offset = 0;
 			this.filter = filter;
-			this.load(true);
+			this.load();
 			return;
 		};
 
@@ -186,47 +183,22 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
+
+		item = item || items[n] || {};
+
+		this.props.setHover({ id: item.relationKey }, scroll);
 	};
 
-	load (clear: boolean, callBack?: (message: any) => void) {
+	load () {
 		const { param } = this.props;
 		const { data } = param;
-		const { types, filter } = data;
-
-		const filters = [];
-		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
-		];
-
-		if (types && types.length) {
-			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
-		};
+		const { rootId, blockId } = data;
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter, this.offset, 1000000, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || Constant.default.name);
-				return it;
-			}));
-
+		C.BlockDataviewRelationListAvailable(rootId, blockId, (message: any) => {
+			this.items = message.relations;
 			this.setState({ loading: false });
-		});
-	};
-
-	loadMoreRows ({ startIndex, stopIndex }) {
-        return new Promise((resolve, reject) => {
-			this.offset += LIMIT;
-			this.load(false, resolve);
 		});
 	};
 
@@ -291,9 +263,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close, position } = this.props;
-		const { data } = param;
-		const { onChange } = data;
+		const { close, position } = this.props;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -302,15 +272,6 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 			close();
 			return;
 		};
-
-		let value = Util.objectCopy(data.value || []);
-		value.push(item.id);
-		value = Util.arrayUnique(value);
-
-		data.value = value;
-
-		commonStore.menuUpdateData(MENU_ID, { value: value });
-		onChange(value);
 
 		position();
 	};
