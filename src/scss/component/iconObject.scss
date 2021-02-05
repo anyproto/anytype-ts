@@ -110,8 +110,8 @@
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 
-.iconObject.c96, .iconObject.c128 {
-	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
+.iconObject.c48, .iconObject.c64 {
+	.iconImage { border-radius: 100%; width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
 .iconObject.c48.isPage, .iconObject.c48.isImage {
 	.iconImage { border-radius: 8px; }
