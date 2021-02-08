@@ -694,6 +694,7 @@ class DataUtil {
 				this.pageOpenPopup(object.id);
 				break;
 
+			/*
 			case 'image':
 				commonStore.popupOpen('preview', {
 					data: {
@@ -706,6 +707,7 @@ class DataUtil {
 			case 'file':
 				ipcRenderer.send('urlOpen', commonStore.fileUrl(object.id));
 				break;
+			*/
 		};
 	};
 
@@ -714,6 +716,7 @@ class DataUtil {
 		const { layout, iconEmoji, iconImage, coverType, coverId } = details;
 		const type = this.schemaField(details.type);
 		const ret: any = {
+			object: details,
 			withCover: (coverType != I.CoverType.None) && coverId,
 			withIcon: false,
 			className: [],

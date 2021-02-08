@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, M, DataUtil } from 'ts/lib';
-import { Block } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { Block, IconObject } from 'ts/component';
+import { blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -26,6 +26,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const { objectTypes } = dbStore;
 		const check = DataUtil.checkDetails(rootId);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const title = blockStore.getLeaf(rootId, 'title') || {};
@@ -35,6 +36,23 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		if (root.isObjectContact()) {
 			icon.type = I.BlockType.IconUser;
 		};
+
+		const objectType = objectTypes.find((it: I.ObjectType) => { return it.url == check.object.type; });
+		//const creator = blockStore.getDetails(rootId, check.object.creator);
+		const creator: any = { name: 'Razor', layout: I.ObjectLayout.Contact };
+		const featured = [];
+
+		if (objectType) {
+			featured.push({ ...objectType, layout: I.ObjectLayout.ObjectType });
+		};
+		featured.push(creator);
+
+		const Element = (item: any) => (
+			<div className="element">
+				<IconObject size={24} object={item} />
+				{item.name}
+			</div>
+		);
 
 		return (
 			<div>
@@ -50,6 +68,15 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					onMenuAdd={onMenuAdd}
 					onPaste={onPaste}
 				/>
+
+				<div className="featured">
+					{featured.map((item: any, i: any) => (
+						<span key={i}>
+							{i > 0 ? <div className="bullet" /> : ''}
+							<Element {...item} />
+						</span>
+					))}
+				</div>
 			</div>
 		);
 	};

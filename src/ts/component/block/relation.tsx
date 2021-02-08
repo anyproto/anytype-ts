@@ -48,7 +48,7 @@ class BlockRelation extends React.Component<Props, {}> {
 							<Input 
 								id="input"
 								ref={(ref: any) => { this.refInput = ref; }} 
-								placeHolder={'New relation'}
+								placeHolder="Create a new relation"
 								onFocus={this.onFocus}
 								onBlur={this.onBlur}
 								onClick={this.onMenu} 
@@ -107,7 +107,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 
-		input.attr({ placeHolder: 'New relation' });
+		input.attr({ placeHolder: 'Create a new relation' });
 	};
 
 	onMenu (e: any) {
