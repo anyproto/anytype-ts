@@ -54,3 +54,7 @@ export interface LinkPreview {
 	faviconUrl: string;
 	imageUrl: string;
 };
+
+export enum ExportFormat {
+	Markdown = 0,
+}

@@ -405,6 +405,10 @@ function menuInit () {
 					label: 'Import',
 					click: () => { send('import'); }
 				},
+				{
+					label: 'Export',
+					click: () => { send('export'); }
+				},
 				{ role: 'close' },
 			]
 		},
