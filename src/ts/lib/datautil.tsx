@@ -633,7 +633,7 @@ class DataUtil {
 		});
 	};
 
-	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View) {
+	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
 		relation = new M.Relation(relation);
 
 		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
@@ -652,27 +652,35 @@ class DataUtil {
 				view.relations.push(relation);
 			};
 
+			if (callBack) {
+				callBack(message);
+			};
+
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
-	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View) {
+	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, new M.Relation(relation), (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};
-			//C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
-	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View) {
+	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};
 			
-			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 

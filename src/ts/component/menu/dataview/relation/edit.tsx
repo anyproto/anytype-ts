@@ -69,7 +69,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<React.Fragment>
 							<div className="line" />
 
-							<div className="sectionName">Object type</div>
+							<div className="sectionName">Type of target object</div>
 							<MenuItemVertical 
 								id="object-type" 
 								name={objectType ? objectType.name : 'Select object type'} 
@@ -123,6 +123,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			this.forceUpdate();
 		};
 
+		this.unbind();
 		this.focus();
 		this.checkButton();
 	};
@@ -133,7 +134,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
 		window.clearTimeout(this.timeout);
+
+		if (rebind) {
+			rebind();
+		};
+	};
+
+	unbind () {
+		$(window).unbind('keydown.menu');
 	};
 
 	focus () {
@@ -279,6 +292,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
+		console.log(e);
+
 		this.save();
 	};
 
@@ -323,20 +338,20 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, onChange } = data;
 		const view = getView();
 
-		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view);
+		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view, onChange);
 	};
 
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, onChange } = data;
 		const view = getView();
 		const relation = this.getViewRelation();
 		
-		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view);
+		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view, onChange);
 	};
 
 	getRelation (): I.Relation {

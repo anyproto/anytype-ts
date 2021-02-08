@@ -41,7 +41,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 
 		const Item = SortableElement((item: any) => {
 			return (
-				<div id={'relation-' + item.relationKey} className="item">
+				<div id={'item-' + item.relationKey} className="item">
 					<Handle />
 					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
@@ -53,7 +53,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		});
 		
 		const ItemAdd = SortableElement((item: any) => (
-			<div id="relation-add" className="item add" onClick={this.onAdd}>
+			<div id="item-add" className="item add" onClick={this.onAdd}>
 				<Icon className="plus" />
 				<div className="name">New relation</div>
 			</div>
@@ -90,22 +90,22 @@ class MenuRelationList extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		
 		commonStore.menuOpen('dataviewRelationSuggest', { 
 			type: I.MenuType.Vertical,
-			element: '#relation-add',
-			offsetX: 8,
+			element: `#${getId()} #item-add`,
+			offsetX: 256,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
 			data: data
 		});
 	};
 	
 	onEdit (e: any, id: string) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { readOnly } = data;
 
@@ -115,7 +115,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		
 		commonStore.menuOpen('dataviewRelationEdit', { 
 			type: I.MenuType.Vertical,
-			element: '#relation-' + id,
+			element: `#${getId()} #item-${id}`,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,

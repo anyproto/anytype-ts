@@ -57,7 +57,7 @@ class MenuOptionList extends React.Component<Props, State> {
 				content =  (
 					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
-						<div className="name">Create option "{filter}"</div>
+						<div className="name">{item.name}</div>
 					</div>
 				);
 			} else 
@@ -259,7 +259,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const relation = data.relation.get();
-		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 
 		let items = relation.selectDict || [];
 		let sections: any = {};
@@ -270,8 +269,9 @@ class MenuOptionList extends React.Component<Props, State> {
 		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Format', children: [] };
 
 		if (data.filter) {
+			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
-			ret.unshift({ id: 'add' });
+			ret.unshift({ id: 'add', name: `Create option "${filter}"` });
 		};
 
 		for (let item of items) {

@@ -37,6 +37,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
@@ -54,15 +55,22 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-					hasFixedWidth={() => {}}
-				>
+
+			let content = null;
+			if (item.id == 'add') {
+				content =  (
+					<div 
+						id="item-add" className="item add" 
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						style={param.style}
+					>
+						<Icon className="plus" />
+						<div className="name">{item.name}</div>
+					</div>
+				);
+			} else {
+				content = (
 					<div 
 						id={'item-' + item.relationKey} 
 						className="item" 
@@ -73,6 +81,19 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 						<div className="name">{item.name}</div>
 					</div>
+				);
+			};
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -177,7 +198,19 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		return this.items;
+		const { param } = this.props;
+		const { data } = param;
+
+		let ret = [];
+		ret = ret.concat(this.items);
+
+		if (data.filter) {
+			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			ret = ret.filter((it: any) => { return it.name.match(filter); });
+		};
+
+		ret.unshift({ id: 'add', name: 'Create from scratch' });
+		return ret;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
@@ -197,7 +230,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		C.BlockDataviewRelationListAvailable(rootId, blockId, (message: any) => {
-			this.items = message.relations;
+			this.items = message.relations.sort(DataUtil.sortByName);
 			this.setState({ loading: false });
 		});
 	};
@@ -263,7 +296,9 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { close, position } = this.props;
+		const { close, position, param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -273,7 +308,25 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 			return;
 		};
 
-		position();
+		if (item.id == 'add') {
+			commonStore.menuOpen('dataviewRelationEdit', { 
+				type: I.MenuType.Vertical,
+				element: '#item-' + item.id,
+				offsetX: 0,
+				offsetY: 0,
+				vertical: I.MenuDirection.Center,
+				horizontal: I.MenuDirection.Right,
+				data: {
+					...data,
+					onChange: () => { close(); },
+					rebind: this.rebind,
+				}
+			});
+		} else {
+			C.BlockDataviewRelationAdd(rootId, blockId, item, (message: any) => {
+				close();
+			});
+		};
 	};
 
 	resize () {
