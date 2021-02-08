@@ -202,14 +202,17 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 		const { data } = param;
 
 		let ret = [];
+		let name = 'Create from scratch';
+
 		ret = ret.concat(this.items);
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			ret = ret.filter((it: any) => { return it.name.match(filter); });
+			name = `Create relation "${data.filter}"`;
 		};
 
-		ret.unshift({ id: 'add', name: 'Create from scratch' });
+		ret.unshift({ id: 'add', name: name });
 		return ret;
 	};
 	

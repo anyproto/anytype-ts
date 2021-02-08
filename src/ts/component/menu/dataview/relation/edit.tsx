@@ -116,11 +116,18 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidMount() {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const relation = this.getRelation();
 
 		if (relation) {
 			this.format = relation.format;
 			this.forceUpdate();
+		};
+
+		if (this.ref && filter) {
+			this.ref.setValue(filter);
 		};
 
 		this.unbind();
