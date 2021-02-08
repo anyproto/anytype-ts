@@ -13,7 +13,9 @@ interface State {
 	error: string;
 };
 
-const { dialog } = window.require('electron').remote;
+const { dialog, app } = window.require('electron').remote;
+const { ipcRenderer } = window.require('electron');
+const userPath = app.getPath('userData');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
@@ -97,6 +99,12 @@ class PopupSettings extends React.Component<Props, State> {
 							<div className="row" onClick={() => { this.onPage('importIndex'); }}>
 								<Icon className="import" />
 								<Label text={translate('popupSettingsImportTitle')} />
+								<Icon className="arrow" />
+							</div>
+
+							<div className="row" onClick={() => { this.onPage('exportMarkdown'); }}>
+								<Icon className="export" />
+								<Label text={translate('popupSettingsExportTitle')} />
 								<Icon className="arrow" />
 							</div>
 						</div>
@@ -301,6 +309,19 @@ class PopupSettings extends React.Component<Props, State> {
 					</div>
 				);
 				break;
+
+			case 'exportMarkdown':
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+
+						<Title text={translate('popupSettingsExportMarkdownTitle')} />
+						<Label text={translate('popupSettingsExportMarkdownText')} />
+
+						<Button text={translate('popupSettingsExportOk')} className="orange" onClick={() => { this.onExport(I.ExportFormat.Markdown); }} />
+					</div>
+				);
+				break;
 		};
 
 		return (
@@ -444,6 +465,50 @@ class PopupSettings extends React.Component<Props, State> {
 				history.push('/main/index');
 			});
 		});
+	};
+
+	onExport (format: I.ExportFormat) {
+		const { root } = blockStore;
+
+		let options: any = {};
+
+		switch (format) {
+			case I.ExportFormat.Markdown:
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					this.setState({ loading: true });
+
+					C.Export(files[0], [], format, true, (message: any) => {	
+						this.setState({ loading: false });
+
+						if (message.error.code) {
+							commonStore.popupOpen('confirm', {
+								data: {
+									title: 'Ooops!',
+									text: 'Something went wrong. <br/>If you think it’s our fault, please write us a feedback.',
+									textConfirm: 'Try one more time',
+									canCancel: false,
+									onConfirm: () => {
+									},
+								},
+							});
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+						this.props.close();
+					});
+				});
+				break;
+		};
 	};
 
 	init () {
