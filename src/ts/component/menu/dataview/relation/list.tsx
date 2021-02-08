@@ -92,6 +92,9 @@ class MenuRelationList extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		
 		commonStore.menuOpen('dataviewRelationSuggest', { 
 			type: I.MenuType.Vertical,
@@ -100,7 +103,11 @@ class MenuRelationList extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
-			data: data
+			data: {
+				...data,
+				filter: '',
+				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+			}
 		});
 	};
 	

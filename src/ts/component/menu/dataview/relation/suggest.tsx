@@ -200,6 +200,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
+		const skipIds = data.skipIds || [];
 
 		let ret = [];
 		let name = 'Create from scratch';
@@ -210,6 +211,10 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			ret = ret.filter((it: any) => { return it.name.match(filter); });
 			name = `Create relation "${data.filter}"`;
+		};
+
+		if (skipIds.length) {
+			ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
 		};
 
 		ret.unshift({ id: 'add', name: name });

@@ -299,7 +299,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		console.log(e);
+		const node = $(ReactDOM.findDOMNode(this));
+		const button = node.find('#button');
+
+		if (button.hasClass('grey')) {
+			return;
+		};
 
 		this.save();
 	};
