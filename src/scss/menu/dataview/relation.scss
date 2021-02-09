@@ -15,6 +15,7 @@
 
 	.menu.menuDataviewRelationList { width: 256px; }
 	.menu.menuDataviewRelationList {
+		.content { max-height: 350px; }
 		.item { padding: 4px 10px; }
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
