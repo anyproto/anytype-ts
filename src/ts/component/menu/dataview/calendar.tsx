@@ -69,7 +69,7 @@ class MenuCalendar extends React.Component<Props, State> {
 								options={years} 
 								menuClassName="orange center" 
 								menuWidth={144} 
-								horizontal={I.MenuDirection.Right} 
+								horizontal={I.MenuDirection.Right}
 								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
 							/>
 						</div>

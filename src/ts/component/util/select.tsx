@@ -124,6 +124,7 @@ class Select extends React.Component<Props, State> {
 				$('#select-' + id).removeClass('active');
 			},
 			data: {
+				noFilter: true,
 				value: value,
 				options: options,
 				onSelect: (e: any, item: any) => {
