@@ -40,7 +40,9 @@
 	.inputWithFile { border: 0px; padding: 0px; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
 	.element {
-		.name { line-height: 20px; width: calc(100% - 24px); @include text-overflow-nw; }
+		.flex { display: flex; }
+		.iconObject { flex-shrink: 0; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 	.element.image {
 		.iconObject { margin: 0px; }
@@ -56,7 +58,9 @@
 .cellContent.c-object {
 	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
 	.element {
-		.name { line-height: 20px; width: calc(100% - 24px); @include text-overflow-nw; }
+		.flex { display: flex; }
+		.iconObject { flex-shrink: 0; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 	.empty { color: $colorDarkGrey; display: none; }
 }

@@ -41,8 +41,10 @@ class CellObject extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			return (
 				<div className="element">
-					<IconObject object={item} />
-					<div className="name">{item.name}</div>
+					<div className="flex">
+						<IconObject object={item} />
+						<div className="name">{item.name}</div>
+					</div>
 				</div>
 			);
 		};

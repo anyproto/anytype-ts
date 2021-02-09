@@ -43,7 +43,9 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		if (objectType) {
 			featured.push({ ...objectType, layout: I.ObjectLayout.ObjectType });
 		};
-		featured.push(creator);
+		if (!creator._detailsEmpty_) {
+			featured.push(creator);
+		};
 
 		const Element = (item: any) => (
 			<div className="element">

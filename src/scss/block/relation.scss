@@ -3,8 +3,12 @@
 .blocks {
 	.block.blockRelation { line-height: 20px; }
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
+
 	.blocks .block.blockRelation {
 		.info { padding: 6px 2px; }
+
+		.cell { padding: 5px 8px; }
+		.cell.c-select { padding: 7px 8px; }
 	};
 }
 
@@ -30,9 +34,7 @@
 		}
 	}
 
-	.cell { @include text-common; width: calc(100% - 216px); position: relative; padding: 5px 8px; }
-
-	.cell.c-select { padding: 7px 8px; }
+	.cell { @include text-common; width: calc(100% - 216px); position: relative; }
 
 	.cell.isEditing { padding: 0px; }
 	.cell.isEditing {

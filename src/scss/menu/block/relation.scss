@@ -9,6 +9,7 @@
 	.menu.menuBlockRelationList.isReadOnly { 
 		.item { cursor: default; }
 		.item:hover::before { opacity: 0; }
+
 		.cell.c-select { cursor: default; }
 	}
 
