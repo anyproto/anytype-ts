@@ -38,6 +38,14 @@ export enum RelationType {
 	Object		 = 100,
 };
 
+export enum RelationScope {
+	Object				 = 0,
+	Type				 = 1,
+	SetOfTheSameType	 = 2,
+	ObjectsOfTheSameType = 3,
+	Library				 = 4,
+};
+
 export interface Relation {
 	relationKey: string;
 	format: RelationType;
@@ -51,6 +59,7 @@ export interface Relation {
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;
 	maxCount: number;
+	scope: RelationScope;
 };
 
 export enum OptionScope {

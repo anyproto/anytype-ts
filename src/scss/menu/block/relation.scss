@@ -15,8 +15,13 @@
 
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
-		.content { max-height: 338px; padding: 30px 0px; }
+		.content { transition: none ;padding: 0px; }
+		.items { height: 100%; }
 		.input { border: 0px; padding: 0px; }
+
+		.item {
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+		}
 
 		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
 		.cellContent.c-description { height: auto; line-height: auto; }

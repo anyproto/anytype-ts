@@ -51,6 +51,7 @@ class Relation implements I.Relation {
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
 	maxCount: number = 0;
+	scope: I.RelationScope = I.RelationScope.Object;
 	selectDict: any[] = [] as any[];
 
 	constructor (props: I.Relation) {
@@ -64,6 +65,7 @@ class Relation implements I.Relation {
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.maxCount = Number(props.maxCount) || 0;
+		self.scope = props.scope || I.RelationScope.Object;
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
 
 		decorate(self, {

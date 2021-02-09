@@ -183,6 +183,7 @@ const Mapper = {
 				isReadOnly: obj.getReadonly(),
 				maxCount: obj.getMaxcount(),
 				objectTypes: obj.getObjecttypesList(),
+				scope: obj.getScope(),
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
 			};
 		},
