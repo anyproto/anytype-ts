@@ -277,6 +277,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onCopy (e: any) {
+		let { close } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
 			return;
