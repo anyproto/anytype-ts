@@ -16,7 +16,12 @@
 	.menu.menuBlockRelationList {
 		.content { max-height: 338px; padding: 30px 0px; }
 		.input { border: 0px; padding: 0px; }
-		.item { padding: 0px 34px; }
+
+		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
+		.cellContent.c-description { height: auto; line-height: auto; }
+		.cellContent.c-description {
+			.name { -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box; }
+		}
 	}
 	
 	.menu.menuBlockRelationEdit { width: 224px; }

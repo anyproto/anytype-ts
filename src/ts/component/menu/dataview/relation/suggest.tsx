@@ -14,10 +14,8 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 20;
-const MENU_ID = 'dataviewObjectValues';
 
 @observer
 class MenuDataviewRelationSuggest extends React.Component<Props, State> {
@@ -217,6 +215,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 			ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
 		};
 
+		ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
 		ret.unshift({ id: 'add', name: name });
 		return ret;
 	};

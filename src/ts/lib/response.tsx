@@ -410,6 +410,12 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
+const ObjectRelationListAvailable = (response: any) => {
+	return {
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+	};
+};
+
 export {
 	VersionGet,
 
@@ -510,5 +516,6 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectRelationListAvailable,
 
 };

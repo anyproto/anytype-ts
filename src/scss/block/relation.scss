@@ -3,6 +3,9 @@
 .blocks {
 	.block.blockRelation { line-height: 20px; }
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
+	.blocks .block.blockRelation {
+		.info { padding: 6px 2px; }
+	};
 }
 
 .menus .menu.menuBlockRelationList, 
@@ -19,7 +22,7 @@
 
 	.sides { display: flex; }
 
-	.info { width: 215px; margin-right: 1px; padding: 6px 2px; }
+	.info { width: 215px; margin-right: 1px; }
 	.info {
 		.name { 
 			display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 

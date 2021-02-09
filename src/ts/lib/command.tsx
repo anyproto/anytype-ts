@@ -903,6 +903,16 @@ const ObjectRelationOptionDelete = (contextId: string, relationKey: string, opti
 	dispatcher.request('objectRelationOptionDelete', request, callBack);
 };
 
+const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationListAvailable.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('objectRelationListAvailable', request, callBack);
+};
+
+
+
 export {
 	VersionGet,
 
@@ -1014,5 +1024,6 @@ export {
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
+	ObjectRelationListAvailable,
 
 };

@@ -6,12 +6,21 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
+interface State {
+	loading: boolean;
+};
+
 const $ = require('jquery');
 
 @observer
-class MenuBlockRelationList extends React.Component<Props, {}> {
+class MenuBlockRelationList extends React.Component<Props, State> {
 
 	cellRefs: Map<string, any> = new Map();
+	items: any[] = [];
+
+	state = {
+		loading: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -27,13 +36,8 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 		const { rootId, readOnly } = data;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 		const idPrefix = 'menuBlockRelationListCell';
-
-		let relations = dbStore.getRelations(rootId, rootId).filter((it: I.Relation) => { return !it.isHidden; });
-		if (data.filter) {
-			relations = relations.filter((it: I.Relation) => { return it.name.match(filter); });
-		};
+		const items = this.getItems();
 
 		const Item = (item: any) => {
 			const relation = item.relation;
@@ -73,7 +77,7 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				{relations.map((item: any, i: number) => (
+				{items.map((item: any, i: number) => (
 					<Item key={i} relation={item} />
 				))}
 			</div>
@@ -81,6 +85,8 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this.load();
+
 		$('body').addClass('over');
 	};
 
@@ -91,6 +97,39 @@ class MenuBlockRelationList extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		commonStore.menuCloseAll();
 		$('body').removeClass('over');
+	};
+
+	load () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
+		this.setState({ loading: true });
+
+		C.ObjectRelationListAvailable(rootId, (message: any) => {
+			this.items = message.relations.sort(DataUtil.sortByName);
+			this.setState({ loading: false });
+		});
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+
+		let ret = [];
+		let name = 'Create from scratch';
+
+		ret = ret.concat(this.items);
+
+		if (data.filter) {
+			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			ret = ret.filter((it: any) => { return it.name.match(filter); });
+			name = `Create relation "${data.filter}"`;
+		};
+
+		ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
+		ret.unshift({ id: 'add', name: name });
+		return ret;
 	};
 
 	onSelect (e: any, item: any) {
