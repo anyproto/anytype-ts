@@ -17,8 +17,7 @@ class PageMainObjectType extends React.Component<Props, {}> {
 
 	render () {
 		const { match } = this.props;
-		const { objectTypes } = dbStore;
-		const objectType = objectTypes.find((it: I.ObjectType) => { return DataUtil.schemaField(it.url) == match.params.id; });
+		const objectType = dbStore.getObjectType('', match.params.id);
 		const relations = Util.objectCopy(objectType.relations);
 
 		relations.sort(DataUtil.sortByName);

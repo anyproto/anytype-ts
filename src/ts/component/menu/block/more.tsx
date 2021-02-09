@@ -34,7 +34,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sectionPage = null;
 		if (block.isPage()) {
-			const objectType = dbStore.getObjectType(object.type);
+			const objectType = dbStore.getObjectType(object.type, '');
 			const layouts = this.getLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 
@@ -366,7 +366,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const { objectTypes } = dbStore;
+		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;

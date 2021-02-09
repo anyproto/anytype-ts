@@ -50,7 +50,7 @@ class Relation implements I.Relation {
 	format: I.RelationType = I.RelationType.Description;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
-	isMultiple: boolean = false;
+	maxCount: number = 0;
 	selectDict: any[] = [] as any[];
 
 	constructor (props: I.Relation) {
@@ -63,12 +63,13 @@ class Relation implements I.Relation {
 		self.format = props.format || I.RelationType.Description;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
-		self.isMultiple = Boolean(props.isMultiple);
+		self.maxCount = Number(props.maxCount) || 0;
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
 
 		decorate(self, {
 			name: observable,
 			format: observable,
+			maxCount: observable,
 			objectTypes: observable,
 			selectDict: observable,
 		});

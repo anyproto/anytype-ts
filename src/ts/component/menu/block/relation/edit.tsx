@@ -44,7 +44,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			const isDate = relation.format == I.RelationType.Date;
 			const isObject = relation.format == I.RelationType.Object;
 			const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
-			const objectType = objectTypes.find((it: I.ObjectType) => { return it.url == url; });
+			const objectType = dbStore.getObjectType(url, '');
 
 			opts = (
 				<React.Fragment>
@@ -161,7 +161,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { objectTypes } = dbStore;
+		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {

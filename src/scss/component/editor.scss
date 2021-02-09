@@ -40,13 +40,6 @@
 		.buttons { opacity: 1; }
 	}
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
-
-	.featured { @include text-paragraph; color: #6c6a5f; white-space: nowrap; padding-left: 48px; margin-bottom: 32px; }
-	.featured {
-		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: -4px 10px 0px 10px; }
-		.element { display: inline-block; }
-		.iconObject { margin-right: 6px; }
-	}
 }
 
 /* Page */

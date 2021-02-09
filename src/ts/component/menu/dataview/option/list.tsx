@@ -286,6 +286,9 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		for (let i in sections) {
 			let section = sections[i];
+			if (!section.children.length) {
+				continue;
+			};
 			ret.push({ id: section.id, name: section.name, isSection: true });
 			ret = ret.concat(section.children);
 		};

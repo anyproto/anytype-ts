@@ -26,7 +26,6 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { objectTypes } = dbStore;
 		const check = DataUtil.checkDetails(rootId);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const title = blockStore.getLeaf(rootId, 'title') || {};
@@ -37,9 +36,8 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			icon.type = I.BlockType.IconUser;
 		};
 
-		const objectType = objectTypes.find((it: I.ObjectType) => { return it.url == check.object.type; });
-		//const creator = blockStore.getDetails(rootId, check.object.creator);
-		const creator: any = { name: 'Razor', layout: I.ObjectLayout.Contact };
+		const objectType = dbStore.getObjectType(check.object.type, '');
+		const creator = blockStore.getDetails(rootId, check.object.creator);
 		const featured = [];
 
 		if (objectType) {
@@ -69,13 +67,16 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					onPaste={onPaste}
 				/>
 
-				<div className="featured">
-					{featured.map((item: any, i: any) => (
-						<span key={i}>
-							{i > 0 ? <div className="bullet" /> : ''}
-							<Element {...item} />
-						</span>
-					))}
+				<div className={[ 'block', 'blockFeatured', 'align' + title.align ].join(' ')}>
+					<div className="wrapMenu" />
+					<div className="wrapContent">
+						{featured.map((item: any, i: any) => (
+							<span key={i}>
+								{i > 0 ? <div className="bullet" /> : ''}
+								<Element {...item} />
+							</span>
+						))}
+					</div>
 				</div>
 			</div>
 		);

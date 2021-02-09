@@ -50,7 +50,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const objectType: any = dbStore.getObjectType(item.type) || {};
+			const objectType: any = dbStore.getObjectType(item.type, '') || {};
 			return (
 				<CellMeasurer
 					key={param.key}

@@ -18,13 +18,9 @@ export interface ObjectType {
 	description?: string;
 	layout: ObjectLayout;
 	iconEmoji: string;
+	isHidden: boolean;
 	relations: Relation[];
 };
-
-export interface ObjectTypePerObject {
-	objectId: string;
-	objectTypes: string[];
-}
 
 export enum RelationType { 
 	Description	 = 0, 
@@ -49,12 +45,12 @@ export interface Relation {
 	dataSource: number;
 	isHidden: boolean;
 	isReadOnly: boolean;
-	isMultiple: boolean;
 	objectTypes: string[];
 	selectDict: any[];
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;
+	maxCount: number;
 };
 
 export enum OptionScope {
