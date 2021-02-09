@@ -24,9 +24,8 @@
 		}
 
 		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
-		.cellContent.c-description { height: auto; line-height: auto; }
 		.cellContent.c-description {
-			.name { -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box; }
+			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
 		}
 	}
 	
