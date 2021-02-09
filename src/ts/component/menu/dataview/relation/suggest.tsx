@@ -305,7 +305,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		const { close, position, param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, getView } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -330,7 +330,7 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 				}
 			});
 		} else {
-			C.BlockDataviewRelationAdd(rootId, blockId, item, (message: any) => {
+			DataUtil.dataviewRelationAdd(rootId, blockId, item, getView(), (message: any) => {
 				close();
 			});
 		};

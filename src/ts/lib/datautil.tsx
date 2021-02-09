@@ -680,6 +680,9 @@ class DataUtil {
 			if (callBack) {
 				callBack(message);
 			};
+
+			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 

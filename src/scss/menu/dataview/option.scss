@@ -1,6 +1,11 @@
 @import "~scss/_vars";
 
 .menus {
+	.menu.menuDataviewOptionList,
+	.menu.menuDataviewOptionValues {
+		.tagItem { vertical-align: top; margin-top: 1px; }
+	}
+
 	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
 		.content { transition: none; padding-bottom: 0px; }
@@ -9,7 +14,6 @@
 		}
 
 		.items { height: calc(100% - 34px); }
-		.tagItem { vertical-align: top; margin-top: 1px; }
 	}
 	
 	.menu.menuDataviewOptionEdit { width: 224px; }
