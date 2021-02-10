@@ -1,12 +1,14 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, translate } from 'ts/lib';
-import { Icon, Input, Switch, MenuItemVertical } from 'ts/component';
+import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class MenuBlockRelationEdit extends React.Component<Props, {}> {
@@ -25,6 +27,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onChange = this.onChange.bind(this);
 	};
 
 	render () {
@@ -81,7 +84,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
 				<div className="inputWrap">
-					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange}  />
 				</div>
 
 				<div className="sectionName">Relation type</div>
@@ -94,6 +97,10 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				/>
 				
 				{opts}
+
+				<div className="inputWrap">
+					<Button id="button" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
+				</div>
 				
 				{relation ? (
 					<React.Fragment>
@@ -121,10 +128,12 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			this.ref.setValue(filter);
 		};
 
+		this.checkButton();
 		this.focus();
 	};
 
 	componentDidUpdate () {
+		this.checkButton();
 		this.focus();
 	};
 
@@ -139,6 +148,22 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			};
 		}, 15);
 	};
+
+	onChange () {
+		this.checkButton();
+	};
+
+	checkButton () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const name = this.ref.getValue();
+		const button = node.find('#button');
+
+		if (name.length) {
+			button.addClass('orange').removeClass('grey');
+		} else {
+			button.removeClass('orange').addClass('grey');
+		};
+	};
 	
 	onRelationType (e: any) {
 		const { param, getId } = this.props;
@@ -150,7 +175,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		};
 
 		this.menuOpen('dataviewRelationType', { 
-			element: `${getId()} #item-relation-type`,
+			element: `#${getId()} #item-relation-type`,
 			offsetX: 224,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
@@ -249,6 +274,13 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
+		const node = $(ReactDOM.findDOMNode(this));
+		const button = node.find('#button');
+
+		if (button.hasClass('grey')) {
+			return;
+		};
+
 		this.save();
 		this.props.close();
 	};
@@ -272,9 +304,9 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onChange } = data;
+		const { rootId, onChange } = data;
 
-		C.BlockRelationAdd(rootId, blockId, newRelation, onChange);
+		C.ObjectRelationAdd(rootId, newRelation, onChange);
 	};
 
 	update (newRelation: any) {

@@ -89,6 +89,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange} />
 				</div>
+
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
 					id="relation-type" 

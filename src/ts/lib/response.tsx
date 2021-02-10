@@ -200,8 +200,7 @@ const BlockUpload = (response: any) => {
 };
 
 const BlockRelationAdd = (response: any) => {
-	return {
-	};
+	return {};
 };
 
 const BlockBookmarkFetch = (response: any) => {
@@ -415,6 +414,12 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
+const ObjectRelationAdd = (response: any) => {
+	return {
+		relation: Mapper.From.Relation(response.getRelation()),
+	};
+};
+
 const ObjectRelationListAvailable = (response: any) => {
 	return {
 		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
@@ -523,6 +528,7 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 
 };

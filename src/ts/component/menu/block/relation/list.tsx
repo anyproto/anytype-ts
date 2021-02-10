@@ -239,8 +239,9 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 							return;
 						};
 
-						console.log(message);
-						close(); 
+						this.items.push(message.relation);
+						this.items.sort(DataUtil.sortByName);
+						this.forceUpdate();
 					},
 				}
 			});
