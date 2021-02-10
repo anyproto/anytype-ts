@@ -57,8 +57,9 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const relations = view.relations.filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation.format != I.RelationType.File; 
+			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
 		});
+
 		const relationOptions: I.Option[] = relations.map((it: I.ViewRelation) => {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return { 
@@ -66,7 +67,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				name: relation.name, 
 				icon: 'relation ' + DataUtil.relationClass(relation.format),
 			};
-		});
+		}).sort(DataUtil.sortByName);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
