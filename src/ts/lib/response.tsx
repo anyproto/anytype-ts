@@ -195,6 +195,15 @@ const BlockSplit = (response: any) => {
 	};
 };
 
+const BlockUpload = (response: any) => {
+	return {};
+};
+
+const BlockRelationAdd = (response: any) => {
+	return {
+	};
+};
+
 const BlockBookmarkFetch = (response: any) => {
 	return {};
 };
@@ -203,10 +212,6 @@ const BlockBookmarkCreateAndFetch = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 	};
-};
-
-const BlockUpload = (response: any) => {
-	return {};
 };
 
 const BlockFileCreateAndUpload = (response: any) => {
@@ -458,9 +463,11 @@ export {
 	BlockCopy,
 	BlockCut,
 	BlockPaste,
+	BlockUpload,
+
+	BlockRelationAdd,
 
 	BlockFileCreateAndUpload,
-	BlockUpload,
 	BlockBookmarkFetch,
 	BlockBookmarkCreateAndFetch,
 	

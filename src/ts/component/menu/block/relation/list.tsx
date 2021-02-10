@@ -37,7 +37,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readOnly } = data;
+		const { rootId } = data;
 		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
@@ -234,7 +234,14 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 				horizontal: I.MenuDirection.Left,
 				data: {
 					...data,
-					onChange: () => { close(); },
+					onChange: (message: any) => { 
+						if (!message.error.code) {
+							return;
+						};
+
+						console.log(message);
+						close(); 
+					},
 				}
 			});
 		} else 
@@ -248,7 +255,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(320, items.length * HEIGHT + 16));
+		const height = Math.max(HEIGHT, Math.min(320, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 		position();

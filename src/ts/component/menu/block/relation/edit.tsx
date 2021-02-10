@@ -83,6 +83,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''}  />
 				</div>
+
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
 					id="relation-type" 
@@ -106,11 +107,18 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidMount() {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const relation = this.getRelation();
 
 		if (relation) {
 			this.format = relation.format;
 			this.forceUpdate();
+		};
+
+		if (this.ref && filter) {
+			this.ref.setValue(filter);
 		};
 
 		this.focus();
@@ -264,9 +272,9 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, onChange } = data;
 
-		C.BlockRelationAdd(rootId, blockId, newRelation);
+		C.BlockRelationAdd(rootId, blockId, newRelation, onChange);
 	};
 
 	update (newRelation: any) {
