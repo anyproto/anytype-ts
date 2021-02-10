@@ -304,9 +304,9 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, onChange } = data;
+		const { rootId, blockId, onChange } = data;
 
-		C.ObjectRelationAdd(rootId, newRelation, onChange);
+		C.BlockRelationAdd(rootId, blockId, newRelation, onChange);
 	};
 
 	update (newRelation: any) {

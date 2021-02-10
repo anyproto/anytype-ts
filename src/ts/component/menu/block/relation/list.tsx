@@ -235,13 +235,11 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 				data: {
 					...data,
 					onChange: (message: any) => { 
-						if (!message.error.code) {
+						if (message.error.code) {
 							return;
 						};
 
-						this.items.push(message.relation);
-						this.items.sort(DataUtil.sortByName);
-						this.forceUpdate();
+						close();
 					},
 				}
 			});

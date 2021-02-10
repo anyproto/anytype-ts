@@ -904,7 +904,7 @@ const ObjectRelationOptionDelete = (contextId: string, relationKey: string, opti
 };
 
 const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Relation.Add.Request();
+	const request = new Rpc.Object.RelationAdd.Request();
 	
 	request.setContextid(contextId);
 	request.setRelation(Mapper.To.Relation(relation));
