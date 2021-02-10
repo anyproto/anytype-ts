@@ -29,7 +29,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	render () {
 		const relation = this.getRelation();
-		const { objectTypes } = dbStore;
 
 		let opts = null;
 		let ccn = [ 'item' ];
@@ -134,7 +133,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 	
 	onRelationType (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const relation = this.getRelation();
 		
@@ -143,7 +142,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		};
 
 		this.menuOpen('dataviewRelationType', { 
-			element: '#item-relation-type',
+			element: `${getId()} #item-relation-type`,
 			offsetX: 224,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
@@ -161,6 +160,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
+		const { getId } = this.props;
 		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
@@ -175,7 +175,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		});
 
 		this.menuOpen('select', { 
-			element: '#item-object-type',
+			element: `#${getId()} #item-object-type`,
 			offsetX: 224,
 			offsetY: 4,
 			width: 280,

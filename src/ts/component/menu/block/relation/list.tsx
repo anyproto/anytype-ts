@@ -220,10 +220,24 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 
+		if (item.id == 'add') {
+			commonStore.menuOpen('blockRelationEdit', { 
+				type: I.MenuType.Vertical,
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: 0,
+				offsetY: 0,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				data: {
+					...data,
+					onChange: () => { close(); },
+				}
+			});
+		} else 
 		if (onSelect) {
 			close();
 			onSelect(item);

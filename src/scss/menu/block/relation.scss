@@ -6,13 +6,6 @@
 		.item:hover::before { opacity: 0.15; }
 	}
 
-	.menu.menuBlockRelationList.isReadOnly { 
-		.item { cursor: default; }
-		.item:hover::before { opacity: 0; }
-
-		.cell.c-select { cursor: default; }
-	}
-
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
 		.content { transition: none ;padding: 0px; }
@@ -22,6 +15,7 @@
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
 		}
+		.item * { cursor: pointer; }
 
 		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
 		.cellContent.c-description {

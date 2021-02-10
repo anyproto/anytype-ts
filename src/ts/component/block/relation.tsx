@@ -124,6 +124,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				relationKey: '',
 				readOnly: true,
 				rootId: rootId,
+				blockId: block.id,
 				filter: this.refInput.getValue(),
 				onSelect: (item: any) => {
 					C.BlockRelationSetKey(rootId, block.id, item.relationKey);
