@@ -62,6 +62,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			data: {
 				onCreate: (type: I.ObjectType) => {
 					objectTypes.push(type);
+					dbStore.objectTypesSet(objectTypes);
 				}
 			}
 		});
