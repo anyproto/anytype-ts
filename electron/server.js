@@ -47,24 +47,28 @@ class Server {
 				
 				this.cp.stdout.on('data', data => {
 					let str = data.toString();
+					
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						var regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
 						resolve(true);
 					};
+
 					console.log(str);
 				});
 
 				this.cp.stderr.on('data', data => {
 					let chunk = data.toString();
+					
 					// max chunk size is 8192 bytes
 					// https://github.com/nodejs/node/issues/12921
 					// https://nodejs.org/api/buffer.html#buffer_class_property_buffer_poolsize
+					
 					if (chunk.length > 8000) {
 						// in case we've got a crash lets change the max buffer to collect the whole stack trace
-						maxStdErrChunksBuffer = 1024 // 1024x8192 = 8 Mb max
-					}
+						maxStdErrChunksBuffer = 1024; // 1024x8192 = 8 Mb max
+					};
 					
 					if (!this.lastErrors) {
 						this.lastErrors = [];
