@@ -124,11 +124,12 @@ class MenuOptionValues extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = data.value;
+		let value = Util.objectCopy(data.value);
 		if (!value || ('object' != typeof(value))) {
 			value = [];
 		};
-		return Util.objectCopy(value);
+		value = value.filter((it: string) => { return it; });
+		return value;
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
@@ -188,7 +189,8 @@ class MenuOptionValues extends React.Component<Props> {
 		const { onChange } = data;
 
 		let value = this.getValue();
-		value = arrayMove(value, oldIndex, newIndex);
+
+		value = arrayMove(value, oldIndex - 1, newIndex - 1);
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;

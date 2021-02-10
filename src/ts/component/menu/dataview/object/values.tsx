@@ -189,7 +189,7 @@ class MenuObjectValues extends React.Component<Props> {
 		const { onChange } = data;
 
 		let value = this.getValue();
-		value = arrayMove(value, oldIndex, newIndex);
+		value = arrayMove(value, oldIndex - 1, newIndex - 1);
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;
