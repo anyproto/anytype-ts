@@ -13,13 +13,16 @@ interface Props extends I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
+const Constant = require('json/constant.json');
+
 @observer
 class HeadCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, width, index, onResizeStart } = this.props;
+		const { rootId, block, relationKey, index, onResizeStart } = this.props;
 		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 		const { format, name } = relation;
+		const width = DataUtil.relationWidth(this.props.width, relation.format);
 
 		const Cell = SortableElement((item: any) => {
 			return (

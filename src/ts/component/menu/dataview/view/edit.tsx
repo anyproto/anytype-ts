@@ -213,8 +213,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				const next = filtered[filtered.length - 1];
 
 				if (next) {
-					getData(next.id, 0, () => {
-						C.BlockDataviewViewDelete(rootId, blockId, viewId);
+					C.BlockDataviewViewDelete(rootId, blockId, viewId, () => {
+						getData(next.id, 0);
 					});
 				};
 				break;

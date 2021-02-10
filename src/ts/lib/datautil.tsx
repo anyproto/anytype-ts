@@ -627,9 +627,13 @@ class DataUtil {
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
-				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
+				width: this.relationWidth(vr.width, relation.format),
 			});
 		});
+	};
+
+	relationWidth (width: number, format: I.RelationType): number {
+		return Number(width || Constant.size.dataview.cell[this.relationClass(format)]) || Constant.size.dataview.cell.default;
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
@@ -646,7 +650,7 @@ class DataUtil {
 			} else {
 				relation.relationKey = message.relationKey;
 				relation.isVisible = true;
-				relation.width = Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default;
+				relation.width = this.relationWidth(0, relation.format);
 
 				view.relations.push(relation);
 			};
