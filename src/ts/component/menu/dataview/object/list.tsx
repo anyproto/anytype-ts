@@ -294,6 +294,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { param, close, position } = this.props;
 		const { data } = param;
 		const { onChange } = data;
+		const relation = data.relation.get();
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -307,11 +308,14 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
+		if (relation.maxCount) {
+			value = value.slice(value.length - relation.maxCount, value.length);
+		};
+
 		data.value = value;
 
 		commonStore.menuUpdateData(MENU_ID, { value: value });
 		onChange(value);
-
 		position();
 	};
 

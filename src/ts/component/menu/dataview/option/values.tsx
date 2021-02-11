@@ -154,9 +154,8 @@ class MenuOptionValues extends React.Component<Props> {
 			width: 0,
 			offsetX: node.outerWidth(),
 			vertical: I.MenuDirection.Center,
-			onClose: () => {
-				close();
-			},
+			noFlip: false,
+			onClose: () => { close(); },
 			data: {
 				...data,
 				rebind: this.rebind,

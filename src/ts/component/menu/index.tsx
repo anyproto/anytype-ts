@@ -276,6 +276,11 @@ class Menu extends React.Component<Props, {}> {
 			switch (horizontal) {
 				case I.MenuDirection.Left:
 					x += offsetX;
+
+					// Switch
+					if (!noFlip && (x >= ww - width - BORDER)) {
+						x = offset.left - width;
+					};
 					break;
 
 				case I.MenuDirection.Center:
@@ -284,6 +289,11 @@ class Menu extends React.Component<Props, {}> {
 
 				case I.MenuDirection.Right:
 					x -= width + offsetX - ew;
+
+					// Switch
+					if (!noFlip && (x <= BORDER)) {
+						x = offset.left + ew;
+					};
 					break;
 			};
 

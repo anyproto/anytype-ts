@@ -201,10 +201,12 @@ class MenuOptionList extends React.Component<Props, State> {
 			
 			value.push(item.id);
 			value = Util.arrayUnique(value);
-			value = value.slice(value.length - relation.maxCount, value.length);
 
-			this.props.param.data.value = value;
+			if (relation.maxCount) {
+				value = value.slice(value.length - relation.maxCount, value.length);
+			};
 
+			data.value = value;
 			commonStore.menuUpdateData(MENU_ID, { value: value });
 			onChange(value);
 		};
