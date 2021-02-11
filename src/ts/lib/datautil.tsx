@@ -720,7 +720,8 @@ class DataUtil {
 
 	checkDetails (rootId: string) {
 		const details = blockStore.getDetails(rootId, rootId);
-		const { layout, iconEmoji, iconImage, coverType, coverId } = details;
+		const { iconEmoji, iconImage, coverType, coverId } = details;
+		const layout = Number(details.layout) || I.ObjectLayout.Page;
 		const type = this.schemaField(details.type);
 		const ret: any = {
 			object: details,

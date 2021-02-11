@@ -77,6 +77,7 @@ class IconObject extends React.Component<Props, {}> {
 	render () {
 		const { object, className, size, canEdit, onClick } = this.props;
 		const type = DataUtil.schemaField(object.type);
+		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		
 		if (className) {
@@ -86,7 +87,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, layout, url } = object || {};
+		let { id, name, iconEmoji, iconImage, iconClass, done, url } = object || {};
 		let iconSize = this.iconSize(type, layout, size);
 		let icon = null;
 		let icn = [];

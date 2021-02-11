@@ -197,6 +197,8 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 			name = `Create relation "${data.filter}"`;
 		};
 
+		this.items = this.items.filter((it: any) => { return !it.isHidden; });
+
 		for (let item of this.items) {
 			if (!sections[item.scope]) {
 				continue;

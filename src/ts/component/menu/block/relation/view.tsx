@@ -202,6 +202,8 @@ class MenuBlockRelationView extends React.Component<Props, State> {
 			name = `Create relation "${data.filter}"`;
 		};
 
+		this.items = this.items.filter((it: any) => { return !it.isHidden; });
+
 		for (let item of this.items) {
 			if (!sections[item.scope]) {
 				continue;
@@ -260,7 +262,7 @@ class MenuBlockRelationView extends React.Component<Props, State> {
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
 		const win = $(window);
-		const height = Math.max(HEIGHT, Math.min(win.height() - 56, items.length * HEIGHT + 16));
+		const height = Math.max(HEIGHT, Math.min(win.height() - 56, items.length * HEIGHT + 64));
 
 		obj.css({ height: height });
 		position();
