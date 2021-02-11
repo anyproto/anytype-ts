@@ -55,6 +55,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
 const BORDER = 12;
 
 class Menu extends React.Component<Props, {}> {
@@ -290,7 +291,7 @@ class Menu extends React.Component<Props, {}> {
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 		
-			y = Math.max(BORDER, y);
+			y = Math.max(Constant.size.header + 2, y);
 			y = Math.min(wh - height - BORDER, y);
 
 			let css: any = { left: x, top: y };
