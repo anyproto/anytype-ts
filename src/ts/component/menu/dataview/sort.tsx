@@ -109,7 +109,7 @@ class MenuSort extends React.Component<Props, {}> {
 				name: relation.name, 
 				icon: 'relation ' + DataUtil.relationClass(relation.format),
 			};
-		}).sort(DataUtil.sortByName);
+		});
 
 		return options;
 	};
