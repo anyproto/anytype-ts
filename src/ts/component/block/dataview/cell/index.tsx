@@ -215,6 +215,18 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Status:
+				param = Object.assign(param, {
+					width: width,
+				});
+				param.data = Object.assign(param.data, {
+					canAdd: true,
+					filter: '',
+					value: value || [],
+				});
+
+				menuId = 'dataviewOptionList';
+				break;
+
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,

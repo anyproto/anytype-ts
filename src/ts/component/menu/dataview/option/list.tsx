@@ -192,13 +192,16 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
+		const relation = data.relation.get();
 
 		if (item.id == 'add') {
 			this.onAdd(e);
 		} else {
 			let value = Util.objectCopy(data.value || []);
+			
 			value.push(item.id);
 			value = Util.arrayUnique(value);
+			value = value.slice(value.length - relation.maxCount, value.length);
 
 			this.props.param.data.value = value;
 
