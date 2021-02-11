@@ -202,7 +202,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		commonStore.menuCloseAll();
 		window.setTimeout(() => {
-			commonStore.menuOpen('blockRelationList', { 
+			commonStore.menuOpen('blockRelationView', { 
 				element: '#button-header-relation',
 				type: I.MenuType.Vertical,
 				offsetX: 0,

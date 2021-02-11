@@ -29,6 +29,7 @@ import MenuBlockMention from './block/mention';
 
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
+import MenuBlockRelationView from './block/relation/view';
 
 import MenuDataviewRelationSuggest from './dataview/relation/suggest';
 import MenuDataviewRelationList from './dataview/relation/list';
@@ -102,6 +103,7 @@ class Menu extends React.Component<Props, {}> {
 
 			blockRelationEdit:		 MenuBlockRelationEdit,
 			blockRelationList:		 MenuBlockRelationList,
+			blockRelationView:		 MenuBlockRelationView,
 			
 			dataviewRelationSuggest: MenuDataviewRelationSuggest,
 			dataviewRelationList:	 MenuDataviewRelationList,

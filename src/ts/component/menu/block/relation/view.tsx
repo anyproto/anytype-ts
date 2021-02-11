@@ -16,9 +16,10 @@ interface State {
 const $ = require('jquery');
 const HEIGHT = 28;
 const LIMIT = 40;
+const PREFIX = 'menuBlockRelationViewCell';
 
 @observer
-class MenuBlockRelationList extends React.Component<Props, State> {
+class MenuBlockRelationView extends React.Component<Props, State> {
 
 	cellRefs: Map<string, any> = new Map();
 	items: any[] = [];
@@ -32,6 +33,9 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
+		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellChange = this.onCellChange.bind(this);
+		this.optionCommand = this.optionCommand.bind(this);
 	};
 
 	render () {
@@ -41,7 +45,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		const idPrefix = 'menuBlockRelationListCell';
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -50,7 +53,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
 			
 			let content = null;
 			if (item.id == 'add') {
@@ -65,7 +68,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div className="item sides" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div className="item sides" style={param.style}>
 						<div className="info">
 							<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 							{item.name}
@@ -73,7 +76,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 						<div
 							id={id} 
 							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-							onClick={(e: any) => { this.onClick(e, item); }}
+							onClick={(e: any) => { this.onCellClick(e, item.relationKey, 0); }}
 						>
 							<Cell 
 								ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
@@ -84,11 +87,13 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 								getRecord={() => { return details; }}
 								viewType={I.ViewType.Grid}
 								index={0}
-								idPrefix={idPrefix}
+								idPrefix={PREFIX}
 								menuClassName="fromBlock"
 								scrollContainer={Util.getEditorScrollContainer('menu')}
 								pageContainer={Util.getEditorPageContainer('menu')}
-								readOnly={true}
+								readOnly={false}
+								onCellChange={this.onCellChange}
+								optionCommand={this.optionCommand}
 							/>
 						</div>
 					</div>
@@ -214,7 +219,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		};
 
 		ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
-		ret.unshift({ id: 'add', name: name });
+		ret.push({ id: 'add', name: name });
 
 		return ret;
 	};
@@ -254,12 +259,57 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT, Math.min(320, items.length * HEIGHT + 16));
+		const win = $(window);
+		const height = Math.max(HEIGHT, Math.min(win.height() - 56, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 		position();
 	};
 
+	onCellClick (e: any, relationKey: string, index: number) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, readOnly } = data;
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+
+		if (!relation || readOnly || relation.isReadOnly) {
+			return;
+		};
+
+		const id = DataUtil.cellId(PREFIX, relationKey, index);
+		const ref = this.cellRefs.get(id);
+
+		if (ref) {
+			ref.onClick(e);
+		};
+	};
+
+	onCellChange (id: string, key: string, value: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
+		C.BlockSetDetails(rootId, [ 
+			{ key: key, value: value },
+		]);
+	};
+
+	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
+		switch (code) {
+			case 'add':
+				C.ObjectRelationOptionAdd(rootId, relationKey, option, callBack);
+				break;
+
+			case 'update':
+				C.ObjectRelationOptionUpdate(rootId, relationKey, option, callBack);
+				break;
+
+			case 'delete':
+				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
+				break;
+		};
+	};
+
 };
 
-export default MenuBlockRelationList;
+export default MenuBlockRelationView;
