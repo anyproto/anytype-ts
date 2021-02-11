@@ -113,10 +113,10 @@ class MenuSort extends React.Component<Props, {}> {
 			return;
 		};
 
-		view.sorts.push({ 
-			relationKey: view.relations[0].relationKey, 
-			type: I.SortType.Asc 
-		});
+		const relations = view.relations.sort(DataUtil.sortByName);
+		const first = relations[0];
+
+		view.sorts.push({ relationKey: first.relationKey, type: I.SortType.Asc });
 		this.save();
 	};
 

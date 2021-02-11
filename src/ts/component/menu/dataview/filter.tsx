@@ -384,7 +384,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			return;
 		};
 
-		const first = view.relations[0];
+		const relations = view.relations.sort(DataUtil.sortByName);
+		const first = relations[0];
 		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
