@@ -27,7 +27,7 @@ class MenuSort extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { getView } = data;
 		const view = getView();
 		const sortCnt = view.sorts.length;
 		
@@ -36,19 +36,7 @@ class MenuSort extends React.Component<Props, {}> {
 			{ id: String(I.SortType.Desc), name: 'Descending' },
 		];
 		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
-		});
-
-		const relationOptions: any[] = relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: relation.relationKey, 
-				name: relation.name, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-			};
-		}).sort(DataUtil.sortByName);
+		const relationOptions = this.getRelationOptions();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -103,20 +91,41 @@ class MenuSort extends React.Component<Props, {}> {
 		this.props.position();
 	};
 
+	getRelationOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
+		});
+
+		const options: any[] = relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				name: relation.name, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+			};
+		}).sort(DataUtil.sortByName);
+
+		return options;
+	};
+
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
+		const relationOptions = this.getRelationOptions();
 
-		if (!view.relations.length) {
+		if (!relationOptions.length) {
 			return;
 		};
 
-		const relations = view.relations.sort(DataUtil.sortByName);
-		const first = relations[0];
-
-		view.sorts.push({ relationKey: first.relationKey, type: I.SortType.Asc });
+		view.sorts.push({ relationKey: relationOptions[0].id, type: I.SortType.Asc });
 		this.save();
 	};
 

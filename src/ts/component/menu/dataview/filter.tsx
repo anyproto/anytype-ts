@@ -55,26 +55,14 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
-		});
-
-		const relationOptions: I.Option[] = relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: it.relationKey, 
-				name: relation.name, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-			};
-		}).sort(DataUtil.sortByName);
+		const relationOptions = this.getRelationOptions();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey);
 			if (!relation) {
 				return null;
 			};
@@ -373,24 +361,47 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 		return ret;
 	};
+
+	getRelationOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
+		});
+
+		const options: any[] = relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				name: relation.name, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+			};
+		}).sort(DataUtil.sortByName);
+
+		return options;
+	};
 	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
+		const relationOptions = this.getRelationOptions();
 
-		if (!view.relations.length) {
+		if (!relationOptions.length) {
 			return;
 		};
 
-		const relations = view.relations.sort(DataUtil.sortByName);
-		const first = relations[0];
+		const first = relationOptions[0];
 		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
 		view.filters.push({ 
-			relationKey: first.relationKey, 
+			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: '',
