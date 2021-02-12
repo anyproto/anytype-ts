@@ -182,12 +182,12 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
 			data: {
+				...data,
 				value: this.format,
 				onSelect: (item: any) => {
 					this.format = item.format;
 					this.forceUpdate();
 				},
-				...data
 			}
 		});
 	};
