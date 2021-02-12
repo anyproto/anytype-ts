@@ -45,7 +45,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (commonStore.popupIsOpen('navigation')) {
+		if (commonStore.popupIsOpen('navigation') || commonStore.menuIsOpen('blockRelationView')) {
 			cn.push('active');
 		};
 
@@ -69,11 +69,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					{!root.isObjectReadOnly() ? (
 						<Icon className={[ 'plus', 'big', (root.isObjectSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 					) : ''}
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 				</div>
 
 				<div className="side right">
 					<Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} />
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
 			</div>
@@ -209,8 +209,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				offsetY: 0,
 				fixedY: 40,
 				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Right,
+				horizontal: I.MenuDirection.Center,
 				className: 'fixed',
+				onClose: () => {
+					commonStore.menuCloseAll();
+				},
 				data: {
 					relationKey: '',
 					readOnly: false,

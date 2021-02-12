@@ -2,7 +2,6 @@
 
 .menus {
 	.menu.menuBlockRelationList, 
-	.menu.menuBlockRelationView, 
 	.menu.menuBlockRelationEdit {
 		.item:hover::before { opacity: 0.15; }
 	}
@@ -45,16 +44,19 @@
 
 	.menu.menuBlockRelationView { width: 640px; }
 	.menu.menuBlockRelationView {
-		.content { transition: none; padding: 0px; max-height: unset; }
-		.items { height: 100%; }
+		.content { padding: 32px 0px; max-height: unset; }
 		.input { border: 0px; padding: 0px; }
 
-		.ReactVirtualized__Grid__innerScrollContainer { margin: 32px 0px; }
-		.sectionName { @include text-common; padding: 4px 32px; }
+		.section > .name { @include text-common; padding: 4px 32px; }
+		.section:last-child::after { display: none; }
+		.section::after { margin: 12px 32px 3px 32px; }
 
-		.item { padding: 4px 32px; }
+		.item { padding: 0px 28px; }
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.info { padding: 4px; border-radius: 4px; transition: $transitionFast; margin-right: 4px; }
+			.cell { padding: 4px; }
+			.info:hover { background: rgba(172,169,150,0.15); }
 		}
 		.item * { cursor: pointer; }
 	}

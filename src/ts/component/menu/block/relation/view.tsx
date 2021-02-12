@@ -8,27 +8,13 @@ import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 
-interface State {
-	loading: boolean;
-	n: number;
-};
-
 const $ = require('jquery');
-const HEIGHT = 28;
-const LIMIT = 40;
 const PREFIX = 'menuBlockRelationViewCell';
 
 @observer
-class MenuBlockRelationView extends React.Component<Props, State> {
+class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	cellRefs: Map<string, any> = new Map();
-	items: any[] = [];
-	cache: any = {};
-
-	state = {
-		loading: false,
-		n: 0,
-	};
 
 	constructor (props: any) {
 		super(props);
@@ -42,230 +28,146 @@ class MenuBlockRelationView extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		const items = this.getItems();
+		const sections = this.getSections();
 
-		if (!this.cache) {
-			return null;
-		};
+		const Section = (section: any) => (
+			<div className="section">
+				<div className="name">{section.name}</div>
+				<div className="items">
+					{section.children.map((item: any, i: number) => {
+						return <Item key={i} {...item} />;
+					})}
+					{section.index == sections.length - 1 ? <ItemAdd /> : ''}
+				</div>
+			</div>
+		);
 
-		const rowRenderer = (param: any) => {
-			const item: any = items[param.index];
+		const ItemAdd = (item: any) => (
+			<div id="item-add" className="item sides add" onClick={(e: any) => { this.onAdd(e); }}>
+				<div className="info">
+					<Icon className="plus" />
+					<div className="name">New</div>
+				</div>
+				<div className="cell" />
+			</div>
+		);
+
+		const Item = (item: any) => {
 			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
-			
-			let content = null;
-			if (item.id == 'add') {
-				content =  (
-					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
-						<Icon className="plus" />
-						<div className="name">{item.name}</div>
-					</div>
-				);
-			} else 
-			if (item.isSection) {
-				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
-			} else {
-				content = (
-					<div className="item sides" style={param.style}>
-						<div className="info">
-							<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
-							{item.name}
-						</div>
-						<div
-							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-							onClick={(e: any) => { this.onCellClick(e, item.relationKey, 0); }}
-						>
-							<Cell 
-								ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-								rootId={rootId}
-								storeId={rootId}
-								block={block}
-								relationKey={item.relationKey}
-								getRecord={() => { return details; }}
-								viewType={I.ViewType.Grid}
-								index={0}
-								idPrefix={PREFIX}
-								menuClassName="fromBlock"
-								scrollContainer={Util.getEditorScrollContainer('menu')}
-								pageContainer={Util.getEditorPageContainer('menu')}
-								readOnly={false}
-								onCellChange={this.onCellChange}
-								optionCommand={this.optionCommand}
-							/>
-						</div>
-					</div>
-				);
-			};
-
 			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-					hasFixedWidth={() => {}}
-				>
-					{content}
-				</CellMeasurer>
+				<div className="item sides">
+					<div className="info">
+						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
+						{item.name}
+					</div>
+					<div
+						id={id} 
+						className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
+						onClick={(e: any) => { this.onCellClick(e, item.relationKey, 0); }}
+					>
+						<Cell 
+							ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+							rootId={rootId}
+							storeId={rootId}
+							block={block}
+							relationKey={item.relationKey}
+							getRecord={() => { return details; }}
+							viewType={I.ViewType.Grid}
+							index={0}
+							idPrefix={PREFIX}
+							menuClassName="fromBlock"
+							scrollContainer={Util.getEditorScrollContainer('menu')}
+							pageContainer={Util.getEditorPageContainer('menu')}
+							readOnly={false}
+							onCellChange={this.onCellChange}
+							optionCommand={this.optionCommand}
+						/>
+					</div>
+				</div>
 			);
 		};
 
 		return (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => { return true; }}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									scrollToIndex={n}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+			<div className="sections">
+				{sections.map((item: any, i: number) => {
+					return <Section key={i} {...item} index={i} />;
+				})}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		this.load();
 		this.resize();
 
 		$('body').addClass('over');
 	};
 
 	componentDidUpdate () {
-		const items = this.getItems();
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
-		});
-
 		this.resize();
 	};
 
 	componentWillUnmount () {
-		commonStore.menuCloseAll();
 		$('body').removeClass('over');
 	};
 
-	load () {
+	getSections () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		
+		let items = dbStore.getRelations(rootId, rootId)//.filter((it: any) => { return !it.isHidden; });
+		let featured = [ 'type', 'description', 'creator' ];
 
-		this.setState({ loading: true });
-
-		C.ObjectRelationListAvailable(rootId, (message: any) => {
-			this.items = message.relations.sort(DataUtil.sortByName);
-			this.setState({ loading: false });
-		});
+		return [ 
+			{ 
+				id: 'featured', name: 'Featured relations', 
+				children: items.filter((it: any) => { 
+					console.log(it);
+					return featured.indexOf(it.relationKey) >= 0; 
+				}),
+			},
+			{ 
+				id: 'all', name: 'All relations', 
+				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) < 0; }),
+			},
+		];
 	};
 
-	getItems (): I.SelectOption[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let sections: any = {};
-		let ret = [];
-		let name = 'Create from scratch';
-
-		sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In this object', children: [] };
-		sections[I.RelationScope.Type]					 = { id: I.RelationScope.Type, name: 'Type', children: [] };
-		sections[I.RelationScope.SetOfTheSameType]		 = { id: I.RelationScope.SetOfTheSameType, name: 'Set of the same type', children: [] };
-		sections[I.RelationScope.ObjectsOfTheSameType]	 = { id: I.RelationScope.ObjectsOfTheSameType, name: 'Objects of the same type', children: [] };
-		sections[I.RelationScope.Library]				 = { id: I.RelationScope.Library, name: 'Library', children: [] };
-
-		if (data.filter) {
-			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			this.items = this.items.filter((it: any) => { return it.name.match(filter); });
-			name = `Create relation "${data.filter}"`;
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
 		};
-
-		this.items = this.items.filter((it: any) => { return !it.isHidden; });
-
-		for (let item of this.items) {
-			if (!sections[item.scope]) {
-				continue;
-			};
-			sections[item.scope].children.push(item);
-		};
-
-		for (let i in sections) {
-			let section = sections[i];
-			if (!section.children.length) {
-				continue;
-			};
-			ret.push({ id: section.id, name: section.name, isSection: true });
-			ret = ret.concat(section.children);
-		};
-
-		ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
-		ret.push({ id: 'add', name: name });
-
-		return ret;
+		
+		return items;
 	};
 
-	onClick (e: any, item: any) {
+	onAdd (e: any) {
 		const { param, close, getId } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
 
-		if (item.id == 'add') {
-			commonStore.menuOpen('blockRelationEdit', { 
-				type: I.MenuType.Vertical,
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: 0,
-				offsetY: 0,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
-				data: {
-					...data,
-					onChange: (message: any) => { 
-						if (message.error.code) {
-							return;
-						};
+		commonStore.menuOpen('blockRelationEdit', { 
+			type: I.MenuType.Vertical,
+			element: `#${getId()} #item-add`,
+			offsetX: 0,
+			offsetY: 0,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				...data,
+				onChange: (message: any) => { 
+					if (message.error.code) {
+						return;
+					};
 
-						close();
-					},
-				}
-			});
-		} else 
-		if (onSelect) {
-			close();
-			onSelect(item);
-		};
-	};
-
-	resize () {
-		const { getId, position } = this.props;
-		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const win = $(window);
-		const height = Math.max(HEIGHT, Math.min(win.height() - 56, items.length * HEIGHT + 64));
-
-		obj.css({ height: height });
-		position();
+					close();
+				},
+			}
+		});
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
@@ -310,6 +212,17 @@ class MenuBlockRelationView extends React.Component<Props, State> {
 				C.ObjectRelationOptionDelete(rootId, relationKey, option.id, callBack);
 				break;
 		};
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const obj = $('#' + getId() + ' .content');
+		const sections = obj.find('.sections');
+		const win = $(window);
+		const height = Math.max(92, Math.min(win.height() - 56, sections.height() + 64));
+
+		obj.css({ height: height });
+		position();
 	};
 
 };

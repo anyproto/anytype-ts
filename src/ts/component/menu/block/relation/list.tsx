@@ -160,7 +160,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		commonStore.menuCloseAll();
 		$('body').removeClass('over');
 	};
 
