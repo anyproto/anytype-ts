@@ -50,10 +50,10 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>
+					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
 			</div>
@@ -87,13 +87,14 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 	onRelation () {
 		const { rootId } = this.props;
 
-		commonStore.menuOpen('blockRelationList', { 
+		commonStore.menuOpen('blockRelationView', { 
 			element: '#popupEditorPage #button-header-relation',
 			type: I.MenuType.Vertical,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
+			noFlip: true,
 			data: {
 				relationKey: '',
 				readOnly: false,

@@ -209,6 +209,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				className: 'fixed',
+				noFlip: true,
 				onClose: () => {
 					commonStore.menuCloseAll();
 				},
