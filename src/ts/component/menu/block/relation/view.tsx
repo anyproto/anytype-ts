@@ -78,8 +78,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							index={0}
 							idPrefix={PREFIX}
 							menuClassName="fromBlock"
-							scrollContainer={Util.getEditorScrollContainer('menu')}
-							pageContainer={Util.getEditorPageContainer('menu')}
+							scrollContainer={Util.getEditorScrollContainer('menuBlockRelationView')}
+							pageContainer={Util.getEditorPageContainer('menuBlockRelationView')}
 							readOnly={false}
 							onCellChange={this.onCellChange}
 							optionCommand={this.optionCommand}

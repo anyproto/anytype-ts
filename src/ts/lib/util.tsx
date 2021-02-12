@@ -726,10 +726,10 @@ class Util {
 
 			case 'popup':
 				return '#popupEditorPage .selection';
-
-			case 'menu':
-				return '#menuBlockRelationList .content';
-
+			
+			case 'menuBlockRelationList':
+			case 'menuBlockRelationView':
+				return `#${type} .content`;
 		};
 	};
 
@@ -742,8 +742,9 @@ class Util {
 			case 'popup':
 				return '#popupEditorPage';
 
-			case 'menu':
-				return '#menuBlockRelationList';
+			case 'menuBlockRelationList':
+			case 'menuBlockRelationView':
+				return '#' + type;
 		};
 	};
 

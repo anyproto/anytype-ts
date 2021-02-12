@@ -86,8 +86,8 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								scrollContainer={Util.getEditorScrollContainer('menu')}
-								pageContainer={Util.getEditorPageContainer('menu')}
+								scrollContainer={Util.getEditorScrollContainer('menuBlockRelationList')}
+								pageContainer={Util.getEditorPageContainer('menuBlockRelationList')}
 								readOnly={true}
 							/>
 						</div>
