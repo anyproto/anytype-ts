@@ -60,19 +60,18 @@ class BlockStore {
 		let map = this.detailMap.get(rootId);
 		if (!map) {
 			map = observable(new Map());
+			intercept(map as any, (change: any) => {
+				let item = map.get(change.name);
+				if (Util.objectCompare(change.newValue, item)) {
+					return null;
+				};
+				return change;
+			});
 		};
 
 		for (let item of details) {
 			map.set(item.id, item.details);
 		};
-
-		intercept(map as any, (change: any) => {
-			let item = map.get(change.name);
-			if (Util.objectCompare(change.newValue, item)) {
-				return null;
-			};
-			return change;
-		});
 
 		this.detailMap.set(rootId, map);
 	};
