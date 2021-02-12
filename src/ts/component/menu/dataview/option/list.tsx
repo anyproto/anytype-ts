@@ -202,6 +202,8 @@ class MenuOptionList extends React.Component<Props, State> {
 			value.push(item.id);
 			value = Util.arrayUnique(value);
 
+			console.log('MAX_COUNT', relation.maxCount, relation);
+
 			if (relation.maxCount) {
 				value = value.slice(value.length - relation.maxCount, value.length);
 			};
