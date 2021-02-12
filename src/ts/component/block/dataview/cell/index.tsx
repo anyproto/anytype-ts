@@ -215,18 +215,6 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Status:
-				param = Object.assign(param, {
-					width: width,
-				});
-				param.data = Object.assign(param.data, {
-					canAdd: true,
-					filter: '',
-					value: value || [],
-				});
-
-				menuId = 'dataviewOptionList';
-				break;
-
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
@@ -237,7 +225,8 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 				});
 
-				menuId = 'dataviewOptionValues';
+				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
+				console.log(menuId);
 				break;
 					
 			case I.RelationType.Object:
@@ -250,7 +239,7 @@ class Cell extends React.Component<Props, {}> {
 					types: relation.objectTypes,
 				});
 
-				menuId = 'dataviewObjectValues';
+				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');
 				break;
 
 			case I.RelationType.Description:
