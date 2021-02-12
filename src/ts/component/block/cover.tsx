@@ -273,6 +273,10 @@ class BlockCover extends React.Component<Props, State> {
 		
 		if (canEdit) {
 			const el = this.cover.get(0);
+			if (!el) {
+				return;
+			};
+
 			const cb = () => {
 				const details = blockStore.getDetails(rootId, rootId);
 				const { coverScale } = details;

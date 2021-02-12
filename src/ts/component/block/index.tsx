@@ -60,6 +60,11 @@ class Block extends React.Component<Props, {}> {
 	render () {
 		const { rootId, css, index, className, block, readOnly } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
+
+		if (!id) {
+			return null;
+		};
+
 		const { style, checked } = content || {};
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
@@ -247,7 +252,7 @@ class Block extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block, dataset } = this.props;
-		const { id } = block
+		const { id } = block;
 		const { selection } = dataset || {};
 		const { focused } = focus;
 		
@@ -270,7 +275,7 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 
-		if (block.isTextToggle()) {
+		if (block.id && block.isTextToggle()) {
 			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
 		};
 	};
