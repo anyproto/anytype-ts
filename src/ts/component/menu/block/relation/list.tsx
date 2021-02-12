@@ -37,7 +37,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, filter } = data;
 		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
@@ -183,6 +183,9 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		let sections: any = {};
 		let ret = [];
 		let name = 'Create from scratch';
+		let items = Util.objectCopy(this.items);
+	
+		items = items.filter((it: any) => { return !it.isHidden; });
 
 		sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In this object', children: [] };
 		sections[I.RelationScope.Type]					 = { id: I.RelationScope.Type, name: 'Type', children: [] };
@@ -192,13 +195,11 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			this.items = this.items.filter((it: any) => { return it.name.match(filter); });
+			items = items.filter((it: any) => { return it.name.match(filter); });
 			name = `Create relation "${data.filter}"`;
 		};
 
-		this.items = this.items.filter((it: any) => { return !it.isHidden; });
-
-		for (let item of this.items) {
+		for (let item of items) {
 			if (!sections[item.scope]) {
 				continue;
 			};

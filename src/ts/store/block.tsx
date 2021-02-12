@@ -57,7 +57,10 @@ class BlockStore {
 
 	@action
 	detailsSet (rootId: string, details: any[]) {
-		let map = observable(new Map());
+		let map = this.detailMap.get(rootId);
+		if (!map) {
+			map = observable(new Map());
+		};
 
 		for (let item of details) {
 			map.set(item.id, item.details);
