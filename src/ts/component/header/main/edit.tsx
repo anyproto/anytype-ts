@@ -66,9 +66,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					{!root.isObjectReadOnly() ? (
-						<Icon className={[ 'plus', 'big', (root.isObjectSet() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
-					) : ''}
+					<Icon className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 				</div>
 
@@ -124,7 +122,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
-		if (!root || root.isObjectSet()) {
+		if (!root || root.isObjectReadOnly()) {
 			return;
 		};
 		
