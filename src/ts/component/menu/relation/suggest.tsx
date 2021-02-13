@@ -18,7 +18,7 @@ const HEIGHT = 28;
 const LIMIT = 20;
 
 @observer
-class MenuDataviewRelationSuggest extends React.Component<Props, State> {
+class MenuRelationSuggest extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -225,21 +225,22 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 		const { n } = this.state;
 
 		item = item || items[n] || {};
-
 		this.props.setHover({ id: item.relationKey }, scroll);
 	};
 
 	load () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, listCommand } = data;
 
 		this.setState({ loading: true });
 
-		C.BlockDataviewRelationListAvailable(rootId, blockId, (message: any) => {
-			this.items = message.relations.sort(DataUtil.sortByName);
-			this.setState({ loading: false });
-		});
+		if (listCommand) {
+			listCommand(rootId, blockId, (message: any) => {
+				this.items = message.relations.sort(DataUtil.sortByName);
+				this.setState({ loading: false });
+			});
+		};
 	};
 
 	onFilterChange (v: string) {
@@ -303,9 +304,9 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { close, position, param } = this.props;
+		const { close, param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, menuIdEdit, addCommand } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -316,9 +317,9 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 		};
 
 		if (item.id == 'add') {
-			commonStore.menuOpen('dataviewRelationEdit', { 
+			commonStore.menuOpen(menuIdEdit, { 
 				type: I.MenuType.Vertical,
-				element: '#item-' + item.id,
+				element: `#${getId()} #item-${item.id}`,
 				offsetX: 0,
 				offsetY: 0,
 				vertical: I.MenuDirection.Center,
@@ -329,10 +330,9 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 					rebind: this.rebind,
 				}
 			});
-		} else {
-			DataUtil.dataviewRelationAdd(rootId, blockId, item, getView(), (message: any) => {
-				close();
-			});
+		} else 
+		if (addCommand) {
+			addCommand(rootId, blockId, item);
 		};
 	};
 
@@ -348,4 +348,4 @@ class MenuDataviewRelationSuggest extends React.Component<Props, State> {
 
 };
 
-export default MenuDataviewRelationSuggest;
+export default MenuRelationSuggest;

@@ -163,10 +163,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { param, close, getId } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
+		const { rootId } = data;
+		const relations = dbStore.getRelations(rootId, rootId);
 
-		commonStore.menuOpen('blockRelationEdit', { 
+		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,
 			element: `#${getId()} #item-add`,
 			offsetX: 0,
@@ -175,8 +177,14 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
+				filter: '',
+				menuIdEdit: 'blockRelationEdit',
+				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.ObjectRelationListAvailable(rootId, callBack);
+				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation);
+					C.ObjectRelationAdd(rootId, relation, () => { commonStore.menuClose('relationSuggest'); });
 				},
 			}
 		});

@@ -90,6 +90,7 @@ import 'scss/menu/select.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/search.scss';
 import 'scss/menu/thread.scss';
+import 'scss/menu/relation.scss';
 
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';

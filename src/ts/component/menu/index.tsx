@@ -27,11 +27,12 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 
+import MenuRelationSuggest from './relation/suggest';
+
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
-import MenuDataviewRelationSuggest from './dataview/relation/suggest';
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
@@ -101,11 +102,12 @@ class Menu extends React.Component<Props, {}> {
 			blockCover:				 MenuBlockCover,
 			blockMention:			 MenuBlockMention,
 
+			relationSuggest:		 MenuRelationSuggest,
+
 			blockRelationEdit:		 MenuBlockRelationEdit,
 			blockRelationList:		 MenuBlockRelationList,
 			blockRelationView:		 MenuBlockRelationView,
 			
-			dataviewRelationSuggest: MenuDataviewRelationSuggest,
 			dataviewRelationList:	 MenuDataviewRelationList,
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
 			dataviewRelationType:	 MenuDataviewRelationType,
