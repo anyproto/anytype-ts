@@ -304,21 +304,30 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onChange } = data;
+		const { rootId, blockId, addCommand } = data;
 
-		C.BlockRelationAdd(rootId, blockId, newRelation, onChange);
+		if (addCommand) {
+			addCommand(rootId, blockId, newRelation);
+		};
 	};
 
 	update (newRelation: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, updateCommand } = data;
 		const relation = this.getRelation();
+		
+		if (updateCommand) {
+			updateCommand(rootId, blockId, Object.assign(relation, newRelation));
+		};
 	};
 
 	getRelation () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, relationKey } = data;
-		const relations = dbStore.getRelations(rootId, rootId);
-		return relations.find((it: I.Relation) => { return it.relationKey == relationKey; });
+
+		return dbStore.getRelation(rootId, rootId, relationKey);
 	};
 
 };

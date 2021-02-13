@@ -236,12 +236,8 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 				horizontal: I.MenuDirection.Left,
 				data: {
 					...data,
-					onChange: (message: any) => { 
-						if (message.error.code) {
-							return;
-						};
-
-						close();
+					addCommand: (rootId: string, blockId: string, relation: any) => {
+						C.BlockRelationAdd(rootId, blockId, relation, () => { close(); });
 					},
 				}
 			});

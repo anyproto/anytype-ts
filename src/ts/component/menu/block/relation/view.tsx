@@ -58,7 +58,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
 			return (
 				<div className="item sides">
-					<div className="info">
+					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 						{item.name}
 					</div>
@@ -120,15 +120,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		let items = dbStore.getRelations(rootId, rootId)//.filter((it: any) => { return !it.isHidden; });
 		let featured = [ 'type', 'description', 'creator' ];
 
-		/*
-sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In this object', children: [] };
-		sections[I.RelationScope.Type]					 = { id: I.RelationScope.Type, name: 'Type', children: [] };
-		sections[I.RelationScope.SetOfTheSameType]		 = { id: I.RelationScope.SetOfTheSameType, name: 'Set of the same type', children: [] };
-		sections[I.RelationScope.ObjectsOfTheSameType]	 = { id: I.RelationScope.ObjectsOfTheSameType, name: 'Objects of the same type', children: [] };
-		sections[I.RelationScope.Library]				 = { id: I.RelationScope.Library, name: 'Library', children: [] };
-
-		*/
-
 		let sections = [ 
 			{ 
 				id: 'featured', name: 'Featured relations', 
@@ -139,19 +130,19 @@ sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In t
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Object) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'all', name: 'Type', 
+				id: 'type', name: 'Type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'all', name: 'Set of the same type', 
+				id: 'set', name: 'Set of the same type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'all', name: 'Objects of the same type', 
+				id: 'object', name: 'Objects of the same type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.ObjectsOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'all', name: 'Library', 
+				id: 'library', name: 'Library', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Library) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 		];
@@ -184,12 +175,34 @@ sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In t
 			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
-				onChange: (message: any) => { 
-					if (message.error.code) {
-						return;
-					};
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationAdd(rootId, relation);
+				},
+			}
+		});
+	};
 
-					close();
+	onEdit (e: any, id: string) {
+		const { param, getId, close } = this.props;
+		const { data } = param;
+		const { readOnly } = data;
+
+		if (readOnly) {
+			return;
+		};
+		
+		commonStore.menuOpen('blockRelationEdit', { 
+			type: I.MenuType.Vertical,
+			element: `#${getId()} #item-${id}`,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				...data,
+				relationKey: id,
+				updateCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationUpdate(rootId, relation);
 				},
 			}
 		});

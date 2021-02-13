@@ -912,6 +912,25 @@ const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message
 	dispatcher.request('objectRelationAdd', request, callBack);
 };
 
+const ObjectRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationUpdate.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relation.relationKey);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('objectRelationUpdate', request, callBack);
+};
+
+const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationDelete.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relationKey);
+
+	dispatcher.request('objectRelationDelete', request, callBack);
+};
+
 const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.RelationListAvailable.Request();
 	
@@ -1032,6 +1051,8 @@ export {
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
 	ObjectRelationAdd,
+	ObjectRelationUpdate,
+	ObjectRelationDelete,
 	ObjectRelationListAvailable,
 
 };
