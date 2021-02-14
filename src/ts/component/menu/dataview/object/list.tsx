@@ -293,8 +293,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange } = data;
-		const relation = data.relation.get();
+		const { onChange, maxCount } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -308,8 +307,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
-		if (relation.maxCount) {
-			value = value.slice(value.length - relation.maxCount, value.length);
+		if (maxCount) {
+			value = value.slice(value.length - maxCount, value.length);
 		};
 
 		data.value = value;

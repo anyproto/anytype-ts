@@ -223,6 +223,7 @@ class Cell extends React.Component<Props, {}> {
 					canAdd: true,
 					filter: '',
 					value: value || [],
+					maxCount: relation.maxCount,
 				});
 
 				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
@@ -237,6 +238,7 @@ class Cell extends React.Component<Props, {}> {
 					filter: '',
 					value: value || [],
 					types: relation.objectTypes,
+					maxCount: relation.maxCount,
 				});
 
 				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');

@@ -191,8 +191,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { onChange } = data;
-		const relation = data.relation.get();
+		const { onChange, maxCount } = data;
 
 		if (item.id == 'add') {
 			this.onAdd(e);
@@ -202,10 +201,8 @@ class MenuOptionList extends React.Component<Props, State> {
 			value.push(item.id);
 			value = Util.arrayUnique(value);
 
-			console.log('MAX_COUNT', relation.maxCount, relation);
-
-			if (relation.maxCount) {
-				value = value.slice(value.length - relation.maxCount, value.length);
+			if (maxCount) {
+				value = value.slice(value.length - maxCount, value.length);
 			};
 
 			data.value = value;
