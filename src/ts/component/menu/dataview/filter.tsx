@@ -77,6 +77,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			let cn = [];
 			let list = [];
 
+			console.log(JSON.stringify(item, null, 5));
+
 			switch (relation.format) {
 
 				case I.RelationType.Tag:
@@ -441,16 +443,19 @@ class MenuFilter extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
-			const item = view.filters.find((it: any, i: number) => { return i == id; });
+			let item = view.filters.find((it: any, i: number) => { return i == id; });
 			if (!item) {
 				return;
 			};
-	
+
+			const idx = view.filters.findIndex((it: any, i: number) => { return i == id; });
+
+			item = Util.objectCopy(item);
 			item[k] = v;
 	
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
-				item.value = '';
+				item.value = null;
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
 					(it.relationKey != v) || 
@@ -466,6 +471,8 @@ class MenuFilter extends React.Component<Props, {}> {
 				});
 			};
 	
+			view.filters[idx] = observable(item);
+
 			this.save();
 		}, timeout ? TIMEOUT : 0);
 	};
