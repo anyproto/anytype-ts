@@ -34,7 +34,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		const Section = (section: any) => (
 			<div className="section">
-				<div className="name">{section.name}</div>
+				<div className="name">
+					{section.name}
+					{section.id != 'featured' ? <Icon className="plus" onClick={(e: any) => { this.onAdd(e, true); }} /> : ''}
+				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
 						return <Item key={i} {...item} />;
@@ -45,7 +48,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item sides add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item sides add" onClick={(e: any) => { this.onAdd(e, false); }}>
 				<div className="info">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -123,7 +126,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		let sections = [ 
 			{ 
-				name: 'Featured relations', 
+				id: 'featured', name: 'Featured relations', 
 				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) >= 0; }),
 			},
 			{ 
@@ -163,7 +166,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		return items;
 	};
 
-	onAdd (e: any) {
+	onAdd (e: any, fromSection: boolean) {
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId, readOnly } = data;
@@ -175,11 +178,11 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,
-			element: `#${getId()} #item-add`,
-			offsetX: 0,
-			offsetY: 0,
+			element: $(e.currentTarget),
+			offsetX: fromSection ? 0 : 32,
+			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			horizontal: fromSection ? I.MenuDirection.Right : I.MenuDirection.Left,
 			data: {
 				...data,
 				filter: '',

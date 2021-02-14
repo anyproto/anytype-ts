@@ -85,20 +85,26 @@
 		.content { padding: 24px 0px; max-height: unset; }
 		.input { border: 0px; padding: 0px; }
 
-		.section > .name { @include text-common; padding: 5px 32px; }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+
+		.section > .name { @include text-common; padding: 5px 28px; position: relative; }
+		.section > .name {
+			.icon.plus { position: absolute; right: 28px; top: 50%; margin-top: -10px; cursor: pointer; }
+			.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+		}
 		.section:last-child::after { display: none; }
 		.section::after { margin: 12px 32px 3px 32px; }
 
 		.item { padding: 0px 28px; }
 		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.icon.plus { margin-right: 4px; }
 
 			.info { padding: 5px 5px 5px 2px; border-radius: 4px; transition: background 0.2s ease-in-out; flex-shrink: 0; }
 			.info:hover { background: rgba(172,169,150,0.15); }
 
 			.cell { margin-right: 6px; }			
 
-			.icon.fav { background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
+			.icon.fav { margin: 5px 0px 0px 0px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
 			.icon.fav:hover { background-image: url('~img/icon/fav1.svg'); }
 		}
 		.item * { cursor: pointer; }
