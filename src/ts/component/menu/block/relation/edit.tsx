@@ -261,6 +261,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onCopy (e: any) {
+		const { close } = this.props;
+
 		const relation = this.getRelation();
 		const newRelation: any = { name: relation.name, format: relation.format };
 
@@ -269,6 +271,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onRemove (e: any) {
+		const { close, param } = this.props;
+		const { data } = param;
+		const { rootId, relationKey } = data;
+
+		C.ObjectRelationDelete(rootId, relationKey);
 		close();
 	};
 
