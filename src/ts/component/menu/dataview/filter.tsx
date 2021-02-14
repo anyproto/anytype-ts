@@ -594,7 +594,8 @@ class MenuFilter extends React.Component<Props, {}> {
 
 	resize () {
 		raf(() => {
-			const obj = $('#menuDataviewFilter');
+			const { getId } = this.props;
+			const obj = $('#' + getId());
 			const items = obj.find('.item');
 
 			let width = Constant.size.menuDataviewFilter;
