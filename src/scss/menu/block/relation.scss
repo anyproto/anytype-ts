@@ -6,6 +6,40 @@
 		.item:hover::before { opacity: 0.15; }
 	}
 
+	.menu.menuBlockRelationList,
+	.menu.menuBlockRelationView {
+		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
+		.icon.expand { display: none; }
+		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+
+		.input { 
+			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
+			height: 20px; padding: 0px;
+		}
+
+		.sides { display: flex; }
+
+		.info { width: 192px; }
+		.info {
+			.name { 
+				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
+				width: calc(100% - 24px); color: #6c6a5f;
+			}
+		}
+
+		.cell { @include text-common; width: calc(100% - 216px); position: relative; }
+
+		.cell.isEditing { padding: 0px; }
+		.cell.isEditing {
+			.cellContent { position: static; padding: 5px 8px !important; }
+		}
+
+		.cell.isEditing.c-description, .cell.isEditing.c-file { 
+			.cellContent { box-shadow: 0px 0px; border: 0px; }
+		}
+	}
+
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
 		.content { transition: none ;padding: 0px; }
@@ -54,9 +88,14 @@
 		.item { padding: 0px 28px; }
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
-			.info { padding: 6px 6px 6px 2px; border-radius: 4px; transition: $transitionFast; margin-right: 4px; }
-			.cell { padding: 6px; }
+
+			.info { padding: 5px 5px 5px 2px; border-radius: 4px; transition: $transitionFast; flex-shrink: 0; }
 			.info:hover { background: rgba(172,169,150,0.15); }
+
+			.cell { padding: 6px; margin-right: 6px; }			
+
+			.icon.fav { background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
+			.icon.fav:hover { background-image: url('~img/icon/fav1.svg'); }
 		}
 		.item * { cursor: pointer; }
 	}

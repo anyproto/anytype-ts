@@ -27,7 +27,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, readOnly } = data;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const sections = this.getSections();
@@ -39,7 +39,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 					{section.children.map((item: any, i: number) => {
 						return <Item key={i} {...item} />;
 					})}
-					{section.index == sections.length - 1 ? <ItemAdd /> : ''}
+					{!readOnly && (section.index == sections.length - 1) ? <ItemAdd /> : ''}
 				</div>
 			</div>
 		);
@@ -85,6 +85,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							optionCommand={this.optionCommand}
 						/>
 					</div>
+					<Icon className="fav" />
 				</div>
 			);
 		};
@@ -117,32 +118,32 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		
-		let items = dbStore.getRelations(rootId, rootId)//.filter((it: any) => { return !it.isHidden; });
+		let items = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; });
 		let featured = [ 'type', 'description', 'creator' ];
 
 		let sections = [ 
 			{ 
-				id: 'featured', name: 'Featured relations', 
+				name: 'Featured relations', 
 				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) >= 0; }),
 			},
 			{ 
-				id: 'all', name: 'In this object', 
+				name: 'In this object', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Object) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'type', name: 'Type', 
+				name: 'Type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'set', name: 'Set of the same type', 
+				name: 'Set of the same type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'object', name: 'Objects of the same type', 
+				name: 'Objects of the same type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.ObjectsOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'library', name: 'Library', 
+				name: 'Library', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Library) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 		];
@@ -165,8 +166,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, readOnly } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
+
+		if (readOnly) {
+			return;
+		};
 
 		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,
@@ -190,25 +195,26 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		});
 	};
 
-	onEdit (e: any, id: string) {
+	onEdit (e: any, relationKey: string) {
 		const { param, getId, close } = this.props;
 		const { data } = param;
-		const { readOnly } = data;
+		const { rootId, readOnly } = data;
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (readOnly) {
+		if (!relation || readOnly || relation.isReadOnly) {
 			return;
 		};
 		
 		commonStore.menuOpen('blockRelationEdit', { 
 			type: I.MenuType.Vertical,
-			element: `#${getId()} #item-${id}`,
+			element: `#${getId()} #item-${relationKey}`,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
-				relationKey: id,
+				relationKey: relationKey,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
@@ -265,7 +271,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const obj = $('#' + getId() + ' .content');
 		const sections = obj.find('.sections');
 		const win = $(window);
-		const height = Math.max(92, Math.min(win.height() - 56, sections.height() + 64));
+		const height = Math.max(92, Math.min(win.height() - 56, sections.outerHeight() + 48));
 
 		obj.css({ height: height });
 		position();

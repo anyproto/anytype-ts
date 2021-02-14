@@ -2,47 +2,42 @@
 
 .blocks {
 	.block.blockRelation { line-height: 20px; }
-	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
+	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
-	.blocks .block.blockRelation {
-		.info { padding: 6px 2px; }
+	.block.blockRelation {
+		.info { padding: 5px 2px; }
 
-		.cell { padding: 5px 8px; }
-		.cell.c-select { padding: 7px 8px; }
-	};
-}
+		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
+		.icon.expand { display: none; }
+		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-.menus .menu.menuBlockRelationList,
-.menus .menu.menuBlockRelationView, 
-.blocks .block.blockRelation {
-	.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
-	.icon.expand { display: none; }
-	.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-	.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-
-	.input { 
-		@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
-		height: 20px; padding: 0px;
-	}
-
-	.sides { display: flex; }
-
-	.info { width: 215px; margin-right: 1px; }
-	.info {
-		.name { 
-			display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-			width: calc(100% - 24px); color: #6c6a5f;
+		.input { 
+			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
+			height: 20px; padding: 0px;
 		}
-	}
 
-	.cell { @include text-common; width: calc(100% - 216px); position: relative; }
+		.sides { display: flex; }
 
-	.cell.isEditing { padding: 0px; }
-	.cell.isEditing {
-		.cellContent { position: static; padding: 5px 8px !important; }
-	}
+		.info { width: 215px; flex-shrink: 0; @include text-overflow-nw; }
+		.info {
+			.name { 
+				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
+				width: calc(100% - 24px); color: #6c6a5f;
+			}
+		}
 
-	.cell.isEditing.c-description, .cell.isEditing.c-file { 
-		.cellContent { box-shadow: 0px 0px; border: 0px; }
+		.cell { @include text-common; width: calc(100% - 216px); position: relative; padding: 5px 8px; }
+		
+		.cell.c-select { padding: 7px 8px; }
+
+		.cell.isEditing { padding: 0px; }
+		.cell.isEditing {
+			.cellContent { position: static; padding: 5px 8px !important; }
+		}
+
+		.cell.isEditing.c-description, .cell.isEditing.c-file { 
+			.cellContent { box-shadow: 0px 0px; border: 0px; }
+		}
 	}
 }
