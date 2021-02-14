@@ -108,7 +108,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{relation ? (
 					<React.Fragment>
 						<div className="line" />
-						<MenuItemVertical icon="expand" name="Open as object" onClick={() => {}} />
+						<MenuItemVertical icon="expand" name="Open to edit" onClick={() => {}} />
 						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} />
 						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} />
 					</React.Fragment>
