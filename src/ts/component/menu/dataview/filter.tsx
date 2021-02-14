@@ -77,8 +77,6 @@ class MenuFilter extends React.Component<Props, {}> {
 			let cn = [];
 			let list = [];
 
-			console.log(JSON.stringify(item, null, 5));
-
 			switch (relation.format) {
 
 				case I.RelationType.Tag:
