@@ -153,7 +153,8 @@ class MenuOptionValues extends React.Component<Props> {
 			element: '#' + getId() + ' #item-add',
 			width: 0,
 			offsetX: node.outerWidth(),
-			vertical: I.MenuDirection.Center,
+			offsetY: -36,
+			vertical: I.MenuDirection.Bottom,
 			noFlip: false,
 			onClose: () => { close(); },
 			data: {

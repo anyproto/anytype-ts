@@ -227,7 +227,6 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
-				console.log(menuId);
 				break;
 					
 			case I.RelationType.Object:

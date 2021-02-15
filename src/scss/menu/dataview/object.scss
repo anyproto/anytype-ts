@@ -30,6 +30,8 @@
 
 	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
+		.content { max-height: 280px; }
+
 		.item { padding: 4px 16px 4px 10px; }
 		.item {
 			.name { @include text-overflow-nw; }

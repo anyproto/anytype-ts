@@ -206,6 +206,7 @@ class MenuOptionList extends React.Component<Props, State> {
 			};
 
 			data.value = value;
+
 			commonStore.menuUpdateData(MENU_ID, { value: value });
 			onChange(value);
 		};
@@ -253,10 +254,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		data.relation.set(relation);
 		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
-		if (menu) {
-			menu.param.data.relation = observable.box(relation);
-			commonStore.menuUpdate(this.props.id, menu.param);
-		};
+		commonStore.menuUpdateData(this.props.id, { relation: observable.box(relation) });
 	};
 
 	getItems (): I.SelectOption[] {

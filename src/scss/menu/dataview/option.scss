@@ -6,6 +6,10 @@
 		.tagItem { vertical-align: top; margin-top: 1px; }
 	}
 
+	.menu.menuDataviewOptionValues {
+		.content { max-height: 280px; }
+	}
+
 	.menu.menuDataviewOptionList { width: 288px; }
 	.menu.menuDataviewOptionList {
 		.content { transition: none; padding-bottom: 0px; }
