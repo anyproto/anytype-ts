@@ -5,7 +5,9 @@ import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	history: any;
+};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -25,6 +27,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onOpen = this.onOpen.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -108,7 +111,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{relation ? (
 					<React.Fragment>
 						<div className="line" />
-						<MenuItemVertical icon="expand" name="Open to edit" onClick={() => {}} />
+						<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} />
 						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} />
 						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} />
 					</React.Fragment>
@@ -276,6 +279,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				data: data
 			});
 		}, Constant.delay.menu);
+	};
+
+	onOpen (e: any) {
+		const { history } = this.props;
+		const relation = this.getRelation();
+
+		history.push('/main/relation/' + relation.relationKey);
 	};
 
 	onCopy (e: any) {
