@@ -122,8 +122,10 @@ class MenuFilter extends React.Component<Props, {}> {
 					Item = (item: any) => {
 						return (
 							<div className="element">
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<div className="flex">
+									<IconObject object={item} />
+									<div className="name">{item.name}</div>
+								</div>
 							</div>
 						);
 					};
@@ -514,9 +516,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
-				window.setTimeout(() => {
-					this.refObj[id].focus();
-				}, 200);
+				window.setTimeout(() => { this.refObj[id].focus(); }, 200);
 			},
 			data: { 
 				value: value, 

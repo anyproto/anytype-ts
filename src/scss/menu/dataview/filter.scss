@@ -23,7 +23,8 @@
 			.select {
 				.element { display: inline-block; margin-right: 6px; line-height: 20px; }
 				.element {
-					.name { max-width: calc(100% - 24px); }
+					.iconObject { flex-shrink: 0; }
+					.name { width: 100%; @include text-overflow-nw; }
 					.tagItem { vertical-align: top; margin-top: 1px; }
 				}
 			}
