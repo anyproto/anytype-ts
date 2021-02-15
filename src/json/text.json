@@ -173,6 +173,9 @@
 	"blockNameDot": { "en": "Dots divider" },
 	"blockTextDot": { "en": "Separate information with three dots" },
 
+	"blockNameRelation": { "en": "Relation" },
+	"blockTextRelation": { "en": "Meaningful connection between objects" },
+
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },
@@ -293,12 +296,6 @@
 	"linkPreviewCopy": { "en": "Copy link" },
 	"linkPreviewEdit": { "en": "Edit link" },
 	"linkPreviewUnlink": { "en": "Unlink" },
-
-	"blockNameRelation": { "en": "Relation" },
-	"blockDescriptionRelation": { "en": "..." },
-
-	"blockNameNewRelation": { "en": "New Relation" },
-	"blockDescriptionNewRelation": { "en": "..." },
 
 	"filterConditionEqual": { "en": "is exactly" },
 	"filterConditionNotEqual": { "en": "is not" },
