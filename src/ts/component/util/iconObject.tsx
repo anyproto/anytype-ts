@@ -59,6 +59,20 @@ const Obj = {
 	image: require('img/icon/object/image.svg'),
 };
 
+const Relation: any = {};
+Relation[I.RelationType.Description] = require('img/icon/dataview/relation/description.svg');
+Relation[I.RelationType.Title] = require('img/icon/dataview/relation/title.svg');
+Relation[I.RelationType.Number] = require('img/icon/dataview/relation/number.svg');
+Relation[I.RelationType.Status] = require('img/icon/dataview/relation/status.svg');
+Relation[I.RelationType.Date] = require('img/icon/dataview/relation/date.svg');
+Relation[I.RelationType.File] = require('img/icon/dataview/relation/file.svg');
+Relation[I.RelationType.Checkbox] = require('img/icon/dataview/relation/checkbox.svg');
+Relation[I.RelationType.Url] = require('img/icon/dataview/relation/url.svg');
+Relation[I.RelationType.Email] = require('img/icon/dataview/relation/email.svg');
+Relation[I.RelationType.Phone] = require('img/icon/dataview/relation/phone.svg');
+Relation[I.RelationType.Tag] = require('img/icon/dataview/relation/tag.svg');
+Relation[I.RelationType.Object] = require('img/icon/dataview/relation/description.svg');
+
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
@@ -87,7 +101,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, url } = object || {};
+		let { id, name, iconEmoji, iconImage, iconClass, done, url, format } = object || {};
 		let iconSize = this.iconSize(type, layout, size);
 		let icon = null;
 		let icn = [];
@@ -118,12 +132,24 @@ class IconObject extends React.Component<Props, {}> {
 					case I.ObjectLayout.ObjectType:
 						cn.push('isObjectType');
 						id = DataUtil.schemaField(url);
+
 						if (object.iconEmoji) {
 							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						} else 
 						if (Obj[id]) {
 							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 							icon = <img src={Obj[id]} className={icn.join(' ')} />;
+						} else {
+							icon = <div />;
+						};
+						break;
+
+					case I.ObjectLayout.Relation:
+						cn.push('isRelation');
+
+						if (Relation[format]) {
+							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+							icon = <img src={Relation[format]} className={icn.join(' ')} />;
 						} else {
 							icon = <div />;
 						};

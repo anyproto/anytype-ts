@@ -64,9 +64,7 @@ class PopupStore extends React.Component<Props, State> {
 		const details = blockStore.getDetails(profile, profile);
 		
 		let relations = [];
-		objectTypes.map((it: I.ObjectType) => {
-			relations = relations.concat(it.relations);
-		});
+		objectTypes.map((it: I.ObjectType) => { relations = relations.concat(it.relations); });
 		relations = Util.arrayUniqueObjects(relations, 'relationKey');
 		relations.sort((c1: any, c2: any) => {
 			if (c1.name > c2.name) return 1;
@@ -294,7 +292,7 @@ class PopupStore extends React.Component<Props, State> {
 	onRelation (e: any, item: any) {
 		const { history } = this.props;
 
-		history.push('/main/relation/' + item.id);
+		history.push('/main/relation/' + item.relationKey);
 	};
 	
 };
