@@ -55,6 +55,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 			opts = (
 				<React.Fragment>
+					{isObject ? (
+						<React.Fragment>
+							<div className="sectionName">Type of target object</div>
+							<MenuItemVertical 
+								id="object-type" 
+								name={objectType ? objectType.name : 'Select object type'} 
+								object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+								onClick={this.onObjectType} 
+								arrow={true}
+							/>
+						</React.Fragment>
+					) : ''}
+
 					{isDate ? (
 						<React.Fragment>
 							<div className="line" />
@@ -65,21 +78,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							</div>
 
 							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
-						</React.Fragment>
-					) : ''}
-
-					{isObject ? (
-						<React.Fragment>
-							<div className="line" />
-
-							<div className="sectionName">Type of target object</div>
-							<MenuItemVertical 
-								id="object-type" 
-								name={objectType ? objectType.name : 'Select object type'} 
-								object={objectType} 
-								onClick={this.onObjectType} 
-								arrow={true}
-							/>
 						</React.Fragment>
 					) : ''}
 				</React.Fragment>

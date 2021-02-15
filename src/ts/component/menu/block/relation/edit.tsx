@@ -53,6 +53,19 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 			opts = (
 				<React.Fragment>
+					{isObject ? (
+						<React.Fragment>
+							<div className="sectionName">Type of target object</div>
+							<MenuItemVertical 
+								id="object-type" 
+								object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+								name={objectType ? objectType.name : 'Select object type'} 
+								onClick={this.onObjectType} 
+								arrow={true}
+							/>
+						</React.Fragment>
+					) : ''}
+
 					{isDate ? (
 						<React.Fragment>
 							<div className="line" />
@@ -63,20 +76,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							</div>
 
 							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
-						</React.Fragment>
-					) : ''}
-
-					{isObject ? (
-						<React.Fragment>
-							<div className="line" />
-							<div className="sectionName">Object type</div>
-							<MenuItemVertical 
-								id="object-type" 
-								object={objectType} 
-								name={objectType ? objectType.name : 'Select object type'} 
-								onClick={this.onObjectType} 
-								arrow={true}
-							/>
 						</React.Fragment>
 					) : ''}
 				</React.Fragment>
@@ -202,7 +201,12 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
-			return { ...it, object: it, id: DataUtil.schemaField(it.url) };
+			it.layout = I.ObjectLayout.ObjectType;
+			return { 
+				...it, 
+				object: it, 
+				id: DataUtil.schemaField(it.url), 
+			};
 		});
 
 		options.sort((c1: any, c2: any) => {

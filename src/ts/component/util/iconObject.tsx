@@ -139,8 +139,6 @@ class IconObject extends React.Component<Props, {}> {
 						if (Obj[id]) {
 							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 							icon = <img src={Obj[id]} className={icn.join(' ')} />;
-						} else {
-							icon = <div />;
 						};
 						break;
 
@@ -150,8 +148,6 @@ class IconObject extends React.Component<Props, {}> {
 						if (Relation[format]) {
 							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 							icon = <img src={Relation[format]} className={icn.join(' ')} />;
-						} else {
-							icon = <div />;
 						};
 						break;
 				};
