@@ -88,6 +88,7 @@ class CellSelect extends React.Component<Props, State> {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
+		console.log('VALUE1', value);
 		return Util.objectCopy(value);
 	};
 
