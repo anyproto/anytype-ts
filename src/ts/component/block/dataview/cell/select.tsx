@@ -33,7 +33,8 @@ class CellSelect extends React.Component<Props, State> {
 			return null;
 		};
 
-		let value: any = this.getValue();
+		let value = this.getValue();
+		console.log('VALUE', value);
 		value = value.map((id: string, i: number) => { 
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});

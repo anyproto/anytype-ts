@@ -55,7 +55,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 		
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {

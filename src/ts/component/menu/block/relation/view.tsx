@@ -40,6 +40,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
+						if (section.id == 'featured') {
+							item.isFeatured = true;
+						};
 						return <Item key={i} {...item} />;
 					})}
 					{!readOnly && (section.index == sections.length - 1) ? <ItemAdd /> : ''}
@@ -88,7 +91,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							optionCommand={this.optionCommand}
 						/>
 					</div>
-					<Icon className="fav" />
+					<Icon className={[ 'fav', (item.isFeatured ? 'active' : '') ].join(' ')} />
 				</div>
 			);
 		};

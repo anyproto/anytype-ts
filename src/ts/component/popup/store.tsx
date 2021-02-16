@@ -63,19 +63,29 @@ class PopupStore extends React.Component<Props, State> {
 		const { profile } = blockStore;
 		const { tab } = this.state;
 		const rootId = this.getRootId();
-		const tabItem = Tabs.find((it: any) => { return it.id == tab; });
 		const details = blockStore.getDetails(profile, profile);
-		const block = blockStore.getLeaf(rootId, BLOCK_ID);
-
-		console.log(block);
-
-		if (!block) {
-			return null;
-		};
-
-		const views = block.content.views;
+		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
 		const data = dbStore.getData(rootId, block.id);
+		const views = block.content?.views || [];
+
+		const tabs = (
+			<div className="tabs">
+				{views.map((item: any, i: number) => (
+					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
+						{item.name}
+					</div>
+				))}
+			</div>
+		);
+
+		const items = (
+			<div className="items">
+				{data.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
+			</div>
+		);
 
 		let relations = [];
 		objectTypes.map((it: I.ObjectType) => { relations = relations.concat(it.relations); });
@@ -86,7 +96,7 @@ class PopupStore extends React.Component<Props, State> {
 			return 0;
 		});
 
-		let content = null;
+		let element = null;
 		let Item = null;
 
 		switch (tab) {
@@ -113,7 +123,7 @@ class PopupStore extends React.Component<Props, State> {
 					);
 				};
 
-				content = (
+				element = (
 					<React.Fragment>
 						<div className="mid">
 							<Title text="Type every object" />
@@ -122,19 +132,8 @@ class PopupStore extends React.Component<Props, State> {
 							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onObjectType(e, { id: 'create' }); }} />
 						</div>
 
-						<div className="tabs">
-							{views.map((item: any, i: number) => (
-								<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
-									{item.name}
-								</div>
-							))}
-						</div>
-
-						<div className="items">
-							{data.map((item: any, i: number) => (
-								<Item key={i} {...item} />
-							))}
-						</div>
+						{tabs}
+						{items}
 					</React.Fragment>
 				);
 				break;
@@ -145,9 +144,7 @@ class PopupStore extends React.Component<Props, State> {
 			case 'relation':
 				Item = (item: any) => (
 					<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onRelation(e, item); }}>
-						<div className="iconObject c48 isRelation">
-							<Icon className={[ 'iconCommon', 'c30', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
-						</div>
+						<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 						<div className="info">
 							<div className="name">{item.name} ({item.relationKey})</div>
 							<div className="author">
@@ -160,7 +157,7 @@ class PopupStore extends React.Component<Props, State> {
 					</div>
 				);
 
-				content = (
+				element = (
 					<React.Fragment>
 						<div className="mid">
 							<Title text="All objects are connected" />
@@ -169,19 +166,8 @@ class PopupStore extends React.Component<Props, State> {
 							<Button text="Create a new type" className="orange" />
 						</div>
 
-						<div className="tabs">
-							{views.map((item: any, i: number) => (
-								<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
-									{item.name}
-								</div>
-							))}
-						</div>
-
-						<div className="items">
-							{relations.map((item: any, i: number) => (
-								<Item key={i} {...item} />
-							))}
-						</div>
+						{tabs}
+						{items}
 					</React.Fragment>
 				);
 				break;
@@ -201,7 +187,7 @@ class PopupStore extends React.Component<Props, State> {
 				</div>
 				
 				<div className="body">
-					{content}
+					{element}
 				</div>
 			</div>
 		);
@@ -321,7 +307,6 @@ class PopupStore extends React.Component<Props, State> {
 
 		dbStore.metaSet(rootId, BLOCK_ID, meta);
 		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.store.records, cb);
-
 	};
 	
 };
