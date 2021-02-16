@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, DataUtil, SmileUtil, Util } from 'ts/lib';
+import { I } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -13,7 +13,6 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onAdd = this.onAdd.bind(this);
 		this.onSettings = this.onSettings.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 	};
@@ -40,15 +39,6 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 				disableFirstKey: true,
 				rootId: root,
 			}, 
-		});
-	};
-
-	onAdd (e: any) {
-		const { root } = blockStore;
-		
-		DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
-			DataUtil.pageOpen(message.targetId);
-			Util.scrollTopEnd();
 		});
 	};
 
