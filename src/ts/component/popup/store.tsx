@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Icon } from 'ts/component';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -271,9 +271,23 @@ class PopupStore extends React.Component<Props, State> {
 		});
 	};
 
+	load (tab: string) {
+		const { storeType, storeRelation, storeTemplate } = blockStore;
+
+		let id = '';
+		if (tab == 'type') id = storeType;
+		if (tab == 'template') id = storeTemplate;
+		if (tab == 'relation') id = storeRelation;
+
+		C.BlockOpen(id, (message: any) => {
+		});
+	};
+
 	onTab (e: any, item: any) {
 		const tabItem = Tabs.find((it: any) => { return it.id == item.id; });
 		this.setState({ tab: item.id, subTab: tabItem.active });
+
+		this.load(item.id);
 	};
 
 	onSubTab (e: any, item: any) {

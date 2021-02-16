@@ -214,6 +214,8 @@ class DataUtil {
 			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
+			blockStore.storeSetType(message.marketplaceTypeId);
+			blockStore.storeSetRelation(message.marketplaceRelationId);
 
 			C.ObjectTypeList((message: any) => {
 				dbStore.objectTypesSet(message.objectTypes);

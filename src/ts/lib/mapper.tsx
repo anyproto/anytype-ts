@@ -168,7 +168,8 @@ const Mapper = {
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),
-				isHidden: obj.getHidden(),
+				//isHidden: obj.getHidden(),
+				isHidden: false,
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 			};
 		},
@@ -183,7 +184,8 @@ const Mapper = {
 				isReadOnly: obj.getReadonly(),
 				maxCount: obj.getMaxcount(),
 				objectTypes: obj.getObjecttypesList(),
-				scope: obj.getScope(),
+				//scope: obj.getScope(),
+				scope: 0,
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
 			};
 		},

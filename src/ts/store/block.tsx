@@ -10,6 +10,9 @@ class BlockStore {
 	@observable public archiveId: string = '';
 	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
+	@observable public storeIdType: string = '';
+	@observable public storeIdTemplate: string = '';
+	@observable public storeIdRelation: string = '';
 
 	public treeMap: Map<string, any[]> = new Map();
 	public blockMap: Map<string, any[]> = new Map();
@@ -35,6 +38,21 @@ class BlockStore {
 		return this.breadcrumbsId;
 	};
 
+	@computed
+	get storeType (): string {
+		return this.storeIdType;
+	};
+
+	@computed
+	get storeTemplate (): string {
+		return this.storeIdTemplate;
+	};
+
+	@computed
+	get storeRelation (): string {
+		return this.storeIdRelation;
+	};
+
 	@action
 	rootSet (id: string) {
 		this.rootId = String(id || '');
@@ -48,6 +66,21 @@ class BlockStore {
 	@action
 	profileSet (id: string) {
 		this.profileId = String(id || '');
+	};
+
+	@action
+	storeSetType (id: string) {
+		this.storeIdType = String(id || '');
+	};
+
+	@action
+	storeSetTemplate (id: string) {
+		this.storeIdTemplate = String(id || '');
+	};
+
+	@action
+	storeSetRelation (id: string) {
+		this.storeIdRelation = String(id || '');
 	};
 
 	@action
