@@ -157,10 +157,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 				data: {
 					value: '',
 					options: [
+						{ id: 'page', icon: 'page', name: 'Draft' },
 						{ id: 'link', icon: 'existing', name: 'Link to page' },
-						{ id: 'create', icon: 'create', name: 'New set' },
+						{ id: 'set', icon: 'set', name: 'New set' },
 					],
 					onSelect: (event: any, item: any) => {
+						if (item.id == 'page') {
+							DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
+								DataUtil.pageOpen(message.targetId);
+							});
+						};
+
 						if (item.id == 'link') {
 							commonStore.popupOpen('search', { 
 								preventResize: true,
@@ -174,7 +181,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							});
 						};
 
-						if (item.id == 'create') {
+						if (item.id == 'set') {
 							history.push('/main/set');
 						};
 					},

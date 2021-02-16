@@ -21,12 +21,9 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	render () {
 		return (
 			<div className="header headerMainIndex">
-				<div className="side center" onClick={this.onSearch}>
-					Search for an object
-				</div>
+				<div className="side center" onClick={this.onSearch}>Search for an object</div>
 
 				<div className="side right">
-					<Icon tooltip="Create new page" className="add" onClick={this.onAdd} />
 					<Icon tooltip="Settings" className={[ 'settings', (commonStore.popupIsOpen('settings') ? 'active' : '') ].join(' ')} onClick={this.onSettings} />
 				</div>
 			</div>

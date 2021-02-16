@@ -50,7 +50,7 @@
 
 	.side.left { left: 6px; z-index: 1; }
 
-	.side.center { width: 400px; height: 28px; left: 50%; margin-left: -200px; white-space: nowrap; }
+	.side.center { width: 512px; height: 28px; left: 50%; margin-left: -256px; white-space: nowrap; }
 
 	.side.right { right: 6px; z-index: 1; }
 	.side.right {
@@ -65,8 +65,8 @@
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.side.center { 
-		border: 1px solid rgba(255,255,255,0.5); border-radius: 6px; width: 512px; height: 28px; line-height: 26px; color: #fff; text-align: center;
-		cursor: text; margin-left: -256px;
+		border: 1px solid rgba(255,255,255,0.5); border-radius: 6px;height: 28px; line-height: 26px; color: #fff; text-align: center;
+		cursor: text;
 	}
 }
 
@@ -78,7 +78,7 @@
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
-		line-height: 24px; width: 400px; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
+		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
 		.item { line-height: 20px; vertical-align: middle; }
