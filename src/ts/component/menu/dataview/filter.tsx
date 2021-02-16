@@ -131,7 +131,11 @@ class MenuFilter extends React.Component<Props, {}> {
 					};
 					cn = [ 'select', 'isList' ];
 
-					list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
+					list = (item.value || []).map((it: string) => { 
+						const details = blockStore.getDetails(rootId, it);
+						const { iconImage, iconEmoji, name } = details;
+						return details;
+					});
 					list = list.filter((it: any) => { return !it._detailsEmpty_; });
 
 					if (list.length) {
@@ -448,9 +452,6 @@ class MenuFilter extends React.Component<Props, {}> {
 				return;
 			};
 
-			const idx = view.filters.findIndex((it: any, i: number) => { return i == id; });
-
-			item = Util.objectCopy(item);
 			item[k] = v;
 	
 			// Remove value when we change relation, filter non unique entries
@@ -470,10 +471,9 @@ class MenuFilter extends React.Component<Props, {}> {
 					((it.relationKey == item.relationKey) && (it.condition != v)); 
 				});
 			};
-	
-			view.filters[idx] = observable(item);
 
 			this.save();
+			this.forceUpdate();
 		}, timeout ? TIMEOUT : 0);
 	};
 
