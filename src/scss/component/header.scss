@@ -41,7 +41,6 @@
 	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
 	.icon.plus { background-image: url('~img/icon/header/plus.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
-	.icon.search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
@@ -64,6 +63,11 @@
 .header.headerMainIndex {
 	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
+
+	.side.center { 
+		border: 1px solid rgba(255,255,255,0.5); border-radius: 6px; width: 512px; height: 28px; line-height: 26px; color: #fff; text-align: center;
+		cursor: text; margin-left: -256px;
+	}
 }
 
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }

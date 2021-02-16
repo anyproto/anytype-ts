@@ -55,11 +55,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 					<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 					<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
+					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 				</div>
 
 				<div className="side center">
-					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<IconObject object={details} />
 							<div className="name">{Util.shorten(details.name, 32)}</div>
@@ -168,7 +168,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		}, Constant.delay.menu);
 	};
 
-	onNavigation (e: any, expanded: boolean) {
+	onNavigation (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -179,7 +179,22 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				type: I.NavigationType.Go, 
-				expanded: expanded,
+				expanded: true,
+			},
+		});
+	};
+
+	onSearch (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { rootId } = this.props;
+
+		commonStore.popupOpen('search', {
+			preventResize: true, 
+			data: {
+				rootId: rootId,
+				type: I.NavigationType.Go, 
 			},
 		});
 	};

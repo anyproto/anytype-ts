@@ -7,6 +7,7 @@ import { commonStore } from 'ts/store';
 import PopupSettings from './settings';
 import PopupArchive from './archive';
 import PopupNavigation from './navigation';
+import PopupSearch from './search';
 import PopupHelp from './help';
 import PopupPrompt from './prompt';
 import PopupPreview from './preview';
@@ -42,6 +43,7 @@ class Popup extends React.Component<Props, {}> {
 			settings: PopupSettings,
 			archive: PopupArchive,
 			navigation: PopupNavigation,
+			search: PopupSearch,
 			confirm: PopupConfirm,
 			prompt: PopupPrompt,
 			help: PopupHelp,

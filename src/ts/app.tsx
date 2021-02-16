@@ -73,6 +73,7 @@ import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/archive.scss';
 import 'scss/popup/navigation.scss';
+import 'scss/popup/search.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
 import 'scss/popup/help.scss';

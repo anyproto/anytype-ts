@@ -45,11 +45,11 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 					<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 					<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e, true); }} />
+					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 				</div>
 
 				<div className="side center">
-					<div className="path" onMouseDown={(e: any) => { this.onNavigation(e, false); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
 							<div className="name">{objectType.name}</div>
@@ -126,7 +126,7 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position);
 	};
 
-	onNavigation (e: any, expanded: boolean) {
+	onNavigation (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -137,7 +137,22 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 			data: {
 				rootId: root,
 				type: I.NavigationType.Go, 
-				expanded: expanded,
+				expanded: true,
+			},
+		});
+	};
+
+	onSearch (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { root } = blockStore;
+
+		commonStore.popupOpen('search', {
+			preventResize: true, 
+			data: {
+				rootId: root,
+				type: I.NavigationType.Go, 
 			},
 		});
 	};

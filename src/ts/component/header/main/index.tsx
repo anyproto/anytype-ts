@@ -21,10 +21,11 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	render () {
 		return (
 			<div className="header headerMainIndex">
-				<Icon className="logo" onClick={this.onSearch} />
+				<div className="side center" onClick={this.onSearch}>
+					Search for an object
+				</div>
 
 				<div className="side right">
-					<Icon tooltip="Search for page" className={[ 'search', (commonStore.popupIsOpen('navigation') ? 'active' : '') ].join(' ')} onClick={this.onSearch} />
 					<Icon tooltip="Create new page" className="add" onClick={this.onAdd} />
 					<Icon tooltip="Settings" className={[ 'settings', (commonStore.popupIsOpen('settings') ? 'active' : '') ].join(' ')} onClick={this.onSettings} />
 				</div>
@@ -35,7 +36,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	onSearch (e: any) {
 		const { root } = blockStore;
 
-		commonStore.popupOpen('navigation', { 
+		commonStore.popupOpen('search', { 
 			preventResize: true,
 			data: { 
 				type: I.NavigationType.Go, 

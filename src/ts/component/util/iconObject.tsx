@@ -26,6 +26,7 @@ interface Props {
 
 const Size = {
 	16: 16,
+	18: 18,
 	20: 18,
 	24: 20,
 	26: 20,

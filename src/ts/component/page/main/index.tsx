@@ -162,7 +162,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					],
 					onSelect: (event: any, item: any) => {
 						if (item.id == 'link') {
-							commonStore.popupOpen('navigation', { 
+							commonStore.popupOpen('search', { 
 								preventResize: true,
 								data: { 
 									type: I.NavigationType.Link, 

@@ -76,7 +76,7 @@ class Keyboard {
 			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked || !account) {
 				return;
 			};
-			commonStore.popupOpen('navigation', { 
+			commonStore.popupOpen('search', { 
 				preventResize: true,
 				data: { 
 					type: I.NavigationType.Go, 
