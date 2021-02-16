@@ -6,7 +6,7 @@
 		.content { max-height: 350px; }
 		.item { padding: 4px 10px; }
 		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}

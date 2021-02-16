@@ -33,10 +33,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const sections = this.getSections();
 
 		const Section = (section: any) => (
-			<div className="section">
+			<div id={'section-' + section.id} className="section">
 				<div className="name">
 					{section.name}
-					{section.id != 'featured' ? <Icon className="plus" onClick={(e: any) => { this.onAdd(e, true); }} /> : ''}
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
@@ -51,7 +50,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item sides add" onClick={(e: any) => { this.onAdd(e, false); }}>
+			<div id="item-add" className="item sides add" onClick={(e: any) => { this.onAdd(e); }}>
 				<div className="info">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -133,23 +132,23 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				children: items.filter((it: any) => { return featured.indexOf(it.relationKey) >= 0; }),
 			},
 			{ 
-				name: 'In this object', 
+				id: 'object', name: 'In this object', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Object) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				name: 'Type', 
+				id: 'type', name: 'Type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				name: 'Set of the same type', 
+				id: 'setType', name: 'Set of the same type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				name: 'Objects of the same type', 
+				id: 'objectType', name: 'Objects of the same type', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.ObjectsOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				name: 'Library', 
+				id: 'library', name: 'Library', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Library) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 		];
@@ -169,8 +168,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		return items;
 	};
 
-	onAdd (e: any, fromSection: boolean) {
-		const { param, getId } = this.props;
+	onAdd (e: any) {
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readOnly } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
@@ -182,10 +181,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,
 			element: $(e.currentTarget),
-			offsetX: fromSection ? 0 : 32,
+			offsetX: 32,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: fromSection ? I.MenuDirection.Right : I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
 				filter: '',

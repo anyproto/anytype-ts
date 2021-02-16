@@ -62,13 +62,15 @@ class MenuBlockMention extends React.Component<Props, State> {
 				>
 					<MenuItemVertical 
 						id={item.id}
-						object={item}
+						object={item.id == 'add' ? undefined : item}
+						icon={item.icon}
 						name={item.name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}
 						caption={objectType.name}
 						style={param.style}
+						className={item.id == 'add' ? 'add' : ''}
 					/>
 				</CellMeasurer>
 			);
@@ -150,7 +152,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	getItems () {
 		return [
-			{ id: 'create', name: 'Create new page', object: {}, skipFilter: true }
+			{ id: 'add', name: 'Create new page', icon: 'plus', skipFilter: true }
 		].concat(this.items);
 	};
 	
@@ -272,7 +274,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 			onChange(name + ' ', marks, from, to);
 		};
 
-		if (item.id == 'create') {
+		if (item.id == 'add') {
 			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;

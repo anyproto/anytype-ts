@@ -3,8 +3,8 @@
 .blocks {
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
-		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/plus0.svg'); cursor: pointer; }
-		.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
+		.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		
 		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); transition: none; }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
@@ -52,7 +52,7 @@
 			.item.view { width: 32px; }
 			
 			.item:hover, .item.active {
-				.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 				.icon.arrow { background-image: url('~img/icon/dataview/button/arrow1.svg'); }
 				.icon.relation { background-image: url('~img/icon/dataview/button/relation1.svg'); }
 				.icon.filter { background-image: url('~img/icon/dataview/button/filter1.svg'); }
