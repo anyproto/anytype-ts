@@ -301,7 +301,7 @@ class EditorPage extends React.Component<Props, {}> {
 				dbStore.relationsRemove(id, 'dataview');
 				authStore.threadRemove(id);
 			});
-		}, Constant.delay.menu);
+		}, 200);
 	};
 	
 	unbind () {
