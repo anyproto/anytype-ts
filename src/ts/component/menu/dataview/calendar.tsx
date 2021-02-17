@@ -3,6 +3,8 @@ import { I, Util, translate } from 'ts/lib';
 import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
 
+
+
 const Constant = require('json/constant.json');
 
 interface Props extends I.Menu {};
