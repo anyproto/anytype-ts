@@ -69,20 +69,16 @@ class PopupStore extends React.Component<Props, State> {
 		const data = dbStore.getData(rootId, block.id);
 		const views = block.content?.views || [];
 
+		let Item = null;
+		let element = null;
+		let items = null;
+
 		const tabs = (
 			<div className="tabs">
 				{views.map((item: any, i: number) => (
 					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
 						{item.name}
 					</div>
-				))}
-			</div>
-		);
-
-		const items = (
-			<div className="items">
-				{data.map((item: any, i: number) => (
-					<Item key={i} {...item} />
 				))}
 			</div>
 		);
@@ -95,9 +91,6 @@ class PopupStore extends React.Component<Props, State> {
 			if (c1.name < c2.name) return -1;
 			return 0;
 		});
-
-		let element = null;
-		let Item = null;
 
 		switch (tab) {
 
@@ -122,6 +115,14 @@ class PopupStore extends React.Component<Props, State> {
 						</div>
 					);
 				};
+
+				items = (
+					<div className="items">
+						{data.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
+				);
 
 				element = (
 					<React.Fragment>
@@ -154,6 +155,14 @@ class PopupStore extends React.Component<Props, State> {
 							<div className="line" />
 						</div>
 						<Button className="blank c28" text="Add" />
+					</div>
+				);
+
+				items = (
+					<div className="items">
+						{data.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
 					</div>
 				);
 
