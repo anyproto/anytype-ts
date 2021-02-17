@@ -489,7 +489,9 @@ class MenuFilter extends React.Component<Props, {}> {
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
 				const relation = dbStore.getRelation(rootId, blockId, v);
+				const conditions = this.conditionsByType(relation.format);
 
+				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 				item.value = this.valueByType(relation.format);
 
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
