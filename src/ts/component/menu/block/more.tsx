@@ -214,7 +214,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getLayouts () {
 		return [
 			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
-			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
+			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
 			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
 			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
 		];

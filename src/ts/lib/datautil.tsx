@@ -741,9 +741,9 @@ class DataUtil {
 						ret.className.push('isPage');
 						break;
 
-					case I.ObjectLayout.Contact:
+					case I.ObjectLayout.Human:
 						ret.withIcon = true;
-						ret.className.push('isContact');
+						ret.className.push('isHuman');
 						break;
 
 					case I.ObjectLayout.Task:

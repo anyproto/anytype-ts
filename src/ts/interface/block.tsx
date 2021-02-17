@@ -91,7 +91,7 @@ export interface Block {
 
 	isPage?(): boolean;
 	isObjectPage?(): boolean;
-	isObjectContact?(): boolean;
+	isObjectHuman?(): boolean;
 	isObjectTask?(): boolean;
 	isObjectSet?(): boolean;
 	isObjectFile?(): boolean;

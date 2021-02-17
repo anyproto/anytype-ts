@@ -83,7 +83,7 @@ class Controls extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		focus.clear(true);
-		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectHuman() ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {

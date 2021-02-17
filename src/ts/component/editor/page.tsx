@@ -376,7 +376,7 @@ class EditorPage extends React.Component<Props, {}> {
 			offset = 394;
 		};
 
-		if (root.isObjectContact()) {
+		if (root.isObjectHuman()) {
 		};
 
 		if (root.isObjectTask()) {

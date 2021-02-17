@@ -33,7 +33,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: title.align, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: title.align, childrenIds: [], fields: {}, content: {} });
 
-		if (root.isObjectContact()) {
+		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
 		};
 

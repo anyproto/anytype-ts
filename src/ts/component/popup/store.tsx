@@ -106,7 +106,7 @@ class PopupStore extends React.Component<Props, State> {
 								<div className="name">{item.name}</div>
 								<div className="descr">{item.description}</div>
 								<div className="author">
-									<IconObject object={author} size={16} />
+									<IconObject object={{ ...author, layout: I.ObjectLayout.Human }} size={16} />
 									{author.name}
 								</div>
 								<div className="line" />

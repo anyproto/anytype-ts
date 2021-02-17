@@ -61,7 +61,7 @@ class MenuObjectType extends React.Component<Props, State> {
 	getItems () {
 		return [
 			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
-			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
+			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
 			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
 		];
 	};

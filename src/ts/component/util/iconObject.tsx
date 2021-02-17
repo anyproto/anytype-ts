@@ -53,7 +53,7 @@ const File = {
 
 const Obj = {
 	page: require('img/icon/object/page.svg'),
-	contact: require('img/icon/object/contact.svg'),
+	human: require('img/icon/object/human.svg'),
 	task: require('img/icon/object/task.svg'),
 	set: require('img/icon/object/set.svg'),
 	file: require('img/icon/object/file.svg'),
@@ -118,7 +118,7 @@ class IconObject extends React.Component<Props, {}> {
 						};
 						break;
 
-					case I.ObjectLayout.Contact:
+					case I.ObjectLayout.Human:
 						cn.push('isUser');
 						icn.push('c' + size);
 						icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;

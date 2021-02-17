@@ -111,8 +111,8 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Page);
 	};
 
-	isObjectContact (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.Contact);
+	isObjectHuman (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Human);
 	};
 
 	isObjectTask (): boolean { 

@@ -2,7 +2,7 @@ import { I } from 'ts/lib';
 
 export enum ObjectLayout {
 	Page		 = 0,
-	Contact		 = 1,
+	Human		 = 1,
 	Task		 = 2,
 	Set			 = 3,
 	ObjectType	 = 4,
