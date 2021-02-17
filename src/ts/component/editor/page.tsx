@@ -122,7 +122,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const win = $(window);
 		const namespace = isPopup ? '.popup' : '';
 		
-		keyboard.disableBack(true);
 		this.unbind();
 		this.open();
 		
@@ -176,7 +175,6 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		this.close(rootId);
 
-		keyboard.disableBack(false);
 		focus.clear(false);
 
 		Storage.delete('pageId');
