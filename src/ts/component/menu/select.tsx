@@ -273,10 +273,11 @@ class MenuSelect extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const obj = $('#' + getId());
 		const content = obj.find('.content');
+
 		const length = Math.max(items.length, 1);
-		const offset = length > LIMIT ? 58 : 16;
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, length * HEIGHT + offset));
 		const withFilter = !noFilter && (length > LIMIT);
+		const offset = withFilter ? 50 : 8;
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
 
 		content.css({ height: height });
 

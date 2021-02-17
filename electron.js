@@ -497,6 +497,7 @@ function menuInit () {
 							label: 'Interface', type: 'checkbox', checked: config.debugUI,
 							click: () => {
 								setConfig({ debugUI: !config.debugUI });
+								win.reload();
 							}
 						},
 						{
