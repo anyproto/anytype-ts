@@ -50,8 +50,11 @@
 		
 		.items { width: 33.33%; padding: 4px 0px; }
 		.items.center { padding: 39px 16px 4px 16px; }
+		.items.right {
+			.row { padding-right: 32px; }
+		}
 		.items {
-			.row { width: 100%; padding: 0px 32px 0px 16px; }
+			.row { width: 100%; padding: 0px 16px; }
 			.item {
 				.icon.arrow { 
 					width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);

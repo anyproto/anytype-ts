@@ -26,8 +26,9 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
-
+		const { config } = commonStore;
 		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (!root) {
 			return null;
 		};
@@ -50,7 +51,9 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 							<div className="name">{Util.shorten(details.name, 32)}</div>
 						</div>
 					</div>
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+					{config.allowDataview ? (
+						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+					) : ''}
 				</div>
 
 				<div className="side right">

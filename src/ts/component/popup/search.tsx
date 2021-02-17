@@ -495,6 +495,7 @@ class PopupSearch extends React.Component<Props, State> {
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const { root } = blockStore;
+		const filterMapper = (it: I.PageInfo) => { return this.filterMapper(it, config); };
 
 		this.setState({ loading: true, n: -1 });
 		this.panel = Panel.Left;
@@ -511,13 +512,10 @@ class PopupSearch extends React.Component<Props, State> {
 					continue;
 				};
 
-				page = this.getPage(page);
-				if (!this.filterMapper(page, config)) {
-					continue;
-				};
-
-				pages.push(page);
+				pages.push(this.getPage(page));
 			};
+
+			pages = pages.filter(filterMapper);
 
 			if (this.ref) {
 				this.ref.focus();
@@ -527,7 +525,11 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: I.PageInfo, config: any) {
-		if (it.details.isArchived || (!config.allowDataview && (it.details.layout == I.ObjectLayout.Set))) {
+		const object = it.details;
+		if (object.isArchived) {
+			return false;
+		};
+		if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
 			return false;
 		};
 		return true;

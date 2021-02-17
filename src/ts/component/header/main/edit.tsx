@@ -36,6 +36,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { rootId } = this.props;
 		const { breadcrumbs } = blockStore;
+		const { config } = commonStore;
 
 		const root = blockStore.getLeaf(rootId, rootId);
 		if (!root) {
@@ -67,7 +68,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					</div>
 
 					<Icon className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
-					<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+					{config.allowDataview ? (
+						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+					) : ''}
 				</div>
 
 				<div className="side right">

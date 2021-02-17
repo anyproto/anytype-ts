@@ -31,9 +31,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = blockStore.getDetails(rootId, rootId);
+		const { config } = commonStore;
 
 		let sectionPage = null;
-		if (block.isPage()) {
+		if (block.isPage() && config.allowDataview) {
 			const objectType = dbStore.getObjectType(object.type, '');
 			const layouts = this.getLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });

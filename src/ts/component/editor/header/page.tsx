@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, M, DataUtil } from 'ts/lib';
 import { Block, IconObject } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -21,6 +21,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const { config } = commonStore;
 
 		if (!root) {
 			return null;
@@ -69,17 +70,19 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					onPaste={onPaste}
 				/>
 
-				<div className={[ 'block', 'blockFeatured', 'align' + title.align ].join(' ')}>
-					<div className="wrapMenu" />
-					<div className="wrapContent">
-						{featured.map((item: any, i: any) => (
-							<span key={i}>
-								{i > 0 ? <div className="bullet" /> : ''}
-								<Element {...item} />
-							</span>
-						))}
+				{config.allowDataview ? (
+					<div className={[ 'block', 'blockFeatured', 'align' + title.align ].join(' ')}>
+						<div className="wrapMenu" />
+						<div className="wrapContent">
+							{featured.map((item: any, i: any) => (
+								<span key={i}>
+									{i > 0 ? <div className="bullet" /> : ''}
+									<Element {...item} />
+								</span>
+							))}
+						</div>
 					</div>
-				</div>
+				) : ''}
 			</div>
 		);
 	};

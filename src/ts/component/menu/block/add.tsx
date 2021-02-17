@@ -205,6 +205,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const { config } = commonStore;
 		
 		if (!block) {
 			return [];
@@ -217,6 +218,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			{ id: 'relation', name: 'Relation', color: 'violet', children: DataUtil.menuGetBlockRelation() },
 			{ id: 'other', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
 		];
+
+		if (!config.allowDataview) {
+			sections = sections.filter((it: any) => {
+				return [ 'object', 'relation' ].indexOf(it.id) < 0;
+			});
+		};
 		
 		if (filter && filter.text) {
 			sections = sections.concat([

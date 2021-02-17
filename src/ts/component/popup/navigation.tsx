@@ -13,7 +13,6 @@ interface Props extends I.Popup {
 
 interface State {
 	pageId: string;
-	showIcon: boolean;
 	loading: boolean;
 	info: I.PageInfo;
 	pagesIn: I.PageInfo[];
@@ -38,7 +37,6 @@ class PopupNavigation extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		pageId: '',
-		showIcon: false,
 		loading: false,
 		info: null,
 		pagesIn: [] as I.PageInfo[],
@@ -60,7 +58,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { pageId, info, pagesIn, pagesOut, loading, showIcon, n } = this.state;
+		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { type, rootId, blockId } = data;
@@ -69,7 +67,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		const isRoot = pageId == root;
 
 		let confirm = '';
-		let iconSearch = null;
 		let iconHome = (
 			<div className="iconObject c48">
 				<div className="iconEmoji c48">
@@ -77,16 +74,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
-
-		if (showIcon) {
-			if (isRoot) {
-				iconSearch = <Icon key="icon-home" className="home big" />;
-			} else {
-				iconSearch = <IconObject object={details} />;
-			};
-		} else {
-			iconSearch = <Icon key="icon-search" className="search" />;
-		};
 
 		switch (type) {
 			default:
@@ -140,9 +127,11 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		const ItemEmpty = (item: any) => {
 			return (
-				<div className="item empty">
-					<div className="name">{item.name}</div>
-					<Icon className="arrow" />
+				<div className="row">
+					<div className="item empty">
+						<div className="name">{item.name}</div>
+						<Icon className="arrow" />
+					</div>
 				</div>
 			);
 		};
@@ -277,7 +266,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		this._isMounted = true;
 
 		this.setCrumbs(rootId);
-		this.setState({ pageId: rootId, showIcon: true });
+		this.setState({ pageId: rootId });
 		this.loadPage(rootId);
 
 		this.resize();
@@ -525,7 +514,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: I.PageInfo, config: any) {
-		if (it.details.isArchived || (!config.allowDataview && (it.details.layout == I.ObjectLayout.Set))) {
+		const object = it.details;
+		if (object.isArchived) {
+			return false;
+		};
+		if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
 			return false;
 		};
 		return true;

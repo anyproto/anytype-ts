@@ -164,6 +164,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { filter } = commonStore;
+		const { config } = commonStore;
+		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -181,12 +183,26 @@ class MenuBlockMention extends React.Component<Props, State> {
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || Constant.default.name);
-				return it;
+				return {
+					...it, 
+					name: String(it.name || Constant.default.name),
+				};
 			}));
+			this.items = this.items.filter(filterMapper);
 
 			this.setState({ loading: false });
 		});
+	};
+
+	filterMapper (it: I.PageInfo, config: any) {
+		const object = it.details;
+		if (object.isArchived) {
+			return false;
+		};
+		if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
+			return false;
+		};
+		return true;
 	};
 
 	onKeyDown (e: any) {
