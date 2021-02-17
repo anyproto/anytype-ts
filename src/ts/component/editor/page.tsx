@@ -295,13 +295,15 @@ class EditorPage extends React.Component<Props, {}> {
 		if (isPopup || !id) {
 			return;
 		};
-		
-		C.BlockClose(id, (message: any) => {
-			blockStore.blocksClear(id);
-			dbStore.relationsRemove(id, id);
-			dbStore.relationsRemove(id, 'dataview');
-			authStore.threadRemove(id);
-		});
+
+		window.setTimeout(() => {
+			C.BlockClose(id, (message: any) => {
+				blockStore.blocksClear(id);
+				dbStore.relationsRemove(id, id);
+				dbStore.relationsRemove(id, 'dataview');
+				authStore.threadRemove(id);
+			});
+		}, Constant.delay.menu);
 	};
 	
 	unbind () {

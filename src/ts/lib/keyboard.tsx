@@ -46,6 +46,7 @@ class Keyboard {
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
 			if (this.isBackDisabled || this.isFocused) {
+				e.preventDefault();
 				return;
 			};
 			this.history.goBack();
