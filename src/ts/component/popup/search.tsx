@@ -24,7 +24,6 @@ const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 const HEIGHT = 32;
-const HEIGHT_EXPANDED = 96;
 
 enum Panel { 
 	Left = 1, 

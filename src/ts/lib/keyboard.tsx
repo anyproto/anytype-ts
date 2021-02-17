@@ -97,7 +97,6 @@ class Keyboard {
 				data: { 
 					type: I.NavigationType.Go, 
 					rootId: rootId,
-					expanded: true,
 				}, 
 			});
 		});

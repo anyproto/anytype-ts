@@ -179,7 +179,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				type: I.NavigationType.Go, 
-				expanded: true,
 			},
 		});
 	};

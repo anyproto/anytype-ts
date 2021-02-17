@@ -614,6 +614,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const shift = pressed.match('shift');
 			const first = blockStore.getLeaf(rootId, ids[0]);
+			if (!first) {
+				return;
+			};
+
 			const element = map[first.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
@@ -1123,7 +1127,6 @@ class EditorPage extends React.Component<Props, {}> {
 										data: { 
 											type: I.NavigationType.Link, 
 											rootId: rootId,
-											expanded: true,
 											skipId: rootId,
 											blockId: block.id,
 											position: position,

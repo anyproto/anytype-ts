@@ -137,7 +137,6 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 			data: {
 				rootId: root,
 				type: I.NavigationType.Go, 
-				expanded: true,
 			},
 		});
 	};
