@@ -433,6 +433,7 @@ export {
 
 	ImageGetBlob,
 	ConfigGet,
+	Export,
 	Shutdown,
 	UploadFile,
 	ProcessCancel,
