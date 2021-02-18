@@ -58,7 +58,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 							action.object = { 
 								url: action.url, 
 								iconEmoji: action.iconEmoji, 
-								decription: action.description 
+								decription: action.description,
+								layout: I.ObjectLayout.ObjectType,
 							};
 							action.iconSize = 40;
 						};

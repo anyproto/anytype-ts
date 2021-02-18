@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -97,12 +97,15 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	bind () {
+		const { menus } = commonStore;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
 		scroll.unbind('.scroll').scroll(() => {
-			win.trigger('resize.menu');
+			for (let menu of menus) {
+				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			};
 		});
 	};
 

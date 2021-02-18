@@ -179,7 +179,7 @@ class Menu extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		win.on('resize.menu', () => { this.position(); });
+		win.on('resize.' + this.getId(), () => { this.position(); });
 
 		if (commonStore.popupIsOpen()) {
 			node.addClass('fromPopup');
@@ -199,7 +199,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.menu');
+		$(window).unbind('resize.' + this.getId());
 	};
 	
 	animate () {
