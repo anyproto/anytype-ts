@@ -47,7 +47,6 @@ class Keyboard {
 			if (this.isEditor() || this.isFocused) {
 				return;
 			};
-			console.log('BACK');
 			this.history.goBack();
 		});
 
