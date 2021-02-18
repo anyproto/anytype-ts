@@ -409,6 +409,10 @@ function menuInit () {
 					label: 'Export',
 					click: () => { send('export'); }
 				},
+				{
+					label: 'Object diagnostics',
+					click: () => { send('debugSync'); }
+				},
 				{ role: 'close' },
 			]
 		},

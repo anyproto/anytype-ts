@@ -657,17 +657,15 @@ class Dispatcher {
 
 				let message: any = {};
 				let err = response.getError();
-				let code = err.getCode();
+				let code = err ? err.getCode() : 0;
+				let description = err ? err.getDescription() : '';
 
 				if (!code && Response[upper]) {
 					message = Response[upper](response);
 				};
 
 				message.event = response.getEvent ? response.getEvent() : null;
-				message.error = {
-					code: code,
-					description: err.getDescription(),
-				};
+				message.error = { code: code, description: description };
 
 				if (message.error.code) {
 					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);

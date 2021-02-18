@@ -4,6 +4,10 @@ const VersionGet = (response: any) => {
 	return {};
 };
 
+const DebugSync = (response: any) => {
+	return response.toObject();
+};
+
 const ImageGetBlob = (response: any) => {
 	return {
 		blob: response.getBlob(),
@@ -406,6 +410,7 @@ const ObjectSearch = (response: any) => {
 
 export {
 	VersionGet,
+	DebugSync,
 
 	ImageGetBlob,
 	ConfigGet,

@@ -747,6 +747,10 @@ class Util {
 		};
 	};
 
+	dateForFile () {
+		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
+	};
+
 };
 
 export default new Util();
