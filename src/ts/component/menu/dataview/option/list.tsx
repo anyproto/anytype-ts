@@ -234,6 +234,7 @@ class MenuOptionList extends React.Component<Props, State> {
 			offsetY: 0,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
+			passThrough: true,
 			data: {
 				...data,
 				option: item,
