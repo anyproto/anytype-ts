@@ -189,36 +189,43 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
+		item.id == 'add' ? this.onMenuAdd(e) : this.onValueAdd(item.id);
+	};
+
+	onValueAdd (id: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		if (item.id == 'add') {
-			this.onAdd(e);
-		} else {
-			let value = Util.objectCopy(data.value || []);
-			
-			value.push(item.id);
-			value = Util.arrayUnique(value);
+		let value = Util.objectCopy(data.value || []);
+		value.push(id);
+		value = Util.arrayUnique(value);
 
-			if (maxCount) {
-				value = value.slice(value.length - maxCount, value.length);
-			};
-
-			data.value = value;
-
-			commonStore.menuUpdateData(MENU_ID, { value: value });
-			onChange(value);
+		if (maxCount) {
+			value = value.slice(value.length - maxCount, value.length);
 		};
+
+		data.value = value;
+
+		commonStore.menuUpdateData(MENU_ID, { value: value });
+		onChange(value);
 	};
 
-	onAdd (e: any) {
+	onMenuAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
 
-		optionCommand('add', rootId, blockId, relation.relationKey, record.id, { text: filter });
+		optionCommand('add', rootId, blockId, relation.relationKey, record.id, { text: filter }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			this.onValueAdd(message.option.id);
+			relation.selectDict.push(message.option);
+			this.ref.setValue('');
+		});
 	};
 	
 	onEdit (e: any, item: any) {

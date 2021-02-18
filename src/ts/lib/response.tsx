@@ -432,6 +432,12 @@ const ObjectRelationListAvailable = (response: any) => {
 	};
 };
 
+const ObjectRelationOptionAdd = (response: any) => {
+	return {
+		option: Mapper.From.SelectOption(response.getOption()),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -538,5 +544,6 @@ export {
 	ObjectSearch,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
+	ObjectRelationOptionAdd,
 
 };

@@ -104,6 +104,7 @@ class Filter extends React.Component<Props, {}> {
 
 	setValue (v: string) {
 		this.ref.setValue(v);
+		this.props.onChange(v);
 	};
 
 	getValue () {
