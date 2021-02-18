@@ -10,8 +10,9 @@ function dateForFile() {
 	return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 };
 
-class Server {
+let maxStdErrChunksBuffer = 10;
 
+class Server {
 	start (binPath, workingDir) {
 		return new Promise((resolve, reject) => {
 			// stop will resolve immediately in case child process is not running
@@ -46,25 +47,37 @@ class Server {
 				
 				this.cp.stdout.on('data', data => {
 					let str = data.toString();
+					
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						var regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
 						resolve(true);
 					};
+
 					console.log(str);
 				});
-				
+
 				this.cp.stderr.on('data', data => {
+					let chunk = data.toString();
+					
+					// max chunk size is 8192 bytes
+					// https://github.com/nodejs/node/issues/12921
+					// https://nodejs.org/api/buffer.html#buffer_class_property_buffer_poolsize
+					
+					if (chunk.length > 8000) {
+						// in case we've got a crash lets change the max buffer to collect the whole stack trace
+						maxStdErrChunksBuffer = 1024; // 1024x8192 = 8 Mb max
+					};
+					
 					if (!this.lastErrors) {
 						this.lastErrors = [];
-					} else
-					if (this.lastErrors.length >= 10) {
+					} else if (this.lastErrors.length >= maxStdErrChunksBuffer) {
 						this.lastErrors.shift();
 					};
 					
-					this.lastErrors.push(data);
-					Util.log('warn', data.toString());
+					this.lastErrors.push(chunk);
+					Util.log('warn', chunk);
 				});
 				
 				this.cp.on('exit', () => {

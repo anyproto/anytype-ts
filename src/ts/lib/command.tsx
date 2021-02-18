@@ -12,6 +12,14 @@ const VersionGet = (callBack?: (message: any) => void) => {
 	dispatcher.request('versionGet', request, callBack);
 };
 
+const DebugSync = (limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.Sync.Request();
+
+	request.setRecordstraverselimit(limit);
+
+	dispatcher.request('debugSync', request, callBack);
+};
+
 const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
 	
@@ -941,6 +949,7 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 
 export {
 	VersionGet,
+	DebugSync,
 
 	ImageGetBlob,
 	ConfigGet,

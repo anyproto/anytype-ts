@@ -232,17 +232,42 @@ class DragProvider extends React.Component<Props, {}> {
 
 			let { x, y, width, height } = this.hoverData;
 			let { type, style } = $(this.hoverData.obj).data();
+			/*
 			let col1 = x - Constant.size.blockMenu / 4;
 			let col2 = x + 28;
 			let col3 = x + width - 28;
+			*/
 
+			let col1 = x - Constant.size.blockMenu / 4;
+			let col2 = x + width;
+
+			/*;
 			if (([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0) ||
 				((type == I.BlockType.Text) &&
 				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
 			)) {
 				col2 = col3;
 			};
+			*/
 
+			if (ex <= col1) {
+				this.position = I.BlockPosition.Left;
+			} else
+			if ((ex > col1) && (ex <= col2)) {
+				if (ey <= y + height * 0.15) {
+					this.position = I.BlockPosition.Top;
+				} else
+				if (ey >= y + height * 0.85) {
+					this.position = I.BlockPosition.Bottom;
+				} else {
+					this.position = I.BlockPosition.Inner;
+				};
+			} else
+			if (ex > col2) {
+				this.position = I.BlockPosition.Right;
+			};
+
+			/*
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
 			} else
@@ -255,6 +280,7 @@ class DragProvider extends React.Component<Props, {}> {
 			if (ex > col3) {
 				this.position = I.BlockPosition.Right;
 			};
+			*/
 
 			// You can't drop on Icon
 			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(this.hoverData.type) >= 0) {
@@ -301,10 +327,12 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
+			/*
 			// You can't inner drop files
 			if (isFileDrag && (this.position == I.BlockPosition.Inner)) {
 				this.position = I.BlockPosition.Bottom;
 			};
+			*/
 		};
 
 		window.clearTimeout(this.timeoutHover);

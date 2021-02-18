@@ -139,8 +139,11 @@ const rootStore = {
 	dbStore: dbStore,
 };
 
+const path = require('path');
 const { app } = window.require('electron').remote;
 const version = app.getVersion();
+const userPath = app.getPath('userData');
+
 
 /*
 enableLogging({
@@ -444,6 +447,22 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('leave-full-screen', () => {
 			html.removeClass('fullScreen');
 		});
+
+		ipcRenderer.on('debugSync', (e: any, route: string) => {
+			C.DebugSync(100, (message: any) => {
+				let logsDir = path.join(userPath, 'logs');
+				try { fs.mkdirSync(logsDir); } catch (err) {};
+
+				let log = path.join(logsDir, 'sync_' + Util.dateForFile() + '.json');
+				try {
+					fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
+				} catch(e) {
+					console.log('Failed to save a file');
+				};
+
+				ipcRenderer.send('pathOpen', logsDir);
+			});
+		});
 	};
 
 	setWindowEvents () {
@@ -516,7 +535,7 @@ class App extends React.Component<Props, State> {
 	onClose (e: any) {
 		ipcRenderer.send('winCommand', 'close');
 	};
-	
+
 };
 
 export default App;
