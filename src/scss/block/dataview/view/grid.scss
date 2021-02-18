@@ -66,12 +66,14 @@
 				.cellContent { min-width: unset; }
 			}
 
-			.cell.add { color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; line-height: 20px; }
+			.cell.add { color: $colorDarkGrey; cursor: pointer; line-height: 20px; padding: 10px; }
 			.cell.add {
-				 .icon { vertical-align: top; margin: 0px 4px 0px 0px; }
-				 .name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
+				.btn { display: inline-block; cursor: pointer; padding: 4px; border-radius: 4px; transition: $transitionFast; }
+				.btn:hover { color: $colorBlack; background-color: #f3f2ec; }
+				.icon { vertical-align: top; margin: 0px 4px 0px 0px; }
+				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
 			}
-			.cell.add:hover { color: $colorBlack; }
+			.cell.add:hover {  }
 			.cell.add:hover {
 				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 			}

@@ -63,9 +63,11 @@ class ViewGrid extends React.Component<Props, {}> {
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={relations.length + 1} onClick={onRowAdd}>
-										<Icon className="plus" />
-										<div className="name">{translate('blockDataviewNew')}</div>
+									<td className="cell add" colSpan={relations.length + 1}>
+										<div className="btn" onClick={onRowAdd}>
+											<Icon className="plus" />
+											<div className="name">{translate('blockDataviewNew')}</div>
+										</div>
 									</td>
 								</tr>
 							) : null}
