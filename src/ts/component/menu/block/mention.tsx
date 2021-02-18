@@ -194,12 +194,11 @@ class MenuBlockMention extends React.Component<Props, State> {
 		});
 	};
 
-	filterMapper (it: I.PageInfo, config: any) {
-		const object = it.details;
-		if (object.isArchived) {
+	filterMapper (it: any, config: any) {
+		if (it.isArchived) {
 			return false;
 		};
-		if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
+		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
 			return false;
 		};
 		return true;
