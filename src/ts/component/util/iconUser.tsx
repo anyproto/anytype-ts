@@ -54,7 +54,7 @@ class IconUser extends React.Component<Props, {}> {
 		} else {
 			cn.push(color);
 		};
-		
+
 		return (
 			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} className={cn.join(' ')}>
 				{icon ? <img src={icon} className="image" /> : ''}

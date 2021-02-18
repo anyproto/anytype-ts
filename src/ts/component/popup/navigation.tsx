@@ -518,7 +518,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		if (object.isArchived) {
 			return false;
 		};
-		if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
+		if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Dashboard ].indexOf(object.layout) < 0)) {
 			return false;
 		};
 		return true;

@@ -32,6 +32,11 @@ class DbStore {
 	};
 
 	@action
+	objectTypesClear () {
+		this.objectTypeMap.clear();
+	};
+
+	@action
 	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
 		this.relationMap.set(this.getId(rootId, blockId), observable.array(list));

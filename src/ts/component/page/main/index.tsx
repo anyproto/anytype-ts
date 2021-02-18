@@ -46,7 +46,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const list = this.getList();
 		const map = blockStore.getDetailsMap(root);
 		const size = map.size;
-		
+
 		return (
 			<div>
 				<Cover {...cover} />
@@ -63,7 +63,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							{config.allowDataview ? (
 								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
 							) : ''}
-							<IconObject object={details} size={64} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject object={{ ...details, layout: I.ObjectLayout.Human }} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
