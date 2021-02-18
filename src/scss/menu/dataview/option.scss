@@ -4,6 +4,9 @@
 	.menu.menuDataviewOptionList,
 	.menu.menuDataviewOptionValues {
 		.tagItem { vertical-align: top; margin-top: 1px; }
+		.item.add {
+			.name { @include text-overflow-nw; width: calc(100% - 24px); }
+		}
 	}
 
 	.menu.menuDataviewOptionValues {
