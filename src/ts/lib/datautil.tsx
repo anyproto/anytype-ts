@@ -306,64 +306,85 @@ class DataUtil {
 	};
 	
 	pageSetIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: 'iconEmoji', value: emoji },
 			{ key: 'iconImage', value: image },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: 'name', value: name },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetCover (rootId: string, type: I.CoverType, coverId: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
 		y = Number(y) || 0;
 		scale = Number(scale) || 0;
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'coverType', value: type },
 			{ key: 'coverId', value: coverId },
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
 		y = Number(y) || 0;
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
-		], callBack);
+		];
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
 		scale = Number(scale) || 0;
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'coverScale', value: scale },
-		], callBack);
+		];
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		done = Boolean(done);
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'done', value: done },
-		], callBack);
+		];
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
 		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
 
-		C.BlockSetDetails(rootId, [ 
+		const details = [
 			{ key: 'layout', value: layout },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {

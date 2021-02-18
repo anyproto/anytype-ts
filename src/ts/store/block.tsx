@@ -123,7 +123,7 @@ class BlockStore {
 			create = true;
 		};
 
-		map.set(item.id, item.details);
+		map.set(item.id, Object.assign(map.get(item.id) || {}, item.details));
 
 		if (create) {
 			intercept(map as any, (change: any) => {
@@ -136,6 +136,15 @@ class BlockStore {
 
 			this.detailMap.set(rootId, map);
 		};
+	};
+
+	@action
+	detailsUpdateArray (rootId: string, blockId: string, details: any[]) {
+		let obj: any = {};
+		for (let item of details) {
+			obj[item.key] = item.value;
+		};
+		this.detailsUpdate(rootId, { id: blockId, details: obj });
 	};
 
 	@action

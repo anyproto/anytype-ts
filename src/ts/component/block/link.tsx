@@ -32,7 +32,7 @@ class BlockLink extends React.Component<Props, {}> {
 
 		if (_detailsEmpty_) {
 			return (
-				<div className="loading">
+				<div className="loading" data-target-block-id={content.targetBlockId}>
 					<Loader />
 					<div className="name">{translate('blockLinkSyncing')}</div>
 				</div>
