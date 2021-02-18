@@ -28,6 +28,10 @@
 	.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 }
 
+.cell.isEditing.c-file {
+	.inputWithFile { display: block; }
+}
+
 .cellContent { cursor: default; border-radius: 4px; }
 .cellContent {
 	.iconObject { margin-right: 4px; vertical-align: top; }
@@ -37,7 +41,7 @@
 }
 
 .cellContent.c-file {
-	.inputWithFile { border: 0px; padding: 0px; }
+	.inputWithFile { border: 0px; padding: 0px; display: none; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
 	.element {
 		.iconObject { flex-shrink: 0; }
