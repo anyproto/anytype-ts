@@ -10,6 +10,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuOptionValues extends React.Component<Props> {
@@ -149,21 +150,23 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 		const node = $('#' + getId());
 
-		commonStore.menuOpen('dataviewOptionList', {
-			...param,
-			element: '#' + getId() + ' #item-add',
-			width: 0,
-			offsetX: node.outerWidth(),
-			offsetY: -36,
-			vertical: I.MenuDirection.Bottom,
-			noFlip: false,
-			passThrough: true,
-			onClose: () => { close(); },
-			data: {
-				...data,
-				rebind: this.rebind,
-			},
-		});
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewOptionList', {
+				...param,
+				element: '#' + getId() + ' #item-add',
+				width: 0,
+				offsetX: node.outerWidth(),
+				offsetY: -36,
+				vertical: I.MenuDirection.Bottom,
+				noFlip: false,
+				passThrough: true,
+				onClose: () => { close(); },
+				data: {
+					...data,
+					rebind: this.rebind,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	onEdit (e: any, item: any) {

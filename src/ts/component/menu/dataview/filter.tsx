@@ -573,25 +573,29 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		commonStore.menuOpen('dataviewOptionValues', { 
-			element: '#' + getId() + ' #' + id,
-			offsetX: 0,
-			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			className: 'fromFilter',
-			data: { 
-				rootId: rootId,
-				blockId: blockId,
-				value: item.value || [], 
-				types: relation.objectTypes,
-				relation: observable.box(relation),
-				onChange: (value: any) => {
-					this.onChange(item.id, 'value', value);
+		commonStore.menuCloseAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ]);
+
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewOptionValues', { 
+				element: '#' + getId() + ' #' + id,
+				offsetX: 0,
+				offsetY: 4,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				className: 'fromFilter',
+				data: { 
+					rootId: rootId,
+					blockId: blockId,
+					value: item.value || [], 
+					types: relation.objectTypes,
+					relation: observable.box(relation),
+					onChange: (value: any) => {
+						this.onChange(item.id, 'value', value);
+					},
 				},
-			},
-		});
+			});
+		}, Constant.delay.menu);
 	};
 
 	onObject (e: any, item: any) {
@@ -601,25 +605,29 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		commonStore.menuOpen('dataviewObjectValues', { 
-			element: '#' + getId() + ' #' + id,
-			offsetX: 0,
-			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			className: 'fromFilter',
-			data: { 
-				rootId: rootId,
-				blockId: blockId,
-				value: item.value || [], 
-				types: relation.objectTypes,
-				relation: observable.box(relation),
-				onChange: (value: any) => {
-					this.onChange(item.id, 'value', value);
+		commonStore.menuCloseAll([ 'dataviewObjectValues', 'dataviewObjectList' ]);
+
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewObjectValues', { 
+				element: '#' + getId() + ' #' + id,
+				offsetX: 0,
+				offsetY: 4,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				className: 'fromFilter',
+				data: { 
+					rootId: rootId,
+					blockId: blockId,
+					value: item.value || [], 
+					types: relation.objectTypes,
+					relation: observable.box(relation),
+					onChange: (value: any) => {
+						this.onChange(item.id, 'value', value);
+					},
 				},
-			},
-		});
+			});
+		}, Constant.delay.menu);
 	};
 
 	save () {
