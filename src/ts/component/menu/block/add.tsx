@@ -221,7 +221,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 		if (!config.allowDataview) {
 			sections = sections.filter((it: any) => {
-				return [ 'object', 'relation' ].indexOf(it.id) < 0;
+				return [ 'relation' ].indexOf(it.id) < 0;
 			});
 		};
 		

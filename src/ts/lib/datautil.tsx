@@ -441,6 +441,7 @@ class DataUtil {
 
 	menuGetBlockObject () {
 		const { objectTypes } = dbStore;
+		const { config } = commonStore;
 
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
@@ -450,17 +451,19 @@ class DataUtil {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
 		];
 
-		let i = 0;
-		for (let type of objectTypes) {
-			ret.push({ 
-				type: I.BlockType.Page, 
-				id: 'object' + i++, 
-				objectTypeUrl: type.url, 
-				iconEmoji: type.iconEmoji, 
-				name: type.name || Constant.default.name, 
-				description: type.description,
-				isObject: true,
-			});
+		if (config.allowDataview) {
+			let i = 0;
+			for (let type of objectTypes) {
+				ret.push({ 
+					type: I.BlockType.Page, 
+					id: 'object' + i++, 
+					objectTypeUrl: type.url, 
+					iconEmoji: type.iconEmoji, 
+					name: type.name || Constant.default.name, 
+					description: type.description,
+					isObject: true,
+				});
+			};
 		};
 		
 		return ret.map(this.menuMapperBlock);
