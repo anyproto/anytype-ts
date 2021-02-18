@@ -221,21 +221,32 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	onCellAdd (e: any) {
 		const { rootId, block, readOnly, getData, getView } = this.props;
+		const view = getView();
+		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
-		commonStore.menuOpen('dataviewRelationEdit', { 
-			element: '#cell-add',
+		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,
+			element: `#cell-add`,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Left,
 			data: {
 				readOnly: readOnly,
-				rootId: rootId,
-				blockId: block.id, 
 				getData: getData,
 				getView: getView,
-			},
+				rootId: rootId,
+				blockId: block.id,
+				menuIdEdit: 'dataviewRelationEdit',
+				filter: '',
+				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), (message: any) => { close(); });
+				},
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
+				},
+			}
 		});
 	};
 

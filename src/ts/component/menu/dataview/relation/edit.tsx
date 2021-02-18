@@ -36,7 +36,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	render () {
 		const relation = this.getRelation();
 		const viewRelation = this.getViewRelation();
-		const { objectTypes } = dbStore;
 
 		let opts = null;
 		let ccn = [ 'item' ];

@@ -468,7 +468,6 @@ class DataUtil {
 		};
 
 		ret.push({ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' });
-		
 		return ret.map(this.menuMapperBlock);
 	};
 
