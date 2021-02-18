@@ -101,7 +101,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				{opts}
 
 				<div className="inputWrap">
-					<Button id="button" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
+					<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
 				</div>
 				
 				{relation ? (
@@ -131,6 +131,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			this.ref.setValue(filter);
 		};
 
+		this.unbind();
 		this.checkButton();
 		this.focus();
 	};
@@ -141,7 +142,20 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
 		window.clearTimeout(this.timeout);
+		this.unbind();
+		
+		if (rebind) {
+			rebind();
+		};
+	};
+
+	unbind () {
+		$(window).unbind('keydown.menu');
 	};
 
 	focus () {
