@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.cell.c-title { cursor: text; }
-.cell.c-title {
+.cell.c-shortText { cursor: text; }
+.cell.c-shortText {
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; }
 }
 
@@ -71,8 +71,8 @@
 	.icon.user { margin-right: 5px; }
 }
 
-.cellContent.canEdit.c-title, 
-.cellContent.canEdit.c-description, 
+.cellContent.canEdit.c-shortText, 
+.cellContent.canEdit.c-longText, 
 .cellContent.canEdit.c-date, 
 .cellContent.canEdit.c-object, 
 .cellContent.canEdit.c-select { cursor: text; }

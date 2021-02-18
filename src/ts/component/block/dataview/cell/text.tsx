@@ -57,7 +57,7 @@ class CellText extends React.Component<Props, State> {
 		let value = String(record[relation.relationKey] || '');
 
 		if (editing) {
-			if (relation.format == I.RelationType.Description) {
+			if (relation.format == I.RelationType.LongText) {
 				value = value.replace(/\n/g, '<br/>');
 				EditorComponent = (item: any) => (
 					<span dangerouslySetInnerHTML={{ __html: value }} />
@@ -220,7 +220,7 @@ class CellText extends React.Component<Props, State> {
 	onKeyUp (e: any, value: string) {
 		const { relation, onChange } = this.props;
 
-		if (relation.format == I.RelationType.Description) {
+		if (relation.format == I.RelationType.LongText) {
 			return;
 		};
 

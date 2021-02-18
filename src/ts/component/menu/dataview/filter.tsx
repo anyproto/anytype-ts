@@ -306,8 +306,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		let ret = [];
 
 		switch (type) {
-			case I.RelationType.Title: 
-			case I.RelationType.Description: 
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
 			case I.RelationType.Url: 
 			case I.RelationType.Email: 
 			case I.RelationType.Phone: 
@@ -361,8 +361,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		let ret: any = null;
 
 		switch (type) {
-			case I.RelationType.Title: 
-			case I.RelationType.Description: 
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
 			case I.RelationType.Url: 
 			case I.RelationType.Email: 
 			case I.RelationType.Phone: 

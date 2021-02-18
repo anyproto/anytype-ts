@@ -61,8 +61,8 @@ const Obj = {
 };
 
 const Relation: any = {};
-Relation[I.RelationType.Description] = require('img/icon/dataview/relation/description.svg');
-Relation[I.RelationType.Title] = require('img/icon/dataview/relation/title.svg');
+Relation[I.RelationType.LongText] = require('img/icon/dataview/relation/longText.svg');
+Relation[I.RelationType.ShortText] = require('img/icon/dataview/relation/shortText.svg');
 Relation[I.RelationType.Number] = require('img/icon/dataview/relation/number.svg');
 Relation[I.RelationType.Status] = require('img/icon/dataview/relation/status.svg');
 Relation[I.RelationType.Date] = require('img/icon/dataview/relation/date.svg');
@@ -72,7 +72,7 @@ Relation[I.RelationType.Url] = require('img/icon/dataview/relation/url.svg');
 Relation[I.RelationType.Email] = require('img/icon/dataview/relation/email.svg');
 Relation[I.RelationType.Phone] = require('img/icon/dataview/relation/phone.svg');
 Relation[I.RelationType.Tag] = require('img/icon/dataview/relation/tag.svg');
-Relation[I.RelationType.Object] = require('img/icon/dataview/relation/description.svg');
+Relation[I.RelationType.Object] = require('img/icon/dataview/relation/object.svg');
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');

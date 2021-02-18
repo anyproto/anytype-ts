@@ -39,7 +39,7 @@
 			.cellContent { height: auto !important; padding-bottom: 0px !important; }
 		}
 
-		.cell.isEditing.c-description, .cell.isEditing.c-file { 
+		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
 			.cellContent { box-shadow: 0px 0px; border: 0px; }
 		}
 	}
@@ -56,7 +56,7 @@
 		.item * { cursor: pointer; }
 
 		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
-		.cellContent.c-description {
+		.cellContent.c-longText {
 			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
 		}
 	}

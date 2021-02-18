@@ -47,7 +47,7 @@ class Relation implements I.Relation {
 	name: string = '';
 	dataSource: number = 0;
 	objectTypes: string[] = [];
-	format: I.RelationType = I.RelationType.Description;
+	format: I.RelationType = I.RelationType.LongText;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
 	maxCount: number = 0;
@@ -61,7 +61,7 @@ class Relation implements I.Relation {
 		self.name = String(props.name || '');
 		self.dataSource = Number(props.dataSource) || 0;
 		self.objectTypes = props.objectTypes || [];
-		self.format = props.format || I.RelationType.Description;
+		self.format = props.format || I.RelationType.LongText;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
 		self.maxCount = Number(props.maxCount) || 0;

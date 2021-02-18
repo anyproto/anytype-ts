@@ -23,8 +23,8 @@ export interface ObjectType {
 };
 
 export enum RelationType { 
-	Description	 = 0, 
-	Title		 = 1, 
+	LongText	 = 0, 
+	ShortText	 = 1, 
 	Number		 = 2, 
 	Status		 = 3, 
 	Date		 = 4, 
@@ -34,7 +34,7 @@ export enum RelationType {
 	Url			 = 8,
 	Email		 = 9,
 	Phone		 = 10,
-	Tag		 = 11,
+	Tag			 = 11,
 	Object		 = 100,
 };
 

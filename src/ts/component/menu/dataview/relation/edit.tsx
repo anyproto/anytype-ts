@@ -16,7 +16,7 @@ const $ = require('jquery');
 class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
-	format: I.RelationType = I.RelationType.Description;
+	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
 	ref: any = null;
 	

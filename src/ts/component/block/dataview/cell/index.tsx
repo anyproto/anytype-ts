@@ -53,9 +53,9 @@ class Cell extends React.Component<Props, {}> {
 		let CellComponent: React.ReactType<Props>;
 		switch (relation.format) {
 			default:
-			case I.RelationType.Title:
+			case I.RelationType.ShortText:
 			case I.RelationType.Number:
-			case I.RelationType.Description:
+			case I.RelationType.LongText:
 			case I.RelationType.Date:
 				CellComponent = CellText;
 				break;
@@ -243,7 +243,7 @@ class Cell extends React.Component<Props, {}> {
 				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');
 				break;
 
-			case I.RelationType.Description:
+			case I.RelationType.LongText:
 				param = Object.assign(param, {
 					element: cell,
 					offsetY: -height,

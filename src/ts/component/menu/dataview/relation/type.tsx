@@ -21,8 +21,8 @@ class MenuRelationType extends React.Component<Props, {}> {
 		const { data } = param;
 		const { value } = data;
 		const relations: any[] = [
-			{ format: I.RelationType.Description },
-			{ format: I.RelationType.Title },
+			{ format: I.RelationType.LongText },
+			{ format: I.RelationType.ShortText },
 			{ format: I.RelationType.Number },
 			{ format: I.RelationType.Status },
 			{ format: I.RelationType.Tag },

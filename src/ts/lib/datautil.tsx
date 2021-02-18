@@ -95,8 +95,8 @@ class DataUtil {
 		let c = '';
 		switch (v) {
 			default:
-			case I.RelationType.Description: c = 'description'; break;
-			case I.RelationType.Title:		 c = 'title'; break;
+			case I.RelationType.LongText:	 c = 'longText'; break;
+			case I.RelationType.ShortText:	 c = 'shortText'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
 			case I.RelationType.Status:		 c = 'select isStatus'; break;
