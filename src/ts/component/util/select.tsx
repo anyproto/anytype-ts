@@ -53,7 +53,7 @@ class Select extends React.Component<Props, State> {
 		if (!current) {
 			current = options[0];
 		};
-		
+
 		return (
 			<div id={'select-' + id} className={cn.join(' ')} onClick={this.show}>
 				{current ? (
@@ -70,8 +70,9 @@ class Select extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		let { value, options, initial } = this.props;
+		let { options, initial } = this.props;
 		let opts = [];
+		let value = this.props.value.toString();
 		
 		if (initial) {
 			opts.unshift({ id: '', name: initial, isInitial: true });			

@@ -42,6 +42,7 @@ class MenuSelect extends React.Component<Props, {}> {
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
+			console.log(JSON.stringify(item, null, 5), value);
 			return (
 				<CellMeasurer
 					key={param.key}
