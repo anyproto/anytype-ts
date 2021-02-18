@@ -40,6 +40,7 @@ class MenuOptionValues extends React.Component<Props> {
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
 					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
+					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);
@@ -162,6 +163,27 @@ class MenuOptionValues extends React.Component<Props> {
 				...data,
 				rebind: this.rebind,
 			},
+		});
+	};
+
+	onEdit (e: any, item: any) {
+		e.stopPropagation();
+
+		const { param, getId } = this.props;
+		const { data } = param;
+
+		commonStore.menuOpen('dataviewOptionEdit', { 
+			type: I.MenuType.Vertical,
+			element: '#' + getId() + ' #item-' + item.id,
+			offsetX: 288,
+			offsetY: 0,
+			vertical: I.MenuDirection.Center,
+			horizontal: I.MenuDirection.Left,
+			passThrough: true,
+			data: {
+				...data,
+				option: item,
+			}
 		});
 	};
 

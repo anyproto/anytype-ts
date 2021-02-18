@@ -8,6 +8,9 @@
 
 	.menu.menuDataviewOptionValues {
 		.content { max-height: 280px; }
+		.item {
+			.icon.more { right: 34px; }
+		}
 	}
 
 	.menu.menuDataviewOptionList { width: 288px; }
