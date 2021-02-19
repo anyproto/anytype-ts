@@ -125,9 +125,9 @@ class MenuObjectValues extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = data.value;
-		if (!value || ('object' != typeof(value))) {
-			value = [];
+		let value = data.value || [];
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
 		};
 		return Util.objectCopy(value);
 	};
