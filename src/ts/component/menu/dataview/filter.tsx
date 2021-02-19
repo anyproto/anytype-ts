@@ -55,25 +55,14 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
 		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation.format != I.RelationType.File; 
-		});
-		const relationOptions: I.Option[] = relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: it.relationKey, 
-				name: relation.name, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-			};
-		});
+		const relationOptions = this.getRelationOptions();
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey);
 			if (!relation) {
 				return null;
 			};
@@ -133,14 +122,20 @@ class MenuFilter extends React.Component<Props, {}> {
 					Item = (item: any) => {
 						return (
 							<div className="element">
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<div className="flex">
+									<IconObject object={item} />
+									<div className="name">{item.name}</div>
+								</div>
 							</div>
 						);
 					};
 					cn = [ 'select', 'isList' ];
 
-					list = (item.value || []).map((it: string) => { return blockStore.getDetails(rootId, it); });
+					list = (item.value || []).map((it: string) => { 
+						const details = blockStore.getDetails(rootId, it);
+						const { iconImage, iconEmoji, name } = details;
+						return details;
+					});
 					list = list.filter((it: any) => { return !it._detailsEmpty_; });
 
 					if (list.length) {
@@ -311,8 +306,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		let ret = [];
 
 		switch (type) {
-			case I.RelationType.Title: 
-			case I.RelationType.Description: 
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
 			case I.RelationType.Url: 
 			case I.RelationType.Email: 
 			case I.RelationType.Phone: 
@@ -321,17 +316,6 @@ class MenuFilter extends React.Component<Props, {}> {
 					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
 					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
 					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				];
-				break;
-
-			case I.RelationType.Object: 
-				ret = [ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionIn') }, 
-					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotIn') },
 					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
 					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				];
@@ -372,26 +356,80 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 		return ret;
 	};
+
+	valueByType (type: I.RelationType): any {
+		let ret: any = null;
+
+		switch (type) {
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
+			case I.RelationType.Url: 
+			case I.RelationType.Email: 
+			case I.RelationType.Phone: 
+				ret = '';
+				break;
+
+			case I.RelationType.Object: 
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
+				ret = [];
+				break;
+			
+			case I.RelationType.Number:
+			case I.RelationType.Date:
+				ret = 0;
+				break;
+			
+			case I.RelationType.Checkbox:
+				ret = false;
+				break;
+		};
+		return ret;
+	};
+
+	getRelationOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
+		});
+
+		const options: any[] = relations.map((it: I.ViewRelation) => {
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				name: relation.name, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+			};
+		});
+
+		return options;
+	};
 	
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
+		const relationOptions = this.getRelationOptions();
 
-		if (!view.relations.length) {
+		if (!relationOptions.length) {
 			return;
 		};
 
-		const first = view.relations[0];
+		const first = relationOptions[0];
 		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
 		view.filters.push({ 
-			relationKey: first.relationKey, 
+			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
-			value: '',
+			value: this.valueByType(first.format),
 		});
 		this.save();
 	};
@@ -434,21 +472,28 @@ class MenuFilter extends React.Component<Props, {}> {
 	onChange (id: number, k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
-			const item = view.filters.find((it: any, i: number) => { return i == id; });
+			let item = view.filters.find((it: any, i: number) => { return i == id; });
+			let idx = view.filters.findIndex((it: any, i: number) => { return i == id; });
 			if (!item) {
 				return;
 			};
-	
+
+			item = Util.objectCopy(item);
 			item[k] = v;
 	
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
-				item.value = '';
+				const relation = dbStore.getRelation(rootId, blockId, v);
+				const conditions = this.conditionsByType(relation.format);
+
+				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+				item.value = this.valueByType(relation.format);
+
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == id) || 
 					(it.relationKey != v) || 
@@ -463,8 +508,11 @@ class MenuFilter extends React.Component<Props, {}> {
 					((it.relationKey == item.relationKey) && (it.condition != v)); 
 				});
 			};
-	
+
+			view.filters[idx] = item;
+
 			this.save();
+			this.forceUpdate();
 		}, timeout ? TIMEOUT : 0);
 	};
 
@@ -507,9 +555,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
-				window.setTimeout(() => {
-					this.refObj[id].focus();
-				}, 200);
+				window.setTimeout(() => { this.refObj[id].focus(); }, 200);
 			},
 			data: { 
 				value: value, 
@@ -527,25 +573,29 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		commonStore.menuOpen('dataviewOptionValues', { 
-			element: '#' + getId() + ' #' + id,
-			offsetX: 0,
-			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			className: 'fromFilter',
-			data: { 
-				rootId: rootId,
-				blockId: blockId,
-				value: item.value || [], 
-				types: relation.objectTypes,
-				relation: observable.box(relation),
-				onChange: (value: any) => {
-					this.onChange(item.id, 'value', value);
+		commonStore.menuCloseAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ]);
+
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewOptionValues', { 
+				element: '#' + getId() + ' #' + id,
+				offsetX: 0,
+				offsetY: 4,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				className: 'fromFilter',
+				data: { 
+					rootId: rootId,
+					blockId: blockId,
+					value: item.value || [], 
+					types: relation.objectTypes,
+					relation: observable.box(relation),
+					onChange: (value: any) => {
+						this.onChange(item.id, 'value', value);
+					},
 				},
-			},
-		});
+			});
+		}, Constant.delay.menu);
 	};
 
 	onObject (e: any, item: any) {
@@ -555,25 +605,29 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		commonStore.menuOpen('dataviewObjectValues', { 
-			element: '#' + getId() + ' #' + id,
-			offsetX: 0,
-			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			className: 'fromFilter',
-			data: { 
-				rootId: rootId,
-				blockId: blockId,
-				value: item.value || [], 
-				types: relation.objectTypes,
-				relation: observable.box(relation),
-				onChange: (value: any) => {
-					this.onChange(item.id, 'value', value);
+		commonStore.menuCloseAll([ 'dataviewObjectValues', 'dataviewObjectList' ]);
+
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewObjectValues', { 
+				element: '#' + getId() + ' #' + id,
+				offsetX: 0,
+				offsetY: 4,
+				type: I.MenuType.Vertical,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
+				className: 'fromFilter',
+				data: { 
+					rootId: rootId,
+					blockId: blockId,
+					value: item.value || [], 
+					types: relation.objectTypes,
+					relation: observable.box(relation),
+					onChange: (value: any) => {
+						this.onChange(item.id, 'value', value);
+					},
 				},
-			},
-		});
+			});
+		}, Constant.delay.menu);
 	};
 
 	save () {
@@ -587,7 +641,8 @@ class MenuFilter extends React.Component<Props, {}> {
 
 	resize () {
 		raf(() => {
-			const obj = $('#menuDataviewFilter');
+			const { getId } = this.props;
+			const obj = $('#' + getId());
 			const items = obj.find('.item');
 
 			let width = Constant.size.menuDataviewFilter;

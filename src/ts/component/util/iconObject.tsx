@@ -26,6 +26,7 @@ interface Props {
 
 const Size = {
 	16: 16,
+	18: 18,
 	20: 18,
 	24: 20,
 	26: 20,
@@ -52,12 +53,26 @@ const File = {
 
 const Obj = {
 	page: require('img/icon/object/page.svg'),
-	contact: require('img/icon/object/contact.svg'),
+	human: require('img/icon/object/human.svg'),
 	task: require('img/icon/object/task.svg'),
 	set: require('img/icon/object/set.svg'),
 	file: require('img/icon/object/file.svg'),
 	image: require('img/icon/object/image.svg'),
 };
+
+const Relation: any = {};
+Relation[I.RelationType.LongText] = require('img/icon/dataview/relation/longText.svg');
+Relation[I.RelationType.ShortText] = require('img/icon/dataview/relation/shortText.svg');
+Relation[I.RelationType.Number] = require('img/icon/dataview/relation/number.svg');
+Relation[I.RelationType.Status] = require('img/icon/dataview/relation/status.svg');
+Relation[I.RelationType.Date] = require('img/icon/dataview/relation/date.svg');
+Relation[I.RelationType.File] = require('img/icon/dataview/relation/file.svg');
+Relation[I.RelationType.Checkbox] = require('img/icon/dataview/relation/checkbox.svg');
+Relation[I.RelationType.Url] = require('img/icon/dataview/relation/url.svg');
+Relation[I.RelationType.Email] = require('img/icon/dataview/relation/email.svg');
+Relation[I.RelationType.Phone] = require('img/icon/dataview/relation/phone.svg');
+Relation[I.RelationType.Tag] = require('img/icon/dataview/relation/tag.svg');
+Relation[I.RelationType.Object] = require('img/icon/dataview/relation/object.svg');
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
@@ -77,6 +92,7 @@ class IconObject extends React.Component<Props, {}> {
 	render () {
 		const { object, className, size, canEdit, onClick } = this.props;
 		const type = DataUtil.schemaField(object.type);
+		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		
 		if (className) {
@@ -86,7 +102,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, layout, url } = object || {};
+		let { id, name, iconEmoji, iconImage, iconClass, done, url, format } = object || {};
 		let iconSize = this.iconSize(type, layout, size);
 		let icon = null;
 		let icn = [];
@@ -102,7 +118,7 @@ class IconObject extends React.Component<Props, {}> {
 						};
 						break;
 
-					case I.ObjectLayout.Contact:
+					case I.ObjectLayout.Human:
 						cn.push('isUser');
 						icn.push('c' + size);
 						icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
@@ -117,14 +133,22 @@ class IconObject extends React.Component<Props, {}> {
 					case I.ObjectLayout.ObjectType:
 						cn.push('isObjectType');
 						id = DataUtil.schemaField(url);
+
 						if (object.iconEmoji) {
 							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 						} else 
 						if (Obj[id]) {
 							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 							icon = <img src={Obj[id]} className={icn.join(' ')} />;
-						} else {
-							icon = <div />;
+						};
+						break;
+
+					case I.ObjectLayout.Relation:
+						cn.push('isRelation');
+
+						if (Relation[format]) {
+							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+							icon = <img src={Relation[format]} className={icn.join(' ')} />;
 						};
 						break;
 				};

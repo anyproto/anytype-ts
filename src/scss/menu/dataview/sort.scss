@@ -3,6 +3,8 @@
 .menus {
 	.menu.menuDataviewSort { width: 400px; }
 	.menu.menuDataviewSort {
+		.content { max-height: 350px; }
+
 		.item { padding: 4px 40px 4px 10px; white-space: nowrap; }
 	}	
 }

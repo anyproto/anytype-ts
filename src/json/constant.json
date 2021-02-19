@@ -45,6 +45,9 @@
 			"records": 50,
 			"views": 100000,
 			"viewName": 24
+		},
+		"store": {
+			"records": 50
 		}
 	},
 	

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Icon } from 'ts/component';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
@@ -10,7 +11,6 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 interface State {
 	tab: string;
-	subTab: string;
 };
 
 const $ = require('jquery');
@@ -40,12 +40,14 @@ const Tabs = [
 		], 
 	},
 ];
+const BLOCK_ID = 'dataview';
+const Constant = require('json/constant.json');
 
+@observer
 class PopupStore extends React.Component<Props, State> {
 
 	state = {
 		tab: 'type',
-		subTab: '',
 	};
 
 	_isMounted: boolean = false;
@@ -59,14 +61,30 @@ class PopupStore extends React.Component<Props, State> {
 	render () {
 		const { objectTypes } = dbStore;
 		const { profile } = blockStore;
-		const { tab, subTab } = this.state;
-		const tabItem = Tabs.find((it: any) => { return it.id == tab; });
+		const { tab } = this.state;
+		const rootId = this.getRootId();
 		const details = blockStore.getDetails(profile, profile);
-		
+		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
+		const meta = dbStore.getMeta(rootId, block.id);
+		const data = dbStore.getData(rootId, block.id);
+		const views = block.content?.views || [];
+
+		let Item = null;
+		let element = null;
+		let items = null;
+
+		const tabs = (
+			<div className="tabs">
+				{views.map((item: any, i: number) => (
+					<div key={item.id} className={[ 'item', (item.id == meta.viewId ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onView(e, item); }}>
+						{item.name}
+					</div>
+				))}
+			</div>
+		);
+
 		let relations = [];
-		objectTypes.map((it: I.ObjectType) => {
-			relations = relations.concat(it.relations);
-		});
+		objectTypes.map((it: I.ObjectType) => { relations = relations.concat(it.relations); });
 		relations = Util.arrayUniqueObjects(relations, 'relationKey');
 		relations.sort((c1: any, c2: any) => {
 			if (c1.name > c2.name) return 1;
@@ -74,49 +92,39 @@ class PopupStore extends React.Component<Props, State> {
 			return 0;
 		});
 
-		let content = null;
-		let subContent = null;
-		let Item = null;
-
 		switch (tab) {
 
 			default:
 			case 'type':
-				Item = (item: any) => (
-					<div className={[ 'item', 'isType', subTab ].join(' ')} onClick={(e: any) => { this.onObjectType(e, item); }}>
-						<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
-						<div className="info">
-							<div className="name">{item.name}</div>
-							<div className="descr">An invoice, bill or tab is a commercial documents... An invoice, bill or tab is a commercial documents... An invoice, bill or tab is a commercial documents...</div>
-							<div className="author">
-								<IconObject object={details} size={16} />
-								{details.name}
+				Item = (item: any) => {
+					const author = blockStore.getDetails(rootId, item.creator);
+
+					return (
+						<div className={[ 'item', 'isType' ].join(' ')} onClick={(e: any) => { this.onObjectType(e, item); }}>
+							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
+							<div className="info">
+								<div className="name">{item.name}</div>
+								<div className="descr">{item.description}</div>
+								<div className="author">
+									<IconObject object={{ ...author, layout: I.ObjectLayout.Human }} size={16} />
+									{author.name}
+								</div>
+								<div className="line" />
 							</div>
-							<div className="line" />
+							<Button className="blank c28" text="Add" />
 						</div>
-						<Button className="blank c28" text="Add" />
+					);
+				};
+
+				items = (
+					<div className="items">
+						{data.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
 					</div>
 				);
 
-				switch (subTab) {
-
-					default:
-					case 'market':
-						break;
-
-					case 'library':
-						subContent = (
-							<React.Fragment>
-								{objectTypes.map((item: any, i: number) => (
-									<Item key={i} {...item} />
-								))}
-							</React.Fragment>
-						);
-						break;
-
-				};
-
-				content = (
+				element = (
 					<React.Fragment>
 						<div className="mid">
 							<Title text="Type every object" />
@@ -125,17 +133,8 @@ class PopupStore extends React.Component<Props, State> {
 							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onObjectType(e, { id: 'create' }); }} />
 						</div>
 
-						<div className="tabs">
-							{tabItem.children.map((item: any, i: number) => (
-								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : ''), (item.disabled ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
-									{item.name}
-								</div>
-							))}
-						</div>
-
-						<div className="items">
-							{subContent}
-						</div>
+						{tabs}
+						{items}
 					</React.Fragment>
 				);
 				break;
@@ -145,10 +144,8 @@ class PopupStore extends React.Component<Props, State> {
 
 			case 'relation':
 				Item = (item: any) => (
-					<div className={[ 'item', 'isRelation', subTab ].join(' ')} onClick={(e: any) => { this.onRelation(e, item); }}>
-						<div className="iconObject c48 isRelation">
-							<Icon className={[ 'iconCommon', 'c30', 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
-						</div>
+					<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onRelation(e, item); }}>
+						<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 						<div className="info">
 							<div className="name">{item.name} ({item.relationKey})</div>
 							<div className="author">
@@ -161,25 +158,15 @@ class PopupStore extends React.Component<Props, State> {
 					</div>
 				);
 
-				switch (subTab) {
+				items = (
+					<div className="items">
+						{data.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</div>
+				);
 
-					default:
-					case 'market':
-						break;
-
-					case 'library':
-						subContent = (
-							<React.Fragment>
-								{relations.map((item: any, i: number) => (
-									<Item key={i} {...item} />
-								))}
-							</React.Fragment>
-						);
-						break;
-
-				};
-
-				content = (
+				element = (
 					<React.Fragment>
 						<div className="mid">
 							<Title text="All objects are connected" />
@@ -188,17 +175,8 @@ class PopupStore extends React.Component<Props, State> {
 							<Button text="Create a new type" className="orange" />
 						</div>
 
-						<div className="tabs">
-							{tabItem.children.map((item: any, i: number) => (
-								<div key={item.id} className={[ 'item', (item.id == subTab ? 'active' : ''), (item.disabled ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onSubTab(e, item); }}>
-									{item.name}
-								</div>
-							))}
-						</div>
-
-						<div className="items">
-							{subContent}
-						</div>
+						{tabs}
+						{items}
 					</React.Fragment>
 				);
 				break;
@@ -218,7 +196,7 @@ class PopupStore extends React.Component<Props, State> {
 				</div>
 				
 				<div className="body">
-					{content}
+					{element}
 				</div>
 			</div>
 		);
@@ -273,15 +251,38 @@ class PopupStore extends React.Component<Props, State> {
 		});
 	};
 
-	onTab (e: any, item: any) {
-		const tabItem = Tabs.find((it: any) => { return it.id == item.id; });
-		this.setState({ tab: item.id, subTab: tabItem.active });
+	load () {
+		const rootId = this.getRootId();
+		C.BlockOpen(rootId, (message: any) => {
+			this.forceUpdate();
+		});
 	};
 
-	onSubTab (e: any, item: any) {
-		if (!item.disabled) {
-			this.setState({ subTab: item.id });
+	getRootId () {
+		const { tab } = this.state;
+		const { storeType, storeRelation, storeTemplate } = blockStore;
+
+		let id = '';
+		if (tab == 'type') id = storeType;
+		if (tab == 'template') id = storeTemplate;
+		if (tab == 'relation') id = storeRelation;
+		return id;
+	};
+
+	onTab (e: any, item: any) {
+		const tabItem = Tabs.find((it: any) => { return it.id == item.id; });
+		if (!tabItem) {
+			return;
 		};
+
+		this.state.tab = tabItem.id;
+		this.setState({ tab: item.id });
+
+		this.load();
+	};
+
+	onView (e: any, item: any) {
+		this.getData(item.id, 0);
 	};
 
 	onObjectType (e: any, item: any) {
@@ -294,7 +295,27 @@ class PopupStore extends React.Component<Props, State> {
 	onRelation (e: any, item: any) {
 		const { history } = this.props;
 
-		history.push('/main/relation/' + item.id);
+		history.push('/main/relation/' + item.relationKey);
+	};
+
+	getData (id: string, offset: number, callBack?: (message: any) => void) {
+		const rootId = this.getRootId();
+		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
+		const viewChange = id != viewId;
+		const meta: any = { offset: offset };
+		const cb = (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+		};
+
+		if (viewChange) {
+			meta.viewId = id;
+			dbStore.recordsSet(rootId, BLOCK_ID, []);
+		};
+
+		dbStore.metaSet(rootId, BLOCK_ID, meta);
+		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.store.records, cb);
 	};
 	
 };

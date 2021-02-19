@@ -652,6 +652,15 @@ const BlockDataviewRecordDelete = (contextId: string, blockId: string, recordId:
 	dispatcher.request('blockDataviewRecordDelete', request, callBack);
 };
 
+const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.RelationListAvailable.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+
+	dispatcher.request('blockDataviewRelationListAvailable', request, callBack);
+};
+
 const BlockRelationList = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.List.Request();
 	
@@ -689,14 +698,14 @@ const BlockRelationRemove = (contextId: string, relationKey: string, callBack?: 
 	dispatcher.request('blockRelationRemove', request, callBack);
 };
 
- const BlockRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+const BlockRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Update.Request();
 	
 	request.setContextid(contextId);
 	request.setRelation(Mapper.To.Relation(relation));
 
 	dispatcher.request('blockRelationUpdate', request, callBack);
-}; 
+};
 
 const HistoryVersions = (pageId: string, lastVersionId: string, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.History.Versions.Request();
@@ -902,6 +911,42 @@ const ObjectRelationOptionDelete = (contextId: string, relationKey: string, opti
 	dispatcher.request('objectRelationOptionDelete', request, callBack);
 };
 
+const ObjectRelationAdd = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationAdd.Request();
+	
+	request.setContextid(contextId);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('objectRelationAdd', request, callBack);
+};
+
+const ObjectRelationUpdate = (contextId: string, relation: any, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationUpdate.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relation.relationKey);
+	request.setRelation(Mapper.To.Relation(relation));
+
+	dispatcher.request('objectRelationUpdate', request, callBack);
+};
+
+const ObjectRelationDelete = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationDelete.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationkey(relationKey);
+
+	dispatcher.request('objectRelationDelete', request, callBack);
+};
+
+const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.RelationListAvailable.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('objectRelationListAvailable', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -980,6 +1025,7 @@ export {
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
 	BlockDataviewRelationDelete,
+	BlockDataviewRelationListAvailable,
 
 	BlockDataviewRecordRelationOptionAdd,
 	BlockDataviewRecordRelationOptionUpdate,
@@ -1013,5 +1059,9 @@ export {
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
+	ObjectRelationAdd,
+	ObjectRelationUpdate,
+	ObjectRelationDelete,
+	ObjectRelationListAvailable,
 
 };

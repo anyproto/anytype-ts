@@ -17,7 +17,6 @@ class Keyboard {
 	isFocused: boolean = false;
 	isPreviewDisabled: boolean = false;
 	isMouseDisabled: boolean = false;
-	isBackDisabled: boolean = false;
 	isPinChecked: boolean = false;
 	isShiftPressed: boolean = false;
 	isContextDisabled: boolean = false;
@@ -42,10 +41,10 @@ class Keyboard {
 		const rootId = this.isEditor() ? this.match.params.id : root;
 		const isMainIndex = this.isMainIndex();
 		const platform = Util.getPlatform();
-		
+
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (this.isBackDisabled || this.isFocused) {
+			if (this.isEditor() || this.isFocused) {
 				return;
 			};
 			this.history.goBack();
@@ -76,7 +75,7 @@ class Keyboard {
 			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked || !account) {
 				return;
 			};
-			commonStore.popupOpen('navigation', { 
+			commonStore.popupOpen('search', { 
 				preventResize: true,
 				data: { 
 					type: I.NavigationType.Go, 
@@ -96,7 +95,6 @@ class Keyboard {
 				data: { 
 					type: I.NavigationType.Go, 
 					rootId: rootId,
-					expanded: true,
 				}, 
 			});
 		});
@@ -235,10 +233,6 @@ class Keyboard {
 
 	setMatch (match: any) {
 		this.match = match;
-	};
-	
-	disableBack (v: boolean) {
-		this.isBackDisabled = v;
 	};
 	
 	disableMouse (v: boolean) {

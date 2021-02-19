@@ -1,6 +1,5 @@
 import { dispatcher } from './dispatcher';
 import { keyboard, Key } from './keyboard';
-import { cache } from './cache';
 import Storage from './storage';
 import Util from './util';
 import DataUtil from './datautil';
@@ -36,7 +35,6 @@ const translate = (key: string): string => {
 export {
 	dispatcher,
 	keyboard,
-	cache,
 	focus,
 	Key,
 	Storage,

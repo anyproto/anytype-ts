@@ -55,7 +55,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 		
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -122,7 +122,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const win = $(window);
 		const namespace = isPopup ? '.popup' : '';
 		
-		keyboard.disableBack(true);
 		this.unbind();
 		this.open();
 		
@@ -176,7 +175,6 @@ class EditorPage extends React.Component<Props, {}> {
 		this.unbind();
 		this.close(rootId);
 
-		keyboard.disableBack(false);
 		focus.clear(false);
 
 		Storage.delete('pageId');
@@ -284,8 +282,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		const length = block.getLength();
-		focus.set(block.id, { from: length, to: length });
-		focus.apply();
+		if (!length) {
+			focus.set(block.id, { from: length, to: length });
+			focus.apply();
+		};
 	};
 	
 	close (id: string) {
@@ -293,13 +293,15 @@ class EditorPage extends React.Component<Props, {}> {
 		if (isPopup || !id) {
 			return;
 		};
-		
-		C.BlockClose(id, (message: any) => {
-			blockStore.blocksClear(id);
-			dbStore.relationsRemove(id, id);
-			dbStore.relationsRemove(id, 'dataview');
-			authStore.threadRemove(id);
-		});
+
+		window.setTimeout(() => {
+			C.BlockClose(id, (message: any) => {
+				blockStore.blocksClear(id);
+				dbStore.relationsRemove(id, id);
+				dbStore.relationsRemove(id, 'dataview');
+				authStore.threadRemove(id);
+			});
+		}, 200);
 	};
 	
 	unbind () {
@@ -374,7 +376,7 @@ class EditorPage extends React.Component<Props, {}> {
 			offset = 394;
 		};
 
-		if (root.isObjectContact()) {
+		if (root.isObjectHuman()) {
 		};
 
 		if (root.isObjectTask()) {
@@ -610,6 +612,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const shift = pressed.match('shift');
 			const first = blockStore.getLeaf(rootId, ids[0]);
+			if (!first) {
+				return;
+			};
+
 			const element = map[first.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
@@ -1104,10 +1110,6 @@ class EditorPage extends React.Component<Props, {}> {
 								};
 							};
 
-							if ((item.type == I.BlockType.Relation) && (item.key == 'new-relation')) {
-								param.fields = { isNew: true };
-							};
-							
 							if (item.type == I.BlockType.File) {
 								param.content.type = item.key;
 							};
@@ -1123,7 +1125,6 @@ class EditorPage extends React.Component<Props, {}> {
 										data: { 
 											type: I.NavigationType.Link, 
 											rootId: rootId,
-											expanded: true,
 											skipId: rootId,
 											blockId: block.id,
 											position: position,
@@ -1666,7 +1667,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
@@ -1675,10 +1675,10 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const wh = win.height();
+		const h = this.getScrollContainer().height();
 		const height = blocks.outerHeight() + blocks.offset().top;
 
-		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
+		last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {

@@ -44,8 +44,10 @@ class CellFile extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<div className="element file" onClick={(e: any) => { DataUtil.objectOpen(e, item); }}>
-				<IconObject object={item} />
-				<div className="name">{item.name}</div>
+				<div className="flex">
+					<IconObject object={item} />
+					<div className="name">{item.name}</div>
+				</div>
 			</div>
 		);
 

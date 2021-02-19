@@ -4,6 +4,7 @@
     .menu.menuDataviewRelationType, 
     .menu.menuDataviewRelationList, 
     .menu.menuDataviewRelationEdit, 
+	.menu.menuRelationSuggest, 
     .menu.menuDataviewViewList,
 	.menu.menuDataviewObjectType,
 	.menu.menuDataviewObjectValues,
@@ -14,18 +15,12 @@
 	{
         .item:hover::before { opacity: 0.15; }
 		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/dataview/button/plus0.svg'); }
+			.icon.plus { margin-right: 4px; }
 			.icon.dnd { margin-right: 2px; }
 		}
 
 		.item.empty { color: #6c6a5f; padding: 8px 16px 10px 16px; line-height: 22px; cursor: default; }
 		.item.empty:hover::before { opacity: 0; }
-
-		.item.add { color: $colorDarkGrey; line-height: 20px; }
-		.item.add:hover { color: $colorBlack; }
-		.item.add:hover {
-			.icon.plus { background-image: url('~img/icon/dataview/button/plus1.svg'); }
-		}
 
 		.label { color: $colorDarkGrey; @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
     }

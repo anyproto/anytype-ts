@@ -55,7 +55,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const objectType: any = dbStore.getObjectType(item.type) || {};
+			const objectType: any = dbStore.getObjectType(item.type, '') || {};
 
 			return (
 				<CellMeasurer
@@ -293,7 +293,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange } = data;
+		const { onChange, maxCount } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -307,11 +307,14 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
+		if (maxCount) {
+			value = value.slice(value.length - maxCount, value.length);
+		};
+
 		data.value = value;
 
 		commonStore.menuUpdateData(MENU_ID, { value: value });
 		onChange(value);
-
 		position();
 	};
 

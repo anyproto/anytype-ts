@@ -12,7 +12,6 @@ class Action {
 			data: { 
 				type: I.NavigationType.Move, 
 				rootId: rootId,
-				expanded: true,
 				blockId: blockId,
 				blockIds: blockIds,
 			}, 

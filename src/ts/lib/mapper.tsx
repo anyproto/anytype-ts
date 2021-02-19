@@ -168,14 +168,8 @@ const Mapper = {
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),
+				isHidden: obj.getHidden(),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
-			};
-		},
-
-		ObjectTypePerObject: (obj: any): I.ObjectTypePerObject => {
-			return {
-				objectId: obj.getObjectid(),
-				objectTypes: obj.getObjecttypesList(),
 			};
 		},
 
@@ -187,8 +181,9 @@ const Mapper = {
 				dataSource: obj.getDatasource(),
 				isHidden: obj.getHidden(),
 				isReadOnly: obj.getReadonly(),
-				isMultiple: obj.getMulti(),
+				maxCount: obj.getMaxcount(),
 				objectTypes: obj.getObjecttypesList(),
+				scope: obj.getScope(),
 				selectDict: (obj.getSelectdictList() || []).map(Mapper.From.SelectOption),
 			};
 		},
@@ -490,6 +485,7 @@ const Mapper = {
 			item.setName(obj.name);
 			item.setLayout(obj.layout);
 			item.setIconemoji(obj.iconEmoji);
+			item.setHidden(obj.isHidden);
 			item.setRelationsList((obj.relations || []).map(Mapper.To.Relation));
 
 			return item;
@@ -505,7 +501,7 @@ const Mapper = {
 			item.setDatasource(obj.dataSource);
 			item.setHidden(obj.isHidden);
 			item.setReadonly(obj.isReadOnly);
-			item.setMulti(obj.isMultiple);
+			item.setMaxcount(obj.maxCount);
 			item.setObjecttypesList(obj.objectTypes);
 			item.setSelectdictList((obj.selectDict || []).map(Mapper.To.SelectOption));
 

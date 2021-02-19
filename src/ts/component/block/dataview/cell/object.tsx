@@ -26,8 +26,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, getRecord, index, canEdit } = this.props;
-		const relation = dbStore.getRelation(rootId, block.id, this.props.relation.relationKey);
+		const { rootId, block, readOnly, getRecord, index, canEdit, relation } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -41,8 +40,10 @@ class CellObject extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			return (
 				<div className="element">
-					<IconObject object={item} />
-					<div className="name">{item.name}</div>
+					<div className="flex">
+						<IconObject object={item} />
+						<div className="name">{item.name}</div>
+					</div>
 				</div>
 			);
 		};
@@ -107,7 +108,7 @@ class CellObject extends React.Component<Props, State> {
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
 
-		let value = record[relation.relationKey];
+		let value = record[relation.relationKey] || [];
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};

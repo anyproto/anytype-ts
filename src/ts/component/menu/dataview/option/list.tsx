@@ -57,7 +57,7 @@ class MenuOptionList extends React.Component<Props, State> {
 				content =  (
 					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
-						<div className="name">Create option "{filter}"</div>
+						<div className="name">{item.name}</div>
 					</div>
 				);
 			} else 
@@ -88,7 +88,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter objects..." onChange={this.onFilterChange} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter or create options..." onChange={this.onFilterChange} />
 
 				<div className="items">
 					<InfiniteLoader
@@ -189,31 +189,42 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { onChange } = data;
-
-		if (item.id == 'add') {
-			this.onAdd(e);
-		} else {
-			let value = Util.objectCopy(data.value || []);
-			value.push(item.id);
-			value = Util.arrayUnique(value);
-
-			this.props.param.data.value = value;
-
-			commonStore.menuUpdateData(MENU_ID, { value: value });
-			onChange(value);
-		};
+		item.id == 'add' ? this.onMenuAdd(e) : this.onValueAdd(item.id);
 	};
 
-	onAdd (e: any) {
+	onValueAdd (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange, maxCount } = data;
+
+		let value = Util.objectCopy(data.value || []);
+		value.push(id);
+		value = Util.arrayUnique(value);
+
+		if (maxCount) {
+			value = value.slice(value.length - maxCount, value.length);
+		};
+
+		data.value = value;
+
+		commonStore.menuUpdateData(MENU_ID, { value: value });
+		onChange(value);
+	};
+
+	onMenuAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
 
-		optionCommand('add', rootId, blockId, relation.relationKey, record.id, { text: filter });
+		optionCommand('add', rootId, blockId, relation.relationKey, record.id, { text: filter }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			this.onValueAdd(message.option.id);
+			this.ref.setValue('');
+		});
 	};
 	
 	onEdit (e: any, item: any) {
@@ -229,6 +240,8 @@ class MenuOptionList extends React.Component<Props, State> {
 			offsetY: 0,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
+			passThrough: true,
+			noFlipY: true,
 			data: {
 				...data,
 				option: item,
@@ -249,17 +262,14 @@ class MenuOptionList extends React.Component<Props, State> {
 		data.relation.set(relation);
 		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
-		if (menu) {
-			menu.param.data.relation = observable.box(relation);
-			commonStore.menuUpdate(this.props.id, menu.param);
-		};
+		commonStore.menuUpdateData(this.props.id, { relation: observable.box(relation) });
 	};
 
 	getItems (): I.SelectOption[] {
 		const { param } = this.props;
 		const { data } = param;
+		const { canAdd } = data;
 		const relation = data.relation.get();
-		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 
 		let items = relation.selectDict || [];
 		let sections: any = {};
@@ -270,8 +280,11 @@ class MenuOptionList extends React.Component<Props, State> {
 		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Format', children: [] };
 
 		if (data.filter) {
+			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
-			ret.unshift({ id: 'add' });
+			if (canAdd) {
+				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
+			};
 		};
 
 		for (let item of items) {
@@ -283,6 +296,9 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		for (let i in sections) {
 			let section = sections[i];
+			if (!section.children.length) {
+				continue;
+			};
 			ret.push({ id: section.id, name: section.name, isSection: true });
 			ret = ret.concat(section.children);
 		};

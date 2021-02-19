@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, M, DataUtil } from 'ts/lib';
-import { Block } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { Block, IconObject } from 'ts/component';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -21,6 +21,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const { config } = commonStore;
 
 		if (!root) {
 			return null;
@@ -32,9 +33,27 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: title.align, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: title.align, childrenIds: [], fields: {}, content: {} });
 
-		if (root.isObjectContact()) {
+		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
 		};
+
+		const objectType = dbStore.getObjectType(check.object.type, '');
+		const creator = blockStore.getDetails(rootId, check.object.creator);
+		const featured = [];
+
+		if (objectType) {
+			featured.push({ ...objectType, layout: I.ObjectLayout.ObjectType });
+		};
+		if (!creator._detailsEmpty_) {
+			featured.push(creator);
+		};
+
+		const Element = (item: any) => (
+			<div className="element">
+				<IconObject size={24} object={item} />
+				{item.name}
+			</div>
+		);
 
 		return (
 			<div>
@@ -50,6 +69,20 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					onMenuAdd={onMenuAdd}
 					onPaste={onPaste}
 				/>
+
+				{config.allowDataview ? (
+					<div className={[ 'block', 'blockFeatured', 'align' + title.align ].join(' ')}>
+						<div className="wrapMenu" />
+						<div className="wrapContent">
+							{featured.map((item: any, i: any) => (
+								<span key={i}>
+									{i > 0 ? <div className="bullet" /> : ''}
+									<Element {...item} />
+								</span>
+							))}
+						</div>
+					</div>
+				) : ''}
 			</div>
 		);
 	};

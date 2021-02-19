@@ -47,10 +47,11 @@ class Relation implements I.Relation {
 	name: string = '';
 	dataSource: number = 0;
 	objectTypes: string[] = [];
-	format: I.RelationType = I.RelationType.Description;
+	format: I.RelationType = I.RelationType.LongText;
 	isHidden: boolean = false;
 	isReadOnly: boolean = false;
-	isMultiple: boolean = false;
+	maxCount: number = 0;
+	scope: I.RelationScope = I.RelationScope.Object;
 	selectDict: any[] = [] as any[];
 
 	constructor (props: I.Relation) {
@@ -60,15 +61,17 @@ class Relation implements I.Relation {
 		self.name = String(props.name || '');
 		self.dataSource = Number(props.dataSource) || 0;
 		self.objectTypes = props.objectTypes || [];
-		self.format = props.format || I.RelationType.Description;
+		self.format = props.format || I.RelationType.LongText;
 		self.isHidden = Boolean(props.isHidden);
 		self.isReadOnly = Boolean(props.isReadOnly);
-		self.isMultiple = Boolean(props.isMultiple);
+		self.maxCount = Number(props.maxCount) || 0;
+		self.scope = props.scope || I.RelationScope.Object;
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new SelectOption(it); });
 
 		decorate(self, {
 			name: observable,
 			format: observable,
+			maxCount: observable,
 			objectTypes: observable,
 			selectDict: observable,
 		});

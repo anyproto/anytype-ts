@@ -2,7 +2,7 @@ import { I } from 'ts/lib';
 
 export enum ObjectLayout {
 	Page		 = 0,
-	Contact		 = 1,
+	Human		 = 1,
 	Task		 = 2,
 	Set			 = 3,
 	ObjectType	 = 4,
@@ -18,17 +18,13 @@ export interface ObjectType {
 	description?: string;
 	layout: ObjectLayout;
 	iconEmoji: string;
+	isHidden: boolean;
 	relations: Relation[];
 };
 
-export interface ObjectTypePerObject {
-	objectId: string;
-	objectTypes: string[];
-}
-
 export enum RelationType { 
-	Description	 = 0, 
-	Title		 = 1, 
+	LongText	 = 0, 
+	ShortText	 = 1, 
 	Number		 = 2, 
 	Status		 = 3, 
 	Date		 = 4, 
@@ -38,8 +34,16 @@ export enum RelationType {
 	Url			 = 8,
 	Email		 = 9,
 	Phone		 = 10,
-	Tag		 = 11,
+	Tag			 = 11,
 	Object		 = 100,
+};
+
+export enum RelationScope {
+	Object				 = 0,
+	Type				 = 1,
+	SetOfTheSameType	 = 2,
+	ObjectsOfTheSameType = 3,
+	Library				 = 4,
 };
 
 export interface Relation {
@@ -49,12 +53,13 @@ export interface Relation {
 	dataSource: number;
 	isHidden: boolean;
 	isReadOnly: boolean;
-	isMultiple: boolean;
 	objectTypes: string[];
 	selectDict: any[];
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;
+	maxCount: number;
+	scope: RelationScope;
 };
 
 export enum OptionScope {

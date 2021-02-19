@@ -21,7 +21,7 @@ class HeadRow extends React.Component<Props, {}> {
 		const { block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-
+		
 		const Row = SortableContainer((item: any) => (
 			<tr className="row">
 				{relations.map((relation: any, i: number) => (

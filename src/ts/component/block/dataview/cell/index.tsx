@@ -53,9 +53,9 @@ class Cell extends React.Component<Props, {}> {
 		let CellComponent: React.ReactType<Props>;
 		switch (relation.format) {
 			default:
-			case I.RelationType.Title:
+			case I.RelationType.ShortText:
 			case I.RelationType.Number:
-			case I.RelationType.Description:
+			case I.RelationType.LongText:
 			case I.RelationType.Date:
 				CellComponent = CellText;
 				break;
@@ -112,6 +112,8 @@ class Cell extends React.Component<Props, {}> {
 			return;
 		};
 
+		$('.cell.isEditing').removeClass('isEditing');
+
 		const win = $(window);
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const cell = $('#' + id).addClass('isEditing');
@@ -161,7 +163,7 @@ class Cell extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
-			noFlip: true,
+			noFlipY: true,
 			passThrough: true,
 			className: menuClassName,
 			onOpen: setOn,
@@ -218,11 +220,13 @@ class Cell extends React.Component<Props, {}> {
 					width: width,
 				});
 				param.data = Object.assign(param.data, {
+					canAdd: true,
 					filter: '',
 					value: value || [],
+					maxCount: relation.maxCount,
 				});
 
-				menuId = 'dataviewOptionValues';
+				menuId = (relation.maxCount == 1 ? 'dataviewOptionList' : 'dataviewOptionValues');
 				break;
 					
 			case I.RelationType.Object:
@@ -233,12 +237,13 @@ class Cell extends React.Component<Props, {}> {
 					filter: '',
 					value: value || [],
 					types: relation.objectTypes,
+					maxCount: relation.maxCount,
 				});
 
-				menuId = 'dataviewObjectValues';
+				menuId = (relation.maxCount == 1 ? 'dataviewObjectList' : 'dataviewObjectValues');
 				break;
 
-			case I.RelationType.Description:
+			case I.RelationType.LongText:
 				param = Object.assign(param, {
 					element: cell,
 					offsetY: -height,
@@ -313,6 +318,7 @@ class Cell extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				commonStore.menuOpen(menuId, param); 
 				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
+				win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(menuIds); });
 			}, 1);
 		} else {
 			setOn();

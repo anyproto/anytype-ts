@@ -10,6 +10,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuObjectValues extends React.Component<Props> {
@@ -33,7 +34,7 @@ class MenuObjectValues extends React.Component<Props> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const objectType: any = dbStore.getObjectType(item.type) || {};
+			const objectType: any = dbStore.getObjectType(item.type, '') || {};
 			return (
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
@@ -124,9 +125,9 @@ class MenuObjectValues extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = data.value;
-		if (!value || ('object' != typeof(value))) {
-			value = [];
+		let value = data.value || [];
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
 		};
 		return Util.objectCopy(value);
 	};
@@ -151,20 +152,22 @@ class MenuObjectValues extends React.Component<Props> {
 		const { data } = param;
 		const node = $('#' + getId());
 
-		commonStore.menuOpen('dataviewObjectList', {
-			...param,
-			element: '#' + getId() + ' #item-add',
-			width: 0,
-			offsetX: node.outerWidth(),
-			vertical: I.MenuDirection.Center,
-			onClose: () => {
-				close();
-			},
-			data: {
-				...data,
-				rebind: this.rebind,
-			},
-		});
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewObjectList', {
+				...param,
+				element: '#' + getId() + ' #item-add',
+				width: 0,
+				offsetX: node.outerWidth(),
+				offsetY: -36,
+				vertical: I.MenuDirection.Bottom,
+				noFlipY: true,
+				onClose: () => { close(); },
+				data: {
+					...data,
+					rebind: this.rebind,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	onRemove (e: any, item: any) {
@@ -189,7 +192,7 @@ class MenuObjectValues extends React.Component<Props> {
 		const { onChange } = data;
 
 		let value = this.getValue();
-		value = arrayMove(value, oldIndex, newIndex);
+		value = arrayMove(value, oldIndex - 1, newIndex - 1);
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;

@@ -17,7 +17,8 @@ export interface MenuParam {
 	className?: string;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
-	noFlip?: boolean;
+	noFlipX?: boolean;
+	noFlipY?: boolean;
 	onClose?(): void;
 	onOpen?(): void;
 };
@@ -25,7 +26,7 @@ export interface MenuParam {
 export interface Menu {
 	id: string;
 	param: MenuParam;
-	setHover? (item?: any, scroll?: boolean): void;
+	setHover? (id?: any, scroll?: boolean): void;
 	getId?(): string;
 	position? (): void;
 	close? (): void;

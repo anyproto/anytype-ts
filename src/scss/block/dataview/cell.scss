@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.cell.c-title { cursor: text; }
-.cell.c-title {
+.cell.c-shortText { cursor: text; }
+.cell.c-shortText {
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; }
 }
 
@@ -28,6 +28,10 @@
 	.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 }
 
+.cell.isEditing.c-file {
+	.inputWithFile { display: block; }
+}
+
 .cellContent { cursor: default; border-radius: 4px; }
 .cellContent {
 	.iconObject { margin-right: 4px; vertical-align: top; }
@@ -37,10 +41,11 @@
 }
 
 .cellContent.c-file {
-	.inputWithFile { border: 0px; padding: 0px; }
+	.inputWithFile { border: 0px; padding: 0px; display: none; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
 	.element {
-		.name { line-height: 20px; width: calc(100% - 24px); @include text-overflow-nw; }
+		.iconObject { flex-shrink: 0; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 	.element.image {
 		.iconObject { margin: 0px; }
@@ -56,7 +61,8 @@
 .cellContent.c-object {
 	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
 	.element {
-		.name { line-height: 20px; width: calc(100% - 24px); @include text-overflow-nw; }
+		.iconObject { flex-shrink: 0; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
 	.empty { color: $colorDarkGrey; display: none; }
 }
@@ -69,8 +75,8 @@
 	.icon.user { margin-right: 5px; }
 }
 
-.cellContent.canEdit.c-title, 
-.cellContent.canEdit.c-description, 
+.cellContent.canEdit.c-shortText, 
+.cellContent.canEdit.c-longText, 
 .cellContent.canEdit.c-date, 
 .cellContent.canEdit.c-object, 
 .cellContent.canEdit.c-select { cursor: text; }

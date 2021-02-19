@@ -27,6 +27,7 @@
 	}
 
 	.iconUser.c16 { line-height: 16px; font-size: 10px; }
+	.iconUser.c18 { line-height: 18px; font-size: 10px; }
 	.iconUser.c20 { line-height: 20px; font-size: 12px; }
 	.iconUser.c40 { line-height: 40px; font-size: 18px; }
 	.iconUser.c48 { line-height: 48px; font-size: 28px; }
@@ -54,6 +55,8 @@
 		
 		.icon.home.big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	}
+
+	.iconEmoji.c18 { width: 18px; height: 18px; line-height: 18px; }
 
 	.iconEmoji.c20 { width: 20px; height: 20px; line-height: 20px; }
 	.iconEmoji.c20 {
@@ -98,6 +101,7 @@
 	.iconEmoji.canEdit.c48.active, .iconEmoji.canEdit.c64.active { background-color: #ebe9e0; }
 }
 .iconObject.c16 { width: 16px; height: 16px; }
+.iconObject.c18 { width: 18px; height: 18px; }
 .iconObject.c24 { width: 24px; height: 24px; }
 .iconObject.c26 { width: 26px; height: 26px; }
 .iconObject.c28 { width: 28px; height: 28px; }

@@ -95,8 +95,8 @@ class DataUtil {
 		let c = '';
 		switch (v) {
 			default:
-			case I.RelationType.Description: c = 'description'; break;
-			case I.RelationType.Title:		 c = 'title'; break;
+			case I.RelationType.LongText:	 c = 'longText'; break;
+			case I.RelationType.ShortText:	 c = 'shortText'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
 			case I.RelationType.Status:		 c = 'select isStatus'; break;
@@ -204,6 +204,7 @@ class DataUtil {
 	pageInit (callBack?: () => void) {
 		C.ConfigGet((message: any) => {
 			const root = message.homeBlockId;
+			const profile = message.profileBlockId;
 			
 			if (!root) {
 				console.error('[pageInit] No root defined');
@@ -214,17 +215,21 @@ class DataUtil {
 			
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
+			blockStore.storeSetType(message.marketplaceTypeId);
+			blockStore.storeSetRelation(message.marketplaceRelationId);
 
 			C.ObjectTypeList((message: any) => {
 				dbStore.objectTypesSet(message.objectTypes);
 			});
 			
-			if (message.profileBlockId) {
-				blockStore.profileSet(message.profileBlockId);
-				C.BlockOpen(message.profileBlockId, (message: any) => {
+			if (profile) {
+				C.BlockOpen(profile, (message: any) => {
 					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 						Util.onErrorUpdate();
+						return;
 					};
+
+					blockStore.profileSet(profile);
 				});
 			};
 
@@ -304,64 +309,85 @@ class DataUtil {
 	};
 	
 	pageSetIcon (rootId: string, emoji: string, image: string, callBack?: (message: any) => void) {
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: 'iconEmoji', value: emoji },
 			{ key: 'iconImage', value: image },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetName (rootId: string, name: string, callBack?: (message: any) => void) {
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: 'name', value: name },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetCover (rootId: string, type: I.CoverType, coverId: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
 		y = Number(y) || 0;
 		scale = Number(scale) || 0;
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'coverType', value: type },
 			{ key: 'coverId', value: coverId },
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
 		y = Number(y) || 0;
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
-		], callBack);
+		];
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
 		scale = Number(scale) || 0;
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'coverScale', value: scale },
-		], callBack);
+		];
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		done = Boolean(done);
-		
-		C.BlockSetDetails(rootId, [ 
+
+		const details = [ 
 			{ key: 'done', value: done },
-		], callBack);
+		];
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
 		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
 
-		C.BlockSetDetails(rootId, [ 
+		const details = [
 			{ key: 'layout', value: layout },
-		], callBack);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
@@ -418,35 +444,39 @@ class DataUtil {
 
 	menuGetBlockObject () {
 		const { objectTypes } = dbStore;
+		const { config } = commonStore;
 
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
 		];
 
 		let i = 0;
-		for (let type of objectTypes) {
-			ret.push({ 
-				type: I.BlockType.Page, 
-				id: 'object' + i++, 
-				objectTypeUrl: type.url, 
-				iconEmoji: type.iconEmoji, 
-				name: type.name || Constant.default.name, 
-				//description: type.description,
-				isObject: true,
-			});
+		if (config.allowDataview) {
+			for (let type of objectTypes) {
+				ret.push({ 
+					type: I.BlockType.Page, 
+					id: 'object' + i++, 
+					objectTypeUrl: type.url, 
+					iconEmoji: type.iconEmoji, 
+					name: type.name || Constant.default.name, 
+					description: type.description,
+					isObject: true,
+				});
+			};
+		} else {
+			ret.push({ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' });
 		};
-		
+
+		ret.push({ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' });
 		return ret.map(this.menuMapperBlock);
 	};
 
 	menuGetBlockRelation () {
 		return [
 			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation default', lang: 'Relation' },
-			{ type: I.BlockType.Relation, id: 'new-relation', icon: 'relation', lang: 'NewRelation' },
 		].map(this.menuMapperBlock);
 	};
 	
@@ -628,12 +658,16 @@ class DataUtil {
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
-				width: Number(vr.width || Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default) || 0,
+				width: this.relationWidth(vr.width, relation.format),
 			});
 		});
 	};
 
-	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View) {
+	relationWidth (width: number, format: I.RelationType): number {
+		return Number(width || Constant.size.dataview.cell[this.relationClass(format)]) || Constant.size.dataview.cell.default;
+	};
+
+	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
 		relation = new M.Relation(relation);
 
 		C.BlockDataviewRelationAdd(rootId, blockId, relation, (message: any) => {
@@ -647,30 +681,41 @@ class DataUtil {
 			} else {
 				relation.relationKey = message.relationKey;
 				relation.isVisible = true;
-				relation.width = Constant.size.dataview.cell[this.relationClass(relation.format)] || Constant.size.dataview.cell.default;
+				relation.width = this.relationWidth(0, relation.format);
 
 				view.relations.push(relation);
+			};
+
+			if (callBack) {
+				callBack(message);
 			};
 
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
 	};
 
-	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View) {
+	dataviewRelationUpdate (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationUpdate(rootId, blockId, relation.relationKey, new M.Relation(relation), (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};
-			//C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+			
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 
-	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View) {
+	dataviewRelationDelete (rootId: string, blockId: string, relationKey: string, view?: I.View, callBack?: (message: any) => void) {
 		C.BlockDataviewRelationDelete(rootId, blockId, relationKey, (message: any) => {
 			if (message.error.code || !view) {
 				return;
 			};
 			
+			if (callBack) {
+				callBack(message);
+			};
+
 			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
@@ -687,6 +732,7 @@ class DataUtil {
 				this.pageOpenPopup(object.id);
 				break;
 
+			/*
 			case 'image':
 				commonStore.popupOpen('preview', {
 					data: {
@@ -699,14 +745,17 @@ class DataUtil {
 			case 'file':
 				ipcRenderer.send('urlOpen', commonStore.fileUrl(object.id));
 				break;
+			*/
 		};
 	};
 
 	checkDetails (rootId: string) {
 		const details = blockStore.getDetails(rootId, rootId);
-		const { layout, iconEmoji, iconImage, coverType, coverId } = details;
+		const { iconEmoji, iconImage, coverType, coverId } = details;
+		const layout = Number(details.layout) || I.ObjectLayout.Page;
 		const type = this.schemaField(details.type);
 		const ret: any = {
+			object: details,
 			withCover: (coverType != I.CoverType.None) && coverId,
 			withIcon: false,
 			className: [],
@@ -721,9 +770,9 @@ class DataUtil {
 						ret.className.push('isPage');
 						break;
 
-					case I.ObjectLayout.Contact:
+					case I.ObjectLayout.Human:
 						ret.withIcon = true;
-						ret.className.push('isContact');
+						ret.className.push('isHuman');
 						break;
 
 					case I.ObjectLayout.Task:

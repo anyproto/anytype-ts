@@ -3,6 +3,8 @@
 .menus {
 	.menu.menuDataviewFilter { width: 400px; }
 	.menu.menuDataviewFilter {
+		.content { max-height: 350px; }
+
 		.item { padding: 4px 40px 4px 10px; line-height: 28px; position: relative; white-space: nowrap; }
 		.item {
 			.icon.dnd { vertical-align: top; margin-top: 4px; }
@@ -12,7 +14,10 @@
 				user-select: text;
 			}
 
-			.icon.checkbox { width: 24px; height: 24px; margin-top: 3px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+			.icon.checkbox { 
+				width: 32px; height: 28px; margin: 0px; background-image: url('~img/icon/dataview/checkbox0.svg'); 
+				border-radius: 4px; border: solid 1px #d2d0c2;
+			}
 			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
 			.select { vertical-align: top; max-width: 150px; overflow: hidden; }
@@ -23,11 +28,12 @@
 			.select {
 				.element { display: inline-block; margin-right: 6px; line-height: 20px; }
 				.element {
-					.name { max-width: calc(100% - 24px); }
+					.iconObject { flex-shrink: 0; }
+					.name { width: 100%; @include text-overflow-nw; }
 					.tagItem { vertical-align: top; margin-top: 1px; }
 				}
 			}
-			.select.isList { margin: 0px; }
+			.select.isList { width: 150px; margin: 0px; }
 			.select.isList.withValues { padding-right: 0px; }
 
 			.txt { height: 28px; line-height: 28px; margin-right: 8px; display: inline-block; vertical-align: top; }

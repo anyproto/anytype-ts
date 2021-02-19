@@ -27,8 +27,11 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 
+import MenuRelationSuggest from './relation/suggest';
+
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
+import MenuBlockRelationView from './block/relation/view';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -54,6 +57,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
 const BORDER = 12;
 
 class Menu extends React.Component<Props, {}> {
@@ -98,8 +102,11 @@ class Menu extends React.Component<Props, {}> {
 			blockCover:				 MenuBlockCover,
 			blockMention:			 MenuBlockMention,
 
+			relationSuggest:		 MenuRelationSuggest,
+
 			blockRelationEdit:		 MenuBlockRelationEdit,
 			blockRelationList:		 MenuBlockRelationList,
+			blockRelationView:		 MenuBlockRelationView,
 			
 			dataviewRelationList:	 MenuDataviewRelationList,
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -172,7 +179,7 @@ class Menu extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		win.on('resize.menu', () => { this.position(); });
+		win.on('resize.' + this.getId(), () => { this.position(); });
 
 		if (commonStore.popupIsOpen()) {
 			node.addClass('fromPopup');
@@ -192,7 +199,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.menu');
+		$(window).unbind('resize.' + this.getId());
 	};
 	
 	animate () {
@@ -211,7 +218,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlip } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -249,7 +256,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top - height + offsetY;
 					
 					// Switch
-					if (!noFlip && (y <= BORDER)) {
+					if (!noFlipY && (y <= BORDER)) {
 						y = offset.top + eh - offsetY;
 					};
 					break;
@@ -262,7 +269,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top + eh + offsetY;
 
 					// Switch
-					if (!noFlip && (y >= wh - height - BORDER)) {
+					if (!noFlipY && (y >= wh - height - BORDER)) {
 						y = offset.top - height - offsetY;
 					};
 					break;
@@ -271,6 +278,11 @@ class Menu extends React.Component<Props, {}> {
 			switch (horizontal) {
 				case I.MenuDirection.Left:
 					x += offsetX;
+
+					// Switch
+					if (!noFlipX && (x >= ww - width - BORDER)) {
+						x = offset.left - width;
+					};
 					break;
 
 				case I.MenuDirection.Center:
@@ -279,6 +291,11 @@ class Menu extends React.Component<Props, {}> {
 
 				case I.MenuDirection.Right:
 					x -= width + offsetX - ew;
+
+					// Switch
+					if (!noFlipX && (x <= BORDER)) {
+						x = offset.left + ew;
+					};
 					break;
 			};
 
@@ -288,7 +305,7 @@ class Menu extends React.Component<Props, {}> {
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 		
-			y = Math.max(BORDER, y);
+			y = Math.max(Constant.size.header + 2, y);
 			y = Math.min(wh - height - BORDER, y);
 
 			let css: any = { left: x, top: y };

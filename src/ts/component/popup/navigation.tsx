@@ -13,11 +13,7 @@ interface Props extends I.Popup {
 
 interface State {
 	pageId: string;
-	showIcon: boolean;
-	expanded: boolean;
 	loading: boolean;
-	filter: string;
-	pages: I.PageInfo[];
 	info: I.PageInfo;
 	pagesIn: I.PageInfo[];
 	pagesOut: I.PageInfo[];
@@ -27,8 +23,7 @@ interface State {
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
-const HEIGHT = 64;
-const HEIGHT_EXPANDED = 96;
+const HEIGHT = 96;
 
 enum Panel { 
 	Left = 1, 
@@ -42,22 +37,14 @@ class PopupNavigation extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		pageId: '',
-		showIcon: false,
-		expanded: false,
 		loading: false,
-		filter: '',
-		pages: [] as I.PageInfo[],
 		info: null,
 		pagesIn: [] as I.PageInfo[],
 		pagesOut: [] as I.PageInfo[],
 		n: 0,
 	};
-	ref: any = null;
 	timeout: number = 0;
-	disableFirstKey: boolean = false;
 	panel: Panel = Panel.Left;
-	focused: boolean = false;
-	cache: any = {};
 	cacheIn: any = {};
 	cacheOut: any = {};
 	focus: boolean = false;
@@ -66,27 +53,20 @@ class PopupNavigation extends React.Component<Props, State> {
 	constructor (props: any) {
 		super (props);
 
-		this.onKeyDownSearch = this.onKeyDownSearch.bind(this);
-		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
 		this.onConfirm = this.onConfirm.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onOver = this.onOver.bind(this);
 	};
 	
 	render () {
-		const { pageId, expanded, filter, info, pagesIn, pagesOut, loading, showIcon, n } = this.state;
+		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { type, rootId, blockId } = data;
 		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
-		const pages = this.getItems();
 
 		let confirm = '';
-		let iconSearch = null;
 		let iconHome = (
 			<div className="iconObject c48">
 				<div className="iconEmoji c48">
@@ -94,16 +74,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
-
-		if (showIcon) {
-			if (isRoot) {
-				iconSearch = <Icon key="icon-home" className="home big" />;
-			} else {
-				iconSearch = <IconObject object={details} />;
-			};
-		} else {
-			iconSearch = <Icon key="icon-search" className="search" />;
-		};
 
 		switch (type) {
 			default:
@@ -120,21 +90,6 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 		};
 
-		const head = (
-			<form id="head" className="head" onSubmit={this.onSubmit}>
-				{iconSearch}
-				<Input 
-					ref={(ref: any) => { this.ref = ref; }} 
-					value={details.name} 
-					placeHolder={translate('popupNavigationPlaceholder')} 
-					onKeyDown={this.onKeyDownSearch} 
-					onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-				/>
-			</form>
-		);
-
 		const Item = (item: any) => {
 			let { name } = item.details || {};
 			let isRoot = item.id == root;
@@ -148,7 +103,7 @@ class PopupNavigation extends React.Component<Props, State> {
 							<div className="descr">{item.snippet}</div>
 						</div>
 					</div>
-					<Icon className="arrow" onClick={(e: any) => { this.onClickArrow(e, item); }} />
+					<Icon className="arrow" />
 				</div>
 			);
 		};
@@ -172,9 +127,11 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		const ItemEmpty = (item: any) => {
 			return (
-				<div className="item empty">
-					<div className="name">{item.name}</div>
-					<Icon className="arrow" />
+				<div className="row">
+					<div className="item empty">
+						<div className="name">{item.name}</div>
+						<Icon className="arrow" />
+					</div>
 				</div>
 			);
 		};
@@ -218,61 +175,18 @@ class PopupNavigation extends React.Component<Props, State> {
 		return (
 			<div>
 				{loading ? <Loader /> : ''}
-				{expanded ? (
-					<React.Fragment>
-						<div key="sides" className="sides">
-							<div id={'panel-' + Panel.Left} className="items left">
-								{!isRoot ? (
-									<React.Fragment>
-										<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
-										{!pagesIn.length ? (
-											<ItemEmpty name={translate('popupNavigationEmptyTo')} />
-										) : (
-											<InfiniteLoader
-												rowCount={pagesIn.length}
-												loadMoreRows={() => {}}
-												isRowLoaded={({ index }) => index < pagesIn.length}
-											>
-												{({ onRowsRendered, registerChild }) => (
-													<AutoSizer className="scrollArea">
-														{({ width, height }) => (
-															<List
-																ref={registerChild}
-																width={width + 20}
-																height={height - 35}
-																deferredMeasurmentCache={this.cacheIn}
-																rowCount={pagesIn.length}
-																rowHeight={HEIGHT_EXPANDED}
-																rowRenderer={(param: any) => { 
-																	param.panel = Panel.Left;
-																	return rowRenderer(pagesIn, this.cacheIn, param); 
-																}}
-																onRowsRendered={onRowsRendered}
-																overscanRowCount={10}
-																scrollToIndex={this.panel == Panel.Left ? n : 0}
-															/>
-														)}
-													</AutoSizer>
-												)}
-											</InfiniteLoader>
-										)}
-									</React.Fragment>
-								) : ''}
-							</div>
-
-							<div id={'panel-' + Panel.Center} className="items center">
-								{info ? <Selected {...info} /> : ''}
-							</div>
-
-							<div id={'panel-' + Panel.Right} className="items right">
-								<div className="sideName">{translate('popupNavigationLinkTo')}</div>
-								{!pagesOut.length ? (
-									<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
+				<div key="sides" className="sides">
+					<div id={'panel-' + Panel.Left} className="items left">
+						{!isRoot ? (
+							<React.Fragment>
+								<div className="sideName">{translate('popupNavigationLinkFrom')}</div>
+								{!pagesIn.length ? (
+									<ItemEmpty name={translate('popupNavigationEmptyTo')} />
 								) : (
 									<InfiniteLoader
-										rowCount={pagesOut.length}
+										rowCount={pagesIn.length}
 										loadMoreRows={() => {}}
-										isRowLoaded={({ index }) => index < pagesOut.length}
+										isRowLoaded={({ index }) => index < pagesIn.length}
 									>
 										{({ onRowsRendered, registerChild }) => (
 											<AutoSizer className="scrollArea">
@@ -281,69 +195,65 @@ class PopupNavigation extends React.Component<Props, State> {
 														ref={registerChild}
 														width={width + 20}
 														height={height - 35}
-														deferredMeasurmentCache={this.cacheOut}
-														rowCount={pagesOut.length}
-														rowHeight={HEIGHT_EXPANDED}
+														deferredMeasurmentCache={this.cacheIn}
+														rowCount={pagesIn.length}
+														rowHeight={HEIGHT}
 														rowRenderer={(param: any) => { 
-															param.panel = Panel.Right;
-															return rowRenderer(pagesOut, this.cacheOut, param); 
+															param.panel = Panel.Left;
+															return rowRenderer(pagesIn, this.cacheIn, param); 
 														}}
 														onRowsRendered={onRowsRendered}
 														overscanRowCount={10}
-														scrollToIndex={this.panel == Panel.Right ? n : 0}
+														scrollToIndex={this.panel == Panel.Left ? n : 0}
 													/>
 												)}
 											</AutoSizer>
 										)}
 									</InfiniteLoader>
 								)}
-							</div>
-						</div>
-					</React.Fragment>
-				) : (
-					<React.Fragment>
-						{head}
+							</React.Fragment>
+						) : ''}
+					</div>
 
-						{!pages.length && !loading ? (
-							<div id="empty" key="empty" className="empty">
-								<div 
-									className="txt" 
-									dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('popupNavigationEmptyFilter'), filter) }} 
-								/>
-							</div>
+					<div id={'panel-' + Panel.Center} className="items center">
+						{info ? <Selected {...info} /> : ''}
+					</div>
+
+					<div id={'panel-' + Panel.Right} className="items right">
+						<div className="sideName">{translate('popupNavigationLinkTo')}</div>
+						{!pagesOut.length ? (
+							<ItemEmpty name={translate('popupNavigationEmptyFrom')} />
 						) : (
-							<div id={'panel-' + Panel.Left} key="items" className="items left">
-								<InfiniteLoader
-									rowCount={pages.length}
-									loadMoreRows={() => {}}
-									isRowLoaded={({ index }) => index < pages.length}
-								>
-									{({ onRowsRendered, registerChild }) => (
-										<AutoSizer className="scrollArea">
-											{({ width, height }) => (
-												<List
-													ref={registerChild}
-													width={width}
-													height={height}
-													deferredMeasurmentCache={this.cache}
-													rowCount={pages.length}
-													rowHeight={HEIGHT}
-													rowRenderer={(param: any) => { 
-														param.panel = Panel.Left;
-														return rowRenderer(pages, this.cache, param); 
-													}}
-													onRowsRendered={onRowsRendered}
-													overscanRowCount={10}
-													scrollToIndex={n}
-												/>
-											)}
-										</AutoSizer>
-									)}
-								</InfiniteLoader>
-							</div>
+							<InfiniteLoader
+								rowCount={pagesOut.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => index < pagesOut.length}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={registerChild}
+												width={width + 20}
+												height={height - 35}
+												deferredMeasurmentCache={this.cacheOut}
+												rowCount={pagesOut.length}
+												rowHeight={HEIGHT}
+												rowRenderer={(param: any) => { 
+													param.panel = Panel.Right;
+													return rowRenderer(pagesOut, this.cacheOut, param); 
+												}}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToIndex={this.panel == Panel.Right ? n : 0}
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
 						)}
-					</React.Fragment>
-				)}
+					</div>
+				</div>
 			</div>
 		);
 	};
@@ -351,54 +261,24 @@ class PopupNavigation extends React.Component<Props, State> {
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { expanded, rootId, disableFirstKey } = data;
+		const { rootId } = data;
 
-		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
 
 		this.setCrumbs(rootId);
-		this.initSize(expanded);
-		this.initSearch(rootId);
-		this.focus = true;
-		this.select = true;
+		this.setState({ pageId: rootId });
+		this.loadPage(rootId);
 
-		this.setState({ pageId: rootId, expanded: expanded, showIcon: true });
-		this.loadSearch();
-		
-		if (expanded) {
-			this.loadPage(rootId);
-		};
-
+		this.resize();
 		this.rebind();
 		focus.clear(true);
 	};
 	
 	componentDidUpdate (prevProps: any, prevState: any) {
-		const { expanded, pages, pagesIn, pagesOut, filter } = this.state;
+		const { pagesIn, pagesOut } = this.state;
 
-		if (filter != prevState.filter) {
-			this.loadSearch();
-			return;
-		};
-
-		this.initSize(expanded);
+		this.resize();
 		this.setActive();
-
-		if (this.ref) {
-			if (this.focus) {
-				this.ref.focus();
-			};
-			if (this.select) {
-				this.ref.select();
-				this.select = false;
-			};
-		};
-
-		this.cache = new CellMeasurerCache({
-			fixedWidth: true,
-			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (pages[i] || {}).id; },
-		});
 
 		this.cacheIn = new CellMeasurerCache({
 			fixedWidth: true,
@@ -435,31 +315,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		$(window).unbind('keydown.navigation resize.navigation');
 	};
 	
-	initSize (expanded: boolean) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const obj = $('#popupNavigation #innerWrap');
-		expanded ? obj.addClass('expanded') : obj.removeClass('expanded');
-		this.resize();
-	};
-
-	initSearch (id: string) {
-		if (!id) {
-			return;
-		};
-
-		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, id);
-		const isRoot = id == root;
-
-		if (this.ref) {
-			this.ref.setValue(isRoot ? 'Home' : details.name);
-			this.ref.select();
-		};
-	};
-
 	resize () {
 		if (!this._isMounted) {
 			return;
@@ -468,13 +323,12 @@ class PopupNavigation extends React.Component<Props, State> {
 		const platform = Util.getPlatform();
 
 		raf(() => {
-			const { expanded } = this.state;
 			const win = $(window);
 			const obj = $('#popupNavigation #innerWrap');
 			const items = obj.find('.items');
 			const sides = obj.find('.sides');
 			const empty = obj.find('#empty');
-			const offset = expanded ? 32 : 0;
+			const offset = 32;
 			const wh = win.height();
 			const ww = win.width();
 			
@@ -484,7 +338,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			};
 
 			let sh = oh - offset;
-			let width = expanded ? Math.min(1136, Math.max(896, ww - 128)) : 400;
+			let width = Math.min(1136, Math.max(896, ww - 128));
 
 			sides.css({ height: sh });
 			items.css({ height: sh });
@@ -493,60 +347,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		});
 	};
 	
-	onSubmit (e: any) {
-		e.preventDefault();
-		this.onKeyUpSearch(e, true);
-	};
-
-	onFocus () {
-		this.focused = true;
-	};
-
-	onBlur () {
-		this.focused = false;
-	};
-
 	onKeyDown (e: any) {
 		const items = this.getItems();
 		const l = items.length;
 
-		let { expanded, n } = this.state;
+		let { n } = this.state;
 		let k = e.key.toLowerCase();
 
 		keyboard.disableMouse(true);
-
-		if (!expanded) {
-			if (k == Key.tab) {
-				k = e.shiftKey ? Key.up : Key.down;
-			};
-
-			if ([ Key.left, Key.right ].indexOf(k) >= 0) {
-				return;
-			};
-
-			if ((k == Key.down) && (n == -1)) {
-				this.ref.blur();
-				this.focus = false;
-				this.disableFirstKey = true;
-			};
-
-			if ((k == Key.up) && (n == 0)) {
-				this.ref.focus();
-				this.ref.select();
-				this.disableFirstKey = true;
-				this.unsetActive();
-				this.setState({ n: -1 });
-				return;
-			};
-
-			if ((k != Key.down) && this.focused) {
-				return;
-			};
-		} else {
-			if (k == Key.tab) {
-				k = e.shiftKey ? Key.left : Key.right;
-			};
-		};
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -625,21 +433,17 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { info, pages, pagesIn, pagesOut, expanded } = this.state;
+		const { info, pagesIn, pagesOut } = this.state;
 
-		if (expanded) {
-			switch (this.panel) {
-				case Panel.Left:
-					return pagesIn;
-				
-				case Panel.Center:
-					return [ info ];
-	
-				case Panel.Right:
-					return pagesOut;
-			};
-		} else {
-			return pages;
+		switch (this.panel) {
+			case Panel.Left:
+				return pagesIn;
+			
+			case Panel.Center:
+				return [ info ];
+
+			case Panel.Right:
+				return pagesOut;
 		};
 	};
 
@@ -678,71 +482,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 	};
 
-	onKeyDownSearch (e: any) {
-		const { expanded, showIcon } = this.state;
-		const newState: any = {};
-
-		if (expanded) {
-			newState.expanded = false;
-		};
-		if (showIcon) {
-			newState.showIcon = false;
-		};
-		if (Util.objectLength(newState)) {
-			this.setState(newState);
-		};
-	};
-	
-	onKeyUpSearch (e: any, force: boolean) {
-		if (this.disableFirstKey) {
-			this.disableFirstKey = false;
-			return;
-		};
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
-		}, force ? 0 : 50);
-	};
-
-	loadSearch () {
-		const { param } = this.props;
-		const { data } = param;
-		const { type, skipId } = data;
-		const { filter } = this.state;
-		const { config } = commonStore;
-		const { root } = blockStore;
-
-		this.setState({ loading: true, n: -1 });
-		this.panel = Panel.Left;
-
-		let pages: I.PageInfo[] = [];
-		C.NavigationListObjects(type, filter, 0, 100000000, (message: any) => {
-			if (message.error.code) {
-				this.setState({ loading: false });
-				return;
-			};
-
-			for (let page of message.objects) {
-				if ((skipId && (page.id == skipId)) || page.id == root) {
-					continue;
-				};
-
-				page = this.getPage(page);
-				if (!this.filterMapper(page, config)) {
-					continue;
-				};
-
-				pages.push(page);
-			};
-
-			if (this.ref) {
-				this.ref.focus();
-			};
-			this.setState({ pages: pages, loading: false });
-		});
-	};
-
 	loadPage (id: string) {
 		const { config } = commonStore;
 		const filter = (it: I.PageInfo) => { return this.filterMapper(it, config); };
@@ -763,12 +502,10 @@ class PopupNavigation extends React.Component<Props, State> {
 			pagesOut = pagesOut.filter(filter);
 
 			this.panel = Panel.Center;
-			this.initSearch(id);
 			this.setState({ 
 				n: 0,
 				pageId: id,
 				loading: false,
-				expanded: true, 
 				info: this.getPage(message.object.info),
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
@@ -777,7 +514,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: I.PageInfo, config: any) {
-		if (it.details.isArchived || (!config.allowDataview && (it.details.layout == I.ObjectLayout.Set))) {
+		const object = it.details;
+		if (object.isArchived) {
+			return false;
+		};
+		if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Dashboard ].indexOf(object.layout) < 0)) {
 			return false;
 		};
 		return true;
@@ -790,17 +531,8 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: I.PageInfo) {
-		const { expanded } = this.state;
-
 		e.stopPropagation();
-		expanded ? this.loadPage(item.id) : this.onConfirm(e, item);
-	};
-
-	onClickArrow (e: any, item: I.PageInfo) {
-		const { expanded } = this.state;
-		if (!expanded) {
-			this.loadPage(item.id);
-		};
+		this.loadPage(item.id);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
@@ -875,10 +607,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		return ret;
-	};
-
-	onSearch () {
-		this.setState({ expanded: false });
 	};
 	
 	getPage (page: any): I.PageInfo {

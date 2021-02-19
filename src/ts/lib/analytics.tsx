@@ -82,7 +82,6 @@ class Analytics {
 				break;
 
 			case 'BlockCreate':
-			case 'BlockReplace':
 				let block = new M.Block(Mapper.From.Block(data.getBlock()));
 				
 				param.type = block.type;

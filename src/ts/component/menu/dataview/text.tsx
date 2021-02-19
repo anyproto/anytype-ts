@@ -95,7 +95,7 @@ class MenuText extends React.Component<Props, {}> {
 		input.css({ height: 'auto' });
 		const sh = input.get(0).scrollHeight;
 
-		input.css({ height: Math.min(wh - 76, sh) });
+		input.css({ height: Math.min(wh - 78, sh) });
 		input.scrollTop(sh);
 
 		position();

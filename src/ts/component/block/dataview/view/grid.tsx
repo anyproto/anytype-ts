@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -63,9 +63,11 @@ class ViewGrid extends React.Component<Props, {}> {
 							))}
 							{!readOnly ? (
 								<tr>
-									<td className="cell add" colSpan={relations.length + 1} onClick={onRowAdd}>
-										<Icon className="plus" />
-										<div className="name">{translate('blockDataviewNew')}</div>
+									<td className="cell add" colSpan={relations.length + 1}>
+										<div className="btn" onClick={onRowAdd}>
+											<Icon className="plus" />
+											<div className="name">{translate('blockDataviewNew')}</div>
+										</div>
 									</td>
 								</tr>
 							) : null}
@@ -97,12 +99,15 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	bind () {
+		const { menus } = commonStore;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
 		scroll.unbind('.scroll').scroll(() => {
-			win.trigger('resize.menu');
+			for (let menu of menus) {
+				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			};
 		});
 	};
 
@@ -218,21 +223,32 @@ class ViewGrid extends React.Component<Props, {}> {
 
 	onCellAdd (e: any) {
 		const { rootId, block, readOnly, getData, getView } = this.props;
+		const view = getView();
+		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
-		commonStore.menuOpen('dataviewRelationEdit', { 
-			element: '#cell-add',
+		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,
+			element: `#cell-add`,
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Left,
 			data: {
 				readOnly: readOnly,
-				rootId: rootId,
-				blockId: block.id, 
 				getData: getData,
 				getView: getView,
-			},
+				rootId: rootId,
+				blockId: block.id,
+				menuIdEdit: 'dataviewRelationEdit',
+				filter: '',
+				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView());
+				},
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
+				},
+			}
 		});
 	};
 

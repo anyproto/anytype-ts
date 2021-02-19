@@ -55,7 +55,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		let cn = [ 'editorWrapper', check.className ];
 		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
 		
-		if (root && root.isObjectContact()) {
+		if (root && root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
 		};
 

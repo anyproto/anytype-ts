@@ -21,6 +21,7 @@ import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
 import PageMainObjectType from './main/objectType';
+import PageMainRelation from './main/relation';
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -44,6 +45,7 @@ const Components: any = {
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
 	'main/objectType':		 PageMainObjectType,
+	'main/relation':		 PageMainRelation,
 };
 
 interface Props extends RouteComponentProps<any> {};

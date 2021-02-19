@@ -4,7 +4,9 @@ import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
 
-interface Props extends I.Menu { history: any; };
+interface Props extends I.Menu { 
+	history: any; 
+};
 
 interface State {
 	error: string;

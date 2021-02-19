@@ -30,10 +30,10 @@ class MenuSelect extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value } = data;
+		const { filter, value, noFilter } = data;
 		const items = this.getItems();
 		const idx = items.findIndex((it: I.Option) => { return it.id == value; });
-		const withFilter = items.length > LIMIT;
+		const withFilter = !noFilter && (items.length > LIMIT);
 
 		let scrollTo = idx + 1; 
 		if (idx > LIMIT) {
@@ -267,17 +267,26 @@ class MenuSelect extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { position, getId } = this.props;
+		const { position, getId, param } = this.props;
+		const { data } = param;
+		const { noFilter } = data;
 		const items = this.getItems();
 		const obj = $('#' + getId());
 		const content = obj.find('.content');
+
 		const length = Math.max(items.length, 1);
-		const offset = length > LIMIT ? 58 : 16;
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, length * HEIGHT + offset));
+		const withFilter = !noFilter && (length > LIMIT);
+
+		let offset = withFilter ? 50 : 8;
+		if (length <= LIMIT) {
+			offset += 8;
+		};
+
+		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
 
 		content.css({ height: height });
 
-		if (length > LIMIT) {
+		if (withFilter) {
 			obj.addClass('withFilter');
 		};
 		position();

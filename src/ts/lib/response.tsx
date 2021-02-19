@@ -20,6 +20,8 @@ const ConfigGet = (response: any) => {
 		archiveBlockId: response.getArchiveblockid(),
 		profileBlockId: response.getProfileblockid(),
 		gatewayUrl: response.getGatewayurl(),
+		//marketplaceTypeId: response.getMarketplacetypeid(),
+		//marketplaceRelationId: response.getMarketplacerelationid(),
 	};
 };
 
@@ -199,6 +201,14 @@ const BlockSplit = (response: any) => {
 	};
 };
 
+const BlockUpload = (response: any) => {
+	return {};
+};
+
+const BlockRelationAdd = (response: any) => {
+	return {};
+};
+
 const BlockBookmarkFetch = (response: any) => {
 	return {};
 };
@@ -207,10 +217,6 @@ const BlockBookmarkCreateAndFetch = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 	};
-};
-
-const BlockUpload = (response: any) => {
-	return {};
 };
 
 const BlockFileCreateAndUpload = (response: any) => {
@@ -345,6 +351,12 @@ const BlockDataviewRelationAdd = (response: any) => {
 	};
 };
 
+const BlockDataviewRelationListAvailable = (response: any) => {
+	return {
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+	};
+};
+
 const BlockDataviewRecordRelationOptionAdd = (response: any) => {
 	return {
 		option: Mapper.From.SelectOption(response.getOption()),
@@ -408,12 +420,31 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
+const ObjectRelationAdd = (response: any) => {
+	return {
+		relation: Mapper.From.Relation(response.getRelation()),
+	};
+};
+
+const ObjectRelationListAvailable = (response: any) => {
+	return {
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
+	};
+};
+
+const ObjectRelationOptionAdd = (response: any) => {
+	return {
+		option: Mapper.From.SelectOption(response.getOption()),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
 
 	ImageGetBlob,
 	ConfigGet,
+	Export,
 	Shutdown,
 	UploadFile,
 	ProcessCancel,
@@ -451,9 +482,11 @@ export {
 	BlockCopy,
 	BlockCut,
 	BlockPaste,
+	BlockUpload,
+
+	BlockRelationAdd,
 
 	BlockFileCreateAndUpload,
-	BlockUpload,
 	BlockBookmarkFetch,
 	BlockBookmarkCreateAndFetch,
 	
@@ -477,6 +510,7 @@ export {
 	BlockDataviewRecordDelete,
 
 	BlockDataviewRelationAdd,
+	BlockDataviewRelationListAvailable,
 
 	BlockDataviewRecordRelationOptionAdd,
 	BlockDataviewRecordRelationOptionUpdate,
@@ -508,5 +542,8 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectRelationAdd,
+	ObjectRelationListAvailable,
+	ObjectRelationOptionAdd,
 
 };

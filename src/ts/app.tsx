@@ -46,6 +46,7 @@ import 'scss/page/main/edit.scss';
 import 'scss/page/main/history.scss';
 import 'scss/page/main/set.scss';
 import 'scss/page/main/objectType.scss';
+import 'scss/page/main/relation.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -66,11 +67,13 @@ import 'scss/block/iconPage.scss';
 import 'scss/block/iconUser.scss';
 import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
+import 'scss/block/featured.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/archive.scss';
 import 'scss/popup/navigation.scss';
+import 'scss/popup/search.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
 import 'scss/popup/help.scss';
@@ -89,6 +92,7 @@ import 'scss/menu/select.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/search.scss';
 import 'scss/menu/thread.scss';
+import 'scss/menu/relation.scss';
 
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
@@ -139,7 +143,6 @@ const path = require('path');
 const { app } = window.require('electron').remote;
 const version = app.getVersion();
 const userPath = app.getPath('userData');
-
 
 /*
 enableLogging({

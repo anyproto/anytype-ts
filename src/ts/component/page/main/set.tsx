@@ -17,7 +17,7 @@ class PageMainSet extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { objectTypes } = dbStore;
+		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 
 		const Item = (item: any) => {
 			return (
@@ -62,7 +62,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			data: {
 				onCreate: (type: I.ObjectType) => {
 					objectTypes.push(type);
-					this.setState({ objectTypes: objectTypes });
+					dbStore.objectTypesSet(objectTypes);
 				}
 			}
 		});

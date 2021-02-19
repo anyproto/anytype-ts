@@ -32,20 +32,22 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	render () {
 		const { cover } = commonStore;
+		const { config } = commonStore;
 		const { root, profile } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 
 		if (!element) {
 			return null;
 		};
-		
+
 		const details = blockStore.getDetails(profile, profile);
+		const { iconImage, name } = details;
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const list = this.getList();
 		const map = blockStore.getDetailsMap(root);
 		const size = map.size;
-		
+
 		return (
 			<div>
 				<Cover {...cover} />
@@ -59,8 +61,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 						<div className="rightMenu">
 							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
-							<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
-							<IconObject object={details} size={64} tooltip="Your profile" onClick={this.onProfile} />
+							{config.allowDataview ? (
+								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
+							) : ''}
+							<IconObject object={{ ...details, layout: I.ObjectLayout.Human }} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -145,49 +149,52 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const { config } = commonStore;
 
-		if (config.allowDataview) {
-			commonStore.menuOpen('select', { 
-				element: '#button-add',
-				type: I.MenuType.Vertical,
-				offsetX: 0,
-				offsetY: 4,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Center,
-				width: 176,
-				data: {
-					value: '',
-					options: [
-						{ id: 'link', icon: 'existing', name: 'Link to page' },
-						{ id: 'create', icon: 'create', name: 'New set' },
-					],
-					onSelect: (event: any, item: any) => {
-						if (item.id == 'link') {
-							commonStore.popupOpen('navigation', { 
-								preventResize: true,
-								data: { 
-									type: I.NavigationType.Link, 
-									rootId: root,
-									skipId: root,
-									blockId: '',
-									position: I.BlockPosition.Bottom,
-								}, 
-							});
-						};
+		const options = [
+			{ id: 'page', icon: 'page', name: 'Draft' },
+			{ id: 'link', icon: 'existing', name: 'Link to page' },
+		];
 
-						if (item.id == 'create') {
-							history.push('/main/set');
-						};
-					},
-				}
-			});
-		} else {
-			DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				DataUtil.pageOpen(message.targetId);
-			});
+		if (config.allowDataview) {
+			options.push({ id: 'set', icon: 'set', name: 'New set' });
 		};
+
+		commonStore.menuOpen('select', { 
+			element: '#button-add',
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			width: 176,
+			data: {
+				value: '',
+				options: options,
+				onSelect: (event: any, item: any) => {
+					if (item.id == 'page') {
+						DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
+							DataUtil.pageOpen(message.targetId);
+						});
+					};
+
+					if (item.id == 'link') {
+						commonStore.popupOpen('search', { 
+							preventResize: true,
+							data: { 
+								type: I.NavigationType.Link, 
+								rootId: root,
+								skipId: root,
+								blockId: '',
+								position: I.BlockPosition.Bottom,
+							}, 
+						});
+					};
+
+					if (item.id == 'set') {
+						history.push('/main/set');
+					};
+				},
+			}
+		});
 	};
 
 	onMore (e: any, item: any) {
@@ -293,11 +300,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { config } = commonStore;
 
 		return blockStore.getChildren(root, root, (it: any) => {
-			const details = blockStore.getDetails(root, it.content.targetBlockId);
-			if (!config.allowDataview && (it.content.style == I.LinkStyle.Dataview)) {
+			const object = blockStore.getDetails(root, it.content.targetBlockId);
+			if (it.content.style == I.LinkStyle.Archive) {
+				return true;
+			};
+			if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
 				return false;
 			};
-			return !details.isArchived;
+			if (object.isArchived) {
+				return false;
+			};
+			return true;
 		});
 	};
 

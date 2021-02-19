@@ -31,10 +31,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = blockStore.getDetails(rootId, rootId);
+		const { config } = commonStore;
 
 		let sectionPage = null;
-		if (block.isPage()) {
-			const objectType = dbStore.getObjectType(object.type);
+		if (block.isPage() && config.allowDataview) {
+			const objectType = dbStore.getObjectType(object.type, '');
 			const layouts = this.getLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 
@@ -213,7 +214,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getLayouts () {
 		return [
 			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
-			{ id: I.ObjectLayout.Contact, icon: 'contact', name: 'Contact' },
+			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
 			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
 			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
 		];
@@ -279,7 +280,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
-						expanded: true,
 						...data,
 					},
 				});
@@ -313,7 +313,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.Move, 
-						expanded: true,
 						...data,
 					}, 
 				});
@@ -366,7 +365,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const { objectTypes } = dbStore;
+		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;

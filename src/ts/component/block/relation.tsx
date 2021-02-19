@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon, Input, Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -7,6 +8,7 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 interface Props extends I.BlockComponent {};
 
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class BlockRelation extends React.Component<Props, {}> {
@@ -17,6 +19,8 @@ class BlockRelation extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -31,8 +35,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		const details = blockStore.getDetails(rootId, rootId);
 		const relations = dbStore.getRelations(rootId, rootId);
 		const relation = relations.find((it: any) => { return it.relationKey == key; });
-		const isNew = (block.fields || {}).isNew;
-		const placeHolder = isNew ? 'New relation' : 'Relation';
 		const idPrefix = 'blockRelationCell';
 		const id = DataUtil.cellId(idPrefix, key, '0');
 
@@ -42,11 +44,13 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info">
-							<Icon className="relation default" />
+							<Icon key="icon-default" className="relation default" />
 							<Input 
-								id={'relation-type-' + block.id} 
+								id="input"
 								ref={(ref: any) => { this.refInput = ref; }} 
-								placeHolder={placeHolder} 
+								placeHolder="Create a new relation"
+								onFocus={this.onFocus}
+								onBlur={this.onBlur}
 								onClick={this.onMenu} 
 								onKeyUp={this.onKeyUp} 
 							/>
@@ -56,7 +60,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info">
-							<Icon className={'relation ' + DataUtil.relationClass(relation.format)} />
+							<Icon key="icon-relation" className={'relation ' + DataUtil.relationClass(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
 						<div 
@@ -89,81 +93,43 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any) {
-		const { block } = this.props;
-		const isNew = (block.fields || {}).isNew;
-		const menuId = isNew ? 'select' : 'blockRelationList';
+		commonStore.menuUpdateData('blockRelationList', { filter: this.refInput.getValue() });
+	};
 
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == menuId; });
+	onFocus () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
 
-		if (menu) {
-			if (isNew) {
-				menu.param.data.options = this.getItems();
-			} else {
-				menu.param.data.filter = this.refInput.getValue();
-			};
-			commonStore.menuUpdate(menuId, menu.param);
-		};
+		input.attr({ placeHolder: 'Relation search' });
+	};
+
+	onBlur () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		input.attr({ placeHolder: 'Create a new relation' });
 	};
 
 	onMenu (e: any) {
-		const { rootId, block, readOnly } = this.props;
-		const isNew = (block.fields || {}).isNew;
-		const menuId = isNew ? 'select' : 'blockRelationList';
+		const { rootId, block } = this.props;
 
-		let param: any = {
+		commonStore.menuOpen('blockRelationList', {
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
-			data: {}
-		};
-
-		if (isNew) {
-			param = Object.assign(param, { width: 320 });
-			param.data = Object.assign(param.data, {
-				options: this.getItems(),
-				onSelect: (event: any, item: any) => {
-					if (item.id == 'add') {
-						window.setTimeout(() => { this.onMenuAdd(); }, Constant.delay.menu);
-					} else {
-						C.BlockRelationSetKey(rootId, block.id, item.id);
-					};
-				}
-			});
-		} else {
-			param.data = Object.assign(param.data, {
-				relationKey: '',
-				readOnly: true,
-				rootId: rootId,
-				filter: this.refInput.getValue(),
-				onSelect: (item: any) => {
-					C.BlockRelationSetKey(rootId, block.id, item.relationKey);
-				}
-			});
-		};
-
-		commonStore.menuOpen(menuId, param);
-	};
-
-	onMenuAdd () {
-		const { rootId, block, readOnly } = this.props;
-
-		commonStore.menuOpen('blockRelationEdit', { 
-			element: '#block-' + block.id,
-			type: I.MenuType.Vertical,
-			offsetX: Constant.size.blockMenu,
-			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
 				relationKey: '',
-				readOnly: readOnly,
+				readOnly: true,
 				rootId: rootId,
-				blockId: block.id, 
-			},
+				blockId: block.id,
+				filter: this.refInput.getValue(),
+				onSelect: (item: any) => {
+					C.BlockRelationSetKey(rootId, block.id, item.relationKey);
+				}
+			}
 		});
 	};
 

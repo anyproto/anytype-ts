@@ -10,6 +10,9 @@ class BlockStore {
 	@observable public archiveId: string = '';
 	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
+	@observable public storeIdType: string = '';
+	@observable public storeIdTemplate: string = '';
+	@observable public storeIdRelation: string = '';
 
 	public treeMap: Map<string, any[]> = new Map();
 	public blockMap: Map<string, any[]> = new Map();
@@ -35,6 +38,21 @@ class BlockStore {
 		return this.breadcrumbsId;
 	};
 
+	@computed
+	get storeType (): string {
+		return this.storeIdType;
+	};
+
+	@computed
+	get storeTemplate (): string {
+		return this.storeIdTemplate;
+	};
+
+	@computed
+	get storeRelation (): string {
+		return this.storeIdRelation;
+	};
+
 	@action
 	rootSet (id: string) {
 		this.rootId = String(id || '');
@@ -51,25 +69,42 @@ class BlockStore {
 	};
 
 	@action
+	storeSetType (id: string) {
+		this.storeIdType = String(id || '');
+	};
+
+	@action
+	storeSetTemplate (id: string) {
+		this.storeIdTemplate = String(id || '');
+	};
+
+	@action
+	storeSetRelation (id: string) {
+		this.storeIdRelation = String(id || '');
+	};
+
+	@action
 	breadcrumbsSet (id: string) {
 		this.breadcrumbsId = String(id || '');
 	};
 
 	@action
 	detailsSet (rootId: string, details: any[]) {
-		let map = observable(new Map());
+		let map = this.detailMap.get(rootId);
+		if (!map) {
+			map = observable(new Map());
+			intercept(map as any, (change: any) => {
+				let item = map.get(change.name);
+				if (Util.objectCompare(change.newValue, item)) {
+					return null;
+				};
+				return change;
+			});
+		};
 
 		for (let item of details) {
 			map.set(item.id, item.details);
 		};
-
-		intercept(map as any, (change: any) => {
-			let item = map.get(change.name);
-			if (Util.objectCompare(change.newValue, item)) {
-				return null;
-			};
-			return change;
-		});
 
 		this.detailMap.set(rootId, map);
 	};
@@ -88,7 +123,7 @@ class BlockStore {
 			create = true;
 		};
 
-		map.set(item.id, item.details);
+		map.set(item.id, Object.assign(map.get(item.id) || {}, item.details));
 
 		if (create) {
 			intercept(map as any, (change: any) => {
@@ -101,6 +136,15 @@ class BlockStore {
 
 			this.detailMap.set(rootId, map);
 		};
+	};
+
+	@action
+	detailsUpdateArray (rootId: string, blockId: string, details: any[]) {
+		let obj: any = {};
+		for (let item of details) {
+			obj[item.key] = item.value;
+		};
+		this.detailsUpdate(rootId, { id: blockId, details: obj });
 	};
 
 	@action

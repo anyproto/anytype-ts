@@ -4,12 +4,13 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Tag } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuOptionValues extends React.Component<Props> {
@@ -40,6 +41,7 @@ class MenuOptionValues extends React.Component<Props> {
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
 					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
+					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);
@@ -124,11 +126,12 @@ class MenuOptionValues extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 
-		let value = data.value;
-		if (!value || ('object' != typeof(value))) {
-			value = [];
+		let value = Util.objectCopy(data.value || []);
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
 		};
-		return Util.objectCopy(value);
+		value = value.filter((it: string) => { return it; });
+		return value;
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
@@ -147,19 +150,44 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 		const node = $('#' + getId());
 
-		commonStore.menuOpen('dataviewOptionList', {
-			...param,
-			element: '#' + getId() + ' #item-add',
-			width: 0,
-			offsetX: node.outerWidth(),
+		window.setTimeout(() => {
+			commonStore.menuOpen('dataviewOptionList', {
+				...param,
+				element: '#' + getId() + ' #item-add',
+				width: 0,
+				offsetX: node.outerWidth(),
+				offsetY: -36,
+				vertical: I.MenuDirection.Bottom,
+				noFlipY: true,
+				passThrough: true,
+				onClose: () => { close(); },
+				data: {
+					...data,
+					rebind: this.rebind,
+				},
+			});
+		}, Constant.delay.menu);
+	};
+
+	onEdit (e: any, item: any) {
+		e.stopPropagation();
+
+		const { param, getId } = this.props;
+		const { data } = param;
+
+		commonStore.menuOpen('dataviewOptionEdit', { 
+			type: I.MenuType.Vertical,
+			element: '#' + getId() + ' #item-' + item.id,
+			offsetX: 288,
+			offsetY: 0,
 			vertical: I.MenuDirection.Center,
-			onClose: () => {
-				close();
-			},
+			horizontal: I.MenuDirection.Left,
+			passThrough: true,
+			noFlipY: true,
 			data: {
 				...data,
-				rebind: this.rebind,
-			},
+				option: item,
+			}
 		});
 	};
 
@@ -188,7 +216,8 @@ class MenuOptionValues extends React.Component<Props> {
 		const { onChange } = data;
 
 		let value = this.getValue();
-		value = arrayMove(value, oldIndex, newIndex);
+
+		value = arrayMove(value, oldIndex - 1, newIndex - 1);
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;

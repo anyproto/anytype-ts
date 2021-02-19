@@ -5,7 +5,9 @@ import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {
+	history: any;
+};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
@@ -14,7 +16,7 @@ const $ = require('jquery');
 class MenuRelationEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
-	format: I.RelationType = I.RelationType.Description;
+	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
 	ref: any = null;
 	
@@ -25,6 +27,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		this.onObjectType = this.onObjectType.bind(this);
 		this.onDateSettings = this.onDateSettings.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onOpen = this.onOpen.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -33,7 +36,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	render () {
 		const relation = this.getRelation();
 		const viewRelation = this.getViewRelation();
-		const { objectTypes } = dbStore;
 
 		let opts = null;
 		let ccn = [ 'item' ];
@@ -48,10 +50,23 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			const isDate = relation.format == I.RelationType.Date;
 			const isObject = relation.format == I.RelationType.Object;
 			const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
-			const objectType = objectTypes.find((it: I.ObjectType) => { return it.url == url; });
+			const objectType = dbStore.getObjectType(url, '');
 
 			opts = (
 				<React.Fragment>
+					{isObject ? (
+						<React.Fragment>
+							<div className="sectionName">Type of target object</div>
+							<MenuItemVertical 
+								id="object-type" 
+								name={objectType ? objectType.name : 'Select object type'} 
+								object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+								onClick={this.onObjectType} 
+								arrow={true}
+							/>
+						</React.Fragment>
+					) : ''}
+
 					{isDate ? (
 						<React.Fragment>
 							<div className="line" />
@@ -64,21 +79,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
 						</React.Fragment>
 					) : ''}
-
-					{isObject ? (
-						<React.Fragment>
-							<div className="line" />
-
-							<div className="sectionName">Object type</div>
-							<MenuItemVertical 
-								id="object-type" 
-								name={objectType ? objectType.name : 'Select object type'} 
-								object={objectType} 
-								onClick={this.onObjectType} 
-								arrow={true}
-							/>
-						</React.Fragment>
-					) : ''}
 				</React.Fragment>
 			);
 		};
@@ -89,6 +89,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange} />
 				</div>
+
 				<div className="sectionName">Relation type</div>
 				<MenuItemVertical 
 					id="relation-type" 
@@ -107,6 +108,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{relation ? (
 					<React.Fragment>
 						<div className="line" />
+						<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} />
 						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} />
 						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} />
 					</React.Fragment>
@@ -116,6 +118,9 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidMount() {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const relation = this.getRelation();
 
 		if (relation) {
@@ -123,6 +128,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			this.forceUpdate();
 		};
 
+		if (this.ref && filter) {
+			this.ref.setValue(filter);
+		};
+
+		this.unbind();
 		this.focus();
 		this.checkButton();
 	};
@@ -133,7 +143,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
 		window.clearTimeout(this.timeout);
+
+		if (rebind) {
+			rebind();
+		};
+	};
+
+	unbind () {
+		$(window).unbind('keydown.menu');
 	};
 
 	focus () {
@@ -172,7 +194,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { objectTypes } = dbStore;
+		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
@@ -256,7 +278,15 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		}, Constant.delay.menu);
 	};
 
+	onOpen (e: any) {
+		const { history } = this.props;
+		const relation = this.getRelation();
+
+		history.push('/main/relation/' + relation.relationKey);
+	};
+
 	onCopy (e: any) {
+		let { close } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
 			return;
@@ -278,6 +308,13 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	onSubmit (e: any) {
 		e.preventDefault();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const button = node.find('#button');
+
+		if (button.hasClass('grey')) {
+			return;
+		};
 
 		this.save();
 	};
@@ -323,20 +360,20 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, onChange } = data;
 		const view = getView();
 
-		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view);
+		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view, onChange);
 	};
 
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, onChange } = data;
 		const view = getView();
 		const relation = this.getViewRelation();
 		
-		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view);
+		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view, onChange);
 	};
 
 	getRelation (): I.Relation {

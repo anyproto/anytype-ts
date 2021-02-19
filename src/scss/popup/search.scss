@@ -1,0 +1,57 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupSearch {
+		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
+
+		.content { height: 432px; overflow: visible; transition: none; }
+		.wrap { height: 100%; }
+		.innerWrap { top: 38px; width: 512px; margin-left: -256px; transform: scale3d(1,1,1); transition: none; }
+		.dimmer { transition: none; }
+
+		.head { 
+			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
+			transform: translateX(-50%); padding: 4px 8px;
+		}
+		.head {
+			.iconObject { margin-right: 6px; }
+			.icon {  width: 20px; height: 20px; vertical-align: top; margin-right: 6px; }
+			.icon.search { background-size: 18px 18px; background-image: url('~img/icon/search.svg'); }
+			.input { 
+				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
+				vertical-align: top;
+			}
+		}
+
+		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
+		.empty {
+			b { display: block; font-weight: 400; color: $colorBlack; }
+			.txt { line-height: 24px; color: $colorDarkGrey; }
+		}
+		
+		.items { height: 100%; }
+		.items {
+			.pad { height: 12px; }
+			.item { 
+				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 5px 16px; white-space: nowrap;
+			}
+			.item {
+				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; }
+				.name { @include text-overflow-nw; line-height: 22px; max-width: 200px; display: inline-block; vertical-align: top;  }
+				.descr { 
+					@include text-small; @include text-overflow-nw; line-height: 22px; max-width: 180px; color: #6c6a5f; display: inline-block; vertical-align: top; 
+				}
+
+				.div { width: 2px; height: 22px; line-height: 22px; margin: 0px 6px; display: inline-block; vertical-align: top; }
+				.div {
+					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorDarkGrey; }
+				}
+
+				.element { height: 22px; line-height: 22px; display: inline-block; vertical-align: top; }
+				.element:last-child .div { display: none; }
+			}
+
+			.item.active { background-color: rgba(172, 169, 150, 0.15); }
+		}
+	}
+}

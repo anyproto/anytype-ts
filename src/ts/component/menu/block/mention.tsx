@@ -50,7 +50,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const objectType: any = dbStore.getObjectType(item.type) || {};
+			const objectType: any = dbStore.getObjectType(item.type, '') || {};
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -62,13 +62,15 @@ class MenuBlockMention extends React.Component<Props, State> {
 				>
 					<MenuItemVertical 
 						id={item.id}
-						object={item}
+						object={item.id == 'add' ? undefined : item}
+						icon={item.icon}
 						name={item.name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}
 						caption={objectType.name}
 						style={param.style}
+						className={item.id == 'add' ? 'add' : ''}
 					/>
 				</CellMeasurer>
 			);
@@ -150,7 +152,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	getItems () {
 		return [
-			{ id: 'create', name: 'Create new page', object: {}, skipFilter: true }
+			{ id: 'add', name: 'Create new page', icon: 'plus', skipFilter: true }
 		].concat(this.items);
 	};
 	
@@ -162,6 +164,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { filter } = commonStore;
+		const { config } = commonStore;
+		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -179,12 +183,25 @@ class MenuBlockMention extends React.Component<Props, State> {
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || Constant.default.name);
-				return it;
+				return {
+					...it, 
+					name: String(it.name || Constant.default.name),
+				};
 			}));
+			this.items = this.items.filter(filterMapper);
 
 			this.setState({ loading: false });
 		});
+	};
+
+	filterMapper (it: any, config: any) {
+		if (it.isArchived) {
+			return false;
+		};
+		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
+			return false;
+		};
+		return true;
 	};
 
 	onKeyDown (e: any) {
@@ -272,7 +289,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 			onChange(name + ' ', marks, from, to);
 		};
 
-		if (item.id == 'create') {
+		if (item.id == 'add') {
 			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;

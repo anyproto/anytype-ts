@@ -156,7 +156,7 @@ class BlockCover extends React.Component<Props, State> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		focus.clear(true);
-		root.isObjectContact() ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectHuman() ? this.onAddIconUser() : this.onAddIconPage();
 	};
 	
 	onAddIconPage () {
@@ -273,6 +273,10 @@ class BlockCover extends React.Component<Props, State> {
 		
 		if (canEdit) {
 			const el = this.cover.get(0);
+			if (!el) {
+				return;
+			};
+
 			const cb = () => {
 				const details = blockStore.getDetails(rootId, rootId);
 				const { coverScale } = details;
