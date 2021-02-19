@@ -1667,7 +1667,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
@@ -1676,10 +1675,10 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const wh = win.height();
+		const h = this.getScrollContainer().height();
 		const height = blocks.outerHeight() + blocks.offset().top;
 
-		last.css({ height: Math.max(Constant.size.lastBlock, wh - height) });
+		last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
