@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, Util, translate } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { I, Util, DataUtil, translate } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
 
@@ -127,8 +127,13 @@ class Controls extends React.Component<Props, State> {
 		const { rootId, block, getData, getView } = this.props;
 		const { content } = block;
 		const { views } = content;
+		const view = getView();
+		const newView: any = { 
+			name: Constant.default.viewName,
+			relations: Util.objectCopy(view.relations),
+		};
 
-		C.BlockDataviewViewCreate(rootId, block.id, { name: Constant.default.viewName }, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
 			getData(message.viewId, 0);
 
 			const view = views.find((item: any) => { return item.id == message.viewId; });
