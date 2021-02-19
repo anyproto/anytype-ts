@@ -7,6 +7,8 @@ import { commonStore } from 'ts/store';
 
 interface Props extends I.Relation {};
 
+const $ = require('jquery');
+
 @observer
 class HeadHandle extends React.Component<Props, {}> {
 
@@ -30,6 +32,7 @@ class HeadHandle extends React.Component<Props, {}> {
 	};
 
 	onMouseDown (e: any) {
+		$('.cell.isEditing').removeClass('isEditing');
 		commonStore.menuCloseAll();
 	};
 
