@@ -218,7 +218,7 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlip } = param;
+		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -256,7 +256,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top - height + offsetY;
 					
 					// Switch
-					if (!noFlip && (y <= BORDER)) {
+					if (!noFlipY && (y <= BORDER)) {
 						y = offset.top + eh - offsetY;
 					};
 					break;
@@ -269,7 +269,7 @@ class Menu extends React.Component<Props, {}> {
 					y = offset.top + eh + offsetY;
 
 					// Switch
-					if (!noFlip && (y >= wh - height - BORDER)) {
+					if (!noFlipY && (y >= wh - height - BORDER)) {
 						y = offset.top - height - offsetY;
 					};
 					break;
@@ -280,7 +280,7 @@ class Menu extends React.Component<Props, {}> {
 					x += offsetX;
 
 					// Switch
-					if (!noFlip && (x >= ww - width - BORDER)) {
+					if (!noFlipX && (x >= ww - width - BORDER)) {
 						x = offset.left - width;
 					};
 					break;
@@ -293,7 +293,7 @@ class Menu extends React.Component<Props, {}> {
 					x -= width + offsetX - ew;
 
 					// Switch
-					if (!noFlip && (x <= BORDER)) {
+					if (!noFlipX && (x <= BORDER)) {
 						x = offset.left + ew;
 					};
 					break;

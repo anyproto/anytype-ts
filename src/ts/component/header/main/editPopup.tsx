@@ -97,7 +97,7 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
-			noFlip: true,
+			noFlipY: true,
 			data: {
 				relationKey: '',
 				readOnly: false,

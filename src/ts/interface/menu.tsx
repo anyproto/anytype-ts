@@ -17,7 +17,8 @@ export interface MenuParam {
 	className?: string;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
-	noFlip?: boolean;
+	noFlipX?: boolean;
+	noFlipY?: boolean;
 	onClose?(): void;
 	onOpen?(): void;
 };
