@@ -204,6 +204,7 @@ class DataUtil {
 	pageInit (callBack?: () => void) {
 		C.ConfigGet((message: any) => {
 			const root = message.homeBlockId;
+			const profile = message.profileBlockId;
 			
 			if (!root) {
 				console.error('[pageInit] No root defined');
@@ -221,12 +222,14 @@ class DataUtil {
 				dbStore.objectTypesSet(message.objectTypes);
 			});
 			
-			if (message.profileBlockId) {
-				blockStore.profileSet(message.profileBlockId);
-				C.BlockOpen(message.profileBlockId, (message: any) => {
+			if (profile) {
+				C.BlockOpen(profile, (message: any) => {
 					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 						Util.onErrorUpdate();
+						return;
 					};
+
+					blockStore.profileSet(profile);
 				});
 			};
 

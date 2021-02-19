@@ -39,8 +39,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 		if (!element) {
 			return null;
 		};
-		
+
 		const details = blockStore.getDetails(profile, profile);
+		const { iconImage, name } = details;
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const list = this.getList();
