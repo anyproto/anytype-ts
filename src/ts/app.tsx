@@ -144,7 +144,6 @@ const { app } = window.require('electron').remote;
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 
-
 /*
 enableLogging({
 	predicate: () => true,

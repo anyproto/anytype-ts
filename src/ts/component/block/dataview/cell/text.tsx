@@ -43,11 +43,14 @@ class CellText extends React.Component<Props, State> {
 		const { editing } = this.state;
 		const { index, relation, viewType, getView, getRecord, canEdit } = this.props;
 		const record = getRecord(index);
+		
 		if (!record) {
 			return null;
 		};
 
+		let { iconEmoji, iconImage, layout } = record || {};
 		let viewRelation: any = {};
+
 		if (getView) {
 			viewRelation = getView().getRelation(relation.relationKey);
 		};
@@ -146,6 +149,8 @@ class CellText extends React.Component<Props, State> {
 			if (viewType != I.ViewType.Grid) {
 				value = value || Constant.default.name;
 			};
+
+			console.log('RECORD', JSON.stringify(record, null, 5));
 
 			content = (
 				<React.Fragment>
