@@ -150,8 +150,6 @@ class CellText extends React.Component<Props, State> {
 				value = value || Constant.default.name;
 			};
 
-			console.log('RECORD', JSON.stringify(record, null, 5));
-
 			content = (
 				<React.Fragment>
 					<IconObject 

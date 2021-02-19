@@ -223,7 +223,6 @@ class MenuOptionList extends React.Component<Props, State> {
 			};
 
 			this.onValueAdd(message.option.id);
-			relation.selectDict.push(message.option);
 			this.ref.setValue('');
 		});
 	};
