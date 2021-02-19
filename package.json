@@ -153,7 +153,7 @@
 	},
 	"build": {
 		"generateUpdatesFilesForAllChannels": true,
-		"afterSign": "electron/notarize.js",
+		"afterSign": "./electron/notarize.js",
 		"appId": "com.anytype.anytype2",
 		"compression": "normal",
 		"productName": "Anytype",
