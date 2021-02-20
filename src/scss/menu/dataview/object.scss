@@ -38,13 +38,11 @@
 
 			.icon.delete { 
 				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
-				opacity: 0; z-index: 1;
+				opacity: 0; z-index: 1; transition: none;
 			}
 			.icon.delete:hover { background-color: rgba(172, 169, 150, 0.15); }
-
-			.caption { transition: $transitionFast; }
 		}
-		.item.hover {
+		.item.hover, .item:hover {
 			.caption { opacity: 0; }
 			.icon.delete { opacity: 1; }
 		}

@@ -35,8 +35,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	render () {
 		const relation = this.getRelation();
+		const isDate = this.format == I.RelationType.Date;
+		const isObject = this.format == I.RelationType.Object;
+		const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+		const objectType = dbStore.getObjectType(url, '');
 
-		let opts = null;
 		let ccn = [ 'item' ];
 		if (commonStore.menuIsOpen('dataviewRelationType')) {
 			ccn.push('active');
@@ -45,42 +48,35 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
-		if (relation) {
-			const isDate = relation.format == I.RelationType.Date;
-			const isObject = relation.format == I.RelationType.Object;
-			const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
-			const objectType = dbStore.getObjectType(url, '');
+		const opts = (
+			<React.Fragment>
+				{isObject ? (
+					<React.Fragment>
+						<div className="sectionName">Type of target object</div>
+						<MenuItemVertical 
+							id="object-type" 
+							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+							name={objectType ? objectType.name : 'Select object type'} 
+							onClick={this.onObjectType} 
+							arrow={true}
+						/>
+					</React.Fragment>
+				) : ''}
 
-			opts = (
-				<React.Fragment>
-					{isObject ? (
-						<React.Fragment>
-							<div className="sectionName">Type of target object</div>
-							<MenuItemVertical 
-								id="object-type" 
-								object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
-								name={objectType ? objectType.name : 'Select object type'} 
-								onClick={this.onObjectType} 
-								arrow={true}
-							/>
-						</React.Fragment>
-					) : ''}
+				{isDate ? (
+					<React.Fragment>
+						<div className="line" />
+						<div className="item">
+							<Icon className="clock" />
+							<div className="name">Include time</div>
+							<Switch value={relation ? relation.includeTime : false} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+						</div>
 
-					{isDate ? (
-						<React.Fragment>
-							<div className="line" />
-							<div className="item">
-								<Icon className="clock" />
-								<div className="name">Include time</div>
-								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-							</div>
-
-							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
-						</React.Fragment>
-					) : ''}
-				</React.Fragment>
-			);
-		};
+						<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
+					</React.Fragment>
+				) : ''}
+			</React.Fragment>
+		);
 
 		return (
 			<form onSubmit={this.onSubmit}>

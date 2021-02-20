@@ -156,7 +156,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let param: I.MenuParam = { 
-			element: element,
+			element: `#${id} .cellContent`,
 			offsetX: 0,
 			offsetY: 0,
 			type: I.MenuType.Vertical,
