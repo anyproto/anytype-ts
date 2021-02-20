@@ -20,8 +20,8 @@ const ConfigGet = (response: any) => {
 		archiveBlockId: response.getArchiveblockid(),
 		profileBlockId: response.getProfileblockid(),
 		gatewayUrl: response.getGatewayurl(),
-		//marketplaceTypeId: response.getMarketplacetypeid(),
-		//marketplaceRelationId: response.getMarketplacerelationid(),
+		marketplaceTypeId: response.getMarketplacetypeid(),
+		marketplaceRelationId: response.getMarketplacerelationid(),
 	};
 };
 
