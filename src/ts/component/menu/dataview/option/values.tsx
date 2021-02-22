@@ -67,6 +67,7 @@ class MenuOptionValues extends React.Component<Props> {
 		
 		return (
 			<div>
+				<div className="sectionName">Select an option or add one</div>
 				<List 
 					axis="y" 
 					transitionDuration={150}
