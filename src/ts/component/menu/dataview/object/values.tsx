@@ -160,6 +160,7 @@ class MenuObjectValues extends React.Component<Props> {
 				offsetX: node.outerWidth(),
 				offsetY: -36,
 				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
 				noFlipY: true,
 				onClose: () => { close(); },
 				data: {

@@ -218,6 +218,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
+					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
@@ -232,6 +233,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Object:
 				param = Object.assign(param, {
 					width: width,
+					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					filter: '',
