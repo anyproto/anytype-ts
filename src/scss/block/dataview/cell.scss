@@ -26,7 +26,6 @@
 .cell.isEditing.c-object, .cell.isEditing.c-select {
 	.empty { display: block; }
 	.cellContent { height: 20px !important; padding-right: 1px !important; }
-	.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 }
 
 .cell.isEditing.c-file {

@@ -101,10 +101,10 @@
 		.item {
 			.icon.plus { margin-right: 4px; }
 
-			.info { height: 30px; padding: 5px 5px 5px 2px; border-radius: 4px; transition: background 0.2s ease-in-out; flex-shrink: 0; }
+			.info { height: 32px; padding: 5px 5px 5px 2px; border-radius: 4px; transition: background 0.2s ease-in-out; flex-shrink: 0; }
 			.info:hover { background: rgba(172,169,150,0.15); }
 
-			.cell { padding: 6px; margin-right: 6px; }
+			.cell { padding: 5px 8px; margin-right: 6px; }
 
 			.icon.fav { display: none; margin: 5px 0px 0px 0px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
 			.icon.fav:hover, .icon.fav.active { background-image: url('~img/icon/fav1.svg'); }

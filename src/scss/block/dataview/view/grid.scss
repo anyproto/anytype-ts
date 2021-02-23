@@ -40,7 +40,7 @@
 
 			.cell.c-object, .cell.c-file { padding-right: 0px; }
 			.cellContent.c-object, .cellContent.c-select {
-				.wrap { white-space: nowrap; }
+				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
 
 			tr.active {
