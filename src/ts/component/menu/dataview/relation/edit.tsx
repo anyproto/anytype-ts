@@ -83,7 +83,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
 				<div className="inputWrap">
-					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange} />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} readOnly={this.isReadOnly()} onChange={this.onChange} />
 				</div>
 
 				<div className="sectionName">Relation type</div>
@@ -323,12 +323,18 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const name = this.ref.getValue();
 		const button = node.find('#button');
+		const canSave = name.length && !this.isReadOnly();
 
-		if (name.length) {
+		if (canSave) {
 			button.addClass('orange').removeClass('grey');
 		} else {
 			button.removeClass('orange').addClass('grey');
 		};
+	};
+
+	isReadOnly () {
+		const relation = this.getRelation();
+		return relation && relation.isReadOnly;
 	};
 
 	save () {

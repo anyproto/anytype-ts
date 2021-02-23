@@ -232,7 +232,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				readOnly: readOnly,
 				getData: getData,

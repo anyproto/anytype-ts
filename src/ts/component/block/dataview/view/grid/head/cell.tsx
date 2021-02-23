@@ -48,9 +48,8 @@ class HeadCell extends React.Component<Props, {}> {
 
 	onEdit (e: any) {
 		const { rootId, block, readOnly, getData, getView, relationKey } = this.props;
-		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 
-		if (readOnly || relation.isReadOnly) {
+		if (readOnly) {
 			return;
 		};
 
