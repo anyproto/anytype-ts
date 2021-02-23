@@ -479,8 +479,6 @@ class PopupSearch extends React.Component<Props, State> {
 		let children = blockStore.getChildren(recent, recent).reverse();
 		let ret: any[] = [];
 
-		children = children.filter((it: any) => { return it.content.targetBlockId != rootId; });
-
 		if (children.length) {
 			ret.push({ name: 'Recent objects', isSection: true });
 
@@ -507,14 +505,19 @@ class PopupSearch extends React.Component<Props, State> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { skipId } = data;
-		const { root } = blockStore;
+		const { skipId, rootId } = data;
 		const { config } = commonStore;
 		
 		if (it.isArchived) {
 			return false;
 		};
-		if ((skipId && (it.id == skipId)) || it.id == root) {
+		if (skipId && (it.id == skipId)) {
+			return false;
+		};
+		if (it.id == rootId) {
+			return false;
+		};
+		if (it.layout == I.ObjectLayout.Dashboard) {
 			return false;
 		};
 		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
