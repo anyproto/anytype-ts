@@ -35,7 +35,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sectionPage = null;
 		if (block.isPage() && config.allowDataview) {
-			const objectType = dbStore.getObjectType(object.type, '');
+			const objectType = dbStore.getObjectType(object.type);
 			const layouts = this.getLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 
@@ -372,11 +372,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		const options = objectTypes.map((it: I.ObjectType) => {
 			it.layout = I.ObjectLayout.ObjectType;
-			return { 
-				...it, 
-				object: it, 
-				id: DataUtil.schemaField(it.url), 
-			};
+			return { ...it, object: it };
 		});
 
 		options.sort((c1: any, c2: any) => {

@@ -43,7 +43,7 @@ class ListIndex extends React.Component<Props, {}> {
 			const object = blockStore.getDetails(root, content.targetBlockId);
 			const { _detailsEmpty_, name, layout, iconEmoji, iconImage } = object;
 			const type = DataUtil.schemaField(object.type);
-			const objectType: any = type ? dbStore.getObjectType(object.type, '') : null;
+			const objectType: any = type ? dbStore.getObjectType(object.type) : null;
 			const cn = [ 'item' ];
 
 			if (_detailsEmpty_) {

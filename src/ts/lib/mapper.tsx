@@ -1,5 +1,4 @@
-import { I, M, Decode, Util, Encode } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, M, Decode, DataUtil, Util, Encode } from 'ts/lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -164,7 +163,7 @@ const Mapper = {
 
 		ObjectType: (obj: any): I.ObjectType => {
 			return {
-				url: obj.getUrl(),
+				id: DataUtil.schemaField(obj.getUrl()),
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),

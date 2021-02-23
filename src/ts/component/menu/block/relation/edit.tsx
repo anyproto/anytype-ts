@@ -38,7 +38,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
-		const objectType = dbStore.getObjectType(url, '');
+		const objectType = dbStore.getObjectType(url);
 
 		let ccn = [ 'item' ];
 		if (commonStore.menuIsOpen('dataviewRelationType')) {
@@ -212,11 +212,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 		const options = objectTypes.map((it: I.ObjectType) => {
 			it.layout = I.ObjectLayout.ObjectType;
-			return { 
-				...it, 
-				object: it, 
-				id: DataUtil.schemaField(it.url), 
-			};
+			return { ...it, object: it };
 		});
 
 		options.sort((c1: any, c2: any) => {

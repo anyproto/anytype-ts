@@ -13,7 +13,7 @@ export enum ObjectLayout {
 };
 
 export interface ObjectType {
-	url: string;
+	id: string;
 	name: string;
 	description?: string;
 	layout: ObjectLayout;

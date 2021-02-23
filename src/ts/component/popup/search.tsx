@@ -102,7 +102,7 @@ class PopupSearch extends React.Component<Props, State> {
 
 		const Item = (item: any) => {
 			let isRoot = item.id == root;
-			let objectType = dbStore.getObjectType(item.type, '');
+			let objectType = dbStore.getObjectType(item.type);
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>

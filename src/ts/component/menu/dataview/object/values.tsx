@@ -34,7 +34,7 @@ class MenuObjectValues extends React.Component<Props> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const objectType: any = dbStore.getObjectType(item.type, '') || {};
+			const objectType: any = dbStore.getObjectType(item.type) || {};
 			return (
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />

@@ -11,13 +11,10 @@ class DbStore {
 
 	@computed
 	get objectTypes (): I.ObjectType[] {
-		let types =  Array.from(this.objectTypeMap.values());
+		let types = Array.from(this.objectTypeMap.values());
 
 		types = types.map((it: I.ObjectType) => {
-			return {
-				...it,
-				name: it.name || Constant.default.name,
-			};
+			return { ...it, name: it.name || Constant.default.name };
 		});
 
 		types.sort(DataUtil.sortByName);
@@ -27,7 +24,7 @@ class DbStore {
 	@action
 	objectTypesSet (types: I.ObjectType[]) {
 		for (let type of types) {
-			this.objectTypeMap.set(DataUtil.schemaField(type.url), type);
+			this.objectTypeMap.set(DataUtil.schemaField(type.id), type);
 		};
 	};
 
@@ -152,8 +149,8 @@ class DbStore {
 		return [ rootId, blockId ].join(':');
 	};
 
-	getObjectType (url: string, id: string): I.ObjectType {
-		return this.objectTypeMap.get(id ? id : DataUtil.schemaField(url));
+	getObjectType (id: string): I.ObjectType {
+		return this.objectTypeMap.get(id);
 	};
 
 	getRelations (rootId: string, blockId: string): I.Relation[] {

@@ -33,7 +33,7 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 	render () {
 		const { match } = this.props;
 		const cn = [ 'header', 'headerMainEdit' ];
-		const objectType = dbStore.getObjectType('', match.params.id);
+		const objectType = dbStore.getObjectType(match.params.id);
 
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');
