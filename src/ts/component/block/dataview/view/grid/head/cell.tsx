@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil, keyboard } from 'ts/lib';
 import { SortableElement } from 'react-sortable-hoc';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -49,7 +49,7 @@ class HeadCell extends React.Component<Props, {}> {
 	onEdit (e: any) {
 		const { rootId, block, readOnly, getData, getView, relationKey } = this.props;
 
-		if (readOnly) {
+		if (keyboard.isResizing) {
 			return;
 		};
 
@@ -66,6 +66,7 @@ class HeadCell extends React.Component<Props, {}> {
 				rootId: rootId,
 				blockId: block.id,
 				relationKey: relationKey,
+				readOnly: readOnly,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
 				},

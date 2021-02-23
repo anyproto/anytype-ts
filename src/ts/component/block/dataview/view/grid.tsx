@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
-import { I, C, Util, DataUtil, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -180,6 +180,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		win.unbind('mousemove.cell mouseup.cell');
 		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
 		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
+
+		keyboard.setResize(true);
 	};
 
 	onResizeMove (e: any, id: string) {
@@ -212,6 +214,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		$('body').removeClass('colResize');
 
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
+
+		window.setTimeout(() => { keyboard.setResize(false); }, 15);
 	};
 
 	onRowOver (id: number) {
