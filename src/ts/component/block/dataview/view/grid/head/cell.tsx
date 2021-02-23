@@ -32,9 +32,9 @@ class HeadCell extends React.Component<Props, {}> {
 
 		const Cell = SortableElement((item: any) => {
 			return (
-				<th id={DataUtil.cellId('head', relationKey, '')} className={'cellHead ' + DataUtil.relationClass(relation.format)} style={{ width: width }} onClick={this.onEdit}>
+				<th id={DataUtil.cellId('head', relationKey, '')} className={'cellHead ' + DataUtil.relationClass(relation.format)} style={{ width: width }}>
 					<div className="cellContent">
-						<Handle {...relation} />
+						<Handle {...relation} onClick={this.onEdit} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>
 							<div className="line" />
 						</div>

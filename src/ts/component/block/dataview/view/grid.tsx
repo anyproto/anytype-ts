@@ -215,7 +215,7 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 
-		window.setTimeout(() => { keyboard.setResize(false); }, 15);
+		window.setTimeout(() => { keyboard.setResize(false); }, 50);
 	};
 
 	onRowOver (id: number) {
