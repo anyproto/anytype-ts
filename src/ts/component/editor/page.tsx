@@ -212,8 +212,9 @@ class EditorPage extends React.Component<Props, {}> {
 		if (!lastTargetId || (lastTargetId != rootId)) {
 			cr = crumbs.add(I.CrumbsType.Page, rootId);
 		};
-		
 		crumbs.save(I.CrumbsType.Page, cr);
+		crumbs.addRecent(rootId);
+
 		this.id = rootId;
 
 		C.BlockOpen(this.id, (message: any) => {

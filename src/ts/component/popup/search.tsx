@@ -16,7 +16,7 @@ interface State {
 	showIcon: boolean;
 	loading: boolean;
 	filter: string;
-	pages: I.PageInfo[];
+	pages: any[];
 	n: number;
 };
 
@@ -24,12 +24,6 @@ const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 const HEIGHT = 32;
-
-enum Panel { 
-	Left = 1, 
-	Center = 2, 
-	Right = 3,
-};
 
 @observer
 class PopupSearch extends React.Component<Props, State> {
@@ -40,15 +34,14 @@ class PopupSearch extends React.Component<Props, State> {
 		showIcon: false,
 		loading: false,
 		filter: '',
-		pages: [] as I.PageInfo[],
+		pages: [] as any[],
 		n: 0,
 	};
 	ref: any = null;
 	timeout: number = 0;
 	disableFirstKey: boolean = false;
-	panel: Panel = Panel.Left;
 	focused: boolean = false;
-	cache: any = {};
+	cache: any = null;
 	focus: boolean = false;
 	select: boolean = false;
 	
@@ -62,17 +55,25 @@ class PopupSearch extends React.Component<Props, State> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onOver = this.onOver.bind(this);
+		this.filterMapper = this.filterMapper.bind(this);
 	};
 	
 	render () {
+		if (!this.cache) {
+			return null;
+		};
+
 		const { pageId, filter, loading, showIcon, n } = this.state;
-		const { param, close } = this.props;
-		const { data } = param;
-		const { type, rootId, blockId } = data;
-		const { root, breadcrumbs } = blockStore;
+		const { root, breadcrumbs, recent } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
-		const pages = this.getItems();
+		const items = this.getItems();
+		const childrenIds = blockStore.getChildrenIds(recent, recent);
+
+		for (let id of childrenIds) {
+			const d = blockStore.getDetails(recent, id);
+			const { iconImage, iconEmoji, layout, type, name } = d;
+		};
 
 		const div = (
 			<div className="div">
@@ -100,20 +101,17 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const Item = (item: any) => {
-			let { name } = item.details || {};
 			let isRoot = item.id == root;
-			let objectType = dbStore.getObjectType(item.details.type, '');
+			let objectType = dbStore.getObjectType(item.type, '');
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
-					{isRoot ? iconHome : <IconObject object={item.details} size={18} /> }
+					{isRoot ? iconHome : <IconObject object={item} size={18} /> }
 					
-					{name ? (
-						<div className="element">
-							<div className="name element">{name}</div>
-							{div}
-						</div>
-					) : ''}
+					<div className="element">
+						<div className="name element">{item.name}</div>
+						{div}
+					</div>
 
 					{objectType ? (
 						<div className="element">
@@ -132,19 +130,26 @@ class PopupSearch extends React.Component<Props, State> {
 			);
 		};
 
-		const rowRenderer = (list: I.PageInfo[], cache: any, { index, key, style, parent, panel }) => {
+		const rowRenderer = ({ index, key, style, parent, panel }) => {
+			const item = items[index];
 			return (
 				<CellMeasurer
 					key={key}
 					parent={parent}
-					cache={cache}
+					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
 					hasFixedWidth={() => {}}
 				>
-					<div className="row" style={style}>
-						<Item {...list[index]} index={index} panel={panel} />
-					</div>
+					{item.isSection ? (
+						<div className="section" style={style}>
+							<div className="name">{item.name}</div>
+						</div>
+					) : (
+						<div className="row" style={style}>
+							<Item {...item} index={index} panel={panel} />
+						</div>
+					)}
 				</CellMeasurer>
 			);
 		};
@@ -166,7 +171,7 @@ class PopupSearch extends React.Component<Props, State> {
 					/>
 				</form>
 
-				{!pages.length && !loading ? (
+				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
 						<div 
 							className="txt" 
@@ -174,11 +179,11 @@ class PopupSearch extends React.Component<Props, State> {
 						/>
 					</div>
 				) : (
-					<div id={'panel-' + Panel.Left} key="items" className="items left">
+					<div key="items" className="items left">
 						<InfiniteLoader
-							rowCount={pages.length}
+							rowCount={items.length}
 							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => index < pages.length}
+							isRowLoaded={({ index }) => index < items.length}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -188,12 +193,9 @@ class PopupSearch extends React.Component<Props, State> {
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
-											rowCount={pages.length}
+											rowCount={items.length}
 											rowHeight={HEIGHT}
-											rowRenderer={(param: any) => { 
-												param.panel = Panel.Left;
-												return rowRenderer(pages, this.cache, param); 
-											}}
+											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
 											scrollToIndex={n}
@@ -230,7 +232,7 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate (prevProps: any, prevState: any) {
-		const { pages, filter } = this.state;
+		const { filter } = this.state;
 
 		if (filter != prevState.filter) {
 			this.load();
@@ -250,10 +252,11 @@ class PopupSearch extends React.Component<Props, State> {
 			};
 		};
 
+		const items = this.getItems();
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (pages[i] || {}).id; },
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 	};
 	
@@ -374,40 +377,6 @@ class PopupSearch extends React.Component<Props, State> {
 				this.setActive();
 				break;
 
-			case Key.left:
-				this.setState({ n: 0 });
-				this.panel--;
-				if (this.panel < Panel.Left) {
-					this.panel = Panel.Right;
-				};
-
-				if ((this.panel == Panel.Left) && !this.getItems().length) {
-					this.panel = Panel.Right;
-				};
-				if ((this.panel == Panel.Right) && !this.getItems().length) {
-					this.panel = Panel.Center;
-				};
-
-				this.setActive();
-				break;
-				
-			case Key.right:
-				this.setState({ n: 0 });
-				this.panel++;
-				if (this.panel > Panel.Right) {
-					this.panel = Panel.Left;
-				};
-				
-				if ((this.panel == Panel.Left) && !this.getItems().length) {
-					this.panel = Panel.Center;
-				};
-				if ((this.panel == Panel.Right) && !this.getItems().length) {
-					this.panel = Panel.Left;
-				};
-
-				this.setActive();
-				break;
-				
 			case Key.enter:
 			case Key.space:
 				const item = items[n];
@@ -424,11 +393,6 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 	};
 
-	getItems () {
-		const { pages } = this.state;
-		return pages;
-	};
-
 	setActive (item?: any) {
 		const { n } = this.state;
 		if (!item) {
@@ -440,14 +404,10 @@ class PopupSearch extends React.Component<Props, State> {
 			return;
 		};
 
-		if (item.panel) {
-			this.panel = item.panel;
-		};
-
 		this.unsetActive();
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
+		node.find(`#item-${item.id}`).addClass('active');
 	};
 
 	unsetActive () {
@@ -458,8 +418,7 @@ class PopupSearch extends React.Component<Props, State> {
 	onOver (e: any, item: any) {
 		const { n } = this.state;
 		
-		if (!keyboard.isMouseDisabled && ((item.panel != this.panel) || (item.index != n))) {
-			this.panel = item.panel;
+		if (!keyboard.isMouseDisabled && (item.index != n)) {
 			this.setState({ n: item.index });
 		};
 	};
@@ -489,47 +448,71 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	load () {
-		const { param } = this.props;
-		const { data } = param;
-		const { type, skipId } = data;
 		const { filter } = this.state;
-		const { config } = commonStore;
-		const { root } = blockStore;
-		const filterMapper = (it: I.PageInfo) => { return this.filterMapper(it, config); };
+		const filters = [];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
 
 		this.setState({ loading: true, n: -1 });
-		this.panel = Panel.Left;
 
-		let pages: I.PageInfo[] = [];
-		C.NavigationListObjects(type, filter, 0, 100000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, 0, 100000000, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
 			};
 
-			for (let page of message.objects) {
-				if ((skipId && (page.id == skipId)) || page.id == root) {
-					continue;
-				};
-
-				pages.push(this.getPage(page));
-			};
-
-			pages = pages.filter(filterMapper);
-
 			if (this.ref) {
 				this.ref.focus();
 			};
-			this.setState({ pages: pages, loading: false });
+			this.setState({ pages: message.records, loading: false });
 		});
 	};
 
-	filterMapper (it: I.PageInfo, config: any) {
-		const object = it.details;
-		if (object.isArchived) {
+	getItems () {
+		const { pages } = this.state;
+		const { recent } = blockStore;
+		const children = blockStore.getChildren(recent, recent).reverse();
+
+		let ret: any[] = [];
+
+		if (children.length) {
+			ret.push({ name: 'Recent objects', isSection: true });
+
+			for (let child of children) {
+				const details = blockStore.getDetails(recent, child.content.targetBlockId);
+				ret.push({ ...details, id: child.content.targetBlockId });
+			};
+		};
+
+		ret.push({ name: 'Search results', isSection: true });
+		ret = ret.concat(pages);
+
+		ret = ret.filter(this.filterMapper);
+		ret = ret.map((it: any) => {
+			return { ...it, name: String(it.name || Constant.default.name) };
+		});
+		return ret;
+	};
+
+	filterMapper (it: any) {
+		if (it.isSection) {
+			return true;
+		};
+
+		const { param } = this.props;
+		const { data } = param;
+		const { skipId } = data;
+		const { root } = blockStore;
+		const { config } = commonStore;
+		
+		if (it.isArchived) {
 			return false;
 		};
-		if (!config.allowDataview && (object.layout != I.ObjectLayout.Page)) {
+		if ((skipId && (it.id == skipId)) || it.id == root) {
+			return false;
+		};
+		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
 			return false;
 		};
 		return true;
@@ -539,6 +522,9 @@ class PopupSearch extends React.Component<Props, State> {
 		let cr = crumbs.get(I.CrumbsType.Page);
 		cr = crumbs.add(I.CrumbsType.Page, id);
 		crumbs.save(I.CrumbsType.Page, cr);
+
+		let recent = crumbs.get(I.CrumbsType.Recent);
+		crumbs.save(I.CrumbsType.Recent, recent);
 	};
 	
 	onClick (e: any, item: I.PageInfo) {
@@ -547,14 +533,10 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
-		const { param, history } = this.props;
+		const { param, history, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
 		const { root } = blockStore;
-
-		if (!this.withButtons(item)) {
-			return;
-		};
 
 		switch (type) {
 			case I.NavigationType.Go:
@@ -582,53 +564,9 @@ class PopupSearch extends React.Component<Props, State> {
 				break;
 		};
 
-		this.props.close();
+		close();
 	};
 
-	withButtons (item: I.PageInfo) {
-		const { param } = this.props;
-		const { data } = param;
-		const { type, rootId, blockId, blockIds } = data;
-		const { root } = blockStore;
-
-		let isRoot = item.id == root;
-		let isSelf = (item.id == rootId) || (item.id == blockId);
-		let ret = true;
-
-		if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
-			ret = false;
-		};
-
-		if (isRoot && (type != I.NavigationType.Go)) {
-			ret = false;
-		};
-
-		if (type == I.NavigationType.Move) {
-			for (let id of blockIds) {
-				let block = blockStore.getLeaf(rootId, id);
-				if (isRoot && (block.type != I.BlockType.Link)) {
-					ret = false;
-					break;
-				};
-				if ((block.type == I.BlockType.Link) && (item.id == block.content.targetBlockId)) {
-					ret = false;
-					break;
-				};
-			};
-		};
-
-		return ret;
-	};
-
-	getPage (page: any): I.PageInfo {
-		page.details.name = String(page.details.name || Constant.default.name || '');
-
-		return {
-			...page,
-			text: [ page.details.name, page.snippet ].join(' '),
-		};
-	};
-	
 };
 
 export default PopupSearch;
