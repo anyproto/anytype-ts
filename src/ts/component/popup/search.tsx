@@ -470,11 +470,16 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
 		const { pages } = this.state;
 		const { recent } = blockStore;
-		const children = blockStore.getChildren(recent, recent).reverse();
-
+		
+		let children = blockStore.getChildren(recent, recent).reverse();
 		let ret: any[] = [];
+
+		children = children.filter((it: any) => { return it.content.targetBlockId != rootId; });
 
 		if (children.length) {
 			ret.push({ name: 'Recent objects', isSection: true });
