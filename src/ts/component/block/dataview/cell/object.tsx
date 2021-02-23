@@ -57,7 +57,7 @@ class CellObject extends React.Component<Props, State> {
 						})}
 					</React.Fragment>
 				) : (
-					<div className="empty">Add objects</div>
+					<div className="empty">Select objects</div>
 				)}
 			</div>
 		);

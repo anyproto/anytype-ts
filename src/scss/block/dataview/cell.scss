@@ -20,6 +20,7 @@
 	.cellContent {
 		.name { display: inline-block; }
 	}
+	.empty { display: block; }
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
@@ -38,6 +39,7 @@
 	.name { display: inline-block; vertical-align: top; }
 	div.name:empty { display: none; }
 	span:empty { display: none; }
+	.empty { color: $colorDarkGrey; display: none; }
 }
 
 .cellContent.c-file {
@@ -64,7 +66,6 @@
 		.iconObject { flex-shrink: 0; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
-	.empty { color: $colorDarkGrey; display: none; }
 }
 
 .cellContent.isName {

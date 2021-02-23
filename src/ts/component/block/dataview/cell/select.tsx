@@ -39,13 +39,19 @@ class CellSelect extends React.Component<Props, State> {
 		});
 		value = value.filter((it: any) => { return it && it.id; });
 
+		const placeHolder = relation.format == I.RelationType.Status ? 'Select status' : 'Select tags';
+
 		return (
 			<div className="wrap">
-				<React.Fragment>
-					{value.map((item: any, i: number) => {
-						return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
-					})}
-				</React.Fragment>
+				{value.length ? (
+					<React.Fragment>
+						{value.map((item: any, i: number) => {
+							return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
+						})}
+					</React.Fragment>
+				) : (
+					<div className="empty">{placeHolder}</div>
+				)}
 			</div>
 		);
 	};
