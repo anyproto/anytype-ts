@@ -20,12 +20,11 @@
 	.cellContent {
 		.name { display: inline-block; }
 	}
+	.empty { display: block; }
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
-	.empty { display: block; }
 	.cellContent { height: 20px !important; padding-right: 1px !important; }
-	.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 }
 
 .cell.isEditing.c-file {
@@ -38,6 +37,7 @@
 	.name { display: inline-block; vertical-align: top; }
 	div.name:empty { display: none; }
 	span:empty { display: none; }
+	.empty { color: $colorDarkGrey; display: none; }
 }
 
 .cellContent.c-file {
@@ -53,7 +53,6 @@
 	.cellContent { white-space: normal; }
 }
 
-.cellContent.c-select { line-height: 0px; }
 .cellContent.c-select {
 	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
 }
@@ -64,7 +63,6 @@
 		.iconObject { flex-shrink: 0; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
-	.empty { color: $colorDarkGrey; display: none; }
 }
 
 .cellContent.isName {

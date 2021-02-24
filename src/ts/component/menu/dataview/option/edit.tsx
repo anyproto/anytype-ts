@@ -28,6 +28,17 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const { option } = data;
 		const relation = data.relation.get();
 		const colors = DataUtil.menuGetBgColors();
+		
+		let prefix = '';
+		switch (relation.format) {
+			default:
+				prefix = 'bgColor';
+				break;
+
+			case I.RelationType.Status:
+				prefix = 'textColor';
+				break;
+		};
 
 		return (
 			<div>
@@ -38,9 +49,10 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 					<Icon className="remove" />
 					<div className="name">{translate('menuDataviewOptionEditDelete')}</div>
 				</div>
+
 				<div className="line" />
 				{colors.map((action: any, i: number) => {
-					let inner = <div className={'inner bgColor bgColor-' + action.className} />;
+					let inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
 					return <MenuItemVertical id={i} key={i} {...action} icon="color" inner={inner} isActive={action.value == option.color} onClick={(e: any) => { this.onColor(e, action); }} />;
 				})}
 			</div>

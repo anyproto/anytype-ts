@@ -6,6 +6,7 @@ interface CrumbsObject {
 };
 
 const PREFIX = 'crumbs-';
+const LIMIT_RECENT = 10;
 
 class Crumbs {
 	
@@ -17,6 +18,12 @@ class Crumbs {
 		if (!blockStore.breadcrumbs) {
 			C.BlockOpenBreadcrumbs((message: any) => {
 				blockStore.breadcrumbsSet(message.blockId);
+			});
+		};
+
+		if (!blockStore.recent) {
+			C.BlockOpenBreadcrumbs((message: any) => {
+				blockStore.recentSet(message.blockId);
 			});
 		};
 	};
@@ -66,6 +73,14 @@ class Crumbs {
 		this.save(key, prev, callBack);
 		return obj;
 	};
+
+	addRecent (id: string) {
+		let recent = this.get(I.CrumbsType.Recent);
+		recent = this.add(I.CrumbsType.Recent, id);
+		recent.ids = Util.arrayUnique(recent.ids);
+		recent.ids = recent.ids.slice(recent.ids.length - LIMIT_RECENT, recent.ids.length);
+		this.save(I.CrumbsType.Recent, recent);
+	};
 	
 	save (key: I.CrumbsType, obj: CrumbsObject, callBack?: () => void) {
 		if (!obj) {
@@ -73,9 +88,14 @@ class Crumbs {
 		};
 
 		Storage.set(this.key(key), obj, true);
+
+		let id = blockStore.breadcrumbs;
+		if (key == I.CrumbsType.Recent) {
+			id = blockStore.recent;
+		};
 		
-		if (blockStore.breadcrumbs) {
-			C.BlockSetBreadcrumbs(blockStore.breadcrumbs, obj.ids, (message: any) => {
+		if (id) {
+			C.BlockSetBreadcrumbs(id, obj.ids, (message: any) => {
 				if (message.error.code) {
 					this.delete(key);
 				};

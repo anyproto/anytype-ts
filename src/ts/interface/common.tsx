@@ -24,6 +24,7 @@ export enum CoverType {
 export enum CrumbsType {
 	Page	 = 'page',
 	Popup	 = 'popup',
+	Recent	 = 'recent',
 };
 
 export enum NavigationType {

@@ -35,8 +35,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	render () {
 		const relation = this.getRelation();
+		const isDate = this.format == I.RelationType.Date;
+		const isObject = this.format == I.RelationType.Object;
+		const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+		const objectType = dbStore.getObjectType(url, '');
 
-		let opts = null;
 		let ccn = [ 'item' ];
 		if (commonStore.menuIsOpen('dataviewRelationType')) {
 			ccn.push('active');
@@ -45,48 +48,41 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
-		if (relation) {
-			const isDate = relation.format == I.RelationType.Date;
-			const isObject = relation.format == I.RelationType.Object;
-			const url = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
-			const objectType = dbStore.getObjectType(url, '');
+		const opts = (
+			<React.Fragment>
+				{isObject ? (
+					<React.Fragment>
+						<div className="sectionName">Type of target object</div>
+						<MenuItemVertical 
+							id="object-type" 
+							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+							name={objectType ? objectType.name : 'Select object type'} 
+							onClick={this.onObjectType} 
+							arrow={true}
+						/>
+					</React.Fragment>
+				) : ''}
 
-			opts = (
-				<React.Fragment>
-					{isObject ? (
-						<React.Fragment>
-							<div className="sectionName">Type of target object</div>
-							<MenuItemVertical 
-								id="object-type" 
-								object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
-								name={objectType ? objectType.name : 'Select object type'} 
-								onClick={this.onObjectType} 
-								arrow={true}
-							/>
-						</React.Fragment>
-					) : ''}
+				{isDate ? (
+					<React.Fragment>
+						<div className="line" />
+						<div className="item">
+							<Icon className="clock" />
+							<div className="name">Include time</div>
+							<Switch value={relation ? relation.includeTime : false} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+						</div>
 
-					{isDate ? (
-						<React.Fragment>
-							<div className="line" />
-							<div className="item">
-								<Icon className="clock" />
-								<div className="name">Include time</div>
-								<Switch value={relation.includeTime} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-							</div>
-
-							<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
-						</React.Fragment>
-					) : ''}
-				</React.Fragment>
-			);
-		};
+						<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
+					</React.Fragment>
+				) : ''}
+			</React.Fragment>
+		);
 
 		return (
 			<form onSubmit={this.onSubmit}>
 				<div className="sectionName">Relation name</div>
 				<div className="inputWrap">
-					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} onChange={this.onChange}  />
+					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} readOnly={this.isReadOnly()} onChange={this.onChange}  />
 				</div>
 
 				<div className="sectionName">Relation type</div>
@@ -174,12 +170,21 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const name = this.ref.getValue();
 		const button = node.find('#button');
+		const canSave = name.length && !this.isReadOnly();
 
-		if (name.length) {
+		if (canSave) {
 			button.addClass('orange').removeClass('grey');
 		} else {
 			button.removeClass('orange').addClass('grey');
 		};
+	};
+
+	isReadOnly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { readOnly } = data;
+		const relation = this.getRelation();
+		return readOnly || (relation && relation.isReadOnly);
 	};
 	
 	onRelationType (e: any) {

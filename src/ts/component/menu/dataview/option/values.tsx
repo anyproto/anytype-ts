@@ -67,6 +67,7 @@ class MenuOptionValues extends React.Component<Props> {
 		
 		return (
 			<div>
+				<div className="sectionName">Select an option or add one</div>
 				<List 
 					axis="y" 
 					transitionDuration={150}
@@ -158,6 +159,7 @@ class MenuOptionValues extends React.Component<Props> {
 				offsetX: node.outerWidth(),
 				offsetY: -36,
 				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Left,
 				noFlipY: true,
 				passThrough: true,
 				onClose: () => { close(); },

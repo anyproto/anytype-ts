@@ -317,12 +317,14 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 		};
 
 		if (item.id == 'add') {
+			const obj = $(`#${getId()}`);
+
 			commonStore.menuOpen(menuIdEdit, { 
 				type: I.MenuType.Vertical,
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: 0,
-				offsetY: 0,
-				vertical: I.MenuDirection.Center,
+				offsetX: obj.outerWidth(),
+				offsetY: -76,
+				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				data: {
 					...data,

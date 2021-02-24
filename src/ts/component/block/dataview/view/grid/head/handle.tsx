@@ -5,7 +5,9 @@ import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 import { commonStore } from 'ts/store';
 
-interface Props extends I.Relation {};
+interface Props extends I.Relation {
+	onClick?: (e: any) => void;
+};
 
 const $ = require('jquery');
 
@@ -19,10 +21,10 @@ class HeadHandle extends React.Component<Props, {}> {
 	}
 
 	render () {
-		const { format, name } = this.props;
+		const { format, name, onClick } = this.props;
 
 		const Handle = SortableHandle(() => (
-			<div onMouseDown={this.onMouseDown}>
+			<div onMouseDown={this.onMouseDown} onClick={onClick}>
 				<Icon className={'relation ' + DataUtil.relationClass(format)} />
 				<div className="name">{name}</div>
 			</div>

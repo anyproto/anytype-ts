@@ -156,7 +156,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let param: I.MenuParam = { 
-			element: element,
+			element: `#${id} .cellContent`,
 			offsetX: 0,
 			offsetY: 0,
 			type: I.MenuType.Vertical,
@@ -218,6 +218,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
+					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
@@ -232,6 +233,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Object:
 				param = Object.assign(param, {
 					width: width,
+					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					filter: '',
@@ -318,7 +320,7 @@ class Cell extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				commonStore.menuOpen(menuId, param); 
 				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
-				win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(menuIds); });
+				//win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(menuIds); });
 			}, 1);
 		} else {
 			setOn();

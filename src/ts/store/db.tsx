@@ -63,12 +63,12 @@ class DbStore {
 	@action
 	relationUpdate (rootId: string, blockId: string, item: any) {
 		const relations = this.getRelations(rootId, blockId);
-		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
-		if (!relation) {
+		const idx = relations.findIndex((it: I.Relation) => { return it.relationKey == item.relationKey; });
+
+		if (idx < 0) {
 			return;
 		};
 
-		const idx = relations.findIndex((it: I.Relation) => { return it.relationKey == item.relationKey; });
 		set(relations[idx], item);
 	};
 
