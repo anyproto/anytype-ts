@@ -31,14 +31,9 @@ class HeaderMainRelation extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { match } = this.props;
-		const { objectTypes } = dbStore;
+		const { rootId } = this.props;
 		const cn = [ 'header', 'headerMainEdit' ];
-
-		let relations = [];
-		objectTypes.map((it: I.ObjectType) => { relations = relations.concat(it.relations); });
-
-		const relation = relations.find((it: I.Relation) => { return it.relationKey == match.params.id; });
+		const object = blockStore.getDetails(rootId, rootId);
 
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');
@@ -56,8 +51,8 @@ class HeaderMainRelation extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<IconObject object={{ ...relation, layout: I.ObjectLayout.Relation }} />
-							<div className="name">{relation.name}</div>
+							<IconObject object={object} />
+							<div className="name">{object.name}</div>
 						</div>
 					</div>
 				</div>
@@ -152,7 +147,7 @@ class HeaderMainRelation extends React.Component<Props, {}> {
 
 		const { root } = blockStore;
 
-		commonStore.popupOpen('navigation', {
+		commonStore.popupOpen('search', {
 			preventResize: true, 
 			data: {
 				rootId: root,

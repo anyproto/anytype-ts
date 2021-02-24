@@ -92,7 +92,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, format } = object || {};
+		let { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
 		let iconSize = this.iconSize(layout, size);
 		let icon = null;
 		let icn = [];
@@ -129,9 +129,9 @@ class IconObject extends React.Component<Props, {}> {
 			case I.ObjectLayout.Relation:
 				cn.push('isRelation');
 
-				if (Relation[format]) {
+				if (Relation[relationFormat]) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={Relation[format]} className={icn.join(' ')} />;
+					icon = <img src={Relation[relationFormat]} className={icn.join(' ')} />;
 				};
 				break;
 

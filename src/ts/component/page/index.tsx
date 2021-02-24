@@ -20,7 +20,7 @@ import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
-import PageMainObjectType from './main/objectType';
+import PageMainType from './main/type';
 import PageMainRelation from './main/relation';
 
 const { ipcRenderer } = window.require('electron');
@@ -44,7 +44,7 @@ const Components: any = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
-	'main/objectType':		 PageMainObjectType,
+	'main/type':			 PageMainType,
 	'main/relation':		 PageMainRelation,
 };
 

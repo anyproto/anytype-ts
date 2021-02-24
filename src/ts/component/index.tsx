@@ -18,7 +18,7 @@ import HeaderMainEdit from './header/main/edit';
 import HeaderMainEditPopup from './header/main/editPopup';
 import HeaderMainHistory from './header/main/history';
 import HeaderMainSet from './header/main/set';
-import HeaderMainObjectType from './header/main/objectType';
+import HeaderMainType from './header/main/type';
 import HeaderMainRelation from './header/main/relation';
 import HeaderHelpIndex from './header/help/index';
 import FooterAuth from './footer/auth';
@@ -81,7 +81,7 @@ export {
 	HeaderMainEditPopup,
 	HeaderMainHistory,
 	HeaderMainSet,
-	HeaderMainObjectType,
+	HeaderMainType,
 	HeaderMainRelation,
 	HeaderHelpIndex,
 	FooterAuth,

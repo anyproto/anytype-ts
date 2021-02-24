@@ -9,8 +9,8 @@ export enum ObjectLayout {
 	Relation	 = 5,
 	File		 = 6,
 	Dashboard	 = 7,
-	Database	 = 8,
 	Image		 = 9,
+	Database	 = 20,
 };
 
 export interface ObjectType {

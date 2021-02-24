@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainRelation as Header } from 'ts/component';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -17,24 +17,22 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 	render () {
 		const { match } = this.props;
-		const { objectTypes } = dbStore;
+		const rootId = match.params.id;
+		const object = blockStore.getDetails(rootId, rootId);
 
-		let relations = [];
-		objectTypes.map((it: I.ObjectType) => { relations = relations.concat(it.relations); });
-
-		const relation = relations.find((it: I.Relation) => { return it.relationKey == match.params.id; });
+		console.log(object);
 
 		return (
 			<div>
-				<Header {...this.props} rootId="" />
+				<Header {...this.props} rootId={rootId} />
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject size={96} object={{ ...relation, layout: I.ObjectLayout.Relation }} />
+							<IconObject size={96} object={object} />
 						</div>
 						<div className="side right">
-							<div className="title">{relation.name}</div>
-							<div className="descr">A person with whom one has a bond of mutual affection</div>
+							<div className="title">{object.name}</div>
+							<div className="descr">{object.description}</div>
 						</div>
 					</div>
 				</div>
@@ -50,6 +48,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 		const { match } = this.props;
 
 		C.BlockOpen(match.params.id, (message: any) => {
+			this.forceUpdate();
 		});
 	};
 	

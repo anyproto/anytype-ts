@@ -520,6 +520,9 @@ class PopupSearch extends React.Component<Props, State> {
 		if (it.layout == I.ObjectLayout.Dashboard) {
 			return false;
 		};
+		if (it.isHidden) {
+			return false;
+		};
 		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
 			return false;
 		};

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainObjectType as Header } from 'ts/component';
+import { Icon, IconObject, HeaderMainType as Header } from 'ts/component';
 import { I, DataUtil, Util } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
 @observer
-class PageMainObjectType extends React.Component<Props, {}> {
+class PageMainType extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -38,11 +38,11 @@ class PageMainObjectType extends React.Component<Props, {}> {
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject size={96} object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
+							<IconObject size={96} object={objectType} />
 						</div>
 						<div className="side right">
 							<div className="title">{objectType.name}</div>
-							<div className="descr">A person with whom one has a bond of mutual affection</div>
+							<div className="descr">{objectType.description}</div>
 						</div>
 					</div>
 					
@@ -106,4 +106,4 @@ class PageMainObjectType extends React.Component<Props, {}> {
 	
 };
 
-export default PageMainObjectType;
+export default PageMainType;

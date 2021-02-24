@@ -725,11 +725,11 @@ class DataUtil {
 				break;
 
 			case I.ObjectLayout.ObjectType:
-				this.history.push('/main/objectType/' + object.id);
+				this.history.push('/main/type/' + object.id);
 				break;
 
 			case I.ObjectLayout.Relation:
-				this.history.push('/main/relation/' + object.relationKey);
+				this.history.push('/main/relation/' + object.id);
 				break;
 		};
 	};

@@ -100,7 +100,7 @@ class PopupStore extends React.Component<Props, State> {
 					const author = blockStore.getDetails(rootId, item.creator);
 
 					return (
-						<div className={[ 'item', 'isType' ].join(' ')} onClick={(e: any) => { this.onObjectType(e, item); }}>
+						<div className={[ 'item', 'isType' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 							<div className="info">
 								<div className="name">{item.name}</div>
@@ -130,7 +130,7 @@ class PopupStore extends React.Component<Props, State> {
 							<Title text="Type every object" />
 							<Label text="Our beautifully-designed templates come with hundreds" />
 
-							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onObjectType(e, { id: 'create' }); }} />
+							<Button text="Create a new type" className="orange" onClick={(e: any) => {  }} />
 						</div>
 
 						{tabs}
@@ -144,7 +144,7 @@ class PopupStore extends React.Component<Props, State> {
 
 			case 'relation':
 				Item = (item: any) => (
-					<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onRelation(e, item); }}>
+					<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 						<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 						<div className="info">
 							<div className="name">{item.name} ({item.relationKey})</div>
@@ -285,15 +285,8 @@ class PopupStore extends React.Component<Props, State> {
 		this.getData(item.id, 0);
 	};
 
-	onObjectType (e: any, item: any) {
-		const { history } = this.props;
-		history.push('/main/objectType/' + item.id);
-	};
-
-	onRelation (e: any, item: any) {
-		const { history } = this.props;
-
-		history.push('/main/relation/' + item.relationKey);
+	onClick (e: any, item: any) {
+		DataUtil.objectOpen(item);
 	};
 
 	getData (id: string, offset: number, callBack?: (message: any) => void) {

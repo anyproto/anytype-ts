@@ -45,7 +45,7 @@ import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 import 'scss/page/main/history.scss';
 import 'scss/page/main/set.scss';
-import 'scss/page/main/objectType.scss';
+import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 
 import 'scss/block/common.scss';
