@@ -287,9 +287,7 @@ class PopupStore extends React.Component<Props, State> {
 
 	onObjectType (e: any, item: any) {
 		const { history } = this.props;
-		const id = DataUtil.schemaField(item.url);
-
-		history.push('/main/objectType/' + id);
+		history.push('/main/objectType/' + item.id);
 	};
 
 	onRelation (e: any, item: any) {

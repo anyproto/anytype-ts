@@ -160,7 +160,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const object = blockStore.getDetails(rootId, content.targetBlockId);
-		const type = DataUtil.schemaField(object.type);
 
 		let items = [];
 		if (block.isObjectSet()) {
@@ -196,10 +195,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isLinkPage()) {
 			items = [
 				{ id: 'move', icon: 'move', name: 'Move to' },
+				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
 			];
-			if (type != 'profile') {
-				items.push({ id: 'archiveIndex', icon: 'remove', name: 'Archive' });
-			};
 		} else {
 			items = [
 				{ id: 'move', icon: 'move', name: 'Move to' },
@@ -390,7 +387,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: options,
-				value: DataUtil.schemaField(object.type),
+				value: object.id,
 				onSelect: (e: any, item: any) => {
 					C.BlockObjectTypeSet(rootId, item.url);
 					close();

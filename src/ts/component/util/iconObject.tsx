@@ -51,15 +51,6 @@ const File = {
 	table: require('img/icon/file/table.svg'),
 };
 
-const Obj = {
-	page: require('img/icon/object/page.svg'),
-	human: require('img/icon/object/human.svg'),
-	task: require('img/icon/object/task.svg'),
-	set: require('img/icon/object/set.svg'),
-	file: require('img/icon/object/file.svg'),
-	image: require('img/icon/object/image.svg'),
-};
-
 const Relation: any = {};
 Relation[I.RelationType.LongText] = require('img/icon/dataview/relation/longText.svg');
 Relation[I.RelationType.ShortText] = require('img/icon/dataview/relation/shortText.svg');
@@ -91,7 +82,6 @@ class IconObject extends React.Component<Props, {}> {
 	
 	render () {
 		const { object, className, size, canEdit, onClick } = this.props;
-		const type = DataUtil.schemaField(object.type);
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		
@@ -102,59 +92,50 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, url, format } = object || {};
-		let iconSize = this.iconSize(type, layout, size);
+		let { id, name, iconEmoji, iconImage, iconClass, done, format } = object || {};
+		let iconSize = this.iconSize(layout, size);
 		let icon = null;
 		let icn = [];
 
-		switch (type) {
+		switch (layout) {
 			default:
-				switch (layout) {
-					default:
-					case I.ObjectLayout.Page:
-						cn.push('isPage');
-						if (iconEmoji || iconImage) {
-							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-						};
-						break;
-
-					case I.ObjectLayout.Human:
-						cn.push('isUser');
-						icn.push('c' + size);
-						icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
-						break;
-
-					case I.ObjectLayout.Task:
-						cn.push('isTask');
-						icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-						icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} onClick={this.onCheckbox} />;
-						break;
-
-					case I.ObjectLayout.ObjectType:
-						cn.push('isObjectType');
-						id = DataUtil.schemaField(url);
-
-						if (object.iconEmoji) {
-							icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-						} else 
-						if (Obj[id]) {
-							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-							icon = <img src={Obj[id]} className={icn.join(' ')} />;
-						};
-						break;
-
-					case I.ObjectLayout.Relation:
-						cn.push('isRelation');
-
-						if (Relation[format]) {
-							icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-							icon = <img src={Relation[format]} className={icn.join(' ')} />;
-						};
-						break;
+			case I.ObjectLayout.Page:
+				cn.push('isPage');
+				if (iconEmoji || iconImage) {
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				};
 				break;
 
-			case 'image':
+			case I.ObjectLayout.Human:
+				cn.push('isUser');
+				icn.push('c' + size);
+				icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
+				break;
+
+			case I.ObjectLayout.Task:
+				cn.push('isTask');
+				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
+				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} onClick={this.onCheckbox} />;
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				cn.push('isObjectType');
+
+				if (iconEmoji) {
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+				};
+				break;
+
+			case I.ObjectLayout.Relation:
+				cn.push('isRelation');
+
+				if (Relation[format]) {
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={Relation[format]} className={icn.join(' ')} />;
+				};
+				break;
+
+			case I.ObjectLayout.Image:
 				if (id) {
 					cn.push('isImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
@@ -166,7 +147,7 @@ class IconObject extends React.Component<Props, {}> {
 				};
 				break;
 
-			case 'file':
+			case I.ObjectLayout.File:
 				cn.push('isFile');
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
@@ -182,26 +163,10 @@ class IconObject extends React.Component<Props, {}> {
 		);
 	};
 
-	iconSize (type: string, layout: I.ObjectLayout, size: number) {
-		type = type || 'page';
+	iconSize (layout: I.ObjectLayout, size: number) {
 		let s = Size[size];
-
-		if (size ==  48) {
-			switch (type) {
-				default:
-				case 'page':
-					if (layout == I.ObjectLayout.Page) {
-						s = 40;
-					};
-					break;
-
-				case 'set':
-				case 'file':
-				case 'image':
-					s = 40;
-					break;
-
-			};
+		if ((size == 48) && ([ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.File, I.ObjectLayout.Image ].indexOf(layout) >= 0)) {
+			s = 40;
 		};
 		return s;
 	};

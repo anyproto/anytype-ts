@@ -10,6 +10,7 @@ export enum ObjectLayout {
 	File		 = 6,
 	Dashboard	 = 7,
 	Database	 = 8,
+	Image		 = 9,
 };
 
 export interface ObjectType {

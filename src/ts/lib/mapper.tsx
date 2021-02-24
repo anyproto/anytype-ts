@@ -163,7 +163,7 @@ const Mapper = {
 
 		ObjectType: (obj: any): I.ObjectType => {
 			return {
-				id: DataUtil.schemaField(obj.getUrl()),
+				id: obj.getUrl(),
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),

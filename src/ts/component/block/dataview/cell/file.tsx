@@ -24,7 +24,6 @@ class CellFile extends React.Component<Props, {}> {
 		};
 		
 		let value = this.getValue();
-
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._detailsEmpty_; });
 
@@ -60,12 +59,11 @@ class CellFile extends React.Component<Props, {}> {
 		return (
 			<React.Fragment>
 				{value.map((item: any, i: number) => {
-					const type = DataUtil.schemaField(item.type);
-					switch (type) {
-						case 'file':
+					switch (item.layout) {
+						case I.ObjectLayout.File:
 							return <File key={i} {...item} />;
 
-						case 'image':
+						case I.ObjectLayout.Image:
 							return <Image key={i} {...item} />;
 					};
 				})}

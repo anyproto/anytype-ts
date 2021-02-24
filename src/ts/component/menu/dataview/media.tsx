@@ -52,15 +52,13 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		);
 
         const Item = SortableElement((item: any) => {
-			const type = DataUtil.schemaField(item.type);
-
 			let content = null;
-			switch (type) {
-				case 'file':
+			switch (item.layout) {
+				case I.ObjectLayout.File:
 					content = <File {...item} />;
 					break;
 
-				case 'image':
+				case I.ObjectLayout.Image:
 					content = <Image {...item} />;
 					break;
 			};

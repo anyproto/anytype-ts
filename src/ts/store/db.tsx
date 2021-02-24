@@ -24,7 +24,7 @@ class DbStore {
 	@action
 	objectTypesSet (types: I.ObjectType[]) {
 		for (let type of types) {
-			this.objectTypeMap.set(DataUtil.schemaField(type.id), type);
+			this.objectTypeMap.set(type.id, type);
 		};
 	};
 

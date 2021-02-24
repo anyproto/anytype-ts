@@ -615,11 +615,6 @@ class DataUtil {
 		return sections;
 	};
 	
-	schemaField (v: string) {
-		const a = String(v || '').split('/');
-		return a.length > 1 ? a[a.length - 1] : '';
-	};
-
 	cellId (prefix: string, relationKey: string, id: any) {
 		return [ prefix, relationKey, id.toString() ].join('-');
 	};
@@ -725,35 +720,13 @@ class DataUtil {
 		e.stopPropagation();
 		e.preventDefault();
 
-		const type = this.schemaField(object.type);
-
-		switch (type) {
-			default:
-				this.pageOpenPopup(object.id);
-				break;
-
-			/*
-			case 'image':
-				commonStore.popupOpen('preview', {
-					data: {
-						type: I.FileType.Image,
-						url: commonStore.imageUrl(object.id, Constant.size.image),
-					}
-				});
-				break;
-
-			case 'file':
-				ipcRenderer.send('urlOpen', commonStore.fileUrl(object.id));
-				break;
-			*/
-		};
+		this.pageOpenPopup(object.id);
 	};
 
 	checkDetails (rootId: string) {
 		const details = blockStore.getDetails(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = details;
 		const layout = Number(details.layout) || I.ObjectLayout.Page;
-		const type = this.schemaField(details.type);
 		const ret: any = {
 			object: details,
 			withCover: (coverType != I.CoverType.None) && coverId,
@@ -761,37 +734,33 @@ class DataUtil {
 			className: [],
 		};
 
-		switch (type) {
+		switch (layout) {
 			default:
-				switch (layout) {
-					default:
-					case I.ObjectLayout.Page:
-						ret.withIcon = iconEmoji || iconImage;
-						ret.className.push('isPage');
-						break;
-
-					case I.ObjectLayout.Human:
-						ret.withIcon = true;
-						ret.className.push('isHuman');
-						break;
-
-					case I.ObjectLayout.Task:
-						ret.className.push('isTask');
-						break;
-
-					case I.ObjectLayout.Set:
-						ret.withIcon = iconEmoji || iconImage;
-						ret.className.push('isSet');
-						break;
-				};
+			case I.ObjectLayout.Page:
+				ret.withIcon = iconEmoji || iconImage;
+				ret.className.push('isPage');
 				break;
 
-			case 'image':
+			case I.ObjectLayout.Human:
+				ret.withIcon = true;
+				ret.className.push('isHuman');
+				break;
+
+			case I.ObjectLayout.Task:
+				ret.className.push('isTask');
+				break;
+
+			case I.ObjectLayout.Set:
+				ret.withIcon = iconEmoji || iconImage;
+				ret.className.push('isSet');
+				break;
+
+			case I.ObjectLayout.Image:
 				ret.withIcon = true;
 				ret.className.push('isImage');
 				break;
 
-			case 'file':
+			case I.ObjectLayout.File:
 				ret.withIcon = true;
 				ret.className.push('isFile');
 				break;
