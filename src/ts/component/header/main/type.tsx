@@ -32,8 +32,9 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 
 	render () {
 		const { match } = this.props;
+		const rootId = match.params.id;
+		const object = blockStore.getDetails(rootId, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
-		const objectType = dbStore.getObjectType(match.params.id);
 
 		if (commonStore.popupIsOpen('navigation')) {
 			cn.push('active');
@@ -51,8 +52,8 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
-							<div className="name">{objectType.name}</div>
+							<IconObject object={object} />
+							<div className="name">{object.name}</div>
 						</div>
 					</div>
 				</div>

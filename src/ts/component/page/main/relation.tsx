@@ -11,6 +11,7 @@ interface Props extends RouteComponentProps<any> {};
 class PageMainRelation extends React.Component<Props, {}> {
 
 	id: string = '';
+	refHeader: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -24,7 +25,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<Header {...this.props} rootId={rootId} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">
@@ -60,6 +61,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 		C.BlockOpen(rootId, (message: any) => {
 			this.forceUpdate();
+			this.refHeader.forceUpdate();
 		});
 	};
 	

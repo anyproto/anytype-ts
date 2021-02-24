@@ -11,6 +11,7 @@ interface Props extends RouteComponentProps<any> {};
 class PageMainType extends React.Component<Props, {}> {
 
 	id: string = '';
+	refHeader: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -20,9 +21,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
-		const relations = dbStore.getRelations(rootId, rootId);
-
-		relations.sort(DataUtil.sortByName);
+		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
 
 		const Relation = (item: any) => (
 			<div className="item">
@@ -36,7 +35,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<Header {...this.props} rootId="" />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId="" />
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">
@@ -126,6 +125,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		C.BlockOpen(rootId, (message: any) => {
 			this.forceUpdate();
+			this.refHeader.forceUpdate();
 		});
 	};
 	
