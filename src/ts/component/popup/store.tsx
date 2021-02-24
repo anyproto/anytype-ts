@@ -68,7 +68,6 @@ class PopupStore extends React.Component<Props, State> {
 
 		let Item = null;
 		let element = null;
-		let items = null;
 
 		const tabs = (
 			<div className="tabs">
@@ -104,14 +103,6 @@ class PopupStore extends React.Component<Props, State> {
 					);
 				};
 
-				items = (
-					<div className="items">
-						{data.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
-					</div>
-				);
-
 				element = (
 					<React.Fragment>
 						<div className="mid">
@@ -122,7 +113,12 @@ class PopupStore extends React.Component<Props, State> {
 						</div>
 
 						{tabs}
-						{items}
+						
+						<div className="items">
+							{data.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</div>
 					</React.Fragment>
 				);
 				break;
@@ -149,14 +145,6 @@ class PopupStore extends React.Component<Props, State> {
 					);
 				};
 
-				items = (
-					<div className="items">
-						{data.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
-					</div>
-				);
-
 				element = (
 					<React.Fragment>
 						<div className="mid">
@@ -167,7 +155,12 @@ class PopupStore extends React.Component<Props, State> {
 						</div>
 
 						{tabs}
-						{items}
+
+						<div className="items">
+							{data.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</div>
 					</React.Fragment>
 				);
 				break;

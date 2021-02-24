@@ -7,6 +7,8 @@ import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
+const BLOCK_ID = 'dataview';
+
 @observer
 class PageMainType extends React.Component<Props, {}> {
 
@@ -21,6 +23,9 @@ class PageMainType extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
+		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
+		const meta = dbStore.getMeta(rootId, block.id);
+		const data = dbStore.getData(rootId, block.id);
 		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
 
 		const Relation = (item: any) => (
@@ -32,6 +37,29 @@ class PageMainType extends React.Component<Props, {}> {
 				<div className="value">Empty</div>
 			</div>
 		);
+
+		const Row = (item: any) => {
+			const author = blockStore.getDetails(rootId, item.creator);
+			return (
+				<tr className="row">
+					<td className="cell">
+						<div className="cellContent">
+							<IconObject object={item} />
+							<div className="name">{item.name}</div>
+						</div>
+					</td>
+					<td className="cell">
+						<div className="cellContent">{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}</div>
+					</td>
+					<td className="cell">
+						<div className="cellContent">
+							<IconObject object={author} />
+							<div className="name">{author.name}</div>
+						</div>
+					</td>
+				</tr>
+			);
+		};
 
 		return (
 			<div>
@@ -79,23 +107,9 @@ class PageMainType extends React.Component<Props, {}> {
 									</tr>
 								</thead>
 								<tbody>
-									<tr className="row">
-										<td className="cell">
-											<div className="cellContent">
-												<IconObject object={object} />
-												<div className="name">Joseph Wolf</div>
-											</div>
-										</td>
-										<td className="cell">
-											<div className="cellContent">Apr 11, 2020</div>
-										</td>
-										<td className="cell">
-											<div className="cellContent">
-												<IconObject object={object} />
-												<div className="name">Joseph Wolf</div>
-											</div>
-										</td>
-									</tr>
+									{data.map((item: any, i: number) => (
+										<Row key={i} {...item} />
+									))}
 								</tbody>
 							</table>
 						</div>
