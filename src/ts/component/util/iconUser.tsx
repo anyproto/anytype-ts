@@ -11,7 +11,6 @@ interface Props {
 	avatar?: string;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
-	onMouseDown?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 };
@@ -30,7 +29,6 @@ class IconUser extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -56,7 +54,7 @@ class IconUser extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} className={cn.join(' ')}>
+			<div onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} className={cn.join(' ')}>
 				{icon ? <img src={icon} className="image" /> : ''}
 				<div className="txt">{this.shortName(text)}</div>
 			</div>
@@ -99,16 +97,6 @@ class IconUser extends React.Component<Props, {}> {
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);
-		};
-	};
-	
-	onMouseDown (e: any) {
-		const { onMouseDown } = this.props;
-		
-		Util.tooltipHide();
-		
-		if (onMouseDown) {
-			onMouseDown(e);
 		};
 	};
 	

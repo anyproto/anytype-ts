@@ -46,7 +46,7 @@
 		}
 		
 		.item {
-			.click { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
+			.click { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
@@ -57,7 +57,7 @@
 			
 			.icon.more { 
 				background-image: url('~img/icon/index/more0.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;
-				right: 16px; top: 16px; opacity: 0; z-index: 1; transition: none;
+				right: 16px; top: 16px; opacity: 0; z-index: 2; transition: none;
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
 
