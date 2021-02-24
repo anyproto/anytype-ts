@@ -282,7 +282,7 @@ class DataUtil {
 		if (commonStore.popupIsOpen('editorPage')) {
 			commonStore.popupUpdate('editorPage', param);
 		} else {
-			commonStore.popupOpen('editorPage', param);
+			window.setTimeout(() => { commonStore.popupOpen('editorPage', param); }, Constant.delay.popup);
 		};
 	};
 	
