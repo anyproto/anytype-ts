@@ -193,7 +193,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	onValueAdd (id: string) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
@@ -203,6 +203,10 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
+
+			if (maxCount == 1) {
+				close();
+			};
 		};
 
 		data.value = value;

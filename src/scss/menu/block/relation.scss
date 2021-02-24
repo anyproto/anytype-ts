@@ -8,7 +8,7 @@
 
 	.menu.menuBlockRelationList,
 	.menu.menuBlockRelationView {
-		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
+		.icon.relation { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
 		.icon.expand { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
@@ -20,7 +20,7 @@
 
 		.sides { display: flex; }
 
-		.info { width: 192px; @include text-overflow-nw; }
+		.info { width: 192px; @include text-overflow-nw; line-height: 20px; }
 		.info {
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
@@ -37,6 +37,11 @@
 
 		.cell.isEditing.c-object, .cell.isEditing.c-select {
 			.cellContent { height: auto !important; padding-bottom: 0px !important; }
+		}
+
+		.cell.c-select { padding-bottom: 0px !important; }
+		.cell.c-select {
+			.tagItem { margin: 2px 6px 4px 0px; }
 		}
 
 		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
@@ -101,7 +106,7 @@
 		.item {
 			.icon.plus { margin-right: 4px; }
 
-			.info { height: 32px; padding: 5px 5px 5px 2px; border-radius: 4px; transition: background 0.2s ease-in-out; flex-shrink: 0; }
+			.info { height: 32px; padding: 6px 6px 6px 2px; border-radius: 4px; transition: background 0.2s ease-in-out; flex-shrink: 0; }
 			.info:hover { background: rgba(172,169,150,0.15); }
 
 			.cell { padding: 5px 8px; margin-right: 6px; }
