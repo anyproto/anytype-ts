@@ -51,7 +51,7 @@ class PopupSearch extends React.Component<Props, State> {
 		this.onKeyDownSearch = this.onKeyDownSearch.bind(this);
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onConfirm = this.onConfirm.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onOver = this.onOver.bind(this);
@@ -130,7 +130,7 @@ class PopupSearch extends React.Component<Props, State> {
 			);
 		};
 
-		const rowRenderer = ({ index, key, style, parent, panel }) => {
+		const rowRenderer = ({ index, key, style, parent }) => {
 			const item = items[index];
 			return (
 				<CellMeasurer
@@ -147,7 +147,7 @@ class PopupSearch extends React.Component<Props, State> {
 						</div>
 					) : (
 						<div className="row" style={style}>
-							<Item {...item} index={index} panel={panel} />
+							<Item {...item} index={index} />
 						</div>
 					)}
 				</CellMeasurer>
@@ -384,7 +384,7 @@ class PopupSearch extends React.Component<Props, State> {
 					break;
 				};
 
-				this.onConfirm(e, item);
+				this.onClick(e, item);
 				break;
 				
 			case Key.escape:
@@ -535,12 +535,9 @@ class PopupSearch extends React.Component<Props, State> {
 		crumbs.save(I.CrumbsType.Recent, recent);
 	};
 	
-	onClick (e: any, item: I.PageInfo) {
+	onClick (e: any, item: any) {
 		e.stopPropagation();
-		this.onConfirm(e, item);
-	};
 
-	onConfirm (e: any, item: I.PageInfo) {
 		const { param, history, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
@@ -549,11 +546,7 @@ class PopupSearch extends React.Component<Props, State> {
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					if (item.id == root) {
-						history.push('/main/index');
-					} else {
-						DataUtil.pageOpen(item.id);
-					};
+					DataUtil.objectOpen(item);
 				});
 				break;
 

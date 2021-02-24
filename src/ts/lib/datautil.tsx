@@ -716,11 +716,22 @@ class DataUtil {
 		});
 	};
 
-	objectOpen (e: any, object: any) {
-		e.stopPropagation();
-		e.preventDefault();
+	objectOpen (object: any) {
+		console.log('objectOpen', object);
 
-		this.pageOpenPopup(object.id);
+		switch (object.layout) {
+			default:
+				this.pageOpenPopup(object.id);
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				this.history.push('/main/objectType/' + object.id);
+				break;
+
+			case I.ObjectLayout.Relation:
+				this.history.push('/main/relation/' + object.relationKey);
+				break;
+		};
 	};
 
 	checkDetails (rootId: string) {

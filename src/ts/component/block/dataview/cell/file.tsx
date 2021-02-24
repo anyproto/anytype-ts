@@ -42,7 +42,7 @@ class CellFile extends React.Component<Props, {}> {
 		};
 
 		const File = (item: any) => (
-			<div className="element file" onClick={(e: any) => { DataUtil.objectOpen(e, item); }}>
+			<div className="element file" onClick={(e: any) => { DataUtil.objectOpen(item); }}>
 				<div className="flex">
 					<IconObject object={item} />
 					<div className="name">{item.name}</div>
@@ -51,7 +51,7 @@ class CellFile extends React.Component<Props, {}> {
 		);
 
 		const Image = (item: any) => (
-			<div className="element image" onClick={(e: any) => { DataUtil.objectOpen(e, item); }}>
+			<div className="element image" onClick={(e: any) => { DataUtil.objectOpen(item); }}>
 				<IconObject object={item} />
 			</div>
 		);

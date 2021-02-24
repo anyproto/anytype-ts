@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainRelation as Header } from 'ts/component';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
@@ -40,6 +40,17 @@ class PageMainRelation extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.open();
+	};
+
+	open () {
+		const { match } = this.props;
+
+		C.BlockOpen(match.params.id, (message: any) => {
+		});
 	};
 	
 };

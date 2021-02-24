@@ -39,14 +39,14 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		));
 
 		const File = (item: any) => (
-			<div className="element file" onClick={(e: any) => { DataUtil.objectOpen(e, item); }}>
+			<div className="element file" onClick={(e: any) => { DataUtil.objectOpen(item); }}>
 				<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
 
 		const Image = (item: any) => (
-			<div className="element image" onClick={(e: any) => { DataUtil.objectOpen(e, item); }}>
+			<div className="element image" onClick={(e: any) => { DataUtil.objectOpen(item); }}>
 				<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
 			</div>
 		);
