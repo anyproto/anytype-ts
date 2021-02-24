@@ -329,8 +329,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	isReadOnly () {
+		const { param } = this.props;
+		const { data } = param;
+		const { readOnly } = data;
 		const relation = this.getRelation();
-		return relation && relation.isReadOnly;
+		return readOnly || (relation && relation.isReadOnly);
 	};
 
 	save () {

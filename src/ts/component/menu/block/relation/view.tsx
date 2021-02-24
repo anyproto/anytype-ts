@@ -204,11 +204,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param, getId, close } = this.props;
 		const { data } = param;
 		const { rootId, readOnly } = data;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
-
-		if (!relation || readOnly || relation.isReadOnly) {
-			return;
-		};
 		
 		commonStore.menuOpen('blockRelationEdit', { 
 			type: I.MenuType.Vertical,
@@ -220,6 +215,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			data: {
 				...data,
 				relationKey: relationKey,
+				readOnly: readOnly,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

@@ -24,7 +24,6 @@
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
-	.empty { display: block; }
 	.cellContent { height: 20px !important; padding-right: 1px !important; }
 }
 
@@ -54,7 +53,6 @@
 	.cellContent { white-space: normal; }
 }
 
-.cellContent.c-select { line-height: 0px; }
 .cellContent.c-select {
 	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
 }
