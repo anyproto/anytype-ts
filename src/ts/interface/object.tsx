@@ -31,12 +31,13 @@ export enum RelationType {
 	Date		 = 4, 
 	File		 = 5,
 	Checkbox	 = 6, 
-	Icon		 = 7,
-	Url			 = 8,
-	Email		 = 9,
-	Phone		 = 10,
+	Url			 = 7,
+	Email		 = 8,
+	Phone		 = 9,
+	Icon		 = 10,
 	Tag			 = 11,
 	Object		 = 100,
+	Relations	 = 101,
 };
 
 export enum RelationScope {
