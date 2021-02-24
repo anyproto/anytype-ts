@@ -2,23 +2,25 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainType as Header } from 'ts/component';
-import { I, DataUtil, Util } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { I, C, DataUtil, Util } from 'ts/lib';
+import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
 @observer
 class PageMainType extends React.Component<Props, {}> {
 
+	id: string = '';
+
 	constructor (props: any) {
 		super(props);
-
 	};
 
 	render () {
 		const { match } = this.props;
-		const objectType = dbStore.getObjectType(match.params.id);
-		const relations = Util.objectCopy(objectType.relations);
+		const rootId = match.params.id;
+		const object = blockStore.getDetails(rootId, rootId);
+		const relations = dbStore.getRelations(rootId, rootId);
 
 		relations.sort(DataUtil.sortByName);
 
@@ -38,11 +40,11 @@ class PageMainType extends React.Component<Props, {}> {
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject size={96} object={objectType} />
+							<IconObject size={96} object={object} />
 						</div>
 						<div className="side right">
-							<div className="title">{objectType.name}</div>
-							<div className="descr">{objectType.description}</div>
+							<div className="title">{object.name}</div>
+							<div className="descr">{object.description}</div>
 						</div>
 					</div>
 					
@@ -81,7 +83,7 @@ class PageMainType extends React.Component<Props, {}> {
 									<tr className="row">
 										<td className="cell">
 											<div className="cellContent">
-												<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
+												<IconObject object={object} />
 												<div className="name">Joseph Wolf</div>
 											</div>
 										</td>
@@ -90,7 +92,7 @@ class PageMainType extends React.Component<Props, {}> {
 										</td>
 										<td className="cell">
 											<div className="cellContent">
-												<IconObject object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} />
+												<IconObject object={object} />
 												<div className="name">Joseph Wolf</div>
 											</div>
 										</td>
@@ -102,6 +104,29 @@ class PageMainType extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.open();
+	};
+
+	componentDidUpdate () {
+		this.open();
+	};
+
+	open () {
+		const { match } = this.props;
+		const rootId = match.params.id;
+
+		if (this.id == rootId) {
+			return;
+		};
+
+		this.id = rootId;
+
+		C.BlockOpen(rootId, (message: any) => {
+			this.forceUpdate();
+		});
 	};
 	
 };

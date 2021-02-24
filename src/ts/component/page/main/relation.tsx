@@ -10,6 +10,8 @@ interface Props extends RouteComponentProps<any> {};
 @observer
 class PageMainRelation extends React.Component<Props, {}> {
 
+	id: string = '';
+
 	constructor (props: any) {
 		super(props);
 
@@ -19,8 +21,6 @@ class PageMainRelation extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
-
-		console.log(object);
 
 		return (
 			<div>
@@ -44,10 +44,21 @@ class PageMainRelation extends React.Component<Props, {}> {
 		this.open();
 	};
 
+	componentDidUpdate () {
+		this.open();
+	};
+
 	open () {
 		const { match } = this.props;
+		const rootId = match.params.id;
 
-		C.BlockOpen(match.params.id, (message: any) => {
+		if (this.id == rootId) {
+			return;
+		};
+
+		this.id = rootId;
+
+		C.BlockOpen(rootId, (message: any) => {
 			this.forceUpdate();
 		});
 	};

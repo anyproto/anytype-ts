@@ -59,11 +59,8 @@ class PopupStore extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { objectTypes } = dbStore;
-		const { profile } = blockStore;
 		const { tab } = this.state;
 		const rootId = this.getRootId();
-		const details = blockStore.getDetails(profile, profile);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
 		const data = dbStore.getData(rootId, block.id);
@@ -83,15 +80,6 @@ class PopupStore extends React.Component<Props, State> {
 			</div>
 		);
 
-		let relations = [];
-		objectTypes.map((it: I.ObjectType) => { relations = relations.concat(it.relations); });
-		relations = Util.arrayUniqueObjects(relations, 'relationKey');
-		relations.sort((c1: any, c2: any) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-
 		switch (tab) {
 
 			default:
@@ -103,10 +91,10 @@ class PopupStore extends React.Component<Props, State> {
 						<div className={[ 'item', 'isType' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 							<div className="info">
-								<div className="name">{item.name}</div>
+								<div className="name">{item.name} ({item.id})</div>
 								<div className="descr">{item.description}</div>
 								<div className="author">
-									<IconObject object={{ ...author, layout: I.ObjectLayout.Human }} size={16} />
+									<IconObject object={author} size={16} />
 									{author.name}
 								</div>
 								<div className="line" />
@@ -143,20 +131,23 @@ class PopupStore extends React.Component<Props, State> {
 				break;
 
 			case 'relation':
-				Item = (item: any) => (
-					<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-						<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
-						<div className="info">
-							<div className="name">{item.name} ({item.relationKey})</div>
-							<div className="author">
-								<IconObject object={details} size={16} />
-								{details.name}
+				Item = (item: any) => {
+					const author = blockStore.getDetails(rootId, item.creator);
+					return (
+						<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
+							<div className="info">
+								<div className="name">{item.name} ({item.id})</div>
+								<div className="author">
+									<IconObject object={author} size={16} />
+									{author.name}
+								</div>
+								<div className="line" />
 							</div>
-							<div className="line" />
+							<Button className="blank c28" text="Add" />
 						</div>
-						<Button className="blank c28" text="Add" />
-					</div>
-				);
+					);
+				};
 
 				items = (
 					<div className="items">
