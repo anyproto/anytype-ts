@@ -206,6 +206,7 @@ class Cell extends React.Component<Props, {}> {
 					element: cell,
 					offsetY: -height + 1,
 					width: width,
+					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					value: value || [],

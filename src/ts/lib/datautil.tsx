@@ -103,7 +103,6 @@ class DataUtil {
 			case I.RelationType.Tag:		 c = 'select isTag'; break;
 			case I.RelationType.File:		 c = 'file'; break;
 			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
-			case I.RelationType.Icon:		 c = 'icon'; break;
 			case I.RelationType.Url:		 c = 'url'; break;
 			case I.RelationType.Email:		 c = 'email'; break;
 			case I.RelationType.Phone:		 c = 'phone'; break;
