@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject } from 'ts/component';
 import { blockStore, dbStore } from 'ts/store';
@@ -14,9 +15,13 @@ interface Props {
 	helperContainer?(): any;
 };
 
+const $ = require('jquery');
+
 @observer
 class ListIndex extends React.Component<Props, {}> {
 	
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -56,12 +61,10 @@ class ListIndex extends React.Component<Props, {}> {
 
 			let icon = null;
 			let showMenu = true;
+			let btn = null;
 
-			if (content.style == I.LinkStyle.Dataview) {
-				icon = <IconObject size={48} object={object} />;
-			} else 
 			if (content.style == I.LinkStyle.Archive) {
-				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />
+				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />;
 				showMenu = false;
 			} else 
 			if (layout == I.ObjectLayout.Task) {
@@ -71,12 +74,21 @@ class ListIndex extends React.Component<Props, {}> {
 				icon = <IconObject size={48} object={object} />;
 			};
 
+			if (showMenu) {
+				btn = <Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />;
+			};
+
 			return (
-				<div id={'item-' + item.id} className={cn.join(' ')}>
+				<div 
+					id={'item-' + item.id} 
+					className={cn.join(' ')} 
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+				>
 					{icon}
 					<div className="name">{name}</div>
-					{showMenu ? <Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} /> : ''}
 					<div className="type">{objectType ? objectType.name : ''}</div>
+					{btn}
 					<div className="click" onClick={(e: any) => { onSelect(e, item); }} onContextMenu={(e: any) => { 
 						if (showMenu) {
 							onMore(e, item); 
@@ -97,16 +109,18 @@ class ListIndex extends React.Component<Props, {}> {
 		});
 		
 		return (
-			<List 
-				axis="xy" 
-				transitionDuration={150}
-				distance={10}
-				list={children} 
-				helperClass="isDragging"
-				getContainer={helperContainer}
-				helperContainer={helperContainer} 
-				onSortEnd={this.onSortEnd} 
-			/>
+			<div>
+				<List 
+					axis="xy" 
+					transitionDuration={150}
+					distance={10}
+					list={children} 
+					helperClass="isDragging"
+					getContainer={helperContainer}
+					helperContainer={helperContainer} 
+					onSortEnd={this.onSortEnd} 
+				/>
+			</div>
 		);
 	};
 
@@ -120,6 +134,24 @@ class ListIndex extends React.Component<Props, {}> {
 	onSortEnd (result: any) {
 		const { onSortEnd } = this.props;
 		onSortEnd(result);
+	};
+
+	onMouseEnter (e: any, item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#item-' + item.id);
+
+		window.clearTimeout(this.timeout);
+		node.find('.item.hover').removeClass('hover');
+		el.addClass('hover');
+	};
+
+	onMouseLeave (e: any, item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			node.find('.item.hover').removeClass('hover');
+		}, 100);
 	};
 	
 };

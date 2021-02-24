@@ -9,7 +9,7 @@ class Tooltip extends React.Component<{}, {}> {
 			</div>
 		);
 	};
-	
+
 };
 
 export default Tooltip;

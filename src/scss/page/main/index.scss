@@ -75,11 +75,11 @@
 			.name { -webkit-line-clamp: 3; }
 		}
 		
-		.item:hover {
+		.item.active, .item.hover {
 			.icon.more { opacity: 1; }
 		}
 		.item.active {
-			.icon.more { opacity: 1; transition: none; background-image: url('~img/icon/index/more1.svg'); }
+			.icon.more { background-image: url('~img/icon/index/more1.svg'); }
 		}
 	}
 	
