@@ -11,7 +11,7 @@ interface State {
 };
 
 @observer
-class MenuObjectType extends React.Component<Props, State> {
+class MenuObjectTypeEdit extends React.Component<Props, State> {
 
 	ref: any = null;
 	state = {
@@ -45,7 +45,7 @@ class MenuObjectType extends React.Component<Props, State> {
 				<MenuItemVertical 
 					id="object-layout" 
 					icon={item ? item.icon : ''} 
-					name={item ? item.name : 'Select type'}
+					name={item ? item.name : 'Select layout'}
 					menuId="select"
 					onClick={this.onLayout} 
 					arrow={true}
@@ -106,4 +106,4 @@ class MenuObjectType extends React.Component<Props, State> {
 	
 };
 
-export default MenuObjectType;
+export default MenuObjectTypeEdit;

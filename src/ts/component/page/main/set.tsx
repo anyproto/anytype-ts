@@ -52,7 +52,7 @@ class PageMainSet extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { objectTypes } = dbStore;
 
-		commonStore.menuOpen('dataviewObjectType', { 
+		commonStore.menuOpen('objectTypeEdit', { 
 			element: '#button-add',
 			offsetX: 28,
 			offsetY: 4,

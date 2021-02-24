@@ -27,16 +27,17 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 
-import MenuRelationSuggest from './relation/suggest';
-
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
+import MenuObjectTypeEdit from './type/edit';
+
+import MenuRelationSuggest from './relation/suggest';
+
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
-import MenuDataviewObjectType from './dataview/object/type';
 import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewObjectValues from './dataview/object/values';
 import MenuDataviewFilter from './dataview/filter';
@@ -102,16 +103,17 @@ class Menu extends React.Component<Props, {}> {
 			blockCover:				 MenuBlockCover,
 			blockMention:			 MenuBlockMention,
 
-			relationSuggest:		 MenuRelationSuggest,
-
 			blockRelationEdit:		 MenuBlockRelationEdit,
 			blockRelationList:		 MenuBlockRelationList,
 			blockRelationView:		 MenuBlockRelationView,
-			
+
+			objectTypeEdit:			 MenuObjectTypeEdit,
+
+			relationSuggest:		 MenuRelationSuggest,
+
 			dataviewRelationList:	 MenuDataviewRelationList,
 			dataviewRelationEdit:	 MenuDataviewRelationEdit,
 			dataviewRelationType:	 MenuDataviewRelationType,
-			dataviewObjectType:		 MenuDataviewObjectType,
 			dataviewObjectList:		 MenuDataviewObjectList,
 			dataviewObjectValues:	 MenuDataviewObjectValues,
 			dataviewOptionList:		 MenuDataviewOptionList,
