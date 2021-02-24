@@ -71,11 +71,7 @@ class PageMainSet extends React.Component<Props, {}> {
 	setCreate (item: any) {
 		const { root } = blockStore;
 
-		if (!item.url) {
-			return;
-		};
-
-		C.BlockCreateSet(root, '', item.url, { name: item.name + ' set', iconEmoji: item.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
+		C.BlockCreateSet(root, '', item.id, { name: item.name + ' set', iconEmoji: item.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -480,7 +480,7 @@ const Mapper = {
 		ObjectType: (obj: any) => {
 			const item = new Relation.ObjectType();
 			
-			item.setUrl(obj.url);
+			item.setUrl(obj.id);
 			item.setName(obj.name);
 			item.setLayout(obj.layout);
 			item.setIconemoji(obj.iconEmoji);

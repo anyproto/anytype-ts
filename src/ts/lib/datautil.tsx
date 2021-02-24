@@ -459,7 +459,7 @@ class DataUtil {
 				ret.push({ 
 					type: I.BlockType.Page, 
 					id: 'object' + i++, 
-					objectTypeUrl: type.id, 
+					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
 					name: type.name || Constant.default.name, 
 					description: type.description,

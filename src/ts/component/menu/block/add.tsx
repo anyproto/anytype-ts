@@ -56,7 +56,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 						if (action.isObject) {
 							action.object = { 
-								url: action.url, 
 								iconEmoji: action.iconEmoji, 
 								decription: action.description,
 								layout: I.ObjectLayout.ObjectType,

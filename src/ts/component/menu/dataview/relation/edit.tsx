@@ -216,7 +216,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				value: value,
 				options: options,
 				onSelect: (e: any, item: any) => {
-					this.objectTypes = [ item.url ];
+					this.objectTypes = [ item.id ];
 
 					if (relation) {
 						this.save();

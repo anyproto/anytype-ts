@@ -389,7 +389,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				options: options,
 				value: object.id,
 				onSelect: (e: any, item: any) => {
-					C.BlockObjectTypeSet(rootId, item.url);
+					C.BlockObjectTypeSet(rootId, item.id);
 					close();
 				}
 			}

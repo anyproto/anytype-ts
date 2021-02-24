@@ -236,14 +236,14 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	dispatcher.request('blockCreatePage', request, callBack);
 };
 
-const BlockCreateSet = (contextId: string, targetId: string, objectTypeUrl: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreateSet = (contextId: string, targetId: string, objectTypeId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.Block.CreateSet.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setObjecttypeurl(objectTypeId);
 	request.setPosition(position);
 	request.setDetails(Encode.encodeStruct(details));
 
@@ -814,37 +814,37 @@ const ObjectTypeCreate = (objectType: any, callBack?: (message: any) => void) =>
 	dispatcher.request('objectTypeCreate', request, callBack);
 };
 
-const ObjectTypeRelationList = (objectTypeUrl: string, otherTypes: boolean, callBack?: (message: any) => void) => {
+const ObjectTypeRelationList = (objectTypeId: string, otherTypes: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.List.Request();
 	
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setObjecttypeurl(objectTypeId);
 	request.setAppendrelationsfromothertypes(otherTypes);
 
 	dispatcher.request('objectTypeRelationList', request, callBack);
 };
 
-const ObjectTypeRelationAdd = (objectTypeUrl: string, relations: any[], callBack?: (message: any) => void) => {
+const ObjectTypeRelationAdd = (objectTypeId: string, relations: any[], callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Add.Request();
 	
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setObjecttypeurl(objectTypeId);
 	request.setRelationsList(relations.map(Mapper.To.Relation));
 
 	dispatcher.request('objectTypeRelationAdd', request, callBack);
 };
 
-const ObjectTypeRelationUpdate = (objectTypeUrl: string, relation: any, callBack?: (message: any) => void) => {
+const ObjectTypeRelationUpdate = (objectTypeId: string, relation: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Update.Request();
 	
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setObjecttypeurl(objectTypeId);
 	request.setRelation(Mapper.To.Relation(relation));
 
 	dispatcher.request('objectTypeRelationUpdate', request, callBack);
 };
 
-const ObjectTypeRelationRemove = (objectTypeUrl: string, relationKey: string, callBack?: (message: any) => void) => {
+const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.ObjectType.Relation.Remove.Request();
 	
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setObjecttypeurl(objectTypeId);
 	request.setRelationkey(relationKey);
 
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
