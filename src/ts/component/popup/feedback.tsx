@@ -231,7 +231,7 @@ class PopupFeedback extends React.Component<Props, State> {
 			error: (xhr: any, status: string, error: string) => {
 				let err = {};
 				try {
-					err = JSON.parse(xhr.responseText || '{}s');
+					err = JSON.parse(xhr.responseText || '{}');
 				} catch (e) {};
 				
 				this.setState({ loading: false, error: 'Feedback upload failed' });
