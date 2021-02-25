@@ -224,7 +224,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				},
 			}
 		});
-
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
