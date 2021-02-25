@@ -54,7 +54,7 @@ export interface BlockComponent {
 	isPopup?: boolean;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
-	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
+	onMenuAdd? (id: string, text: string, range: I.TextRange, useRect: boolean): void;
 	onPaste? (e: any): void;
 };
 

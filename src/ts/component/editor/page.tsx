@@ -1004,18 +1004,19 @@ class EditorPage extends React.Component<Props, {}> {
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
 			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
-			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
+			this.onMenuAdd(blockId, '', { from: 0, to: 0 }, false);
 		});
 	};
 	
-	onMenuAdd (id: string, text: string, range: I.TextRange) {
+	onMenuAdd (id: string, text: string, range: I.TextRange, useRect: boolean) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
 		if (!block) {
 			return;
 		};
-		
+
+		const win = $(window);
 		const { content } = block;
 		const { marks } = content;
 		const length = String(text || '').length;
@@ -1039,9 +1040,10 @@ class EditorPage extends React.Component<Props, {}> {
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockAdd', { 
 			element: el,
+			rect: useRect ? { width: 0, height: rect.height, x: rect.x, y: rect.y + win.scrollTop() } : null,
 			type: I.MenuType.Vertical,
-			offsetX: x,
-			offsetY: y,
+			offsetX: useRect ? 0 : x,
+			offsetY: useRect ? 4 : y,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {

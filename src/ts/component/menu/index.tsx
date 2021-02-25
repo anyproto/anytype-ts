@@ -220,59 +220,74 @@ class Menu extends React.Component<Props, {}> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
+		const { element, rect, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
 		
 		raf(() => {
 			if (!this._isMounted) {
 				return;
 			};
 			
-			let el = null;
-			if ('object' == typeof(element)) {
-				el = $(element);
-			} else {
-				el = $(element.replace(/\//g, '\\/'));
-			};
-			
-			if (!el || !el.length) {
-				console.log('[Menu.position]', id, 'element not found', element);
-				return;
-			};
-
 			const win = $(window);
 			const node = $(ReactDOM.findDOMNode(this));
 			const menu = node.find('.menu');
 			const ww = win.width();
 			const wh = win.scrollTop() + win.height();
-			const offset = el.offset();
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
-			const ew = el.outerWidth();
-			const eh = el.outerHeight();
+			
+			let ew = 0;
+			let eh = 0;
+			let ox = 0;
+			let oy = 0;
 
-			let x = offset.left;
-			let y = offset.top;
+			if (rect) {
+				ew = Number(rect.width) || 0;
+				eh = Number(rect.height) || 0;
+				ox = Number(rect.x) || 0;
+				oy = Number(rect.y) || 0;
+			} else {
+				let el = null;
+				if ('object' == typeof(element)) {
+					el = $(element);
+				} else {
+					el = $(element.replace(/\//g, '\\/'));
+				};
+				
+				if (!el || !el.length) {
+					console.log('[Menu.position]', id, 'element not found', element);
+					return;
+				};
+
+				const offset = el.offset();
+				ew = el.outerWidth();
+				eh = el.outerHeight();
+				ox = offset.left;
+				oy = offset.top;
+			};
+
+			let x = ox;
+			let y = oy;
 
 			switch (vertical) {
 				case I.MenuDirection.Top:
-					y = offset.top - height + offsetY;
+					y = oy - height + offsetY;
 					
 					// Switch
 					if (!noFlipY && (y <= BORDER)) {
-						y = offset.top + eh - offsetY;
+						y = oy + eh - offsetY;
 					};
 					break;
 
 				case I.MenuDirection.Center:
-					y = offset.top - height / 2 + eh / 2 + offsetY;
+					y = oy - height / 2 + eh / 2 + offsetY;
 					break;
 
 				case I.MenuDirection.Bottom:
-					y = offset.top + eh + offsetY;
+					y = oy + eh + offsetY;
 
 					// Switch
 					if (!noFlipY && (y >= wh - height - BORDER)) {
-						y = offset.top - height - offsetY;
+						y = oy - height - offsetY;
 					};
 					break;
 			};
@@ -283,7 +298,7 @@ class Menu extends React.Component<Props, {}> {
 
 					// Switch
 					if (!noFlipX && (x >= ww - width - BORDER)) {
-						x = offset.left - width;
+						x = ox - width;
 					};
 					break;
 
@@ -296,7 +311,7 @@ class Menu extends React.Component<Props, {}> {
 
 					// Switch
 					if (!noFlipX && (x <= BORDER)) {
-						x = offset.left + ew;
+						x = ox + ew;
 					};
 					break;
 			};
