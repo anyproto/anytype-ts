@@ -2,7 +2,7 @@ export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { Top = 1, Bottom, Left, Right, Center };
 
 export interface MenuParam {
-	element: any;
+	element?: any;
 	rect?: any;
 	type: MenuType;
 	vertical: MenuDirection;

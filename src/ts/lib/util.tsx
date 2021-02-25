@@ -650,11 +650,12 @@ class Util {
 	};
 
 	selectionRect () {
-		const sel = window.getSelection();
+		let sel = window.getSelection();
+		let ret: any = { x: 0, y: 0, width: 0, height: 0 };
 		if (sel && (sel.rangeCount > 0)) {
-			return sel.getRangeAt(0).getBoundingClientRect() as DOMRect;
+			ret = sel.getRangeAt(0).getBoundingClientRect() as DOMRect;
 		};
-		return { x: 0, y: 0, width: 0, height: 0 };
+		return this.objectCopy(ret);
 	};
 
 	cntWord (cnt: any, w1: string, w2?: string) {

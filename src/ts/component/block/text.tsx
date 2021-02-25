@@ -561,7 +561,7 @@ class BlockText extends React.Component<Props, {}> {
 		// Open add menu
 		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !menuOpenAdd) {
 			value = Util.stringCut(value, range.from - 1, range.from);
-			onMenuAdd(id, value, range, true);
+			onMenuAdd(id, value, range);
 		};
 		
 		// Make div
@@ -658,18 +658,16 @@ class BlockText extends React.Component<Props, {}> {
 
 	onMention () {
 		const { rootId, block } = this.props;
+		const win = $(window);
 		const range = this.getRange();
 		const el = $('#block-' + block.id);
 		const offset = el.offset();
-		const rect = Util.selectionRect();
 
+		let rect = Util.selectionRect();
 		let value = this.getValue();
-		let x = rect.x - offset.left;
-		let y = rect.y - (offset.top - $(window).scrollTop()) - el.outerHeight() + rect.height + 8;
 
-		if (!rect.x && !rect.y) {
-			x = Constant.size.blockMenu;
-			y = 4;
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
 		};
 
 		this.preventSaveOnBlur = true;
@@ -677,9 +675,10 @@ class BlockText extends React.Component<Props, {}> {
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockMention', {
 			element: el,
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			type: I.MenuType.Vertical,
-			offsetX: x,
-			offsetY: y,
+			offsetX: rect ? 0 : Constant.size.blockMenu,
+			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {
@@ -710,25 +709,22 @@ class BlockText extends React.Component<Props, {}> {
 
 	onSmile () {
 		const { rootId, block } = this.props;
+		const win = $(window);
 		const range = this.getRange();
-		const el = $('#block-' + block.id);
-		const offset = el.offset();
-		const rect = Util.selectionRect();
 		
+		let rect = Util.selectionRect();
 		let value = this.getValue();
-		let x = rect.x - offset.left;
-		let y = rect.y - (offset.top - $(window).scrollTop());
 
-		if (!rect.x && !rect.y) {
-			x = Constant.size.blockMenu;
-			y = 4;
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
 		};
 
 		commonStore.menuOpen('smile', {
-			element: el,
+			element: '#block-' + block.id,
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			type: I.MenuType.Vertical,
-			offsetX: x,
-			offsetY: y,
+			offsetX: rect ? 0 : Constant.size.blockMenu,
+			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			data: {
@@ -885,12 +881,13 @@ class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
+		const win = $(window);
 		const el = $('#block-' + id);
-		const offset = el.offset();
-		const rect = Util.selectionRect();
-		const size = Number(Constant.size.menuBlockContext[DataUtil.styleClassText(style)] || Constant.size.menuBlockContext.default) || 0;
-		const x = rect.x - offset.left - size / 2 + rect.width / 2;
-		const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
+
+		let rect = Util.selectionRect();
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
+		};
 
 		commonStore.menuCloseAll([ 'blockAdd', 'blockMention' ]);
 
@@ -898,11 +895,12 @@ class BlockText extends React.Component<Props, {}> {
 		this.timeoutContext = window.setTimeout(() => {
 			commonStore.menuOpen('blockContext', {
 				element: el,
+				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				type: I.MenuType.Horizontal,
-				offsetX: x,
-				offsetY: y,
+				offsetX: 0,
+				offsetY: -4,
 				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Left,
+				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				data: {
 					blockId: id,

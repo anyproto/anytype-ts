@@ -639,6 +639,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const win = $(window);
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
@@ -785,20 +786,22 @@ class EditorPage extends React.Component<Props, {}> {
 				if (type == I.MarkType.Link) {
 					const mark = Mark.getInRange(marks, type, range);
 					const el = $('#block-' + focused);
-					const offset = el.offset();
-					const rect = Util.selectionRect();
-					const x = rect.x - offset.left - Constant.size.menuBlockLink / 2 + rect.width / 2;
-					const y = rect.y - (offset.top - $(window).scrollTop()) - 8;
+
+					let rect = Util.selectionRect();
+					if (!rect.x && !rect.y && !rect.width && !rect.height) {
+						rect = null;
+					};
 
 					commonStore.menuClose('blockContext');
 					window.setTimeout(() => {
 						commonStore.menuOpen('blockLink', {
-							type: I.MenuType.Horizontal,
 							element: el,
-							offsetX: x,
-							offsetY: y,
+							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+							type: I.MenuType.Horizontal,
+							offsetX: 0,
+							offsetY: -4,
 							vertical: I.MenuDirection.Top,
-							horizontal: I.MenuDirection.Left,
+							horizontal: I.MenuDirection.Center,
 							data: {
 								value: (mark ? mark.param : ''),
 								onChange: (param: string) => {
@@ -1004,11 +1007,11 @@ class EditorPage extends React.Component<Props, {}> {
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
 			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
-			this.onMenuAdd(blockId, '', { from: 0, to: 0 }, false);
+			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
 	};
 	
-	onMenuAdd (id: string, text: string, range: I.TextRange, useRect: boolean) {
+	onMenuAdd (id: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
 		const block = blockStore.getLeaf(rootId, id);
 
@@ -1017,33 +1020,28 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		const win = $(window);
+		const el = $('#block-' + id);
 		const { content } = block;
 		const { marks } = content;
 		const length = String(text || '').length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		const el = $('#block-' + id);
-		const offset = el.offset() || {};
-		const rect = Util.selectionRect();
 		const onCommand = (message: any) => {
 			focus.set(message.blockId || id, { from: length, to: length });
 			focus.apply();
 		};
-		
-		let x = rect.x - offset.left;
-		let y = rect.y - (offset.top - $(window).scrollTop()) - el.outerHeight() + rect.height + 8;
 
-		if (!rect.x && !rect.y) {
-			x = Constant.size.blockMenu;
-			y = -4;
+		let rect = Util.selectionRect();
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
 		};
 
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockAdd', { 
 			element: el,
-			rect: useRect ? { width: 0, height: rect.height, x: rect.x, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			type: I.MenuType.Vertical,
-			offsetX: useRect ? 0 : x,
-			offsetY: useRect ? 4 : y,
+			offsetX: rect ? 0 : Constant.size.blockMenu,
+			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			onClose: () => {

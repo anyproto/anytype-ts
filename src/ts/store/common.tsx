@@ -190,11 +190,6 @@ class CommonStore {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 
-		if (!param.element) {
-			console.error('[menuOpen] Element is not defined');
-			return;
-		};
-
 		this.menuClose(id, () => {
 			this.menuList.push(observable({ id: id, param: param }));
 			
