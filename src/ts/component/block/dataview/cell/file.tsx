@@ -22,7 +22,7 @@ class CellFile extends React.Component<Props, {}> {
 		if (!record) {
 			return null;
 		};
-		
+
 		let value = this.getValue();
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._detailsEmpty_; });
