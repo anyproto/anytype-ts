@@ -415,8 +415,8 @@ class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
 		const menuOpenMention = commonStore.menuIsOpen('blockMention');
 		const menuOpenSmile = commonStore.menuIsOpen('smile');
-		
-		keyboard.shortcut('enter', e, (pressed: string) => {
+
+		keyboard.shortcut('enter, enter+backspace', e, (pressed: string) => {
 			if (block.isTextCode() || menuOpen) {
 				return;
 			};
