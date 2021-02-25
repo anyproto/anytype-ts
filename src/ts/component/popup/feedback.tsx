@@ -167,7 +167,7 @@ class PopupFeedback extends React.Component<Props, State> {
 		const request: any = {
 			name: this.refObject.name.getValue(),
 			email: this.refObject.email.getValue(),
-			comments: message.join('\n\n'),
+			comments: message.join('\n———\n'),
 			event_id: '',
 		};
 		
