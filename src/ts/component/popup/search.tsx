@@ -449,7 +449,9 @@ class PopupSearch extends React.Component<Props, State> {
 
 	load () {
 		const { filter } = this.state;
-		const filters = [];
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];

@@ -166,7 +166,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { filter } = commonStore;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
-		const filters = [];
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
