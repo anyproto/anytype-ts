@@ -23,7 +23,7 @@
 	}
 	.iconUser {
 		.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
-		.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; }
+		.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; vertical-align: top !important; }
 	}
 
 	.iconUser.c16 { line-height: 16px; font-size: 10px; }
@@ -125,7 +125,8 @@
 
 .iconObject.c48.isRelation { border-radius: 8px; background-color: #f3f2ec; }
 
-.iconObject.isUser { border-radius: 100%; }
+.iconObject.isUser { border-radius: 100%; display: inline-block !important; }
+.iconObject.isUser * { display: inline-block !important; }
 
 .iconObject.isTask.canEdit {
 	.iconCheckbox { cursor: pointer; }
