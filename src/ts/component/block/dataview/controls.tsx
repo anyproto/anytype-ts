@@ -4,6 +4,7 @@ import { I, Util, DataUtil, translate } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
 interface Props extends I.ViewComponent {};
 
@@ -12,6 +13,7 @@ interface State {
 };
 
 const Constant = require('json/constant.json');
+const $ = require('jquery');
 
 @observer
 class Controls extends React.Component<Props, State> {
@@ -25,6 +27,7 @@ class Controls extends React.Component<Props, State> {
 
 		this.onButton = this.onButton.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
+		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
@@ -46,12 +49,6 @@ class Controls extends React.Component<Props, State> {
 			{ id: 'more', menu: 'dataviewViewEdit' },
 		];
 
-		const ViewItem = (item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
-				{item.name}
-			</div>
-		);
-		
 		const ButtonItem = (item: any) => {
 			let icn = [ item.id, String(item.className || '') ];
 			let cn = [ 'item', (item.on ? 'on' : '') ].concat(icn);
@@ -67,21 +64,41 @@ class Controls extends React.Component<Props, State> {
 				/>
 			);
 		};
+
+		const ViewItem = SortableElement((item: any) => (
+			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
+				{item.name}
+			</div>
+		));
+
+		const Views = SortableContainer((item: any) => (
+			<div className="views">
+				{views.slice(page * limit, (page + 1) * limit).map((item: I.View, i: number) => (
+					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
+				))}
+
+				<div className="item">
+					<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
+				</div>
+				<div className="item dn">
+					<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
+					<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
+				</div>
+			</div>
+		));
 		
 		return (
 			<div className="dataviewControls">
-				<div className="views">
-					{views.slice(page * limit, (page + 1) * limit).map((item: I.View, i: number) => (
-						<ViewItem key={i} {...item} active={item.id == viewId} />
-					))}
-					<div className="item">
-						<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
-					</div>
-					<div className="item dn">
-						<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
-						<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
-					</div>
-				</div>
+				<Views 
+					axis="x" 
+					lockAxis="x"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					onSortEnd={this.onSortEnd}
+					helperClass="isDragging"
+					helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
+				/>
 				
 				<div className="buttons">
 					<div className="side left">
@@ -157,6 +174,10 @@ class Controls extends React.Component<Props, State> {
 				},
 			});
 		});
+	};
+
+	onSortEnd (result: any) {
+		const { oldIndex, newIndex } = result;
 	};
 
 	onArrow (dir: number) {

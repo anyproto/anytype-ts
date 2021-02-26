@@ -16,10 +16,15 @@
 
 		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {
-			.item { margin-right: 20px; display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; }
+			.item { 
+				margin-right: 20px; display: inline-block; vertical-align: middle; transition: color 0.2s ease-in-out; cursor: pointer; 
+				white-space: nowrap;
+			}
 			.item:last-child { margin: 0px; }
 			.item:hover, .item.active { color: $colorBlack; }
 			
+			.item.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
+
 			.icon.plus { margin-top: -4px; }
 		}
 		
