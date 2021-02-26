@@ -46,11 +46,11 @@ class ListIndex extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
 			const object = blockStore.getDetails(root, content.targetBlockId);
-			const { _detailsEmpty_, name, layout, iconEmoji, iconImage } = object;
+			const { _objectEmpty_, name, layout, iconEmoji, iconImage } = object;
 			const objectType: any = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
 
-			if (_detailsEmpty_) {
+			if (_objectEmpty_) {
 				return (
 					<div className="item">
 						<div className="iconObject c48" />

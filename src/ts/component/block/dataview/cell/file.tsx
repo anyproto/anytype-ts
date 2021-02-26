@@ -25,7 +25,7 @@ class CellFile extends React.Component<Props, {}> {
 
 		let value = this.getValue();
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
-		value = value.filter((it: any) => { return !it._detailsEmpty_; });
+		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
 		if (!value.length) {
 			return !canEdit ? null : (

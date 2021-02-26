@@ -59,7 +59,7 @@ class HeaderMainObjectType extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-more" tooltip="Menu big" className="more" onClick={this.onMore} />
+					<Icon id="button-header-more" tooltip="Menu" className="more" onClick={this.onMore} />
 				</div>
 			</div>
 		);

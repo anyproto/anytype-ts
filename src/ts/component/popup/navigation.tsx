@@ -548,11 +548,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					if (item.id == root) {
-						history.push('/main/index');
-					} else {
-						DataUtil.pageOpen(item.id);
-					};
+					DataUtil.objectOpen({ id: item.id });
 				});
 				break;
 

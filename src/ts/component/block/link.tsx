@@ -27,10 +27,10 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const details = blockStore.getDetails(rootId, content.targetBlockId);
-		const { _detailsEmpty_, name, isArchived } = details;
+		const { _objectEmpty_, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 
-		if (_detailsEmpty_) {
+		if (_objectEmpty_) {
 			return (
 				<div className="loading" data-target-block-id={content.targetBlockId}>
 					<Loader />
@@ -77,11 +77,11 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const details = blockStore.getDetails(rootId, targetBlockId);
-		const { _detailsEmpty_ } = details;
+		const object = blockStore.getDetails(rootId, targetBlockId);
+		const { _objectEmpty_ } = object;
 		
-		if (!_detailsEmpty_ && (targetBlockId != rootId)) {
-			DataUtil.pageOpenEvent(e, targetBlockId);
+		if (!_objectEmpty_ && (targetBlockId != rootId)) {
+			DataUtil.objectOpenEvent(e, object);
 		};
 	};
 	

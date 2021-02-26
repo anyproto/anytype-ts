@@ -16,6 +16,7 @@ import PopupFeedback from './feedback';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupStore from './store';
+import PopupPage from './page';
 
 interface Props extends I.Popup {
 	history: any;
@@ -52,6 +53,7 @@ class Popup extends React.Component<Props, {}> {
 			feedback: PopupFeedback,
 			shortcut: PopupShortcut,
 			store: PopupStore,
+			page: PopupPage,
 		};
 		
 		const popupId = this.getId();

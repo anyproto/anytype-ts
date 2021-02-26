@@ -139,9 +139,9 @@ class Keyboard {
 			
 			DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
 				if (isMainIndex) {
-					DataUtil.pageOpen(message.targetId);
+					DataUtil.objectOpen({ id: message.targetId });
 				} else {
-					DataUtil.pageOpenPopup(message.targetId);
+					DataUtil.objectOpenPopup({ id: message.targetId });
 				};
 			});
 		});

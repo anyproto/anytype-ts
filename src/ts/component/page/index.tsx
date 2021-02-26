@@ -48,7 +48,9 @@ const Components: any = {
 	'main/relation':		 PageMainRelation,
 };
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	isPopup?: boolean;
+};
 
 class Page extends React.Component<Props, {}> {
 
@@ -93,7 +95,7 @@ class Page extends React.Component<Props, {}> {
 	
 	init () {
 		const { account } = authStore;
-		const { match, history } = this.props;
+		const { isPopup, match, history } = this.props;
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
@@ -115,9 +117,12 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 		this.event();
 		this.unbind();
-		
-		commonStore.popupCloseAll();
-		commonStore.menuCloseAll();
+
+		if (!isPopup) {
+			commonStore.popupCloseAll();
+			commonStore.menuCloseAll();
+		};		
+
 		Util.linkPreviewHide(true);
 		
 		keyboard.setMatch(match);
@@ -181,14 +186,16 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
+		const { isPopup } = this.props;
 		const { config } = commonStore;
 		const cn = [ this.getClass('body') ];
+		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
 		
 		if (config.debugUI) {
 			cn.push('debug');
 		};
 
-		$('html').attr({ class: cn.join(' ') });
+		obj.attr({ class: cn.join(' ') });
 	};
 	
 	resize () {

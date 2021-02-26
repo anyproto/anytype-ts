@@ -76,7 +76,7 @@ class PageMainSet extends React.Component<Props, {}> {
 				return;
 			};
 
-			DataUtil.pageOpen(message.targetId);
+			DataUtil.objectOpen({ id: message.targetId });
 		});
 	};
 	

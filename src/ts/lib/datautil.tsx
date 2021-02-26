@@ -253,35 +253,59 @@ class DataUtil {
 		});
 	};
 
-	pageOpenEvent (e: any, targetId: string) {
+	objectOpenEvent (e: any, object: any) {
 		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
-			this.pageOpenPopup(targetId);
+			this.objectOpenPopup(object);
 		} else {
-			this.pageOpen(targetId);
+			this.objectOpen(object);
 		};
 	};
 	
-	pageOpen (targetId: string) {
-		if (!targetId) {
-			return;
-		};
-
+	objectOpen (object: any) {
 		const { root } = blockStore;
-		const route = targetId == root ? '/main/index' : '/main/edit/' + targetId;
-		this.history.push(route);
+		console.log('objectOpen', object);
+
+		switch (object.layout) {
+			default:
+				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				this.history.push('/main/type/' + object.id);
+				break;
+
+			case I.ObjectLayout.Relation:
+				this.history.push('/main/relation/' + object.id);
+				break;
+		};
 	};
 
-	pageOpenPopup (targetId: string) {
-		if (!targetId) {
-			return;
+	objectOpenPopup (object: any) {
+		console.log('objectOpenPopup', object);
+		let param: any = { data: {} };
+		let popupId = '';
+
+		switch (object.layout) {
+			default:
+				popupId = 'editorPage';
+				param.data.id = object.id;
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				popupId = 'page';
+				param.data.match = { params: { page: 'main', action: 'type', id: object.id } };
+				break;
+
+			case I.ObjectLayout.Relation:
+				popupId = 'page';
+				param.data.match = { params: { page: 'main', action: 'relation', id: object.id } };
+				break;
 		};
 
-		const param = { data: { id: targetId } };
-
-		if (commonStore.popupIsOpen('editorPage')) {
-			commonStore.popupUpdate('editorPage', param);
+		if (commonStore.popupIsOpen(popupId)) {
+			commonStore.popupUpdate(popupId, param);
 		} else {
-			window.setTimeout(() => { commonStore.popupOpen('editorPage', param); }, Constant.delay.popup);
+			window.setTimeout(() => { commonStore.popupOpen(popupId, param); }, Constant.delay.popup);
 		};
 	};
 	
@@ -713,24 +737,6 @@ class DataUtil {
 			view.relations = view.relations.filter((it: I.ViewRelation) => { return it.relationKey != relationKey; });
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 		});
-	};
-
-	objectOpen (object: any) {
-		console.log('objectOpen', object);
-
-		switch (object.layout) {
-			default:
-				this.pageOpenPopup(object.id);
-				break;
-
-			case I.ObjectLayout.ObjectType:
-				this.history.push('/main/type/' + object.id);
-				break;
-
-			case I.ObjectLayout.Relation:
-				this.history.push('/main/relation/' + object.id);
-				break;
-		};
 	};
 
 	checkDetails (rootId: string) {

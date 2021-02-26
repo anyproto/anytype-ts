@@ -24,6 +24,8 @@ interface Props {
 	onClick?(e: any): void;
 };
 
+const IDS40 = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.ObjectType ];
+
 const Size = {
 	16: 16,
 	18: 18,
@@ -165,7 +167,8 @@ class IconObject extends React.Component<Props, {}> {
 
 	iconSize (layout: I.ObjectLayout, size: number) {
 		let s = Size[size];
-		if ((size == 48) && ([ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.File, I.ObjectLayout.Image ].indexOf(layout) >= 0)) {
+
+		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
 			s = 40;
 		};
 		return s;

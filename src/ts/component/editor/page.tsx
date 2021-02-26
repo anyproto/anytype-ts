@@ -1139,7 +1139,7 @@ class EditorPage extends React.Component<Props, {}> {
 									};
 
 									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {
-										DataUtil.pageOpenPopup(message.targetId);
+										DataUtil.objectOpenPopup(details);
 									});
 								};
 							} else {

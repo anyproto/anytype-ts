@@ -136,7 +136,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						const { iconImage, iconEmoji, name } = details;
 						return details;
 					});
-					list = list.filter((it: any) => { return !it._detailsEmpty_; });
+					list = list.filter((it: any) => { return !it._objectEmpty_; });
 
 					if (list.length) {
 						cn.push('withValues');

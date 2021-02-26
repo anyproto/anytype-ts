@@ -284,18 +284,18 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			const details = blockStore.getDetails(rootId, data.param);
+			const object = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
-			const { _detailsEmpty_, iconEmoji, iconImage } = details;
+			const { _objectEmpty_, iconEmoji, iconImage } = object;
 			const cn = [];
 
 			if (smile && smile.length) {
 				let icon = null;
-				if (_detailsEmpty_) {
+				if (_objectEmpty_) {
 					item.addClass('dis');
 					icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 				} else {
-					icon = <IconObject size={size} object={details} />;
+					icon = <IconObject size={size} object={object} />;
 				};
 
 				if (icon) {
@@ -312,7 +312,8 @@ class BlockText extends React.Component<Props, {}> {
 			e.preventDefault();
 			const el = $(this);
 			if (!el.hasClass('dis')) {
-				DataUtil.pageOpenEvent(e, el.data('param'));
+				const object = blockStore.getDetails(rootId, el.data('param'));
+				DataUtil.objectOpenEvent(e, object);
 			};
 		});
 	};

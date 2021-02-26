@@ -65,7 +65,9 @@ class HeaderMainEditPopup extends React.Component<Props, {}> {
 
 	onOpen () {
 		const { rootId } = this.props;
-		DataUtil.pageOpen(rootId);
+		const object = blockStore.getDetails(rootId, rootId);
+
+		DataUtil.objectOpen(object);
 	};
 
 	onMore (e: any) {

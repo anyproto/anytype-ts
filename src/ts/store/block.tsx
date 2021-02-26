@@ -423,7 +423,7 @@ class BlockStore {
 
 	getDetails (rootId: string, id: string): any {
 		const map = this.getDetailsMap(rootId);
-		const item = map.get(id) || { _detailsEmpty_: true };
+		const item = map.get(id) || { _objectEmpty_: true };
 		return {
 			...item,
 			name: String(item.name || Constant.default.name || ''),
