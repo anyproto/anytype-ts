@@ -57,7 +57,7 @@ class CellFile extends React.Component<Props, {}> {
 		);
 
 		return (
-			<React.Fragment>
+			<div className="wrap">
 				{value.map((item: any, i: number) => {
 					switch (item.layout) {
 						case I.ObjectLayout.File:
@@ -67,7 +67,7 @@ class CellFile extends React.Component<Props, {}> {
 							return <Image key={i} {...item} />;
 					};
 				})}
-			</React.Fragment>
+			</div>
 		);
 	};
 

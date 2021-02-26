@@ -280,7 +280,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		
 		items.css({ width: width }).removeClass('last');
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - 150 - height });
+		documents.css({ marginTop: wh - 142 - height });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
