@@ -325,7 +325,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 				offsetX: obj.outerWidth(),
 				offsetY: -76,
 				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Right,
+				horizontal: I.MenuDirection.Left,
 				data: {
 					...data,
 					onChange: () => { close(); },
