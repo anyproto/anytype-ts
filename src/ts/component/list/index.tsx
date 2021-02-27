@@ -47,7 +47,7 @@ class ListIndex extends React.Component<Props, {}> {
 			const content = item.content || {};
 			const object = blockStore.getDetails(root, content.targetBlockId);
 			const { _objectEmpty_, name, layout, iconEmoji, iconImage } = object;
-			const objectType: any = dbStore.getObjectType(object.type);
+			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
 
 			if (_objectEmpty_) {
@@ -87,7 +87,7 @@ class ListIndex extends React.Component<Props, {}> {
 				>
 					{icon}
 					<div className="name">{name}</div>
-					<div className="type">{objectType ? objectType.name : ''}</div>
+					<div className="type">{type ? type.name : ''}</div>
 					{btn}
 					<div className="click" onClick={(e: any) => { onSelect(e, item); }} onContextMenu={(e: any) => { 
 						if (showMenu) {

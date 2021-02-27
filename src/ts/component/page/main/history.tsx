@@ -150,7 +150,6 @@ class PageMainHistory extends React.Component<Props, State> {
 	componentDidMount () {
 		this.loadList('');
 		this.resize();
-		this.setId();
 	};
 
 	componentDidUpdate () {
@@ -159,7 +158,6 @@ class PageMainHistory extends React.Component<Props, State> {
 		const sideRight = node.find('#sideRight');
 
 		this.resize();
-		this.setId();
 
 		if (this.version) {
 			this.show(this.version.id);
@@ -207,13 +205,6 @@ class PageMainHistory extends React.Component<Props, State> {
 				clone.remove();
 			};
 		});
-	};
-
-	setId () {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
-		Storage.set('redirect', '/main/history/' + rootId);
 	};
 
 	show (id: string) {

@@ -50,12 +50,10 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.open();
-		this.setId();
 	};
 
 	componentDidUpdate () {
 		this.open();
-		this.setId();
 	};
 
 	open () {
@@ -69,7 +67,6 @@ class PageMainRelation extends React.Component<Props, {}> {
 		this.id = rootId;
 		this.loading = true;
 		this.forceUpdate();
-		this.setId();
 
 		C.BlockOpen(rootId, (message: any) => {
 			this.loading = false;
@@ -81,13 +78,6 @@ class PageMainRelation extends React.Component<Props, {}> {
 		});
 	};
 
-	setId () {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
-		Storage.set('redirect', '/main/relation/' + rootId);
-	};
-	
 };
 
 export default PageMainRelation;

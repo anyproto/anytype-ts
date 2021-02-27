@@ -37,12 +37,12 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			icon.type = I.BlockType.IconUser;
 		};
 
-		const objectType = dbStore.getObjectType(check.object.type);
+		const type = dbStore.getObjectType(check.object.type);
 		const creator = blockStore.getDetails(rootId, check.object.creator);
 		const featured = [];
 
-		if (objectType) {
-			featured.push({ ...objectType, layout: I.ObjectLayout.ObjectType });
+		if (type) {
+			featured.push({ ...type, layout: I.ObjectLayout.ObjectType });
 		};
 		if (!creator._objectEmpty_) {
 			featured.push(creator);

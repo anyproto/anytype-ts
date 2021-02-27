@@ -145,7 +145,6 @@ class PageMainType extends React.Component<Props, {}> {
 		this.id = rootId;
 		this.loading = true;
 		this.forceUpdate();
-		this.setId();
 
 		C.BlockOpen(rootId, (message: any) => {
 			this.loading = false;
@@ -157,15 +156,6 @@ class PageMainType extends React.Component<Props, {}> {
 		});
 	};
 
-	setId () {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
-		console.log('SET REDIRECT');
-
-		Storage.set('redirect', '/main/type/' + rootId);
-	};
-	
 };
 
 export default PageMainType;

@@ -35,19 +35,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sectionPage = null;
 		if (block.isPage() && config.allowDataview) {
-			const objectType = dbStore.getObjectType(object.type);
+			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 
 			sectionPage = (
 				<React.Fragment>
-					{objectType ? (
+					{type ? (
 						<React.Fragment>
 							<div className="sectionName">Type</div>
 							<MenuItemVertical 
 								id="object-type" 
-								object={{...objectType, layout: I.ObjectLayout.ObjectType }}
-								name={objectType.name}
+								object={{...type, layout: I.ObjectLayout.ObjectType }}
+								name={type.name}
 								menuId="select"
 								onClick={this.onType} 
 								arrow={true}

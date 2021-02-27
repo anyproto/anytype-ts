@@ -36,21 +36,6 @@ class PageMainEdit extends React.Component<Props, {}> {
 		);
 	};
 	
-	componentDidMount () {
-		this.setId();
-	};
-	
-	componentDidUpdate () {
-		this.setId();
-	};
-	
-	setId () {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
-		Storage.set('redirect', '/main/edit/' + rootId);
-	};
-
 	onOpen () {
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();

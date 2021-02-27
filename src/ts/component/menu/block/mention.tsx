@@ -50,7 +50,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const objectType: any = dbStore.getObjectType(item.type) || {};
+			const type: any = dbStore.getObjectType(item.type);
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -68,7 +69,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}
-						caption={objectType.name}
+						caption={type ? type.name : undefined}
 						style={param.style}
 						className={item.id == 'add' ? 'add' : ''}
 					/>

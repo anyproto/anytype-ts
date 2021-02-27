@@ -34,7 +34,8 @@ class MenuObjectValues extends React.Component<Props> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const objectType: any = dbStore.getObjectType(item.type) || {};
+			const type: any = dbStore.getObjectType(item.type) || {};
+
 			return (
 				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
@@ -42,7 +43,7 @@ class MenuObjectValues extends React.Component<Props> {
 						<IconObject object={item} />
 						<div className="name">{item.name}</div>
 					</span>
-					<div className="caption">{objectType.name}</div>
+					<div className="caption">{type.name}</div>
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);

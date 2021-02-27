@@ -121,19 +121,20 @@ class Page extends React.Component<Props, {}> {
 		if (!isPopup) {
 			commonStore.popupCloseAll();
 			commonStore.menuCloseAll();
-		};		
+		};
 
 		Util.linkPreviewHide(true);
 		keyboard.setMatch(match);
 
-		if (isMain) {
-			if (!popupNewBlock) {
-				commonStore.popupOpen('help', { 
-					data: { document: 'whatsNew' },
-				});
-			};
+		
+		if (isMain && !popupNewBlock) {
+			commonStore.popupOpen('help', { 
+				data: { document: 'whatsNew' },
+			});
+		};
 
-			if (account && isMainIndex && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+		if (isMainIndex) {
+			if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 				Storage.delete('askSurvey');
 				commonStore.popupOpen('confirm', {
 					data: {
@@ -153,6 +154,10 @@ class Page extends React.Component<Props, {}> {
 					},
 				});
 			};
+
+			Storage.delete('redirect');
+		} else {
+			Storage.set('redirect', history.location.pathname);
 		};
 
 		$(window).on('resize.page', () => { this.resize(); });

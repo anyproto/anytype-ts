@@ -6,7 +6,7 @@
 
 		.content { height: 432px; overflow: visible; transition: none; }
 		.wrap { height: 100%; }
-		.innerWrap { top: 38px; width: 512px; margin-left: -256px; transform: scale3d(1,1,1); transition: none; }
+		.innerWrap { top: 38px; width: 512px; margin-left: -256px; transform: scale3d(1,1,1); transition: none; overflow: visible; }
 		.dimmer { transition: none; }
 
 		.head { 
@@ -37,21 +37,20 @@
 
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 5px 16px; white-space: nowrap;
+				display: flex;
 			}
 			.item {
-				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; }
-				.name { @include text-overflow-nw; line-height: 22px; max-width: 200px; display: inline-block; vertical-align: top;  }
+				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; flex-shrink: 0; }
+				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 33%; }
+				.type { flex-shrink: 0; max-width: 33%; }
 				.descr { 
-					@include text-small; @include text-overflow-nw; line-height: 22px; max-width: 180px; color: #6c6a5f; display: inline-block; vertical-align: top; 
+					@include text-small; @include text-overflow-nw; line-height: 22px; color: #6c6a5f; display: inline-block; vertical-align: top; 
 				}
 
-				.div { width: 2px; height: 22px; line-height: 22px; margin: 0px 6px; display: inline-block; vertical-align: top; }
+				.div { width: 2px; height: 22px; line-height: 22px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
 				.div {
 					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorDarkGrey; }
 				}
-
-				.element { height: 22px; line-height: 22px; display: inline-block; vertical-align: top; }
-				.element:last-child .div { display: none; }
 			}
 
 			.item.active { background-color: rgba(172, 169, 150, 0.15); }

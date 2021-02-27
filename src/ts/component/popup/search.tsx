@@ -102,29 +102,27 @@ class PopupSearch extends React.Component<Props, State> {
 
 		const Item = (item: any) => {
 			let isRoot = item.id == root;
-			let objectType = dbStore.getObjectType(item.type);
+			let type = dbStore.getObjectType(item.type);
+			let description = item.description || item.snippet;
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 					{isRoot ? iconHome : <IconObject object={item} size={18} /> }
 					
-					<div className="element">
-						<div className="name element">{item.name}</div>
-						{div}
-					</div>
+					<div className="name">{item.name}</div>
 
-					{objectType ? (
-						<div className="element">
-							<div className="descr">{objectType.name}</div>
+					{type ? (
+						<React.Fragment>
 							{div}
-						</div>
+							<div className="type descr">{type.name}</div>
+						</React.Fragment>
 					) : ''}
 
-					{item.snippet ? (
-						<div className="element">
-							<div className="descr">{item.snippet}</div>
+					{description ? (
+						<React.Fragment>
 							{div}
-						</div>
+							<div className="descr">{description}</div>
+						</React.Fragment>
 					) : ''}
 				</div>
 			);
