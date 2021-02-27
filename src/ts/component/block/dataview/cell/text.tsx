@@ -163,7 +163,7 @@ class CellText extends React.Component<Props, State> {
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpen(record); }} />
+					<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpenPopup(record); }} />
 				</React.Fragment>
 			);
 		} else 

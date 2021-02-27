@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainType as Header } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header } from 'ts/component';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { blockStore, dbStore } from 'ts/store';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	isPopup?: boolean;
+};
 
 const BLOCK_ID = 'dataview';
 
@@ -20,7 +22,7 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { match } = this.props;
+		const { match, isPopup } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
@@ -63,7 +65,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId="" />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">

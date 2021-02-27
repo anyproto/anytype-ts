@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainEditPopup as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { HeaderMainEdit as Header, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 import { commonStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -21,13 +21,13 @@ class PopupEditorPage extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { history, location, match, param } = this.props;
+		const { history, location, param } = this.props;
 		const { data } = param;
-		const { id } = data;
+		const { id, match } = data;
 		
 		return (
 			<div className="wrap">
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={id} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} match={match} isPopup={true} />
 				<SelectionProvider rootId={id}>
 					<DragProvider {...this.props} rootId={id}>
 						<EditorPage key="editorPagePopup" isPopup={true} history={history} location={location} match={match} rootId={id} onOpen={this.onOpen} />

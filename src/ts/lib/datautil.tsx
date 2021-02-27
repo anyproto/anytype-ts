@@ -263,7 +263,6 @@ class DataUtil {
 	
 	objectOpen (object: any) {
 		const { root } = blockStore;
-		console.log('objectOpen', object);
 
 		switch (object.layout) {
 			default:
@@ -281,7 +280,6 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
-		console.log('objectOpenPopup', object);
 		let param: any = { data: {} };
 		let popupId = '';
 
@@ -289,6 +287,7 @@ class DataUtil {
 			default:
 				popupId = 'editorPage';
 				param.data.id = object.id;
+				param.data.match = { params: { page: 'main', action: 'edit', id: object.id } };
 				break;
 
 			case I.ObjectLayout.ObjectType:

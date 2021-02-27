@@ -23,7 +23,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 			<div>
 				<SelectionProvider rootId={match.params.id}>
 					<DragProvider {...this.props} rootId={rootId}>
-						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={false} />
 	
 						<div className="wrapper">
 							<EditorPage key="editorPage" isPopup={false} history={history} location={location} match={match} rootId={rootId} onOpen={this.onOpen} />

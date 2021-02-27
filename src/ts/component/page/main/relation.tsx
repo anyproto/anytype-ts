@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainRelation as Header } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header } from 'ts/component';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { blockStore, dbStore } from 'ts/store';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	isPopup?: boolean;
+};
 
 @observer
 class PageMainRelation extends React.Component<Props, {}> {
@@ -19,13 +21,13 @@ class PageMainRelation extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { match } = this.props;
+		const { match, isPopup } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
 				<div className="wrapper">
 					<div className="head">
 						<div className="side left">

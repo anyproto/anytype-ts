@@ -45,6 +45,7 @@
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.new-set { background-image: url('~img/icon/header/set.svg'); }
+	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
 
 	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
 
@@ -119,8 +120,6 @@
 		.path {
 			.item { cursor: default; }
 		}
-
-		.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
 	}
 }
 

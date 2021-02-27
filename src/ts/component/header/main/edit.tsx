@@ -7,7 +7,7 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
-	rootId: string;
+	isPopup: boolean;
 	dataset?: any;
 };
 
@@ -28,22 +28,23 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.onSync = this.onSync.bind(this);
+		this.onOpen = this.onOpen.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
-		const { rootId } = this.props;
-		const { breadcrumbs } = blockStore;
+		const { match, isPopup } = this.props;
 		const { config } = commonStore;
-
+		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (!root) {
 			return null;
 		};
 		
-		const details = blockStore.getDetails(breadcrumbs, rootId);
+		const object = blockStore.getDetails(rootId, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (commonStore.popupIsOpen('navigation') || commonStore.menuIsOpen('blockRelationView')) {
@@ -52,22 +53,32 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		return (
 			<div id="header" className={cn.join(' ')}>
-				<div className="side left">
-					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-					<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-					<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-					<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-				</div>
+				{isPopup ? (
+					<div className="side left">
+						<div className="item" onClick={this.onOpen}>
+							<Icon className="expand" />
+							Open as page
+						</div>
+					</div>
+				) : (
+					<div className="side left">
+						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
+						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
+						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
+					</div>
+				)}
+
 
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<IconObject object={details} />
-							<div className="name">{Util.shorten(details.name, 32)}</div>
+							<IconObject object={object} />
+							<div className="name">{Util.shorten(object.name, 32)}</div>
 						</div>
 					</div>
 
-					<Icon className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 					{config.allowDataview ? (
 						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					) : ''}
@@ -94,9 +105,18 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		crumbs.restore(I.CrumbsType.Page);
 		this.props.history.goForward();
 	};
+
+	onOpen () {
+		const { match } = this.props;
+		const rootId = match.params.id;
+		const object = blockStore.getDetails(rootId, rootId);
+
+		DataUtil.objectOpen(object);
+	};
 	
 	onMore (e: any) {
-		const { rootId, match } = this.props;
+		const { match } = this.props;
+		const rootId = match.params.id;
 
 		commonStore.menuCloseAll();
 		window.setTimeout(() => {
@@ -120,8 +140,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { rootId } = this.props;
+		const { match } = this.props;
 		const { focused } = focus;
+		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
@@ -151,7 +172,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
-		const { rootId } = this.props;
+		const { match } = this.props;
+		const rootId = match.params.id;
 
 		commonStore.menuCloseAll();
 		window.setTimeout(() => {
@@ -175,7 +197,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
+		const { match } = this.props;
+		const rootId = match.params.id;
 
 		commonStore.popupOpen('navigation', {
 			preventResize: true, 
@@ -190,7 +213,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
+		const { match } = this.props;
+		const rootId = match.params.id;
 
 		commonStore.popupOpen('search', {
 			preventResize: true, 
@@ -213,7 +237,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onRelation () {
-		const { rootId } = this.props;
+		const { match } = this.props;
+		const rootId = match.params.id;
 
 		commonStore.menuCloseAll();
 		window.setTimeout(() => {
