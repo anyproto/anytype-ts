@@ -36,7 +36,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let sectionPage = null;
 		if (block.isPage() && config.allowDataview) {
 			const objectType = dbStore.getObjectType(object.type);
-			const layouts = this.getLayouts();
+			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 
 			sectionPage = (
@@ -211,15 +211,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		return items;
 	};
 
-	getLayouts () {
-		return [
-			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
-			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
-			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
-			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
-		];
-	};
-	
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
@@ -354,7 +345,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				options: this.getLayouts(),
+				options: DataUtil.menuGetLayouts(),
 				value: object.layout,
 				onSelect: (e: any, item: any) => {
 					DataUtil.pageSetLayout(rootId, item.id);

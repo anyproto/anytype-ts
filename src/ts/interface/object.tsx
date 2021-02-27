@@ -13,16 +13,6 @@ export enum ObjectLayout {
 	Database	 = 20,
 };
 
-export interface ObjectType {
-	id: string;
-	name: string;
-	description?: string;
-	layout: ObjectLayout;
-	iconEmoji: string;
-	isHidden: boolean;
-	relations: Relation[];
-};
-
 export enum RelationType { 
 	LongText	 = 0, 
 	ShortText	 = 1, 
@@ -48,6 +38,22 @@ export enum RelationScope {
 	Library				 = 4,
 };
 
+export enum OptionScope {
+    Local	 = 0,
+	Relation = 1,
+	Format	 = 2,
+};
+
+export interface ObjectType {
+	id: string;
+	name: string;
+	description?: string;
+	layout: ObjectLayout;
+	iconEmoji: string;
+	isHidden: boolean;
+	relations: Relation[];
+};
+
 export interface Relation {
 	relationKey: string;
 	format: RelationType;
@@ -63,12 +69,6 @@ export interface Relation {
 	maxCount: number;
 	scope: RelationScope;
 };
-
-export enum OptionScope {
-    Local	 = 0,
-	Relation = 1,
-	Format	 = 2,
-}
 
 export interface SelectOption {
 	id: string;

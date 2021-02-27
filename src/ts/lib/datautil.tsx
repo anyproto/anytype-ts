@@ -585,6 +585,22 @@ class DataUtil {
 
 		return ret;
 	};
+
+	menuGetLayouts () {
+		return [
+			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
+			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
+			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
+			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
+			{ id: I.ObjectLayout.File, icon: 'file', name: 'File' },
+			{ id: I.ObjectLayout.Image, icon: 'image', name: 'Image' },
+			{ id: I.ObjectLayout.ObjectType, icon: 'type', name: 'Object type' },
+			{ id: I.ObjectLayout.Relation, icon: 'relation', name: 'Relation' },
+		].map((it: any) => {
+			it.icon = 'layout-' + it.icon;
+			return it;
+		});
+	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
 		const reg = new RegExp(Util.filterFix(filter), 'gi');

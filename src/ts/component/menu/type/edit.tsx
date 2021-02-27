@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, SmileUtil, translate } from 'ts/lib';
+import { I, C, SmileUtil, translate, DataUtil } from 'ts/lib';
 import { MenuItemVertical, Input, Button } from 'ts/component';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -26,7 +26,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 	};
 
 	render () {
-		const options = this.getItems();
+		const options = DataUtil.menuGetLayouts();
 		const { layout } = this.state;
 
 		let item = null;
@@ -58,14 +58,6 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 		);
 	};
 
-	getItems () {
-		return [
-			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
-			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
-			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
-		];
-	};
-	
 	onLayout (e: any) {
 		const { layout } = this.state;
 
@@ -77,7 +69,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				options: this.getItems(),
+				options: DataUtil.menuGetLayouts(),
 				value: layout,
 				onSelect: (e: any, item: any) => {
 					this.setState({ layout: item.id });
