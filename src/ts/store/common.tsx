@@ -128,10 +128,14 @@ class CommonStore {
 		analytics.event(Util.toCamelCase('Popup-' + id));
 		this.menuCloseAll();
 	};
+
+	popupGet (id: string): I.Popup {
+		return this.popupList.find((item: I.Menu) => { return item.id == id; });
+	};
 	
 	@action
 	popupUpdate (id: string, param: any) {
-		const item = this.popupList.find((item: I.Popup) => { return item.id == id; });
+		const item = this.popupGet(id);
 		if (!item) {
 			return;
 		};
@@ -143,13 +147,21 @@ class CommonStore {
 		if (!id) {
 			return this.popupList.length > 0;
 		};
-		return this.popupList.find((item: I.Popup) => { return item.id == id; }) ? true : false;
+		return this.popupGet(id) ? true : false;
+	};
+
+	popupIsOpenList (ids: string[]) {
+		for (let id of ids) {
+			if (this.popupIsOpen(id)) {
+				return true;
+			};
+		};
+		return false;
 	};
 	
 	@action
 	popupClose (id: string, callBack?: () => void) {
-		const item: I.Popup = this.popupList.find((item: I.Popup) => { return item.id == id; });
-		
+		const item = this.popupGet(id);
 		if (!item) {
 			if (callBack) {
 				callBack();

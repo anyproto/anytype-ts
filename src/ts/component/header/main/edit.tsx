@@ -47,7 +47,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (commonStore.popupIsOpen('navigation') || commonStore.menuIsOpen('blockRelationView')) {
+		if (commonStore.popupIsOpenList([ 'navigation', 'search' ]) || commonStore.menuIsOpen('blockRelationView')) {
 			cn.push('active');
 		};
 
@@ -68,7 +68,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 					</div>
 				)}
-
 
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
