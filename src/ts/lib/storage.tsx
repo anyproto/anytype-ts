@@ -73,7 +73,6 @@ class Storage {
 	logout () {
 		this.delete('accountId');
 		this.delete('toggle');
-		this.delete('pageId');
 		this.delete('hello');
 		this.delete('popupNewBlock');
 	};

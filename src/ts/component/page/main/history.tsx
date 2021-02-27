@@ -211,7 +211,9 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	setId () {
 		const { match } = this.props;
-		Storage.set('pageId', match.params.id);
+		const rootId = match.params.id;
+
+		Storage.set('redirect', '/main/history/' + rootId);
 	};
 
 	show (id: string) {

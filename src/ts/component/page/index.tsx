@@ -91,6 +91,8 @@ class Page extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		Storage.delete('redirect');
 	};
 	
 	init () {
@@ -123,8 +125,8 @@ class Page extends React.Component<Props, {}> {
 			commonStore.menuCloseAll();
 		};		
 
+		Storage.delete('redirect');
 		Util.linkPreviewHide(true);
-		
 		keyboard.setMatch(match);
 
 		if (isMain) {

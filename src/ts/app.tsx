@@ -267,11 +267,16 @@ class App extends React.Component<Props, State> {
 
 		const cover = Storage.get('cover');
 		const coverImg = Storage.get('coverImg');
-		const pageId = Storage.get('pageId');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
+		const redirect = Storage.get('redirect');
 
 		if (!lastSurveyTime) {
 			Storage.set('lastSurveyTime', Util.time());
+		};
+
+		if (redirect) {
+			Storage.set('redirectTo', redirect);
+			Storage.delete('redirect');
 		};
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
@@ -281,10 +286,6 @@ class App extends React.Component<Props, State> {
 		
 		this.setIpcEvents();
 		this.setWindowEvents();
-
-		if (pageId) {
-			Storage.set('redirectTo', '/main/edit/' + pageId);
-		};
 	};
 
 	preload (callBack?: () => void) {
@@ -484,7 +485,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	onCommand (e: any, key: string) {
-		const id = String(Storage.get('pageId') || '');
+		const id = String(Storage.get('editorId') || '');
 		if (!id || keyboard.isFocused) {
 			return;
 		};
@@ -495,7 +496,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'redo':
-				C.BlockUndo(id);
+				C.BlockRedo(id);
 				break;
 		};
 	};

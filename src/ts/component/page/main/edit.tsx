@@ -46,7 +46,9 @@ class PageMainEdit extends React.Component<Props, {}> {
 	
 	setId () {
 		const { match } = this.props;
-		Storage.set('pageId', match.params.id);
+		const rootId = match.params.id;
+
+		Storage.set('redirect', '/main/edit/' + rootId);
 	};
 
 	onOpen () {

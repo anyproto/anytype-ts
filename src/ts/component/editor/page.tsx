@@ -176,8 +176,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.close(rootId);
 
 		focus.clear(false);
-
-		Storage.delete('pageId');
+		Storage.delete('editorId');
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 
@@ -216,6 +215,7 @@ class EditorPage extends React.Component<Props, {}> {
 		crumbs.addRecent(rootId);
 
 		this.id = rootId;
+		Storage.set('editorId', rootId);
 
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {

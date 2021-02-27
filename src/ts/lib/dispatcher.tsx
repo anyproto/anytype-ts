@@ -116,7 +116,6 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debugMW && !skipDebug;
 		const debugThread = config.debugTH && !skipDebug;
-		const pageId = Storage.get('pageId');
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -170,7 +169,7 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
-			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(Util.objectClear(event.toObject()), null, 3)); };
+			let log = () => { console.log('[Dispatcher.event] rootId', rootId, 'event', type, JSON.stringify(Util.objectClear(data.toObject()), null, 3)); };
 
 			if (debugThread && (type == 'threadStatus')) {
 				log();

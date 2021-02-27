@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, Loader } from 'ts/component';
+import { I, C, DataUtil, Util, Storage } from 'ts/lib';
 import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -16,12 +16,17 @@ class PageMainType extends React.Component<Props, {}> {
 
 	id: string = '';
 	refHeader: any = null;
+	loading: boolean = false;
 
 	constructor (props: any) {
 		super(props);
 	};
 
 	render () {
+		if (this.loading) {
+			return <Loader />;
+		};
+
 		const { match, isPopup } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
@@ -138,11 +143,25 @@ class PageMainType extends React.Component<Props, {}> {
 		};
 
 		this.id = rootId;
+		this.loading = true;
+		this.forceUpdate();
+		this.setId();
 
 		C.BlockOpen(rootId, (message: any) => {
+			this.loading = false;
 			this.forceUpdate();
-			this.refHeader.forceUpdate();
+
+			if (this.refHeader) {
+				this.refHeader.forceUpdate();
+			};
 		});
+	};
+
+	setId () {
+		const { match } = this.props;
+		const rootId = match.params.id;
+
+		Storage.set('redirect', '/main/type/' + rootId);
 	};
 	
 };

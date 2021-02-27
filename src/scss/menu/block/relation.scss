@@ -35,8 +35,12 @@
 			.cellContent { position: static; padding: 4px 8px !important; }
 		}
 
-		.cell.isEditing.c-object, .cell.isEditing.c-select {
+		.cell.isEditing.c-select {
 			.cellContent { height: auto !important; padding-bottom: 0px !important; }
+		}
+
+		.cell.isEditing.c-object{
+			.cellContent { height: auto !important; padding-bottom: 4px !important; }
 		}
 
 		.cell.c-select { padding-bottom: 0px !important; }

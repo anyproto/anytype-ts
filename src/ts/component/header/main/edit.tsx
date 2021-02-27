@@ -78,7 +78,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					{!isPopup ? <Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} /> : ''}
 					{config.allowDataview ? (
 						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					) : ''}
@@ -115,28 +115,31 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onMore (e: any) {
-		const { match } = this.props;
+		const { isPopup, match } = this.props;
 		const rootId = match.params.id;
 
+		const param: any = {
+			element: `${this.getContainer()} #button-header-more`,
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 0,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId: rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
+				match: match,
+			}
+		};
+
+		if (!isPopup) {
+			param.fixedY = 40;
+			param.className = 'fixed';
+		};
+
 		commonStore.menuCloseAll();
-		window.setTimeout(() => {
-			commonStore.menuOpen('blockMore', { 
-				element: '#button-header-more',
-				type: I.MenuType.Vertical,
-				offsetX: 0,
-				offsetY: 0,
-				fixedY: 40,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Right,
-				className: 'fixed',
-				data: {
-					rootId: rootId,
-					blockId: rootId,
-					blockIds: [ rootId ],
-					match: match,
-				}
-			});
-		}, Constant.delay.menu);
+		window.setTimeout(() => { commonStore.menuOpen('blockMore', param); }, Constant.delay.menu);
 	};
 
 	onAdd (e: any) {
@@ -172,25 +175,28 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
-		const { match } = this.props;
+		const { isPopup, match } = this.props;
 		const rootId = match.params.id;
 
+		const param: any = {
+			type: I.MenuType.Vertical, 
+			element: `${this.getContainer()} #button-header-sync`,
+			offsetX: 0,
+			offsetY: 0,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId: rootId,
+			}
+		};
+
+		if (!isPopup) {
+			param.fixedY = 40;
+			param.className = 'fixed';
+		};
+
 		commonStore.menuCloseAll();
-		window.setTimeout(() => {
-			commonStore.menuOpen('threadList', {
-				type: I.MenuType.Vertical, 
-				element: '#button-header-sync',
-				offsetX: 0,
-				offsetY: 0,
-				fixedY: 40,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Right,
-				className: 'fixed',
-				data: {
-					rootId: rootId,
-				}
-			});
-		}, Constant.delay.menu);
+		window.setTimeout(() => { commonStore.menuOpen('threadList', param); }, Constant.delay.menu);
 	};
 
 	onNavigation (e: any) {
@@ -213,8 +219,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match } = this.props;
+		const { isPopup, match } = this.props;
 		const rootId = match.params.id;
+
+		if (isPopup) {
+			return;
+		};
 
 		commonStore.popupOpen('search', {
 			preventResize: true, 
@@ -226,6 +236,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onPathOver () {
+		const { isPopup } = this.props;
+		if (isPopup) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const path = node.find('.path');
 
@@ -237,31 +252,39 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onRelation () {
-		const { match } = this.props;
+		const { isPopup, match } = this.props;
 		const rootId = match.params.id;
 
+		const param: any = {
+			element: `${this.getContainer()} #button-header-relation`,
+			type: I.MenuType.Vertical,
+			offsetX: 0,
+			offsetY: 0,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			onClose: () => {
+				commonStore.menuCloseAll();
+			},
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
+		};
+
+		if (!isPopup) {
+			param.fixedY = 40;
+			param.className = 'fixed';
+		};
+
 		commonStore.menuCloseAll();
-		window.setTimeout(() => {
-			commonStore.menuOpen('blockRelationView', { 
-				element: '#button-header-relation',
-				type: I.MenuType.Vertical,
-				offsetX: 0,
-				offsetY: 0,
-				fixedY: 40,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Center,
-				className: 'fixed',
-				noFlipY: true,
-				onClose: () => {
-					commonStore.menuCloseAll();
-				},
-				data: {
-					relationKey: '',
-					readOnly: false,
-					rootId: rootId,
-				},
-			});
-		}, Constant.delay.menu);
+		window.setTimeout(() => { commonStore.menuOpen('blockRelationView', param); }, Constant.delay.menu);
+	};
+
+	getContainer () {
+		const { isPopup } = this.props;
+		return (isPopup ? '.popup' : '') + ' .header';
 	};
 	
 };

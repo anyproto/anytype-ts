@@ -56,9 +56,6 @@ class PageAuthSelect extends React.Component<Props, State> {
 		const { history } = this.props;
 		const { path } = authStore;
 
-		Storage.delete('pageId');
-		Storage.delete('redirectTo');
-		
 		C.WalletCreate(path, (message: any) => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
