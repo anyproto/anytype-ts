@@ -77,6 +77,7 @@ export interface Block {
 	canHaveColor?(): boolean;
 	canHaveBackground?(): boolean;
 	canHaveMarks?(): boolean;
+	canHaveHistory?(): boolean;
 	canTurn?(): boolean;
 	canTurnText?(): boolean;
 	canTurnPage?(): boolean;
@@ -95,6 +96,8 @@ export interface Block {
 	isObjectTask?(): boolean;
 	isObjectSet?(): boolean;
 	isObjectFile?(): boolean;
+	isObjectType?(): boolean;
+	isObjectRelation?(): boolean;
 	isObjectReadOnly?(): boolean;
 
 	isLayout?(): boolean;

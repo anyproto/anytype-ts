@@ -87,6 +87,10 @@ class Block implements I.Block {
 		return this.canTurnPage();
 	};
 
+	canHaveHistory (): boolean {
+		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask();
+	};
+
 	isIndentable (): boolean {
 		return !this.isSystem() && !this.isTextTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
@@ -125,6 +129,14 @@ class Block implements I.Block {
 
 	isObjectFile (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.File);
+	};
+
+	isObjectType (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.ObjectType);
+	};
+
+	isObjectRelation (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Relation);
 	};
 
 	isObjectReadOnly (): boolean { 

@@ -114,7 +114,8 @@ class BlockStore {
 		};
 
 		for (let item of details) {
-			map.set(item.id, item.details);
+			let object = map.get(item.id) || {};
+			map.set(item.id, Object.assign(object, item.details));
 		};
 
 		this.detailMap.set(rootId, map);

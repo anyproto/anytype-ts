@@ -6,7 +6,6 @@ import { C, Util, DataUtil, I, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
-	rootId: string;
 	version: I.HistoryVersion;
 };
 
@@ -43,14 +42,16 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 	};
 
 	onBack (e: any) {
-		const { rootId } = this.props;
+		const { match } = this.props;
+		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		DataUtil.objectOpen(object);
 	};
 
 	onRestore (e: any) {
-		const { rootId, version } = this.props;
+		const { match, version } = this.props;
+		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {

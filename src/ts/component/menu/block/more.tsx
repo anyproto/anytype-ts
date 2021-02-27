@@ -180,11 +180,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'undo', icon: 'undo', name: 'Undo' },
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
-				{ id: 'history', icon: 'history', name: 'Version history' },
 				{ id: 'search', icon: 'search', name: 'Search on page' },
 				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
+
+			if (block.canHaveHistory()) {
+				items.push({ id: 'history', icon: 'history', name: 'Version history' },);
+			};
 			
 			if (object.isArchived) {
 				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });

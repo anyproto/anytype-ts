@@ -96,7 +96,7 @@ class PageMainHistory extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} version={this.version} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} version={this.version} />
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>

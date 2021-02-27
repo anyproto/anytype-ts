@@ -161,6 +161,8 @@ class PageMainType extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const rootId = match.params.id;
 
+		console.log('SET REDIRECT');
+
 		Storage.set('redirect', '/main/type/' + rootId);
 	};
 	
