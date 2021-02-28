@@ -7,6 +7,7 @@ import { I, C, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, St
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import Controls from './controls';
+import { setRange, getRange } from 'selection-ranges';
 
 import EditorHeaderPage from './header/page';
 
@@ -970,7 +971,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		if ((dir > 0) && length && (range.to != length)) {
+		if ((dir > 0) && (range.to != length)) {
 			return;
 		};
 
