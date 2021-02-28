@@ -66,29 +66,23 @@ class EditorPage extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
-		const check = DataUtil.checkDetails(rootId);
-
-		let cn = [ 'editorWrapper', check.className ];
-		let header = (
-			<EditorHeaderPage 
-				{...this.props} 
-				onKeyDown={this.onKeyDownBlock}
-				onKeyUp={this.onKeyUpBlock}  
-				onMenuAdd={this.onMenuAdd}
-				onPaste={this.onPaste}
-				readOnly={false}
-			/>
-		);
 
 		return (
-			<div className={cn.join(' ')}>
+			<div>
 				<Controls {...this.props} readOnly={false} />
 				
 				<div className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 
-						{header}
+						<EditorHeaderPage 
+							{...this.props} 
+							onKeyDown={this.onKeyDownBlock}
+							onKeyUp={this.onKeyUpBlock}  
+							onMenuAdd={this.onMenuAdd}
+							onPaste={this.onPaste}
+							readOnly={false}
+						/>
 					
 						{children.map((block: I.Block, i: number) => {
 							if (block.isLayoutHeader()) {
@@ -149,8 +143,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
+		const check = DataUtil.checkDetails(rootId);
 		
 		this.open();
 		
@@ -158,6 +154,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 
+		node.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
 		this.resize();

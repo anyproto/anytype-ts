@@ -87,8 +87,6 @@ class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.Title:
 				placeHolder = Constant.default.name;
 
-				console.log('RENDER TITLE');
-				
 				if (root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheck };
 				};
