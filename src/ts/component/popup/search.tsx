@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
+import { Icon, Button, Input, Cover, Loader, IconObject, Label } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -59,10 +59,6 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 	
 	render () {
-		if (!this.cache) {
-			return null;
-		};
-
 		const { pageId, filter, loading, showIcon, n } = this.state;
 		const { root, breadcrumbs, recent } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
@@ -171,12 +167,11 @@ class PopupSearch extends React.Component<Props, State> {
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
-						<div 
-							className="txt" 
-							dangerouslySetInnerHTML={{ __html: Util.sprintf(translate('popupNavigationEmptyFilter'), filter) }} 
-						/>
+						<Label text={Util.sprintf(translate('popupNavigationEmptyFilter'), filter)} />
 					</div>
-				) : (
+				) : ''}
+				
+				{this.cache && items.length && !loading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
 							rowCount={items.length}
@@ -203,7 +198,7 @@ class PopupSearch extends React.Component<Props, State> {
 							)}
 						</InfiniteLoader>
 					</div>
-				)}
+				) : ''}
 			</div>
 		);
 	};
@@ -475,26 +470,31 @@ class PopupSearch extends React.Component<Props, State> {
 		const { rootId } = data;
 		const { pages } = this.state;
 		const { recent } = blockStore;
-		
-		let children = blockStore.getChildren(recent, recent).reverse();
+		const children = blockStore.getChildren(recent, recent).reverse();
+		const sections = [
+			{ 
+				id: 'recent', name: 'Recent objects', children: children.map((it: I.Block) => {
+					const details = blockStore.getDetails(recent, it.content.targetBlockId);
+					return { ...details, id: it.content.targetBlockId };
+				}),
+			},
+			{ id: 'search', name: 'Search results', children: pages }
+		];
+
 		let ret: any[] = [];
 
-		if (children.length) {
-			ret.push({ name: 'Recent objects', isSection: true });
-
-			for (let child of children) {
-				const details = blockStore.getDetails(recent, child.content.targetBlockId);
-				ret.push({ ...details, id: child.content.targetBlockId });
+		for (let section of sections) {
+			if (!section.children.length) {
+				continue;
 			};
+			ret.push({ id: section.id, name: section.name, isSection: true });
+			ret = ret.concat(section.children);
 		};
 
-		ret.push({ name: 'Search results', isSection: true });
-		ret = ret.concat(pages);
-
-		ret = ret.filter(this.filterMapper);
 		ret = ret.map((it: any) => {
 			return { ...it, name: String(it.name || Constant.default.name) };
 		});
+
 		return ret;
 	};
 
