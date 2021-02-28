@@ -644,6 +644,9 @@ class EditorPage extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
 		const menuOpen = commonStore.menuIsOpen();
+		const st = win.scrollTop();
+		const element = $('#block-' + block.id);
+		const value = element.find('#value');
 
 		range = range || {};
 
@@ -863,18 +866,32 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Expand selection
 		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
-			if (menuOpen) {
+			if (selection.get(true).length) {
 				return;
 			};
-			
-			e.preventDefault();
 
-			if (selection.get(true).length < 1) {
-				selection.set([ focused ]);
+			const dir = pressed.match(Key.up) ? -1 : 1;
+			const sRect = Util.selectionRect();
+			const vRect = value.get(0).getBoundingClientRect();
+			const lh = parseInt(value.css('line-height'));
+			const sy = sRect.y + st;
+			const vy = vRect.y + st;
+
+			const cb = () => {
+				e.preventDefault();
+
 				focus.clear(true);
-				
-				commonStore.menuCloseAll([ 'blockContext', 'blockAction' ]);
+				selection.set([ focused ]);
 
+				commonStore.menuCloseAll([ 'blockContext', 'blockAction' ]);
+			};
+
+			if ((dir < 0) && (sy - 4 <= vy)) {
+				cb();
+			};
+
+			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height)) {
+				cb();
 			};
 		});
 
@@ -946,24 +963,24 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { rootId } = this.props;
 		const { focused, range } = focus;
-		const node = $(ReactDOM.findDOMNode(this));
 		const dir = pressed.match(Key.up) ? -1 : 1;
+
+		if ((dir < 0) && range.to) {
+			return;
+		};
+
+		if ((dir > 0) && length && (range.to != length)) {
+			return;
+		};
+
+		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
-		
 		if (!next) {
 			return;
 		};
 
-		if ((dir < 0) && range.to && (range.to == length)) {
-			return;
-		};
-
-		if ((dir > 0) && length && !range.to) {
-			return;
-		};
-
+		const node = $(ReactDOM.findDOMNode(this));
 		const parent = blockStore.getLeaf(rootId, next.parentId);
 		const l = next.getLength();
 		
