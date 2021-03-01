@@ -22,6 +22,7 @@ export enum BlockType {
 	Link		 = 'link',
 	Cover		 = 'cover',
 	Relation	 = 'relation',
+	Featured	 = 'featured',
 };
 
 export enum BlockPosition {

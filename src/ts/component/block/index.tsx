@@ -18,12 +18,13 @@ import BlockLink from './link';
 import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
+import BlockFeatured from './featured';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
-	//cnt?: number;
 	css?: any;
 	className?: string;
+	iconSize?: number;
 };
 
 const $ = require('jquery');
@@ -170,6 +171,11 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Relation:
 				cn.push('blockRelation');
 				blockComponent = <BlockRelation {...this.props} />;
+				break;
+
+			case I.BlockType.Featured:
+				cn.push('blockFeatured');
+				blockComponent = <BlockFeatured {...this.props} />;
 				break;
 		};
 		

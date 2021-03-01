@@ -8,9 +8,14 @@
 			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
 			.side.right { width: calc(100% - 128px); }
 
-			.title { @include text-header1; margin-bottom: 5px; }
-			.descr { @include text-paragraph; }
+			.title { @include text-header1; }
+			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
 		}
+
+		.block {
+			.wrapMenu { display: none; }
+		}
+		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; }
 
 		.section { margin-bottom: 32px; }
 		.section:last-child { margin: 0px; }

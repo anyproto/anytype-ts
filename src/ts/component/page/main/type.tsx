@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader } from 'ts/component';
-import { I, C, DataUtil, Util, Storage } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { I, M, C, DataUtil, Util, Storage } from 'ts/lib';
 import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -34,6 +34,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const meta = dbStore.getMeta(rootId, block.id);
 		const data = dbStore.getData(rootId, block.id);
 		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		const Relation = (item: any) => (
 			<div className="item">
@@ -71,7 +72,8 @@ class PageMainType extends React.Component<Props, {}> {
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
-				<div className="wrapper">
+
+				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
 							<IconObject size={96} object={object} />
@@ -79,6 +81,8 @@ class PageMainType extends React.Component<Props, {}> {
 						<div className="side right">
 							<div className="title">{object.name}</div>
 							<div className="descr">{object.description}</div>
+
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 						</div>
 					</div>
 					

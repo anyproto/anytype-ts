@@ -32,33 +32,17 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const title = blockStore.getLeaf(rootId, 'title') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: title.align, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: title.align, childrenIds: [], fields: {}, content: {} });
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: title.align, childrenIds: [], fields: {}, content: {} });
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
 		};
 
-		const type = dbStore.getObjectType(check.object.type);
-		const creator = blockStore.getDetails(rootId, check.object.creator);
-		const featured = [];
-
-		if (type) {
-			featured.push({ ...type, layout: I.ObjectLayout.ObjectType });
-		};
-		if (!creator._objectEmpty_) {
-			featured.push(creator);
-		};
-
-		const Element = (item: any) => (
-			<div className="element">
-				<IconObject size={24} object={item} />
-				{item.name}
-			</div>
-		);
-
 		return (
 			<div>
 				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
 				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+
 				<Block 
 					key={header.id} 
 					{...this.props}
@@ -71,17 +55,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 				/>
 
 				{config.allowDataview ? (
-					<div className={[ 'block', 'blockFeatured', 'align' + title.align ].join(' ')}>
-						<div className="wrapMenu" />
-						<div className="wrapContent">
-							{featured.map((item: any, i: any) => (
-								<span key={i}>
-									{i > 0 ? <div className="bullet" /> : ''}
-									<Element {...item} />
-								</span>
-							))}
-						</div>
-					</div>
+					<Block {...this.props} key={featured.id} block={featured} />
 				) : ''}
 			</div>
 		);

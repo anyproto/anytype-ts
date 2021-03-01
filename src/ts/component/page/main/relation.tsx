@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader } from 'ts/component';
-import { I, C, DataUtil, Util, Storage } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { I, M, C, DataUtil, Util, Storage } from 'ts/lib';
 import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -29,11 +29,13 @@ class PageMainRelation extends React.Component<Props, {}> {
 		const { match, isPopup } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
-				<div className="wrapper">
+
+				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
 							<IconObject size={96} object={object} />
@@ -41,6 +43,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 						<div className="side right">
 							<div className="title">{object.name}</div>
 							<div className="descr">{object.description}</div>
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 						</div>
 					</div>
 				</div>
