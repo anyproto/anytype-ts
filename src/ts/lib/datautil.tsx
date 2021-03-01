@@ -465,8 +465,8 @@ class DataUtil {
 	};
 
 	menuGetBlockObject () {
-		const { objectTypes } = dbStore;
 		const { config } = commonStore;
+		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },

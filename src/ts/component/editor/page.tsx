@@ -196,6 +196,8 @@ class EditorPage extends React.Component<Props, {}> {
 		if (this.id == rootId) {
 			return;
 		};
+
+		console.log('ROOT_ID', rootId);
 		
 		this.loading = true;
 		this.forceUpdate();
@@ -1154,7 +1156,7 @@ class EditorPage extends React.Component<Props, {}> {
 									};
 
 									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {
-										DataUtil.objectOpenPopup(details);
+										DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 									});
 								};
 							} else {

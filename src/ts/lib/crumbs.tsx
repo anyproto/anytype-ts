@@ -77,6 +77,8 @@ class Crumbs {
 	addRecent (id: string) {
 		let recent = this.get(I.CrumbsType.Recent);
 		recent = this.add(I.CrumbsType.Recent, id);
+
+		console.log('RECENT', id, recent);
 		recent.ids = Util.arrayUnique(recent.ids);
 		if (recent.ids.length > LIMIT_RECENT) {
 			recent.ids = recent.ids.slice(recent.ids.length - LIMIT_RECENT, recent.ids.length);
