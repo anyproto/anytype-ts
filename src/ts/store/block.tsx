@@ -1,4 +1,4 @@
-import { observable, action, computed, set, intercept } from 'mobx';
+import { observable, action, computed, set, intercept, toJS } from 'mobx';
 import { I, M, Util, Decode } from 'ts/lib';
 
 const $ = require('jquery');
@@ -102,20 +102,19 @@ class BlockStore {
 	@action
 	detailsSet (rootId: string, details: any[]) {
 		let map = this.detailMap.get(rootId);
+
 		if (!map) {
-			map = observable(new Map());
+			map = observable.map(new Map());
 			intercept(map as any, (change: any) => {
-				let item = map.get(change.name);
-				if (Util.objectCompare(change.newValue, item)) {
-					return null;
-				};
-				return change;
+				const item = map.get(change.name);
+				return Util.objectCompare(change.newValue, item) ? null :change;
 			});
 		};
 
 		for (let item of details) {
-			let object = map.get(item.id) || {};
-			map.set(item.id, Object.assign(object, item.details));
+			const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
+			intercept(object as any, (change: any) => { return Util.intercept(object, change); });
+			map.set(item.id, object);
 		};
 
 		this.detailMap.set(rootId, map);
@@ -131,26 +130,23 @@ class BlockStore {
 		let create = false;
 
 		if (!map) {
-			map = observable(new Map());
+			map = observable.map(new Map());
 			create = true;
 		};
 
-		map.set(item.id, Object.assign(map.get(item.id) || {}, item.details));
+		const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
+		intercept(object as any, (change: any) => { return Util.intercept(object, change); });
+		map.set(item.id, object);
 
 		if (create) {
 			intercept(map as any, (change: any) => {
-				let item = map.get(change.name);
-				if (Util.objectCompare(change.newValue, item)) {
-					return null;
-				};
-				return change;
+				const item = map.get(change.name);
+				return Util.objectCompare(change.newValue, item) ? null :change;
 			});
-
 			this.detailMap.set(rootId, map);
 		};
 	};
 
-	@action
 	detailsUpdateArray (rootId: string, blockId: string, details: any[]) {
 		let obj: any = {};
 		for (let item of details) {

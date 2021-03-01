@@ -15,6 +15,8 @@ interface Props extends RouteComponentProps<any> {
 	onPaste? (e: any): void;
 };
 
+const $ = require('jquery');
+
 @observer
 class EditorHeaderPage extends React.Component<Props, {}> {
 	
@@ -59,6 +61,21 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 				) : ''}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.init();
+	};
+
+	componentDidUpdate () {
+		this.init();
+	};
+
+	init () {
+		const { rootId } = this.props;
+		const check = DataUtil.checkDetails(rootId);
+
+		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 	};
 	
 };

@@ -6,9 +6,8 @@ import { commonStore, blockStore, authStore, dbStore } from 'ts/store';
 import { I, C, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import Controls from './controls';
-import { setRange, getRange } from 'selection-ranges';
 
+import Controls from './controls';
 import EditorHeaderPage from './header/page';
 
 interface Props extends RouteComponentProps<any> {
@@ -63,12 +62,14 @@ class EditorPage extends React.Component<Props, {}> {
 			return null;
 		};
 		
+		//const details = blockStore.getDetails(rootId, rootId);
+		//const { iconEmoji, iconImage, coverType, coverId } = details;
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 
 		return (
-			<div>
+			<div id="editorWrapper">
 				<Controls {...this.props} readOnly={false} />
 				
 				<div className="editor">
@@ -154,7 +155,6 @@ class EditorPage extends React.Component<Props, {}> {
 			this.uiHide();
 		};
 
-		node.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
 		this.resize();
