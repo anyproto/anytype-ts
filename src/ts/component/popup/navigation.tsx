@@ -68,7 +68,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		let confirm = '';
 		let iconHome = (
-			<div className="iconObject c48">
+			<div className="iconObject isRelation c48">
 				<div className="iconEmoji c48">
 					<Icon className="home big" />
 				</div>
@@ -545,6 +545,8 @@ class PopupNavigation extends React.Component<Props, State> {
 			return;
 		};
 
+		let newBlock: any = {};
+
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
@@ -557,13 +559,23 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 
 			case I.NavigationType.Link:
-				const param = {
+				newBlock = {
 					type: I.BlockType.Link,
 					content: {
 						targetBlockId: String(item.id || ''),
 					}
 				};
 				C.BlockCreate(param, rootId, blockId, position);
+				break;
+
+			case I.NavigationType.LinkTo:
+				newBlock = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: blockId,
+					}
+				};
+				C.BlockCreate(newBlock, item.id, '', position);
 				break;
 		};
 
@@ -584,7 +596,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			ret = false;
 		};
 
-		if (isRoot && (type != I.NavigationType.Go)) {
+		if (isRoot && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
 			ret = false;
 		};
 

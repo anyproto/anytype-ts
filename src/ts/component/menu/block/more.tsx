@@ -181,6 +181,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ id: 'redo', icon: 'redo', name: 'Redo' },
 				{ id: 'print', icon: 'print', name: 'Print' },
 				{ id: 'search', icon: 'search', name: 'Search on page' },
+				{ id: 'link', icon: 'existing', name: 'Create link' },
 				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
@@ -305,6 +306,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					data: { 
 						type: I.NavigationType.Move, 
 						...data,
+					}, 
+				});
+				break;
+
+			case 'link':
+				commonStore.popupOpen('navigation', { 
+					preventResize: true,
+					data: { 
+						type: I.NavigationType.LinkTo, 
+						rootId: rootId,
+						blockId: block.id,
+						position: I.BlockPosition.Bottom,
 					}, 
 				});
 				break;

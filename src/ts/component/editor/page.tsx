@@ -1143,7 +1143,6 @@ class EditorPage extends React.Component<Props, {}> {
 										data: { 
 											type: I.NavigationType.Link, 
 											rootId: rootId,
-											skipId: rootId,
 											blockId: block.id,
 											position: position,
 										}, 

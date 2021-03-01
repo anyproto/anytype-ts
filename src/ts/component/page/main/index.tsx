@@ -220,7 +220,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 			className: 'fromIndex',
 			data: {
 				rootId: root,
-				skipId: item.content.targetBlockId,
 				blockId: item.id,
 				blockIds: [ item.id ],
 				match: match
