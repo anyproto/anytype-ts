@@ -59,9 +59,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 					<React.Fragment>
 						{element}
 						<div className="name">{name}</div>
-						{withCaption ? (
-							<div className="caption">{caption}</div>
-						) : ''}
+						{withCaption ? <div className="caption" dangerouslySetInnerHTML={{ __html: caption }} /> : ''}
 					</React.Fragment>
 				)}
 				{arrow ? <Icon className="arrow" /> : ''}

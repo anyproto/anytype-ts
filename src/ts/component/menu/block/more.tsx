@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, focus, crumbs } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
 import { blockStore, commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -75,7 +75,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 				<div className="section">
 					{items.map((action: any, i: number) => (
-						<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
+						<MenuItemVertical 
+							key={i} 
+							{...action}
+							icon={action.icon || action.id}
+							withCaption={action.caption}
+							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+						/>
 					))}
 				</div>
 			</div>
@@ -160,13 +167,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const object = blockStore.getDetails(rootId, content.targetBlockId);
+		const platform = Util.getPlatform();
+		const cmd = platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+
+		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
+		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };
+		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
 
 		let items = [];
 		if (block.isObjectSet()) {
 			items = [
-				{ id: 'undo', icon: 'undo', name: 'Undo' },
-				{ id: 'redo', icon: 'redo', name: 'Redo' },
-				{ id: 'print', icon: 'print', name: 'Print' },
+				undo,
+				redo,
+				print,
 			];
 
 			if (object.isArchived) {
@@ -177,17 +190,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else
 		if (block.isPage()) {
 			items = [
-				{ id: 'undo', icon: 'undo', name: 'Undo' },
-				{ id: 'redo', icon: 'redo', name: 'Redo' },
-				{ id: 'print', icon: 'print', name: 'Print' },
-				{ id: 'search', icon: 'search', name: 'Search on page' },
+				undo,
+				redo,
+				print,
+				{ id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` },
 				{ id: 'link', icon: 'existing', name: 'Create link' },
-				//{ id: 'move', icon: 'move', name: 'Move to' },
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
 			if (block.canHaveHistory()) {
-				items.push({ id: 'history', icon: 'history', name: 'Version history' },);
+				items.push({ id: 'history', name: 'Version history' },);
 			};
 			
 			if (object.isArchived) {
@@ -198,14 +210,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else 
 		if (block.isLinkPage()) {
 			items = [
-				{ id: 'move', icon: 'move', name: 'Move to' },
+				{ id: 'move', name: 'Move to' },
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
 			];
 		} else {
 			items = [
-				{ id: 'move', icon: 'move', name: 'Move to' },
-				//{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-				{ id: 'remove', icon: 'remove', name: 'Delete' },
+				{ id: 'move', name: 'Move to' },
+				//{ id: 'copy', name: 'Duplicate' },
+				{ id: 'remove', name: 'Delete' },
 			];
 		};
 		

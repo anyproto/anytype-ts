@@ -417,7 +417,7 @@ class BlockText extends React.Component<Props, {}> {
 		const menuOpenMention = commonStore.menuIsOpen('blockMention');
 		const menuOpenSmile = commonStore.menuIsOpen('smile');
 
-		keyboard.shortcut('enter, enter+backspace', e, (pressed: string) => {
+		keyboard.shortcut('enter', e, (pressed: string) => {
 			if (block.isTextCode() || menuOpen) {
 				return;
 			};
@@ -455,6 +455,11 @@ class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (keyboard.pressed.indexOf(Key.enter) >= 0) {
+				ret = true;
+				return;
+			};
+
 			if (!menuOpenAdd && !menuOpenMention) {
 				if (range.to) {
 					return;
@@ -863,7 +868,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { from, to } = focus.range;
 		const { style } = content;
 
-		if ((focused != block.id) && keyboard.isShiftPressed) {
+		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
 			e.preventDefault();
 			return;
 		};

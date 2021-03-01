@@ -9,7 +9,7 @@ class Keyboard {
 	history: any = null;
 	coords: any = { x: 0, y: 0 };
 	timeoutPin: number = 0;
-	pressed: any = {};
+	pressed: string[] = [];
 	match: any = {};
 	
 	isDragging: boolean = false;
@@ -18,7 +18,6 @@ class Keyboard {
 	isPreviewDisabled: boolean = false;
 	isMouseDisabled: boolean = false;
 	isPinChecked: boolean = false;
-	isShiftPressed: boolean = false;
 	isContextDisabled: boolean = false;
 	
 	init (history: any) {
@@ -41,6 +40,9 @@ class Keyboard {
 		const rootId = this.isEditor() ? this.match.params.id : root;
 		const isMainIndex = this.isMainIndex();
 		const platform = Util.getPlatform();
+		const key = e.key.toLowerCase();
+
+		this.pressed.push(key);
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
@@ -57,10 +59,6 @@ class Keyboard {
 			this.shortcut('alt+arrowleft', e, (pressed: string) => { this.back(); });
 			this.shortcut('alt+arrowright', e, (pressed: string) => { this.forward(); });
 		};
-
-		this.shortcut('shift', e, (pressed: string) => {
-			this.isShiftPressed = true;
-		});
 
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
@@ -150,9 +148,9 @@ class Keyboard {
 	};
 
 	onKeyUp (e: any) {
-		this.shortcut('shift', e, (pressed: string) => {
-			this.isShiftPressed = false;
-		});
+		const key = e.key.toLowerCase();
+
+		this.pressed = this.pressed.filter((it: string) => { return it != key; });
 	};
 
 	back () {
@@ -317,6 +315,7 @@ export enum Key {
 	backspace	 = 'backspace',
 	tab			 = 'tab',
 	enter		 = 'enter',
+	shift		 = 'shift',
 	escape		 = 'escape',
 	space		 = 'space',
 	left		 = 'arrowleft',
