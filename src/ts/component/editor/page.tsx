@@ -197,8 +197,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		console.log('ROOT_ID', rootId);
-		
 		this.loading = true;
 		this.forceUpdate();
 		
