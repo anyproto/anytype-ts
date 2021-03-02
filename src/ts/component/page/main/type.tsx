@@ -1,15 +1,19 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
-import { I, M, C, DataUtil, Util, Storage } from 'ts/lib';
+import { I, M, C, DataUtil, Util, keyboard, focus } from 'ts/lib';
 import { blockStore, dbStore } from 'ts/store';
+import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
 };
 
+const $ = require('jquery');
 const BLOCK_ID = 'dataview';
+const Constant = require('json/constant.json');
 
 @observer
 class PageMainType extends React.Component<Props, {}> {
@@ -17,9 +21,14 @@ class PageMainType extends React.Component<Props, {}> {
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
+
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 
 	render () {
@@ -54,6 +63,7 @@ class PageMainType extends React.Component<Props, {}> {
 						<div className="cellContent">
 							<IconObject object={item} />
 							<div className="name">{item.name}</div>
+							<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} />
 						</div>
 					</td>
 					<td className="cell">
@@ -69,6 +79,23 @@ class PageMainType extends React.Component<Props, {}> {
 			);
 		};
 
+		const Editor = (item: any) => {
+			return (
+				<div 
+					id={'editor-' + item.id}
+					className={[ 'editor', item.className, 'focusable', 'c' + item.id ].join(' ')}
+					contentEditable={true}
+					suppressContentEditableWarning={true}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onKeyUp={this.onKeyUp}
+					onSelect={(e: any) => { this.onSelect(e, item); }}
+				>
+					{object[item.id]}
+				</div>
+			);
+		};
+
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
@@ -79,8 +106,8 @@ class PageMainType extends React.Component<Props, {}> {
 							<IconObject size={96} object={object} />
 						</div>
 						<div className="side right">
-							<div className="title">{object.name}</div>
-							<div className="descr">{object.description}</div>
+							<Editor className="title" id="name" />
+							<Editor className="descr" id="description" />
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 						</div>
@@ -118,9 +145,10 @@ class PageMainType extends React.Component<Props, {}> {
 									</tr>
 								</thead>
 								<tbody>
-									{data.map((item: any, i: number) => (
-										<Row key={i} {...item} />
-									))}
+									{data.map((item: any, i: number) => {
+										item.name = String(item.name || Constant.default.name || '');
+										return <Row key={i} {...item} />;
+									})}
 								</tbody>
 							</table>
 						</div>
@@ -136,6 +164,8 @@ class PageMainType extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		this.open();
+
+		window.setTimeout(() => { focus.apply(); }, 10);
 	};
 
 	open () {
@@ -158,6 +188,50 @@ class PageMainType extends React.Component<Props, {}> {
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	onFocus (e: any) {
+		keyboard.setFocus(true);
+	};
+
+	onBlur (e: any) {
+		keyboard.setFocus(false);
+		this.save();
+	};
+
+	onKeyUp (e: any) {
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+	};
+
+	onSelect (e: any, item: any) {
+		focus.set(item.id, this.getRange(item.id));
+	};
+
+	save () {
+		const { match } = this.props;
+		const rootId = match.params.id;
+		const ids = [ 'name', 'description' ];
+		const details = [];
+
+		for (let id of ids) {
+			details.push({ key: id, value: this.getValue(id) });
+		};
+
+		C.BlockSetDetails(rootId, details);
+	};
+
+	getRange (id: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const range = getRange(node.find('#editor-' + id).get(0) as Element);
+		return range ? { from: range.start, to: range.end } : null;
+	};
+
+	getValue (id: string): string {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#editor-' + id);
+		
+		return String(value.get(0).innerText || '');
 	};
 
 };

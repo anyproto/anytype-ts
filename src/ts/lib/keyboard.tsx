@@ -46,6 +46,8 @@ class Keyboard {
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
+			console.log(this.isFocused);
+
 			if (this.isEditor() || this.isFocused) {
 				return;
 			};

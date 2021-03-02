@@ -16,6 +16,8 @@
 
 			.title { @include text-header1; }
 			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
+
+			.editor { -webkit-user-modify: read-write-plaintext-only; }
 		}
 
 		.section { margin-bottom: 32px; }
@@ -63,6 +65,17 @@
 
 			.cell { padding: 14px; border-bottom: 1px solid #eae9e0; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.c-select { padding-bottom: 8px; }
+
+			.icon.expand { 
+				width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; 
+				position: absolute; right: 2px; top: 2px; opacity: 0; width: 38px; height: calc(100% - 4px);
+				background-size: 20px 20px; background-position: 9px 12px; background-color: rgba(255,255,255,0.75);
+			}
+			.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
+
+			tr:hover {
+				.icon.expand { opacity: 1; }
+			}
 		}
 	}
 }
