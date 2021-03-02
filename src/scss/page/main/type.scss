@@ -17,7 +17,12 @@
 			.title { @include text-header1; }
 			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
 
-			.editor { -webkit-user-modify: read-write-plaintext-only; }
+			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
+
+			.wrap { position: relative; }
+			.wrap {
+				.placeHolder { position: absolute; left: 0px; top: 0px; color: $colorDarkGrey; }
+			}
 		}
 
 		.section { margin-bottom: 32px; }
@@ -30,6 +35,8 @@
 		.section.relation {
 			.item { display: flex; }
 			.item {
+				.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
+
 				.clickable { width: 228px; padding: 4px; display: flex; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
 				.clickable:hover { background: rgba(172,169,150,0.15); }
 
@@ -37,6 +44,12 @@
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: #6c6a5f; }
 				.value { color: $colorDarkGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
 				.value:hover { background: rgba(172,169,150,0.15); }
+			}
+
+			.item.add { color: $colorDarkGrey; line-height: 20px; }
+			.item.add:hover { color: $colorBlack; }
+			.item.add:hover {
+				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 			}
 		}
 

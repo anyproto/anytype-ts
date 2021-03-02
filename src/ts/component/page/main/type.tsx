@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus } from 'ts/lib';
-import { blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
@@ -13,23 +13,17 @@ interface Props extends RouteComponentProps<any> {
 
 const $ = require('jquery');
 const BLOCK_ID = 'dataview';
+const EDITOR_IDS = [ 'name', 'description' ];
 const Constant = require('json/constant.json');
 
 @observer
 class PageMainType extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
 	timeout: number = 0;
-
-	constructor (props: any) {
-		super(props);
-
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-	};
 
 	render () {
 		if (this.loading) {
@@ -44,6 +38,34 @@ class PageMainType extends React.Component<Props, {}> {
 		const data = dbStore.getData(rootId, block.id);
 		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const placeHolder = {
+			name: Constant.default.name,
+			description: 'Add description',
+		};
+
+		if (object.name == Constant.default.name) {
+			object.name = '';
+		};
+
+		const Editor = (item: any) => {
+			return (
+				<div className={[ 'wrap', item.className ].join(' ')}>
+					<div 
+						id={'editor-' + item.id}
+						className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
+						contentEditable={true}
+						suppressContentEditableWarning={true}
+						onFocus={(e: any) => { this.onFocus(e, item); }}
+						onBlur={(e: any) => { this.onBlur(e, item); }}
+						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+						onSelect={(e: any) => { this.onSelect(e, item); }}
+					>
+						{object[item.id]}
+					</div>
+					<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
+				</div>
+			);
+		};
 
 		const Relation = (item: any) => (
 			<div className="item">
@@ -52,6 +74,16 @@ class PageMainType extends React.Component<Props, {}> {
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="value">Empty</div>
+			</div>
+		);
+
+		const ItemAdd = (item: any) => (
+			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+				<div className="clickable">
+					<Icon className="plus" />
+					<div className="name">New</div>
+				</div>
+				<div className="value" />
 			</div>
 		);
 
@@ -76,23 +108,6 @@ class PageMainType extends React.Component<Props, {}> {
 						</div>
 					</td>
 				</tr>
-			);
-		};
-
-		const Editor = (item: any) => {
-			return (
-				<div 
-					id={'editor-' + item.id}
-					className={[ 'editor', item.className, 'focusable', 'c' + item.id ].join(' ')}
-					contentEditable={true}
-					suppressContentEditableWarning={true}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onKeyUp={this.onKeyUp}
-					onSelect={(e: any) => { this.onSelect(e, item); }}
-				>
-					{object[item.id]}
-				</div>
 			);
 		};
 
@@ -124,6 +139,7 @@ class PageMainType extends React.Component<Props, {}> {
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
 							))}
+							<ItemAdd />
 						</div>
 					</div>
 
@@ -159,13 +175,22 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
 		this.open();
 	};
 
 	componentDidUpdate () {
 		this.open();
 
+		for (let id of EDITOR_IDS) {
+			this.placeHolderCheck(id);
+		};
+
 		window.setTimeout(() => { focus.apply(); }, 10);
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	open () {
@@ -190,16 +215,49 @@ class PageMainType extends React.Component<Props, {}> {
 		});
 	};
 
-	onFocus (e: any) {
-		keyboard.setFocus(true);
+	onAdd (e: any) {
+		const { match } = this.props;
+		const rootId = match.params.id;
+		const relations = dbStore.getRelations(rootId, rootId);
+
+		commonStore.menuOpen('relationSuggest', { 
+			type: I.MenuType.Vertical,
+			element: $(e.currentTarget),
+			offsetX: 32,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Left,
+			data: {
+				filter: '',
+				rootId: rootId,
+				menuIdEdit: 'blockRelationEdit',
+				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.ObjectRelationListAvailable(rootId, callBack);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationAdd(rootId, relation, () => { commonStore.menuClose('relationSuggest'); });
+				},
+			}
+		});
 	};
 
-	onBlur (e: any) {
+	onFocus (e: any, item: any) {
+		keyboard.setFocus(true);
+
+		this.placeHolderCheck(item.id);
+	};
+
+	onBlur (e: any, item: any) {
 		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
+
 		this.save();
 	};
 
-	onKeyUp (e: any) {
+	onKeyUp (e: any, item: any) {
+		this.placeHolderCheck(item.id);
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
@@ -211,10 +269,9 @@ class PageMainType extends React.Component<Props, {}> {
 	save () {
 		const { match } = this.props;
 		const rootId = match.params.id;
-		const ids = [ 'name', 'description' ];
 		const details = [];
 
-		for (let id of ids) {
+		for (let id of EDITOR_IDS) {
 			details.push({ key: id, value: this.getValue(id) });
 		};
 
@@ -222,16 +279,47 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	getRange (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const range = getRange(node.find('#editor-' + id).get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
 	};
 
 	getValue (id: string): string {
+		if (!this._isMounted) {
+			return '';
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#editor-' + id);
-		
-		return String(value.get(0).innerText || '');
+
+		return value.length ? String(value.get(0).innerText || '') : '';
+	};
+
+	placeHolderCheck (id: string) {
+		const value = this.getValue(id);
+		value.length ? this.placeHolderHide(id) : this.placeHolderShow(id);			
+	};
+
+	placeHolderHide (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder.c' + id).hide();
+	};
+	
+	placeHolderShow (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder.c' + id).show();
 	};
 
 };

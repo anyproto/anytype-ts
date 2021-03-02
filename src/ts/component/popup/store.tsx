@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Icon } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { Title, Label, Button, IconObject } from 'ts/component';
+import { I, C, DataUtil, SmileUtil } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -109,7 +109,7 @@ class PopupStore extends React.Component<Props, State> {
 							<Title text="Type every object" />
 							<Label text="Our beautifully-designed templates come with hundreds" />
 
-							<Button text="Create a new type" className="orange" onClick={(e: any) => {  }} />
+							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(); }} />
 						</div>
 
 						{tabs}
@@ -271,6 +271,22 @@ class PopupStore extends React.Component<Props, State> {
 
 	onClick (e: any, item: any) {
 		DataUtil.objectOpen(item);
+	};
+
+	onCreateType () {
+		const param: any = { 
+			name: 'New type', 
+			layout: I.ObjectLayout.Page, 
+			iconEmoji: SmileUtil.random(),
+		};
+
+		C.ObjectTypeCreate(param, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			DataUtil.objectOpenPopup({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
+		});
 	};
 
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
