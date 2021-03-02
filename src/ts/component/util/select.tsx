@@ -72,7 +72,7 @@ class Select extends React.Component<Props, State> {
 
 		let { options, initial } = this.props;
 		let opts = [];
-		let value = this.props.value.toString();
+		let value = String(this.props.value || '');
 		
 		if (initial) {
 			opts.unshift({ id: '', name: initial, isInitial: true });			
