@@ -38,11 +38,11 @@ class PageMainType extends React.Component<Props, {}> {
 		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
-			name: Constant.default.name,
+			name: Constant.default.nameType,
 			description: 'Add description',
 		};
 
-		if (object.name == Constant.default.name) {
+		if (this.isDefaultName()) {
 			object.name = '';
 		};
 
@@ -201,11 +201,23 @@ class PageMainType extends React.Component<Props, {}> {
 			this.placeHolderCheck(id);
 		};
 
+		if (this.isDefaultName()) {
+			focus.set('name', { from: 0, to: 0 });
+		};
+
 		window.setTimeout(() => { focus.apply(); }, 10);
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	isDefaultName () {
+		const { match } = this.props;
+		const rootId = match.params.id;
+		const object = blockStore.getDetails(rootId, rootId);
+
+		return [ Constant.default.name, Constant.default.nameType ].indexOf(object.name) >= 0;
 	};
 
 	open () {
