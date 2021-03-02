@@ -190,7 +190,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
 		} else
-		if (block.isObjectRelation()) {
+		if (block.isObjectType() || block.isObjectRelation()) {
 		} else
 		if (block.isPage()) {
 			items = [

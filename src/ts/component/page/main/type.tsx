@@ -25,6 +25,13 @@ class PageMainType extends React.Component<Props, {}> {
 	loading: boolean = false;
 	timeout: number = 0;
 
+	constructor (props: any) {
+		super(props);
+		
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+	};
+
 	render () {
 		if (this.loading) {
 			return <Loader />;
@@ -47,7 +54,7 @@ class PageMainType extends React.Component<Props, {}> {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
 
-		if (this.isDefaultName()) {
+		if (this.isDefaultName() || (object.name == Constant.default.name)) {
 			object.name = '';
 		};
 
@@ -68,7 +75,7 @@ class PageMainType extends React.Component<Props, {}> {
 						onBlur={(e: any) => { this.onBlur(e, item); }}
 						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
 						onInput={(e: any) => { this.onInput(e, item); }}
-						onSelect={(e: any) => { this.onSelect(e, item); }}
+						onSelect={(e: any) => { this.onSelectText(e, item); }}
 					>
 						{object[item.id]}
 					</div>
@@ -83,7 +90,7 @@ class PageMainType extends React.Component<Props, {}> {
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
-				<div className="value">Empty</div>
+				<div className="value" />
 			</div>
 		);
 
@@ -134,7 +141,7 @@ class PageMainType extends React.Component<Props, {}> {
 				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject size={96} object={object} />
+							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
 						<div className="side right">
 							<Editor className="title" id="name" />
@@ -256,6 +263,20 @@ class PageMainType extends React.Component<Props, {}> {
 		});
 	};
 
+	onSelect (icon: string) {
+		const { match } = this.props;
+		const rootId = match.params.id;
+
+		DataUtil.pageSetIcon(rootId, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { match } = this.props;
+		const rootId = match.params.id;
+
+		DataUtil.pageSetIcon(rootId, '', hash);
+	};
+
 	onAdd (e: any) {
 		const { match } = this.props;
 		const rootId = match.params.id;
@@ -329,7 +350,7 @@ class PageMainType extends React.Component<Props, {}> {
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
-	onSelect (e: any, item: any) {
+	onSelectText (e: any, item: any) {
 		focus.set(item.id, this.getRange(item.id));
 	};
 

@@ -174,6 +174,7 @@ class Block extends React.Component<Props, {}> {
 				break;
 
 			case I.BlockType.Featured:
+				canSelect = false;
 				cn.push('blockFeatured');
 				blockComponent = <BlockFeatured {...this.props} />;
 				break;
