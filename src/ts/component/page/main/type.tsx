@@ -69,7 +69,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		const Relation = (item: any) => (
 			<div className="item">
-				<div className="clickable">
+				<div className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -99,13 +99,19 @@ class PageMainType extends React.Component<Props, {}> {
 						</div>
 					</td>
 					<td className="cell">
-						<div className="cellContent">{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}</div>
+						{item.lastModifiedDate ? (
+							<div className="cellContent">
+								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
+							</div>
+						) : ''}
 					</td>
 					<td className="cell">
-						<div className="cellContent">
-							<IconObject object={author} />
-							<div className="name">{author.name}</div>
-						</div>
+						{!author._objectEmpty_ ? (
+							<div className="cellContent">
+								<IconObject object={author} />
+								<div className="name">{author.name}</div>
+							</div>
+						) : ''}
 					</td>
 				</tr>
 			);
@@ -128,7 +134,7 @@ class PageMainType extends React.Component<Props, {}> {
 						</div>
 					</div>
 					
-					<div className="section note">
+					<div className="section note dn">
 						<div className="title">Notes</div>
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
@@ -237,6 +243,28 @@ class PageMainType extends React.Component<Props, {}> {
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationAdd(rootId, relation, () => { commonStore.menuClose('relationSuggest'); });
+				},
+			}
+		});
+	};
+
+	onEdit (e: any, relationKey: string) {
+		const { match } = this.props;
+		const rootId = match.params.id;
+		
+		commonStore.menuOpen('blockRelationEdit', { 
+			type: I.MenuType.Vertical,
+			element: $(e.currentTarget),
+			offsetX: 0,
+			offsetY: 4,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				relationKey: relationKey,
+				readOnly: false,
+				updateCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationUpdate(rootId, relation);
 				},
 			}
 		});

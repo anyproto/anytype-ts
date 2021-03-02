@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject } from 'ts/component';
+import { Title, Label, Button, IconObject, Loader } from 'ts/component';
 import { I, C, DataUtil, SmileUtil } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -11,6 +11,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 interface State {
 	tab: string;
+	loading: boolean;
 };
 
 const $ = require('jquery');
@@ -48,6 +49,7 @@ class PopupStore extends React.Component<Props, State> {
 
 	state = {
 		tab: 'type',
+		loading: false,
 	};
 
 	_isMounted: boolean = false;
@@ -59,7 +61,7 @@ class PopupStore extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { tab } = this.state;
+		const { tab, loading } = this.state;
 		const rootId = this.getRootId();
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
@@ -112,13 +114,18 @@ class PopupStore extends React.Component<Props, State> {
 							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(); }} />
 						</div>
 
-						{tabs}
-						
-						<div className="items">
-							{data.map((item: any, i: number) => (
-								<Item key={i} {...item} />
-							))}
-						</div>
+						{loading ? 
+							<Loader />
+						: (
+							<React.Fragment>
+								{tabs}
+								<div className="items">
+									{data.map((item: any, i: number) => (
+										<Item key={i} {...item} />
+									))}
+								</div>
+							</React.Fragment>
+						)}
 					</React.Fragment>
 				);
 				break;
@@ -154,13 +161,18 @@ class PopupStore extends React.Component<Props, State> {
 							<Button text="Create a new type" className="orange" />
 						</div>
 
-						{tabs}
-
-						<div className="items">
-							{data.map((item: any, i: number) => (
-								<Item key={i} {...item} />
-							))}
-						</div>
+						{loading ? 
+							<Loader />
+						: (
+							<React.Fragment>
+								{tabs}
+								<div className="items">
+									{data.map((item: any, i: number) => (
+										<Item key={i} {...item} />
+									))}
+								</div>
+							</React.Fragment>
+						)}
 					</React.Fragment>
 				);
 				break;
@@ -227,18 +239,18 @@ class PopupStore extends React.Component<Props, State> {
 			const { getId, position } = this.props;
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const width = 1152; //Math.min(1152, Math.max(960, win.width() - 128));
 			const height = Math.max(648, win.height() - 128);
 
-			obj.css({ width: width, height: height });
+			obj.css({ height: height });
 			position();
 		});
 	};
 
 	load () {
-		const rootId = this.getRootId();
-		C.BlockOpen(rootId, (message: any) => {
-			this.forceUpdate();
+		this.setState({ loading: true });
+
+		C.BlockOpen(this.getRootId(), (message: any) => {
+			this.setState({ loading: false });
 		});
 	};
 
