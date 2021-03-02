@@ -2,6 +2,8 @@
 
 .iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; border-radius: 3px; }
 .iconObject {
+	img { pointer-events: none; }
+
 	.iconEmoji, .iconImage, .iconFile, .iconUser, .iconCheckbox { width: 100%; height: 100%; transition: none; vertical-align: top; }
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
