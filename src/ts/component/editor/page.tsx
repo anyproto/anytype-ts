@@ -1682,6 +1682,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
@@ -1690,8 +1691,10 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const h = this.getScrollContainer().height();
-		const height = blocks.outerHeight() + blocks.offset().top;
+		const container = this.getScrollContainer();
+		const ct = isPopup ? container.offset().top : 0;
+		const h = container.height();
+		const height = blocks.outerHeight() + blocks.offset().top - ct;
 
 		last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
 	};

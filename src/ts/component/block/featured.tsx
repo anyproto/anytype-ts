@@ -50,10 +50,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{featured.map((item: any, i: any) => (
-					<span key={i}>
+					<React.Fragment key={i}>
 						{i > 0 ? <div className="bullet" /> : ''}
 						<Element {...item} />
-					</span>
+					</React.Fragment>
 				))}
 			</div>
 		);

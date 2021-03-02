@@ -110,12 +110,13 @@ class IconObject extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Human:
 				cn.push('isUser');
+				icn.push('c' + size);
 				if (iconImage) {
-					icn = icn.concat([ 'iconImage', 'c' + size ]);
+					icn.push('iconImage');
 					icon = <img src={commonStore.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
 				} else {
+					icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
 				};
-				//icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
 				break;
 
 			case I.ObjectLayout.Task:
