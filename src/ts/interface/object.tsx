@@ -55,6 +55,7 @@ export interface ObjectType {
 };
 
 export interface Relation {
+	objectId: string;
 	relationKey: string;
 	format: RelationType;
 	name: string;
@@ -63,11 +64,11 @@ export interface Relation {
 	isReadOnly: boolean;
 	objectTypes: string[];
 	selectDict: any[];
+	maxCount: number;
+	scope: RelationScope;
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;
-	maxCount: number;
-	scope: RelationScope;
 };
 
 export interface SelectOption {

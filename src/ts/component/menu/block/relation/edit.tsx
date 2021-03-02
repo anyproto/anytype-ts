@@ -283,10 +283,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onOpen (e: any) {
-		const { history } = this.props;
 		const relation = this.getRelation();
-
-		history.push('/main/relation/' + relation.relationKey);
+		DataUtil.objectOpenPopup({ id: relation.objectId, layout: I.ObjectLayout.Relation });
 	};
 
 	onCopy (e: any) {

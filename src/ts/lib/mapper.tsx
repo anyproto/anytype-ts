@@ -174,6 +174,7 @@ const Mapper = {
 
 		Relation: (obj: any): I.Relation => {
 			return {
+				objectId: '',
 				relationKey: obj.getKey(),
 				format: obj.getFormat(),
 				name: obj.getName(),

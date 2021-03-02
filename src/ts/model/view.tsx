@@ -43,6 +43,7 @@ class View implements I.View {
 
 class Relation implements I.Relation {
 
+	objectId: string = '';
 	relationKey: string = '';
 	name: string = '';
 	dataSource: number = 0;
@@ -57,6 +58,7 @@ class Relation implements I.Relation {
 	constructor (props: I.Relation) {
 		let self = this;
 
+		self.objectId = String(props.objectId || '');
 		self.relationKey = String(props.relationKey || '');
 		self.name = String(props.name || '');
 		self.dataSource = Number(props.dataSource) || 0;

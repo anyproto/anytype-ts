@@ -270,15 +270,15 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onOpen (e: any) {
-		const { history } = this.props;
 		const relation = this.getRelation();
 
-		history.push('/main/relation/' + relation.relationKey);
+		DataUtil.objectOpenPopup({ id: relation.objectId, layout: I.ObjectLayout.Relation });
 	};
 
 	onCopy (e: any) {
-		let { close } = this.props;
+		const { close } = this.props;
 		const relation = this.getRelation();
+
 		if (!relation) {
 			return;
 		};
@@ -288,12 +288,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onRemove (e: any) {
-		let { param, close } = this.props;
-		let { data } = param;
-		let { rootId, blockId, relationKey, getView } = data;
-		let view = getView();
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId, relationKey, getView } = data;
+		const view = getView();
 
-		DataUtil.dataviewRelationDelete (rootId, blockId, relationKey, view);
+		DataUtil.dataviewRelationDelete(rootId, blockId, relationKey, view);
 		close();
 	};
 
@@ -332,6 +332,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { readOnly } = data;
 		const relation = this.getRelation();
+
 		return readOnly || (relation && relation.isReadOnly);
 	};
 
