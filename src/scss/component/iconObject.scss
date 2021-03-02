@@ -127,8 +127,7 @@
 
 .iconObject.c48.isRelation { border-radius: 8px; background-color: #f3f2ec; }
 
-.iconObject.isUser { border-radius: 100%; display: inline-block !important; }
-.iconObject.isUser * { display: inline-block !important; }
+.iconObject.isUser { border-radius: 100%; }
 
 .iconObject.isTask.canEdit {
 	.iconCheckbox { cursor: pointer; }

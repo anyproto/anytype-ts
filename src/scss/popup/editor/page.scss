@@ -35,6 +35,14 @@
 			}
 		}
 
+		.editorWrapper.isHuman.withIconAndCover {
+			.block.blockCover {
+				.elements {
+					.buttons { padding-left: 150px; }
+				}
+			}
+		}
+
 		.block.blockCover { top: 0px; }
 	}	
 }
