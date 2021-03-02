@@ -62,6 +62,7 @@ class PageMainType extends React.Component<Props, {}> {
 						onFocus={(e: any) => { this.onFocus(e, item); }}
 						onBlur={(e: any) => { this.onBlur(e, item); }}
 						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+						onInput={(e: any) => { this.onInput(e, item); }}
 						onSelect={(e: any) => { this.onSelect(e, item); }}
 					>
 						{object[item.id]}
@@ -307,6 +308,10 @@ class PageMainType extends React.Component<Props, {}> {
 		window.clearTimeout(this.timeout);
 
 		this.save();
+	};
+
+	onInput (e: any, item: any) {
+		this.placeHolderCheck(item.id);
 	};
 
 	onKeyUp (e: any, item: any) {
