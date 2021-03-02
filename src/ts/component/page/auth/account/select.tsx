@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Icon, Cover, Error, Title, IconUser, HeaderAuth as Header, FooterAuth as Footer, Loader } from 'ts/component';
+import { Frame, Icon, Cover, Error, Title, IconObject, HeaderAuth as Header, FooterAuth as Footer, Loader } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, translate } from 'ts/lib';
@@ -34,7 +34,7 @@ class PageAccountSelect extends React.Component<Props, State> {
 
 		const Item = (item: any) => (
 			<div className="item" onClick={(e) => { this.onSelect(item as I.Account); }}>
-				<IconUser {...item} className="c64" />
+				<IconObject object={{ ...item, layout: I.ObjectLayout.Human }} size={64} />
 				<div className="name">{item.name}</div>
 			</div>
 		);

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Frame, Cover, Title, IconObject, Error, Input, Button, IconUser, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, Util, translate } from 'ts/lib';
+import { Util, translate } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {

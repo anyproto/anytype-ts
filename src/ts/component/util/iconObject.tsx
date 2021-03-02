@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Icon, IconUser, IconEmoji } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import * as ReactDOM from 'react-dom';
+import { IconEmoji } from 'ts/component';
+import { I, Util } from 'ts/lib';
+import { commonStore } from 'ts/store';
 
 interface Props {
 	id?: string;
@@ -22,6 +23,8 @@ interface Props {
 	onUpload?(hash: string): void;
 	onCheckbox?(e: any): void;
 	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
 };
 
 const IDS40 = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.ObjectType ];
@@ -39,6 +42,18 @@ const Size = {
 	64: 32,
 	96: 64,
 	128: 64,
+};
+
+const FontSize = {
+	16: 10,
+	18: 10,
+	20: 12,
+	40: 18,
+	48: 28,
+	56: 34,
+	64: 34,
+	96: 44,
+	128: 72,
 };
 
 const File = {
@@ -70,6 +85,10 @@ Relation[I.RelationType.Object] = require('img/icon/dataview/relation/object.svg
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
+const Lcg = require('font/lcg/medium.otf');
+
+const $ = require('jquery');
+
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -80,8 +99,10 @@ class IconObject extends React.Component<Props, {}> {
 		super(props);
 
 		this.onCheckbox = this.onCheckbox.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
-	
+
 	render () {
 		const { object, className, size, canEdit, onClick } = this.props;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -111,11 +132,26 @@ class IconObject extends React.Component<Props, {}> {
 			case I.ObjectLayout.Human:
 				cn.push('isUser');
 				icn.push('c' + size);
+
 				if (iconImage) {
 					icn.push('iconImage');
 					icon = <img src={commonStore.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
 				} else {
-					icon = <IconUser className={icn.join(' ')} {...this.props} name={name} avatar={iconImage} />;
+					icn.push('iconUser');
+
+					let n = name.trim().substr(0, 1).toUpperCase();
+					let defs = `<defs>
+						<style type="text/css">
+							@font-face {
+								font-family: 'Lcg'; font-style: normal; font-weight: 500;
+								src: url('${Lcg}') format('opentype');
+							}
+						</style>
+					</defs>`;
+					let text = `<text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${n}</text>`;
+					let svg = 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${defs}${text}</svg>`);
+
+					icon = <img src={svg} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -166,7 +202,7 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div id={this.props.id} className={cn.join(' ')} onClick={onClick}>{icon}</div>
+			<div id={this.props.id} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>{icon}</div>
 		);
 	};
 
@@ -183,6 +219,29 @@ class IconObject extends React.Component<Props, {}> {
 		const { canEdit, onCheckbox } = this.props;
 		if (canEdit && onCheckbox) {
 			onCheckbox(e);
+		};
+	};
+
+	onMouseEnter (e: any) {
+		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		
+		if (tooltip) {
+			Util.tooltipShow(tooltip, node, tooltipY);
+		};
+		
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+		
+		Util.tooltipHide();
+		
+		if (onMouseLeave) {
+			onMouseLeave(e);
 		};
 	};
 

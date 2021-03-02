@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, IconUser, Error } from 'ts/component';
+import { Icon, IconObject, Error } from 'ts/component';
 import { authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
@@ -32,7 +32,7 @@ class MenuAccount extends React.Component<Props, State> {
 		
 		const Item = (item: any) => (
 			<div className={'item ' + (item.id == account.id ? 'active' : '')} onClick={(e) => { this.onSelect(e, item.id); }}>
-				<IconUser className="c40" {...item} />
+				<IconObject object={{ ...item, layout: I.ObjectLayout.Human }} size={40} />
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
