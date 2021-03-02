@@ -60,7 +60,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 	};
 
 	open () {
-		const { match } = this.props;
+		const { match, history } = this.props;
 		const rootId = match.params.id;
 
 		if (this.id == rootId) {
@@ -72,6 +72,11 @@ class PageMainRelation extends React.Component<Props, {}> {
 		this.forceUpdate();
 
 		C.BlockOpen(rootId, (message: any) => {
+			if (message.error.code) {
+				history.push('/main/index');
+				return;
+			};
+
 			this.loading = false;
 			this.forceUpdate();
 
