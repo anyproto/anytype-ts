@@ -658,6 +658,8 @@ class DataUtil {
 	};
 
 	viewGetRelations (rootId: string, blockId: string, view: I.View): I.ViewRelation[] {
+		const { config } = commonStore;
+
 		if (!view) {
 			return [];
 		};
@@ -666,7 +668,9 @@ class DataUtil {
 		let order: any = {};
 		let o = 0;
 
-		relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+		if (!config.debug.ho) {
+			relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+		};
 
 		for (let i = 0; i < view.relations.length; ++i) {
 			order[view.relations[i].relationKey] = o++;

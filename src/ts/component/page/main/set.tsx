@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
@@ -17,7 +17,12 @@ class PageMainSet extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		const { config } = commonStore;
+
+		let objectTypes = Util.objectCopy(dbStore.objectTypes);
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		};
 
 		const Item = (item: any) => {
 			return (

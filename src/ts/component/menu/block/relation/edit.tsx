@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -215,11 +215,17 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
+		const { config } = commonStore;
 		const { getId } = this.props;
-		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
-		const options = objectTypes.map((it: I.ObjectType) => {
+
+		let objectTypes = Util.objectCopy(dbStore.objectTypes);
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		};
+
+		let options = objectTypes.map((it: I.ObjectType) => {
 			it.layout = I.ObjectLayout.ObjectType;
 			return { ...it, object: it };
 		});

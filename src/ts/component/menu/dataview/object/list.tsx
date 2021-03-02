@@ -190,16 +190,18 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-		];
+		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
 
 		if (types && types.length) {
 			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });

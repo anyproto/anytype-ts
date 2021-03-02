@@ -15,7 +15,7 @@ class Analytics {
 
 	debug() {
 		const { config } = commonStore;
-		return config.debugAN;
+		return config.debug.an;
 	};
 	
 	init () {

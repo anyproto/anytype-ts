@@ -34,8 +34,13 @@ class CommonStore {
 	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
 	@observable public linkPreviewObj: LinkPreview;
-	public config:any = {};
+	@observable public configObj:any = {};
 	
+	@computed
+	get config(): any {
+		return { ...this.configObj, debug: this.configObj.debug || {} };
+	};
+
 	@computed
 	get progress(): I.Progress {
 		return this.progressObj;
@@ -314,7 +319,7 @@ class CommonStore {
 	};
 
 	configSet (config: any) {
-		this.config = config;
+		this.configObj = config;
 	};
 	
 };

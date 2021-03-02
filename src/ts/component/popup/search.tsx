@@ -441,13 +441,16 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	load () {
+		const { config } = commonStore;
 		const { filter } = this.state;
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
-		];
+		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
+
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+		};
 
 		this.setState({ loading: true, n: -1 });
 
@@ -520,7 +523,7 @@ class PopupSearch extends React.Component<Props, State> {
 		if (it.layout == I.ObjectLayout.Dashboard) {
 			return false;
 		};
-		if (it.isHidden) {
+		if (!config.debug.ho && it.isHidden) {
 			return false;
 		};
 		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {

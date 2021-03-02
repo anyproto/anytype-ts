@@ -195,7 +195,7 @@ class Page extends React.Component<Props, {}> {
 		const cn = [ this.getClass('body') ];
 		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
 		
-		if (config.debugUI) {
+		if (config.debug.ui) {
 			cn.push('debug');
 		};
 

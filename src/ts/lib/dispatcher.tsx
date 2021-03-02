@@ -114,8 +114,8 @@ class Dispatcher {
 		const { config } = commonStore;
 		const rootId = event.getContextid();
 		const messages = event.getMessagesList() || [];
-		const debugCommon = config.debugMW && !skipDebug;
-		const debugThread = config.debugTH && !skipDebug;
+		const debugCommon = config.debug.mw && !skipDebug;
+		const debugThread = config.debug.th && !skipDebug;
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -627,7 +627,7 @@ class Dispatcher {
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		const { config } = commonStore;
 		const upper = Util.toUpperCamelCase(type);
-		const debug = config.debugMW;
+		const debug = config.debug.mw;
 
 		if (!this.service[type]) {
 			console.error('[Dispatcher.request] Service not found: ', type);

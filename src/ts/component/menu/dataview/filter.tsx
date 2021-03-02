@@ -388,6 +388,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	getRelationOptions () {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
@@ -395,7 +396,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const relations = view.relations.filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
+			return relation && (!config.debug.ho && !relation.isHidden) && (relation.format != I.RelationType.File); 
 		});
 
 		const options: any[] = relations.map((it: I.ViewRelation) => {

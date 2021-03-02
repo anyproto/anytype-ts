@@ -291,7 +291,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 	drawRect (rect: any) {
 		const { config } = commonStore;
-		if (!config.debugUI) {
+		if (!config.debug.ui) {
 			return;
 		};
 

@@ -151,33 +151,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	getItems () {
-		const { rootId } = this.props;
-		const filter = new RegExp(Util.filterFix(this.refInput.getValue()), 'gi');
-		const relations = dbStore.getRelations(rootId, rootId);
-		
-		let options: any[] = [];
-		for (let relation of relations) {
-			if (relation.isHidden) {
-				continue;
-			};
-			options.push({
-				id: relation.relationKey,
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-				name: relation.name,
-			});
-		};
-
-		if (filter) {
-			options = options.filter((it: any) => {
-				return it.name.match(filter);
-			});
-		};
-
-		options.unshift({ id: 'add', icon: 'add', name: 'Add new' });
-		return options;
-	};
-
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
 		switch (code) {
 			case 'add':

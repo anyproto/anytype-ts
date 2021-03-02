@@ -30,16 +30,21 @@ class PageMainType extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 
+		const { config } = commonStore;
 		const { match, isPopup } = this.props;
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
-		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.nameType,
 			description: 'Add description',
+		};
+
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByName);
+		if (!config.debug.ho) {
+			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
 
 		if (this.isDefaultName()) {

@@ -196,6 +196,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 	};
 
 	getItems () {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const skipIds = data.skipIds || [];
@@ -215,7 +216,9 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 			ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
 		};
 
-		ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
+		if (!config.debug.ho) {
+			ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
+		};
 		ret.unshift({ id: 'add', name: name });
 		return ret;
 	};

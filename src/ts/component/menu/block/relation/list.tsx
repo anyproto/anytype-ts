@@ -177,6 +177,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	};
 
 	getItems (): I.SelectOption[] {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 
@@ -185,7 +186,9 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		let name = 'Create from scratch';
 		let items = Util.objectCopy(this.items);
 	
-		items = items.filter((it: any) => { return !it.isHidden; });
+		if (!config.debug.ho) {
+			items = items.filter((it: any) => { return !it.isHidden; });
+		};
 
 		sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In this object', children: [] };
 		sections[I.RelationScope.Type]					 = { id: I.RelationScope.Type, name: 'Type', children: [] };
@@ -215,7 +218,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 			ret = ret.concat(section.children);
 		};
 
-		ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
 		ret.unshift({ id: 'add', name: name });
 
 		return ret;

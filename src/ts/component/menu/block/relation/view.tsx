@@ -119,12 +119,17 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	getSections () {
+		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		
-		let items = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; });
+		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		let featured = [ 'type', 'description', 'creator' ];
+
+		if (!config.debug.ho) {
+			items = items.filter((it: any) => { return !it.isHidden; });
+		};
 
 		let sections = [ 
 			{ 

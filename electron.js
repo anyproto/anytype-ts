@@ -478,6 +478,24 @@ function menuInit () {
 	];
 
 	if (config.allowDebug) {
+		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics' };
+		const flagMenu = [];
+
+		for (let i in flags) {
+			flagMenu.push({
+				label: flags[i], type: 'checkbox', checked: config.debug,
+				click: () => {
+					const debug = config.debug || {};
+					debug[i] = !debug[i];
+					setConfig({ debug: debug });
+					
+					if ([ 'ui', 'ho' ].indexOf(i) >= 0) {
+						win.reload();
+					};
+				}
+			});
+		};
+
 		menuParam.push({
 			label: 'Debug',
 			submenu: [
@@ -494,36 +512,7 @@ function menuInit () {
 						},
 					]
 				},
-				{
-					label: 'Flags',
-					submenu: [
-						{
-							label: 'Interface', type: 'checkbox', checked: config.debugUI,
-							click: () => {
-								setConfig({ debugUI: !config.debugUI });
-								win.reload();
-							}
-						},
-						{
-							label: 'Middleware', type: 'checkbox', checked: config.debugMW,
-							click: () => {
-								setConfig({ debugMW: !config.debugMW });
-							}
-						},
-						{
-							label: 'Threads', type: 'checkbox', checked: config.debugTH,
-							click: () => {
-								setConfig({ debugTH: !config.debugTH });
-							}
-						},
-						{
-							label: 'Analytics', type: 'checkbox', checked: config.debugAN,
-							click: () => {
-								setConfig({ debugAN: !config.debugAN });
-							}
-						},
-					]
-				},
+				{ label: 'Flags', submenu: flagMenu },
 				{
 					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
 					click: () => { win.reload(); }

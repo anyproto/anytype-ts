@@ -381,12 +381,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		const { config } = commonStore;
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
-		const options = objectTypes.map((it: I.ObjectType) => {
+
+		let objectTypes = Util.objectCopy(dbStore.objectTypes);
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		};
+
+		let options = objectTypes.map((it: I.ObjectType) => {
 			it.layout = I.ObjectLayout.ObjectType;
 			return { ...it, object: it };
 		});

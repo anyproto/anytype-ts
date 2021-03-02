@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util } from 'ts/lib';
-import { blockStore, dbStore } from 'ts/store';
+import { I, Util } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
 
@@ -26,6 +26,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
+		const { config } = commonStore;
 		const { rootId, block, readOnly, getRecord, index, canEdit, relation } = this.props;
 		const record = getRecord(index);
 
@@ -35,7 +36,11 @@ class CellObject extends React.Component<Props, State> {
 
 		let value = this.getValue();
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
-		value = value.filter((it: any) => { return !it.isHidden && !it._objectEmpty_; });
+		value = value.filter((it: any) => { return !it._objectEmpty_; });
+
+		if (!config.debug.ho) {
+			value = value.filter((it: any) => { return !it.isHidden; });
+		};
 
 		const Item = (item: any) => {
 			return (
