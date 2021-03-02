@@ -57,7 +57,7 @@
 					.info { height: 100%; position: relative; }
 					.info {
 						.name { font-weight: 500; @include text-overflow-nw; }
-						.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
+						.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
 						.author { @include text-small; color: #6c6a5f; line-height: 18px; }
 						.line { width: 100%; height: 1px; background: #eae9e0; position: absolute; left: 0px; }
 					}

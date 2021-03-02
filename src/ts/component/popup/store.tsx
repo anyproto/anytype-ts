@@ -65,11 +65,26 @@ class PopupStore extends React.Component<Props, State> {
 		const rootId = this.getRootId();
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
-		const data = dbStore.getData(rootId, block.id);
 		const views = block.content?.views || [];
 
 		let Item = null;
 		let element = null;
+		let data = dbStore.getData(rootId, block.id).map((it: any) => {
+			it.name = String(it.name || Constant.default.name || '');
+			return it;
+		});
+
+		const Author = (item: any) => {
+			if (item._objectEmpty_) {
+				return null;
+			};
+			return (
+				<div className="author">
+					<IconObject object={item} size={16} />
+					{item.name}
+				</div>
+			);
+		};
 
 		const tabs = (
 			<div className="tabs">
@@ -92,12 +107,9 @@ class PopupStore extends React.Component<Props, State> {
 						<div className={[ 'item', 'isType' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 							<div className="info">
-								<div className="name">{item.name} ({item.id})</div>
+								<div className="name">{item.name}</div>
 								<div className="descr">{item.description}</div>
-								<div className="author">
-									<IconObject object={author} size={16} />
-									{author.name}
-								</div>
+								<Author {...author} />
 								<div className="line" />
 							</div>
 							<Button className="blank c28" text="Add" />
@@ -140,11 +152,8 @@ class PopupStore extends React.Component<Props, State> {
 						<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 							<div className="info">
-								<div className="name">{item.name} ({item.id})</div>
-								<div className="author">
-									<IconObject object={author} size={16} />
-									{author.name}
-								</div>
+								<div className="name">{item.name}</div>
+								<Author {...author} />
 								<div className="line" />
 							</div>
 							<Button className="blank c28" text="Add" />
@@ -282,7 +291,7 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpen(item);
+		DataUtil.objectOpenEvent(e, item);
 	};
 
 	onCreateType () {

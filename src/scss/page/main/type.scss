@@ -78,6 +78,7 @@
 
 			.cell { padding: 14px; border-bottom: 1px solid #eae9e0; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.c-select { padding-bottom: 8px; }
+			.cell.empty { color: $colorDarkGrey; }
 
 			.icon.expand { 
 				width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; 

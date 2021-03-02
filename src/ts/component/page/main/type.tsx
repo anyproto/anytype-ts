@@ -35,7 +35,6 @@ class PageMainType extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
-		const data = dbStore.getData(rootId, block.id);
 		const relations = dbStore.getRelations(rootId, rootId).filter((it: any) => { return !it.isHidden; }).sort(DataUtil.sortByName);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
@@ -46,6 +45,11 @@ class PageMainType extends React.Component<Props, {}> {
 		if (object.name == Constant.default.name) {
 			object.name = '';
 		};
+
+		let data = dbStore.getData(rootId, block.id).map((it: any) => {
+			it.name = String(it.name || Constant.default.name || '');
+			return it;
+		});
 
 		const Editor = (item: any) => {
 			return (
@@ -167,10 +171,15 @@ class PageMainType extends React.Component<Props, {}> {
 									</tr>
 								</thead>
 								<tbody>
-									{data.map((item: any, i: number) => {
-										item.name = String(item.name || Constant.default.name || '');
-										return <Row key={i} {...item} />;
-									})}
+									{data.map((item: any, i: number) => (
+										<Row key={i} {...item} />
+									))}
+
+									{!data.length ? (
+										<tr>
+											<td className="cell empty" colSpan={3}>No objects yet</td>
+										</tr>
+									) : ''}
 								</tbody>
 							</table>
 						</div>
