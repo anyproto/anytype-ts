@@ -58,10 +58,10 @@
 		}
 		.filter.active { .icon.clear { opacity: 1; } }
 
-		.inputWrap { padding: 0px 16px 8px 16px; }
+		.inputWrap { padding: 0px 14px 8px 14px; }
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 	
-		.title { @include text-small;  margin: 0px; padding: 7px 16px; font-weight: 400; color: $colorDarkGrey; }
+		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorDarkGrey; }
 	
 		.item { 
 			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
@@ -113,9 +113,9 @@
 
 		.item.empty { color: $colorDarkGrey; }
 		
-		.item.withDescription { padding: 8px 16px; height: 56px; }
+		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {
-			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 16px; top: 8px; }
+			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
 			.descr { @include text-small; height: 18px; color: #6c6a5f; }
 			.descr:empty { display: none; }
 			.info { padding-left: 52px; line-height: 40px; }
@@ -138,19 +138,19 @@
 			}
 		}
 
-		.line { height: 1px; margin: 8px 16px; background: $colorLightGrey; }
+		.line { height: 1px; margin: 8px 14px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
-		.sectionName { padding: 5px 16px; @include text-very-small; font-weight: 500; }
+		.sectionName { padding: 5px 14px; @include text-very-small; font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }
 		.section::after {
-			content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block;
+			content: ""; height: 1px; margin: 8px 14px 0px 14px; background: $colorLightGrey; display: block;
 		}
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
+		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
 	}
 
 	.menu.horizontal {

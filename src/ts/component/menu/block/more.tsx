@@ -64,7 +64,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						onClick={this.onLayout} 
 						arrow={true}
 					/>
-					<div className="line" />
 				</React.Fragment>
 			);
 		};
@@ -72,19 +71,22 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		return (
 			<div>
 				{sectionPage}
+				{sectionPage && items.length ? <div className="line" /> : ''}
 
-				<div className="section">
-					{items.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action}
-							icon={action.icon || action.id}
-							withCaption={action.caption}
-							onClick={(e: any) => { this.onClick(e, action); }} 
-							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
-						/>
-					))}
-				</div>
+				{items.length ? (
+					<div className="section">
+						{items.map((action: any, i: number) => (
+							<MenuItemVertical 
+								key={i} 
+								{...action}
+								icon={action.icon || action.id}
+								withCaption={action.caption}
+								onClick={(e: any) => { this.onClick(e, action); }} 
+								onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+							/>
+						))}
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -187,6 +189,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			} else {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
+		} else
+		if (block.isObjectRelation()) {
 		} else
 		if (block.isPage()) {
 			items = [
