@@ -93,6 +93,7 @@ class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		size: 20,
+		tooltipY: I.MenuDirection.Bottom,
 	};
 
 	constructor (props: any) {
@@ -202,7 +203,9 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div id={this.props.id} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>{icon}</div>
+			<div id={this.props.id} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+				{icon}
+			</div>
 		);
 	};
 
@@ -225,7 +228,7 @@ class IconObject extends React.Component<Props, {}> {
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipY, onMouseEnter } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		
+
 		if (tooltip) {
 			Util.tooltipShow(tooltip, node, tooltipY);
 		};

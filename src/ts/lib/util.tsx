@@ -511,7 +511,7 @@ class Util {
 			let obj = $('#tooltip');
 			let offset = node.offset();
 			let st = win.scrollTop(); 
-			
+
 			text = text.toString().replace(/\\n/, '\n');
 			
 			obj.find('.txt').html(this.lbBr(text));
@@ -527,7 +527,7 @@ class Util {
 			if (typeY == I.MenuDirection.Bottom) {
 				y = offset.top + node.outerHeight() + 12 - st;
 			};
-			
+
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
