@@ -172,15 +172,17 @@ class PageMainType extends React.Component<Props, {}> {
 									</tr>
 								</thead>
 								<tbody>
-									{data.map((item: any, i: number) => (
-										<Row key={i} {...item} />
-									))}
-
 									{!data.length ? (
 										<tr>
 											<td className="cell empty" colSpan={3}>No objects yet</td>
 										</tr>
-									) : ''}
+									) : (
+										<React.Fragment>
+											{data.map((item: any, i: number) => (
+												<Row key={i} {...item} />
+											))}
+										</React.Fragment>
+									)}
 								</tbody>
 							</table>
 						</div>
@@ -211,6 +213,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		focus.clear(true);
 	};
 
 	isDefaultName () {
@@ -218,7 +221,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const rootId = match.params.id;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		return [ Constant.default.name, Constant.default.nameType ].indexOf(object.name) >= 0;
+		return [ Constant.default.nameType ].indexOf(object.name) >= 0;
 	};
 
 	open () {
