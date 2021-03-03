@@ -5,7 +5,11 @@
 		.item.empty { font-size: 12px; line-height: 18px; padding-top: 8px; }
 	}
 
+	.menu.menuBlockMore { width: 256px; }
 	.menu.menuBlockMore {
+		.item {
+			.name { @include text-overflow-nw; }
+		}
 		.item:hover::before { opacity: 0.15; }
 	}
 	.menu.menuBlockMore.fromIndex { width: 160px; }
