@@ -555,6 +555,8 @@ class PopupSearch extends React.Component<Props, State> {
 
 		close();
 
+		let newBlock: any = {};
+
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
@@ -567,13 +569,23 @@ class PopupSearch extends React.Component<Props, State> {
 				break;
 
 			case I.NavigationType.Link:
-				const param = {
+				newBlock = {
 					type: I.BlockType.Link,
 					content: {
 						targetBlockId: String(item.id || ''),
 					}
 				};
-				C.BlockCreate(param, rootId, blockId, position);
+				C.BlockCreate(newBlock, rootId, blockId, position);
+				break;
+
+			case I.NavigationType.LinkTo:
+				newBlock = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: blockId,
+					}
+				};
+				C.BlockCreate(newBlock, item.id, '', position);
 				break;
 		};
 	};

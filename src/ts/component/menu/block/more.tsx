@@ -327,7 +327,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'link':
-				commonStore.popupOpen('navigation', { 
+				commonStore.popupOpen('search', { 
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.LinkTo, 
