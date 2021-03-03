@@ -85,7 +85,7 @@ class PageMainType extends React.Component<Props, {}> {
 		};
 
 		const Relation = (item: any) => (
-			<div className="item">
+			<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>

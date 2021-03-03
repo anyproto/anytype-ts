@@ -62,7 +62,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const Item = (item: any) => {
 			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
 			return (
-				<div className="item sides">
+				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 						{item.name}

@@ -102,7 +102,11 @@ class PopupSearch extends React.Component<Props, State> {
 			let description = item.description || item.snippet;
 
 			return (
-				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
+				<div 
+					id={'item-' + item.id} 
+					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+					onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}
+				>
 					{isRoot ? iconHome : <IconObject object={item} size={18} /> }
 					
 					<div className="name">{item.name}</div>

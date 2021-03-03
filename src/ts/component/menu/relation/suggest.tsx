@@ -71,7 +71,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 				content = (
 					<div 
 						id={'item-' + item.relationKey} 
-						className="item" 
+						className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}
 						style={param.style}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}

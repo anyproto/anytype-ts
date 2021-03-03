@@ -37,7 +37,11 @@ class MenuObjectValues extends React.Component<Props> {
 			const type: any = dbStore.getObjectType(item.type) || {};
 
 			return (
-				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<div 
+					id={'item-' + item.id} 
+					className={[ 'item', 'withCaption', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+				>
 					<Handle />
 					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 						<IconObject object={item} />

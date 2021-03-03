@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
@@ -38,6 +38,10 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		let element = null;
 		if (object) {
 			element = <IconObject object={object} size={iconSize} />;
+
+			if (object.isHidden) {
+				cn.push('isHidden');
+			};
 		} else 
 		if (icon) {
 			element = <Icon className={icon} inner={inner} />;

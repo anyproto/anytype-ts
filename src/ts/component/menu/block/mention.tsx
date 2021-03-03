@@ -71,7 +71,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 						withCaption={true}
 						caption={type ? type.name : undefined}
 						style={param.style}
-						className={item.id == 'add' ? 'add' : ''}
+						className={[ (item.id == 'add' ? 'add' : ''), (item.isHidden ? 'isHidden' : '') ].join(' ')}
 					/>
 				</CellMeasurer>
 			);

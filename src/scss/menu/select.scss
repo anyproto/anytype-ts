@@ -6,8 +6,14 @@
 		.items { height: 100%; }
 		.item.empty { margin-top: 4px; }
 
-		.item.initial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
-		.item.initial {
+		.item { display: flex; }
+		.item {
+			.icon { flex-shrink: 0; }
+			.name { width: 100%; @include text-overflow-nw; }
+		}
+
+		.item.isInitial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
+		.item.isInitial {
 			.name { text-transform: uppercase; @include text-very-small; }
 		}
 	}

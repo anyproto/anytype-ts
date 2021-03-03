@@ -41,7 +41,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 
 		const Item = SortableElement((item: any) => {
 			return (
-				<div id={'item-' + item.relationKey} className="item">
+				<div id={'item-' + item.relationKey} className={[ 'item', (item.relation.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<Handle />
 					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />

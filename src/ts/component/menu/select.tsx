@@ -42,6 +42,13 @@ class MenuSelect extends React.Component<Props, {}> {
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
+			const cn = [];
+			if (item.isInitial) {
+				cn.push('isInitial');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -53,7 +60,7 @@ class MenuSelect extends React.Component<Props, {}> {
 				>
 					<MenuItemVertical 
 						{...item} 
-						className={item.isInitial ? 'initial' : ''} 
+						className={cn.join(' ')} 
 						isActive={item.id == value} 
 						onClick={(e: any) => { this.onSelect(e, item); }} 
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 

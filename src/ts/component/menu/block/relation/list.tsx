@@ -65,7 +65,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div className="item sides" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<div className="info">
 							<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 							{item.name}
