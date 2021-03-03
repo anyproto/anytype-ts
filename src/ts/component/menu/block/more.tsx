@@ -175,6 +175,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
 		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };
 		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
+		const link = { id: 'link', icon: 'existing', name: 'Create link' };
+		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
 
 		let items = [];
 		if (block.isObjectSet()) {
@@ -182,6 +184,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				undo,
 				redo,
 				print,
+				search,
+				link,
 			];
 
 			if (object.isArchived) {
@@ -197,8 +201,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				undo,
 				redo,
 				print,
-				{ id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` },
-				{ id: 'link', icon: 'existing', name: 'Create link' },
+				search,
+				link,
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
@@ -327,7 +331,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'link':
-				commonStore.popupOpen('search', { 
+				commonStore.popupOpen('navigation', { 
 					preventResize: true,
 					data: { 
 						type: I.NavigationType.LinkTo, 

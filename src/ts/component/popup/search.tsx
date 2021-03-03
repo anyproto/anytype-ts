@@ -472,9 +472,7 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+		const filter = new RegExp(Util.filterFix(this.state.filter), 'gi');
 		const { pages } = this.state;
 		const { recent } = blockStore;
 		const children = blockStore.getChildren(recent, recent).reverse();
@@ -483,7 +481,7 @@ class PopupSearch extends React.Component<Props, State> {
 				id: 'recent', name: 'Recent objects', children: children.map((it: I.Block) => {
 					const details = blockStore.getDetails(recent, it.content.targetBlockId);
 					return { ...details, id: it.content.targetBlockId };
-				}),
+				}).filter((it: any) => { return it.name.match(filter); }),
 			},
 			{ id: 'search', name: 'Search results', children: pages }
 		];
