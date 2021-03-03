@@ -74,6 +74,19 @@ class Crumbs {
 		return obj;
 	};
 
+	addCrumbs (id: string) {
+		let cr = this.get(I.CrumbsType.Page);
+		let lastTargetId = '';
+		
+		if (cr.ids.length) {
+			lastTargetId = cr.ids[cr.ids.length - 1];
+		};
+		if (!lastTargetId || (lastTargetId != id)) {
+			cr = this.add(I.CrumbsType.Page, id);
+		};
+		this.save(I.CrumbsType.Page, cr);
+	};
+
 	addRecent (id: string) {
 		if (!id) {
 			return;

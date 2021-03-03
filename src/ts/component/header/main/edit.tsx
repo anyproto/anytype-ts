@@ -37,6 +37,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	render () {
 		const { match, isPopup } = this.props;
 		const { config } = commonStore;
+		const { breadcrumbs } = blockStore;
 		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -45,7 +46,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const canAdd = !root.isObjectRelation() && !root.isObjectType();
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = blockStore.getDetails(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (commonStore.popupIsOpenList([ 'navigation', 'search' ]) || commonStore.menuIsOpen('blockRelationView')) {

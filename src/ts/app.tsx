@@ -458,7 +458,7 @@ class App extends React.Component<Props, State> {
 				try {
 					fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
 				} catch(e) {
-					console.log('Failed to save a file');
+					console.log('[DebugSync] Failed to save a file');
 				};
 
 				ipcRenderer.send('pathOpen', logsDir);

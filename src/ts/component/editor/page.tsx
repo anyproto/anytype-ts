@@ -200,16 +200,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.loading = true;
 		this.forceUpdate();
 		
-		let cr = crumbs.get(I.CrumbsType.Page);
-		let lastTargetId = '';
-		
-		if (cr.ids.length) {
-			lastTargetId = cr.ids[cr.ids.length - 1];
-		};
-		if (!lastTargetId || (lastTargetId != rootId)) {
-			cr = crumbs.add(I.CrumbsType.Page, rootId);
-		};
-		crumbs.save(I.CrumbsType.Page, cr);
+		crumbs.addCrumbs(rootId);
 		crumbs.addRecent(rootId);
 
 		this.id = rootId;

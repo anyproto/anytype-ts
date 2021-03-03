@@ -667,7 +667,6 @@ class BlockText extends React.Component<Props, {}> {
 		const win = $(window);
 		const range = this.getRange();
 		const el = $('#block-' + block.id);
-		const offset = el.offset();
 
 		let rect = Util.selectionRect();
 		let value = this.getValue();
@@ -759,15 +758,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
-		const text = String(content.text || '');
 
-		if ((value == text) && (JSON.stringify(this.marks) == JSON.stringify(marks))) {
-			if (callBack) {
-				callBack(null);
-			};
-			return;
-		};
-		
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
 		};

@@ -422,8 +422,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
-		console.log(relationOptions);
-
 		if (!relationOptions.length) {
 			return;
 		};

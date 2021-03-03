@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus } from 'ts/lib';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -23,7 +23,6 @@ class PageMainType extends React.Component<Props, {}> {
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
-	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -248,6 +247,9 @@ class PageMainType extends React.Component<Props, {}> {
 		this.loading = true;
 		this.forceUpdate();
 
+		crumbs.addCrumbs(rootId);
+		crumbs.addRecent(rootId);
+
 		C.BlockOpen(rootId, (message: any) => {
 			if (message.error.code) {
 				history.push('/main/index');
@@ -334,8 +336,6 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onBlur (e: any, item: any) {
 		keyboard.setFocus(false);
-		window.clearTimeout(this.timeout);
-
 		this.save();
 	};
 
@@ -345,9 +345,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onKeyUp (e: any, item: any) {
 		this.placeHolderCheck(item.id);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.save();
 	};
 
 	onSelectText (e: any, item: any) {

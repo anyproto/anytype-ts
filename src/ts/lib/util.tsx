@@ -2,6 +2,7 @@ import { I, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
+import { getRange, setRange } from 'selection-ranges';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -650,12 +651,15 @@ class Util {
 	};
 
 	selectionRect () {
-		let sel = window.getSelection();
-		let ret: any = { x: 0, y: 0, width: 0, height: 0 };
+		let sel: Selection = window.getSelection();
+		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
+		let range: Range = null;
+
 		if (sel && (sel.rangeCount > 0)) {
-			ret = sel.getRangeAt(0).getBoundingClientRect() as DOMRect;
+			range = sel.getRangeAt(0);
+			rect = range.getBoundingClientRect() as DOMRect;
 		};
-		return this.objectCopy(ret);
+		return this.objectCopy(rect);
 	};
 
 	cntWord (cnt: any, w1: string, w2?: string) {
