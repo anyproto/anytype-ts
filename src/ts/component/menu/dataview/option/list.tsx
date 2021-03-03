@@ -210,8 +210,10 @@ class MenuOptionList extends React.Component<Props, State> {
 		};
 
 		data.value = value;
-
 		commonStore.menuUpdateData(MENU_ID, { value: value });
+
+		console.log(value);
+
 		onChange(value);
 	};
 

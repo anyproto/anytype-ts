@@ -151,6 +151,10 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 		const node = $('#' + getId());
 
+		if (commonStore.menuIsOpen('dataviewOptionList')) {
+			return;
+		};
+
 		window.setTimeout(() => {
 			commonStore.menuOpen('dataviewOptionList', {
 				...param,

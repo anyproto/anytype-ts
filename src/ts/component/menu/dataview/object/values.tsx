@@ -162,10 +162,14 @@ class MenuObjectValues extends React.Component<Props> {
 		const { data } = param;
 		const node = $('#' + getId());
 
+		if (commonStore.menuIsOpen('dataviewOptionList')) {
+			return;
+		};
+
 		window.setTimeout(() => {
 			commonStore.menuOpen('dataviewObjectList', {
 				...param,
-				element: '#' + getId() + ' #item-add',
+				element: `#${getId()} #item-add`,
 				width: 0,
 				offsetX: node.outerWidth(),
 				offsetY: -36,

@@ -483,7 +483,7 @@ function menuInit () {
 
 		for (let i in flags) {
 			flagMenu.push({
-				label: flags[i], type: 'checkbox', checked: config.debug,
+				label: flags[i], type: 'checkbox', checked: config.debug[i],
 				click: () => {
 					const debug = config.debug || {};
 					debug[i] = !debug[i];

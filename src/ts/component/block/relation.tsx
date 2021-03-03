@@ -122,7 +122,6 @@ class BlockRelation extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Left,
 			data: {
 				relationKey: '',
-				readOnly: true,
 				rootId: rootId,
 				blockId: block.id,
 				filter: this.refInput.getValue(),
