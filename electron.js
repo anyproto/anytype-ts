@@ -478,6 +478,8 @@ function menuInit () {
 	];
 
 	if (config.allowDebug) {
+		config.debug = config.debug || {};
+
 		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics' };
 		const flagMenu = [];
 
@@ -485,9 +487,8 @@ function menuInit () {
 			flagMenu.push({
 				label: flags[i], type: 'checkbox', checked: config.debug[i],
 				click: () => {
-					const debug = config.debug || {};
-					debug[i] = !debug[i];
-					setConfig({ debug: debug });
+					config.debug[i] = !config.debug[i];
+					setConfig({ debug: config.debug });
 					
 					if ([ 'ui', 'ho' ].indexOf(i) >= 0) {
 						win.reload();
