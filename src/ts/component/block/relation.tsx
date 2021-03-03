@@ -33,8 +33,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { content } = block;
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
-		const relations = dbStore.getRelations(rootId, rootId);
-		const relation = relations.find((it: any) => { return it.relationKey == key; });
+		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell';
 		const id = DataUtil.cellId(idPrefix, key, '0');
 
@@ -132,11 +131,12 @@ class BlockRelation extends React.Component<Props, {}> {
 		});
 	};
 
-	onCellChange (id: string, key: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any) {
 		const { rootId } = this.props;
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		C.BlockSetDetails(rootId, [ 
-			{ key: key, value: value },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
 		]);
 	};
 

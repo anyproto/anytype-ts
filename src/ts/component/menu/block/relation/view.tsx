@@ -246,13 +246,14 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		};
 	};
 
-	onCellChange (id: string, key: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		C.BlockSetDetails(rootId, [ 
-			{ key: key, value: value },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
 		]);
 	};
 

@@ -824,6 +824,37 @@ class DataUtil {
 		return 0;
 	};
 
+	formatRelationValue (relation: I.Relation, value: any) {
+		switch (relation.format) {
+			default:
+				value = String(value || '');
+				break;
+
+			case I.RelationType.Number:
+			case I.RelationType.Date:
+				value = parseInt(value);
+				break;
+
+			case I.RelationType.Checkbox:
+				value = Boolean(value);
+				break;
+
+			case I.RelationType.Status:
+			case I.RelationType.File:
+			case I.RelationType.Tag:
+			case I.RelationType.Object:
+			case I.RelationType.Relations:
+				value = Util.objectCopy(value || []);
+				value = Util.arrayUnique(value);
+
+				if (relation.maxCount) {
+					value = value.slice(value.length - relation.maxCount, value.length);
+				};
+				break;
+		};
+		return value;
+	};
+
 };
 
 export default new DataUtil();
