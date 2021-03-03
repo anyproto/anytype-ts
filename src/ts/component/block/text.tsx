@@ -853,18 +853,16 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onSelect (e: any) {
-		const { rootId, dataset, block } = this.props;
-		const { id, content } = block;
+		const { rootId, dataset, block, isPopup } = this.props;
 		const { focused } = focus;
 		const { from, to } = focus.range;
-		const { style } = content;
 
 		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
 			e.preventDefault();
 			return;
 		};
 
-		focus.set(id, this.getRange());
+		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
 		const { range } = focus;
@@ -879,7 +877,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		const win = $(window);
-		const el = $('#block-' + id);
+		const el = $('#block-' + block.id);
 
 		let rect = Util.selectionRect();
 		if (!rect.x && !rect.y && !rect.width && !rect.height) {
@@ -890,6 +888,9 @@ class BlockText extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
+			const pageContainer = Util.getEditorPageContainer(isPopup ? 'popup' : 'page');
+			$(pageContainer).unbind('click.context').on('click.context', () => { commonStore.menuClose('blockContext'); });
+
 			commonStore.menuOpen('blockContext', {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
@@ -900,8 +901,8 @@ class BlockText extends React.Component<Props, {}> {
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
 				data: {
-					blockId: id,
-					blockIds: [ id ],
+					blockId: block.id,
+					blockIds: [ block.id ],
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
@@ -910,7 +911,7 @@ class BlockText extends React.Component<Props, {}> {
 						this.setMarks(marks);
 
 						raf(() => {
-							focus.set(id, { from: currentFrom, to: currentTo });
+							focus.set(block.id, { from: currentFrom, to: currentTo });
 							focus.apply();
 						});
 					},
