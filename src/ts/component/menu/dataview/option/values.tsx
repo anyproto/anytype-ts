@@ -116,12 +116,8 @@ class MenuOptionValues extends React.Component<Props> {
 		const relation = data.relation.get();
 
 		let value = this.getValue();
-		console.log(value);
-
 		value = value.map((id: string) => { 
-			const opt = (relation.selectDict || []).find((it: any) => { return it.id == id; });
-			console.log(id, opt);
-			return opt;
+			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
 
 		value = value.filter((it: any) => { return it && it.id; });

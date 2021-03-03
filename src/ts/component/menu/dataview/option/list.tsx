@@ -212,8 +212,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		data.value = value;
 		commonStore.menuUpdateData(MENU_ID, { value: value });
 
-		console.log(value);
-
 		onChange(value);
 	};
 
@@ -230,8 +228,10 @@ class MenuOptionList extends React.Component<Props, State> {
 				return;
 			};
 
-			this.onValueAdd(message.option.id);
-			this.ref.setValue('');
+			window.setTimeout(() => { 
+				this.ref.setValue('');
+				this.onValueAdd(message.option.id); 
+			}, 50);
 		});
 	};
 	
