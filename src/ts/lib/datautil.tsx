@@ -832,7 +832,7 @@ class DataUtil {
 
 			case I.RelationType.Number:
 			case I.RelationType.Date:
-				value = parseInt(value);
+				value = parseFloat(value);
 				break;
 
 			case I.RelationType.Checkbox:

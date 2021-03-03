@@ -36,7 +36,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
+			horizontal: I.MenuDirection.Center,
 			data: {
 				value: '',
 				options: [
