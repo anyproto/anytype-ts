@@ -38,7 +38,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const readOnly = block.isObjectRelation();
+			const readOnly = block.isObjectRelation() || block.isObjectType();
 
 			sectionPage = (
 				<React.Fragment>

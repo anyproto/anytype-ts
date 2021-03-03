@@ -44,7 +44,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const canAdd = !root.isObjectRelation();
+		const canAdd = !root.isObjectRelation() && !root.isObjectType();
 		const object = blockStore.getDetails(rootId, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
