@@ -152,6 +152,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '⌘ + X',			 com: 'Ctrl + X',			 name: 'Cut selected block/blocks or text part' },
 						{ mac: '⌘ + V',			 com: 'Ctrl + V',			 name: 'Paste data outside Anytype, block/blocks or text part' },
 						{ mac: '⌘ + D',			 com: 'Ctrl + D',			 name: 'Duplicate selected block/blocks' },
+						{ mac: '⌘ + E',			 com: 'Ctrl + E',		 name: 'Launch emoji menu' },
 					]
 				},
 
