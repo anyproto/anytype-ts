@@ -37,7 +37,7 @@ class Keyboard {
 		const { account } = authStore;
 		const { root } = blockStore;
 		const { focused } = focus;
-		const rootId = this.isEditor() ? this.match.params.id : root;
+		const rootId = this.isMainEditor() ? this.match.params.id : root;
 		const isMainIndex = this.isMainIndex();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
@@ -46,7 +46,7 @@ class Keyboard {
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (this.isEditor() || this.isFocused) {
+			if (this.isMainEditor() || this.isFocused) {
 				return;
 			};
 			this.history.goBack();
@@ -113,13 +113,16 @@ class Keyboard {
 			if (!check) {
 				return;
 			};
+			if (!this.isMainIndex() && !this.isMainEditor()) {
+				return;
+			};
 
 			e.preventDefault();
 			
 			let targetId = '';
 			let position = I.BlockPosition.Bottom;
 			
-			if (this.isEditor()) {
+			if (this.isMainEditor()) {
 				const fb = blockStore.getLeaf(rootId, focused);
 				if (fb) {
 					if (fb.isTextTitle()) {
@@ -182,13 +185,17 @@ class Keyboard {
 			return e.ctrlKey;
 		};
 	};
+
+	isMain () {
+		return this.match?.params?.page == 'main';
+	};
 	
-	isEditor () {
-		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'edit');
+	isMainEditor () {
+		return this.isMain() && (this.match?.params?.action == 'edit');
 	};
 
 	isMainIndex () {
-		return this.match && this.match.params && (this.match.params.page == 'main') && (this.match.params.action == 'index');
+		return this.isMain() && (this.match?.params?.action == 'index');
 	};
 	
 	setFocus (v: boolean) {

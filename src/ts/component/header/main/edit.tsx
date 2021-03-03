@@ -44,6 +44,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
+		const canAdd = !root.isObjectRelation();
 		const object = blockStore.getDetails(rootId, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
@@ -77,7 +78,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					{!isPopup ? <Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} /> : ''}
+					{!isPopup && canAdd ? (
+						<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+					) : ''}
 					{config.allowDataview ? (
 						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					) : ''}

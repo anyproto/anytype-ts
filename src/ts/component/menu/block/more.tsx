@@ -38,6 +38,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
+			const readOnly = block.isObjectRelation();
 
 			sectionPage = (
 				<React.Fragment>
@@ -49,8 +50,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								object={{...type, layout: I.ObjectLayout.ObjectType }}
 								name={type.name}
 								menuId="select"
-								onClick={this.onType} 
-								arrow={true}
+								onClick={!readOnly ? this.onType : undefined} 
+								arrow={!readOnly}
+								className={readOnly ? 'isReadOnly' : ''}
 							/>
 						</React.Fragment>
 					) : ''}
@@ -61,8 +63,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						icon={layout ? layout.icon : ''} 
 						name={layout ? layout.name : 'Select layout'}
 						menuId="select"
-						onClick={this.onLayout} 
-						arrow={true}
+						onClick={!readOnly ? this.onLayout : undefined} 
+						arrow={!readOnly}
+						className={readOnly ? 'isReadOnly' : ''}
 					/>
 				</React.Fragment>
 			);

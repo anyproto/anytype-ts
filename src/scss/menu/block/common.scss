@@ -11,6 +11,7 @@
 			.name { @include text-overflow-nw; }
 		}
 		.item:hover::before { opacity: 0.15; }
+		.item.isReadOnly:hover::before { opacity: 0; }
 	}
 	.menu.menuBlockMore.fromIndex { width: 160px; }
 	
