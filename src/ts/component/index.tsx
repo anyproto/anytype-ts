@@ -54,7 +54,6 @@ import Sync from './util/sync';
 import Filter from './util/filter';
 
 import Icon from './util/icon';
-import IconUser from './util/iconUser';
 import IconObject from './util/iconObject';
 
 import LinkPreview from './util/linkPreview';
@@ -110,7 +109,6 @@ export {
 	IconEmoji,
 	Error,
 	Icon,
-	IconUser,
 	IconObject,
 	LinkPreview,
 	Cell,

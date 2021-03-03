@@ -19,6 +19,7 @@ interface Props {
 	menuId?: string;
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
+	color?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onCheckbox?(e: any): void;
@@ -86,6 +87,18 @@ const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
 const Lcg = require('font/lcg/medium.otf');
+const Color = {
+	grey:	 '#dfddd0',
+	black:	 '#2c2b27',
+	brown:	 '#aca996',
+	orange:	 '#ffb522',
+	red:	 '#f55522',
+	purple:	 '#ab50cc',
+	blue:	 '#3e58eb',
+	teal:	 '#0fc8ba',
+	lime:	 '#5dd400',
+	green:	 '#57c600',
+};
 
 const $ = require('jquery');
 
@@ -94,6 +107,7 @@ class IconObject extends React.Component<Props, {}> {
 	public static defaultProps = {
 		size: 20,
 		tooltipY: I.MenuDirection.Bottom,
+		color: 'grey',
 	};
 
 	constructor (props: any) {
@@ -105,7 +119,7 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { object, className, size, canEdit, onClick } = this.props;
+		const { object, className, size, canEdit, onClick, color } = this.props;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		
@@ -132,28 +146,8 @@ class IconObject extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Human:
 				cn.push('isUser');
-				icn.push('c' + size);
-
-				if (iconImage) {
-					icn.push('iconImage');
-					icon = <img src={commonStore.imageUrl(iconImage, size * 2)} className={icn.join(' ')} />;
-				} else {
-					icn.push('iconUser');
-
-					let n = name.trim().substr(0, 1).toUpperCase();
-					let defs = `<defs>
-						<style type="text/css">
-							@font-face {
-								font-family: 'Lcg'; font-style: normal; font-weight: 500;
-								src: url('${Lcg}') format('opentype');
-							}
-						</style>
-					</defs>`;
-					let text = `<text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${n}</text>`;
-					let svg = 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${defs}${text}</svg>`);
-
-					icon = <img src={svg} className={icn.join(' ')} />;
-				};
+				icn = icn.concat([ 'iconImage', 'c' + size ]);
+				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, size * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.Task:
@@ -216,6 +210,26 @@ class IconObject extends React.Component<Props, {}> {
 			s = 40;
 		};
 		return s;
+	};
+
+	userSvg (): string {
+		const { object, className, size, canEdit, onClick, color } = this.props;
+		const { name } = object;
+
+		const n = String(name || '').trim().substr(0, 1).toUpperCase();
+		const defs = `<defs>
+			<style type="text/css">
+				@font-face {
+					font-family: 'Lcg'; font-style: normal; font-weight: 500;
+					src: url('${Lcg}') format('opentype');
+				}
+			</style>
+		</defs>`;
+
+		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${n}</text>`;
+		const svg = 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${circle}${defs}${text}</svg>`);
+		return svg;
 	};
 
 	onCheckbox (e: any) {

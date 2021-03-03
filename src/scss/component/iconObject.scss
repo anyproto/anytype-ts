@@ -4,7 +4,7 @@
 .iconObject {
 	img { pointer-events: none; }
 
-	.iconEmoji, .iconImage, .iconFile, .iconUser, .iconCheckbox { width: inherit; height: inherit; transition: none; vertical-align: top; }
+	.iconEmoji, .iconImage, .iconFile, .iconCheckbox { width: inherit; height: inherit; transition: none; vertical-align: top; }
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage { border-radius: inherit; }
 
@@ -18,35 +18,6 @@
 	.iconCommon.c40, .smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
 	.iconCommon.c48, .smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
 	.iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
-
-	.iconUser { 
-		border-radius: inherit; position: relative; overflow: hidden; text-transform: uppercase; color: #fff; text-align: center; 
-		background-color: $colorLightGrey; font-weight: 500; font-family: 'Lcg';
-	}
-	.iconUser {
-		.txt { line-height: inherit; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 1; }
-		.image { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; object-fit: cover; vertical-align: top !important; }
-	}
-
-	.iconUser.c16 { line-height: 16px; font-size: 10px; }
-	.iconUser.c18 { line-height: 18px; font-size: 10px; }
-	.iconUser.c20 { line-height: 20px; font-size: 12px; }
-	.iconUser.c40 { line-height: 40px; font-size: 18px; }
-	.iconUser.c48 { line-height: 48px; font-size: 28px; }
-	.iconUser.c56 { line-height: 56px; font-size: 34px; }
-	.iconUser.c64 { line-height: 64px; font-size: 34px; }
-	.iconUser.c96 { line-height: 96px; font-size: 44px; }
-	.iconUser.c128 { line-height: 128px; font-size: 72px; }
-
-	.iconUser.grey { background-color: $colorLightGrey; }
-	.iconUser.black { background-color: $colorBlack; }
-	.iconUser.brown { background-color: $colorDarkGrey; }
-	.iconUser.orange { background-color: $colorOrange; }
-	.iconUser.red { background-color: $colorRed; }
-	.iconUser.purple { background-color: $colorPurple; }
-	.iconUser.blue { background-color: $colorBlue; }
-	.iconUser.teal { background-color: $colorTeal; }
-	.iconUser.green { background-color: $colorLime; }
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 	.iconEmoji {
