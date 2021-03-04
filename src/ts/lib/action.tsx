@@ -1,10 +1,19 @@
 import { I, C, focus } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, authStore, blockStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
 class Action {
+
+	pageClose (rootId: string) {
+		C.BlockClose(rootId, (message: any) => {
+			blockStore.blocksClear(rootId);
+			dbStore.relationsRemove(rootId, rootId);
+			dbStore.relationsRemove(rootId, 'dataview');
+			authStore.threadRemove(rootId);
+		});
+	};
 	
 	move (rootId: string, blockId: string, blockIds: string[]) {
 		commonStore.popupOpen('navigation', { 

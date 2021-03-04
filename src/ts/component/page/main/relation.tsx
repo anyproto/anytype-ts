@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
-import { I, M, C, crumbs } from 'ts/lib';
+import { IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { I, M, C, crumbs, Action } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -57,6 +57,15 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		this.open();
+	};
+
+	componentWillUnmount () {
+		const { isPopup, match } = this.props;
+		const rootId = match.params.id;
+
+		if (!isPopup) {
+			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
+		};
 	};
 
 	open () {

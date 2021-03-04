@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs } from 'ts/lib';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -224,6 +224,13 @@ class PageMainType extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		focus.clear(true);
+
+		const { isPopup, match } = this.props;
+		const rootId = match.params.id;
+
+		if (!isPopup) {
+			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
+		};
 	};
 
 	isDefaultName () {
