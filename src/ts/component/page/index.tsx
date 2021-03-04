@@ -73,7 +73,7 @@ class Page extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={this.getClass('page')}>
+			<div className={'page ' + this.getClass('page')}>
 				<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 			</div>
 		);

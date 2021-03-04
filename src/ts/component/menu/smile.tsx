@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Input, IconObject, IconEmoji } from 'ts/component';
+import { Filter, IconEmoji } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -107,9 +107,7 @@ class MenuSmile extends React.Component<Props, State> {
 					</div>
 				) : ''}
 				
-				<form className={[ 'filter', (!noHead ? 'withHead' : '') ].join(' ')} onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} placeHolder={translate('commonFilterClick')} value={filter} onKeyUp={(e: any) => { this.onKeyUp(e, false); }} />
-				</form>
+				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={(e: any) => { this.onKeyUp(e, false); }} />
 				
 				<div className="items">
 					<InfiniteLoader
