@@ -230,7 +230,7 @@ class CellText extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			commonStore.menuCloseAll();
+			commonStore.menuCloseAll(Constant.cellMenuIds);
 			this.setState({ editing: false });
 
 			if (onChange) {

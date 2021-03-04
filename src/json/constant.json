@@ -51,6 +51,11 @@
 			"records": 50
 		}
 	},
+
+	"cellMenuIds": [ 
+		"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
+		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar"
+	],
 	
 	"size": {
 		"page": 704,
