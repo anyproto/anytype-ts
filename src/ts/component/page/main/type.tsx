@@ -106,7 +106,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const Row = (item: any) => {
 			const author = blockStore.getDetails(rootId, item.creator);
 			return (
-				<tr className="row">
+				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
 						<div className="cellContent">
 							<IconObject object={item} />
