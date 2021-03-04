@@ -5,7 +5,7 @@
 	.block.blockFeatured {
 		.wrapMenu { visibility: hidden; }
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: -4px 10px 0px 10px; }
-		.element { display: inline-block; }
+		.element { display: inline-block; cursor: pointer; }
 		.iconObject { margin-right: 6px; }
 	}
 }
