@@ -327,8 +327,6 @@ class Menu extends React.Component<Props, {}> {
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 
-			console.log(minY);
-		
 			y = Math.max(minY, y);
 			y = Math.min(wh - height - BORDER, y);
 

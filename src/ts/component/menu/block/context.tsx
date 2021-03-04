@@ -100,7 +100,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}`);
 
-		obj.unbind('mousedown').on('mousedown', (e: any) => {
+		obj.unbind('mousedown click').on('mousedown click', (e: any) => {
 			e.preventDefault();
 			e.stopPropagation();
 		});
