@@ -108,10 +108,9 @@ class PageMainType extends React.Component<Props, {}> {
 			return (
 				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
-						<div className="cellContent">
+						<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 							<IconObject object={item} />
 							<div className="name">{item.name}</div>
-							<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} />
 						</div>
 					</td>
 					<td className="cell">
@@ -123,7 +122,7 @@ class PageMainType extends React.Component<Props, {}> {
 					</td>
 					<td className="cell">
 						{!author._objectEmpty_ ? (
-							<div className="cellContent">
+							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
 								<IconObject object={author} />
 								<div className="name">{author.name}</div>
 							</div>
