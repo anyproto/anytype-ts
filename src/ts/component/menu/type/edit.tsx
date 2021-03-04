@@ -63,7 +63,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 
 		commonStore.menuOpen('select', { 
 			element: '#item-object-layout',
-			offsetX: 256,
+			offsetX: 224,
 			offsetY: 4,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
