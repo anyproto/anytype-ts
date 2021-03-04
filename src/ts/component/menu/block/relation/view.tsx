@@ -251,10 +251,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
-
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
-		]);
+		]
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
