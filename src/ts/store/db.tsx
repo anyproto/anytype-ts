@@ -42,11 +42,19 @@ class DbStore {
 	@action
 	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
 		const key = this.getId(rootId, blockId);
+		const relations = this.getRelations(rootId, blockId);
 
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
-		list = (this.relationMap.get(key) || []).concat(observable.array(list));
-
-		this.relationMap.set(key, list);
+		for (let item of list) {
+			const check = this.getRelation(rootId, blockId, item.relationKey);
+			if (check) {
+				this.relationUpdate(rootId, blockId, item);
+			} else {
+				relations.push(item);
+			};
+		};
+		
+		this.relationMap.set(key, relations);
 	};
 
 	@action
