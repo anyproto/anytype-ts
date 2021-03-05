@@ -35,8 +35,12 @@ class DbStore {
 
 	@action
 	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
+		const key = this.getId(rootId, blockId);
+
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
-		this.relationMap.set(this.getId(rootId, blockId), observable.array(list));
+		list = (this.relationMap.get(key) || []).concat(observable.array(list));
+
+		this.relationMap.set(key, list);
 	};
 
 	@action
