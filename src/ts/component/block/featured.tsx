@@ -19,15 +19,12 @@ class BlockFeatured extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 	};
 
 	render () {
 		const { rootId, block, iconSize } = this.props;
-		const { id, content } = block;
-		const cn = [ 'focusable', 'c' + id ];
+		const cn = [ 'focusable', 'c' + block.id ];
 		const object = blockStore.getDetails(rootId, rootId);
 		const type = dbStore.getObjectType(object.type);
 		const creator = blockStore.getDetails(rootId, object.creator);
@@ -48,7 +45,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		);
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div className={cn.join(' ')} tabIndex={0}>
 				{featured.map((item: any, i: any) => (
 					<React.Fragment key={i}>
 						{i > 0 ? <div className="bullet" /> : ''}
@@ -67,14 +64,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
-	};
-	
-	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
-	};
-
 	onFocus () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });

@@ -307,7 +307,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			return;
 		};
 
-		let value = Util.objectCopy(data.value || []);
+		let value = this.getValue();
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
@@ -320,6 +320,17 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		commonStore.menuUpdateData(MENU_ID, { value: value });
 		onChange(value);
 		position();
+	};
+
+	getValue (): any[] {
+		const { param } = this.props;
+		const { data } = param;
+
+		let value = data.value || [];
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
+		};
+		return Util.objectCopy(value);
 	};
 
 	resize () {

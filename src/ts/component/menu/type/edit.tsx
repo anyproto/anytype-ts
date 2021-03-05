@@ -58,6 +58,18 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 		);
 	};
 
+	componentDidMount () {
+		this.focus();
+	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
+	};
+
 	onLayout (e: any) {
 		const { layout } = this.state;
 
