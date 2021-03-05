@@ -3,12 +3,12 @@ import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon, Cell } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const PREFIX = 'menuBlockRelationViewCell';
 
 @observer
@@ -61,6 +61,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		const Item = (item: any) => {
 			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
+			const fcn = [ 'fav', (item.isFeatured ? 'active' : '') ];
+
+			if (Constant.featuredRelations.indexOf(item.relationKey) >= 0) {
+				fcn.push('disabled');
+			};
+
 			return (
 				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
@@ -90,7 +96,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							optionCommand={this.optionCommand}
 						/>
 					</div>
-					<Icon className={[ 'fav', (item.isFeatured ? 'active' : '') ].join(' ')} />
+					<Icon className={fcn.join(' ')} onClick={(e: any) => { this.onFav(e, item); }} />
 				</div>
 			);
 		};
@@ -123,9 +129,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const object = blockStore.getDetails(rootId, rootId);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		let featured = [ 'type', 'description', 'creator' ];
+		let featured = Constant.featuredRelations.concat(object.featuredRelations);
 
 		if (!config.debug.ho) {
 			items = items.filter((it: any) => { return !it.isHidden; });
@@ -173,15 +180,35 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		return items;
 	};
 
+	onFav (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const object = blockStore.getDetails(rootId, rootId);
+
+		let featured = Util.objectCopy(object.featuredRelations);
+		let idx = featured.findIndex((it: string) => { return it == item.relationKey; });
+
+		if (idx >= 0) {
+			featured = featured.filter((it: any) => { return it != item.relationKey; });
+		} else {
+			featured.push(item.relationKey);
+		};
+
+		const details = [ 
+			{ key: 'featuredRelations', value: featured },
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details);
+
+	};
+
 	onAdd (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readOnly } = data;
+		const { rootId } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
-
-		if (readOnly) {
-			return;
-		};
 
 		commonStore.menuOpen('relationSuggest', { 
 			type: I.MenuType.Vertical,

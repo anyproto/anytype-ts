@@ -56,6 +56,8 @@
 		"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
 		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar"
 	],
+
+	"featuredRelations": [ "type", "description", "creator" ],
 	
 	"size": {
 		"page": 704,
