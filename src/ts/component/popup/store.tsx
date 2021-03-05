@@ -104,7 +104,7 @@ class PopupStore extends React.Component<Props, State> {
 					const author = blockStore.getDetails(rootId, item.creator);
 
 					return (
-						<div className={[ 'item', 'isType' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', 'isType', meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 							<div className="info">
 								<div className="name">{item.name}</div>
@@ -149,7 +149,7 @@ class PopupStore extends React.Component<Props, State> {
 				Item = (item: any) => {
 					const author = blockStore.getDetails(rootId, item.creator);
 					return (
-						<div className={[ 'item', 'isRelation' ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', 'isRelation', meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 							<div className="info">
 								<div className="name">{item.name}</div>
