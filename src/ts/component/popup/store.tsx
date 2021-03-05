@@ -295,6 +295,7 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	onCreateType () {
+		const { objectTypes } = dbStore;
 		const param: any = { 
 			name: Constant.default.nameType, 
 			layout: I.ObjectLayout.Page, 
@@ -305,6 +306,9 @@ class PopupStore extends React.Component<Props, State> {
 			if (message.error.code) {
 				return;
 			};
+
+			objectTypes.push(message.objectType);
+			dbStore.objectTypesSet(objectTypes);
 
 			DataUtil.objectOpenPopup({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
 		});

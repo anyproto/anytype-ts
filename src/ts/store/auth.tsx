@@ -103,6 +103,7 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 		crumbs.delete(I.CrumbsType.Page);
+		crumbs.delete(I.CrumbsType.Recent);
 
 		commonStore.coverSetDefault();
 

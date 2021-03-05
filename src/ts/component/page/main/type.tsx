@@ -23,6 +23,7 @@ class PageMainType extends React.Component<Props, {}> {
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -351,7 +352,11 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onKeyUp (e: any, item: any) {
 		this.placeHolderCheck(item.id);
-		this.save();
+
+		window.clearTimeout(this.timeout);
+		window.setTimeout(() => {
+			this.save();
+		}, 300);
 	};
 
 	onSelectText (e: any, item: any) {
@@ -362,12 +367,18 @@ class PageMainType extends React.Component<Props, {}> {
 		const { match } = this.props;
 		const rootId = match.params.id;
 		const details = [];
+		const object: any = { id: rootId };
 
 		for (let id of EDITOR_IDS) {
-			details.push({ key: id, value: this.getValue(id) });
+			const value = this.getValue(id);
+
+			details.push({ key: id, value: value });
+			object[id] = value;
 		};
 
 		blockStore.detailsUpdateArray(rootId, rootId, details);
+		dbStore.objectTypeUpdate(object);
+
 		C.BlockSetDetails(rootId, details);
 	};
 

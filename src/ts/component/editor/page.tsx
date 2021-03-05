@@ -1134,7 +1134,11 @@ class EditorPage extends React.Component<Props, {}> {
 									const details: any = { iconEmoji: SmileUtil.random() };
 									
 									if (item.isObject) {
-										details.type = item.objectTypeId;
+										const type = dbStore.getObjectType(item.objectTypeId);
+										if (type) {
+											details.type = type.id;
+											details.layout = type.layout;
+										};
 									};
 
 									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {

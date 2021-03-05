@@ -29,6 +29,12 @@ class DbStore {
 	};
 
 	@action
+	objectTypeUpdate (type: any) {
+		const item = this.getObjectType(type.id);
+		set(item, type);
+	};
+
+	@action
 	objectTypesClear () {
 		this.objectTypeMap.clear();
 	};

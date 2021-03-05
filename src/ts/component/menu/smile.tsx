@@ -107,7 +107,7 @@ class MenuSmile extends React.Component<Props, State> {
 					</div>
 				) : ''}
 				
-				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} className={!noHead ? 'withHead' : ''} onChange={(e: any) => { this.onKeyUp(e, false); }} />
 				
 				<div className="items">
 					<InfiniteLoader
