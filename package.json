@@ -118,7 +118,7 @@
 		"mobx-state-tree": "^3.17.2",
 		"node-loader": "^1.0.2",
 		"node-sass": "^4.14.1",
-		"npm": "^6.14.8",
+		"npm": "^7.6.1",
 		"npm-run-all": "^4.1.5",
 		"object-assign": "^4.1.1",
 		"os": "^0.1.1",
