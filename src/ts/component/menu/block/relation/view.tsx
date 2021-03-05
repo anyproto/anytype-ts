@@ -206,9 +206,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onEdit (e: any, relationKey: string) {
-		const { param, getId, close } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, readOnly } = data;
 		
 		commonStore.menuOpen('blockRelationEdit', { 
 			type: I.MenuType.Vertical,
@@ -220,7 +219,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			data: {
 				...data,
 				relationKey: relationKey,
-				readOnly: readOnly,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
@@ -251,10 +249,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
-
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
-		]);
+		]
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

@@ -134,10 +134,12 @@ class BlockRelation extends React.Component<Props, {}> {
 	onCellChange (id: string, relationKey: string, value: any) {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
-
-		C.BlockSetDetails(rootId, [ 
+		const details = [ 
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
-		]);
+		];
+
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details);
 	};
 
 	onCellClick (e: any) {

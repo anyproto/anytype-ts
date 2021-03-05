@@ -315,7 +315,7 @@ class App extends React.Component<Props, State> {
 
 	setIpcEvents () {
 		const accountId = Storage.get('accountId');
-		const html = $('html');
+		const body = $('body');
 		const phrase = Storage.get('phrase');
 
 		ipcRenderer.send('appLoaded', true);
@@ -442,11 +442,11 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('enter-full-screen', () => {
-			html.addClass('fullScreen')
+			body.addClass('fullScreen')
 		});
 
 		ipcRenderer.on('leave-full-screen', () => {
-			html.removeClass('fullScreen');
+			body.removeClass('fullScreen');
 		});
 
 		ipcRenderer.on('debugSync', (e: any, route: string) => {

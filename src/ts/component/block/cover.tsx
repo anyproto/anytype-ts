@@ -64,7 +64,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
-		const { coverType, coverId,  } = details;
+		const { coverType, coverId } = details;
 		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
@@ -137,7 +137,7 @@ class BlockCover extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.resize();
-		
+
 		const win = $(window);
 		win.unbind('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
@@ -380,31 +380,28 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onScaleMove (v: number) {
-		if (!this._isMounted) {
+		if (!this._isMounted || !this.cover || !this.cover.length) {
 			return false;
 		};
 
-		if (!this.cover || !this.cover.length) {
-			return;
-		};
-		
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverX, coverY } = details;
 		const value = node.find('#drag-value');
-		const rect = this.cover.get(0).getBoundingClientRect() as DOMRect;
-		
+
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
 		this.cover.css({ height: 'auto', width: v + '%' });
+
+		const rect = this.cover.get(0).getBoundingClientRect() as DOMRect;
 
 		this.rect.cw = rect.width;
 		this.rect.ch = rect.height;
 		
 		this.x = coverX * this.rect.cw;
 		this.y = coverY * this.rect.ch;
-		
+
 		this.setTransform(this.x, this.y);
 	};
 	

@@ -122,10 +122,6 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
-		const menuIds = [ 
-			'select', 'button', 'dataviewText', 'dataviewObjectList', 'dataviewObjectValues', 'dataviewOptionValues', 
-			'dataviewOptionList', 'dataviewOptionEdit', 'dataviewMedia', 'dataviewCalendar',
-		];
 
 		let menuId = '';
 		let setOn = () => {
@@ -317,11 +313,11 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			commonStore.menuCloseAll(menuIds);
+			commonStore.menuCloseAll(Constant.cellMenuIds);
 			window.setTimeout(() => {
 				commonStore.menuOpen(menuId, param); 
-				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(menuIds); });
-				win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(menuIds); });
+				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(Constant.cellMenuIds); });
+				win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(Constant.cellMenuIds); });
 			}, 1);
 		} else {
 			setOn();

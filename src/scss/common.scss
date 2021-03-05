@@ -59,6 +59,8 @@ html.platformWindows {
 		.icon.max:hover { background-image: url('~img/icon/header/windows/max1.svg'); }
 		.icon.close:hover { background-image: url('~img/icon/header/windows/close1.svg'); }
 	}
+
+	.page { padding-top: 30px; }
 	
 	.header { top: 30px !important; }
 	.header {
@@ -67,8 +69,6 @@ html.platformWindows {
 			background-image: url('~img/logoSmall.svg'); 
 		}
 	}
-
-	.pageMainEdit .wrapper { padding-top: 68px; }
 
 	.popups {
 		.popup.popupNavigation {
@@ -87,7 +87,7 @@ html.platformWindows {
 .dn { display: none !important; }
 .txt { vertical-align: middle; display: inline-block; line-height: 1; }
 .flex { display: flex; }
-.cp { cursor: pointer; }
+.cp { cursor: pointer !important; }
 .nw { white-space: nowrap; }
 .through { pointer-events: none; }
 .rel { position: relative; }

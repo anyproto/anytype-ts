@@ -370,18 +370,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onLayout (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		commonStore.menuOpen('select', { 
 			element: '#item-object-layout',
-			offsetX: 208,
+			offsetX: 256,
 			offsetY: -36,
 			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				options: DataUtil.menuGetLayouts(),
+				options: DataUtil.menuTurnLayouts(),
 				value: object.layout,
 				onSelect: (e: any, item: any) => {
 					DataUtil.pageSetLayout(rootId, item.id);

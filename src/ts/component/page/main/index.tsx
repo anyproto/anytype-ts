@@ -156,7 +156,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		const options = [
 			{ id: 'page', icon: 'page', name: 'Draft' },
-			{ id: 'link', icon: 'existing', name: 'Link to page' },
+			{ id: 'link', icon: 'existing', name: 'Link to object' },
 		];
 
 		if (config.allowDataview) {

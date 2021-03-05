@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, focus } from 'ts/lib';
+import { I, DataUtil, focus } from 'ts/lib';
 import { IconObject } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore, dbStore } from 'ts/store';
@@ -41,7 +41,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		const Element = (item: any) => (
-			<div className="element">
+			<div className="element" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 				<IconObject size={iconSize} object={item} />
 				{item.name}
 			</div>

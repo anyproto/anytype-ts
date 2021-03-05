@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs } from 'ts/lib';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -106,12 +106,11 @@ class PageMainType extends React.Component<Props, {}> {
 		const Row = (item: any) => {
 			const author = blockStore.getDetails(rootId, item.creator);
 			return (
-				<tr className="row">
+				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
-						<div className="cellContent">
+						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 							<IconObject object={item} />
 							<div className="name">{item.name}</div>
-							<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} />
 						</div>
 					</td>
 					<td className="cell">
@@ -123,7 +122,7 @@ class PageMainType extends React.Component<Props, {}> {
 					</td>
 					<td className="cell">
 						{!author._objectEmpty_ ? (
-							<div className="cellContent">
+							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
 								<IconObject object={author} />
 								<div className="name">{author.name}</div>
 							</div>
@@ -225,6 +224,13 @@ class PageMainType extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		focus.clear(true);
+
+		const { isPopup, match } = this.props;
+		const rootId = match.params.id;
+
+		if (!isPopup) {
+			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
+		};
 	};
 
 	isDefaultName () {
@@ -361,6 +367,7 @@ class PageMainType extends React.Component<Props, {}> {
 			details.push({ key: id, value: this.getValue(id) });
 		};
 
+		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details);
 	};
 

@@ -95,7 +95,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			</div>
 		);
 	};
-	
+
 	onMark (e: any, type: any) {
 		e.preventDefault();
 		e.stopPropagation();

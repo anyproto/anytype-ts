@@ -221,6 +221,7 @@ class Menu extends React.Component<Props, {}> {
 	position () {
 		const { id, param } = this.props;
 		const { element, rect, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
+		const platform = Util.getPlatform();
 		
 		raf(() => {
 			if (!this._isMounted) {
@@ -234,11 +235,15 @@ class Menu extends React.Component<Props, {}> {
 			const wh = win.scrollTop() + win.height();
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
-			
+
 			let ew = 0;
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
+			let minY = Constant.size.header + 2;
+			if (platform == I.Platform.Windows) {
+				minY += 30;
+			};
 
 			if (rect) {
 				ew = Number(rect.width) || 0;
@@ -321,8 +326,8 @@ class Menu extends React.Component<Props, {}> {
 
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
-		
-			y = Math.max(Constant.size.header + 2, y);
+
+			y = Math.max(minY, y);
 			y = Math.min(wh - height - BORDER, y);
 
 			let css: any = { left: x, top: y };

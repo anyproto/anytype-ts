@@ -69,7 +69,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Left,
 			data: {
-				options: DataUtil.menuGetLayouts(),
+				options: DataUtil.menuTurnLayouts(),
 				value: layout,
 				onSelect: (e: any, item: any) => {
 					this.setState({ layout: item.id });

@@ -601,6 +601,12 @@ class DataUtil {
 			return it;
 		});
 	};
+
+	menuTurnLayouts () {
+		return this.menuGetLayouts().filter((it: any) => {
+			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
+		});
+	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
 		const reg = new RegExp(Util.filterFix(filter), 'gi');
