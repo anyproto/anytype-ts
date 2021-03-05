@@ -234,14 +234,11 @@ class Dispatcher {
 				case 'blockSetDetails':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
 
 					const details = Decode.decodeStruct(data.getDetails());
 					blockStore.detailsUpdate(rootId, { id: id, details: details });
 
-					if ((id == rootId) && (block.layout !== details.layout)) {
+					if ((id == rootId) && block && (block.layout !== details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
 					};
 					break;

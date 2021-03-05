@@ -218,8 +218,8 @@ class IconObject extends React.Component<Props, {}> {
 		
 		let name = String(object.name || '');
 		name = SmileUtil.strip(name);
+		name = name.trim().substr(0, 1).toUpperCase();
 
-		const n = name.trim().substr(0, 1).toUpperCase();
 		const defs = `<defs>
 			<style type="text/css">
 				@font-face {
@@ -230,7 +230,7 @@ class IconObject extends React.Component<Props, {}> {
 		</defs>`;
 
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${n}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${name}</text>`;
 		const svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${circle}${defs}${text}</svg>`)));
 		return svg;
 	};
