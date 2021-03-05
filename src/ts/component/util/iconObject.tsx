@@ -49,6 +49,7 @@ const FontSize = {
 	16: 10,
 	18: 10,
 	20: 12,
+	24: 13,
 	40: 18,
 	48: 28,
 	56: 34,
@@ -227,7 +228,7 @@ class IconObject extends React.Component<Props, {}> {
 		</defs>`;
 
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" alignment-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${n}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${n}</text>`;
 		const svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${circle}${defs}${text}</svg>`)));
 		return svg;
 	};
