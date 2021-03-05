@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { I, Util, SmileUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 
 interface Props {
@@ -215,9 +215,11 @@ class IconObject extends React.Component<Props, {}> {
 
 	userSvg (): string {
 		const { object, className, size, canEdit, onClick, color } = this.props;
-		const { name } = object;
+		
+		let name = String(object.name || '');
+		name = SmileUtil.strip(name);
 
-		const n = String(name || '').trim().substr(0, 1).toUpperCase();
+		const n = name.trim().substr(0, 1).toUpperCase();
 		const defs = `<defs>
 			<style type="text/css">
 				@font-face {
