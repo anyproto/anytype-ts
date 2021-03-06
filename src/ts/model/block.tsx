@@ -91,6 +91,10 @@ class Block implements I.Block {
 		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask();
 	};
 
+	canCreateBlock (): boolean {
+		return !this.isTextTitle() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured();
+	};
+
 	isIndentable (): boolean {
 		return !this.isSystem() && !this.isTextTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
@@ -141,6 +145,10 @@ class Block implements I.Block {
 
 	isObjectReadOnly (): boolean { 
 		return this.isObjectSet() || this.isObjectFile();
+	};
+
+	isFeatured (): boolean {
+		return this.type == I.BlockType.Featured;
 	};
 
 	isLayout (): boolean {

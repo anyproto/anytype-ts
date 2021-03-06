@@ -364,12 +364,6 @@ class EditorPage extends React.Component<Props, {}> {
 			offset = 394;
 		};
 
-		if (root.isObjectHuman()) {
-		};
-
-		if (root.isObjectTask()) {
-		};
-
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
 			let rect = item.getBoundingClientRect() as DOMRect;
@@ -418,14 +412,14 @@ class EditorPage extends React.Component<Props, {}> {
 			
 			if (pageX <= x + 20) {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
-				if (block) {
-					if (!block.isTextTitle() && !block.isLayoutColumn() && !block.isLayoutDiv() && !block.isLayoutHeader()) {
-						hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
-					};
+				if (block && block.canCreateBlock()) {
+					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
+					/*
 					if (block.isTextTitle()) {
 						this.hoverPosition = I.BlockPosition.Bottom;
 						hovered.addClass('isAdding bottom');
 					};
+					*/
 				};
 			};
 		} else {
