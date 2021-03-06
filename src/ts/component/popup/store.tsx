@@ -4,6 +4,7 @@ import { Title, Label, Button, IconObject, Loader } from 'ts/component';
 import { I, C, DataUtil, SmileUtil } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
@@ -61,12 +62,14 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	offset: number = 0;
+	cache: any = null;
 	_isMounted: boolean = false;
 
 	constructor (props: any) {
 		super(props);
 
 		this.loadMoreRows = this.loadMoreRows.bind(this);
+		this.getRowHeight = this.getRowHeight.bind(this);
 		this.resize = this.resize.bind(this);
 	};
 	
@@ -80,12 +83,6 @@ class PopupStore extends React.Component<Props, State> {
 
 		let Item = null;
 		let mid = null;
-		let data = dbStore.getData(rootId, block.id).map((it: any) => {
-			it.name = String(it.name || Constant.default.name || '');
-			return it;
-		});
-
-		console.log(items);
 
 		const Author = (item: any) => {
 			if (item._objectEmpty_) {
@@ -171,6 +168,26 @@ class PopupStore extends React.Component<Props, State> {
 
 		};
 
+		const rowRenderer = (param: any) => {
+			const item = items[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<div className="row" style={param.style}>
+						{item.children.map((smile: any, i: number) => {
+							return <Item key={i} id={smile.smile} {...smile} />;
+						})}
+					</div>
+				</CellMeasurer>
+			);
+		};
+
 		return (
 			<div className={[ 'wrapper', tab ].join(' ')}>
 				<div className="head">
@@ -191,9 +208,29 @@ class PopupStore extends React.Component<Props, State> {
 						<Loader />
 					: (
 						<div className="items">
-							{data.map((item: any, i: number) => (
-								<Item key={i} {...item} />
-							))}
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={this.loadMoreRows}
+								isRowLoaded={({ index }) => { return index < items.length; }}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={registerChild}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={this.getRowHeight}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
 						</div>
 					)}
 				</div>
@@ -209,6 +246,15 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const items = this.getItems();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: this.getRowHeight(),
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
+
+
 		this.resize();
 	};
 
@@ -259,6 +305,16 @@ class PopupStore extends React.Component<Props, State> {
 		return id;
 	};
 
+	getRowHeight () {
+		const { tab } = this.state;
+
+		let h = 0;
+		if (tab == Tab.Type) h = 96;
+		if (tab == Tab.Template) h = 2;
+		if (tab == Tab.Relation) h = 64;
+		return h;
+	};
+
 	getRowLimit () {
 		const { tab } = this.state;
 
@@ -284,7 +340,7 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	onView (e: any, item: any) {
-		this.getData(item.id);
+		this.getData(item.id, true);
 	};
 
 	onClick (e: any, item: any) {
@@ -311,7 +367,7 @@ class PopupStore extends React.Component<Props, State> {
 		});
 	};
 
-	getData (id: string, callBack?: (message: any) => void) {
+	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
 		const rootId = this.getRootId();
 		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
 		const viewChange = id != viewId;
@@ -324,6 +380,8 @@ class PopupStore extends React.Component<Props, State> {
 
 		if (viewChange) {
 			meta.viewId = id;
+		};
+		if (viewChange || clear) {
 			dbStore.recordsSet(rootId, BLOCK_ID, []);
 		};
 
@@ -337,15 +395,14 @@ class PopupStore extends React.Component<Props, State> {
 
         return new Promise((resolve, reject) => {
 			this.offset += 25 * this.getRowLimit();
-			this.getData(viewId, resolve);
+			this.getData(viewId, false, resolve);
 		});
 	};
 
 	getItems () {
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
-		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const data = dbStore.getData(rootId, block.id).map((it: any) => {
+		const data = dbStore.getData(rootId, BLOCK_ID).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
 			return it;
 		});
