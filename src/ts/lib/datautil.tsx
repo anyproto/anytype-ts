@@ -3,7 +3,6 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
-const { ipcRenderer } = window.require('electron');
 
 class DataUtil {
 
@@ -280,6 +279,9 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
+		//window.open(this.history.location.href + '?_path=' + this.history.location.pathname);
+		//return;
+
 		let param: any = { data: { rootId: object.id } };
 		let popupId = '';
 

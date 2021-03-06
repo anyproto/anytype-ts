@@ -70,15 +70,15 @@
 					.button { display: block; }
 				}
 
-				.item.isType { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; }
-				.item.isType:nth-child(2n + 2) { margin-right: 0px; }
-				.item.isType {
+				.item.type { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; }
+				.item.type:nth-child(2n + 2) { margin-right: 0px; }
+				.item.type {
 					.line { bottom: -16px; }
 				}
 
-				.item.isRelation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; }
-				.item.isRelation:nth-child(3n + 3) { margin-right: 0px; }
-				.item.isRelation {
+				.item.relation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; }
+				.item.relation:nth-child(3n + 3) { margin-right: 0px; }
+				.item.relation {
 					.line { bottom: -8px; }
 					.item:nth-child(2n + 2) { margin-right: 0px; }
 				}

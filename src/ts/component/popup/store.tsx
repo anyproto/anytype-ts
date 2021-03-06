@@ -14,11 +14,19 @@ interface State {
 	loading: boolean;
 };
 
+enum Tab {
+	Type = 'type',
+	Template = 'template',
+	Relation = 'relation',
+}
+
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
+
 const Tabs = [
 	{ 
-		id: 'type', name: 'Types', active: 'library',
+		id: Tab.Type, name: 'Types', active: 'library',
 		children: [
 			{ id: 'market', name: 'Marketplace', disabled: true },
 			{ id: 'library', name: 'Library' },
@@ -26,7 +34,7 @@ const Tabs = [
 	},
 	/*
 	{ 
-		id: 'template', 'name': 'Templates', active: 'library', 
+		id: Tab.Template, 'name': 'Templates', active: 'library', 
 		children: [
 			{ id: 'market', name: 'Marketplace' },
 			{ id: 'library', name: 'Library' },
@@ -34,29 +42,31 @@ const Tabs = [
 	},
 	*/
 	{ 
-		id: 'relation', 'name': 'Relations', active: 'library', 
+		id: Tab.Relation, 'name': 'Relations', active: 'library', 
 		children: [
 			{ id: 'market', name: 'Marketplace', disabled: true },
 			{ id: 'library', name: 'Library' },
 		], 
 	},
 ];
+
 const BLOCK_ID = 'dataview';
-const Constant = require('json/constant.json');
 
 @observer
 class PopupStore extends React.Component<Props, State> {
 
 	state = {
-		tab: 'type',
+		tab: Tab.Type,
 		loading: false,
 	};
 
+	offset: number = 0;
 	_isMounted: boolean = false;
 
 	constructor (props: any) {
 		super(props);
 
+		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.resize = this.resize.bind(this);
 	};
 	
@@ -66,13 +76,16 @@ class PopupStore extends React.Component<Props, State> {
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
 		const views = block.content?.views || [];
+		const items = this.getItems();
 
 		let Item = null;
-		let element = null;
+		let mid = null;
 		let data = dbStore.getData(rootId, block.id).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
 			return it;
 		});
+
+		console.log(items);
 
 		const Author = (item: any) => {
 			if (item._objectEmpty_) {
@@ -99,12 +112,12 @@ class PopupStore extends React.Component<Props, State> {
 		switch (tab) {
 
 			default:
-			case 'type':
+			case Tab.Type:
 				Item = (item: any) => {
 					const author = blockStore.getDetails(rootId, item.creator);
 
 					return (
-						<div className={[ 'item', 'isType', meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 							<div className="info">
 								<div className="name">{item.name}</div>
@@ -117,39 +130,24 @@ class PopupStore extends React.Component<Props, State> {
 					);
 				};
 
-				element = (
-					<React.Fragment>
-						<div className="mid">
-							<Title text="Type every object" />
-							<Label text="Our beautifully-designed templates come with hundreds" />
+				mid = (
+					<div className="mid">
+						<Title text="Type every object" />
+						<Label text="Our beautifully-designed templates come with hundreds" />
 
-							<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(); }} />
-						</div>
-
-						{loading ? 
-							<Loader />
-						: (
-							<React.Fragment>
-								{tabs}
-								<div className="items">
-									{data.map((item: any, i: number) => (
-										<Item key={i} {...item} />
-									))}
-								</div>
-							</React.Fragment>
-						)}
-					</React.Fragment>
+						<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(); }} />
+					</div>
 				);
 				break;
 
-			case 'template':
+			case Tab.Template:
 				break;
 
-			case 'relation':
+			case Tab.Relation:
 				Item = (item: any) => {
 					const author = blockStore.getDetails(rootId, item.creator);
 					return (
-						<div className={[ 'item', 'isRelation', meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 							<div className="info">
 								<div className="name">{item.name}</div>
@@ -161,28 +159,13 @@ class PopupStore extends React.Component<Props, State> {
 					);
 				};
 
-				element = (
-					<React.Fragment>
-						<div className="mid">
-							<Title text="All objects are connected" />
-							<Label text="Our beautifully-designed templates come with hundreds" />
+				mid = (
+					<div className="mid">
+						<Title text="All objects are connected" />
+						<Label text="Our beautifully-designed templates come with hundreds" />
 
-							<Button text="Create a new type" className="orange" />
-						</div>
-
-						{loading ? 
-							<Loader />
-						: (
-							<React.Fragment>
-								{tabs}
-								<div className="items">
-									{data.map((item: any, i: number) => (
-										<Item key={i} {...item} />
-									))}
-								</div>
-							</React.Fragment>
-						)}
-					</React.Fragment>
+						<Button text="Create a new type" className="orange" />
+					</div>
 				);
 				break;
 
@@ -199,9 +182,20 @@ class PopupStore extends React.Component<Props, State> {
 						))}
 					</div>
 				</div>
-				
+
 				<div className="body">
-					{element}
+					{mid}
+					{tabs}
+
+					{loading ? 
+						<Loader />
+					: (
+						<div className="items">
+							{data.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		);
@@ -211,7 +205,6 @@ class PopupStore extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-
 		this.onTab(null, Tabs[0]);
 	};
 
@@ -255,23 +248,25 @@ class PopupStore extends React.Component<Props, State> {
 		});
 	};
 
-	load () {
-		this.setState({ loading: true });
-
-		C.BlockOpen(this.getRootId(), (message: any) => {
-			this.setState({ loading: false });
-		});
-	};
-
 	getRootId () {
 		const { tab } = this.state;
 		const { storeType, storeRelation, storeTemplate } = blockStore;
 
 		let id = '';
-		if (tab == 'type') id = storeType;
-		if (tab == 'template') id = storeTemplate;
-		if (tab == 'relation') id = storeRelation;
+		if (tab == Tab.Type) id = storeType;
+		if (tab == Tab.Template) id = storeTemplate;
+		if (tab == Tab.Relation) id = storeRelation;
 		return id;
+	};
+
+	getRowLimit () {
+		const { tab } = this.state;
+
+		let l = 0;
+		if (tab == Tab.Type) l = 2;
+		if (tab == Tab.Template) l = 2;
+		if (tab == Tab.Relation) l = 3;
+		return l;
 	};
 
 	onTab (e: any, item: any) {
@@ -281,13 +276,15 @@ class PopupStore extends React.Component<Props, State> {
 		};
 
 		this.state.tab = tabItem.id;
-		this.setState({ tab: item.id });
+		this.setState({ tab: item.id, loading: true });
 
-		this.load();
+		C.BlockOpen(this.getRootId(), (message: any) => {
+			this.setState({ loading: false });
+		});
 	};
 
 	onView (e: any, item: any) {
-		this.getData(item.id, 0);
+		this.getData(item.id);
 	};
 
 	onClick (e: any, item: any) {
@@ -314,11 +311,11 @@ class PopupStore extends React.Component<Props, State> {
 		});
 	};
 
-	getData (id: string, offset: number, callBack?: (message: any) => void) {
+	getData (id: string, callBack?: (message: any) => void) {
 		const rootId = this.getRootId();
 		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
 		const viewChange = id != viewId;
-		const meta: any = { offset: offset };
+		const meta: any = { offset: this.offset };
 		const cb = (message: any) => {
 			if (callBack) {
 				callBack(message);
@@ -331,9 +328,52 @@ class PopupStore extends React.Component<Props, State> {
 		};
 
 		dbStore.metaSet(rootId, BLOCK_ID, meta);
-		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.store.records, cb);
+		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, this.offset, Constant.limit.store.records, cb);
 	};
-	
+
+	loadMoreRows ({ startIndex, stopIndex }) {
+		const rootId = this.getRootId();
+		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
+
+        return new Promise((resolve, reject) => {
+			this.offset += 25 * this.getRowLimit();
+			this.getData(viewId, resolve);
+		});
+	};
+
+	getItems () {
+		const limit = this.getRowLimit();
+		const rootId = this.getRootId();
+		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
+		const data = dbStore.getData(rootId, block.id).map((it: any) => {
+			it.name = String(it.name || Constant.default.name || '');
+			return it;
+		});
+
+		let ret: any[] = [];
+		let n = 0;
+		let row = { children: [] };
+		for (let i = 0; i < data.length; ++i) {
+			const item = data[i];
+
+			row.children.push(item);
+
+			n++;
+			if (n == limit) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
+			};
+		};
+
+		if (row.children.length < limit) {
+			ret.push(row);
+		};
+
+		ret = ret.filter((it: any) => { return it.children.length > 0; });
+		return ret;
+	};
+
 };
 
 export default PopupStore;

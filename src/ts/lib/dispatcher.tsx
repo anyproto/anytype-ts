@@ -41,6 +41,7 @@ class Dispatcher {
 			let serverAddr = remote.getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
+
 			this.listenEvents();
 		/// #endif
 	};
@@ -63,8 +64,8 @@ class Dispatcher {
 			};
 		});
 
-		this.stream.on('end', (end: any) => {
-			console.error('[Dispatcher.stream] end, restarting', end);
+		this.stream.on('end', () => {
+			console.error('[Dispatcher.stream] end, restarting');
 			this.listenEvents();
 		});
 	};
