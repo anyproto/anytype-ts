@@ -279,9 +279,6 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
-		//window.open(this.history.location.href + '?_path=' + this.history.location.pathname);
-		//return;
-
 		let param: any = { data: { rootId: object.id } };
 		let popupId = '';
 
