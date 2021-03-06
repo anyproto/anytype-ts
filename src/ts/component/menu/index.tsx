@@ -272,6 +272,7 @@ class Menu extends React.Component<Props, {}> {
 
 			let x = ox;
 			let y = oy;
+			let flipX = false;
 
 			switch (vertical) {
 				case I.MenuDirection.Top:
@@ -304,6 +305,7 @@ class Menu extends React.Component<Props, {}> {
 					// Switch
 					if (!noFlipX && (x >= ww - width - BORDER)) {
 						x = ox - width;
+						flipX = true;
 					};
 					break;
 
@@ -317,6 +319,7 @@ class Menu extends React.Component<Props, {}> {
 					// Switch
 					if (!noFlipX && (x <= BORDER)) {
 						x = ox + ew;
+						flipX = true;
 					};
 					break;
 			};
@@ -344,13 +347,23 @@ class Menu extends React.Component<Props, {}> {
 				if (type == I.MenuType.Vertical) {
 					let px = Math.abs(x - coords.x);
 					let py = Math.abs(y - coords.y);
-					 
+					let w = px - 4;
+					let t = '';
+					let l = coords.x + 4;
+
+					if (flipX) {
+						w -= width;
+						l -= w + 8;
+						t = 'scaleX(-1)';
+					};
+
 					poly.show().css({
-						width: px - 4,
+						width: w,
 						height: height,
-						left: coords.x + 4,
+						left: l,
 						top: y,
-						clipPath: 'polygon(0px ' + py + 'px, 100% 0%, 100% 100%)'
+						clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
+						transform: t,
 					});
 				};
 			};

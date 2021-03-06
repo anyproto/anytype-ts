@@ -166,13 +166,17 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, match } = this.props;
 
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
-		
-		if (!isPopup) {
+	
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (close) {
 			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
 		};
 

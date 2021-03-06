@@ -8,6 +8,7 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	isPopup?: boolean;
 };
 
@@ -38,8 +39,8 @@ class PageMainType extends React.Component<Props, {}> {
 		};
 
 		const { config } = commonStore;
-		const { match, isPopup } = this.props;
-		const rootId = match.params.id;
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
 		const object = blockStore.getDetails(rootId, rootId);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
@@ -135,7 +136,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
 				<div className="blocks wrapper">
 					<div className="head">
@@ -223,28 +224,31 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+
 		this._isMounted = false;
 		focus.clear(true);
 
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
-
-		if (!isPopup) {
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (close) {
 			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
 		};
 	};
 
 	isDefaultName () {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const object = blockStore.getDetails(rootId, rootId);
 
 		return [ Constant.default.nameType ].indexOf(object.name) >= 0;
 	};
 
 	open () {
-		const { match, history } = this.props;
-		const rootId = match.params.id;
+		const { history } = this.props;
+		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
 			return;
@@ -273,22 +277,17 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	onSelect (icon: string) {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
+		const rootId = this.getRootId();
 		DataUtil.pageSetIcon(rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
+		const rootId = this.getRootId();
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
 	onAdd (e: any) {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		commonStore.menuOpen('relationSuggest', { 
@@ -314,8 +313,7 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	onEdit (e: any, relationKey: string) {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		
 		commonStore.menuOpen('blockRelationEdit', { 
 			type: I.MenuType.Vertical,
@@ -364,8 +362,7 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	save () {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const details = [];
 		const object: any = { id: rootId };
 
@@ -424,6 +421,11 @@ class PageMainType extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder.c' + id).show();
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
 	};
 
 };

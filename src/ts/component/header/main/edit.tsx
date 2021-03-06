@@ -7,6 +7,7 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	isPopup: boolean;
 	dataset?: any;
 };
@@ -35,10 +36,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { match, isPopup } = this.props;
+		const { match, isPopup, rootId } = this.props;
 		const { config } = commonStore;
 		const { breadcrumbs } = blockStore;
-		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Util, Storage, analytics, keyboard } from 'ts/lib';
+import { ListPopup } from 'ts/component';
 import { authStore, commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -50,6 +50,7 @@ const Components: any = {
 
 interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
+	rootId?: string;
 };
 
 class Page extends React.Component<Props, {}> {
@@ -73,9 +74,12 @@ class Page extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={'page ' + this.getClass('page')}>
-				<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
-			</div>
+			<React.Fragment>
+				<ListPopup {...this.props} />
+				<div className={'page ' + this.getClass('page')}>
+					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
+				</div>
+			</React.Fragment>
 		);
 	};
 	

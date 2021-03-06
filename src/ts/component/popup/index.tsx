@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
 import { commonStore } from 'ts/store';
+import { RouteComponentProps } from 'react-router';
 
 import PopupSettings from './settings';
 import PopupArchive from './archive';
@@ -18,9 +19,7 @@ import PopupShortcut from './shortcut';
 import PopupStore from './store';
 import PopupPage from './page';
 
-interface Props extends I.Popup {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const raf = require('raf');
