@@ -44,6 +44,8 @@ $colorDarkGrey: $colorWhite;
 				.item:hover { color: $colorWhite; }
 			}
 		}
+
+		.block.blockIconUser .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
 	}
 
 }
