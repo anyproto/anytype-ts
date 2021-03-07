@@ -9,6 +9,7 @@
 			.loaderWrapper { background: rgba(0,0,0,0.1); }
 		}
 
+		.popup.popupSettings .head { background: #333; }
 		.popup.popupSearch .head { background: #333; }
 	}
 
@@ -19,7 +20,6 @@
 	}
 
 	.cell.isEditing .cellContent { background: #333; }
-
 
 	.blocks .block.blockDataview .views .item:hover, .blocks .block.blockDataview .views .item.active { color: #fff; }
 	.blocks .block.blockDataview .viewItem.viewGrid .cellContent.isName .icon.expand { background-color: unset; }
