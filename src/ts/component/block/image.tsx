@@ -27,6 +27,7 @@ class BlockImage extends React.Component<Props, {}> {
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onLoad = this.onLoad.bind(this);
 		this.onError = this.onError.bind(this);
 	};
 
@@ -60,7 +61,7 @@ class BlockImage extends React.Component<Props, {}> {
 			case I.FileState.Done:
 				element = (
 					<div className="wrap resizable" style={css}>
-						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onError={this.onError} />
+						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);
@@ -215,6 +216,10 @@ class BlockImage extends React.Component<Props, {}> {
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },
 		]);
+	};
+
+	onLoad () {
+		$(window).trigger('resize');
 	};
 
 	onError () {
