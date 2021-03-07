@@ -1,9 +1,9 @@
-import { hot } from 'react-hot-loader/root';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListPopup, ListMenu, Progress, Tooltip, Loader, LinkPreview, Icon } from './component';
+import { Page, ListMenu, Progress, Tooltip, LinkPreview, Icon } from './component';
 import { commonStore, authStore, blockStore, dbStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
@@ -216,7 +216,11 @@ class App extends React.Component<Props, State> {
 		const { loading } = this.state;
 		
 		if (loading) {
-			return <Loader />
+			return (
+				<div id="loader" className="loaderWrapper">
+					<div id="logo" className="logo" />
+				</div>
+			);
 		};
 		
 		return (
@@ -316,6 +320,9 @@ class App extends React.Component<Props, State> {
 		const accountId = Storage.get('accountId');
 		const body = $('body');
 		const phrase = Storage.get('phrase');
+		const node = $(ReactDOM.findDOMNode(this));
+		const loader = node.find('#loader');
+		const logo = node.find('#logo');
 
 		ipcRenderer.send('appLoaded', true);
 
@@ -341,9 +348,14 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
-
-			this.setState({ loading: false });
 			this.preload();
+
+			window.setTimeout(() => {
+				logo.css({ opacity: 0 });
+				window.setTimeout(() => {
+					this.setState({ loading: false });
+				}, 600);
+			}, 2000);
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
