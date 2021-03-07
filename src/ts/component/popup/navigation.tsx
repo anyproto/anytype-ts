@@ -536,10 +536,11 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
-		const { param, history } = this.props;
+		e.persist();
+
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
-		const { root } = blockStore;
 
 		if (!this.withButtons(item)) {
 			return;
@@ -550,7 +551,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpen({ id: item.id });
+					DataUtil.objectOpenEvent(e, { id: item.id });
 				});
 				break;
 
