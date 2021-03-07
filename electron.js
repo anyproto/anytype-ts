@@ -314,6 +314,10 @@ function createWindow () {
 		args.shift();
 		send.apply(this, args);
 	});
+
+	ipcMain.handle('dark-mode:system', () => {
+		nativeTheme.themeSource = 'system';
+	});
 	
 	ipcMain.on('winCommand', (e, cmd) => {
 		switch (cmd) {
@@ -497,6 +501,13 @@ function menuInit () {
 				}
 			});
 		};
+
+		flagMenu.push({
+			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
+			click: () => {
+				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+			}
+		});
 
 		menuParam.push({
 			label: 'Debug',
