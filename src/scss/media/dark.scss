@@ -1,3 +1,25 @@
 @media (prefers-color-scheme: dark) {
-	body { background:  #333; color: white; }
+	body { background: #333; color: white; }
+
+	.header.headerMainEdit { background: #333; }
+	
+	.popups {
+		.popup {
+			.innerWrap { background: #333; }
+			.loaderWrapper { background: rgba(0,0,0,0.1); }
+		}
+
+		.popup.popupSearch .head { background: #333; }
+	}
+
+	.pageMainIndex {
+		#documents {
+			.item { background: #333; }
+		}
+	}
+
+	.cell.isEditing .cellContent { background: #333; }
+
+
+	.blocks .block.blockDataview .views .item:hover, .blocks .block.blockDataview .views .item.active { color: #fff; }
 }
