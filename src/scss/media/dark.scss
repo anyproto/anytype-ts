@@ -1,26 +1,49 @@
-@media (prefers-color-scheme: dark) {
-	body { background: #333; color: white; }
+$colorWhite: #fff;
+$colorBlack: #333;
+$colorDarkGrey: $colorWhite;
 
-	.header.headerMainEdit { background: #333; }
+@media (prefers-color-scheme: dark) {
+	body { background: $colorBlack; color: white; }
+
+	.frame { background: $colorBlack; }
+
+	.header.headerMainEdit { background: $colorBlack; }
 	
 	.popups {
 		.popup {
-			.innerWrap { background: #333; }
-			.loaderWrapper { background: rgba(0,0,0,0.1); }
+			.innerWrap { background: $colorBlack; }
+			.loaderWrapper { background: rgba(0,0,0,0); }
 		}
 
-		.popup.popupSettings .head { background: #333; }
-		.popup.popupSearch .head { background: #333; }
+		.popup.popupSettings .head { background: $colorBlack; }
+		.popup.popupSearch .head { background: $colorBlack; }
+	}
+
+	.menus {
+		.menu { background: #444; }
+		.menu.vertical .item { background: #444; }
 	}
 
 	.pageMainIndex {
 		#documents {
-			.item { background: #333; }
+			.item { background: $colorBlack; }
 		}
 	}
 
-	.cell.isEditing .cellContent { background: #333; }
+	.cell.isEditing .cellContent { background: $colorBlack; }
 
-	.blocks .block.blockDataview .views .item:hover, .blocks .block.blockDataview .views .item.active { color: #fff; }
-	.blocks .block.blockDataview .viewItem.viewGrid .cellContent.isName .icon.expand { background-color: unset; }
+	.blocks {
+		.block.blockDataview {
+			.views { 
+				.item:hover, .item.active { color: $colorWhite; }
+			}
+
+			.viewItem.viewGrid .cellContent.isName .icon.expand { background-color: unset; }
+			.buttons { color: $colorWhite; }
+			.buttons {
+				.item:hover { color: $colorWhite; }
+			}
+		}
+	}
+
 }
