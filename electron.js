@@ -315,10 +315,6 @@ function createWindow () {
 		send.apply(this, args);
 	});
 
-	ipcMain.handle('dark-mode:system', () => {
-		nativeTheme.themeSource = 'system';
-	});
-	
 	ipcMain.on('winCommand', (e, cmd) => {
 		switch (cmd) {
 			case 'menu':
