@@ -59,6 +59,7 @@ class DbStore {
 
 	@action
 	relationsRemove (rootId: string, blockId: string) {
+		console.log('REMOVE', rootId, blockId);
 		this.relationMap.delete(this.getId(rootId, blockId));
 	};
 

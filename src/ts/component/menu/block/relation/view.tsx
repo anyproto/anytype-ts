@@ -165,6 +165,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			},
 		];
 
+		console.log(items);
+		console.log(sections);
+
 		sections = sections.filter((it: any) => { return it.children.length; });
 		return sections;
 	};

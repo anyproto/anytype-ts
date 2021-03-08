@@ -110,16 +110,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onOpen () {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const { match, rootId } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		DataUtil.objectOpen(object);
 	};
 	
 	onMore (e: any) {
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, match, rootId } = this.props;
 
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
@@ -146,9 +144,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { match } = this.props;
+		const { rootId } = this.props;
 		const { focused } = focus;
-		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
@@ -178,8 +175,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, match, rootId } = this.props;
 
 		const param: any = {
 			type: I.MenuType.Vertical, 
@@ -206,8 +202,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const { match, rootId } = this.props;
 
 		commonStore.popupOpen('navigation', {
 			preventResize: true, 
@@ -222,8 +217,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, rootId } = this.props;
 
 		if (isPopup) {
 			return;
@@ -255,8 +249,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onRelation () {
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, rootId } = this.props;
 
 		const param: any = {
 			element: `${this.getContainer()} #button-header-relation`,

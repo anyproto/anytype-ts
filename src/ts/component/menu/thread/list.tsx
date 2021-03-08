@@ -64,7 +64,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
-				{accounts.map((item: I.ThreadAccount, i: number) => (
+				{(accounts || []).map((item: I.ThreadAccount, i: number) => (
 					<Item key={i} {...item} />
 				))}
 			</div>
