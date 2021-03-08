@@ -24,7 +24,7 @@ class PopupPage extends React.Component<Props, {}> {
 		
 		return (
 			<div id="wrap">
-				<Page {...this.props} rootId={rootId} isPopup={true} match={matchPopup} />
+				<Page {...this.props} rootId={rootId} isPopup={true} matchPopup={matchPopup} />
 			</div>
 		);
 	};

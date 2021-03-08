@@ -60,7 +60,8 @@ class Page extends React.Component<Props, {}> {
 	childRef: any;
 
 	render () {
-		const { match, isPopup } = this.props;
+		const { isPopup } = this.props;
+		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 		
@@ -98,9 +99,15 @@ class Page extends React.Component<Props, {}> {
 		this.unbind();
 	};
 
+	getMatch () {
+		const { match, matchPopup, isPopup } = this.props;
+		return isPopup ? matchPopup : match;
+	};
+
 	init () {
 		const { account } = authStore;
-		const { isPopup, match, history } = this.props;
+		const { isPopup, history } = this.props;
+		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
@@ -172,7 +179,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	event () {
-		const { match } = this.props;
+		const match = this.getMatch();
 		const page = String(match.params.page || 'index');
 		const action = String(match.params.action || 'index');
 		const path = [ 'page', page, action ].join('-');
@@ -181,7 +188,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	getClass (prefix: string) {
-		const { match } = this.props;
+		const match = this.getMatch();
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 		const platform = Util.getPlatform();
