@@ -20,11 +20,11 @@ class PopupPage extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, matchPopup } = data;
 		
 		return (
 			<div id="wrap">
-				<Page {...this.props} rootId={rootId} isPopup={true} />
+				<Page {...this.props} rootId={rootId} isPopup={true} match={matchPopup} />
 			</div>
 		);
 	};

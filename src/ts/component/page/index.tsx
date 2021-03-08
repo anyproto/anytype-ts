@@ -50,6 +50,7 @@ const Components: any = {
 
 interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
+	matchPopup?: any;
 	rootId?: string;
 };
 
@@ -59,7 +60,7 @@ class Page extends React.Component<Props, {}> {
 	childRef: any;
 
 	render () {
-		const { match } = this.props;
+		const { match, isPopup } = this.props;
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 		
@@ -75,7 +76,7 @@ class Page extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				<ListPopup {...this.props} />
+				{!isPopup ? <ListPopup {...this.props} /> : ''}
 				<div className={'page ' + this.getClass('page')}>
 					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 				</div>
@@ -96,7 +97,7 @@ class Page extends React.Component<Props, {}> {
 		this._isMounted = false;
 		this.unbind();
 	};
-	
+
 	init () {
 		const { account } = authStore;
 		const { isPopup, match, history } = this.props;
@@ -122,14 +123,8 @@ class Page extends React.Component<Props, {}> {
 		this.event();
 		this.unbind();
 
-		if (!isPopup) {
-			commonStore.popupCloseAll();
-			commonStore.menuCloseAll();
-		};
-
 		Util.linkPreviewHide(true);
 		keyboard.setMatch(match);
-
 		
 		if (isMain && !popupNewBlock) {
 			commonStore.popupOpen('help', { 
@@ -137,31 +132,36 @@ class Page extends React.Component<Props, {}> {
 			});
 		};
 
-		if (isMainIndex) {
-			if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-				Storage.delete('askSurvey');
-				commonStore.popupOpen('confirm', {
-					data: {
-						title: 'We need your opinion',
-						text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
-						textConfirm: 'Let\'s go!',
-						textCancel: 'Skip',
-						canCancel: true,
-						onConfirm: () => {
-							ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
-							Storage.set('lastSurveyTime', Util.time());
-						},
-						onCancel: () => {
-							Storage.set('lastSurveyCanceled', 1);
-							Storage.set('lastSurveyTime', Util.time());
-						},
-					},
-				});
-			};
+		if (!isPopup) {
+			commonStore.popupCloseAll();
+			commonStore.menuCloseAll();
 
-			Storage.delete('redirect');
-		} else {
-			Storage.set('redirect', history.location.pathname);
+			if (isMainIndex) {
+				if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					Storage.delete('askSurvey');
+					commonStore.popupOpen('confirm', {
+						data: {
+							title: 'We need your opinion',
+							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
+							textConfirm: 'Let\'s go!',
+							textCancel: 'Skip',
+							canCancel: true,
+							onConfirm: () => {
+								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+								Storage.set('lastSurveyTime', Util.time());
+							},
+							onCancel: () => {
+								Storage.set('lastSurveyCanceled', 1);
+								Storage.set('lastSurveyTime', Util.time());
+							},
+						},
+					});
+				};
+
+				Storage.delete('redirect');
+			} else {
+				Storage.set('redirect', history.location.pathname);
+			};
 		};
 
 		$(window).on('resize.page', () => { this.resize(); });

@@ -288,8 +288,12 @@ class DataUtil {
 				break;
 
 			case I.ObjectLayout.ObjectType:
+				popupId = 'page';
+				param.data.matchPopup = { params: { page: 'main', action: 'type', id: object.id } };
+				break;
 			case I.ObjectLayout.Relation:
 				popupId = 'page';
+				param.data.matchPopup = { params: { page: 'main', action: 'relation', id: object.id } };
 				break;
 		};
 
