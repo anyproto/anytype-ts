@@ -47,6 +47,8 @@ $colorDarkGrey: $colorWhite;
 			}
 		}
 
+		.block.blockFeatured { color: $colorWhite; }
+
 		.block.blockIconUser .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
 
 		.block.blockText.code > .wrapContent > .selectable > .dropTarget { background: #444; }
