@@ -181,6 +181,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onFav (e: any, item: any) {
+		if (Constant.featuredRelations.indexOf(item.relationKey) >= 0) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;

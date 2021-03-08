@@ -99,6 +99,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		crumbs.delete(I.CrumbsType.Page);
 
+		/*
 		if (Storage.get('hello')) {
 			hello.remove();
 		} else {
@@ -107,6 +108,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				hello.addClass('hide');
 			}, 5000);
 		};
+		*/
 	};
 	
 	componentDidUpdate () {
