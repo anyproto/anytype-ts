@@ -481,7 +481,7 @@ function menuInit () {
 	if (config.allowDebug) {
 		config.debug = config.debug || {};
 
-		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics' };
+		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics', dm: 'Dark Mode' };
 		const flagMenu = [];
 
 		for (let i in flags) {
@@ -491,19 +491,21 @@ function menuInit () {
 					config.debug[i] = !config.debug[i];
 					setConfig({ debug: config.debug });
 					
-					if ([ 'ui', 'ho' ].indexOf(i) >= 0) {
+					if ([ 'ui', 'ho', 'dm' ].indexOf(i) >= 0) {
 						win.reload();
 					};
 				}
 			});
 		};
 
+		/*
 		flagMenu.push({
 			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
 			click: () => {
 				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 			}
 		});
+		*/
 
 		menuParam.push({
 			label: 'Debug',

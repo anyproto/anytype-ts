@@ -2,7 +2,8 @@ $colorWhite: #fff;
 $colorBlack: #333;
 $colorDarkGrey: $colorWhite;
 
-@media (prefers-color-scheme: dark) {
+/*@media (prefers-color-scheme: dark) {*/
+html.dark {
 	body { background: $colorBlack; color: white; }
 
 	.frame { background: $colorBlack; }
