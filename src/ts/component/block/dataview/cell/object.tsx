@@ -38,10 +38,6 @@ class CellObject extends React.Component<Props, State> {
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
-		if (!config.debug.ho) {
-			value = value.filter((it: any) => { return !it.isHidden; });
-		};
-
 		const Item = (item: any) => {
 			return (
 				<div className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
