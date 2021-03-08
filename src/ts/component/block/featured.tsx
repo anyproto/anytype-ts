@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { I, DataUtil, focus } from 'ts/lib';
-import { IconObject } from 'ts/component';
+import { IconObject, Cell } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
+
+const Constant = require('json/constant.json');
 
 @observer
 class BlockFeatured extends React.Component<Props, {}> {
@@ -24,10 +26,15 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, iconSize } = this.props;
-		const cn = [ 'focusable', 'c' + block.id ];
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const object = blockStore.getDetails(rootId, rootId);
 		const type = dbStore.getObjectType(object.type);
 		const creator = blockStore.getDetails(rootId, object.creator);
+		const featured = Constant.featuredRelations.concat(object.featuredRelations).filter((it: any) => {
+			return object[it];
+		});
+
+		/*
 		const featured = [];
 
 		if (type) {
@@ -43,13 +50,25 @@ class BlockFeatured extends React.Component<Props, {}> {
 				{item.name}
 			</div>
 		);
+		*/
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0}>
-				{featured.map((item: any, i: any) => (
+			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
+				{featured.map((relationKey: any, i: any) => (
 					<React.Fragment key={i}>
 						{i > 0 ? <div className="bullet" /> : ''}
-						<Element {...item} />
+						<Cell 
+							rootId={rootId}
+							storeId={rootId}
+							block={block}
+							relationKey={relationKey}
+							getRecord={() => { return object; }}
+							viewType={I.ViewType.Grid}
+							index={0}
+							scrollContainer=""
+							pageContainer=""
+							readOnly={true}
+						/>
 					</React.Fragment>
 				))}
 			</div>

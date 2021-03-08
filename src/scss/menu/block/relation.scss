@@ -117,7 +117,7 @@
 				.cellContent { padding: 5px 8px !important; }
 			}
 
-			.icon.fav { display: none; margin: 5px 0px 0px 0px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
+			.icon.fav { margin: 5px 0px 0px 0px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
 			.icon.fav:hover, .icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 		}
 		.item * { cursor: pointer; }

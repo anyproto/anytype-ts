@@ -186,7 +186,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		let featured = Util.objectCopy(object.featuredRelations);
+		let featured = Util.objectCopy(object.featuredRelations || []);
 		let idx = featured.findIndex((it: string) => { return it == item.relationKey; });
 
 		if (idx >= 0) {
@@ -201,7 +201,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details);
-
 	};
 
 	onAdd (e: any) {
