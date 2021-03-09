@@ -106,6 +106,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.resize();
 	};
 
+	componentWillUnmount () {
+		$(window).unbind('scroll');
+	};
+
 	onScroll () {
 		const titleY = Constant.size.index.titleY;
 		const win = $(window);
