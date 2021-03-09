@@ -89,7 +89,6 @@ class PageMainRelation extends React.Component<Props, {}> {
 		crumbs.addRecent(rootId);
 
 		C.BlockOpen(rootId, (message: any) => {
-			console.log(message);
 			if (message.error.code) {
 				history.push('/main/index');
 				return;

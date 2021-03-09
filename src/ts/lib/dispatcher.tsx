@@ -172,7 +172,7 @@ class Dispatcher {
 			let data = message[fn] ? message[fn]() : {};
 			let log = () => { 
 				console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold', 'rootId', rootId);
-				console.log(JSON.stringify(Util.objectClear(data.toObject()), null, 3)); 
+				console.log(JSON.stringify(Util.objectClear(data.toObject()), null, 2)); 
 			};
 
 			if (debugThread && (type == 'threadStatus')) {

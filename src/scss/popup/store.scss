@@ -46,7 +46,7 @@
 
 			.loaderWrapper { position: relative; }
 
-			.ReactVirtualized__List { padding: 0px 96px; }
+			.ReactVirtualized__List { padding: 0px 96px 48px 96px; }
 
 			.items { height: 100%; }
 			.items {
@@ -72,13 +72,13 @@
 					.button { display: block; }
 				}
 
-				.item.type { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; }
+				.item.type { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; line-height: 64px; }
 				.item.type:nth-child(2n + 2) { margin-right: 0px; }
 				.item.type {
 					.line { bottom: -16px; }
 				}
 
-				.item.relation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; }
+				.item.relation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; line-height: 48px; }
 				.item.relation:nth-child(3n + 3) { margin-right: 0px; }
 				.item.relation {
 					.line { bottom: -8px; }

@@ -117,9 +117,11 @@ class PopupStore extends React.Component<Props, State> {
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 							<div className="info">
-								<div className="name">{item.name}</div>
-								<div className="descr">{item.description}</div>
-								<Author {...author} />
+								<div className="txt">
+									<div className="name">{item.name}</div>
+									<div className="descr">{item.description}</div>
+									<Author {...author} />
+								</div>
 								<div className="line" />
 							</div>
 							<Button className="blank c28" text="Add" />
@@ -147,8 +149,10 @@ class PopupStore extends React.Component<Props, State> {
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
 							<div className="info">
-								<div className="name">{item.name}</div>
-								<Author {...author} />
+								<div className="txt">
+									<div className="name">{item.name}</div>
+									<Author {...author} />
+								</div>
 								<div className="line" />
 							</div>
 							<Button className="blank c28" text="Add" />

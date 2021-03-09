@@ -237,7 +237,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseUp (e: any) {
-		console.log('MOUSEUP', this._isMounted);
 		if (!this._isMounted) {
 			return
 		};
