@@ -223,10 +223,17 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	filterMapper (it: any, config: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { type } = data;
+
 		if (it.isArchived) {
 			return false;
 		};
 		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
+			return false;
+		};
+		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
 			return false;
 		};
 		return true;
