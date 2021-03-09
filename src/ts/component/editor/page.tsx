@@ -1075,7 +1075,25 @@ class EditorPage extends React.Component<Props, {}> {
 									break;
 
 								case 'move':
-									Action.move(rootId, id, [ id ]);
+									window.setTimeout(() => {
+										commonStore.menuOpen('searchObject', { 
+											element: el,
+											rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+											type: I.MenuType.Vertical,
+											offsetX: rect ? 0 : Constant.size.blockMenu,
+											offsetY: 4,
+											vertical: I.MenuDirection.Bottom,
+											horizontal: I.MenuDirection.Left,
+											data: { 
+												type: I.NavigationType.Move, 
+												rootId: rootId,
+												skipId: rootId,
+												blockId: id,
+												blockIds: [ id ],
+												position: I.BlockPosition.Bottom,
+											}, 
+										});
+									}, Constant.delay.menu);
 									break;
 
 								case 'copy':
@@ -1119,15 +1137,25 @@ class EditorPage extends React.Component<Props, {}> {
 							
 							if (item.type == I.BlockType.Page) {
 								if (item.key == 'existing') {
-									commonStore.popupOpen('navigation', { 
-										preventResize: true,
-										data: { 
-											type: I.NavigationType.Link, 
-											rootId: rootId,
-											blockId: block.id,
-											position: position,
-										}, 
-									});
+									window.setTimeout(() => {
+										commonStore.menuOpen('searchObject', { 
+											element: el,
+											rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+											type: I.MenuType.Vertical,
+											offsetX: rect ? 0 : Constant.size.blockMenu,
+											offsetY: 4,
+											vertical: I.MenuDirection.Bottom,
+											horizontal: I.MenuDirection.Left,
+											data: { 
+												type: I.NavigationType.Link, 
+												rootId: rootId,
+												skipId: rootId,
+												blockId: block.id,
+												blockIds: [ block.id ],
+												position: I.BlockPosition.Bottom,
+											}, 
+										});
+									}, Constant.delay.menu);
 								} else {
 									const details: any = { iconEmoji: SmileUtil.random() };
 									

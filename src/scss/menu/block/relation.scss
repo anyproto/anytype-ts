@@ -117,10 +117,11 @@
 				.cellContent { padding: 5px 8px !important; }
 			}
 
-			.cell.c-shortText {
+			.cellContent.c-shortText {
 				.name { width: 100%; }
 			}
-			.cell.c-shortText.isName {
+
+			.cellContent.c-shortText.isName {
 				.name { width: calc(100% - 24px); }
 			}
 

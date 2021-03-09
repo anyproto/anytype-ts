@@ -515,16 +515,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-	
-		let block = blockStore.getLeaf(rootId, blockId);
+		const node = $(ReactDOM.findDOMNode(this));
+		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
 
 		let ids = DataUtil.selectionGet(blockId, false, data);
+		let close = true;
 
 		switch (item.key) {
 			case 'download':
@@ -532,7 +534,25 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 					
 			case 'move':
-				Action.move(rootId, blockId, blockIds);
+				close = false;
+				window.setTimeout(() => {
+					commonStore.menuOpen('searchObject', { 
+						element: `#${getId()} #item-${item.id}`,
+						type: I.MenuType.Vertical,
+						offsetX: node.outerWidth(),
+						offsetY: -36,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Left,
+						data: { 
+							type: I.NavigationType.Move, 
+							rootId: rootId,
+							skipId: rootId,
+							blockId: blockId,
+							blockIds: blockIds,
+							position: I.BlockPosition.Bottom,
+						}, 
+					});
+				}, Constant.delay.menu);
 				break;
 				
 			case 'copy':
@@ -576,7 +596,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		this.props.close();
+		if (close) {
+			this.props.close();
+		};
 	};
 
 	moveToPage () {
