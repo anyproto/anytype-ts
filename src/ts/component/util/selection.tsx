@@ -237,6 +237,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	onMouseUp (e: any) {
+		console.log('MOUSEUP', this._isMounted);
 		if (!this._isMounted) {
 			return
 		};
@@ -278,10 +279,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 			commonStore.menuClose('blockContext');
 		};
 		
-		keyboard.disablePreview(false);
 		scrollOnMove.onMouseUp(e);
+		this.clearState();
+	};
+
+	clearState () {
+		keyboard.disablePreview(false);
 		this.hide();
-		
+
 		this.rects.clear();
 		this.lastIds = [];
 		this.focused = '';
@@ -344,6 +349,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 			
 		const cached = this.cacheRect(item);
+
 		if (!cached || !Util.rectsCollide(rect, cached)) {
 			return;
 		};
