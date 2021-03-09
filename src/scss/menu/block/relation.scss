@@ -117,8 +117,8 @@
 				.cellContent { padding: 5px 8px !important; }
 			}
 
-			.cellContent.c-shortText {
-				.name { width: 100%; }
+			.cellContent.c-shortText, .cellContent.c-longText {
+				.name, span { width: 100%; word-break: break-word; }
 			}
 
 			.cellContent.c-shortText.isName {
