@@ -128,6 +128,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
+		this.focus();
 		this.load(false);
 	};
 
@@ -149,6 +150,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		});
 
 		this.resize();
+		this.focus();
 		this.setActive(items[n]);
 	};
 	
@@ -164,6 +166,14 @@ class MenuSearchObject extends React.Component<Props, State> {
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
 	};
 
 	getItems () {
@@ -207,7 +217,6 @@ class MenuSearchObject extends React.Component<Props, State> {
 				};
 			}));
 			this.items = this.items.filter(filterMapper);
-			console.log(this.items);
 
 			this.setState({ loading: false });
 		});
