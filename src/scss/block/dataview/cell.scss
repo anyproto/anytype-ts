@@ -47,9 +47,6 @@
 		.iconObject { flex-shrink: 0; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
-	.element.image {
-		.iconObject { margin: 0px; }
-	}
 	.cellContent { white-space: normal; }
 }
 

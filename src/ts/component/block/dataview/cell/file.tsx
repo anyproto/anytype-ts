@@ -41,32 +41,25 @@ class CellFile extends React.Component<Props, {}> {
 			);
 		};
 
-		const File = (item: any) => (
-			<div className="element file" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-				<div className="flex">
-					<IconObject object={item} />
-					<div className="name">{item.name}</div>
+		const Item = (item: any) => {
+			return(
+				<div className="element" onClick={(e: any) => { 
+					e.stopPropagation(); 
+					DataUtil.objectOpenEvent(e, item); 
+				}}>
+					<div className="flex">
+						<IconObject object={item} />
+						<div className="name">{item.name}</div>
+					</div>
 				</div>
-			</div>
-		);
-
-		const Image = (item: any) => (
-			<div className="element image" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-				<IconObject object={item} />
-			</div>
-		);
+			);
+		};
 
 		return (
 			<div className="wrap">
-				{value.map((item: any, i: number) => {
-					switch (item.layout) {
-						case I.ObjectLayout.File:
-							return <File key={i} {...item} />;
-
-						case I.ObjectLayout.Image:
-							return <Image key={i} {...item} />;
-					};
-				})}
+				{value.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
 			</div>
 		);
 	};
