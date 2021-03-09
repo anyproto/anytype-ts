@@ -55,7 +55,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				<Footer {...this.props} />
 				
 				<div id="body" className="wrapper">
-					<div className="title">
+					<div id="title" className="title">
 						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
 						
 						<div className="rightMenu">
@@ -87,6 +87,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { history } = this.props;
 		const redirectTo = Storage.get('redirectTo');
+		const win = $(window);
 
 		Storage.delete('redirect');
 
@@ -96,10 +97,30 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 
 		crumbs.delete(I.CrumbsType.Page);
+
+		this.onScroll();
+		win.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
+	};
+
+	onScroll () {
+		const titleY = Constant.size.index.titleY;
+		const win = $(window);
+		const top = win.scrollTop();
+		const node = $(ReactDOM.findDOMNode(this));
+		const title = node.find('#title');
+		const wh = win.height();
+		const height = wh - titleY - this.getListHeight();
+
+		let y = 0;
+		if (wh - top + 32 <= height) {
+			y = height - top - 32 - titleY;
+		};	
+
+		title.css({ transform: `translate3d(0px,${y}px,0px)` });
 	};
 	
 	onAccount () {
@@ -265,6 +286,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const wh = win.height();
 		const ww = win.width();
 		const node = $(ReactDOM.findDOMNode(this));
+		const title = node.find('#title');
 		const body = node.find('#body');
 		const documents = node.find('#documents');
 		const items = node.find('#documents .item');
@@ -272,16 +294,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const maxWidth = ww - size.border * 2;
 		const cnt = Math.floor(maxWidth / (size.width + size.margin));
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
+		const height = this.getListHeight();
 
-		let height = size.height + size.margin;
-		if (list.length > cnt) {
-			height *= 2;
-		};
-		height += 20;
-		
 		items.css({ width: width }).removeClass('last');
+		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - 142 - height });
+		documents.css({ marginTop: wh - size.titleY - height });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -294,6 +312,25 @@ class PageMainIndex extends React.Component<Props, {}> {
 				item.addClass('withIcon');
 			};
 		});
+
+		this.onScroll();
+	};
+
+	getListHeight () {
+		const win = $(window);
+		const ww = win.width();
+		const size = Constant.size.index;
+		const list = this.getList();
+		const maxWidth = ww - size.border * 2;
+		const cnt = Math.floor(maxWidth / (size.width + size.margin));
+
+		let height = size.height + size.margin;
+		if (list.length > cnt) {
+			height *= 2;
+		};
+
+		height += 20;
+		return height;
 	};
 
 	getList () {

@@ -105,7 +105,8 @@
 			"width": 192,
 			"height": 112,
 			"margin": 16,
-			"border": 72
+			"border": 72,
+			"titleY": 142
 		}
 	},
 
