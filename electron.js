@@ -662,6 +662,15 @@ app.on('before-quit', (e) => {
 	exit(false);
 });
 
+app.on('activate', function () {
+	// On OS X it's common to re-create a window in the app when the
+	// dock icon is clicked and there are no other windows open.
+	if (win === null) {
+		createWindow();
+	};
+	win.show();
+});
+
 function send () {
 	if (win) {
 		win.webContents.send.apply(win.webContents, arguments);
