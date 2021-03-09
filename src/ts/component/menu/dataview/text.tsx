@@ -74,11 +74,12 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	onBlur (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
 		onChange(this.ref.getValue());
+		close();
 	};
 
 	resize () {
