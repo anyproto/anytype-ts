@@ -143,7 +143,7 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpen(item);
+		DataUtil.objectOpenEvent(e, item);
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {

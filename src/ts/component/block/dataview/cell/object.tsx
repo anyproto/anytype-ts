@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
@@ -40,7 +40,7 @@ class CellObject extends React.Component<Props, State> {
 
 		const Item = (item: any) => {
 			return (
-				<div className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
+				<div className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 					<div className="flex">
 						<IconObject object={item} />
 						<div className="name">{item.name}</div>

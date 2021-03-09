@@ -127,7 +127,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onProfile (e: any) {
-		const object = blockStore.getDetails(blockStore.profile, blockStore.profile);
+		const { profile } = blockStore;
+		const object = blockStore.getDetails(profile, profile);
 
 		DataUtil.objectOpen(object);
 	};
