@@ -10,7 +10,9 @@ import MenuSelect from './select';
 import MenuButton from './button';
 import MenuSmile from './smile';
 import MenuSmileSkin from './smile/skin';
-import MenuSearch from './search';
+
+import MenuSearchText from './search/text';
+import MenuSearchObject from './search/object';
 
 import MenuThreadList from './thread/list';
 import MenuThreadStatus from './thread/status';
@@ -86,7 +88,9 @@ class Menu extends React.Component<Props, {}> {
 			button:					 MenuButton,
 			smile:					 MenuSmile,
 			smileSkin:				 MenuSmileSkin,
-			search:					 MenuSearch,
+
+			searchText:				 MenuSearchText,
+			searchObject:			 MenuSearchObject,
 
 			threadList:				 MenuThreadList,
 			threadStatus:			 MenuThreadStatus,

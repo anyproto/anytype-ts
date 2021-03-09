@@ -56,7 +56,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div className="title">
-						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
+						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
 						
 						<div className="rightMenu">
 							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
@@ -86,8 +86,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { history } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const hello = node.find('#hello');
 		const redirectTo = Storage.get('redirectTo');
 
 		Storage.delete('redirect');
@@ -98,17 +96,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 
 		crumbs.delete(I.CrumbsType.Page);
-
-		/*
-		if (Storage.get('hello')) {
-			hello.remove();
-		} else {
-			window.setTimeout(() => {
-				Storage.set('hello', 1);
-				hello.addClass('hide');
-			}, 5000);
-		};
-		*/
 	};
 	
 	componentDidUpdate () {
@@ -185,16 +172,23 @@ class PageMainIndex extends React.Component<Props, {}> {
 					};
 
 					if (item.id == 'link') {
-						commonStore.popupOpen('search', { 
-							preventResize: true,
-							data: { 
-								type: I.NavigationType.Link, 
-								rootId: root,
-								skipId: root,
-								blockId: '',
-								position: I.BlockPosition.Bottom,
-							}, 
-						});
+						window.setTimeout(() => {
+							commonStore.menuOpen('searchObject', { 
+								element: '#button-add',
+								type: I.MenuType.Vertical,
+								offsetX: 0,
+								offsetY: 4,
+								vertical: I.MenuDirection.Bottom,
+								horizontal: I.MenuDirection.Center,
+								data: { 
+									type: I.NavigationType.Link, 
+									rootId: root,
+									skipId: root,
+									blockId: '',
+									position: I.BlockPosition.Bottom,
+								}, 
+							});
+						}, Constant.delay.menu);
 					};
 
 					if (item.id == 'set') {

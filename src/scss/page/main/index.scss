@@ -35,9 +35,6 @@
 		background-size: 800px 100%;
 	}
 
-	#hello { transition: opacity 0.5s ease-in-out; }
-	#hello.hide { opacity: 0; }
-	
 	#documents { display: flex; flex-wrap: wrap; overflow: auto; }
 	#documents {
 		.item { 

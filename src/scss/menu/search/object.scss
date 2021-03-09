@@ -1,0 +1,21 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuSearchObject { width: 360px; }
+	.menu.menuSearchObject {
+		.content { transition: none; padding: 8px 0px 0px 0px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.items { height: 100%; }
+		.item {
+			.name { @include text-overflow-nw; width: 100%; }
+		}
+
+		.filter { flex-shrink: 0; }
+
+		.empty { height: 100%; line-height: 228px; padding: 16px; text-align: center; }
+		.empty {
+			b { display: block; font-weight: 400; color: $colorBlack; }
+			.label { line-height: 24px; color: $colorDarkGrey; display: inline-block; vertical-align: middle; }
+		}
+	}
+}

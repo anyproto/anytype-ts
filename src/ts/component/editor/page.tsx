@@ -1423,7 +1423,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		window.setTimeout(() => {
-			commonStore.menuOpen('search', {
+			commonStore.menuOpen('searchText', {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
 				vertical: I.MenuDirection.Bottom,

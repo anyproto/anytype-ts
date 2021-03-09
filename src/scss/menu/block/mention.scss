@@ -5,9 +5,6 @@
 	.menu.menuBlockMention {
 		.content { transition: none; padding: 0px; }
 		.items { height: 100%; }
-		.section {
-			.name { padding: 5px 16px; margin: 0px; }
-		}
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
 		}

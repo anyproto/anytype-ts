@@ -40,7 +40,13 @@ class CellObject extends React.Component<Props, State> {
 
 		const Item = (item: any) => {
 			return (
-				<div className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+				<div 
+					className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+					onClick={(e: any) => { 
+						e.stopPropagation();
+						DataUtil.objectOpenPopup(item); 
+					}}
+				>
 					<div className="flex">
 						<IconObject object={item} />
 						<div className="name">{item.name}</div>

@@ -43,6 +43,11 @@
 	.menu.vertical {
 		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; }
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
+
+		.loaderWrapper { 
+			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;
+			background: rgba(255,255,255, 0.7);
+		}
 		
 		.filter { padding: 3px 14px 0px 14px; }
 		.filter {
