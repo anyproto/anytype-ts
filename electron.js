@@ -228,8 +228,10 @@ function createWindow () {
 		if (process.platform == 'darwin') {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
+				win.once('leave-full-screen', () => { win.hide(); });
+			} else {
+				win.hide();
 			};
-			win.hide();
 		} else {
 			exit(false);
 		};
@@ -662,9 +664,7 @@ app.on('before-quit', (e) => {
 	exit(false);
 });
 
-app.on('activate', function () {
-	// On OS X it's common to re-create a window in the app when the
-	// dock icon is clicked and there are no other windows open.
+app.on('activate', () => {
 	if (win === null) {
 		createWindow();
 	};
