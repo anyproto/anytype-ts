@@ -68,6 +68,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 							scrollContainer=""
 							pageContainer=""
 							readOnly={true}
+							isInline={true}
 						/>
 					</React.Fragment>
 				))}

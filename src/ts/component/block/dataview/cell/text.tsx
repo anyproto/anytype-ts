@@ -41,7 +41,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit, isInline } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -113,7 +113,7 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
-			value = value.replace(/\n/g, '<br/>');
+			value = value.replace(/\n/g, isInline ? ' ' : '<br/>');
 
 			Name = (item: any) => (
 				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
