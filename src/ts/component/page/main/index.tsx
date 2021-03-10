@@ -111,18 +111,17 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 
 	onScroll () {
-		const titleY = Constant.size.index.titleY;
 		const win = $(window);
 		const top = win.scrollTop();
 		const node = $(ReactDOM.findDOMNode(this));
 		const title = node.find('#title');
-		const wh = win.height();
-		const height = wh - titleY - this.getListHeight();
+		const oy = node.find('#documents').offset().top;
+		const offset = 256;
 
 		let y = 0;
-		if (wh - top + 32 <= height) {
-			y = height - top - 32 - titleY;
-		};	
+		if (oy - top <= offset) {
+			y = oy - top - offset;
+		};
 
 		title.css({ transform: `translate3d(0px,${y}px,0px)` });
 	};
