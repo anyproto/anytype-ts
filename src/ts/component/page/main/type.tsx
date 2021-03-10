@@ -54,6 +54,7 @@ class PageMainType extends React.Component<Props, {}> {
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
+		relations.sort(DataUtil.sortByHidden);
 
 		if (this.isDefaultName() || (object.name == Constant.default.name)) {
 			object.name = '';

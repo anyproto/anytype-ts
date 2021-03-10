@@ -14,6 +14,8 @@
 
 		.icon.back, .icon.forward { width: 20px; height: 20px; }
 
+		.isDone { color: $colorDarkGrey; }
+
 		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {
 			.item { 

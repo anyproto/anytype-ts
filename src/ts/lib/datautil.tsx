@@ -826,6 +826,12 @@ class DataUtil {
 		return 0;
 	};
 
+	sortByHidden (c1: any, c2: any) {
+		if (c1.isHidden && !c2.isHidden) return 1;
+		if (!c1.isHidden && c2.isHidden) return -1;
+		return 0;
+	};
+
 	formatRelationValue (relation: I.Relation, value: any) {
 		switch (relation.format) {
 			default:

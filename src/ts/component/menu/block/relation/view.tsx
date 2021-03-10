@@ -138,11 +138,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			items = items.filter((it: any) => { return !it.isHidden; });
 		};
 
-		items.sort((c1: any, c2: any) => {
-			if (c1.isHidden && !c2.isHidden) return 1;
-			if (!c1.isHidden && c2.isHidden) return -1;
-			return 0;
-		});
+		items.sort(DataUtil.sortByHidden);
 
 		let sections = [ 
 			{ 
