@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, DataUtil, focus } from 'ts/lib';
-import { IconObject, Cell } from 'ts/component';
+import { I, Util, focus } from 'ts/lib';
+import { Cell } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore, dbStore } from 'ts/store';
 
@@ -30,9 +30,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		const type = dbStore.getObjectType(object.type);
 		const creator = blockStore.getDetails(rootId, object.creator);
-		const featured = Constant.featuredRelations.concat(object.featuredRelations).filter((it: any) => {
+		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object.featuredRelations).filter((it: any) => {
 			return object[it];
-		});
+		}));
 
 		/*
 		const featured = [];
