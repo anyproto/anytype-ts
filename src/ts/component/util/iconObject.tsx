@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
 import { I, Util, SmileUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -103,6 +104,7 @@ const Color = {
 
 const $ = require('jquery');
 
+@observer
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
