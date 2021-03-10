@@ -279,7 +279,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			return;
 		};
 		
-		commonStore.menuClose('blockAdd');
 		onSelect(e, item);
 	};
 	

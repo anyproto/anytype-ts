@@ -469,6 +469,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
 		];
 
 		let i = 0;
@@ -488,7 +489,6 @@ class DataUtil {
 			ret.push({ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' });
 		};
 
-		ret.push({ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' });
 		return ret.map(this.menuMapperBlock);
 	};
 

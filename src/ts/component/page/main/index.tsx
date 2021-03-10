@@ -167,14 +167,18 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { history } = this.props;
 		const { root } = blockStore;
 		const { config } = commonStore;
-
 		const options = [
 			{ id: 'page', icon: 'page', name: 'Draft' },
 			{ id: 'link', icon: 'existing', name: 'Link to object' },
 		];
+		const width = 176;
 
 		if (config.allowDataview) {
 			options.push({ id: 'set', icon: 'set', name: 'New set' });
+		};
+
+		const close = () => {
+			commonStore.menuClose('select');
 		};
 
 		commonStore.menuOpen('select', { 
@@ -184,38 +188,43 @@ class PageMainIndex extends React.Component<Props, {}> {
 			offsetY: 4,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
-			width: 176,
+			width: width,
 			data: {
 				value: '',
 				options: options,
+				noClose: true,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'page') {
 						DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
 							DataUtil.objectOpen({ id: message.targetId });
 						});
+
+						close();
 					};
 
 					if (item.id == 'link') {
-						window.setTimeout(() => {
-							commonStore.menuOpen('searchObject', { 
-								element: '#button-add',
-								type: I.MenuType.Vertical,
-								offsetX: 0,
-								offsetY: 4,
-								vertical: I.MenuDirection.Bottom,
-								horizontal: I.MenuDirection.Center,
-								data: { 
-									type: I.NavigationType.Link, 
-									rootId: root,
-									skipId: root,
-									blockId: '',
-									position: I.BlockPosition.Bottom,
-								}, 
-							});
-						}, Constant.delay.menu);
+						commonStore.menuOpen('searchObject', { 
+							element: '#menuSelect #item-link',
+							type: I.MenuType.Vertical,
+							offsetX: width,
+							offsetY: -36,
+							vertical: I.MenuDirection.Bottom,
+							horizontal: I.MenuDirection.Left,
+							data: { 
+								type: I.NavigationType.Link, 
+								rootId: root,
+								skipId: root,
+								blockId: '',
+								position: I.BlockPosition.Bottom,
+								onSelect: (item: any) => {
+									close();
+								}
+							}, 
+						});
 					};
 
 					if (item.id == 'set') {
+						close();
 						history.push('/main/set');
 					};
 				},

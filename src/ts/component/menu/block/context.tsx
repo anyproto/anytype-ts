@@ -177,12 +177,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				break;
 				
 			case 'more':
-				menuParam.data = Object.assign(menuParam.data, {
-					onSelect: (item: any) => {
-						close();
-					},
-				});
-
 				menuId = 'blockMore';
 				break;
 				

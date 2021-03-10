@@ -182,6 +182,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
 		const linkRoot = { id: 'linkRoot', icon: 'existing', name: 'Add to dashboard' };
 		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
+		const move = { id: 'move', name: 'Move to' };
 
 		let items = [];
 		if (block.isObjectSet()) {
@@ -223,13 +224,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else 
 		if (block.isLinkPage()) {
 			items = [
-				{ id: 'move', name: 'Move to' },
+				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
 				{ id: 'remove', icon: 'remove', name: 'Remove from dashboard' },
 			];
 		} else {
 			items = [
-				{ id: 'move', name: 'Move to' },
+				move,
 				//{ id: 'copy', name: 'Duplicate' },
 				{ id: 'remove', name: 'Delete' },
 			];
@@ -296,24 +297,22 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			
 			case 'move':
 				close = false;
-				window.setTimeout(() => {
-					commonStore.menuOpen('searchObject', { 
-						element: `#${getId()} #item-${item.id}`,
-						type: I.MenuType.Vertical,
-						offsetX: node.outerWidth(),
-						offsetY: -36,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
-						data: { 
-							type: I.NavigationType.Move, 
-							rootId: rootId,
-							skipId: rootId,
-							blockId: blockId,
-							blockIds: [ blockId ],
-							position: I.BlockPosition.Bottom,
-						}, 
-					});
-				}, Constant.delay.menu);
+				commonStore.menuOpen('searchObject', { 
+					element: `#${getId()} #item-${item.id}`,
+					type: I.MenuType.Vertical,
+					offsetX: node.outerWidth(),
+					offsetY: -36,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Left,
+					data: { 
+						type: I.NavigationType.Move, 
+						rootId: rootId,
+						skipId: rootId,
+						blockId: blockId,
+						blockIds: [ blockId ],
+						position: I.BlockPosition.Bottom,
+					}, 
+				});
 				break;
 				
 			case 'copy':

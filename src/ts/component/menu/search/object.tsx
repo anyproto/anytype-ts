@@ -301,9 +301,13 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds, position } = data;
+		const { rootId, type, blockId, blockIds, position, onSelect } = data;
 
 		close();
+
+		if (onSelect) {
+			onSelect(item);
+		};
 
 		let newBlock: any = {};
 

@@ -1027,6 +1027,9 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.set(message.blockId || id, { from: length, to: length });
 			focus.apply();
 		};
+		const close = () => {
+			commonStore.menuClose('blockAdd');
+		};
 
 		let rect = Util.selectionRect();
 		if (!rect.x && !rect.y && !rect.width && !rect.height) {
@@ -1051,12 +1054,15 @@ class EditorPage extends React.Component<Props, {}> {
 				blockId: id,
 				rootId: rootId,
 				onSelect: (e: any, item: any) => {
+					const obj = $('#menuBlockAdd');
 					const block = blockStore.getLeaf(rootId, id);
 					const { filter } = commonStore;
 
 					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
 
 					const onSave = () => {
+						let needClose = true;
+
 						// Text colors
 						if (item.isTextColor) {
 							C.BlockListSetTextColor(rootId, [ id ], item.value, onCommand);
@@ -1075,25 +1081,25 @@ class EditorPage extends React.Component<Props, {}> {
 									break;
 
 								case 'move':
-									window.setTimeout(() => {
-										commonStore.menuOpen('searchObject', { 
-											element: el,
-											rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-											type: I.MenuType.Vertical,
-											offsetX: rect ? 0 : Constant.size.blockMenu,
-											offsetY: 4,
-											vertical: I.MenuDirection.Bottom,
-											horizontal: I.MenuDirection.Left,
-											data: { 
-												type: I.NavigationType.Move, 
-												rootId: rootId,
-												skipId: rootId,
-												blockId: id,
-												blockIds: [ id ],
-												position: I.BlockPosition.Bottom,
-											}, 
-										});
-									}, Constant.delay.menu);
+									needClose = false;
+
+									commonStore.menuOpen('searchObject', { 
+										element: '#menuBlockAdd #item-' + item.id,
+										type: I.MenuType.Vertical,
+										offsetX: obj.width(),
+										offsetY: -36,
+										vertical: I.MenuDirection.Bottom,
+										horizontal: I.MenuDirection.Left,
+										data: { 
+											type: I.NavigationType.Move, 
+											rootId: rootId,
+											skipId: rootId,
+											blockId: id,
+											blockIds: [ id ],
+											position: I.BlockPosition.Bottom,
+											onSelect: close,
+										}, 
+									});
 									break;
 
 								case 'copy':
@@ -1137,25 +1143,24 @@ class EditorPage extends React.Component<Props, {}> {
 							
 							if (item.type == I.BlockType.Page) {
 								if (item.key == 'existing') {
-									window.setTimeout(() => {
-										commonStore.menuOpen('searchObject', { 
-											element: el,
-											rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-											type: I.MenuType.Vertical,
-											offsetX: rect ? 0 : Constant.size.blockMenu,
-											offsetY: 4,
-											vertical: I.MenuDirection.Bottom,
-											horizontal: I.MenuDirection.Left,
-											data: { 
-												type: I.NavigationType.Link, 
-												rootId: rootId,
-												skipId: rootId,
-												blockId: block.id,
-												blockIds: [ block.id ],
-												position: I.BlockPosition.Bottom,
-											}, 
-										});
-									}, Constant.delay.menu);
+									needClose = false;
+									commonStore.menuOpen('searchObject', { 
+										element: '#menuBlockAdd #item-' + item.id,
+										type: I.MenuType.Vertical,
+										offsetX: obj.width(),
+										offsetY: -64,
+										vertical: I.MenuDirection.Bottom,
+										horizontal: I.MenuDirection.Left,
+										data: { 
+											type: I.NavigationType.Link, 
+											rootId: rootId,
+											skipId: rootId,
+											blockId: block.id,
+											blockIds: [ block.id ],
+											position: I.BlockPosition.Bottom,
+											onSelect: close,
+										}, 
+									});
 								} else {
 									const details: any = { iconEmoji: SmileUtil.random() };
 									
@@ -1174,6 +1179,10 @@ class EditorPage extends React.Component<Props, {}> {
 							} else {
 								this.blockCreate(block, position, param);
 							};
+						};
+
+						if (needClose) {
+							close();
 						};
 					};
 
