@@ -121,10 +121,6 @@
 				.name, span { width: 100%; word-break: break-word; }
 			}
 
-			.cellContent.c-shortText.isName {
-				.name { width: calc(100% - 24px); }
-			}
-
 			.icon.fav { margin: 5px 0px 0px 0px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
 			.icon.fav:hover, .icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 		}
