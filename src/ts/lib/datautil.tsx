@@ -640,11 +640,12 @@ class DataUtil {
 	};
 	
 	menuSectionsMap (sections: any[]) {
+		sections = Util.objectCopy(sections);
 		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
 			s.children = s.children.map((it: any, i: number) => {
-				it.key = it.id || i;
+				it._id = it.key = it.id || i;
 				it.id = s.id + '-' + it.id;
 				return it;
 			});

@@ -50,7 +50,7 @@ class PageMainType extends React.Component<Props, {}> {
 			description: 'Add description',
 		};
 
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId)).sort(DataUtil.sortByName);
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};

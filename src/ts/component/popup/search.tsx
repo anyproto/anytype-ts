@@ -97,7 +97,6 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const Item = (item: any) => {
-			let isRoot = item.id == root;
 			let type = dbStore.getObjectType(item.type);
 			let description = item.description || item.snippet;
 
@@ -107,7 +106,7 @@ class PopupSearch extends React.Component<Props, State> {
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
 					onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{isRoot ? iconHome : <IconObject object={item} size={18} /> }
+					{item.isRoot ? iconHome : <IconObject object={item} size={18} /> }
 					
 					<div className="name">{item.name}</div>
 
@@ -459,7 +458,7 @@ class PopupSearch extends React.Component<Props, State> {
 		});
 	};
 
-	getItems () {
+	getSections () {
 		const filter = new RegExp(Util.filterFix(this.state.filter), 'gi');
 		const { pages } = this.state;
 		const { recent } = blockStore;
@@ -473,9 +472,14 @@ class PopupSearch extends React.Component<Props, State> {
 			},
 			{ id: 'search', name: 'Search results', children: pages }
 		];
+		return DataUtil.menuSectionsMap(sections);
+	};
+
+	getItems () {
+		const sections = this.getSections();
+		const { root } = blockStore;
 
 		let ret: any[] = [];
-
 		for (let section of sections) {
 			if (!section.children.length) {
 				continue;
@@ -485,9 +489,11 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		ret = ret.map((it: any) => {
+			if (it._id == root) {
+				it.isRoot = true;
+			};
 			return { ...it, name: String(it.name || Constant.default.name) };
 		});
-
 		return ret;
 	};
 
@@ -542,23 +548,22 @@ class PopupSearch extends React.Component<Props, State> {
 		close();
 
 		let newBlock: any = {};
-
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, item);
+					DataUtil.objectOpenEvent(e, { ...item, id: item._id });
 				});
 				break;
 
 			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				C.BlockListMove(rootId, item._id, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
-						targetBlockId: String(item.id || ''),
+						targetBlockId: String(item._id || ''),
 					}
 				};
 				C.BlockCreate(newBlock, rootId, blockId, position);
@@ -571,7 +576,7 @@ class PopupSearch extends React.Component<Props, State> {
 						targetBlockId: blockId,
 					}
 				};
-				C.BlockCreate(newBlock, item.id, '', position);
+				C.BlockCreate(newBlock, item._id, '', position);
 				break;
 		};
 	};
