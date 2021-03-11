@@ -3,7 +3,6 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
-const { ipcRenderer } = window.require('electron');
 
 class DataUtil {
 
@@ -280,24 +279,21 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
-		let param: any = { data: {} };
+		let param: any = { data: { rootId: object.id } };
 		let popupId = '';
 
 		switch (object.layout) {
 			default:
 				popupId = 'editorPage';
-				param.data.id = object.id;
-				param.data.match = { params: { page: 'main', action: 'edit', id: object.id } };
 				break;
 
 			case I.ObjectLayout.ObjectType:
 				popupId = 'page';
-				param.data.match = { params: { page: 'main', action: 'type', id: object.id } };
+				param.data.matchPopup = { params: { page: 'main', action: 'type', id: object.id } };
 				break;
-
 			case I.ObjectLayout.Relation:
 				popupId = 'page';
-				param.data.match = { params: { page: 'main', action: 'relation', id: object.id } };
+				param.data.matchPopup = { params: { page: 'main', action: 'relation', id: object.id } };
 				break;
 		};
 
@@ -473,6 +469,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
 		];
 
 		let i = 0;
@@ -492,7 +489,6 @@ class DataUtil {
 			ret.push({ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' });
 		};
 
-		ret.push({ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' });
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -830,6 +826,12 @@ class DataUtil {
 		return 0;
 	};
 
+	sortByHidden (c1: any, c2: any) {
+		if (c1.isHidden && !c2.isHidden) return 1;
+		if (!c1.isHidden && c2.isHidden) return -1;
+		return 0;
+	};
+
 	formatRelationValue (relation: I.Relation, value: any) {
 		switch (relation.format) {
 			default:
@@ -838,7 +840,7 @@ class DataUtil {
 
 			case I.RelationType.Number:
 			case I.RelationType.Date:
-				value = parseFloat(value);
+				value = parseFloat(String(value || '0'));
 				break;
 
 			case I.RelationType.Checkbox:

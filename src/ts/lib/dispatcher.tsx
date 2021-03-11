@@ -11,7 +11,7 @@ const { remote } = window.require('electron');
 const SORT_IDS = [ 'blockShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
-const { app } = window.require('electron').remote;
+const { app } = remote;
 const bindings = require('bindings')({
 	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
@@ -41,6 +41,7 @@ class Dispatcher {
 			let serverAddr = remote.getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
+
 			this.listenEvents();
 		/// #endif
 	};
@@ -63,8 +64,8 @@ class Dispatcher {
 			};
 		});
 
-		this.stream.on('end', (end: any) => {
-			console.error('[Dispatcher.stream] end, restarting', end);
+		this.stream.on('end', () => {
+			console.error('[Dispatcher.stream] end, restarting');
 			this.listenEvents();
 		});
 	};
@@ -171,7 +172,7 @@ class Dispatcher {
 			let data = message[fn] ? message[fn]() : {};
 			let log = () => { 
 				console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold', 'rootId', rootId);
-				console.log(JSON.stringify(Util.objectClear(data.toObject()), null, 3)); 
+				console.log(JSON.stringify(Util.objectClear(data.toObject()), null, 2)); 
 			};
 
 			if (debugThread && (type == 'threadStatus')) {

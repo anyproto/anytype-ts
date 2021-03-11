@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
+import { I, Util, DataUtil } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
@@ -38,13 +38,15 @@ class CellObject extends React.Component<Props, State> {
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
-		if (!config.debug.ho) {
-			value = value.filter((it: any) => { return !it.isHidden; });
-		};
-
 		const Item = (item: any) => {
 			return (
-				<div className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
+				<div 
+					className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+					onClick={(e: any) => { 
+						e.stopPropagation();
+						DataUtil.objectOpenPopup(item); 
+					}}
+				>
 					<div className="flex">
 						<IconObject object={item} />
 						<div className="name">{item.name}</div>

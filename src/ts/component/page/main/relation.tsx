@@ -6,6 +6,7 @@ import { I, M, C, crumbs, Action } from 'ts/lib';
 import { blockStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
+	rootId?: string;
 	isPopup?: boolean;
 };
 
@@ -26,14 +27,14 @@ class PageMainRelation extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 
-		const { match, isPopup } = this.props;
-		const rootId = match.params.id;
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
 		const object = blockStore.getDetails(rootId, rootId);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
 				<div className="blocks wrapper">
 					<div className="head">
@@ -61,16 +62,20 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 
-		if (!isPopup) {
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (close) {
 			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
 		};
 	};
 
 	open () {
-		const { match, history } = this.props;
-		const rootId = match.params.id;
+		const { history } = this.props;
+		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
 			return;
@@ -96,6 +101,11 @@ class PageMainRelation extends React.Component<Props, {}> {
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
 	};
 
 };

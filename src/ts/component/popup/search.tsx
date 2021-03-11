@@ -216,7 +216,6 @@ class PopupSearch extends React.Component<Props, State> {
 		this._isMounted = true;
 
 		this.setCrumbs(rootId);
-		this.resize();
 		this.initSearch(rootId);
 		this.focus = true;
 		this.select = true;
@@ -236,7 +235,6 @@ class PopupSearch extends React.Component<Props, State> {
 			return;
 		};
 
-		this.resize();
 		this.setActive();
 
 		if (this.ref) {
@@ -271,12 +269,11 @@ class PopupSearch extends React.Component<Props, State> {
 		this.unbind();
 		
 		const win = $(window);
-		win.on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
-		win.unbind('resize.navigation').on('resize.navigation', () => { this.resize(); });
+		win.on('keydown.search', (e: any) => { this.onKeyDown(e); });
 	};
 
 	unbind () {
-		$(window).unbind('keydown.navigation resize.navigation');
+		$(window).unbind('keydown.search resize.search');
 	};
 	
 	initSearch (id: string) {
@@ -294,15 +291,6 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 	};
 
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		raf(() => {
-		});
-	};
-	
 	onSubmit (e: any) {
 		e.preventDefault();
 		this.onKeyUpSearch(e, true);
@@ -544,12 +532,12 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
+		e.persist();
 		e.stopPropagation();
 
-		const { param, history, close } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
-		const { root } = blockStore;
 
 		close();
 
@@ -558,7 +546,7 @@ class PopupSearch extends React.Component<Props, State> {
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpen(item);
+					DataUtil.objectOpenEvent(e, item);
 				});
 				break;
 

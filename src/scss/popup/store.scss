@@ -22,9 +22,9 @@
 			}
 		}
 
-		.body { width: 100%; height: 100%; padding: 96px 96px 56px 96px; overflow-y: auto; display: flex; flex-direction: column; }
+		.body { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
 		.body {
-			.mid { text-align: center; margin-bottom: 57px; }
+			.mid { text-align: center; padding: 96px 96px 56px 96px; }
 			.mid {
 				.title { margin-bottom: 8px; }
 				.label { @include text-paragraph; margin-bottom: 18px; }
@@ -34,7 +34,7 @@
 				}
 			}
 
-			.tabs { white-space: nowrap; margin-bottom: 26px; }
+			.tabs { white-space: nowrap; margin-bottom: 26px; padding: 0px 96px; }
 			.tabs {
 				.item { 
 					display: inline-block; margin-right: 20px; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
@@ -46,7 +46,9 @@
 
 			.loaderWrapper { position: relative; }
 
-			.items { overflow: auto; }
+			.ReactVirtualized__List { padding: 0px 96px 48px 96px; }
+
+			.items { height: 100%; }
 			.items {
 				.item { display: inline-block; vertical-align: top; position: relative; cursor: pointer; }
 
@@ -70,15 +72,15 @@
 					.button { display: block; }
 				}
 
-				.item.isType { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; }
-				.item.isType:nth-child(2n + 2) { margin-right: 0px; }
-				.item.isType {
+				.item.type { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; line-height: 64px; }
+				.item.type:nth-child(2n + 2) { margin-right: 0px; }
+				.item.type {
 					.line { bottom: -16px; }
 				}
 
-				.item.isRelation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; }
-				.item.isRelation:nth-child(3n + 3) { margin-right: 0px; }
-				.item.isRelation {
+				.item.relation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; line-height: 48px; }
+				.item.relation:nth-child(3n + 3) { margin-right: 0px; }
+				.item.relation {
 					.line { bottom: -8px; }
 					.item:nth-child(2n + 2) { margin-right: 0px; }
 				}
@@ -87,7 +89,7 @@
 		}
 
 		.wrapper.relation {
-			.mid { margin-bottom: 115px; }
+			.mid { padding-bottom: 114px; }
 			.mid {
 				.label { margin: 0px; }
 				.button { display: none; }

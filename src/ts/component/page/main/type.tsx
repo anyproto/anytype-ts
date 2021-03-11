@@ -8,6 +8,7 @@ import { commonStore, blockStore, dbStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	isPopup?: boolean;
 };
 
@@ -23,6 +24,7 @@ class PageMainType extends React.Component<Props, {}> {
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -37,8 +39,8 @@ class PageMainType extends React.Component<Props, {}> {
 		};
 
 		const { config } = commonStore;
-		const { match, isPopup } = this.props;
-		const rootId = match.params.id;
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
 		const object = blockStore.getDetails(rootId, rootId);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
@@ -52,6 +54,7 @@ class PageMainType extends React.Component<Props, {}> {
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
+		relations.sort(DataUtil.sortByHidden);
 
 		if (this.isDefaultName() || (object.name == Constant.default.name)) {
 			object.name = '';
@@ -134,7 +137,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} isPopup={isPopup} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
 				<div className="blocks wrapper">
 					<div className="head">
@@ -222,28 +225,31 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+
 		this._isMounted = false;
 		focus.clear(true);
 
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
-
-		if (!isPopup) {
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (close) {
 			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
 		};
 	};
 
 	isDefaultName () {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const object = blockStore.getDetails(rootId, rootId);
 
 		return [ Constant.default.nameType ].indexOf(object.name) >= 0;
 	};
 
 	open () {
-		const { match, history } = this.props;
-		const rootId = match.params.id;
+		const { history } = this.props;
+		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
 			return;
@@ -272,31 +278,23 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	onSelect (icon: string) {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
+		const rootId = this.getRootId();
 		DataUtil.pageSetIcon(rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const { match } = this.props;
-		const rootId = match.params.id;
-
+		const rootId = this.getRootId();
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
 	onAdd (e: any) {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		commonStore.menuOpen('relationSuggest', { 
-			type: I.MenuType.Vertical,
 			element: $(e.currentTarget),
 			offsetX: 32,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				filter: '',
 				rootId: rootId,
@@ -313,15 +311,11 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	onEdit (e: any, relationKey: string) {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		
 		commonStore.menuOpen('blockRelationEdit', { 
-			type: I.MenuType.Vertical,
 			element: $(e.currentTarget),
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
@@ -351,7 +345,11 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onKeyUp (e: any, item: any) {
 		this.placeHolderCheck(item.id);
-		this.save();
+
+		window.clearTimeout(this.timeout);
+		window.setTimeout(() => {
+			this.save();
+		}, 300);
 	};
 
 	onSelectText (e: any, item: any) {
@@ -359,15 +357,20 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	save () {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const details = [];
+		const object: any = { id: rootId };
 
 		for (let id of EDITOR_IDS) {
-			details.push({ key: id, value: this.getValue(id) });
+			const value = this.getValue(id);
+
+			details.push({ key: id, value: value });
+			object[id] = value;
 		};
 
 		blockStore.detailsUpdateArray(rootId, rootId, details);
+		dbStore.objectTypeUpdate(object);
+
 		C.BlockSetDetails(rootId, details);
 	};
 
@@ -413,6 +416,11 @@ class PageMainType extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.placeHolder.c' + id).show();
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
 	};
 
 };

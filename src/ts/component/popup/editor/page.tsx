@@ -21,16 +21,16 @@ class PopupEditorPage extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { history, location, param } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { id, match } = data;
+		const { rootId } = data;
 		
 		return (
 			<div className="wrap">
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} match={match} isPopup={true} />
-				<SelectionProvider rootId={id}>
-					<DragProvider {...this.props} rootId={id}>
-						<EditorPage key="editorPagePopup" isPopup={true} history={history} location={location} match={match} rootId={id} onOpen={this.onOpen} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={true} />
+				<SelectionProvider rootId={rootId}>
+					<DragProvider {...this.props} rootId={rootId}>
+						<EditorPage key="editorPagePopup" isPopup={true} {...this.props} rootId={rootId} onOpen={this.onOpen} />
 					</DragProvider>
 				</SelectionProvider>
 			</div>

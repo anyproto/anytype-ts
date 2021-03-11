@@ -9,10 +9,12 @@
 		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); transition: none; }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
-		.icon.expand { display: none; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; }
+		.icon.expand { display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/expand0.svg'); cursor: pointer; }
 		.icon.expand:hover { background-image: url('~img/icon/dataview/button/expand1.svg'); }
 
 		.icon.back, .icon.forward { width: 20px; height: 20px; }
+
+		.isDone { color: $colorDarkGrey; }
 
 		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
 		.views {

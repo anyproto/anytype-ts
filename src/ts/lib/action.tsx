@@ -15,18 +15,6 @@ class Action {
 		});
 	};
 	
-	move (rootId: string, blockId: string, blockIds: string[]) {
-		commonStore.popupOpen('navigation', { 
-			preventResize: true,
-			data: { 
-				type: I.NavigationType.Move, 
-				rootId: rootId,
-				blockId: blockId,
-				blockIds: blockIds,
-			}, 
-		});
-	};
-
 	download (block: I.Block) {
 		const { content } = block;
 		const { hash } = content;

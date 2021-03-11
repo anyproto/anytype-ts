@@ -1,12 +1,12 @@
 @import "~scss/_vars";
 
-.header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; transition: $transitionFast; user-select: none; }
+.header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; user-select: none; }
 .header {
 	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; margin-right: 12px; -webkit-app-region: no-drag; }
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
-		width: 60px !important; height: 13px !important; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo.svg') no-repeat;
+		width: 60px !important; height: 13px !important; position: absolute; left: 50%; margin-left: -30px; top: 13px; background: url('~img/logo/white.svg') no-repeat;
 		background-position: center center; background-size: 100% 100% !important;
 	}
 

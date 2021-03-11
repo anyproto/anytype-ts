@@ -187,6 +187,7 @@ function createWindow () {
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
 		webPreferences: {
+			nativeWindowOpen: true,
 			enableRemoteModule: true,
 			nodeIntegration: true
 		},
@@ -227,8 +228,10 @@ function createWindow () {
 		if (process.platform == 'darwin') {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
+				win.once('leave-full-screen', () => { win.hide(); });
+			} else {
+				win.hide();
 			};
-			win.hide();
 		} else {
 			exit(false);
 		};
@@ -313,7 +316,7 @@ function createWindow () {
 		args.shift();
 		send.apply(this, args);
 	});
-	
+
 	ipcMain.on('winCommand', (e, cmd) => {
 		switch (cmd) {
 			case 'menu':
@@ -480,7 +483,7 @@ function menuInit () {
 	if (config.allowDebug) {
 		config.debug = config.debug || {};
 
-		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics' };
+		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics', dm: 'Dark Mode' };
 		const flagMenu = [];
 
 		for (let i in flags) {
@@ -490,12 +493,21 @@ function menuInit () {
 					config.debug[i] = !config.debug[i];
 					setConfig({ debug: config.debug });
 					
-					if ([ 'ui', 'ho' ].indexOf(i) >= 0) {
+					if ([ 'ui', 'ho', 'dm' ].indexOf(i) >= 0) {
 						win.reload();
 					};
 				}
 			});
 		};
+
+		/*
+		flagMenu.push({
+			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
+			click: () => {
+				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+			}
+		});
+		*/
 
 		menuParam.push({
 			label: 'Debug',
@@ -650,6 +662,13 @@ app.on('before-quit', (e) => {
 	Util.log('info', 'before-quit');
 
 	exit(false);
+});
+
+app.on('activate', () => {
+	if (win === null) {
+		createWindow();
+	};
+	win.show();
 });
 
 function send () {

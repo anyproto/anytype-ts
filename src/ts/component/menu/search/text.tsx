@@ -11,7 +11,7 @@ const SKIP = [
 	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'emoji',
 ];
 
-class MenuSearch extends React.Component<Props, {}> {
+class MenuSearchText extends React.Component<Props, {}> {
 	
 	ref: any = null;
 	last: string = '';
@@ -155,4 +155,4 @@ class MenuSearch extends React.Component<Props, {}> {
 	
 };
 
-export default MenuSearch;
+export default MenuSearchText;

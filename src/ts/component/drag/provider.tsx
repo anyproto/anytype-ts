@@ -241,15 +241,6 @@ class DragProvider extends React.Component<Props, {}> {
 			let col1 = x - Constant.size.blockMenu / 4;
 			let col2 = x + width;
 
-			/*;
-			if (([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0) ||
-				((type == I.BlockType.Text) &&
-				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
-			)) {
-				col2 = col3;
-			};
-			*/
-
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
 			} else
@@ -266,21 +257,6 @@ class DragProvider extends React.Component<Props, {}> {
 			if (ex > col2) {
 				this.position = I.BlockPosition.Right;
 			};
-
-			/*
-			if (ex <= col1) {
-				this.position = I.BlockPosition.Left;
-			} else
-			if ((ex > col1) && (ex <= col2)) {
-				this.position = ey <= y + height * 0.5 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-			} else
-			if ((ex > col2) && (ex <= col3)) {
-				this.position = I.BlockPosition.Inner;
-			} else
-			if (ex > col3) {
-				this.position = I.BlockPosition.Right;
-			};
-			*/
 
 			// You can't drop on Icon
 			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(this.hoverData.type) >= 0) {
@@ -326,13 +302,6 @@ class DragProvider extends React.Component<Props, {}> {
 					this.position = I.BlockPosition.None;
 				};
 			};
-
-			/*
-			// You can't inner drop files
-			if (isFileDrag && (this.position == I.BlockPosition.Inner)) {
-				this.position = I.BlockPosition.Bottom;
-			};
-			*/
 		};
 
 		window.clearTimeout(this.timeoutHover);
@@ -402,6 +371,7 @@ class DragProvider extends React.Component<Props, {}> {
 
 		if (selection) {
 			selection.preventClear(false);
+			selection.clearState();
 		};
 
 		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);

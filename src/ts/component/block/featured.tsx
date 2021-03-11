@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { I, DataUtil, focus } from 'ts/lib';
-import { IconObject } from 'ts/component';
+import { I, Util, focus } from 'ts/lib';
+import { Cell } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
+
+const Constant = require('json/constant.json');
 
 @observer
 class BlockFeatured extends React.Component<Props, {}> {
@@ -19,18 +21,20 @@ class BlockFeatured extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 	};
 
 	render () {
 		const { rootId, block, iconSize } = this.props;
-		const { id, content } = block;
-		const cn = [ 'focusable', 'c' + id ];
+		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const object = blockStore.getDetails(rootId, rootId);
 		const type = dbStore.getObjectType(object.type);
 		const creator = blockStore.getDetails(rootId, object.creator);
+		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object.featuredRelations).filter((it: any) => {
+			return object[it];
+		}));
+
+		/*
 		const featured = [];
 
 		if (type) {
@@ -46,13 +50,26 @@ class BlockFeatured extends React.Component<Props, {}> {
 				{item.name}
 			</div>
 		);
+		*/
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				{featured.map((item: any, i: any) => (
+			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
+				{featured.map((relationKey: any, i: any) => (
 					<React.Fragment key={i}>
 						{i > 0 ? <div className="bullet" /> : ''}
-						<Element {...item} />
+						<Cell 
+							rootId={rootId}
+							storeId={rootId}
+							block={block}
+							relationKey={relationKey}
+							getRecord={() => { return object; }}
+							viewType={I.ViewType.Grid}
+							index={0}
+							scrollContainer=""
+							pageContainer=""
+							readOnly={true}
+							isInline={true}
+						/>
 					</React.Fragment>
 				))}
 			</div>
@@ -67,14 +84,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
-	};
-	
-	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
-	};
-
 	onFocus () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });

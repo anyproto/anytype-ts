@@ -153,11 +153,6 @@ class Cell extends React.Component<Props, {}> {
 
 		let param: I.MenuParam = { 
 			element: `#${id} .cellContent`,
-			offsetX: 0,
-			offsetY: 0,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			noAnimation: true,
 			noFlipY: true,
 			passThrough: true,
@@ -199,7 +194,6 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				param = Object.assign(param, {
-					element: cell,
 					offsetY: -height + 1,
 					width: width,
 					horizontal: I.MenuDirection.Center,
@@ -264,7 +258,6 @@ class Cell extends React.Component<Props, {}> {
 					horizontal: I.MenuDirection.Center,
 					className: 'button',
 					width: width,
-					offsetY: 0,
 				});
 
 				let name = 'Go to';

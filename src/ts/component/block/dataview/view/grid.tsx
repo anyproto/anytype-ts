@@ -231,11 +231,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
 		commonStore.menuOpen('relationSuggest', { 
-			type: I.MenuType.Vertical,
 			element: `#cell-add`,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				readOnly: readOnly,

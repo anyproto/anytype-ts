@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, Util, Key, keyboard } from 'ts/lib';
+import { MenuItemVertical, Filter, Loader, Label } from 'ts/component';
+import { I, C, Key, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -9,44 +9,41 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {};
 
 interface State {
-	n: number;
 	loading: boolean;
+	n: number;
+	filter: string;
 };
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
-const LIMIT = 20;
-const MENU_ID = 'dataviewObjectValues';
+const LIMIT = 10;
 
 @observer
-class MenuDataviewObjectList extends React.Component<Props, State> {
+class MenuSearchObject extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
 		n: 0,
+		filter: '',
 	};
 
 	_isMounted: boolean = false;	
 	filter: string = '';
+	index: any = null;
 	cache: any = null;
-	offset: number = 0;
-	items: any[] = [];
+	items: any = [];
 	ref: any = null;
+	timeoutFilter: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
-		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
-		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
-		const { n } = this.state;
+		const { n, loading, filter } = this.state;
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -55,7 +52,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const type: any = dbStore.getObjectType(item.type) || {};
+			const type: any = dbStore.getObjectType(item.type);
 
 			return (
 				<CellMeasurer
@@ -68,13 +65,15 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				>
 					<MenuItemVertical 
 						id={item.id}
-						object={item}
+						object={item.id == 'add' ? undefined : item}
+						icon={item.icon}
 						name={item.name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}
 						caption={type ? type.name : undefined}
 						style={param.style}
+						className={[ (item.id == 'add' ? 'add' : ''), (item.isHidden ? 'isHidden' : '') ].join(' ')}
 					/>
 				</CellMeasurer>
 			);
@@ -82,35 +81,45 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter objects..." onChange={this.onFilterChange} />
+				{loading ? <Loader /> : ''}
 
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={registerChild}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										scrollToIndex={n}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
+				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+
+				{!items.length && !loading ? (
+					<div id="empty" key="empty" className="empty">
+						<Label text={Util.sprintf(translate('popupNavigationEmptyFilter'), filter)} />
+					</div>
+				) : ''}
+
+				{this.cache && items.length && !loading ? (
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => index < items.length}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={registerChild}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToIndex={n}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -124,16 +133,13 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { n } = this.state;
+		const { n, filter } = this.state;
 		const items = this.getItems();
-		const { param } = this.props;
-		const { data } = param;
-		const { filter } = data;
 
-		if (filter != this.filter) {
-			this.offset = 0;
-			this.filter = filter;
+		if (this.filter != filter) {
 			this.load(true);
+			this.filter = filter;
+			this.setState({ n: 0 });
 			return;
 		};
 
@@ -149,34 +155,25 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 	
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this._isMounted = false;
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
-	};
-
-	focus () {
-		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
-			};
-		}, 15);
 	};
 
 	rebind () {
 		this.unbind();
-
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
 	};
 
 	getItems () {
@@ -190,10 +187,9 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const { filter } = this.state;
 		const { config } = commonStore;
-		const { param } = this.props;
-		const { data } = param;
-		const { types, filter } = data;
+		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		const filters = [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
@@ -203,13 +199,9 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		if (types && types.length) {
-			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
-		};
-
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter, this.offset, 1000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, 0, 1000000, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -219,23 +211,32 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || Constant.default.name);
-				return it;
+				return {
+					...it, 
+					name: String(it.name || Constant.default.name),
+				};
 			}));
+			this.items = this.items.filter(filterMapper);
 
 			this.setState({ loading: false });
 		});
 	};
 
-	loadMoreRows ({ startIndex, stopIndex }) {
-        return new Promise((resolve, reject) => {
-			this.offset += LIMIT;
-			this.load(false, resolve);
-		});
-	};
+	filterMapper (it: any, config: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { type } = data;
 
-	onFilterChange (v: string) {
-		this.props.param.data.filter = v;
+		if (it.isArchived) {
+			return false;
+		};
+		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
+			return false;
+		};
+		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
+			return false;
+		};
+		return true;
 	};
 
 	onKeyDown (e: any) {
@@ -295,54 +296,71 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, close, position } = this.props;
-		const { data } = param;
-		const { onChange, maxCount } = data;
-
-		e.preventDefault();
+		e.persist();
 		e.stopPropagation();
 
-		if (!item) {
-			close();
-			return;
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId, type, blockId, blockIds, position, onSelect } = data;
+
+		close();
+
+		if (onSelect) {
+			onSelect(item);
 		};
 
-		let value = this.getValue();
-		value.push(item.id);
-		value = Util.arrayUnique(value);
+		let newBlock: any = {};
 
-		if (maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+		switch (type) {
+			case I.NavigationType.Go:
+				crumbs.cut(I.CrumbsType.Page, 0, () => {
+					DataUtil.objectOpenEvent(e, item);
+				});
+				break;
+
+			case I.NavigationType.Move:
+				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				break;
+
+			case I.NavigationType.Link:
+				newBlock = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: String(item.id || ''),
+					}
+				};
+				C.BlockCreate(newBlock, rootId, blockId, position);
+				break;
+
+			case I.NavigationType.LinkTo:
+				newBlock = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: blockId,
+					}
+				};
+				C.BlockCreate(newBlock, item.id, '', position);
+				break;
 		};
-
-		data.value = value;
-
-		commonStore.menuUpdateData(MENU_ID, { value: value });
-		onChange(value);
-		position();
 	};
 
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = data.value || [];
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		return Util.objectCopy(value);
+	onKeyUp (e: any, force: boolean) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
+		}, force ? 0 : 50);
 	};
 
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const height = Math.max(300, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 		position();
 	};
-
+	
 };
 
-export default MenuDataviewObjectList;
+export default MenuSearchObject;

@@ -197,7 +197,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = Util.objectCopy(data.value || []);
+		let value = this.getValue();
 		value.push(id);
 		value = Util.arrayUnique(value);
 
@@ -213,6 +213,17 @@ class MenuOptionList extends React.Component<Props, State> {
 		commonStore.menuUpdateData(MENU_ID, { value: value });
 
 		onChange(value);
+	};
+
+	getValue (): any[] {
+		const { param } = this.props;
+		const { data } = param;
+
+		let value = data.value || [];
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
+		};
+		return Util.objectCopy(value);
 	};
 
 	onMenuAdd (e: any) {
@@ -242,12 +253,9 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 
 		commonStore.menuOpen('dataviewOptionEdit', { 
-			type: I.MenuType.Vertical,
 			element: '#' + getId() + ' #item-' + item.id,
 			offsetX: 288,
-			offsetY: 0,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			passThrough: true,
 			noFlipY: true,
 			data: {

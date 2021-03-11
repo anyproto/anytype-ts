@@ -323,12 +323,9 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 			const obj = $(`#${getId()}`);
 
 			commonStore.menuOpen(menuIdEdit, { 
-				type: I.MenuType.Vertical,
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: obj.outerWidth(),
 				offsetY: -76,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				data: {
 					...data,
 					onChange: () => { close(); },

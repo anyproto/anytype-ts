@@ -84,6 +84,7 @@ class ListIndex extends React.Component<Props, {}> {
 					className={cn.join(' ')} 
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+					data-target-block-id={content.targetBlockId}
 				>
 					{icon}
 					<div className="name">{name}</div>

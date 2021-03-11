@@ -3,7 +3,7 @@
 .pageMainIndex {
 	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
 	
-	.title { color: #fff; position: relative; height: 48px; }
+	.title { color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; white-space: nowrap; }
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
 		.icon { 
@@ -35,9 +35,6 @@
 		background-size: 800px 100%;
 	}
 
-	#hello { transition: opacity 0.5s ease-in-out; }
-	#hello.hide { opacity: 0; }
-	
 	#documents { display: flex; flex-wrap: wrap; overflow: auto; }
 	#documents {
 		.item { 

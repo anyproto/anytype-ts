@@ -55,8 +55,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 				<Footer {...this.props} />
 				
 				<div id="body" className="wrapper">
-					<div className="title">
-						<span id="hello">{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}</span>
+					<div id="title" className="title">
+						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
 						
 						<div className="rightMenu">
 							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
@@ -86,9 +86,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { history } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const hello = node.find('#hello');
 		const redirectTo = Storage.get('redirectTo');
+		const win = $(window);
 
 		Storage.delete('redirect');
 
@@ -99,33 +98,45 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		crumbs.delete(I.CrumbsType.Page);
 
-		if (Storage.get('hello')) {
-			hello.remove();
-		} else {
-			window.setTimeout(() => {
-				Storage.set('hello', 1);
-				hello.addClass('hide');
-			}, 5000);
-		};
+		this.onScroll();
+		win.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 	};
+
+	componentWillUnmount () {
+		$(window).unbind('scroll');
+	};
+
+	onScroll () {
+		const win = $(window);
+		const top = win.scrollTop();
+		const node = $(ReactDOM.findDOMNode(this));
+		const title = node.find('#title');
+		const oy = node.find('#documents').offset().top;
+		const offset = 256;
+
+		let y = 0;
+		if (oy - top <= offset) {
+			y = oy - top - offset;
+		};
+
+		title.css({ transform: `translate3d(0px,${y}px,0px)` });
+	};
 	
 	onAccount () {
 		commonStore.menuOpen('account', {
-			type: I.MenuType.Vertical, 
 			element: '#button-account',
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right
 		});
 	};
 	
 	onProfile (e: any) {
-		const object = blockStore.getDetails(blockStore.profile, blockStore.profile);
+		const { profile } = blockStore;
+		const object = blockStore.getDetails(profile, profile);
 
 		DataUtil.objectOpen(object);
 	};
@@ -153,48 +164,58 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { history } = this.props;
 		const { root } = blockStore;
 		const { config } = commonStore;
-
 		const options = [
 			{ id: 'page', icon: 'page', name: 'Draft' },
 			{ id: 'link', icon: 'existing', name: 'Link to object' },
 		];
+		const width = 176;
 
 		if (config.allowDataview) {
 			options.push({ id: 'set', icon: 'set', name: 'New set' });
 		};
 
+		const close = () => {
+			commonStore.menuClose('select');
+		};
+
 		commonStore.menuOpen('select', { 
 			element: '#button-add',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
-			width: 176,
+			width: width,
 			data: {
 				value: '',
 				options: options,
+				noClose: true,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'page') {
 						DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
 							DataUtil.objectOpen({ id: message.targetId });
 						});
+
+						close();
 					};
 
 					if (item.id == 'link') {
-						commonStore.popupOpen('search', { 
-							preventResize: true,
+						commonStore.menuOpen('searchObject', { 
+							element: '#menuSelect #item-link',
+							offsetX: width,
+							offsetY: -36,
 							data: { 
 								type: I.NavigationType.Link, 
 								rootId: root,
 								skipId: root,
 								blockId: '',
 								position: I.BlockPosition.Bottom,
+								onSelect: (item: any) => {
+									close();
+								}
 							}, 
 						});
 					};
 
 					if (item.id == 'set') {
+						close();
 						history.push('/main/set');
 					};
 				},
@@ -212,10 +233,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-' + item.id + '-more',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 8,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
 			data: {
@@ -268,6 +286,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const wh = win.height();
 		const ww = win.width();
 		const node = $(ReactDOM.findDOMNode(this));
+		const title = node.find('#title');
 		const body = node.find('#body');
 		const documents = node.find('#documents');
 		const items = node.find('#documents .item');
@@ -275,16 +294,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const maxWidth = ww - size.border * 2;
 		const cnt = Math.floor(maxWidth / (size.width + size.margin));
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
+		const height = this.getListHeight();
 
-		let height = size.height + size.margin;
-		if (list.length > cnt) {
-			height *= 2;
-		};
-		height += 20;
-		
 		items.css({ width: width }).removeClass('last');
+		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - 142 - height });
+		documents.css({ marginTop: wh - size.titleY - height });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -297,6 +312,25 @@ class PageMainIndex extends React.Component<Props, {}> {
 				item.addClass('withIcon');
 			};
 		});
+
+		this.onScroll();
+	};
+
+	getListHeight () {
+		const win = $(window);
+		const ww = win.width();
+		const size = Constant.size.index;
+		const list = this.getList();
+		const maxWidth = ww - size.border * 2;
+		const cnt = Math.floor(maxWidth / (size.width + size.margin));
+
+		let height = size.height + size.margin;
+		if (list.length > cnt) {
+			height *= 2;
+		};
+
+		height += 20;
+		return height;
 	};
 
 	getList () {

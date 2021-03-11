@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus, Action, translate } from 'ts/lib';
+import { I, C, keyboard, Key, DataUtil, focus, Action, translate } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 interface State {
@@ -12,8 +11,8 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const SUB_IDS = [ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ];
 
-@observer
 class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
@@ -105,13 +104,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
+		commonStore.menuCloseAll(SUB_IDS);
 	};
 	
 	onFilterFocus (e: any) {
-		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
+		commonStore.menuCloseAll(SUB_IDS);
 		
 		this.focus = true;
 		this.props.setHover();
@@ -414,7 +415,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
+		commonStore.menuCloseAll(SUB_IDS);
 		
 		if (!item.arrow) {
 			return;
@@ -425,11 +426,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
-			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: offsetY,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			isSub: true,
 			passThrough: true,
 			data: {
@@ -504,9 +502,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		if (menuId) {
-			this.timeout = window.setTimeout(() => {
-				commonStore.menuOpen(menuId, menuParam);
-			}, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
 	
@@ -515,16 +511,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-	
-		let block = blockStore.getLeaf(rootId, blockId);
+		const node = $(ReactDOM.findDOMNode(this));
+		const block = blockStore.getLeaf(rootId, blockId);
+
 		if (!block) {
 			return;
 		};
 
 		let ids = DataUtil.selectionGet(blockId, false, data);
+		let close = true;
 
 		switch (item.key) {
 			case 'download':
@@ -532,7 +530,22 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 					
 			case 'move':
-				Action.move(rootId, blockId, blockIds);
+				close = false;
+				window.setTimeout(() => {
+					commonStore.menuOpen('searchObject', { 
+						element: `#${getId()} #item-${item.id}`,
+						offsetX: node.outerWidth(),
+						offsetY: -36,
+						data: { 
+							type: I.NavigationType.Move, 
+							rootId: rootId,
+							skipId: rootId,
+							blockId: blockId,
+							blockIds: blockIds,
+							position: I.BlockPosition.Bottom,
+						}, 
+					});
+				}, Constant.delay.menu);
 				break;
 				
 			case 'copy':
@@ -576,7 +589,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		this.props.close();
+		if (close) {
+			this.props.close();
+		};
 	};
 
 	moveToPage () {

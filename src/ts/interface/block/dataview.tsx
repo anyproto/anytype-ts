@@ -106,6 +106,7 @@ export interface Cell {
 	canEdit?: boolean;
 	scrollContainer?: string;
 	pageContainer?: string;
+	isInline?: boolean;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(data: any): void;

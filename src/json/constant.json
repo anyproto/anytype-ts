@@ -54,8 +54,10 @@
 
 	"cellMenuIds": [ 
 		"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar"
+		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
 	],
+
+	"featuredRelations": [ "type", "creator" ],
 	
 	"size": {
 		"page": 704,
@@ -103,7 +105,8 @@
 			"width": 192,
 			"height": 112,
 			"margin": 16,
-			"border": 72
+			"border": 72,
+			"titleY": 142
 		}
 	},
 

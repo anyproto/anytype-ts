@@ -204,6 +204,9 @@ class CommonStore {
 	
 	@action
 	menuOpen (id: string, param: I.MenuParam) {
+		param.type = Number(param.type) || I.MenuType.Vertical;
+		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
+		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 

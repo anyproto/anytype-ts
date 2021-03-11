@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, DataUtil } from 'ts/lib';
-import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
 
-@observer
 class MenuBlockAlign extends React.Component<Props, {}> {
 	
 	n: number = 0;

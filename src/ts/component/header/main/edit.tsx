@@ -7,6 +7,7 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	isPopup: boolean;
 	dataset?: any;
 };
@@ -35,10 +36,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { match, isPopup } = this.props;
+		const { match, isPopup, rootId } = this.props;
 		const { config } = commonStore;
 		const { breadcrumbs } = blockStore;
-		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -82,7 +82,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					{!isPopup && canAdd ? (
 						<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 					) : ''}
-					{config.allowDataview ? (
+					{config.allowDataview && canAdd ? (
 						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 					) : ''}
 				</div>
@@ -110,23 +110,17 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onOpen () {
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const { rootId } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		DataUtil.objectOpen(object);
 	};
 	
 	onMore (e: any) {
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, match, rootId } = this.props;
 
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: rootId,
@@ -146,9 +140,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { match } = this.props;
+		const { rootId } = this.props;
 		const { focused } = focus;
-		const rootId = match.params.id;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 
@@ -178,15 +171,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
-
+		const { isPopup, rootId } = this.props;
 		const param: any = {
-			type: I.MenuType.Vertical, 
 			element: `${this.getContainer()} #button-header-sync`,
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: rootId,
@@ -206,8 +193,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match } = this.props;
-		const rootId = match.params.id;
+		const { match, rootId } = this.props;
 
 		commonStore.popupOpen('navigation', {
 			preventResize: true, 
@@ -222,8 +208,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, rootId } = this.props;
 
 		if (isPopup) {
 			return;
@@ -255,15 +240,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onRelation () {
-		const { isPopup, match } = this.props;
-		const rootId = match.params.id;
+		const { isPopup, rootId } = this.props;
 
 		const param: any = {
 			element: `${this.getContainer()} #button-header-relation`,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			onClose: () => {

@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
 import { I, Util, SmileUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props {
 	id?: string;
@@ -22,8 +23,8 @@ interface Props {
 	color?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
-	onCheckbox?(e: any): void;
 	onClick?(e: any): void;
+	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 };
@@ -103,6 +104,7 @@ const Color = {
 
 const $ = require('jquery');
 
+@observer
 class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -114,7 +116,7 @@ class IconObject extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onCheckbox = this.onCheckbox.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -154,7 +156,7 @@ class IconObject extends React.Component<Props, {}> {
 			case I.ObjectLayout.Task:
 				cn.push('isTask');
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} onClick={this.onCheckbox} />;
+				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.ObjectType:
@@ -198,10 +200,22 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div id={this.props.id} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div id={this.props.id} className={cn.join(' ')} onClick={this.onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 				{icon}
 			</div>
 		);
+	};
+
+	onClick (e: any) {
+		const { canEdit, object, onClick, onCheckbox } = this.props;
+		const layout = Number(object.layout) || I.ObjectLayout.Page;
+
+		if (onClick) {
+			onClick(e);
+		};
+		if (canEdit && (layout == I.ObjectLayout.Task)) {
+			onCheckbox(e);
+		};
 	};
 
 	iconSize (layout: I.ObjectLayout, size: number) {
@@ -233,13 +247,6 @@ class IconObject extends React.Component<Props, {}> {
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Lcg" font-size="${FontSize[size]}px">${name}</text>`;
 		const svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${circle}${defs}${text}</svg>`)));
 		return svg;
-	};
-
-	onCheckbox (e: any) {
-		const { canEdit, onCheckbox } = this.props;
-		if (canEdit && onCheckbox) {
-			onCheckbox(e);
-		};
 	};
 
 	onMouseEnter (e: any) {

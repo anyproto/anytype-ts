@@ -1,8 +1,8 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
 import { blockStore, commonStore, dbStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -11,7 +11,6 @@ interface Props extends I.Menu {
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 
-@observer
 class MenuBlockMore extends React.Component<Props, {}> {
 	
 	n: number = -1;
@@ -178,8 +177,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
 		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };
 		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
-		const link = { id: 'link', icon: 'existing', name: 'Create link' };
+		const linkRoot = { id: 'linkRoot', icon: 'existing', name: 'Add to dashboard' };
 		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
+		const move = { id: 'move', name: 'Move to' };
 
 		let items = [];
 		if (block.isObjectSet()) {
@@ -188,7 +188,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo,
 				print,
 				search,
-				link,
+				linkRoot,
 			];
 
 			if (object.isArchived) {
@@ -205,7 +205,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo,
 				print,
 				search,
-				link,
+				linkRoot,
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
@@ -221,12 +221,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else 
 		if (block.isLinkPage()) {
 			items = [
-				{ id: 'move', name: 'Move to' },
+				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
+				{ id: 'remove', icon: 'remove', name: 'Remove from dashboard' },
 			];
 		} else {
 			items = [
-				{ id: 'move', name: 'Move to' },
+				move,
 				//{ id: 'copy', name: 'Duplicate' },
 				{ id: 'remove', name: 'Delete' },
 			];
@@ -242,10 +243,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, history } = this.props;
+		const { param, history, getId } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
-		const { breadcrumbs } = blockStore;
+		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		if (!block) {
@@ -254,6 +255,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		let close = true;
 		
@@ -291,12 +293,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 			
 			case 'move':
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
+				close = false;
+				commonStore.menuOpen('searchObject', { 
+					element: `#${getId()} #item-${item.id}`,
+					offsetX: node.outerWidth(),
+					offsetY: -36,
 					data: { 
 						type: I.NavigationType.Move, 
-						...data,
-					},
+						rootId: rootId,
+						skipId: rootId,
+						blockId: blockId,
+						blockIds: [ blockId ],
+						position: I.BlockPosition.Bottom,
+					}, 
 				});
 				break;
 				
@@ -323,26 +332,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], true);
 				break;
 
-			case 'move':
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
-					data: { 
-						type: I.NavigationType.Move, 
-						...data,
-					}, 
-				});
-				break;
-
-			case 'link':
-				commonStore.popupOpen('navigation', { 
-					preventResize: true,
-					data: { 
-						type: I.NavigationType.LinkTo, 
-						rootId: rootId,
-						blockId: block.id,
-						position: I.BlockPosition.Bottom,
-					}, 
-				});
+			case 'linkRoot':
+				const newBlock = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: block.id,
+					}
+				};
+				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
 				break;
 				
 			case 'remove':
@@ -377,8 +374,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			element: '#item-object-layout',
 			offsetX: 256,
 			offsetY: -36,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: DataUtil.menuTurnLayouts(),
@@ -418,8 +413,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			element: '#item-object-type',
 			offsetX: 208,
 			offsetY: -36,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: options,

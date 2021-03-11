@@ -2,8 +2,8 @@
 
 .popups {
 	.popup.popupShortcut {
-		.innerWrap { width: 672px; height: calc(100% - 128px); padding: 52px 0px 0px 0px; }
-		.content { position: relative; padding-top: 25px; height: 100%; }
+		.innerWrap { width: 672px; height: calc(100% - 128px); padding: 48px 0px 0px 0px; }
+		.content { position: relative; padding-top: 38px; height: 100%; }
 		.wrapper { height: 100%; }
 
 		.head { position: absolute; top: 0px; left: 0px; width: 100%; padding: 0px 48px; }
@@ -16,13 +16,13 @@
 			}
 		}
 
-		.body { overflow-y: auto; height: 100%; padding: 32px 48px 48px 48px; }
+		.body { overflow-y: auto; height: 100%; padding: 24px 48px 48px 48px; }
 		.body {
 			.section { margin-bottom: 25px; }
 			.section:last-child { margin-bottom: 0px; }
 			.section {
 				.name { @include text-paragraph; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid #eae9e0; }
-				
+
 				.items {
 					.item { display: flex; padding: 12px 0px; border-bottom: 1px solid #eae9e0; }
 					.item {

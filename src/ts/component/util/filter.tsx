@@ -4,6 +4,7 @@ import { Input, Icon } from 'ts/component';
 import { translate } from 'ts/lib';
 
 interface Props {
+	className?: string;
 	placeHolder?: string;
 	placeHolderFocus?: string;
 	onFocus?(e: any): void;
@@ -16,6 +17,7 @@ const $ = require('jquery');
 class Filter extends React.Component<Props, {}> {
 
 	public static defaultProps = {
+		className: '',
 		placeHolder: translate('commonFilterClick'),
 	};
 	
@@ -31,10 +33,11 @@ class Filter extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { placeHolder } = this.props;
+		const { placeHolder, className } = this.props;
+		const cn = [ 'filter', className ];
 
 		return (
-			<div className="filter">
+			<div className={cn.join(' ')}>
 				<div className="inner">
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 

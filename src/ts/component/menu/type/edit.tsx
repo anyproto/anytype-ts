@@ -58,6 +58,18 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 		);
 	};
 
+	componentDidMount () {
+		this.focus();
+	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
+	};
+
 	onLayout (e: any) {
 		const { layout } = this.state;
 
@@ -65,9 +77,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 			element: '#item-object-layout',
 			offsetX: 224,
 			offsetY: 4,
-			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				options: DataUtil.menuTurnLayouts(),
 				value: layout,

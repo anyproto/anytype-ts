@@ -32,11 +32,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 		
 		commonStore.menuOpen('select', { 
 			element: '#block-' + rootId + '-icon .iconObject',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				value: '',
 				options: [

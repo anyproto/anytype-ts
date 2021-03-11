@@ -54,7 +54,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onToggle = this.onToggle.bind(this);
-		this.onCheck = this.onCheck.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
@@ -88,7 +88,7 @@ class BlockText extends React.Component<Props, {}> {
 				placeHolder = Constant.default.name;
 
 				if (root.isObjectTask()) {
-					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheck };
+					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
 			case I.TextStyle.Quote:
@@ -121,7 +121,7 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 				
 			case I.TextStyle.Checkbox:
-				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheck };
+				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
 		};
 		
@@ -681,11 +681,8 @@ class BlockText extends React.Component<Props, {}> {
 		commonStore.menuOpen('blockMention', {
 			element: el,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			type: I.MenuType.Vertical,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				this.preventSaveOnBlur = false;
 			},
@@ -727,11 +724,8 @@ class BlockText extends React.Component<Props, {}> {
 		commonStore.menuOpen('smile', {
 			element: '#block-' + block.id,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			type: I.MenuType.Vertical,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				noHead: true,
 				rootId: rootId,
@@ -818,7 +812,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.props.onToggle(e);
 	};
 	
-	onCheck (e: any) {
+	onCheckbox (e: any) {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const { checked } = content;
@@ -830,6 +824,10 @@ class BlockText extends React.Component<Props, {}> {
 		focus.clear(true);
 		DataUtil.blockSetText(rootId, block, this.getValue(), this.marks, true, () => {
 			C.BlockSetTextChecked(rootId, id, !checked);
+
+			if (block.isTextTitle()) {
+				DataUtil.pageSetDone(rootId, !checked);
+			};
 		});
 	};
 	
@@ -895,7 +893,6 @@ class BlockText extends React.Component<Props, {}> {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				type: I.MenuType.Horizontal,
-				offsetX: 0,
 				offsetY: -4,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,

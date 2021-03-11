@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, C, Key, keyboard, Util, DataUtil } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -77,16 +77,26 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, relationKey } = data;
+		const { rootId, getView, relationKey } = data;
 
-		const view = getView();
-		const relation = view.getRelation(relationKey);;
-		
-		const dateOptions = this.getOptions('dateFormat');
-		const dateFormat = dateOptions.find((it: any) => { return it.id == relation.dateFormat; }) || dateOptions[0];
+		let relation = null;
+		let dateFormat = null;
+		let timeFormat = null;
 
-		const timeOptions = this.getOptions('timeFormat');
-		const timeFormat = timeOptions.find((it: any) => { return it.id == relation.timeFormat; }) || timeOptions[0];
+		if (getView) {
+			const view = getView();
+			relation = view.getRelation(relationKey);
+		} else {
+			relation = dbStore.getRelation(rootId, rootId, relationKey);
+		};
+
+		if (relation) {
+			const dateOptions = this.getOptions('dateFormat');
+			const timeOptions = this.getOptions('timeFormat');
+
+			dateFormat = dateOptions.find((it: any) => { return it.id == relation.dateFormat; }) || dateOptions[0];
+			timeFormat = timeOptions.find((it: any) => { return it.id == relation.timeFormat; }) || timeOptions[0];
+		};
 
 		let sections = [
 			{ 
@@ -198,9 +208,20 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
-		const view = getView();
-		const relation = view.getRelation(relationKey);
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+
+		let relation = null;
+		let view = null;
+		let idx = 0;
+
+		if (getView) {
+			view = getView();
+			idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
+
+			relation = view.getRelation(relationKey);
+		} else {
+			relation = dbStore.getRelation(rootId, rootId, relationKey);
+		};
+
 		const options = this.getOptions(item.key);
 		const value = options.find((it: any) => { return it.id == relation[item.key]; }) || options[0];
 
@@ -208,16 +229,15 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			element: '#item-' + item.id,
 			offsetX: 208,
 			offsetY: -38,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				value: value.name,
 				options: options,
 				onSelect: (e: any, el: any) => {
-					view.relations[idx][item.key] = el.id;
-					C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
-
+					if (view) {
+						view.relations[idx][item.key] = el.id;
+						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+					};
 					close();
 				}
 			}

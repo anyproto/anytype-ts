@@ -41,11 +41,9 @@
 			}
 			.item {
 				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; flex-shrink: 0; }
-				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 33%; }
+				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; }
 				.type { flex-shrink: 0; max-width: 33%; }
-				.descr { 
-					@include text-small; @include text-overflow-nw; line-height: 22px; color: #6c6a5f; display: inline-block; vertical-align: top; 
-				}
+				.descr { @include text-small; @include text-overflow-nw; line-height: 22px; color: #6c6a5f; display: inline-block; vertical-align: top; }
 
 				.div { width: 2px; height: 22px; line-height: 22px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
 				.div {

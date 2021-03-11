@@ -84,6 +84,7 @@ export interface Block {
 	canTurnPage?(): boolean;
 	canTurnList?(): boolean;
 	canTurnObject?(): boolean;
+	canCreateBlock?(): boolean;
 
 	isIndentable?(): boolean;
 	isFocusable?(): boolean;
@@ -100,6 +101,8 @@ export interface Block {
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
 	isObjectReadOnly?(): boolean;
+
+	isFeatured?(): boolean;
 
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;

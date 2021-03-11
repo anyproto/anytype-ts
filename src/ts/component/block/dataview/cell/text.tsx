@@ -20,10 +20,7 @@ class CellText extends React.Component<Props, State> {
 	state = {
 		editing: false,
 	};
-	range: I.TextRange = {
-		from: 0,
-		to: 0,
-	};
+	range: any = null;
 	ref: any = null;
 
 	constructor (props: any) {
@@ -41,7 +38,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit, isInline } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -57,11 +54,18 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = String(record[relation.relationKey] || '');
+		let value: string = String(record[relation.relationKey] || '');
+
+		if (relation.format == I.RelationType.Number) {
+			value = String(parseFloat(value || '0'));
+		};
+
+		if (relation.format == I.RelationType.LongText) {
+			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
+		};
 
 		if (editing) {
 			if (relation.format == I.RelationType.LongText) {
-				value = value.replace(/\n/g, '<br/>');
 				EditorComponent = (item: any) => (
 					<span dangerouslySetInnerHTML={{ __html: value }} />
 				);
@@ -113,8 +117,6 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
-			value = value.replace(/\n/g, '<br/>');
-
 			Name = (item: any) => (
 				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
 			);
@@ -163,7 +165,10 @@ class CellText extends React.Component<Props, State> {
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { DataUtil.objectOpenPopup(record); }} />
+					<Icon className="expand" onClick={(e: any) => { 
+						e.stopPropagation(); 
+						DataUtil.objectOpenPopup(record); 
+					}} />
 				</React.Fragment>
 			);
 		} else 
@@ -183,7 +188,11 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		if (editing) {
-			let value = String(record[relation.relationKey] || '');
+			let value: string = String(record[relation.relationKey] || '');
+
+			if (relation.format == I.RelationType.Number) {
+				value = String(parseFloat(value || '0'));
+			};
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
@@ -194,7 +203,7 @@ class CellText extends React.Component<Props, State> {
 				this.ref.setValue(value);
 
 				if (this.ref.setRange) {
-					this.ref.setRange(this.range);
+					this.ref.setRange(this.range || { from: value.length, to: value.length });
 				};
 			};
 

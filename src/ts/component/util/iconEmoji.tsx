@@ -122,11 +122,8 @@ class IconEmoji extends React.Component<Props, State> {
 		
 		commonStore.menuOpen('smile', { 
 			element: '#' + id,
-			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: offsetY,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (icon: string) => {
 					this.setState({ icon: icon, hash: '' });

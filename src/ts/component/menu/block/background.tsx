@@ -1,16 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
-import { observer } from 'mobx-react';
+import { MenuItemVertical } from 'ts/component';
+import { I, keyboard, Key, DataUtil } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
-@observer
 class MenuBlockBackground extends React.Component<Props, {}> {
 	
 	n: number = 0;

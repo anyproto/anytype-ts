@@ -4,8 +4,23 @@
 	.block.blockFeatured { @include text-paragraph; color: #6c6a5f; white-space: nowrap; padding: 2px 0px 30px 0px; }
 	.block.blockFeatured {
 		.wrapMenu { visibility: hidden; }
-		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: -4px 10px 0px 10px; }
+		.wrap { white-space: normal; }
+
+		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: 0px 10px; }
 		.element { display: inline-block; cursor: pointer; }
-		.iconObject { margin-right: 6px; }
+
+		.cellContent { display: inline; vertical-align: middle; }
+		.cellContent > .wrap { display: inline; }
+		.cellContent.isName .name { display: inline; }
+		.cellContent {
+			.element { margin-bottom: 0px; vertical-align: middle; }
+			.element:last-child { margin-right: 0px; }
+
+			.tagItem { margin-right: 6px; }
+			.tagItem:last-child { margin-right: 0px; }
+
+			.iconObject { vertical-align: middle; margin-right: 6px; }
+			.name { vertical-align: middle; }
+		}
 	}
 }

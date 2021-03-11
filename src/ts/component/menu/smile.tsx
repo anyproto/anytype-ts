@@ -107,7 +107,7 @@ class MenuSmile extends React.Component<Props, State> {
 					</div>
 				) : ''}
 				
-				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} className={!noHead ? 'withHead' : ''} onChange={(e: any) => { this.onKeyUp(e, false); }} />
 				
 				<div className="items">
 					<InfiniteLoader
@@ -342,7 +342,6 @@ class MenuSmile extends React.Component<Props, State> {
 				commonStore.menuOpen('smileSkin', {
 					type: I.MenuType.Horizontal,
 					element: '.menuSmile #item-' + n,
-					offsetX: 0,
 					offsetY: 4,
 					vertical: I.MenuDirection.Top,
 					horizontal: I.MenuDirection.Center,

@@ -200,9 +200,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			element: `#${getId()} #item-relation-type`,
 			offsetX: 224,
 			offsetY: 4,
-			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
 				value: this.format,
@@ -241,9 +239,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			offsetX: 224,
 			offsetY: 4,
 			width: 280,
-			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				value: value,
 				options: options,
@@ -268,9 +264,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			element: '#item-date-settings',
 			offsetX: 224,
 			offsetY: -38,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				commonStore.menuClose('select');
 			},

@@ -143,7 +143,7 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpen(item);
+		DataUtil.objectOpenEvent(e, item);
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
@@ -162,7 +162,7 @@ class MenuObjectValues extends React.Component<Props> {
 		const { data } = param;
 		const node = $('#' + getId());
 
-		if (commonStore.menuIsOpen('dataviewOptionList')) {
+		if (commonStore.menuIsOpen('dataviewObjectList')) {
 			return;
 		};
 
@@ -173,8 +173,6 @@ class MenuObjectValues extends React.Component<Props> {
 				width: 0,
 				offsetX: node.outerWidth(),
 				offsetY: -36,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				noFlipY: true,
 				onClose: () => { close(); },
 				data: {

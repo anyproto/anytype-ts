@@ -116,9 +116,6 @@ class BlockRelation extends React.Component<Props, {}> {
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
 			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				relationKey: '',
 				rootId: rootId,

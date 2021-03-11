@@ -29,14 +29,32 @@ class DbStore {
 	};
 
 	@action
+	objectTypeUpdate (type: any) {
+		const item = this.getObjectType(type.id);
+		set(item, type);
+	};
+
+	@action
 	objectTypesClear () {
 		this.objectTypeMap.clear();
 	};
 
 	@action
 	relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
+		const key = this.getId(rootId, blockId);
+		const relations = this.getRelations(rootId, blockId);
+
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
-		this.relationMap.set(this.getId(rootId, blockId), observable.array(list));
+		for (let item of list) {
+			const check = this.getRelation(rootId, blockId, item.relationKey);
+			if (check) {
+				this.relationUpdate(rootId, blockId, item);
+			} else {
+				relations.push(item);
+			};
+		};
+		
+		this.relationMap.set(key, relations);
 	};
 
 	@action
