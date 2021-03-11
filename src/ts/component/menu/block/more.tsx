@@ -33,7 +33,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { config } = commonStore;
 
 		let sectionPage = null;
-		if (block.isPage() && config.allowDataview) {
+		if (block && block.isPage() && config.allowDataview) {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
