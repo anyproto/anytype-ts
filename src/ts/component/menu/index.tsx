@@ -191,7 +191,7 @@ class Menu extends React.Component<Props, {}> {
 			node.addClass('fromPopup');
 		};
 	};
-	
+
 	componentWillUnmount () {
 		const { param } = this.props;
 		const { isSub } = param;

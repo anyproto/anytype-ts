@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
 import { blockStore, commonStore, dbStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -11,9 +10,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
-const Constant = require('json/constant.json');
 
-@observer
 class MenuBlockMore extends React.Component<Props, {}> {
 	
 	n: number = -1;

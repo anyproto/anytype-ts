@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
-import { observer } from 'mobx-react';
+import { I } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
-@observer
 class MenuButton extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;

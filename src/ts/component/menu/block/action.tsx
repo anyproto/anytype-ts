@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus, Action, translate } from 'ts/lib';
+import { I, C, keyboard, Key, DataUtil, focus, Action, translate } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
-import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 interface State {
@@ -12,8 +11,8 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const SUB_IDS = [ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ];
 
-@observer
 class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
@@ -105,13 +104,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
+		commonStore.menuCloseAll(SUB_IDS);
 	};
 	
 	onFilterFocus (e: any) {
-		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
+		commonStore.menuCloseAll(SUB_IDS);
 		
 		this.focus = true;
 		this.props.setHover();
@@ -414,7 +415,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		commonStore.menuCloseAll([ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ]);
+		commonStore.menuCloseAll(SUB_IDS);
 		
 		if (!item.arrow) {
 			return;
@@ -501,9 +502,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		if (menuId) {
-			this.timeout = window.setTimeout(() => {
-				commonStore.menuOpen(menuId, menuParam);
-			}, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
 	

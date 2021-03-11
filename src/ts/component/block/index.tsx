@@ -360,23 +360,16 @@ class Block extends React.Component<Props, {}> {
 		};
 		
 		const { dataset, rootId, block } = this.props;
-		const { id } = block;
 		const { selection } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
-
-		let ids = DataUtil.selectionGet(id, true, this.props);
-		if (block.isTextTitle()) {
-			ids = DataUtil.selectionGet('', true, this.props);
-		};
 		
 		commonStore.menuOpen('blockAction', { 
-			element: node.find('#button-block-menu-' + id),
+			element: '#button-block-menu-' + block.id,
 			offsetX: 20,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				blockId: id,
-				blockIds: DataUtil.selectionGet(id, true, this.props),
+				blockId: block.id,
+				blockIds: DataUtil.selectionGet(block.id, true, this.props),
 				rootId: rootId,
 				dataset: dataset,
 			},

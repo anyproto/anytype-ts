@@ -1109,8 +1109,9 @@ class EditorPage extends React.Component<Props, {}> {
 								param.content.style = item.key;
 
 								if (param.content.style == I.TextStyle.Code) {
-									const lang = Storage.get('codeLang') || Constant.default.codeLang;
-									param.fields = { lang: lang };
+									param.fields = { 
+										lang: (Storage.get('codeLang') || Constant.default.codeLang),
+									};
 								};
 							};
 
@@ -1125,6 +1126,7 @@ class EditorPage extends React.Component<Props, {}> {
 							if (item.type == I.BlockType.Page) {
 								if (item.key == 'existing') {
 									needClose = false;
+
 									commonStore.menuOpen('searchObject', { 
 										element: '#menuBlockAdd #item-' + item.id,
 										offsetX: obj.width(),
