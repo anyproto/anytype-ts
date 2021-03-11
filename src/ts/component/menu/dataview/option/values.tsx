@@ -163,8 +163,6 @@ class MenuOptionValues extends React.Component<Props> {
 				width: 0,
 				offsetX: node.outerWidth(),
 				offsetY: -36,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				noFlipY: true,
 				passThrough: true,
 				onClose: () => { close(); },
@@ -183,12 +181,9 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 
 		commonStore.menuOpen('dataviewOptionEdit', { 
-			type: I.MenuType.Vertical,
 			element: '#' + getId() + ' #item-' + item.id,
 			offsetX: 288,
-			offsetY: 0,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			passThrough: true,
 			noFlipY: true,
 			data: {

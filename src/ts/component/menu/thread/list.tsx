@@ -134,11 +134,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 		this.timeoutMenu = window.setTimeout(() => {
 			commonStore.menuOpen('threadStatus', {
 				element: '#item-' + id,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 272,
-				offsetY: 0,
 				fixedY: top,
 				className: 'fixed',
 				noDimmer: true,

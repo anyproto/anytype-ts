@@ -91,11 +91,7 @@ class Controls extends React.Component<Props, {}> {
 		
 		commonStore.menuOpen('smile', { 
 			element: '#button-add-icon',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');

@@ -97,12 +97,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 
 		commonStore.menuOpen('relationSuggest', { 
-			type: I.MenuType.Vertical,
 			element: `#${getId()} #item-add`,
 			offsetX: 256,
 			offsetY: 4,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
 				menuIdEdit: 'dataviewRelationEdit',
@@ -128,11 +126,8 @@ class MenuRelationList extends React.Component<Props, {}> {
 		};
 		
 		commonStore.menuOpen('dataviewRelationEdit', { 
-			type: I.MenuType.Vertical,
 			element: `#${getId()} #item-${id}`,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,

@@ -124,10 +124,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		let menuId = '';
 		let menuParam = {
 			element: '#button-' + blockId + '-' + type,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 15,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onClose: () => {
 				keyboard.disableContext(false);
@@ -188,8 +185,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				menuParam = Object.assign(menuParam, {
 					type: I.MenuType.Horizontal,
 					element: node,
-					offsetX: 0,
-					offsetY: 0,
 					fixedX: offset.left,
 					fixedY: offset.top,
 					vertical: I.MenuDirection.Top,

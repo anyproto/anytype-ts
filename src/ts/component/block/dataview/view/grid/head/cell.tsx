@@ -54,11 +54,8 @@ class HeadCell extends React.Component<Props, {}> {
 		};
 
 		commonStore.menuOpen('dataviewRelationEdit', { 
-			type: I.MenuType.Vertical,
 			element: '#' + DataUtil.cellId('head', relationKey, ''),
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				getData: getData,

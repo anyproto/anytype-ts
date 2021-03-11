@@ -175,10 +175,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		this.menuOpen('dataviewRelationType', { 
 			element: '#item-relation-type',
 			offsetX: 224,
-			offsetY: 0,
-			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				value: this.format,
 				onSelect: (item: any) => {
@@ -216,9 +213,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			offsetX: 224,
 			offsetY: 4,
 			width: 280,
-			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				value: value,
 				options: options,
@@ -262,9 +257,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				element: '#item-date-settings',
 				offsetX: 224,
 				offsetY: -38,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				onClose: () => {
 					commonStore.menuClose('select');
 				},

@@ -147,8 +147,6 @@ class LinkPreview extends React.Component<Props, {}> {
 		commonStore.menuOpen('blockLink', {
 			type: I.MenuType.Horizontal,
 			element: linkPreview.element,
-			offsetX: 0,
-			offsetY: 0,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			data: {

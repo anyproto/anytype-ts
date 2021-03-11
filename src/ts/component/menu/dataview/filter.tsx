@@ -554,10 +554,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	onCalendar (id: number, value: number) {
 		commonStore.menuOpen('dataviewCalendar', {
 			element: `#menuDataviewFilter #item-${id}-value`,
-			offsetX: 0,
 			offsetY: 4,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				window.setTimeout(() => { this.refObj[id].focus(); }, 200);
@@ -583,11 +580,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		window.setTimeout(() => {
 			commonStore.menuOpen('dataviewOptionValues', { 
 				element: '#' + getId() + ' #' + id,
-				offsetX: 0,
 				offsetY: 4,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				className: 'fromFilter',
 				data: { 
 					rootId: rootId,
@@ -615,11 +608,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		window.setTimeout(() => {
 			commonStore.menuOpen('dataviewObjectValues', { 
 				element: '#' + getId() + ' #' + id,
-				offsetX: 0,
 				offsetY: 4,
-				type: I.MenuType.Vertical,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				className: 'fromFilter',
 				data: { 
 					rootId: rootId,

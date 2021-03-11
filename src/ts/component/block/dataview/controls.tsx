@@ -125,10 +125,7 @@ class Controls extends React.Component<Props, State> {
 
 		commonStore.menuOpen(menu, { 
 			element: '#item-button-' + id,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				readOnly: readOnly,
@@ -159,11 +156,8 @@ class Controls extends React.Component<Props, State> {
 			};
 
 			commonStore.menuOpen('dataviewViewEdit', {
-				type: I.MenuType.Vertical,
 				element: '#button-view-add',
-				offsetX: 0,
 				offsetY: 4,
-				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Center,
 				data: {
 					rootId: rootId,

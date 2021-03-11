@@ -299,11 +299,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				close = false;
 				commonStore.menuOpen('searchObject', { 
 					element: `#${getId()} #item-${item.id}`,
-					type: I.MenuType.Vertical,
 					offsetX: node.outerWidth(),
 					offsetY: -36,
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Left,
 					data: { 
 						type: I.NavigationType.Move, 
 						rootId: rootId,
@@ -380,8 +377,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			element: '#item-object-layout',
 			offsetX: 256,
 			offsetY: -36,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: DataUtil.menuTurnLayouts(),
@@ -421,8 +416,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			element: '#item-object-type',
 			offsetX: 208,
 			offsetY: -36,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				options: options,

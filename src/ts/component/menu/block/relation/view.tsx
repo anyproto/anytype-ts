@@ -216,12 +216,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		commonStore.menuOpen('relationSuggest', { 
-			type: I.MenuType.Vertical,
 			element: $(e.currentTarget),
 			offsetX: 32,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				...data,
 				filter: '',
@@ -242,11 +239,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { data } = param;
 		
 		commonStore.menuOpen('blockRelationEdit', { 
-			type: I.MenuType.Vertical,
 			element: `#${getId()} #item-${relationKey}`,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,

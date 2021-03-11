@@ -681,11 +681,8 @@ class BlockText extends React.Component<Props, {}> {
 		commonStore.menuOpen('blockMention', {
 			element: el,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			type: I.MenuType.Vertical,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				this.preventSaveOnBlur = false;
 			},
@@ -727,11 +724,8 @@ class BlockText extends React.Component<Props, {}> {
 		commonStore.menuOpen('smile', {
 			element: '#block-' + block.id,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			type: I.MenuType.Vertical,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				noHead: true,
 				rootId: rootId,
@@ -899,7 +893,6 @@ class BlockText extends React.Component<Props, {}> {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				type: I.MenuType.Horizontal,
-				offsetX: 0,
 				offsetY: -4,
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,

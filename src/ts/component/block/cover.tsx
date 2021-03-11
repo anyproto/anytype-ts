@@ -164,11 +164,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		commonStore.menuOpen('smile', { 
 			element: '#cover-button-add-icon',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 17,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
@@ -209,10 +205,7 @@ class BlockCover extends React.Component<Props, State> {
 		focus.clear(true);
 		commonStore.menuOpen('blockCover', {
 			element: '#cover-button-edit-cover',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 17,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,

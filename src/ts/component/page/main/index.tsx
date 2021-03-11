@@ -128,11 +128,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onAccount () {
 		commonStore.menuOpen('account', {
-			type: I.MenuType.Vertical, 
 			element: '#button-account',
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right
 		});
 	};
@@ -183,10 +180,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		commonStore.menuOpen('select', { 
 			element: '#button-add',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			width: width,
 			data: {
@@ -205,11 +199,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 					if (item.id == 'link') {
 						commonStore.menuOpen('searchObject', { 
 							element: '#menuSelect #item-link',
-							type: I.MenuType.Vertical,
 							offsetX: width,
 							offsetY: -36,
-							vertical: I.MenuDirection.Bottom,
-							horizontal: I.MenuDirection.Left,
 							data: { 
 								type: I.NavigationType.Link, 
 								rootId: root,
@@ -242,10 +233,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		commonStore.menuOpen('blockMore', { 
 			element: '#button-' + item.id + '-more',
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 8,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
 			data: {

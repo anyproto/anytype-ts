@@ -26,9 +26,7 @@ class FooterAuth extends React.Component<Props, {}> {
 
 	onHelp () {
 		commonStore.menuOpen('help', {
-			type: I.MenuType.Vertical, 
 			element: '#button-help',
-			offsetX: 0,
 			offsetY: 4,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right

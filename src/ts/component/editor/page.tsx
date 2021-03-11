@@ -529,7 +529,6 @@ class EditorPage extends React.Component<Props, {}> {
 					commonStore.menuOpen('blockLink', {
 						type: I.MenuType.Horizontal,
 						element: '#block-' + ids[0],
-						offsetX: 0,
 						offsetY: -4,
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
@@ -558,11 +557,7 @@ class EditorPage extends React.Component<Props, {}> {
 				window.setTimeout(() => {
 					commonStore.menuOpen('blockAction', { 
 						element: '#block-' + ids[0],
-						type: I.MenuType.Vertical,
 						offsetX: Constant.size.blockMenu,
-						offsetY: 0,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
 						data: {
 							blockId: ids[0],
 							blockIds: ids,
@@ -715,11 +710,7 @@ class EditorPage extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
-					type: I.MenuType.Vertical,
 					offsetX: Constant.size.blockMenu,
-					offsetY: 0,
-					vertical: I.MenuDirection.Bottom,
-					horizontal: I.MenuDirection.Left,
 					data: {
 						blockId: focused,
 						blockIds: DataUtil.selectionGet(focused, true, this.props),
@@ -782,7 +773,6 @@ class EditorPage extends React.Component<Props, {}> {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 							type: I.MenuType.Horizontal,
-							offsetX: 0,
 							offsetY: -4,
 							vertical: I.MenuDirection.Top,
 							horizontal: I.MenuDirection.Center,
@@ -1040,11 +1030,8 @@ class EditorPage extends React.Component<Props, {}> {
 		commonStore.menuOpen('blockAdd', { 
 			element: el,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			type: I.MenuType.Vertical,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
@@ -1085,11 +1072,8 @@ class EditorPage extends React.Component<Props, {}> {
 
 									commonStore.menuOpen('searchObject', { 
 										element: '#menuBlockAdd #item-' + item.id,
-										type: I.MenuType.Vertical,
 										offsetX: obj.width(),
 										offsetY: -36,
-										vertical: I.MenuDirection.Bottom,
-										horizontal: I.MenuDirection.Left,
 										data: { 
 											type: I.NavigationType.Move, 
 											rootId: rootId,
@@ -1146,11 +1130,8 @@ class EditorPage extends React.Component<Props, {}> {
 									needClose = false;
 									commonStore.menuOpen('searchObject', { 
 										element: '#menuBlockAdd #item-' + item.id,
-										type: I.MenuType.Vertical,
 										offsetX: obj.width(),
 										offsetY: -64,
-										vertical: I.MenuDirection.Bottom,
-										horizontal: I.MenuDirection.Left,
 										data: { 
 											type: I.NavigationType.Link, 
 											rootId: rootId,
@@ -1364,11 +1345,8 @@ class EditorPage extends React.Component<Props, {}> {
 		if (url && !force) {
 			commonStore.menuOpen('select', { 
 				element: '#block-' + focused,
-				type: I.MenuType.Vertical,
 				offsetX: Constant.size.blockMenu,
 				offsetY: 4,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				onOpen: () => {
 					if (block) {
 						focus.set(block.id, { from: currentFrom, to: currentTo });
@@ -1463,9 +1441,7 @@ class EditorPage extends React.Component<Props, {}> {
 			commonStore.menuOpen('searchText', {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
-				vertical: I.MenuDirection.Bottom,
 				horizontal: I.MenuDirection.Right,
-				offsetX: 0,
 				offsetY: 8,
 				data: {
 					container: node,

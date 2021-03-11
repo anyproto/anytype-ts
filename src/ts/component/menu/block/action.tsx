@@ -425,11 +425,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
-			type: I.MenuType.Vertical,
 			offsetX: offsetX,
 			offsetY: offsetY,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			isSub: true,
 			passThrough: true,
 			data: {
@@ -538,11 +535,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				window.setTimeout(() => {
 					commonStore.menuOpen('searchObject', { 
 						element: `#${getId()} #item-${item.id}`,
-						type: I.MenuType.Vertical,
 						offsetX: node.outerWidth(),
 						offsetY: -36,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Left,
 						data: { 
 							type: I.NavigationType.Move, 
 							rootId: rootId,

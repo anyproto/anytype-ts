@@ -230,12 +230,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 
 		if (item.id == 'add') {
 			commonStore.menuOpen('blockRelationEdit', { 
-				type: I.MenuType.Vertical,
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: 0,
-				offsetY: 0,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Left,
 				data: {
 					...data,
 					addCommand: (rootId: string, blockId: string, relation: any) => {

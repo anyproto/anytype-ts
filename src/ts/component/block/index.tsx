@@ -371,9 +371,7 @@ class Block extends React.Component<Props, {}> {
 		
 		commonStore.menuOpen('blockAction', { 
 			element: node.find('#button-block-menu-' + id),
-			type: I.MenuType.Vertical,
 			offsetX: 20,
-			offsetY: 0,
 			vertical: I.MenuDirection.Center,
 			horizontal: I.MenuDirection.Right,
 			data: {

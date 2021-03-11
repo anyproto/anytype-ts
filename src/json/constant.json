@@ -54,7 +54,7 @@
 
 	"cellMenuIds": [ 
 		"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar"
+		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
 	],
 
 	"featuredRelations": [ "type", "creator" ],

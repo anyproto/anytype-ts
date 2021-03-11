@@ -77,9 +77,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 			element: '#item-object-layout',
 			offsetX: 224,
 			offsetY: 4,
-			type: I.MenuType.Vertical,
 			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				options: DataUtil.menuTurnLayouts(),
 				value: layout,

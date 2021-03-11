@@ -109,10 +109,7 @@ class Select extends React.Component<Props, State> {
 		
 		commonStore.menuOpen('select', { 
 			element: '#select-' + id,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: horizontal,
 			className: String(menuClassName || ''),
 			width: menuWidth,

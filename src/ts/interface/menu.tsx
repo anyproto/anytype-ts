@@ -4,13 +4,13 @@ export enum MenuDirection { Top = 1, Bottom, Left, Right, Center };
 export interface MenuParam {
 	element?: any;
 	rect?: any;
-	type: MenuType;
-	vertical: MenuDirection;
-	horizontal: MenuDirection;
+	type?: MenuType;
+	vertical?: MenuDirection;
+	horizontal?: MenuDirection;
 	fixedX?: number;
 	fixedY?: number;
-	offsetX: number;
-	offsetY: number;
+	offsetX?: number;
+	offsetY?: number;
 	width?: number;
 	data?: any;
 	isSub?: boolean;

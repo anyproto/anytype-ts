@@ -121,10 +121,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: rootId,
@@ -175,14 +171,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
-		const { isPopup, match, rootId } = this.props;
-
+		const { isPopup, rootId } = this.props;
 		const param: any = {
-			type: I.MenuType.Vertical, 
 			element: `${this.getContainer()} #button-header-sync`,
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: rootId,
@@ -253,10 +244,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		const param: any = {
 			element: `${this.getContainer()} #button-header-relation`,
-			type: I.MenuType.Vertical,
-			offsetX: 0,
-			offsetY: 0,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			onClose: () => {

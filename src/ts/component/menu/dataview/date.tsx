@@ -229,8 +229,6 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			element: '#item-' + item.id,
 			offsetX: 208,
 			offsetY: -38,
-			type: I.MenuType.Vertical,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				value: value.name,

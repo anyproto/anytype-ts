@@ -292,12 +292,9 @@ class PageMainType extends React.Component<Props, {}> {
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		commonStore.menuOpen('relationSuggest', { 
-			type: I.MenuType.Vertical,
 			element: $(e.currentTarget),
 			offsetX: 32,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Left,
 			data: {
 				filter: '',
 				rootId: rootId,
@@ -317,11 +314,8 @@ class PageMainType extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 		
 		commonStore.menuOpen('blockRelationEdit', { 
-			type: I.MenuType.Vertical,
 			element: $(e.currentTarget),
-			offsetX: 0,
 			offsetY: 4,
-			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
