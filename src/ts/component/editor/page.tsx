@@ -553,8 +553,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 			// Open action menu
 			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-				commonStore.menuClose('blockContext');
-				window.setTimeout(() => {
+				commonStore.menuClose('blockContext', () => {
 					commonStore.menuOpen('blockAction', { 
 						element: '#block-' + ids[0],
 						offsetX: Constant.size.blockMenu,
@@ -569,7 +568,7 @@ class EditorPage extends React.Component<Props, {}> {
 							focus.apply();
 						}
 					});
-				}, Constant.delay.menu);
+				});
 			});
 		};
 
@@ -706,8 +705,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Open action menu
 		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-			commonStore.menuClose('blockContext');
-			window.setTimeout(() => {
+			commonStore.menuClose('blockContext', () => {
 				commonStore.menuOpen('blockAction', { 
 					element: '#block-' + focused,
 					offsetX: Constant.size.blockMenu,
@@ -723,7 +721,7 @@ class EditorPage extends React.Component<Props, {}> {
 						focus.apply();
 					}
 				});
-			}, Constant.delay.menu);
+			});
 		});
 
 		// Mark-up
@@ -767,8 +765,7 @@ class EditorPage extends React.Component<Props, {}> {
 						rect = null;
 					};
 
-					commonStore.menuClose('blockContext');
-					window.setTimeout(() => {
+					commonStore.menuClose('blockContext', () => {
 						commonStore.menuOpen('blockLink', {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
@@ -786,7 +783,7 @@ class EditorPage extends React.Component<Props, {}> {
 								}
 							}
 						});
-					}, Constant.delay.menu);
+					});
 				} else {
 					marks = Mark.toggle(marks, { type: type, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {

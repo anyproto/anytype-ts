@@ -146,6 +146,7 @@ class Page extends React.Component<Props, {}> {
 			if (isMainIndex) {
 				if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 					Storage.delete('askSurvey');
+
 					commonStore.popupOpen('confirm', {
 						data: {
 							title: 'We need your opinion',
