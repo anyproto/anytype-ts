@@ -167,12 +167,10 @@ class MenuObjectValues extends React.Component<Props> {
 
 		window.setTimeout(() => {
 			menuStore.open('dataviewObjectList', {
-				...param,
 				element: `#${getId()} #item-add`,
 				width: 0,
-				offsetX: param.width - 6,
+				offsetX: param.width,
 				offsetY: -36,
-				noFlipY: true,
 				onClose: () => { close(); },
 				data: {
 					...data,
