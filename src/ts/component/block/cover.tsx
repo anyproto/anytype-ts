@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Drag, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -162,7 +162,7 @@ class BlockCover extends React.Component<Props, State> {
 	onAddIconPage () {
 		const { rootId } = this.props;
 		
-		commonStore.menuOpen('smile', { 
+		menuStore.open('smile', { 
 			element: '#cover-button-add-icon',
 			offsetY: 17,
 			data: {
@@ -203,7 +203,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		
 		focus.clear(true);
-		commonStore.menuOpen('blockCover', {
+		menuStore.open('blockCover', {
 			element: '#cover-button-edit-cover',
 			offsetY: 17,
 			horizontal: I.MenuDirection.Center,

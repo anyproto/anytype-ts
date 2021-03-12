@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, MenuItemVertical } from 'ts/component';
-import { I, Util, DataUtil, translate } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, Util, translate } from 'ts/lib';
+import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { C } from 'ts/lib';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -123,7 +123,7 @@ class Controls extends React.Component<Props, State> {
 	onButton (e: any, id: string, menu: string) {
 		const { rootId, block, readOnly, getData, getView } = this.props;
 
-		commonStore.menuOpen(menu, { 
+		menuStore.open(menu, { 
 			element: '#item-button-' + id,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Right,
@@ -155,7 +155,7 @@ class Controls extends React.Component<Props, State> {
 				return;
 			};
 
-			commonStore.menuOpen('dataviewViewEdit', {
+			menuStore.open('dataviewViewEdit', {
 				element: '#button-view-add',
 				offsetY: 4,
 				horizontal: I.MenuDirection.Center,

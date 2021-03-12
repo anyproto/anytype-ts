@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
-	history: any;
+	history: any; 
 };
 
 const Constant = require('json/constant.json');
@@ -41,7 +41,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const objectType = dbStore.getObjectType(type);
 
 		let ccn = [ 'item' ];
-		if (commonStore.menuIsOpen('dataviewRelationType')) {
+		if (menuStore.isOpen('dataviewRelationType')) {
 			ccn.push('active');
 		};
 		if (relation) {
@@ -265,17 +265,17 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			offsetX: 224,
 			offsetY: -38,
 			onClose: () => {
-				commonStore.menuClose('select');
+				menuStore.close('select');
 			},
 			data: data
 		});
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
-		commonStore.menuCloseAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
+		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { commonStore.menuOpen(id, param); }, Constant.delay.menu);
+		this.timeout = window.setTimeout(() => { menuStore.open(id, param); }, Constant.delay.menu);
 	};
 
 	onOpen (e: any) {

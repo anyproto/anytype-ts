@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, DataUtil, Util } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -306,11 +306,11 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			commonStore.menuCloseAll(Constant.cellMenuIds);
+			menuStore.closeAll(Constant.cellMenuIds);
 			window.setTimeout(() => {
-				commonStore.menuOpen(menuId, param); 
-				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(Constant.cellMenuIds); });
-				win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(Constant.cellMenuIds); });
+				menuStore.open(menuId, param); 
+				$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.cellMenuIds); });
+				win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.cellMenuIds); });
 			}, 1);
 		} else {
 			setOn();

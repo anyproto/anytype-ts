@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -89,7 +89,7 @@ class Controls extends React.Component<Props, {}> {
 	onAddIconPage () {
 		const { rootId } = this.props;
 		
-		commonStore.menuOpen('smile', { 
+		menuStore.open('smile', { 
 			element: '#button-add-icon',
 			offsetY: 4,
 			data: {

@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Select } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore, dbStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -154,7 +154,7 @@ class MenuSort extends React.Component<Props, {}> {
 		view.sorts = view.sorts.filter((item: any, i: number) => { return i != id; });
 		this.save();
 
-		commonStore.menuClose('select');
+		menuStore.close('select');
 	};
 	
 	onSortEnd (result: any) {

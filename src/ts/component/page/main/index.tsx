@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { commonStore, blockStore} from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -127,7 +127,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAccount () {
-		commonStore.menuOpen('account', {
+		menuStore.open('account', {
 			element: '#button-account',
 			offsetY: 4,
 			horizontal: I.MenuDirection.Right
@@ -175,10 +175,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 
 		const close = () => {
-			commonStore.menuClose('select');
+			menuStore.close('select');
 		};
 
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#button-add',
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
@@ -197,7 +197,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					};
 
 					if (item.id == 'link') {
-						commonStore.menuOpen('searchObject', { 
+						menuStore.open('searchObject', { 
 							element: '#menuSelect #item-link',
 							offsetX: width,
 							offsetY: -36,
@@ -231,7 +231,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const node = $(ReactDOM.findDOMNode(this));
 
-		commonStore.menuOpen('blockMore', { 
+		menuStore.open('blockMore', { 
 			element: '#button-' + item.id + '-more',
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,

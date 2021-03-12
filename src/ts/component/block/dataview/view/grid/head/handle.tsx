@@ -3,7 +3,7 @@ import { I, DataUtil } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 
 interface Props extends I.Relation {
 	onClick?: (e: any) => void;
@@ -35,7 +35,7 @@ class HeadHandle extends React.Component<Props, {}> {
 
 	onMouseDown (e: any) {
 		$('.cell.isEditing').removeClass('isEditing');
-		commonStore.menuCloseAll();
+		menuStore.closeAll();
 	};
 
 };

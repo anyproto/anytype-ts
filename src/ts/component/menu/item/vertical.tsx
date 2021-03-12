@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
@@ -31,7 +31,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		if (isActive) {
 			cn.push('active');
 		};
-		if (menuId && commonStore.menuIsOpen(menuId)) {
+		if (menuId && menuStore.isOpen(menuId)) {
 			cn.push('active');
 		};
 

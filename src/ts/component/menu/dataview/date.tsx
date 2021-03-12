@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, Key, keyboard, Util, DataUtil } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -225,7 +225,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const options = this.getOptions(item.key);
 		const value = options.find((it: any) => { return it.id == relation[item.key]; }) || options[0];
 
-		commonStore.menuOpen('select', {
+		menuStore.open('select', {
 			element: '#item-' + item.id,
 			offsetX: 208,
 			offsetY: -38,

@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
@@ -291,7 +291,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 		const relations = dbStore.getRelations(rootId, rootId);
 
-		commonStore.menuOpen('relationSuggest', { 
+		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),
 			offsetX: 32,
 			offsetY: 4,
@@ -304,7 +304,7 @@ class PageMainType extends React.Component<Props, {}> {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { commonStore.menuClose('relationSuggest'); });
+					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
 				},
 			}
 		});
@@ -313,7 +313,7 @@ class PageMainType extends React.Component<Props, {}> {
 	onEdit (e: any, relationKey: string) {
 		const rootId = this.getRootId();
 		
-		commonStore.menuOpen('blockRelationEdit', { 
+		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,

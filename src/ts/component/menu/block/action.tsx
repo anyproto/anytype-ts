@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, DataUtil, focus, Action, translate } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -108,11 +108,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
-		commonStore.menuCloseAll(SUB_IDS);
+		menuStore.closeAll(SUB_IDS);
 	};
 	
 	onFilterFocus (e: any) {
-		commonStore.menuCloseAll(SUB_IDS);
+		menuStore.closeAll(SUB_IDS);
 		
 		this.focus = true;
 		this.props.setHover();
@@ -403,19 +403,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.setActive(item, false);
 		window.clearTimeout(this.timeout);
 		
-		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
+		if ((item.id == 'turn') && menuStore.isOpen('blockStyle')) {
 			return;
 		};
 		
-		if ((item.id == 'color') && commonStore.menuIsOpen('blockColor')) {
+		if ((item.id == 'color') && menuStore.isOpen('blockColor')) {
 			return;
 		};
 		
-		if ((item.id == 'background') && commonStore.menuIsOpen('blockBackground')) {
+		if ((item.id == 'background') && menuStore.isOpen('blockBackground')) {
 			return;
 		};
 		
-		commonStore.menuCloseAll(SUB_IDS);
+		menuStore.closeAll(SUB_IDS);
 		
 		if (!item.arrow) {
 			return;
@@ -502,7 +502,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		if (menuId) {
-			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
 	
@@ -532,7 +532,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'move':
 				close = false;
 				window.setTimeout(() => {
-					commonStore.menuOpen('searchObject', { 
+					menuStore.open('searchObject', { 
 						element: `#${getId()} #item-${item.id}`,
 						offsetX: node.outerWidth(),
 						offsetY: -36,

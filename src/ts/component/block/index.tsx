@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { I, C, DataUtil, keyboard, focus, Storage, translate } from 'ts/lib';
 import { DropTarget, ListChildren, Icon } from 'ts/component';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore } from 'ts/store';
+import { menuStore, blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -362,7 +362,7 @@ class Block extends React.Component<Props, {}> {
 		const { dataset, rootId, block } = this.props;
 		const { selection } = dataset || {};
 		
-		commonStore.menuOpen('blockAction', { 
+		menuStore.open('blockAction', { 
 			element: '#button-block-menu-' + block.id,
 			offsetX: 20,
 			vertical: I.MenuDirection.Center,

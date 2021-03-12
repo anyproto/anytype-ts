@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon, Cell } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import 'react-virtualized/styles.css';
 
@@ -215,7 +215,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
 
-		commonStore.menuOpen('relationSuggest', { 
+		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),
 			offsetX: 32,
 			offsetY: 4,
@@ -228,7 +228,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { commonStore.menuClose('relationSuggest'); });
+					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
 				},
 			}
 		});
@@ -238,7 +238,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param, getId } = this.props;
 		const { data } = param;
 		
-		commonStore.menuOpen('blockRelationEdit', { 
+		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, keyboard, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -170,7 +170,7 @@ class Menu extends React.Component<Props, {}> {
 					</div>
 				</div>
 				{!noDimmer ? (
-					<Dimmer onClick={() => { commonStore.menuClose(id); }} className={cd.join(' ')} />
+					<Dimmer onClick={() => { menuStore.close(id); }} className={cd.join(' ')} />
 				) : ''}
 			</div>
 		);
@@ -375,7 +375,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	close () {
-		commonStore.menuClose(this.props.id);
+		menuStore.close(this.props.id);
 	};
 	
 	onMouseLeave (e: any) {

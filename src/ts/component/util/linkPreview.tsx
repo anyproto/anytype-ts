@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 import { Icon, Loader } from 'ts/component';
 import { observer } from 'mobx-react';
 import { I, C, Mark, Util, translate } from 'ts/lib';
@@ -144,7 +144,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		let { marks, range, onChange } = linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
 		
-		commonStore.menuOpen('blockLink', {
+		menuStore.open('blockLink', {
 			type: I.MenuType.Horizontal,
 			element: linkPreview.element,
 			vertical: I.MenuDirection.Top,

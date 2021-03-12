@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 
 interface Props {
 	id?: string;
@@ -50,7 +50,7 @@ class Icon extends React.Component<Props, {}> {
 		if (className) {
 			cn.push(className);
 		};
-		if (menuId && commonStore.menuIsOpen(menuId)) {
+		if (menuId && menuStore.isOpen(menuId)) {
 			cn.push('active');
 		};
 		

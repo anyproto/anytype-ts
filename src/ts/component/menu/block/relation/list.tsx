@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon, Cell } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -229,7 +229,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		const { onSelect } = data;
 
 		if (item.id == 'add') {
-			commonStore.menuOpen('blockRelationEdit', { 
+			menuStore.open('blockRelationEdit', { 
 				element: `#${getId()} #item-${item.id}`,
 				data: {
 					...data,

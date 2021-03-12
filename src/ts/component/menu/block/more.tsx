@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore, dbStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -294,7 +294,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			
 			case 'move':
 				close = false;
-				commonStore.menuOpen('searchObject', { 
+				menuStore.open('searchObject', { 
 					element: `#${getId()} #item-${item.id}`,
 					offsetX: node.outerWidth(),
 					offsetY: -36,
@@ -370,7 +370,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#item-object-layout',
 			offsetX: 256,
 			offsetY: -36,
@@ -409,9 +409,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return 0;
 		});
 
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#item-object-type',
-			offsetX: 208,
+			offsetX: 256,
 			offsetY: -36,
 			horizontal: I.MenuDirection.Right,
 			data: {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
@@ -239,7 +239,7 @@ class CellText extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			commonStore.menuCloseAll(Constant.cellMenuIds);
+			menuStore.closeAll(Constant.cellMenuIds);
 			this.setState({ editing: false });
 
 			if (onChange) {
@@ -250,17 +250,13 @@ class CellText extends React.Component<Props, State> {
 
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == MENU_ID; });
 
 		value = Util.parseDate(String(value || '').replace(/_/g, ''));
-		menu.param.data.value = value;
-
-		commonStore.menuUpdate(MENU_ID, menu.param);
+		menuStore.updateData(MENU_ID, { value: value });
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
-			commonStore.menuClose(MENU_ID);
+			menuStore.close(MENU_ID);
 
 			if (onChange) {
 				onChange(value);
@@ -281,7 +277,7 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		keyboard.setFocus(false);
-		if (!commonStore.menuIsOpen(MENU_ID)) {
+		if (!menuStore.isOpen(MENU_ID)) {
 			this.setState({ editing: false });
 		};
 

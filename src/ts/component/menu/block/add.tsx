@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, keyboard, Key, C, focus, Action, SmileUtil, Util, DataUtil, Storage, translate } from 'ts/lib';
-import { blockStore, commonStore, dbStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -321,7 +321,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					case 'move':
 						needClose = false;
 
-						commonStore.menuOpen('searchObject', { 
+						menuStore.open('searchObject', { 
 							element: `#${getId()} #item-${item.id}`,
 							offsetX: obj.width(),
 							offsetY: -36,
@@ -375,7 +375,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					if (item.key == 'existing') {
 						needClose = false;
 
-						commonStore.menuOpen('searchObject', { 
+						menuStore.open('searchObject', { 
 							element: `#${getId()} #item-${item.id}`,
 							offsetX: obj.width(),
 							offsetY: -64,

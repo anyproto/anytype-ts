@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, C, Mark, Util, DataUtil, focus, keyboard } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -180,7 +180,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			case I.MarkType.Link:
 				const offset = obj.offset();
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-				commonStore.menuClose(this.props.id);
+				menuStore.close(this.props.id);
 
 				menuParam = Object.assign(menuParam, {
 					type: I.MenuType.Horizontal,
@@ -240,8 +240,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				break;
 		};
 
-		if (menuId && !commonStore.menuIsOpen(menuId)) {
-			commonStore.menuCloseAll([ 
+		if (menuId && !menuStore.isOpen(menuId)) {
+			menuStore.closeAll([ 
 				'select',
 				'blockStyle', 
 				'blockMore',
@@ -252,7 +252,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 
 			keyboard.disableContext(true);
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
 	

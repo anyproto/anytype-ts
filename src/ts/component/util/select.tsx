@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 
 interface Props {
 	id: string;
@@ -107,7 +107,7 @@ class Select extends React.Component<Props, State> {
 		const { id, horizontal, menuClassName, onChange, menuWidth } = this.props;
 		const { value, options } = this.state;
 		
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#select-' + id,
 			offsetY: 4,
 			horizontal: horizontal,
@@ -137,7 +137,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	hide () {
-		commonStore.menuClose('select');
+		menuStore.close('select');
 	};
 	
 };

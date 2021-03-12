@@ -1,5 +1,5 @@
 import { I, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
-import { commonStore, authStore, blockStore } from 'ts/store';
+import { commonStore, authStore, blockStore, menuStore } from 'ts/store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
@@ -64,7 +64,7 @@ class Keyboard {
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
 			commonStore.popupCloseAll();
-			commonStore.menuCloseAll();
+			menuStore.closeAll();
 			Util.linkPreviewHide(false);
 		});
 

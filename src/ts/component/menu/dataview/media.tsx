@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, InputWithFile } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {};
@@ -153,15 +153,9 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == id; });
 
 		onChange(value);
-
-		if (menu) {
-			menu.param.data.value = value;
-			commonStore.menuUpdate(id, menu.param);
-		};
+		menuStore.updateData(id, { value: value });
 	};
 
 };

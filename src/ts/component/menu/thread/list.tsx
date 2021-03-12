@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, IconObject } from 'ts/component';
-import { authStore, commonStore } from 'ts/store';
+import { authStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil, translate, Util } from 'ts/lib';
 
@@ -84,8 +84,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 			clear();
 			this.timeoutClose = window.setTimeout(() => {
 				clear();
-				commonStore.menuClose(this.props.id);
-				commonStore.menuClose('threadStatus');
+				menuStore.close(this.props.id);
+				menuStore.close('threadStatus');
 			}, 1000);
 		};
 
@@ -115,8 +115,8 @@ class MenuThreadList extends React.Component<Props, {}> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { menus } = commonStore;
-		const menu = menus.find((it: I.Menu) => { return it.id == 'threadStatus'; });
+		const { list } = menuStore;
+		const menu = list.find((it: I.Menu) => { return it.id == 'threadStatus'; });
 
 		if (menu && (menu.param.data.accountId == id)) {
 			return;
@@ -132,7 +132,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutMenu);
 		this.timeoutMenu = window.setTimeout(() => {
-			commonStore.menuOpen('threadStatus', {
+			menuStore.open('threadStatus', {
 				element: '#item-' + id,
 				horizontal: I.MenuDirection.Right,
 				offsetX: 272,

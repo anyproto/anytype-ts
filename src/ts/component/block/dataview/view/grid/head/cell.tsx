@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, DataUtil, keyboard } from 'ts/lib';
 import { SortableElement } from 'react-sortable-hoc';
-import { commonStore, dbStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Handle from './handle';
@@ -53,7 +53,7 @@ class HeadCell extends React.Component<Props, {}> {
 			return;
 		};
 
-		commonStore.menuOpen('dataviewRelationEdit', { 
+		menuStore.open('dataviewRelationEdit', { 
 			element: '#' + DataUtil.cellId('head', relationKey, ''),
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,

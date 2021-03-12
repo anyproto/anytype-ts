@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'ts/component';
 import { I, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 
 interface Props {};
 
@@ -25,7 +25,7 @@ class FooterAuth extends React.Component<Props, {}> {
 	};
 
 	onHelp () {
-		commonStore.menuOpen('help', {
+		menuStore.open('help', {
 			element: '#button-help',
 			offsetY: 4,
 			vertical: I.MenuDirection.Top,
