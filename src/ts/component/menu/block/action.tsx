@@ -81,7 +81,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		this._isMounted = true;
 		this.rebind();
-		this.setActive();
 
 		window.setTimeout(() => {
 			if (this.ref) {
