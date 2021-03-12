@@ -185,7 +185,7 @@ class Menu extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		win.on('resize.' + this.getId(), () => { this.position(); });
+		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
 
 		if (commonStore.popupIsOpen()) {
 			node.addClass('fromPopup');
@@ -205,7 +205,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.' + this.getId());
+		$(window).unbind('resizeMenu.' + this.getId());
 	};
 	
 	animate () {
@@ -226,7 +226,7 @@ class Menu extends React.Component<Props, {}> {
 		const { id, param } = this.props;
 		const { element, rect, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
 		const platform = Util.getPlatform();
-		
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;

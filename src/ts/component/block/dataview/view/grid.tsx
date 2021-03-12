@@ -32,6 +32,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const { list } = menuStore;
 
 		let pager = null;
 		if (total && data.length) {
@@ -90,6 +91,7 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		this.bind();
 		this.resize();
+		this.onScroll();
 
 		win.trigger('resize.editor');
 	};
@@ -99,16 +101,10 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	bind () {
-		const { list } = menuStore;
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
-		scroll.unbind('.scroll').scroll(() => {
-			for (let menu of list) {
-				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
-			};
-		});
+		scroll.unbind('.scroll').scroll(this.onScroll);
 	};
 
 	unbind () {
@@ -116,6 +112,15 @@ class ViewGrid extends React.Component<Props, {}> {
 		const scroll = node.find('.scroll');
 
 		scroll.unbind('.scroll');
+	};
+
+	onScroll () {
+		const win = $(window);
+		const { list } = menuStore;
+
+		for (let menu of list) {
+			win.trigger('resizeMenu.' + Util.toCamelCase('menu-' + menu.id));
+		};
 	};
 
 	resize () {

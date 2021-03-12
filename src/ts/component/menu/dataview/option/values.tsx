@@ -150,7 +150,6 @@ class MenuOptionValues extends React.Component<Props> {
 	onAdd () {
 		const { param, getId, close } = this.props;
 		const { data } = param;
-		const node = $('#' + getId());
 
 		if (menuStore.isOpen('dataviewOptionList')) {
 			return;
@@ -161,8 +160,8 @@ class MenuOptionValues extends React.Component<Props> {
 				...param,
 				element: '#' + getId() + ' #item-add',
 				width: 0,
-				offsetX: node.outerWidth(),
-				offsetY: -36,
+				offsetX: param.width - 6,
+				offsetY: -64,
 				noFlipY: true,
 				passThrough: true,
 				onClose: () => { close(); },
