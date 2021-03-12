@@ -153,6 +153,7 @@ class Cell extends React.Component<Props, {}> {
 
 		let param: I.MenuParam = { 
 			element: `#${id} .cellContent`,
+			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			noFlipY: true,
 			passThrough: true,
@@ -196,7 +197,6 @@ class Cell extends React.Component<Props, {}> {
 				param = Object.assign(param, {
 					offsetY: -height + 1,
 					width: width,
-					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					value: value || [],
@@ -209,7 +209,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
-					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
@@ -224,7 +223,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Object:
 				param = Object.assign(param, {
 					width: width,
-					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					filter: '',
@@ -255,7 +253,6 @@ class Cell extends React.Component<Props, {}> {
 
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
-					horizontal: I.MenuDirection.Center,
 					className: 'button',
 					width: width,
 				});
