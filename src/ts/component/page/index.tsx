@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Util, Storage, analytics, keyboard } from 'ts/lib';
 import { ListPopup } from 'ts/component';
-import { authStore, commonStore, menuStore } from 'ts/store';
+import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -134,20 +134,20 @@ class Page extends React.Component<Props, {}> {
 		keyboard.setMatch(match);
 		
 		if (isMain && !popupNewBlock) {
-			commonStore.popupOpen('help', { 
+			popupStore.open('help', { 
 				data: { document: 'whatsNew' },
 			});
 		};
 
 		if (!isPopup) {
-			commonStore.popupCloseAll();
+			popupStore.closeAll();
 			menuStore.closeAll();
 
 			if (isMainIndex) {
-				if (account && askSurvey && !commonStore.popupIsOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
 					Storage.delete('askSurvey');
 
-					commonStore.popupOpen('confirm', {
+					popupStore.open('confirm', {
 						data: {
 							title: 'We need your opinion',
 							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',

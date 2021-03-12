@@ -1,8 +1,7 @@
 import { I, keyboard } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, popupStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
-import { getRange, setRange } from 'selection-ranges';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
@@ -692,7 +691,7 @@ class Util {
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
-		commonStore.popupOpen('confirm', {
+		popupStore.open('confirm', {
 			data: {
 				icon: 'update',
 				title: translate('confirmUpdateTitle'),

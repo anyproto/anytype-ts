@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { popupStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -42,17 +42,17 @@ class MenuHelp extends React.Component<Props, {}> {
 
 		switch (item.id) {
 			case 'help':
-				commonStore.popupOpen('help', {
+				popupStore.open('help', {
 					data: { document: item.document },
 				});
 				break;
 
 			case 'shortcut':
-				commonStore.popupOpen('shortcut', {});
+				popupStore.open('shortcut', {});
 				break;
 
 			case 'feedback':
-				commonStore.popupOpen('feedback', {});
+				popupStore.open('feedback', {});
 				break;
 
 			case 'community':

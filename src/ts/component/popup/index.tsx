@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
-import { commonStore, menuStore } from 'ts/store';
+import { menuStore, popupStore } from 'ts/store';
 import { RouteComponentProps } from 'react-router';
 
 import PopupSettings from './settings';
@@ -134,7 +134,7 @@ class Popup extends React.Component<Props, {}> {
 
 	close () {
 		menuStore.closeAll();
-		commonStore.popupClose(this.props.id);
+		popupStore.close(this.props.id);
 	};
 
 	getId (): string {

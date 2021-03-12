@@ -1,5 +1,5 @@
 import { I, C, M, keyboard, crumbs, translate, Util } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -297,10 +297,10 @@ class DataUtil {
 				break;
 		};
 
-		if (commonStore.popupIsOpen(popupId)) {
-			commonStore.popupUpdate(popupId, param);
+		if (popupStore.isOpen(popupId)) {
+			popupStore.update(popupId, param);
 		} else {
-			window.setTimeout(() => { commonStore.popupOpen(popupId, param); }, Constant.delay.popup);
+			window.setTimeout(() => { popupStore.open(popupId, param); }, Constant.delay.popup);
 		};
 	};
 	

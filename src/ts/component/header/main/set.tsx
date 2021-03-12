@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { I, Util, crumbs } from 'ts/lib';
+import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -30,7 +30,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 
 	render () {
 		const cn = [ 'header', 'headerMainEdit' ];
-		if (commonStore.popupIsOpen('navigation')) {
+		if (popupStore.isOpen('navigation')) {
 			cn.push('active');
 		};
 
@@ -78,7 +78,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 
 		const { root } = blockStore;
 
-		commonStore.popupOpen('navigation', {
+		popupStore.open('navigation', {
 			preventResize: true, 
 			data: {
 				rootId: root,
@@ -93,7 +93,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 
 		const { root } = blockStore;
 
-		commonStore.popupOpen('search', {
+		popupStore.open('search', {
 			preventResize: true, 
 			data: {
 				rootId: root,

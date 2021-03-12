@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
 import { I, C, Util, focus, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -122,7 +122,7 @@ class BlockFile extends React.Component<Props, {}> {
 		const icon = Util.fileIcon(content);
 		
 		if (icon == 'image') {
-			commonStore.popupOpen('preview', {
+			popupStore.open('preview', {
 				data: {
 					type: I.FileType.Image,
 					url: commonStore.fileUrl(hash),

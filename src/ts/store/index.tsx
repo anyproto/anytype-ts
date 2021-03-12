@@ -3,6 +3,7 @@ import { authStore } from './auth';
 import { blockStore } from './block';
 import { dbStore } from './db';
 import { menuStore } from './menu';
+import { popupStore } from './popup';
 
 export {
 	commonStore,
@@ -10,4 +11,5 @@ export {
 	blockStore,
 	dbStore,
 	menuStore,
+	popupStore,
 };

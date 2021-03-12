@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Popup } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
@@ -13,11 +13,11 @@ const $ = require('jquery');
 class ListPopup extends React.Component<Props, {}> {
 
 	render () {
-		const { popups } = commonStore;
+		const { list } = popupStore;
 		
 		return (
 			<div className="popups">
-				{popups.map((item: I.Popup, i: number) => (
+				{list.map((item: I.Popup, i: number) => (
 					<Popup {...this.props} key={i} {...item} />
 				))}
 			</div>
@@ -25,10 +25,10 @@ class ListPopup extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { popups } = commonStore;
+		const { list } = popupStore;
 		const body = $('body');
 		
-		popups.length > 0 ? body.addClass('over') : body.removeClass('over');
+		list.length > 0 ? body.addClass('over') : body.removeClass('over');
 	};
 	
 };

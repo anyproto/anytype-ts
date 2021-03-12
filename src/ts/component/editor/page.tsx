@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore, authStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, authStore, menuStore, popupStore } from 'ts/store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -1334,7 +1334,7 @@ class EditorPage extends React.Component<Props, {}> {
 		let blockCnt = Number(Storage.get('blockCnt')) || 0;
 		blockCnt++;
 		if (blockCnt == 10) {
-			commonStore.popupOpen('settings', { 
+			popupStore.open('settings', { 
 				data: { page: 'phrase' } 
 			});
 		};

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
-import { authStore, blockStore, commonStore } from 'ts/store';
+import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -13,9 +13,8 @@ interface State {
 	error: string;
 };
 
-const { dialog, app } = window.require('electron').remote;
+const { dialog } = window.require('electron').remote;
 const { ipcRenderer } = window.require('electron');
-const userPath = app.getPath('userData');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
@@ -490,7 +489,7 @@ class PopupSettings extends React.Component<Props, State> {
 						this.setState({ loading: false });
 
 						if (message.error.code) {
-							commonStore.popupOpen('confirm', {
+							popupStore.open('confirm', {
 								data: {
 									title: 'Ooops!',
 									text: 'Something went wrong. <br/>If you think it’s our fault, please write us a feedback.',

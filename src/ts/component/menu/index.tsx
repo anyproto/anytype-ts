@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, keyboard, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
-import { commonStore, menuStore } from 'ts/store';
+import { menuStore, popupStore } from 'ts/store';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -187,7 +187,7 @@ class Menu extends React.Component<Props, {}> {
 
 		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
 
-		if (commonStore.popupIsOpen()) {
+		if (popupStore.isOpen()) {
 			node.addClass('fromPopup');
 		};
 	};

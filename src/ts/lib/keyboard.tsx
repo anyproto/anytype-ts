@@ -1,5 +1,5 @@
 import { I, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
-import { commonStore, authStore, blockStore, menuStore } from 'ts/store';
+import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
@@ -63,17 +63,17 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			commonStore.popupCloseAll();
+			popupStore.closeAll();
 			menuStore.closeAll();
 			Util.linkPreviewHide(false);
 		});
 
 		// Navigation search
 		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
-			if (commonStore.popupIsOpen('navigation') || !this.isPinChecked || !account) {
+			if (popupStore.isOpen('navigation') || !this.isPinChecked || !account) {
 				return;
 			};
-			commonStore.popupOpen('search', { 
+			popupStore.open('search', { 
 				preventResize: true,
 				data: { 
 					type: I.NavigationType.Go, 
@@ -88,7 +88,7 @@ class Keyboard {
 			if (!account) {
 				return;
 			};
-			commonStore.popupOpen('navigation', { 
+			popupStore.open('navigation', { 
 				preventResize: true,
 				data: { 
 					type: I.NavigationType.Go, 

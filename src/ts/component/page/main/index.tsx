@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -148,7 +148,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(root, block.content.targetBlockId);
 
 		if (block.content.style == I.LinkStyle.Archive) {
-			commonStore.popupOpen('archive', {});
+			popupStore.open('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
 				DataUtil.objectOpenEvent(e, object);
@@ -157,7 +157,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 
 	onStore (e: any) {
-		commonStore.popupOpen('store', {});
+		popupStore.open('store', {});
 	};
 	
 	onAdd (e: any) {
