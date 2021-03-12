@@ -390,7 +390,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 							}, 
 						});
 					} else {
-						const details: any = { iconEmoji: SmileUtil.random() };
+						const details: any = {};
 						
 						if (item.isObject) {
 							const type = dbStore.getObjectType(item.objectTypeId);

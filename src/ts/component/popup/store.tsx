@@ -356,7 +356,6 @@ class PopupStore extends React.Component<Props, State> {
 		const param: any = { 
 			name: Constant.default.nameType, 
 			layout: I.ObjectLayout.Page, 
-			iconEmoji: SmileUtil.random(),
 		};
 
 		C.ObjectTypeCreate(param, (message: any) => {

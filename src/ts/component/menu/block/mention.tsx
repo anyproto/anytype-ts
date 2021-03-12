@@ -295,7 +295,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.id == 'add') {
-			C.PageCreate({ iconEmoji: SmileUtil.random(), name: filter.text }, (message: any) => {
+			C.PageCreate({ name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

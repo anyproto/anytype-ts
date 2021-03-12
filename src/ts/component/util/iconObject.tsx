@@ -88,6 +88,8 @@ Relation[I.RelationType.Object] = require('img/icon/dataview/relation/object.svg
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
+const ObjectType = require('img/icon/object/default.svg');
+
 const Lcg = require('font/lcg/medium.otf');
 const Color = {
 	grey:	 '#dfddd0',
@@ -164,6 +166,9 @@ class IconObject extends React.Component<Props, {}> {
 
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+				} else {
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={ObjectType} className={icn.join(' ')} />;
 				};
 				break;
 

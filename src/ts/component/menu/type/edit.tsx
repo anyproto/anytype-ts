@@ -95,7 +95,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 		const name = this.ref.getValue();
 		const { layout } = this.state;
 
-		C.ObjectTypeCreate({ name: name, layout: layout, iconEmoji: SmileUtil.random() }, (message: any) => {
+		C.ObjectTypeCreate({ name: name, layout: layout }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
