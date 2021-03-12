@@ -48,6 +48,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onPrint = this.onPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
+		this.blockCreate = this.blockCreate.bind(this);
 	};
 
 	render () {
@@ -996,27 +997,14 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 	
-	onMenuAdd (id: string, text: string, range: I.TextRange) {
+	onMenuAdd (blockId: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, id);
-
+		const block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
 		const win = $(window);
-		const el = $('#block-' + id);
-		const { content } = block;
-		const { marks } = content;
-		const length = String(text || '').length;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		const onCommand = (message: any) => {
-			focus.set(message.blockId || id, { from: length, to: length });
-			focus.apply();
-		};
-		const close = () => {
-			commonStore.menuClose('blockAdd');
-		};
 
 		let rect = Util.selectionRect();
 		if (!rect.x && !rect.y && !rect.width && !rect.height) {
@@ -1025,157 +1013,20 @@ class EditorPage extends React.Component<Props, {}> {
 
 		commonStore.filterSet(range.from, '');
 		commonStore.menuOpen('blockAdd', { 
-			element: el,
+			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
-				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
+				$('.placeHolder.c' + blockId).text(Constant.placeHolder.default);
 			},
 			data: {
-				blockId: id,
+				blockId: blockId,
 				rootId: rootId,
-				onSelect: (e: any, item: any) => {
-					const obj = $('#menuBlockAdd');
-					const block = blockStore.getLeaf(rootId, id);
-					const { filter } = commonStore;
-
-					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
-
-					const onSave = () => {
-						let needClose = true;
-
-						// Text colors
-						if (item.isTextColor) {
-							C.BlockListSetTextColor(rootId, [ id ], item.value, onCommand);
-						} else 
-
-						// Background colors
-						if (item.isBgColor) {
-							C.BlockListSetBackgroundColor(rootId, [ id ], item.value, onCommand);
-						} else 
-
-						// Actions
-						if (item.isAction) {
-							switch (item.key) {
-								case 'download':
-									Action.download(block);
-									break;
-
-								case 'move':
-									needClose = false;
-
-									commonStore.menuOpen('searchObject', { 
-										element: '#menuBlockAdd #item-' + item.id,
-										offsetX: obj.width(),
-										offsetY: -36,
-										data: { 
-											type: I.NavigationType.Move, 
-											rootId: rootId,
-											skipId: rootId,
-											blockId: id,
-											blockIds: [ id ],
-											position: I.BlockPosition.Bottom,
-											onSelect: close,
-										}, 
-									});
-									break;
-
-								case 'copy':
-									Action.duplicate(rootId, id, [ id ]);
-									break;
-								
-								case 'remove':
-									Action.remove(rootId, id, [ id ]);
-									break;
-							};
-						} else
-
-						// Align
-						if (item.isAlign) {
-							C.BlockListSetAlign(rootId, [ id ], item.key, onCommand);
-						} else 
-
-						// Blocks
-						if (item.isBlock) {
-							let param: any = {
-								type: item.type,
-								content: {},
-							};
-								
-							if (item.type == I.BlockType.Text) {
-								param.content.style = item.key;
-
-								if (param.content.style == I.TextStyle.Code) {
-									param.fields = { 
-										lang: (Storage.get('codeLang') || Constant.default.codeLang),
-									};
-								};
-							};
-
-							if (item.type == I.BlockType.File) {
-								param.content.type = item.key;
-							};
-							
-							if (item.type == I.BlockType.Div) {
-								param.content.style = item.key;
-							};
-							
-							if (item.type == I.BlockType.Page) {
-								if (item.key == 'existing') {
-									needClose = false;
-
-									commonStore.menuOpen('searchObject', { 
-										element: '#menuBlockAdd #item-' + item.id,
-										offsetX: obj.width(),
-										offsetY: -64,
-										data: { 
-											type: I.NavigationType.Link, 
-											rootId: rootId,
-											skipId: rootId,
-											blockId: block.id,
-											blockIds: [ block.id ],
-											position: I.BlockPosition.Bottom,
-											onSelect: close,
-										}, 
-									});
-								} else {
-									const details: any = { iconEmoji: SmileUtil.random() };
-									
-									if (item.isObject) {
-										const type = dbStore.getObjectType(item.objectTypeId);
-										if (type) {
-											details.type = type.id;
-											details.layout = type.layout;
-										};
-									};
-
-									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {
-										DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-									});
-								};
-							} else {
-								this.blockCreate(block, position, param);
-							};
-						};
-
-						if (needClose) {
-							close();
-						};
-					};
-
-					// Clear filter in block text
-					if (block) {
-						// Hack to prevent onBlur save
-						$('#block-' + id + ' .value').text(text);
-						DataUtil.blockSetText(rootId, block, text, marks, true, onSave);
-					} else {
-						onSave();
-					};
-
-				}
+				text: text,
+				blockCreate: this.blockCreate,
 			}
 		});
 	};
