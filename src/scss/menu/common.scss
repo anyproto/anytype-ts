@@ -32,11 +32,7 @@
 	.menu.v5.h4 { transform-origin: 100% 50%; } /* right center */
 	
 	.menu {
-		.content { opacity: 0; transition: opacity 0.05s ease-in-out; transition-delay: 0.05s; }
 		.input { user-select: text; }
-	}
-	.menu.show {
-		.content { opacity: 1; }
 	}
 	
 	.menu.vertical { width: 224px; }
