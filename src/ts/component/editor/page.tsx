@@ -933,6 +933,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		const { focused, range } = focus;
+		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -943,7 +944,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		if (!next) {
 			return;

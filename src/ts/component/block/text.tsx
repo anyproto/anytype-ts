@@ -11,8 +11,6 @@ import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
-	onFocus?(e: any): void;
-	onBlur?(e: any): void;
 };
 
 const { ipcRenderer } = window.require('electron');
@@ -778,17 +776,11 @@ class BlockText extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		e.persist();
 
-		const { onFocus } = this.props;
-		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
-
-		onFocus(e);
 	};
 	
 	onBlur (e: any) {
-		const { onBlur } = this.props;
-
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
@@ -796,8 +788,6 @@ class BlockText extends React.Component<Props, {}> {
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
 		};
-
-		onBlur(e);
 	};
 	
 	onPaste (e: any) {

@@ -59,7 +59,7 @@ class BlockLink extends React.Component<Props, {}> {
 			</div>
 		);
 	};
-	
+
 	onKeyDown (e: any) {
 		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
 	};

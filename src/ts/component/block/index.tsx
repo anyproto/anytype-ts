@@ -46,8 +46,6 @@ class Block extends React.Component<Props, {}> {
 		this.onToggle = this.onToggle.bind(this);
 		this.onToggleClick = this.onToggleClick.bind(this);
 		this.onEmptyClick = this.onEmptyClick.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
 		this.onMenuClick = this.onMenuClick.bind(this);
@@ -97,7 +95,7 @@ class Block extends React.Component<Props, {}> {
 					);
 				};
 
-				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} onFocus={this.onFocus} onBlur={this.onBlur} />;
+				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} />;
 				break;
 
 			case I.BlockType.Layout:
@@ -378,24 +376,6 @@ class Block extends React.Component<Props, {}> {
 				focus.apply();
 			}
 		});
-	};
-	
-	onFocus (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.addClass('isFocused');
-	};
-	
-	onBlur (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(ReactDOM.findDOMNode(this));
-		node.removeClass('isFocused');
 	};
 	
 	onResizeStart (e: any, index: number) {
