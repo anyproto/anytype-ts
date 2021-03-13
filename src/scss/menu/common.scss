@@ -66,9 +66,9 @@
 	
 		.item { 
 			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
-			transition: all 0.05s ease-in-out; width: 100%; background: #fff;
+			width: 100%; background: #fff;
 		}
-		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadOnly { cursor: default; }
 		
 		.item::before {
