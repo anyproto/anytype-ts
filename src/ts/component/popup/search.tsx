@@ -434,7 +434,9 @@ class PopupSearch extends React.Component<Props, State> {
 	load () {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		const filters = [];
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] },
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];

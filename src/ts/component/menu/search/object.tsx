@@ -190,7 +190,9 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
-		const filters = [];
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] },
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
