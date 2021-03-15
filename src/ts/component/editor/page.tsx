@@ -415,12 +415,6 @@ class EditorPage extends React.Component<Props, {}> {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				if (block && block.canCreateBlock()) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
-					/*
-					if (block.isTextTitle()) {
-						this.hoverPosition = I.BlockPosition.Bottom;
-						hovered.addClass('isAdding bottom');
-					};
-					*/
 				};
 			};
 		} else {

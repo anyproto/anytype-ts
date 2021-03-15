@@ -21,11 +21,11 @@ class Mark {
 		if (mark.range.from == mark.range.to) {
 			return marks;	
 		};
-		
+
 		let map = Util.map(marks, 'type');
 		let type = mark.type;
 		let add = true;
-		
+
 		map[type] = map[type] || [];
 		map[type].slice().sort(this.sort);
 		
@@ -327,9 +327,10 @@ class Mark {
 		let text = html;
 		let marks: any[] = [];
 
-		html.replace(/(&lt;|&gt;)/g, (s: string, p: string, o: number) => {
+		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string, o: number) => {
 			if (p == '&lt;') p = '{';
 			if (p == '&gt;') p = '}';
+			if (p == '&amp;') p = '&';
 			text = text.replace(s, p);
 			return '';
 		});
