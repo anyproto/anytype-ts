@@ -39,15 +39,21 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		));
 
 		const File = (item: any) => (
-			<div className="element file" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-				<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
-				<div className="name">{item.name}</div>
+			<div className="element file">
+				<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+					<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
+					<div className="name">{item.name}</div>
+				</div>
+				<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
 			</div>
 		);
 
 		const Image = (item: any) => (
-			<div className="element image" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-				<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
+			<div className="element image">
+				<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+					<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
+				</div>
+				<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
 			</div>
 		);
 
@@ -63,7 +69,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 					break;
 			};
 			return (
-				<div className="item">
+				<div id={'item-' + item.id} className="item">
 					<Handle />
 					{content}
 				</div>
@@ -156,6 +162,40 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		onChange(value);
 		menuStore.updateData(id, { value: value });
+	};
+
+	onMore (e: any, item: any) {
+		const { getId, param, id } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		const element = $(`#${getId()} #item-${item.id}`);
+
+		element.addClass('active');
+
+		menuStore.open('select', { 
+			element: element.find('.icon.more'),
+			offsetY: 4,
+			horizontal: I.MenuDirection.Center,
+			onClose: () => {
+				element.removeClass('active');
+			},
+			data: {
+				value: '',
+				options: [
+					{ id: 'remove', icon: 'remove', name: 'Delete' },
+				],
+				onSelect: (event: any, el: any) => {
+					if (el.id == 'remove') {
+						let value = Util.objectCopy(data.value || []);
+						value = value.filter((it: any) => { return it != item.id; });
+						value = Util.arrayUnique(value);
+
+						onChange(value);
+						menuStore.updateData(id, { value: value });
+					};
+				},
+			}
+		});
 	};
 
 };

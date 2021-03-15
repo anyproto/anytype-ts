@@ -307,7 +307,7 @@ class Cell extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				menuStore.open(menuId, param); 
 				$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.cellMenuIds); });
-				win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.cellMenuIds); });
+				//win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.cellMenuIds); });
 			}, Constant.delay.menu);
 		} else {
 			setOn();
