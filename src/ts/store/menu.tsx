@@ -14,10 +14,6 @@ class MenuStore {
 	
 	@action
 	open (id: string, param: I.MenuParam) {
-		if (id == 'dataviewOptionList') {
-			console.trace();
-		};
-
 		param.type = Number(param.type) || I.MenuType.Vertical;
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;

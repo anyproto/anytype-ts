@@ -1,10 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Tag } from 'ts/component';
-import { I, C, keyboard, Util, DataUtil } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { Tag, Icon } from 'ts/component';
+import { I, Util, DataUtil } from 'ts/lib';
+import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 
 interface Props extends I.Cell {};
 interface State { 
@@ -23,6 +21,8 @@ class CellSelect extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
+
+		this.onClear = this.onClear.bind(this);
 	};
 
 	render () {
@@ -33,12 +33,8 @@ class CellSelect extends React.Component<Props, State> {
 			return null;
 		};
 
-		let value = this.getValue();
-		value = value.map((id: string, i: number) => { 
-			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-		});
-		value = value.filter((it: any) => { return it && it.id; });
-
+		const value = this.getValue();
+		const canClear = relation.format == I.RelationType.Status;
 		const placeHolder = relation.format == I.RelationType.Status ? 'Select status' : 'Select tags';
 
 		return (
@@ -48,6 +44,7 @@ class CellSelect extends React.Component<Props, State> {
 						{value.map((item: any, i: number) => {
 							return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
 						})}
+						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (
 					<div className="empty">{placeHolder}</div>
@@ -93,7 +90,26 @@ class CellSelect extends React.Component<Props, State> {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		return Util.objectCopy(value);
+		value = Util.objectCopy(value);
+		value = value.map((id: string) => { 
+			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+		});
+		value = value.filter((it: any) => { return it && it.id; });
+
+		return value;
+	};
+
+	onClear (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { onChange } = this.props;
+		
+		this.setEditing(false);
+
+		if (onChange) {
+			onChange([]);
+		};
 	};
 
 };
