@@ -335,6 +335,17 @@
 	"textColor-blue": { "en": "Blue" },
 	"textColor-ice": { "en": "Sky" },
 	"textColor-teal": { "en": "Teal" },
-	"textColor-lime": { "en": "Green" }
+	"textColor-lime": { "en": "Green" },
 
+	"layout0": { "en": "Basic" },
+	"layout1": { "en": "Profile" },
+	"layout2": { "en": "Action" },
+	"layout3": { "en": "Set" },
+	"layout4": { "en": "Object type" },
+	"layout5": { "en": "Relation" },
+	"layout6": { "en": "File" },
+	"layout7": { "en": "Dashboard" },
+	"layout8": { "en": "Image" },
+	"layout20": { "en": "Database" }
+	
 }
