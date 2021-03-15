@@ -106,12 +106,7 @@
 			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.15); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
-			.iconObject { vertical-align: top; }
-
-			.iconObject { margin-right: 4px; }
-			.iconEmoji {
-				.icon.blank { margin: 0px; }
-			}
+			.iconObject { margin-right: 4px; vertical-align: top; flex-shrink: 0; }
 		}
 
 		.item.empty { color: $colorDarkGrey; }

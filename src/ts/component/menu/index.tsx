@@ -218,7 +218,6 @@ class Menu extends React.Component<Props, {}> {
 			const menu = node.find('.menu');
 
 			menu.addClass('show');
-			window.setTimeout(() => { menu.css({ transform: 'none' }); }, 210);
 		});
 	};
 	

@@ -48,7 +48,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								id="object-type" 
 								object={{...type, layout: I.ObjectLayout.ObjectType }}
 								name={type.name}
-								menuId="select"
 								onClick={!readOnly ? this.onType : undefined} 
 								arrow={!readOnly}
 								className={readOnly ? 'isReadOnly' : ''}
@@ -61,7 +60,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						id="object-layout" 
 						icon={layout ? layout.icon : ''} 
 						name={layout ? layout.name : 'Select layout'}
-						menuId="select"
 						onClick={!readOnly ? this.onLayout : undefined} 
 						arrow={!readOnly}
 						className={readOnly ? 'isReadOnly' : ''}
