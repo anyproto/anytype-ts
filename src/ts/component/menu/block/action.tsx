@@ -542,6 +542,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 							blockId: blockId,
 							blockIds: blockIds,
 							position: I.BlockPosition.Bottom,
+							onSelect: () => { this.props.close(); }
 						}, 
 					});
 				}, Constant.delay.menu);

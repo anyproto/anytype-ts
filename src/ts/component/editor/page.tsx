@@ -909,7 +909,7 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			e.stopPropagation();
 
-			let replace = (range.from == length) && (range.to == length) && block.isTextList() && !length;
+			let replace = !range.to && block.isTextList() && !length;
 			if (replace) {
 				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 			} else {

@@ -23,6 +23,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
 
 class Popup extends React.Component<Props, {}> {
 
@@ -106,6 +107,7 @@ class Popup extends React.Component<Props, {}> {
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
 			node.addClass('show');
+			window.setTimeout(() => { node.css({ transform: 'none' }); }, Constant.delay.popup);
 		});
 	};
 	
