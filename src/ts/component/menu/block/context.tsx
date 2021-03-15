@@ -18,7 +18,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onMark = this.onMark.bind(this);
 	};
 
@@ -62,7 +61,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div className="flex" onClick={this.onMenuClick}>
+			<div className="flex">
 				{block.canTurn() ? (
 					<div className="section">
 						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" menuId="blockStyle" className={[ icon, 'blockStyle' ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
@@ -180,7 +179,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			case I.MarkType.Link:
 				const offset = obj.offset();
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-				menuStore.close(this.props.id);
+				close();
 
 				menuParam = Object.assign(menuParam, {
 					type: I.MenuType.Horizontal,
@@ -241,14 +240,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll([ 
-				'select',
-				'blockStyle', 
-				'blockMore',
-				'blockLink',
-				'blockColor',
-				'blockBackground',
-			]);
+			menuStore.closeAll(Constant.menuIds.context);
 
 			keyboard.disableContext(true);
 			window.clearTimeout(this.timeout);
@@ -256,8 +248,17 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 	};
 	
-	onMenuClick () {
-		focus.apply();
+	componentDidMount () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+
+		obj.unbind('click mousedown').on('click mousedown', (e: any) => {
+			const target = $(e.target);
+			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+		});
 	};
 	
 };

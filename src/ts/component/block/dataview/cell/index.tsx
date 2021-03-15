@@ -303,11 +303,11 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			menuStore.closeAll(Constant.cellMenuIds);
+			menuStore.closeAll(Constant.menuIds.cell);
 			window.setTimeout(() => {
 				menuStore.open(menuId, param); 
-				$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.cellMenuIds); });
-				win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.cellMenuIds); });
+				$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 			}, Constant.delay.menu);
 		} else {
 			setOn();

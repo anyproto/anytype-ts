@@ -160,13 +160,13 @@
 		.icon:last-child { margin: 0px; }
 		
 		.icon {
-			.arrow { 
+			.icon.arrow { 
 				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow0.svg'); position: absolute; right: 0px; top: 50%; 
-				margin-top: -4px;
+				margin-top: -4px; background-size: contain;
 			}
 		}
 		.icon.active {
-			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
+			 .icon.arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
 		}
 	}
 

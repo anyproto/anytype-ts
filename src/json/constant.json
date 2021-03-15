@@ -52,10 +52,15 @@
 		}
 	},
 
-	"cellMenuIds": [ 
-		"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-		"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
-	],
+	"menuIds": {
+		"cell": [ 
+			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
+			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
+		],
+		"context": [
+			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
+		]
+	},
 
 	"featuredRelations": [ "type", "creator" ],
 	
