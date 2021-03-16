@@ -225,6 +225,7 @@ class Cell extends React.Component<Props, {}> {
 					width: width,
 				});
 				param.data = Object.assign(param.data, {
+					canAdd: true,
 					filter: '',
 					value: value || [],
 					types: relation.objectTypes,

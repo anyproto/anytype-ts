@@ -230,10 +230,10 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
+			const { x, y, width, height } = this.hoverData;
 			const obj = $(this.hoverData.obj);
 			const type = obj.attr('data-type');
 			const style = Number(obj.attr('data-style')) || 0;
-			const { x, y, width, height } = this.hoverData;
 			const col1 = x - Constant.size.blockMenu / 4;
 			const col2 = x + width;
 
