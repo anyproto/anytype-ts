@@ -438,18 +438,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 			},
 		};
 
-		switch (item.key) {
+		switch (item.itemId) {
 			case 'turn':
 				menuId = 'blockStyle';
 				menuParam.data.onSelect = (item: any) => {
 					if (item.type == I.BlockType.Text) {
-						C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
+						C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
 					};
 						
 					if (item.type == I.BlockType.Div) {
-						C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
+						C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
 					};
@@ -523,7 +523,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let ids = DataUtil.selectionGet(blockId, false, data);
 		let close = true;
 
-		switch (item.key) {
+		switch (item.itemId) {
 			case 'download':
 				Action.download(block);
 				break;
@@ -569,7 +569,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Align
 				if (item.isAlign) {
-					C.BlockListSetAlign(rootId, blockIds, item.key);
+					C.BlockListSetAlign(rootId, blockIds, item.itemId);
 				} else 
 					
 				// Blocks
@@ -578,9 +578,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 						this.moveToPage();
 					} else 
 					if (item.type == I.BlockType.Div) {
-						C.BlockListSetDivStyle(rootId, blockIds, item.key);
+						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
 					} else {
-						C.BlockListTurnInto(rootId, blockIds, item.key, () => {
+						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
 							this.setFocus(blockIds[0]);
 						});
 					};

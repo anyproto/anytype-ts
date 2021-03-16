@@ -148,14 +148,14 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
-							C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
+							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
 								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});
 						};
 						
 						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
+							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
 								focus.set(message.blockId, { from: 0, to: 0 });
 								focus.apply();
 							});

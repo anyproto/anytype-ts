@@ -10,7 +10,7 @@ const LIMIT_RECENT = 10;
 
 class Crumbs {
 	
-	key (key: string): string {
+	getKey (key: string): string {
 		return Util.toCamelCase(PREFIX + key);
 	};
 	
@@ -29,7 +29,7 @@ class Crumbs {
 	};
 	
 	get (key: I.CrumbsType): CrumbsObject {
-		let obj = (Storage.get(this.key(key)) || { ids: [] }) as CrumbsObject;
+		let obj = (Storage.get(this.getKey(key)) || { ids: [] }) as CrumbsObject;
 		obj.ids = obj.ids || [];
 		return obj;
 	};
@@ -39,7 +39,7 @@ class Crumbs {
 			return;
 		};
 		
-		let k = this.key(key);
+		let k = this.getKey(key);
 		let obj = this.get(key);
 
 		Storage.set(k + 'Prev', obj, true);
@@ -52,7 +52,7 @@ class Crumbs {
 	};
 	
 	cut (key: I.CrumbsType, index: number, callBack?: () => void): CrumbsObject {
-		let k = this.key(key);
+		let k = this.getKey(key);
 		let obj = this.get(key);
 		
 		Storage.set(k + 'Prev', obj, true);
@@ -65,7 +65,7 @@ class Crumbs {
 	};
 	
 	restore (key: I.CrumbsType, callBack?: () => void): CrumbsObject {
-		let k = this.key(key);
+		let k = this.getKey(key);
 		let obj = this.get(key);
 		let prev: CrumbsObject = (Storage.get(k + 'Prev') || { ids: [] }) as CrumbsObject;
 		
@@ -107,7 +107,7 @@ class Crumbs {
 			return;
 		};
 
-		Storage.set(this.key(key), obj, true);
+		Storage.set(this.getKey(key), obj, true);
 
 		let id = blockStore.breadcrumbs;
 		if (key == I.CrumbsType.Recent) {
@@ -128,7 +128,7 @@ class Crumbs {
 	};
 	
 	delete (key: I.CrumbsType) {
-		Storage.delete(this.key(key));
+		Storage.delete(this.getKey(key));
 	};
 		
 };

@@ -309,11 +309,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			};
 
 			if (item.isAlign) {
-				C.BlockListSetAlign(rootId, [ blockId ], item.key, onCommand);
+				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, onCommand);
 			};
 
 			if (item.isAction) {
-				switch (item.key) {
+				switch (item.itemId) {
 					case 'download':
 						Action.download(block);
 						break;
@@ -354,7 +354,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				};
 					
 				if (item.type == I.BlockType.Text) {
-					param.content.style = item.key;
+					param.content.style = item.itemId;
 
 					if (param.content.style == I.TextStyle.Code) {
 						param.fields = { 
@@ -364,15 +364,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				};
 
 				if (item.type == I.BlockType.File) {
-					param.content.type = item.key;
+					param.content.type = item.itemId;
 				};
 				
 				if (item.type == I.BlockType.Div) {
-					param.content.style = item.key;
+					param.content.style = item.itemId;
 				};
 				
 				if (item.type == I.BlockType.Page) {
-					if (item.key == 'existing') {
+					if (item.itemId == 'existing') {
 						needClose = false;
 
 						menuStore.open('searchObject', { 

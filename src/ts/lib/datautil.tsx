@@ -646,11 +646,11 @@ class DataUtil {
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
 			s.children = s.children.map((it: any, i: number) => {
-				it._id = it.key = it.id || i;
+				it.itemId = it.id || i;
 				it.id = s.id + '-' + it.id;
 				return it;
 			});
-			s.children = Util.arrayUniqueObjects(s.children, 'key');
+			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
 			return s;
 		});
 		sections = Util.arrayUniqueObjects(sections, 'id');

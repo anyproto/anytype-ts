@@ -222,8 +222,8 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			relation = dbStore.getRelation(rootId, rootId, relationKey);
 		};
 
-		const options = this.getOptions(item.key);
-		const value = options.find((it: any) => { return it.id == relation[item.key]; }) || options[0];
+		const options = this.getOptions(item.itemId);
+		const value = options.find((it: any) => { return it.id == relation[item.itemId]; }) || options[0];
 
 		menuStore.open('select', {
 			element: '#item-' + item.id,
@@ -235,7 +235,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 				options: options,
 				onSelect: (e: any, el: any) => {
 					if (view) {
-						view.relations[idx][item.key] = el.id;
+						view.relations[idx][item.itemId] = el.id;
 						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
 					};
 					close();
