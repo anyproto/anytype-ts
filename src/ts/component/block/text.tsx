@@ -857,7 +857,7 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || block.isTextTitle()) {
+		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks()) {
 			if (!keyboard.isContextDisabled) {
 				menuStore.close('blockContext');
 			};

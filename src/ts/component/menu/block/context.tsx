@@ -260,7 +260,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			};
 		});
 	};
-	
+
 };
 
 export default MenuBlockContext;

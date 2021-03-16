@@ -67,6 +67,10 @@ class Block implements I.Block {
 		return this.isText() && !this.isTextTitle() && !this.isTextCode();
 	};
 
+	canHaveHistory (): boolean {
+		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask();
+	};
+
 	canTurn (): boolean {
 		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv() || this.isLink());
 	};
@@ -85,10 +89,6 @@ class Block implements I.Block {
 
 	canTurnObject (): boolean {
 		return this.canTurnPage();
-	};
-
-	canHaveHistory (): boolean {
-		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask();
 	};
 
 	canCreateBlock (): boolean {
