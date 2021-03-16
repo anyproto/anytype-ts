@@ -38,8 +38,11 @@ class Controls extends React.Component<Props, State> {
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
-		const filterCnt = view.filters.length;
 		const sortCnt = view.sorts.length;
+		const filters = view.filters.filter((it: any) => {
+			return dbStore.getRelation(rootId, block.id, it.relationKey);
+		});
+		const filterCnt = filters.length;
 
 		const buttons: any[] = [
 			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },

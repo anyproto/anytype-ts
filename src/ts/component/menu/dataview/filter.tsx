@@ -45,6 +45,12 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const filterCnt = view.filters.length;
+		const filters = Util.objectCopy(view.filters).map((it: any) => {
+			return { 
+				...it, 
+				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
+			};
+		}).filter((it: any) => { return it.relation; });
 
 		for (let filter of view.filters) {
 			const { relationKey, condition, value } = filter;
@@ -62,12 +68,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey);
-			if (!relation) {
-				return null;
-			};
-
-			const conditionOptions = this.conditionsByType(relation.format);
+			const conditionOptions = this.conditionsByType(item.relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 			const id = [ 'item', item.id, 'value' ].join('-');
 
@@ -77,7 +78,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			let cn = [];
 			let list = [];
 
-			switch (relation.format) {
+			switch (item.relation.format) {
 
 				case I.RelationType.Tag:
 				case I.RelationType.Status:
@@ -86,13 +87,13 @@ class MenuFilter extends React.Component<Props, {}> {
 					Item = (item: any) => {
 						return (
 							<div className="element">
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+								<Tag {...item} key={item.id} className={DataUtil.tagClass(item.relation.format)} />
 							</div>
 						);
 					};
 
 					list = (item.value || []).map((id: string, i: number) => { 
-						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+						return (item.relation.selectDict || []).find((it: any) => { return it.id == id; });
 					});
 					list = list.filter((it: any) => { return it && it.id; });
 
@@ -259,10 +260,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{view.filters.map((item: any, i: number) => (
+					{filters.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
-					{!view.filters.length ? (
+					{!filters.length ? (
 						<div className="item empty">
 							<div className="inner">No filters applied to this view</div>
 						</div>
