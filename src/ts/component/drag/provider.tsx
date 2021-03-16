@@ -230,16 +230,12 @@ class DragProvider extends React.Component<Props, {}> {
 				};
 			};
 
-			let { x, y, width, height } = this.hoverData;
-			let { type, style } = $(this.hoverData.obj).data();
-			/*
-			let col1 = x - Constant.size.blockMenu / 4;
-			let col2 = x + 28;
-			let col3 = x + width - 28;
-			*/
-
-			let col1 = x - Constant.size.blockMenu / 4;
-			let col2 = x + width;
+			const obj = $(this.hoverData.obj);
+			const type = obj.attr('data-type');
+			const style = Number(obj.attr('data-style')) || 0;
+			const { x, y, width, height } = this.hoverData;
+			const col1 = x - Constant.size.blockMenu / 4;
+			const col2 = x + width;
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
