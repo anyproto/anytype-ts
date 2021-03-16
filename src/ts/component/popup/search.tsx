@@ -460,43 +460,24 @@ class PopupSearch extends React.Component<Props, State> {
 		});
 	};
 
-	getSections () {
-		const filter = new RegExp(Util.filterFix(this.state.filter), 'gi');
-		const { pages } = this.state;
-		const { recent } = blockStore;
-		const children = blockStore.getChildren(recent, recent).reverse();
-		const sections = [
-			{ 
-				id: 'recent', name: 'Recent objects', children: children.map((it: I.Block) => {
-					const details = blockStore.getDetails(recent, it.content.targetBlockId);
-					return { ...details, id: it.content.targetBlockId };
-				}).filter((it: any) => { return it.name.match(filter); }),
-			},
-			{ id: 'search', name: 'Search results', children: pages }
-		];
-		return DataUtil.menuSectionsMap(sections);
-	};
-
 	getItems () {
-		const sections = this.getSections();
 		const { root } = blockStore;
+		const pages = Util.objectCopy(this.state.pages);
+		const recent = blockStore.getChildren(blockStore.recent, blockStore.recent).map((it: I.Block) => { return it.content.targetBlockId; });
 
-		let ret: any[] = [];
-		for (let section of sections) {
-			if (!section.children.length) {
-				continue;
-			};
-			ret.push({ id: section.id, name: section.name, isSection: true });
-			ret = ret.concat(section.children);
+		for (let page of pages) {
+			page.order = recent.findIndex((id: string) => { return id == page.id; });
 		};
 
-		ret = ret.map((it: any) => {
-			if (it._id == root) {
-				it.isRoot = true;
-			};
-			return { ...it, name: String(it.name || Constant.default.name) };
+		pages.sort((c1: any, c2: any) => {
+			if (c1.order > c2.order) return -1;
+			if (c2.order < c1.order) return 1;
+			return 0;
 		});
-		return ret;
+
+		return pages.map((it: any) => {
+			return { ...it, isRoot: it.id == root, name: String(it.name || Constant.default.name) }
+		});
 	};
 
 	filterMapper (it: any) {

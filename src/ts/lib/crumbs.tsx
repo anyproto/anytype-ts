@@ -6,7 +6,7 @@ interface CrumbsObject {
 };
 
 const PREFIX = 'crumbs-';
-const LIMIT_RECENT = 10;
+const LIMIT_RECENT = 100;
 
 class Crumbs {
 	
