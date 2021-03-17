@@ -34,7 +34,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
 		const relation = dbStore.getRelation(rootId, rootId, key);
-		const idPrefix = 'blockRelationCell';
+		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
 
 		return (

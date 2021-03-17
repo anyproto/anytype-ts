@@ -18,4 +18,12 @@
 			.label { line-height: 24px; color: $colorDarkGrey; display: inline-block; vertical-align: middle; }
 		}
 	}
+
+	.menu.menuSearchObject.single { width: 224px; }
+	.menu.menuSearchObject.single {
+		.item {
+			.name { margin: 0px; }
+			.caption { display: none; }
+		}
+	}
 }

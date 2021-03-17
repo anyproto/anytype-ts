@@ -20,7 +20,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		this.onClick = this.onClick.bind(this);
 		this.onLayout = this.onLayout.bind(this);
-		this.onType = this.onType.bind(this);
+		this.onObjectType = this.onObjectType.bind(this);
 	};
 
 	render () {
@@ -48,7 +48,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								id="object-type" 
 								object={{...type, layout: I.ObjectLayout.ObjectType }}
 								name={type.name}
-								onClick={!readOnly ? this.onType : undefined} 
+								onClick={!readOnly ? this.onObjectType : undefined} 
 								arrow={!readOnly}
 								className={readOnly ? 'isReadOnly' : ''}
 							/>
@@ -384,38 +384,24 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		});
 	};
 
-	onType (e: any) {
-		const { config } = commonStore;
-		const { param, close } = this.props;
+	onObjectType (e: any) {
+		const { getId, param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		let objectTypes = Util.objectCopy(dbStore.objectTypes);
-		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-		};
-
-		let options = objectTypes.map((it: I.ObjectType) => {
-			it.layout = I.ObjectLayout.ObjectType;
-			return { ...it, object: it };
-		});
-
-		options.sort((c1: any, c2: any) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-
-		menuStore.open('select', { 
-			element: '#item-object-type',
+		menuStore.open('searchObject', { 
+			element: `#${getId()} #item-object-type`,
 			offsetX: 256,
 			offsetY: -36,
 			horizontal: I.MenuDirection.Right,
+			className: 'single',
 			data: {
-				options: options,
 				value: object.id,
-				onSelect: (e: any, item: any) => {
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				],
+				onSelect: (item: any) => {
 					C.BlockObjectTypeSet(rootId, item.id);
 					close();
 				}

@@ -162,7 +162,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertChildrenToPages(rootId, blockIds);
+							C.BlockListConvertChildrenToPages(rootId, blockIds, '');
 						};
 						
 						close();

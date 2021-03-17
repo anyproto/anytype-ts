@@ -232,6 +232,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			];
 
 			let hasTurnText = true;
+			let hasConvert = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasTitle = false;
@@ -247,6 +248,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.canTurnText() || !block.isDiv()) {
 					hasTurnDiv = false;
 				};
+				if (!block.canTurnPage())		 hasConvert = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
@@ -257,6 +259,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasTurnText || hasTurnDiv) {
 				sections[0].children.push({ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true });
+			};
+
+			if (hasConvert) {
+				sections[0].children.push({ id: 'convert', icon: 'turn', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
@@ -380,7 +386,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -401,8 +407,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
 		window.clearTimeout(this.timeout);
-		
+
 		if ((item.id == 'turn') && menuStore.isOpen('blockStyle')) {
+			return;
+		};
+
+		if ((item.id == 'convert') && menuStore.isOpen('searchObject')) {
 			return;
 		};
 		
@@ -413,7 +423,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if ((item.id == 'background') && menuStore.isOpen('blockBackground')) {
 			return;
 		};
-		
+
 		menuStore.closeAll(SUB_IDS);
 		
 		if (!item.arrow) {
@@ -454,11 +464,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 						});
 					};
 					
-					if (item.type == I.BlockType.Page) {
-						this.moveToPage();
-					};
-					
-					this.props.close();
+					close();
+				};
+				break;
+
+			case 'convert':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+				menuParam.data.filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				];
+				menuParam.data.onSelect = (item: any) => {
+					this.moveToPage(item.id);
+					close();
 				};
 				break;
 				
@@ -471,7 +489,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						this.setFocus(blockIds[0]);
 					});
 
-					this.props.close();
+					close();
 				};
 				break;
 				
@@ -484,7 +502,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						this.setFocus(blockIds[0]);
 					});
 
-					this.props.close();
+					close();
 				};
 				break;
 				
@@ -495,7 +513,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						this.setFocus(blockIds[0]);
 					});
 
-					this.props.close();
+					close();
 				};
 				break;
 		};
@@ -504,7 +522,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
-	
+
 	onClick (e: any, item: any) {
 		if (!this._isMounted || item.arrow) {
 			return;
@@ -574,9 +592,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Blocks
 				if (item.isBlock) {
-					if (item.type == I.BlockType.Page) {
-						this.moveToPage();
-					} else 
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
 					} else {
@@ -594,7 +609,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 	};
 
-	moveToPage () {
+	moveToPage (type: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, dataset } = data;
@@ -608,7 +623,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			ids = [ blockId ];
 		};
 		
-		C.BlockListConvertChildrenToPages(rootId, ids);
+		C.BlockListConvertChildrenToPages(rootId, ids, type);
 	};
 
 	setFocus (id: string) {
