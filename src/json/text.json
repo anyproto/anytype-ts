@@ -9,7 +9,7 @@
 	"commonTitle": { "en": "anytype" },
 	"commonSearch": { "en": "Search..." },
 	"commonSearchButton": { "en": "Search" },
-	"commonFilterClick": { "en": "Click to filter" },
+	"commonFilterClick": { "en": "Click to filter..." },
 	"commonFilterEmpty": { "en": "No items match filter" },
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
@@ -258,7 +258,7 @@
 	"popupNavigationLinkTo": { "en": "Link to page" },
 	"popupNavigationEmptyTo": { "en": "No links to this page" },
 	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
-	"popupNavigationEmptyFilter": { "en": "<b>There are no pages named \"%s\"</b>Try creating a new one or search for something else." },
+	"popupNavigationEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else." },
 
 	"popupConfirmUpdateTitle": { "en": "Oops!" },
 	"popupConfirmUpdateText": { "en": "Can’t check available updates, please try again later.<br/><span class=\"error\">%s</span>" },

@@ -199,6 +199,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Center,
 			className: 'single',
 			data: {
+				placeHolder: 'Find a type of object...',
+				label: 'Your object type library',
 				value: value,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }

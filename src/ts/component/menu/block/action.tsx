@@ -229,9 +229,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			sections = [
 				{ 
 					children: [
-						{ id: 'move', icon: 'move', name: 'Move to' },
-						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
 						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
+						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+						{ id: 'move', icon: 'move', name: 'Move to' },
 					] 
 				},
 				{ 
@@ -268,7 +268,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnObject && config.allowDataview) {
-				sections[0].children.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
@@ -282,11 +282,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnText) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(type, style), name: 'Text style', arrow: true });
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(type, style), name: 'Divider style', arrow: true });
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true });
 			};
 
 			if (hasAlign) {
@@ -448,70 +448,87 @@ class MenuBlockAction extends React.Component<Props, State> {
 		switch (item.itemId) {
 			case 'turnStyle':
 				menuId = 'blockStyle';
-				menuParam.data.onSelect = (item: any) => {
-					if (item.type == I.BlockType.Text) {
-						C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
-							this.setFocus(blockIds[0]);
-						});
-					};
+
+				menuParam.data = Object.assign(menuParam.data, {
+					onSelect: (item: any) => {
+						if (item.type == I.BlockType.Text) {
+							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
+							
+						if (item.type == I.BlockType.Div) {
+							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
 						
-					if (item.type == I.BlockType.Div) {
-						C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
-							this.setFocus(blockIds[0]);
-						});
-					};
-					
-					close();
-				};
+						close();
+					}
+				});
 				break;
 
 			case 'turnObject':
 				menuId = 'searchObject';
 				menuParam.className = 'single';
-				menuParam.data.filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
-				];
-				menuParam.data.onSelect = (item: any) => {
-					this.moveToPage(item.id);
-					close();
-				};
+
+				menuParam.data = Object.assign(menuParam.data, {
+					placeHolder: 'Find a type of object...',
+					label: 'Your object type library',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					],
+					onSelect: (item: any) => {
+						this.moveToPage(item.id);
+						close();
+					}
+				});
 				break;
 				
 			case 'color':
 				menuId = 'blockColor';
 				menuParam.offsetY = node.offset().top - el.offset().top - 40;
-				menuParam.data.value = color;
-				menuParam.data.onChange = (color: string) => {
-					C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
-						this.setFocus(blockIds[0]);
-					});
 
-					close();
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					value: color,
+					onChange: (color: string) => {
+						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
+
+						close();
+					}
+				});
 				break;
 				
 			case 'background':
 				menuId = 'blockBackground';
 				menuParam.offsetY = node.offset().top - el.offset().top - 40;
-				menuParam.data.value = bgColor;
-				menuParam.data.onChange = (color: string) => {
-					C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
-						this.setFocus(blockIds[0]);
-					});
 
-					close();
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					value: bgColor,
+					onChange: (color: string) => {
+						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
+
+						close();
+					}
+				});
 				break;
 				
 			case 'align':
 				menuId = 'blockAlign';
-				menuParam.data.onChange = (align: I.BlockAlign) => {
-					C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
-						this.setFocus(blockIds[0]);
-					});
 
-					close();
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					onChange: (align: I.BlockAlign) => {
+						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
+
+						close();
+					}
+				});
 				break;
 		};
 

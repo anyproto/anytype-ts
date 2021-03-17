@@ -46,8 +46,9 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { n, loading, filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, placeHolder, label } = data;
 		const items = this.getItems();
+		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
 
 		if (!this.cache) {
 			return null;
@@ -94,10 +95,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 		};
 
 		return (
-			<div className="wrap">
+			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : ''}
 
-				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onChange={(e: any) => { this.onKeyUp(e, false); }} />
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
@@ -106,33 +107,37 @@ class MenuSearchObject extends React.Component<Props, State> {
 				) : ''}
 
 				{this.cache && items.length && !loading ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => index < items.length}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={registerChild}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											scrollToIndex={n}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
+					<React.Fragment>
+						{label ? <div className="sectionName">{label}</div> : ''}
+
+						<div className="items">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => index < items.length}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={registerChild}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={HEIGHT}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToIndex={n}
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						</div>
+					</React.Fragment>
 				) : ''}
 			</div>
 		);

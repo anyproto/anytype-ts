@@ -396,6 +396,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			className: 'single',
 			data: {
+				placeHolder: 'Find a type of object...',
+				label: 'Your object type library',
 				value: object.id,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
