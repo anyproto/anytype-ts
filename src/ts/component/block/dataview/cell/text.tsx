@@ -187,7 +187,7 @@ class CellText extends React.Component<Props, State> {
 			let value: string = String(record[relation.relationKey] || '');
 
 			if (relation.format == I.RelationType.Number) {
-				value = String(parseFloat(value || '0'));
+				value = String(parseFloat(value) || '');
 			};
 
 			if (relation.format == I.RelationType.Date) {
