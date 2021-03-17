@@ -33,6 +33,7 @@ class CommonStore {
 	@observable public gatewayUrl: string = '';
 	@observable public linkPreviewObj: LinkPreview;
 	@observable public configObj:any = {};
+	public cellId: string = '';
 	
 	@computed
 	get config(): any {

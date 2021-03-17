@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, DataUtil, Util } from 'ts/lib';
-import { menuStore, dbStore } from 'ts/store';
+import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -115,8 +115,8 @@ class Cell extends React.Component<Props, {}> {
 		$('.cell.isEditing').removeClass('isEditing');
 
 		const win = $(window);
-		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $('#' + id).addClass('isEditing');
+		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
+		const cell = $('#' + cellId).addClass('isEditing');
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
@@ -141,6 +141,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let setOff = () => {
+			commonStore.cellId = '';
 			cell.removeClass('isEditing');
 
 			if (this.ref && this.ref.setEditing) {
@@ -152,7 +153,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let param: I.MenuParam = { 
-			element: `#${id} .cellContent`,
+			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			noFlipY: true,
@@ -305,11 +306,15 @@ class Cell extends React.Component<Props, {}> {
 
 		if (menuId) {
 			menuStore.closeAll(Constant.menuIds.cell);
-			window.setTimeout(() => {
-				menuStore.open(menuId, param); 
-				$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
-				win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
-			}, Constant.delay.menu);
+			if (commonStore.cellId != cellId) {
+				window.setTimeout(() => {
+					commonStore.cellId = cellId;
+
+					menuStore.open(menuId, param); 
+					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				}, Constant.delay.menu);
+			};
 		} else {
 			setOn();
 		};
