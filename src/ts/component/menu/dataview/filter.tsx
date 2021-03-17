@@ -50,7 +50,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				...it, 
 				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
 			};
-		}).filter((it: any) => { return it.relation; });
+		}).filter((it: any) => { return it.relation ? true : false; });
 
 		for (let filter of view.filters) {
 			const { relationKey, condition, value } = filter;
@@ -68,7 +68,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const conditionOptions = this.conditionsByType(item.relation.format);
+			const relation = item.relation;
+			const conditionOptions = this.conditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 			const id = [ 'item', item.id, 'value' ].join('-');
 
@@ -78,7 +79,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			let cn = [];
 			let list = [];
 
-			switch (item.relation.format) {
+			switch (relation.format) {
 
 				case I.RelationType.Tag:
 				case I.RelationType.Status:
@@ -87,13 +88,13 @@ class MenuFilter extends React.Component<Props, {}> {
 					Item = (item: any) => {
 						return (
 							<div className="element">
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(item.relation.format)} />
+								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
 							</div>
 						);
 					};
 
 					list = (item.value || []).map((id: string, i: number) => { 
-						return (item.relation.selectDict || []).find((it: any) => { return it.id == id; });
+						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 					});
 					list = list.filter((it: any) => { return it && it.id; });
 
