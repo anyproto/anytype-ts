@@ -56,10 +56,6 @@ class CellText extends React.Component<Props, State> {
 		let EditorComponent = null;
 		let value: string = String(record[relation.relationKey] || '');
 
-		if (relation.format == I.RelationType.Number) {
-			value = String(parseFloat(value || '0'));
-		};
-
 		if (relation.format == I.RelationType.LongText) {
 			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
 		};
@@ -98,6 +94,10 @@ class CellText extends React.Component<Props, State> {
 					/>
 				);
 			} else {
+				if (relation.format == I.RelationType.Number) {
+					value = String(parseFloat(value || '0'));
+				};
+
 				EditorComponent = (item: any) => (
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 

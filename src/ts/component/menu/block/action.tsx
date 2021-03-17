@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate } from 'ts/lib';
-import { blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -55,8 +55,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
+						if (action.isObject) {
+							action.object = { ...action,layout: I.ObjectLayout.ObjectType };
+						};
 
-						return <MenuItemVertical key={i} {...action} withCaption={action.caption} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+						return <MenuItemVertical 
+							key={i} 
+							{...action} 
+							withCaption={action.caption} 
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+							onClick={(e: any) => { this.onClick(e, action); }} 
+						/>;
 					})}
 				</div>
 			</div>
@@ -141,6 +150,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
+		const { config } = commonStore;
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
@@ -160,7 +170,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (filter) {
 			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
 			const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
@@ -257,7 +267,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isTextTitle())		 hasTitle = true;
 			};
 
-			if (hasTurnObject) {
+			if (hasTurnObject && config.allowDataview) {
 				sections[0].children.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
@@ -588,6 +598,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 						});
 					};
 				};
+
+				if (item.isObject) {
+					this.moveToPage(item.objectTypeId);
+				};
 			
 				break;
 		};
@@ -610,6 +624,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (!ids.length) {
 			ids = [ blockId ];
 		};
+
+		console.log(type);
 		
 		C.BlockListConvertChildrenToPages(rootId, ids, type);
 	};

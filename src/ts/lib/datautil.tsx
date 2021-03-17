@@ -507,9 +507,32 @@ class DataUtil {
 	};
 
 	menuGetTurnPage () {
-		return [
-			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' }
-		].map(this.menuMapperBlock);
+		const { config } = commonStore;
+		const ret = [];
+
+		if (config.allowDataview) {
+			let objectTypes = dbStore.objectTypes;
+			
+			if (!config.debug.ho) {
+				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+			};
+
+			let i = 0;
+			for (let type of objectTypes) {
+				ret.push({ 
+					type: I.BlockType.Page, 
+					id: 'object' + i++, 
+					objectTypeId: type.id, 
+					iconEmoji: type.iconEmoji, 
+					name: type.name || Constant.default.name, 
+					description: type.description,
+					isObject: true,
+					isHidden: type.isHidden,
+				});
+			};
+		};
+
+		return ret.map(this.menuMapperBlock);
 	};
 	
 	menuGetTurnObject() {

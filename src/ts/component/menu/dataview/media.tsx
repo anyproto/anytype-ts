@@ -39,39 +39,38 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		));
 
 		const File = (item: any) => (
-			<div className="element file">
-				<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-					<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
-					<div className="name">{item.name}</div>
-				</div>
-				<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
-			</div>
+			<React.Fragment>
+				<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
+				<div className="name">{item.name}</div>
+			</React.Fragment>
 		);
 
 		const Image = (item: any) => (
-			<div className="element image">
-				<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-					<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
-				</div>
-				<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
-			</div>
+			<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
 		);
 
         const Item = SortableElement((item: any) => {
 			let content = null;
+			let cn = [ 'item' ];
+
 			switch (item.layout) {
 				case I.ObjectLayout.File:
+					cn.push('file');
 					content = <File {...item} />;
 					break;
 
 				case I.ObjectLayout.Image:
+					cn.push('image');
 					content = <Image {...item} />;
 					break;
 			};
 			return (
-				<div id={'item-' + item.id} className="item">
+				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					{content}
+					<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
+						{content}
+					</div>
+					<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
 				</div>
 			);
 		});
