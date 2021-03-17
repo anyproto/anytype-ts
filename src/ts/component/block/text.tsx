@@ -844,6 +844,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, dataset, block, isPopup } = this.props;
 		const { focused } = focus;
 		const { from, to } = focus.range;
+		const ids = DataUtil.selectionGet('', false, this.props);
 
 		/*
 		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
@@ -859,7 +860,7 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks()) {
+		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextDisabled) {
 				menuStore.close('blockContext');
 			};
