@@ -478,6 +478,12 @@ class App extends React.Component<Props, State> {
 				ipcRenderer.send('pathOpen', logsDir);
 			});
 		});
+
+		ipcRenderer.on('shutdown', (e, relaunch) => {
+			C.Shutdown(() => {
+				ipcRenderer.send('shutdown', relaunch);
+			});
+		});
 	};
 
 	setWindowEvents () {

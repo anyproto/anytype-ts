@@ -3,6 +3,7 @@
 .settings/
 node_modules/
 build.zip
+build/
 addon
 protobuf
 todo.md
