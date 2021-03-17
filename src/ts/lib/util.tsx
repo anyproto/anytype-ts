@@ -756,6 +756,11 @@ class Util {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};
 
+	ctrlSymbol () {
+		const platform = this.getPlatform();
+		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	};
+
 };
 
 export default new Util();

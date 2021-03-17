@@ -63,7 +63,7 @@ class DataUtil {
 			case I.BlockType.Div:
 				switch (v) {
 					default:
-					case I.DivStyle.Line:		 icon = 'line'; break;
+					case I.DivStyle.Line:		 icon = 'div-line'; break;
 					case I.DivStyle.Dot:		 icon = 'dot'; break;
 				};
 				break;
@@ -527,10 +527,12 @@ class DataUtil {
 	
 	// Action menu
 	menuGetActions (hasFile: boolean) {
+		let cmd = Util.ctrlSymbol();
+
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to' },
-			{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-			{ id: 'remove', icon: 'remove', name: 'Delete' },
+			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 		

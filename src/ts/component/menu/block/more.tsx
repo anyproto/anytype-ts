@@ -169,8 +169,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const object = blockStore.getDetails(rootId, content.targetBlockId);
-		const platform = Util.getPlatform();
-		const cmd = platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+		const cmd = Util.ctrlSymbol();
 
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
 		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };

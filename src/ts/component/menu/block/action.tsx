@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, focus, Action, translate } from 'ts/lib';
+import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate } from 'ts/lib';
 import { blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -11,7 +11,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const SUB_IDS = [ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ];
 
 class MenuBlockAction extends React.Component<Props, State> {
 	
@@ -56,8 +55,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
-						
-						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+
+						return <MenuItemVertical key={i} {...action} withCaption={action.caption} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
 					})}
 				</div>
 			</div>
@@ -107,11 +106,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
-		menuStore.closeAll(SUB_IDS);
+		menuStore.closeAll(Constant.menuIds.action);
 	};
 	
 	onFilterFocus (e: any) {
-		menuStore.closeAll(SUB_IDS);
+		menuStore.closeAll(Constant.menuIds.action);
 		
 		this.focus = true;
 		this.props.setHover();
@@ -147,13 +146,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const cmd = Util.ctrlSymbol();
 		
 		if (!block) {
 			return [];
 		};
 		
-		const { align, content, bgColor } = block;
-		const { color } = content;
+		const { align, content, bgColor, type } = block;
+		const { color, style } = content;
 
 		let sections: any[] = [];
 		
@@ -220,8 +220,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				{ 
 					children: [
 						{ id: 'move', icon: 'move', name: 'Move to' },
-						{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-						{ id: 'remove', icon: 'remove', name: 'Delete' },
+						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 					] 
 				},
 				{ 
@@ -232,7 +232,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			];
 
 			let hasTurnText = true;
-			let hasConvert = true;
+			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasTitle = false;
@@ -248,7 +248,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.canTurnText() || !block.isDiv()) {
 					hasTurnDiv = false;
 				};
-				if (!block.canTurnPage())		 hasConvert = false;
+				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
@@ -257,12 +257,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isTextTitle())		 hasTitle = true;
 			};
 
-			if (hasTurnText || hasTurnDiv) {
-				sections[0].children.push({ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true });
-			};
-
-			if (hasConvert) {
-				sections[0].children.push({ id: 'convert', icon: 'turn', name: 'Turn into object', arrow: true });
+			if (hasTurnObject) {
+				sections[0].children.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
@@ -273,6 +269,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasTitle) {
 				sections[0].children = [];
+			};
+
+			if (hasTurnText) {
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(type, style), name: 'Text style', arrow: true });
+			};
+
+			if (hasTurnDiv) {
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(type, style), name: 'Divider style', arrow: true });
 			};
 
 			if (hasAlign) {
@@ -408,25 +412,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.setActive(item, false);
 		window.clearTimeout(this.timeout);
 
-		if ((item.id == 'turn') && menuStore.isOpen('blockStyle')) {
-			return;
-		};
-
-		if ((item.id == 'convert') && menuStore.isOpen('searchObject')) {
-			return;
-		};
-		
-		if ((item.id == 'color') && menuStore.isOpen('blockColor')) {
-			return;
-		};
-		
-		if ((item.id == 'background') && menuStore.isOpen('blockBackground')) {
-			return;
-		};
-
-		menuStore.closeAll(SUB_IDS);
-		
 		if (!item.arrow) {
+			menuStore.closeAll(Constant.menuIds.action);
 			return;
 		};
 		
@@ -449,7 +436,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		switch (item.itemId) {
-			case 'turn':
+			case 'turnStyle':
 				menuId = 'blockStyle';
 				menuParam.data.onSelect = (item: any) => {
 					if (item.type == I.BlockType.Text) {
@@ -468,7 +455,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 				break;
 
-			case 'convert':
+			case 'turnObject':
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 				menuParam.data.filters = [
@@ -518,7 +505,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId) {
+		if (menuId && !menuStore.isOpen(menuId)) {
+			menuStore.closeAll(Constant.menuIds.action);
 			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};

@@ -59,6 +59,9 @@
 		],
 		"context": [
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
+		],
+		"action": [
+			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
 		]
 	},
 
