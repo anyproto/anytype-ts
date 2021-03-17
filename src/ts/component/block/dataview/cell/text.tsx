@@ -94,10 +94,6 @@ class CellText extends React.Component<Props, State> {
 					/>
 				);
 			} else {
-				if (relation.format == I.RelationType.Number) {
-					value = String(parseFloat(value || '0'));
-				};
-
 				EditorComponent = (item: any) => (
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
