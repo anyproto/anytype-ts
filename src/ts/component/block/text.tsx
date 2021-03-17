@@ -845,10 +845,12 @@ class BlockText extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const { from, to } = focus.range;
 
+		/*
 		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
 			e.preventDefault();
 			return;
 		};
+		*/
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
