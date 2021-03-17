@@ -87,6 +87,8 @@ if (useGRPC) {
 	} else {
 		waitLibraryPromise = server.start(binPath, userPath);
 	};
+} else {
+	waitLibraryPromise = Promise.resolve();
 };
 
 function waitForLibraryAndCreateWindows () {

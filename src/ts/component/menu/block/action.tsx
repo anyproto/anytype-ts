@@ -73,7 +73,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Filter ref={(ref: any) => { this.ref = ref; }} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter actions..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
@@ -427,8 +427,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		this.ref.blur();
-
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
