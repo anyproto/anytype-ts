@@ -239,6 +239,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.LongText:
 				param = Object.assign(param, {
 					element: cell,
+					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
 					width: width,
 				});
@@ -306,6 +307,7 @@ class Cell extends React.Component<Props, {}> {
 
 		if (menuId) {
 			menuStore.closeAll(Constant.menuIds.cell);
+
 			if (commonStore.cellId != cellId) {
 				window.setTimeout(() => {
 					commonStore.cellId = cellId;

@@ -74,34 +74,6 @@ class Crumbs {
 		return obj;
 	};
 
-	addCrumbs (id: string) {
-		let cr = this.get(I.CrumbsType.Page);
-		let lastTargetId = '';
-		
-		if (cr.ids.length) {
-			lastTargetId = cr.ids[cr.ids.length - 1];
-		};
-		if (!lastTargetId || (lastTargetId != id)) {
-			cr = this.add(I.CrumbsType.Page, id);
-		};
-		this.save(I.CrumbsType.Page, cr);
-	};
-
-	addRecent (id: string) {
-		if (!id) {
-			return;
-		};
-
-		let recent = this.get(I.CrumbsType.Recent);
-		recent = this.add(I.CrumbsType.Recent, id);
-
-		recent.ids = Util.arrayUnique(recent.ids);
-		if (recent.ids.length > LIMIT_RECENT) {
-			recent.ids = recent.ids.slice(recent.ids.length - LIMIT_RECENT, recent.ids.length);
-		};
-		this.save(I.CrumbsType.Recent, recent);
-	};
-	
 	save (key: I.CrumbsType, obj: CrumbsObject, callBack?: () => void) {
 		if (!obj) {
 			return;
@@ -129,6 +101,34 @@ class Crumbs {
 	
 	delete (key: I.CrumbsType) {
 		Storage.delete(this.getKey(key));
+	};
+
+	addCrumbs (id: string) {
+		let cr = this.get(I.CrumbsType.Page);
+		let lastTargetId = '';
+		
+		if (cr.ids.length) {
+			lastTargetId = cr.ids[cr.ids.length - 1];
+		};
+		if (!lastTargetId || (lastTargetId != id)) {
+			cr = this.add(I.CrumbsType.Page, id);
+		};
+		this.save(I.CrumbsType.Page, cr);
+	};
+
+	addRecent (id: string) {
+		if (!id) {
+			return;
+		};
+
+		let recent = this.get(I.CrumbsType.Recent);
+		recent = this.add(I.CrumbsType.Recent, id);
+
+		recent.ids = Util.arrayUnique(recent.ids);
+		if (recent.ids.length > LIMIT_RECENT) {
+			recent.ids = recent.ids.slice(recent.ids.length - LIMIT_RECENT, recent.ids.length);
+		};
+		this.save(I.CrumbsType.Recent, recent);
 	};
 		
 };

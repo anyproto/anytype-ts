@@ -124,7 +124,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
-		win.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e); 
@@ -134,9 +133,11 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.apply(); 
 			this.getScrollContainer().scrollTop(this.scrollTop);
 		});
-		
+
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
+
+		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Storage.set('askSurvey', 1);
 
@@ -192,7 +193,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	open (skipInit?: boolean) {
-		const { rootId, onOpen, history } = this.props;
+		const { rootId, onOpen, history, isPopup } = this.props;
 		const { breadcrumbs } = blockStore;
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
@@ -230,7 +231,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.focusTitle();
 			this.forceUpdate();
 			this.resize();
-			this.getScrollContainer().scrollTop(Storage.getScroll('editor', rootId));
+			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			blockStore.setNumbers(rootId);
 
@@ -1026,15 +1027,15 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	onScroll (e: any) {
-		const { rootId } = this.props;
-		const top = $(window).scrollTop();
+		const { rootId, isPopup } = this.props;
+		const top = this.getScrollContainer().scrollTop();
 
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
 		};
-		
+
 		this.scrollTop = top;
-		Storage.setScroll('editor', rootId, top);
+		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Util.linkPreviewHide(false);
 	};
 	
