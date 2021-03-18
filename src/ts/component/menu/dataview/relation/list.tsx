@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -96,7 +96,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 
-		commonStore.menuOpen('relationSuggest', { 
+		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: 256,
 			offsetY: 4,
@@ -107,7 +107,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 				filter: '',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), (message: any) => { commonStore.menuClose('relationSuggest'); });
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), (message: any) => { menuStore.close('relationSuggest'); });
 				},
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
@@ -125,7 +125,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 			return;
 		};
 		
-		commonStore.menuOpen('dataviewRelationEdit', { 
+		menuStore.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${id}`,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,

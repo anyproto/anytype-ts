@@ -5,14 +5,12 @@ import { Select, Marker, Loader, IconObject } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
-	onFocus?(e: any): void;
-	onBlur?(e: any): void;
 };
 
 const { ipcRenderer } = window.require('electron');
@@ -399,7 +397,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
 		
-		if (commonStore.menuIsOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
+		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
 			return;
 		};
@@ -412,10 +410,10 @@ class BlockText extends React.Component<Props, {}> {
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
 		const symbolBefore = range ? value[range.from - 1] : '';
 		
-		const menuOpen = commonStore.menuIsOpen();
-		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
-		const menuOpenMention = commonStore.menuIsOpen('blockMention');
-		const menuOpenSmile = commonStore.menuIsOpen('smile');
+		const menuOpen = menuStore.isOpen();
+		const menuOpenAdd = menuStore.isOpen('blockAdd');
+		const menuOpenMention = menuStore.isOpen('blockMention');
+		const menuOpenSmile = menuStore.isOpen('smile');
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			if (block.isTextCode() || menuOpen) {
@@ -473,11 +471,11 @@ class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (menuOpenAdd && (symbolBefore == '/')) {
-				commonStore.menuClose('blockAdd');
+				menuStore.close('blockAdd');
 			};
 
 			if (menuOpenMention && (symbolBefore == '@')) {
-				commonStore.menuClose('blockMention');
+				menuStore.close('blockMention');
 			};
 		});
 
@@ -525,8 +523,8 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
 
-		const menuOpenAdd = commonStore.menuIsOpen('blockAdd');
-		const menuOpenMention = commonStore.menuIsOpen('blockMention');
+		const menuOpenAdd = menuStore.isOpen('blockAdd');
+		const menuOpenMention = menuStore.isOpen('blockMention');
 		
 		let value = this.getValue();
 		let cmdParsed = false;
@@ -539,7 +537,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (menuOpenAdd) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
-				commonStore.menuClose('blockAdd');
+				menuStore.close('blockAdd');
 			} else {
 				const d = range.from - filter.from;
 				if (d >= 0) {
@@ -553,7 +551,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (menuOpenMention) {
 			if (k == Key.space) {
 				commonStore.filterSet(0, '');
-				commonStore.menuClose('blockMention');
+				menuStore.close('blockMention');
 			} else {
 				const d = range.from - filter.from;
 				if (d >= 0) {
@@ -649,12 +647,12 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		if (cmdParsed) {
-			commonStore.menuClose('blockAdd');
+			menuStore.close('blockAdd');
 			return;
 		};
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			commonStore.menuClose('blockContext');
+			menuStore.close('blockContext');
 		});
 		
 		this.marks = this.getMarksFromHtml();
@@ -678,7 +676,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.preventSaveOnBlur = true;
 
 		commonStore.filterSet(range.from, '');
-		commonStore.menuOpen('blockMention', {
+		menuStore.open('blockMention', {
 			element: el,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
@@ -721,7 +719,7 @@ class BlockText extends React.Component<Props, {}> {
 			rect = null;
 		};
 
-		commonStore.menuOpen('smile', {
+		menuStore.open('smile', {
 			element: '#block-' + block.id,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
@@ -778,17 +776,11 @@ class BlockText extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		e.persist();
 
-		const { onFocus } = this.props;
-		
 		this.placeHolderCheck();
 		keyboard.setFocus(true);
-
-		onFocus(e);
 	};
 	
 	onBlur (e: any) {
-		const { onBlur } = this.props;
-
 		this.placeHolderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
@@ -796,8 +788,6 @@ class BlockText extends React.Component<Props, {}> {
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
 		};
-
-		onBlur(e);
 	};
 	
 	onPaste (e: any) {
@@ -854,11 +844,14 @@ class BlockText extends React.Component<Props, {}> {
 		const { rootId, dataset, block, isPopup } = this.props;
 		const { focused } = focus;
 		const { from, to } = focus.range;
+		const ids = DataUtil.selectionGet('', false, this.props);
 
+		/*
 		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
 			e.preventDefault();
 			return;
 		};
+		*/
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
@@ -867,9 +860,9 @@ class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || block.isTextTitle()) {
+		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextDisabled) {
-				commonStore.menuClose('blockContext');
+				menuStore.close('blockContext');
 			};
 			return;
 		};
@@ -882,14 +875,14 @@ class BlockText extends React.Component<Props, {}> {
 			rect = null;
 		};
 
-		commonStore.menuCloseAll([ 'blockAdd', 'blockMention' ]);
+		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
 			const pageContainer = Util.getEditorPageContainer(isPopup ? 'popup' : 'page');
-			$(pageContainer).unbind('click.context').on('click.context', () => { commonStore.menuClose('blockContext'); });
+			$(pageContainer).unbind('click.context').on('click.context', () => { menuStore.close('blockContext'); });
 
-			commonStore.menuOpen('blockContext', {
+			menuStore.open('blockContext', {
 				element: el,
 				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 				type: I.MenuType.Horizontal,
@@ -931,7 +924,7 @@ class BlockText extends React.Component<Props, {}> {
 			
 			this.clicks = 0;
 			selection.set([ id ]);
-			commonStore.menuClose('blockContext');
+			menuStore.close('blockContext');
 			window.clearTimeout(this.timeoutContext);
 		};
 	};

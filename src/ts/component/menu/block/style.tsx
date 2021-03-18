@@ -93,12 +93,10 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 
 		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
-		const turnPage = { id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() };
 		const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
 		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
 
 		let hasTurnText = true;
-		let hasTurnPage = true;
 		let hasTurnList = true;
 		let hasTurnObject = true;
 		let hasTurnDiv = true;
@@ -108,14 +106,12 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		for (let id of blockIds) {
 			const block = blockStore.getLeaf(rootId, id);
 			if (!block.canTurnText())		 hasTurnText = false;
-			if (!block.canTurnPage())		 hasTurnPage = false;
 			if (!block.canTurnList())		 hasTurnList = false;
 			if (!block.canTurnObject())		 hasTurnObject = false;
 			if (!block.isDiv())				 hasTurnDiv = false;
 		};
 
 		if (hasTurnText)	 sections.push(turnText);
-		if (hasTurnPage)	 sections.push(turnPage);
 		if (hasTurnList)	 sections.push(turnList);
 		if (hasTurnObject)	 sections.push(turnObject);
 		if (hasTurnDiv)		 sections.push(turnDiv);

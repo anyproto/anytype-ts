@@ -4,7 +4,7 @@ import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListMenu, Progress, Tooltip, LinkPreview, Icon } from './component';
-import { commonStore, authStore, blockStore, dbStore } from './store';
+import { commonStore, authStore, blockStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
@@ -120,9 +120,7 @@ import 'scss/media/print.scss';
 import 'scss/media/dark.scss';
 
 interface RouteElement { path: string; };
-interface Props {
-	commonStore?: any;
-};
+interface Props {};
 
 interface State {
 	loading: boolean;
@@ -137,10 +135,12 @@ const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
-	commonStore: commonStore,
-	authStore: authStore,
-	blockStore: blockStore,
-	dbStore: dbStore,
+	commonStore,
+	authStore,
+	blockStore,
+	dbStore,
+	menuStore,
+	popupStore,
 };
 
 const path = require('path');
@@ -366,9 +366,9 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
-			commonStore.popupCloseAll();
+			popupStore.closeAll();
 			window.setTimeout(() => {
-				commonStore.popupOpen(id, { data: data });
+				popupStore.open(id, { data: data });
 			}, Constant.delay.popup);
 		});
 
@@ -382,7 +382,7 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear(); 
 
 			if (!auto) {
-				commonStore.popupOpen('confirm', {
+				popupStore.open('confirm', {
 					data: {
 						title: 'Update available',
 						text: 'Do you want to update on a new version?',
@@ -403,7 +403,7 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear(); 
 
 			if (!auto) {
-				commonStore.popupOpen('confirm', {
+				popupStore.open('confirm', {
 					data: {
 						title: 'You are up-to-date',
 						text: Util.sprintf('You are on the latest version: %s', version),
@@ -426,7 +426,7 @@ class App extends React.Component<Props, State> {
 			commonStore.progressClear();
 
 			if (!auto) {
-				commonStore.popupOpen('confirm', {
+				popupStore.open('confirm', {
 					data: {
 						title: translate('popupConfirmUpdateTitle'),
 						text: Util.sprintf(translate('popupConfirmUpdateText'), err),
@@ -478,6 +478,12 @@ class App extends React.Component<Props, State> {
 				ipcRenderer.send('pathOpen', logsDir);
 			});
 		});
+
+		ipcRenderer.on('shutdown', (e, relaunch) => {
+			C.Shutdown(() => {
+				ipcRenderer.send('shutdown', relaunch);
+			});
+		});
 	};
 
 	setWindowEvents () {
@@ -524,13 +530,13 @@ class App extends React.Component<Props, State> {
 	};
 
 	onImport () {
-		commonStore.popupOpen('settings', {
+		popupStore.open('settings', {
 			data: { page: 'importIndex' }
 		});
 	};
 
 	onExport () {
-		commonStore.popupOpen('settings', {
+		popupStore.open('settings', {
 			data: { page: 'exportMarkdown' }
 		});
 	};

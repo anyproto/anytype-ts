@@ -3,7 +3,7 @@ import { I, C, DataUtil, Util, translate } from 'ts/lib';
 import { Icon, Input, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -119,8 +119,8 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 			value: value, 
 			relation: observable.box(relation),
 		};
-		commonStore.menuUpdateData('dataviewOptionList', nd);
-		commonStore.menuUpdateData('dataviewOptionValues', nd);
+		menuStore.updateData('dataviewOptionList', nd);
+		menuStore.updateData('dataviewOptionValues', nd);
 		
 		onChange(value);
 		close();
@@ -142,8 +142,8 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const nd = { relation: observable.box(relation) };
 		this.props.param.data.option = option;
 
-		commonStore.menuUpdateData('dataviewOptionList', nd);
-		commonStore.menuUpdateData('dataviewOptionValues', nd);
+		menuStore.updateData('dataviewOptionList', nd);
+		menuStore.updateData('dataviewOptionValues', nd);
 	};
 	
 };

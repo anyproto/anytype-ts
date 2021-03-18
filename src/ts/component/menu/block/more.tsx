@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore, dbStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -20,7 +20,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		this.onClick = this.onClick.bind(this);
 		this.onLayout = this.onLayout.bind(this);
-		this.onType = this.onType.bind(this);
+		this.onObjectType = this.onObjectType.bind(this);
 	};
 
 	render () {
@@ -48,8 +48,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								id="object-type" 
 								object={{...type, layout: I.ObjectLayout.ObjectType }}
 								name={type.name}
-								menuId="select"
-								onClick={!readOnly ? this.onType : undefined} 
+								onClick={!readOnly ? this.onObjectType : undefined} 
 								arrow={!readOnly}
 								className={readOnly ? 'isReadOnly' : ''}
 							/>
@@ -61,7 +60,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						id="object-layout" 
 						icon={layout ? layout.icon : ''} 
 						name={layout ? layout.name : 'Select layout'}
-						menuId="select"
 						onClick={!readOnly ? this.onLayout : undefined} 
 						arrow={!readOnly}
 						className={readOnly ? 'isReadOnly' : ''}
@@ -171,8 +169,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const { content } = block;
 		const object = blockStore.getDetails(rootId, content.targetBlockId);
-		const platform = Util.getPlatform();
-		const cmd = platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+		const cmd = Util.ctrlSymbol();
 
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
 		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };
@@ -294,7 +291,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			
 			case 'move':
 				close = false;
-				commonStore.menuOpen('searchObject', { 
+				menuStore.open('searchObject', { 
 					element: `#${getId()} #item-${item.id}`,
 					offsetX: node.outerWidth(),
 					offsetY: -36,
@@ -370,7 +367,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#item-object-layout',
 			offsetX: 256,
 			offsetY: -36,
@@ -386,38 +383,26 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		});
 	};
 
-	onType (e: any) {
-		const { config } = commonStore;
-		const { param, close } = this.props;
+	onObjectType (e: any) {
+		const { getId, param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		let objectTypes = Util.objectCopy(dbStore.objectTypes);
-		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-		};
-
-		let options = objectTypes.map((it: I.ObjectType) => {
-			it.layout = I.ObjectLayout.ObjectType;
-			return { ...it, object: it };
-		});
-
-		options.sort((c1: any, c2: any) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-
-		commonStore.menuOpen('select', { 
-			element: '#item-object-type',
-			offsetX: 208,
+		menuStore.open('searchObject', { 
+			element: `#${getId()} #item-object-type`,
+			offsetX: 256,
 			offsetY: -36,
 			horizontal: I.MenuDirection.Right,
+			className: 'single',
 			data: {
-				options: options,
+				placeHolder: 'Find a type of object...',
+				label: 'Your object type library',
 				value: object.id,
-				onSelect: (e: any, item: any) => {
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				],
+				onSelect: (item: any) => {
 					C.BlockObjectTypeSet(rootId, item.id);
 					close();
 				}

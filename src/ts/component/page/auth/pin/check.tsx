@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Error, Pin, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
 import { Storage, translate, keyboard } from 'ts/lib';
-import { authStore, commonStore } from 'ts/store';
+import { authStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {};
@@ -60,7 +60,7 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 			history.push('/main/index');
 				
 			if (!Storage.get('popupNewBlock')) {
-				commonStore.popupOpen('help', { 
+				popupStore.open('help', { 
 					data: { document: 'whatsNew' },
 				});
 			};

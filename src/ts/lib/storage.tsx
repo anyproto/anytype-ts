@@ -53,8 +53,7 @@ class Storage {
 
 	checkToggle (rootId: string, id: string): boolean {
 		const map = this.get('toggle') || {};
-		const list = map[rootId] || [];
-		return list.indexOf(id) >= 0;
+		return (map[rootId] || []).indexOf(id) >= 0;
 	};
 
 	setScroll (key: string, rootId: string, scroll: number) {
@@ -72,9 +71,10 @@ class Storage {
 
 	logout () {
 		this.delete('accountId');
-		this.delete('toggle');
-		this.delete('hello');
 		this.delete('popupNewBlock');
+		this.delete('scroll');
+		this.delete('toggle');
+		this.delete('crumbs');
 	};
 	
 };

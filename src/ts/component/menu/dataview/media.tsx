@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, InputWithFile } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {};
@@ -39,33 +39,38 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		));
 
 		const File = (item: any) => (
-			<div className="element file" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+			<React.Fragment>
 				<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
 				<div className="name">{item.name}</div>
-			</div>
+			</React.Fragment>
 		);
 
 		const Image = (item: any) => (
-			<div className="element image" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-				<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
-			</div>
+			<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
 		);
 
         const Item = SortableElement((item: any) => {
 			let content = null;
+			let cn = [ 'item' ];
+
 			switch (item.layout) {
 				case I.ObjectLayout.File:
+					cn.push('file');
 					content = <File {...item} />;
 					break;
 
 				case I.ObjectLayout.Image:
+					cn.push('image');
 					content = <Image {...item} />;
 					break;
 			};
 			return (
-				<div className="item">
+				<div id={'item-' + item.id} className={cn.join(' ')}>
 					<Handle />
-					{content}
+					<div className="clickable" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
+						{content}
+					</div>
+					<Icon className="more" onClick={(e: any) => { this.onMore(e, item); }} />
 				</div>
 			);
 		});
@@ -153,15 +158,43 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == id; });
 
 		onChange(value);
+		menuStore.updateData(id, { value: value });
+	};
 
-		if (menu) {
-			menu.param.data.value = value;
-			commonStore.menuUpdate(id, menu.param);
-		};
+	onMore (e: any, item: any) {
+		const { getId, param, id } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+		const element = $(`#${getId()} #item-${item.id}`);
+
+		element.addClass('active');
+
+		menuStore.open('select', { 
+			element: element.find('.icon.more'),
+			offsetY: 4,
+			horizontal: I.MenuDirection.Center,
+			onClose: () => {
+				element.removeClass('active');
+			},
+			data: {
+				value: '',
+				options: [
+					{ id: 'remove', icon: 'remove', name: 'Delete' },
+				],
+				onSelect: (event: any, el: any) => {
+					if (el.id == 'remove') {
+						let value = Util.objectCopy(data.value || []);
+						value = value.filter((it: any) => { return it != item.id; });
+						value = Util.arrayUnique(value);
+
+						onChange(value);
+						menuStore.updateData(id, { value: value });
+					};
+				},
+			}
+		});
 	};
 
 };

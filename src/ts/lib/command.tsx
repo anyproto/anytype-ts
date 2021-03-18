@@ -448,11 +448,12 @@ const BlockListMoveToNewPage = (contextId: string, blockIds: string[], details: 
 	dispatcher.request('blockListMoveToNewPage', request, callBack);
 };
 
-const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], callBack?: (message: any) => void) => {
+const BlockListConvertChildrenToPages = (contextId: string, blockIds: string[], type: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.ConvertChildrenToPages.Request();
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
+	request.setObjecttype(type);
 
 	dispatcher.request('blockListConvertChildrenToPages', request, callBack);
 };

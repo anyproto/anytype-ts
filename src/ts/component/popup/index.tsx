@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { menuStore, popupStore } from 'ts/store';
 import { RouteComponentProps } from 'react-router';
 
 import PopupSettings from './settings';
@@ -23,6 +23,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const raf = require('raf');
+const Constant = require('json/constant.json');
 
 class Popup extends React.Component<Props, {}> {
 
@@ -106,7 +107,7 @@ class Popup extends React.Component<Props, {}> {
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
 			node.addClass('show');
-			window.setTimeout(() => { node.css({ transform: 'none' }); }, 210);
+			window.setTimeout(() => { node.css({ transform: 'none' }); }, Constant.delay.popup);
 		});
 	};
 	
@@ -133,8 +134,8 @@ class Popup extends React.Component<Props, {}> {
 	};
 
 	close () {
-		commonStore.menuCloseAll();
-		commonStore.popupClose(this.props.id);
+		menuStore.closeAll();
+		popupStore.close(this.props.id);
 	};
 
 	getId (): string {

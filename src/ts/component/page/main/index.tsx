@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { commonStore, blockStore} from 'ts/store';
+import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -127,7 +127,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	onAccount () {
-		commonStore.menuOpen('account', {
+		menuStore.open('account', {
 			element: '#button-account',
 			offsetY: 4,
 			horizontal: I.MenuDirection.Right
@@ -148,7 +148,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(root, block.content.targetBlockId);
 
 		if (block.content.style == I.LinkStyle.Archive) {
-			commonStore.popupOpen('archive', {});
+			popupStore.open('archive', {});
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
 				DataUtil.objectOpenEvent(e, object);
@@ -157,7 +157,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 
 	onStore (e: any) {
-		commonStore.popupOpen('store', {});
+		popupStore.open('store', {});
 	};
 	
 	onAdd (e: any) {
@@ -175,10 +175,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 
 		const close = () => {
-			commonStore.menuClose('select');
+			menuStore.close('select');
 		};
 
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#button-add',
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
@@ -189,7 +189,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				noClose: true,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'page') {
-						DataUtil.pageCreate(e, root, '', { iconEmoji: SmileUtil.random() }, I.BlockPosition.Bottom, (message: any) => {
+						DataUtil.pageCreate(e, root, '', {}, I.BlockPosition.Bottom, (message: any) => {
 							DataUtil.objectOpen({ id: message.targetId });
 						});
 
@@ -197,7 +197,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 					};
 
 					if (item.id == 'link') {
-						commonStore.menuOpen('searchObject', { 
+						menuStore.open('searchObject', { 
 							element: '#menuSelect #item-link',
 							offsetX: width,
 							offsetY: -36,
@@ -231,7 +231,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { root } = blockStore;
 		const node = $(ReactDOM.findDOMNode(this));
 
-		commonStore.menuOpen('blockMore', { 
+		menuStore.open('blockMore', { 
 			element: '#button-' + item.id + '-more',
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,

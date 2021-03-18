@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, DataUtil, translate } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { I, keyboard, Key, C, focus, Action, SmileUtil, Util, DataUtil, Storage, translate } from 'ts/lib';
+import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuBlockAdd extends React.Component<Props, {}> {
@@ -270,18 +271,163 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	onClick (e: any, item: any) {
 		e.stopPropagation();
-		
-		const { param } = this.props;
-		const { data } = param;
-		const { onSelect } = data;
-		
+
 		if (item.arrow) {
 			return;
 		};
 		
-		onSelect(e, item);
+		const { param, close, getId } = this.props;
+		const { data } = param;
+		const { rootId, blockId, onSelect, blockCreate } = data;
+		const { filter } = commonStore;
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		let text = String(data.text || '');
+
+		const length = text.length;
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
+		const obj = $('#menuBlockAdd');
+		const onCommand = (message: any) => {
+			focus.set(message.blockId || blockId, { from: length, to: length });
+			focus.apply();
+		};
+
+		let needClose = true;
+
+		const cb = () => {
+			text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
+
+			if (item.isTextColor) {
+				C.BlockListSetTextColor(rootId, [ blockId ], item.value, onCommand);
+			};
+
+			if (item.isBgColor) {
+				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, onCommand);
+			};
+
+			if (item.isAlign) {
+				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, onCommand);
+			};
+
+			if (item.isAction) {
+				switch (item.itemId) {
+					case 'download':
+						Action.download(block);
+						break;
+
+					case 'move':
+						needClose = false;
+
+						menuStore.open('searchObject', { 
+							element: `#${getId()} #item-${item.id}`,
+							offsetX: obj.width(),
+							offsetY: -36,
+							data: { 
+								type: I.NavigationType.Move, 
+								rootId: rootId,
+								skipId: rootId,
+								blockId: blockId,
+								blockIds: [ blockId ],
+								position: I.BlockPosition.Bottom,
+								onSelect: close,
+							}, 
+						});
+						break;
+
+					case 'copy':
+						Action.duplicate(rootId, blockId, [ blockId ]);
+						break;
+					
+					case 'remove':
+						Action.remove(rootId, blockId, [ blockId ]);
+						break;
+				};
+			};
+
+			if (item.isBlock) {
+				let param: any = {
+					type: item.type,
+					content: {},
+				};
+					
+				if (item.type == I.BlockType.Text) {
+					param.content.style = item.itemId;
+
+					if (param.content.style == I.TextStyle.Code) {
+						param.fields = { 
+							lang: (Storage.get('codeLang') || Constant.default.codeLang),
+						};
+					};
+				};
+
+				if (item.type == I.BlockType.File) {
+					param.content.type = item.itemId;
+				};
+				
+				if (item.type == I.BlockType.Div) {
+					param.content.style = item.itemId;
+				};
+				
+				if (item.type == I.BlockType.Page) {
+					if (item.itemId == 'existing') {
+						needClose = false;
+
+						menuStore.open('searchObject', { 
+							element: `#${getId()} #item-${item.id}`,
+							offsetX: obj.width(),
+							offsetY: -64,
+							data: { 
+								type: I.NavigationType.Link, 
+								rootId: rootId,
+								skipId: rootId,
+								blockId: blockId,
+								blockIds: [ blockId ],
+								position: I.BlockPosition.Bottom,
+								onSelect: close,
+							}, 
+						});
+					} else {
+						const details: any = {};
+						
+						if (item.isObject) {
+							const type = dbStore.getObjectType(item.objectTypeId);
+							if (type) {
+								details.type = type.id;
+								details.layout = type.layout;
+							};
+						};
+
+						DataUtil.pageCreate(e, rootId, blockId, details, position, (message: any) => {
+							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+						});
+					};
+				} else {
+					blockCreate(block, position, param);
+				};
+			};
+
+			if (needClose) {
+				close();
+			};
+		};
+
+		if (onSelect) {
+			onSelect(e, item);
+		};
+
+		// Clear filter in block text
+		if (block) {
+			// Hack to prevent onBlur save
+			$(`#block-${blockId} .value`).text(text);
+			DataUtil.blockSetText(rootId, block, text, block.content.marks, true, cb);
+		} else {
+			cb();
+		};
 	};
-	
+
 };
 
 export default MenuBlockAdd;

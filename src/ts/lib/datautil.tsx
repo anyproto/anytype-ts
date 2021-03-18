@@ -1,5 +1,5 @@
 import { I, C, M, keyboard, crumbs, translate, Util } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -63,7 +63,7 @@ class DataUtil {
 			case I.BlockType.Div:
 				switch (v) {
 					default:
-					case I.DivStyle.Line:		 icon = 'line'; break;
+					case I.DivStyle.Line:		 icon = 'div-line'; break;
 					case I.DivStyle.Dot:		 icon = 'dot'; break;
 				};
 				break;
@@ -297,10 +297,10 @@ class DataUtil {
 				break;
 		};
 
-		if (commonStore.popupIsOpen(popupId)) {
-			commonStore.popupUpdate(popupId, param);
+		if (popupStore.isOpen(popupId)) {
+			popupStore.update(popupId, param);
 		} else {
-			window.setTimeout(() => { commonStore.popupOpen(popupId, param); }, Constant.delay.popup);
+			window.setTimeout(() => { popupStore.open(popupId, param); }, Constant.delay.popup);
 		};
 	};
 	
@@ -507,9 +507,32 @@ class DataUtil {
 	};
 
 	menuGetTurnPage () {
-		return [
-			{ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' }
-		].map(this.menuMapperBlock);
+		const { config } = commonStore;
+		const ret = [];
+
+		if (config.allowDataview) {
+			let objectTypes = dbStore.objectTypes;
+			
+			if (!config.debug.ho) {
+				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+			};
+
+			let i = 0;
+			for (let type of objectTypes) {
+				ret.push({ 
+					type: I.BlockType.Page, 
+					id: 'object' + i++, 
+					objectTypeId: type.id, 
+					iconEmoji: type.iconEmoji, 
+					name: type.name || Constant.default.name, 
+					description: type.description,
+					isObject: true,
+					isHidden: type.isHidden,
+				});
+			};
+		};
+
+		return ret.map(this.menuMapperBlock);
 	};
 	
 	menuGetTurnObject() {
@@ -527,10 +550,12 @@ class DataUtil {
 	
 	// Action menu
 	menuGetActions (hasFile: boolean) {
+		let cmd = Util.ctrlSymbol();
+
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to' },
-			{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-			{ id: 'remove', icon: 'remove', name: 'Delete' },
+			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 		
@@ -550,7 +575,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-black', name: 'Black', value: 'black', className: '', isTextColor: true }
+			{ id: 'color-default', name: 'Default', value: 'default', className: 'default', isTextColor: true }
 		];
 		for (let color of Constant.textColor) {
 			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
@@ -584,16 +609,17 @@ class DataUtil {
 
 	menuGetLayouts () {
 		return [
-			{ id: I.ObjectLayout.Page, icon: 'page', name: 'Page' },
-			{ id: I.ObjectLayout.Human, icon: 'human', name: 'Human' },
-			{ id: I.ObjectLayout.Task, icon: 'task', name: 'Task' },
-			{ id: I.ObjectLayout.Set, icon: 'set', name: 'Set' },
-			{ id: I.ObjectLayout.File, icon: 'file', name: 'File' },
-			{ id: I.ObjectLayout.Image, icon: 'image', name: 'Image' },
-			{ id: I.ObjectLayout.ObjectType, icon: 'type', name: 'Object type' },
-			{ id: I.ObjectLayout.Relation, icon: 'relation', name: 'Relation' },
+			{ id: I.ObjectLayout.Page, icon: 'page' },
+			{ id: I.ObjectLayout.Human, icon: 'human' },
+			{ id: I.ObjectLayout.Task, icon: 'task' },
+			{ id: I.ObjectLayout.Set, icon: 'set' },
+			{ id: I.ObjectLayout.File, icon: 'file' },
+			{ id: I.ObjectLayout.Image, icon: 'image' },
+			{ id: I.ObjectLayout.ObjectType, icon: 'type' },
+			{ id: I.ObjectLayout.Relation, icon: 'relation' },
 		].map((it: any) => {
 			it.icon = 'layout-' + it.icon;
+			it.name = translate('layout' + it.id);
 			return it;
 		});
 	};
@@ -640,15 +666,16 @@ class DataUtil {
 	};
 	
 	menuSectionsMap (sections: any[]) {
+		sections = Util.objectCopy(sections);
 		sections = sections.filter((it: any) => { return it.children.length > 0; });
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
 			s.children = s.children.map((it: any, i: number) => {
-				it.key = it.id || i;
+				it.itemId = it.id || i;
 				it.id = s.id + '-' + it.id;
 				return it;
 			});
-			s.children = Util.arrayUniqueObjects(s.children, 'key');
+			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
 			return s;
 		});
 		sections = Util.arrayUniqueObjects(sections, 'id');

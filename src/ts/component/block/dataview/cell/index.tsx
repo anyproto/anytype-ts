@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, DataUtil, Util } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -115,8 +115,8 @@ class Cell extends React.Component<Props, {}> {
 		$('.cell.isEditing').removeClass('isEditing');
 
 		const win = $(window);
-		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $('#' + id).addClass('isEditing');
+		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
+		const cell = $('#' + cellId).addClass('isEditing');
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
@@ -141,6 +141,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let setOff = () => {
+			commonStore.cellId = '';
 			cell.removeClass('isEditing');
 
 			if (this.ref && this.ref.setEditing) {
@@ -152,7 +153,8 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let param: I.MenuParam = { 
-			element: `#${id} .cellContent`,
+			element: `#${cellId} .cellContent`,
+			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			noFlipY: true,
 			passThrough: true,
@@ -196,7 +198,6 @@ class Cell extends React.Component<Props, {}> {
 				param = Object.assign(param, {
 					offsetY: -height + 1,
 					width: width,
-					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					value: value || [],
@@ -209,7 +210,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Tag:
 				param = Object.assign(param, {
 					width: width,
-					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
 					canAdd: true,
@@ -224,9 +224,9 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Object:
 				param = Object.assign(param, {
 					width: width,
-					horizontal: I.MenuDirection.Center,
 				});
 				param.data = Object.assign(param.data, {
+					canAdd: true,
 					filter: '',
 					value: value || [],
 					types: relation.objectTypes,
@@ -239,6 +239,7 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.LongText:
 				param = Object.assign(param, {
 					element: cell,
+					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
 					width: width,
 				});
@@ -255,7 +256,6 @@ class Cell extends React.Component<Props, {}> {
 
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
-					horizontal: I.MenuDirection.Center,
 					className: 'button',
 					width: width,
 				});
@@ -306,12 +306,17 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			commonStore.menuCloseAll(Constant.cellMenuIds);
-			window.setTimeout(() => {
-				commonStore.menuOpen(menuId, param); 
-				$(pageContainer).unbind('click').on('click', () => { commonStore.menuCloseAll(Constant.cellMenuIds); });
-				win.unbind('blur.cell').on('blur.cell', () => { commonStore.menuCloseAll(Constant.cellMenuIds); });
-			}, 1);
+			menuStore.closeAll(Constant.menuIds.cell);
+
+			if (commonStore.cellId != cellId) {
+				window.setTimeout(() => {
+					commonStore.cellId = cellId;
+
+					menuStore.open(menuId, param); 
+					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+				}, Constant.delay.menu);
+			};
 		} else {
 			setOn();
 		};

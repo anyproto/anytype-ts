@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any>  {};
@@ -23,7 +23,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 				<div className="side center" onClick={this.onSearch}>Search for an object</div>
 
 				<div className="side right">
-					<Icon tooltip="Settings" className={[ 'settings', (commonStore.popupIsOpen('settings') ? 'active' : '') ].join(' ')} onClick={this.onSettings} />
+					<Icon tooltip="Settings" className={[ 'settings', (popupStore.isOpen('settings') ? 'active' : '') ].join(' ')} onClick={this.onSettings} />
 				</div>
 			</div>
 		);
@@ -32,7 +32,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	onSearch (e: any) {
 		const { root } = blockStore;
 
-		commonStore.popupOpen('search', { 
+		popupStore.open('search', { 
 			preventResize: true,
 			data: { 
 				type: I.NavigationType.Go, 
@@ -43,7 +43,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 	};
 
 	onSettings (e: any) {
-		commonStore.popupOpen('settings', {});
+		popupStore.open('settings', {});
 	};
 
 };

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore, authStore, dbStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, SmileUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
+import { commonStore, blockStore, authStore, menuStore, popupStore } from 'ts/store';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -48,6 +48,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onPrint = this.onPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
+		this.blockCreate = this.blockCreate.bind(this);
 	};
 
 	render () {
@@ -123,7 +124,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
-		win.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e); 
@@ -133,9 +133,11 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.apply(); 
 			this.getScrollContainer().scrollTop(this.scrollTop);
 		});
-		
+
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
+
+		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Storage.set('askSurvey', 1);
 
@@ -191,7 +193,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	open (skipInit?: boolean) {
-		const { rootId, onOpen, history } = this.props;
+		const { rootId, onOpen, history, isPopup } = this.props;
 		const { breadcrumbs } = blockStore;
 
 		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
@@ -229,7 +231,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.focusTitle();
 			this.forceUpdate();
 			this.resize();
-			this.getScrollContainer().scrollTop(Storage.getScroll('editor', rootId));
+			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			blockStore.setNumbers(rootId);
 
@@ -380,7 +382,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.hoverId = hovered.data('id');
 		};
 		
-		if (keyboard.isResizing || commonStore.menuIsOpen()) {
+		if (keyboard.isResizing || menuStore.isOpen()) {
 			hovered = null;
 		};
 		
@@ -414,12 +416,6 @@ class EditorPage extends React.Component<Props, {}> {
 				const block = blockStore.getLeaf(rootId, this.hoverId);
 				if (block && block.canCreateBlock()) {
 					hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
-					/*
-					if (block.isTextTitle()) {
-						this.hoverPosition = I.BlockPosition.Bottom;
-						hovered.addClass('isAdding bottom');
-					};
-					*/
 				};
 			};
 		} else {
@@ -488,7 +484,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
-			if (ids.length && !commonStore.menuIsOpen()) {
+			if (ids.length && !menuStore.isOpen()) {
 				selection.clear();
 			};
 		});
@@ -526,7 +522,7 @@ class EditorPage extends React.Component<Props, {}> {
 				e.preventDefault();
 
 				if (type == I.MarkType.Link) {
-					commonStore.menuOpen('blockLink', {
+					menuStore.open('blockLink', {
 						type: I.MenuType.Horizontal,
 						element: '#block-' + ids[0],
 						offsetY: -4,
@@ -553,8 +549,8 @@ class EditorPage extends React.Component<Props, {}> {
 
 			// Open action menu
 			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-				commonStore.menuClose('blockContext', () => {
-					commonStore.menuOpen('blockAction', { 
+				menuStore.close('blockContext', () => {
+					menuStore.open('blockAction', { 
 						element: '#block-' + ids[0],
 						offsetX: Constant.size.blockMenu,
 						data: {
@@ -618,7 +614,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
 		const length = String(text || '').length;
-		const menuOpen = commonStore.menuIsOpen();
+		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
 		const element = $('#block-' + block.id);
 		const value = element.find('#value');
@@ -705,8 +701,8 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Open action menu
 		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
-			commonStore.menuClose('blockContext', () => {
-				commonStore.menuOpen('blockAction', { 
+			menuStore.close('blockContext', () => {
+				menuStore.open('blockAction', { 
 					element: '#block-' + focused,
 					offsetX: Constant.size.blockMenu,
 					data: {
@@ -765,8 +761,8 @@ class EditorPage extends React.Component<Props, {}> {
 						rect = null;
 					};
 
-					commonStore.menuClose('blockContext', () => {
-						commonStore.menuOpen('blockLink', {
+					menuStore.close('blockContext', () => {
+						menuStore.open('blockLink', {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 							type: I.MenuType.Horizontal,
@@ -851,7 +847,7 @@ class EditorPage extends React.Component<Props, {}> {
 				focus.clear(true);
 				selection.set([ focused ]);
 
-				commonStore.menuCloseAll([ 'blockContext', 'blockAction' ]);
+				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 			};
 
 			if ((dir < 0) && (sy - 4 <= vy)) {
@@ -904,7 +900,7 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 
-			const menus = commonStore.menus;
+			const menus = menuStore.list;
 			const menuCheck = (menus.length > 1) || ((menus.length == 1) && (menus[0].id != 'blockContext'));
 			
 			if (menuCheck) {
@@ -914,7 +910,7 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			e.stopPropagation();
 
-			let replace = (range.from == length) && (range.to == length) && block.isTextList() && !length;
+			let replace = !range.to && block.isTextList() && !length;
 			if (replace) {
 				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
 			} else {
@@ -927,11 +923,12 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	onArrow (pressed: string, length: number) {
-		if (commonStore.menuIsOpen()) {
+		if (menuStore.isOpen()) {
 			return;
 		};
 
 		const { focused, range } = focus;
+		const { rootId } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -942,7 +939,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { rootId } = this.props;
 		const next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		if (!next) {
 			return;
@@ -969,7 +965,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const ids = blockStore.getBlocks(rootId, (it: any) => { return it.isSelectable(); }).map((it: any) => { return it.id; }); 
 		
 		selection.set(ids);
-		commonStore.menuClose('blockContext');
+		menuStore.close('blockContext');
 	};
 	
 	onAdd (e: any) {
@@ -996,27 +992,14 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 	
-	onMenuAdd (id: string, text: string, range: I.TextRange) {
+	onMenuAdd (blockId: string, text: string, range: I.TextRange) {
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, id);
-
+		const block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
 		const win = $(window);
-		const el = $('#block-' + id);
-		const { content } = block;
-		const { marks } = content;
-		const length = String(text || '').length;
-		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		const onCommand = (message: any) => {
-			focus.set(message.blockId || id, { from: length, to: length });
-			focus.apply();
-		};
-		const close = () => {
-			commonStore.menuClose('blockAdd');
-		};
 
 		let rect = Util.selectionRect();
 		if (!rect.x && !rect.y && !rect.width && !rect.height) {
@@ -1024,172 +1007,35 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		commonStore.filterSet(range.from, '');
-		commonStore.menuOpen('blockAdd', { 
-			element: el,
+		menuStore.open('blockAdd', { 
+			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
 			offsetY: 4,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
-				$('.placeHolder.c' + id).text(Constant.placeHolder.default);
+				$('.placeHolder.c' + blockId).text(Constant.placeHolder.default);
 			},
 			data: {
-				blockId: id,
+				blockId: blockId,
 				rootId: rootId,
-				onSelect: (e: any, item: any) => {
-					const obj = $('#menuBlockAdd');
-					const block = blockStore.getLeaf(rootId, id);
-					const { filter } = commonStore;
-
-					text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
-
-					const onSave = () => {
-						let needClose = true;
-
-						// Text colors
-						if (item.isTextColor) {
-							C.BlockListSetTextColor(rootId, [ id ], item.value, onCommand);
-						} else 
-
-						// Background colors
-						if (item.isBgColor) {
-							C.BlockListSetBackgroundColor(rootId, [ id ], item.value, onCommand);
-						} else 
-
-						// Actions
-						if (item.isAction) {
-							switch (item.key) {
-								case 'download':
-									Action.download(block);
-									break;
-
-								case 'move':
-									needClose = false;
-
-									commonStore.menuOpen('searchObject', { 
-										element: '#menuBlockAdd #item-' + item.id,
-										offsetX: obj.width(),
-										offsetY: -36,
-										data: { 
-											type: I.NavigationType.Move, 
-											rootId: rootId,
-											skipId: rootId,
-											blockId: id,
-											blockIds: [ id ],
-											position: I.BlockPosition.Bottom,
-											onSelect: close,
-										}, 
-									});
-									break;
-
-								case 'copy':
-									Action.duplicate(rootId, id, [ id ]);
-									break;
-								
-								case 'remove':
-									Action.remove(rootId, id, [ id ]);
-									break;
-							};
-						} else
-
-						// Align
-						if (item.isAlign) {
-							C.BlockListSetAlign(rootId, [ id ], item.key, onCommand);
-						} else 
-
-						// Blocks
-						if (item.isBlock) {
-							let param: any = {
-								type: item.type,
-								content: {},
-							};
-								
-							if (item.type == I.BlockType.Text) {
-								param.content.style = item.key;
-
-								if (param.content.style == I.TextStyle.Code) {
-									param.fields = { 
-										lang: (Storage.get('codeLang') || Constant.default.codeLang),
-									};
-								};
-							};
-
-							if (item.type == I.BlockType.File) {
-								param.content.type = item.key;
-							};
-							
-							if (item.type == I.BlockType.Div) {
-								param.content.style = item.key;
-							};
-							
-							if (item.type == I.BlockType.Page) {
-								if (item.key == 'existing') {
-									needClose = false;
-
-									commonStore.menuOpen('searchObject', { 
-										element: '#menuBlockAdd #item-' + item.id,
-										offsetX: obj.width(),
-										offsetY: -64,
-										data: { 
-											type: I.NavigationType.Link, 
-											rootId: rootId,
-											skipId: rootId,
-											blockId: block.id,
-											blockIds: [ block.id ],
-											position: I.BlockPosition.Bottom,
-											onSelect: close,
-										}, 
-									});
-								} else {
-									const details: any = { iconEmoji: SmileUtil.random() };
-									
-									if (item.isObject) {
-										const type = dbStore.getObjectType(item.objectTypeId);
-										if (type) {
-											details.type = type.id;
-											details.layout = type.layout;
-										};
-									};
-
-									DataUtil.pageCreate(e, rootId, block.id, details, position, (message: any) => {
-										DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-									});
-								};
-							} else {
-								this.blockCreate(block, position, param);
-							};
-						};
-
-						if (needClose) {
-							close();
-						};
-					};
-
-					// Clear filter in block text
-					if (block) {
-						// Hack to prevent onBlur save
-						$('#block-' + id + ' .value').text(text);
-						DataUtil.blockSetText(rootId, block, text, marks, true, onSave);
-					} else {
-						onSave();
-					};
-
-				}
+				text: text,
+				blockCreate: this.blockCreate,
 			}
 		});
 	};
 	
 	onScroll (e: any) {
-		const { rootId } = this.props;
-		const top = $(window).scrollTop();
+		const { rootId, isPopup } = this.props;
+		const top = this.getScrollContainer().scrollTop();
 
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
 		};
-		
+
 		this.scrollTop = top;
-		Storage.setScroll('editor', rootId, top);
+		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Util.linkPreviewHide(false);
 	};
 	
@@ -1249,7 +1095,7 @@ class EditorPage extends React.Component<Props, {}> {
 			});
 
 			if (cut) {
-				commonStore.menuClose('blockContext');
+				menuStore.close('blockContext');
 				focus.set(focused, { from: range.from, to: range.from });
 				focus.apply();
 			};
@@ -1342,7 +1188,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const url = match && match[0];
 		
 		if (url && !force) {
-			commonStore.menuOpen('select', { 
+			menuStore.open('select', { 
 				element: '#block-' + focused,
 				offsetX: Constant.size.blockMenu,
 				offsetY: 4,
@@ -1437,7 +1283,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		window.setTimeout(() => {
-			commonStore.menuOpen('searchText', {
+			menuStore.open('searchText', {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
@@ -1483,7 +1329,7 @@ class EditorPage extends React.Component<Props, {}> {
 		let blockCnt = Number(Storage.get('blockCnt')) || 0;
 		blockCnt++;
 		if (blockCnt == 10) {
-			commonStore.popupOpen('settings', { 
+			popupStore.open('settings', { 
 				data: { page: 'phrase' } 
 			});
 		};
@@ -1609,7 +1455,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 
-		commonStore.menuCloseAll([ 'blockAdd', 'blockAction', 'blockContext' ]);
+		menuStore.closeAll([ 'blockAdd', 'blockAction', 'blockContext' ]);
 
 		let next: any = null;
 		let ids = selection.get();

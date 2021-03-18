@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Icon, Error } from 'ts/component';
 import { I, C, translate, focus } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -234,7 +234,7 @@ class BlockImage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		commonStore.popupOpen('preview', {
+		popupStore.open('preview', {
 			data: {
 				type: I.FileType.Image,
 				url: this.getUrl(),

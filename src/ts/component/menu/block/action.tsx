@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, focus, Action, translate } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate } from 'ts/lib';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -11,7 +11,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const SUB_IDS = [ 'blockStyle', 'blockColor', 'blockBackground', 'blockAlign' ];
 
 class MenuBlockAction extends React.Component<Props, State> {
 	
@@ -56,8 +55,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
-						
-						return <MenuItemVertical key={i} {...action} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+						if (action.isObject) {
+							action.object = { ...action,layout: I.ObjectLayout.ObjectType };
+						};
+
+						return <MenuItemVertical 
+							key={i} 
+							{...action} 
+							withCaption={action.caption} 
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+							onClick={(e: any) => { this.onClick(e, action); }} 
+						/>;
 					})}
 				</div>
 			</div>
@@ -65,7 +73,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Filter ref={(ref: any) => { this.ref = ref; }} onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter actions..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
@@ -81,7 +89,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		this._isMounted = true;
 		this.rebind();
-		this.setActive();
 
 		window.setTimeout(() => {
 			if (this.ref) {
@@ -108,11 +115,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
-		commonStore.menuCloseAll(SUB_IDS);
+		menuStore.closeAll(Constant.menuIds.action);
 	};
 	
 	onFilterFocus (e: any) {
-		commonStore.menuCloseAll(SUB_IDS);
+		menuStore.closeAll(Constant.menuIds.action);
 		
 		this.focus = true;
 		this.props.setHover();
@@ -143,25 +150,27 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
+		const { config } = commonStore;
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const cmd = Util.ctrlSymbol();
 		
 		if (!block) {
 			return [];
 		};
 		
-		const { align, content, bgColor } = block;
-		const { color } = content;
+		const { align, content, bgColor, type } = block;
+		const { color, style } = content;
 
 		let sections: any[] = [];
 		
 		if (filter) {
 			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into page', color: '', children: DataUtil.menuGetTurnPage() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
 			const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
@@ -220,9 +229,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			sections = [
 				{ 
 					children: [
-						{ id: 'move', icon: 'move', name: 'Move to' },
-						{ id: 'copy', icon: 'copy', name: 'Duplicate' },
-						{ id: 'remove', icon: 'remove', name: 'Delete' },
+						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
+						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+						{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 					] 
 				},
 				{ 
@@ -233,6 +242,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			];
 
 			let hasTurnText = true;
+			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasTitle = false;
@@ -248,6 +258,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.canTurnText() || !block.isDiv()) {
 					hasTurnDiv = false;
 				};
+				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
@@ -256,8 +267,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isTextTitle())		 hasTitle = true;
 			};
 
-			if (hasTurnText || hasTurnDiv) {
-				sections[0].children.push({ id: 'turn', icon: 'turn', name: 'Turn into', arrow: true });
+			if (hasTurnObject && config.allowDataview) {
+				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
@@ -268,6 +279,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasTitle) {
 				sections[0].children = [];
+			};
+
+			if (hasTurnText) {
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+			};
+
+			if (hasTurnDiv) {
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true });
 			};
 
 			if (hasAlign) {
@@ -381,7 +400,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -402,27 +421,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
 		window.clearTimeout(this.timeout);
-		
-		if ((item.id == 'turn') && commonStore.menuIsOpen('blockStyle')) {
-			return;
-		};
-		
-		if ((item.id == 'color') && commonStore.menuIsOpen('blockColor')) {
-			return;
-		};
-		
-		if ((item.id == 'background') && commonStore.menuIsOpen('blockBackground')) {
-			return;
-		};
-		
-		commonStore.menuCloseAll(SUB_IDS);
-		
-		if (!item.arrow) {
-			return;
-		};
-		
-		this.ref.blur();
 
+		if (!item.arrow) {
+			menuStore.closeAll(Constant.menuIds.action);
+			return;
+		};
+		
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			element: '#item-' + item.id,
@@ -431,123 +435,140 @@ class MenuBlockAction extends React.Component<Props, State> {
 			isSub: true,
 			passThrough: true,
 			data: {
+				rootId: rootId,
 				blockId: blockId,
 				blockIds: blockIds,
-				rootId: rootId,
 				rebind: this.rebind,
 				dataset: dataset,
 			},
 		};
 
-		switch (item.key) {
-			case 'turn':
+		switch (item.itemId) {
+			case 'turnStyle':
 				menuId = 'blockStyle';
-				menuParam.data.onSelect = (item: any) => {
-					if (item.type == I.BlockType.Text) {
-						C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
-							this.setFocus(blockIds[0]);
-						});
-					};
+
+				menuParam.data = Object.assign(menuParam.data, {
+					onSelect: (item: any) => {
+						if (item.type == I.BlockType.Text) {
+							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
+							
+						if (item.type == I.BlockType.Div) {
+							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
 						
-					if (item.type == I.BlockType.Div) {
-						C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
-							this.setFocus(blockIds[0]);
-						});
-					};
-					
-					if (item.type == I.BlockType.Page) {
-						this.moveToPage();
-					};
-					
-					this.props.close();
-				};
+						close();
+					}
+				});
+				break;
+
+			case 'turnObject':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					placeHolder: 'Find a type of object...',
+					label: 'Your object type library',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					],
+					onSelect: (item: any) => {
+						this.moveToPage(item.id);
+						close();
+					}
+				});
+				break;
+
+			case 'move':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Move, 
+					skipId: rootId,
+					position: I.BlockPosition.Bottom,
+					onSelect: () => { close(); }
+				});
 				break;
 				
 			case 'color':
 				menuId = 'blockColor';
 				menuParam.offsetY = node.offset().top - el.offset().top - 40;
-				menuParam.data.value = color;
-				menuParam.data.onChange = (color: string) => {
-					C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
-						this.setFocus(blockIds[0]);
-					});
 
-					this.props.close();
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					value: color,
+					onChange: (color: string) => {
+						C.BlockListSetTextColor(rootId, blockIds, color, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
+
+						close();
+					}
+				});
 				break;
 				
 			case 'background':
 				menuId = 'blockBackground';
 				menuParam.offsetY = node.offset().top - el.offset().top - 40;
-				menuParam.data.value = bgColor;
-				menuParam.data.onChange = (color: string) => {
-					C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
-						this.setFocus(blockIds[0]);
-					});
 
-					this.props.close();
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					value: bgColor,
+					onChange: (color: string) => {
+						C.BlockListSetBackgroundColor(rootId, blockIds, color, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
+
+						close();
+					}
+				});
 				break;
 				
 			case 'align':
 				menuId = 'blockAlign';
-				menuParam.data.onChange = (align: I.BlockAlign) => {
-					C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
-						this.setFocus(blockIds[0]);
-					});
 
-					this.props.close();
-				};
+				menuParam.data = Object.assign(menuParam.data, {
+					onChange: (align: I.BlockAlign) => {
+						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
+							this.setFocus(blockIds[0]);
+						});
+
+						close();
+					}
+				});
 				break;
 		};
 
-		if (menuId) {
-			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
+		if (menuId && !menuStore.isOpen(menuId)) {
+			menuStore.closeAll(Constant.menuIds.action);
+			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
-	
+
 	onClick (e: any, item: any) {
 		if (!this._isMounted || item.arrow) {
 			return;
 		};
 		
-		const { param, getId } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const node = $(ReactDOM.findDOMNode(this));
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
 		};
 
-		let ids = DataUtil.selectionGet(blockId, false, data);
-		let close = true;
+		const ids = DataUtil.selectionGet(blockId, false, data);
 
-		switch (item.key) {
+		switch (item.itemId) {
 			case 'download':
 				Action.download(block);
 				break;
 					
-			case 'move':
-				close = false;
-				window.setTimeout(() => {
-					commonStore.menuOpen('searchObject', { 
-						element: `#${getId()} #item-${item.id}`,
-						offsetX: node.outerWidth(),
-						offsetY: -36,
-						data: { 
-							type: I.NavigationType.Move, 
-							rootId: rootId,
-							skipId: rootId,
-							blockId: blockId,
-							blockIds: blockIds,
-							position: I.BlockPosition.Bottom,
-						}, 
-					});
-				}, Constant.delay.menu);
-				break;
-				
 			case 'copy':
 				Action.duplicate(rootId, ids[ids.length - 1], ids);
 				break;
@@ -569,32 +590,31 @@ class MenuBlockAction extends React.Component<Props, State> {
 					
 				// Align
 				if (item.isAlign) {
-					C.BlockListSetAlign(rootId, blockIds, item.key);
+					C.BlockListSetAlign(rootId, blockIds, item.itemId);
 				} else 
 					
 				// Blocks
 				if (item.isBlock) {
-					if (item.type == I.BlockType.Page) {
-						this.moveToPage();
-					} else 
 					if (item.type == I.BlockType.Div) {
-						C.BlockListSetDivStyle(rootId, blockIds, item.key);
+						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
 					} else {
-						C.BlockListTurnInto(rootId, blockIds, item.key, () => {
+						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
 							this.setFocus(blockIds[0]);
 						});
 					};
+				};
+
+				if (item.isObject) {
+					this.moveToPage(item.objectTypeId);
 				};
 			
 				break;
 		};
 
-		if (close) {
-			this.props.close();
-		};
+		close();
 	};
 
-	moveToPage () {
+	moveToPage (type: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId, dataset } = data;
@@ -607,8 +627,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (!ids.length) {
 			ids = [ blockId ];
 		};
+
+		console.log(type);
 		
-		C.BlockListConvertChildrenToPages(rootId, ids);
+		C.BlockListConvertChildrenToPages(rootId, ids, type);
 	};
 
 	setFocus (id: string) {

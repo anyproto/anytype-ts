@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, IconEmoji } from 'ts/component';
 import { I, C, Util, SmileUtil, keyboard, Storage, translate } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
@@ -182,7 +182,7 @@ class MenuSmile extends React.Component<Props, State> {
 		window.clearTimeout(this.timeoutMenu);
 		window.clearTimeout(this.timeoutFilter);
 		keyboard.setFocus(false);
-		commonStore.menuClose('smileSkin');
+		menuStore.close('smileSkin');
 	};
 	
 	getSections () {
@@ -339,7 +339,7 @@ class MenuSmile extends React.Component<Props, State> {
 			this.timeoutMenu = window.setTimeout(() => {
 				win.unbind('mouseup.smile');
 				
-				commonStore.menuOpen('smileSkin', {
+				menuStore.open('smileSkin', {
 					type: I.MenuType.Horizontal,
 					element: '.menuSmile #item-' + n,
 					offsetY: 4,
@@ -360,7 +360,7 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		win.unbind('mouseup.smile').on('mouseup.smile', () => {
-			if (commonStore.menuIsOpen('smileSkin')) {
+			if (menuStore.isOpen('smileSkin')) {
 				return;
 			};
 			if (this.id) {

@@ -28,7 +28,7 @@ let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
-let service, server;
+let server;
 let dataPath = [];
 let config = {};
 let win = null;
@@ -88,38 +88,7 @@ if (useGRPC) {
 		waitLibraryPromise = server.start(binPath, userPath);
 	};
 } else {
-	const Service = require('./dist/lib/pb/protos/service/service_grpc_web_pb.js');
-
-	service = new Service.ClientCommandsClient('', null, null);
-
-	console.log('Connect via native addon');
-
 	waitLibraryPromise = Promise.resolve();
-
-	const bindings = require('bindings')({
-		bindings: 'addon.node',
-		module_root: path.join(__dirname, 'build'),
-	});
-
-	let napiCall = (method, inputObj, outputObj, request, callBack) => {
-		const a = method.split('/');
-		method = a[a.length - 1];
-
-		const buffer = inputObj.serializeBinary();
-		const handler = (item) => {
-			try {
-				let message = request.b(item.data.buffer);
-				if (message && callBack) {
-					callBack(null, message);
-				};
-			} catch (err) {
-				console.error(err);
-			};
-		};
-		bindings.sendCommand(method, buffer, handler);
-	};
-
-	service.client_.rpcCall = napiCall;
 };
 
 function waitForLibraryAndCreateWindows () {
@@ -282,6 +251,10 @@ function createWindow () {
 
 	ipcMain.on('exit', (e, relaunch) => {
 		exit(relaunch);
+	});
+
+	ipcMain.on('shutdown', (e, relaunch) => {
+		shutdown(relaunch);
 	});
 
 	ipcMain.on('updateDownload', (e) => {
@@ -677,40 +650,30 @@ function send () {
 	};
 };
 
-function exit (relaunch) {
-	let cb = () => {
-		setTimeout(() => {
-			if (relaunch) {
-				Util.log('info', 'Relaunch');
-				app.relaunch();
-			};
-			app.exit(0);
-		}, 2000);
-	};
+function shutdown (relaunch) {
+	setTimeout(() => {
+		if (relaunch) {
+			Util.log('info', 'Relaunch');
+			app.relaunch();
+		};
+		app.exit(0);
+	}, 2000);
+};
 
+function exit (relaunch) {
 	Util.log('info', 'MW shutdown is starting');
 
 	if (useGRPC) {
 		if (server) {
 			server.stop().then(()=>{
 				Util.log('info', 'MW shutdown complete');
-				cb();
+				shutdown(relaunch);
 			});
 		} else {
 			Util.log('warn', 'MW server not set');
-			cb();
+			shutdown(relaunch);
 		}
 	} else {
-		const Commands = require('./dist/lib/pb/protos/commands_pb');
-
-		if (service) {
-			service.shutdown(new Commands.Empty(), {}, () => {
-				Util.log('info', 'MW shutdown complete');
-				cb();
-			});
-		} else {
-			Util.log('warn', 'MW service not set');
-			cb();
-		};
+		send('shutdown', relaunch);
 	};
 };

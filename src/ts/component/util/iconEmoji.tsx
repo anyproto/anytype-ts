@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
-import { commonStore } from 'ts/store';
-import { I, SmileUtil } from 'ts/lib';
+import { commonStore, menuStore } from 'ts/store';
+import { SmileUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -66,7 +66,7 @@ class IconEmoji extends React.Component<Props, State> {
 		if (canEdit) {
 			cn.push('canEdit');
 		};
-		if (menuId && commonStore.menuIsOpen(menuId)) {
+		if (menuId && menuStore.isOpen(menuId)) {
 			cn.push('active');
 		};
 
@@ -120,7 +120,7 @@ class IconEmoji extends React.Component<Props, State> {
 
 		e.stopPropagation();
 		
-		commonStore.menuOpen('smile', { 
+		menuStore.open('smile', { 
 			element: '#' + id,
 			offsetX: offsetX,
 			offsetY: offsetY,

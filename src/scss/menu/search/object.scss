@@ -5,6 +5,10 @@
 	.menu.menuSearchObject {
 		.content { transition: none; padding: 8px 0px 0px 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.wrap.withLabel {
+			.ReactVirtualized__Grid__innerScrollContainer { margin-top: 0px; }
+		}
+
 		.items { height: 100%; }
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }
@@ -15,7 +19,16 @@
 		.empty { height: 100%; line-height: 228px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
-			.label { line-height: 24px; color: $colorDarkGrey; display: inline-block; vertical-align: middle; }
+			span { @include text-overflow-nw; max-width: 100%; display: block; }
+			.label { width: 100%; line-height: 24px; color: $colorDarkGrey; display: inline-block; vertical-align: middle; }
+		}
+	}
+
+	.menu.menuSearchObject.single { width: 256px; }
+	.menu.menuSearchObject.single {
+		.item {
+			.name { margin: 0px; }
+			.caption { display: none; }
 		}
 	}
 }

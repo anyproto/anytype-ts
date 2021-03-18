@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input, Checkbox, IconObject, Tag } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -45,6 +45,12 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const filterCnt = view.filters.length;
+		const filters = Util.objectCopy(view.filters).map((it: any) => {
+			return { 
+				...it, 
+				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
+			};
+		}).filter((it: any) => { return it.relation ? true : false; });
 
 		for (let filter of view.filters) {
 			const { relationKey, condition, value } = filter;
@@ -62,11 +68,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey);
-			if (!relation) {
-				return null;
-			};
-
+			const relation = item.relation;
 			const conditionOptions = this.conditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 			const id = [ 'item', item.id, 'value' ].join('-');
@@ -259,10 +261,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{view.filters.map((item: any, i: number) => (
+					{filters.map((item: any, i: number) => (
 						<Item key={i} {...item} id={i} index={i} />
 					))}
-					{!view.filters.length ? (
+					{!filters.length ? (
 						<div className="item empty">
 							<div className="inner">No filters applied to this view</div>
 						</div>
@@ -448,7 +450,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		view.filters = view.filters.filter((it: any, i: number) => { return i != id; });
 		this.save();
 
-		commonStore.menuClose('select');
+		menuStore.close('select');
 	};
 	
 	onSortEnd (result: any) {
@@ -531,13 +533,10 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	onFocusDate (e: any, item: any) {
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == 'dataviewCalendar'; });
 		const value = item.value || Util.time();
 		
-		if (menu) {
-			menu.param.data.value = value;
-			commonStore.menuUpdate('dataviewCalendar', menu.param);
+		if (menuStore.isOpen('dataviewCalendar')) {
+			menuStore.updateData('dataviewCalendar', { value: value });
 		} else {
 			this.onCalendar(item.id, value);
 		};
@@ -552,7 +551,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	onCalendar (id: number, value: number) {
-		commonStore.menuOpen('dataviewCalendar', {
+		menuStore.open('dataviewCalendar', {
 			element: `#menuDataviewFilter #item-${id}-value`,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
@@ -575,10 +574,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		commonStore.menuCloseAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ]);
+		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ]);
 
 		window.setTimeout(() => {
-			commonStore.menuOpen('dataviewOptionValues', { 
+			menuStore.open('dataviewOptionValues', { 
 				element: '#' + getId() + ' #' + id,
 				offsetY: 4,
 				className: 'fromFilter',
@@ -603,10 +602,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		commonStore.menuCloseAll([ 'dataviewObjectValues', 'dataviewObjectList' ]);
+		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList' ]);
 
 		window.setTimeout(() => {
-			commonStore.menuOpen('dataviewObjectValues', { 
+			menuStore.open('dataviewObjectValues', { 
 				element: '#' + getId() + ' #' + id,
 				offsetY: 4,
 				className: 'fromFilter',

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any>  {
 	rootId: string;
@@ -25,7 +25,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 	};
 
 	onHelp () {
-		commonStore.menuOpen('help', {
+		menuStore.open('help', {
 			element: '#button-help',
 			offsetY: -4,
 			vertical: I.MenuDirection.Top,

@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
-	history: any;
+	history: any; 
 };
 
 const Constant = require('json/constant.json');
@@ -41,7 +41,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const objectType = dbStore.getObjectType(type);
 
 		let ccn = [ 'item' ];
-		if (commonStore.menuIsOpen('dataviewRelationType')) {
+		if (menuStore.isOpen('dataviewRelationType')) {
 			ccn.push('active');
 		};
 		if (relation) {
@@ -213,40 +213,25 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { config } = commonStore;
 		const { getId } = this.props;
 		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 
-		let objectTypes = Util.objectCopy(dbStore.objectTypes);
-		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-		};
-
-		let options = objectTypes.map((it: I.ObjectType) => {
-			it.layout = I.ObjectLayout.ObjectType;
-			return { ...it, object: it };
-		});
-
-		options.sort((c1: any, c2: any) => {
-			if (c1.name > c2.name) return 1;
-			if (c1.name < c2.name) return -1;
-			return 0;
-		});
-
-		this.menuOpen('select', { 
+		menuStore.open('searchObject', { 
 			element: `#${getId()} #item-object-type`,
 			offsetX: 224,
-			offsetY: 4,
-			width: 280,
+			offsetY: 0,
 			vertical: I.MenuDirection.Center,
+			className: 'single',
 			data: {
 				value: value,
-				options: options,
-				onSelect: (e: any, item: any) => {
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				],
+				onSelect: (item: any) => {
 					this.objectTypes = [ item.id ];
 					this.forceUpdate();
-				},
+				}
 			}
 		});
 	};
@@ -265,17 +250,17 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			offsetX: 224,
 			offsetY: -38,
 			onClose: () => {
-				commonStore.menuClose('select');
+				menuStore.close('select');
 			},
 			data: data
 		});
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
-		commonStore.menuCloseAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
+		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { commonStore.menuOpen(id, param); }, Constant.delay.menu);
+		this.timeout = window.setTimeout(() => { menuStore.open(id, param); }, Constant.delay.menu);
 	};
 
 	onOpen (e: any) {

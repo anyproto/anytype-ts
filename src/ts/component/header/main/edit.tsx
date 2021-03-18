@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
 import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -49,7 +49,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (commonStore.popupIsOpenList([ 'navigation', 'search' ]) || commonStore.menuIsOpen('blockRelationView')) {
+		if (popupStore.isOpenList([ 'navigation', 'search' ]) || menuStore.isOpen('blockRelationView')) {
 			cn.push('active');
 		};
 
@@ -135,8 +135,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		commonStore.menuCloseAll();
-		window.setTimeout(() => { commonStore.menuOpen('blockMore', param); }, Constant.delay.menu);
+		menuStore.closeAll();
+		window.setTimeout(() => { menuStore.open('blockMore', param); }, Constant.delay.menu);
 	};
 
 	onAdd (e: any) {
@@ -165,7 +165,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, rootId, targetId, { iconEmoji: SmileUtil.random() }, position, (message: any) => {
+		DataUtil.pageCreate(e, rootId, targetId, {}, position, (message: any) => {
 			DataUtil.objectOpen({ id: message.targetId });
 		});
 	};
@@ -185,8 +185,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		commonStore.menuCloseAll();
-		window.setTimeout(() => { commonStore.menuOpen('threadList', param); }, Constant.delay.menu);
+		menuStore.closeAll();
+		window.setTimeout(() => { menuStore.open('threadList', param); }, Constant.delay.menu);
 	};
 
 	onNavigation (e: any) {
@@ -195,7 +195,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		const { match, rootId } = this.props;
 
-		commonStore.popupOpen('navigation', {
+		popupStore.open('navigation', {
 			preventResize: true, 
 			data: {
 				rootId: rootId,
@@ -214,7 +214,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		commonStore.popupOpen('search', {
+		popupStore.open('search', {
 			preventResize: true, 
 			data: {
 				rootId: rootId,
@@ -247,7 +247,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			onClose: () => {
-				commonStore.menuCloseAll();
+				menuStore.closeAll();
 			},
 			data: {
 				relationKey: '',
@@ -261,8 +261,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		commonStore.menuCloseAll();
-		window.setTimeout(() => { commonStore.menuOpen('blockRelationView', param); }, Constant.delay.menu);
+		menuStore.closeAll();
+		window.setTimeout(() => { menuStore.open('blockRelationView', param); }, Constant.delay.menu);
 	};
 
 	getContainer () {

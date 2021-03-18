@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
 import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -32,6 +32,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const { list } = menuStore;
 
 		let pager = null;
 		if (total && data.length) {
@@ -90,6 +91,7 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		this.bind();
 		this.resize();
+		this.onScroll();
 
 		win.trigger('resize.editor');
 	};
@@ -99,16 +101,10 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	bind () {
-		const { menus } = commonStore;
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 
-		scroll.unbind('.scroll').scroll(() => {
-			for (let menu of menus) {
-				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
-			};
-		});
+		scroll.unbind('.scroll').scroll(this.onScroll);
 	};
 
 	unbind () {
@@ -116,6 +112,15 @@ class ViewGrid extends React.Component<Props, {}> {
 		const scroll = node.find('.scroll');
 
 		scroll.unbind('.scroll');
+	};
+
+	onScroll () {
+		const win = $(window);
+		const { list } = menuStore;
+
+		for (let menu of list) {
+			win.trigger('resizeMenu.' + Util.toCamelCase('menu-' + menu.id));
+		};
 	};
 
 	resize () {
@@ -230,7 +235,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
-		commonStore.menuOpen('relationSuggest', { 
+		menuStore.open('relationSuggest', { 
 			element: `#cell-add`,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Right,

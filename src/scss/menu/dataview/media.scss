@@ -5,12 +5,18 @@
 	.menu.menuDataviewMedia {
 		.content { padding-bottom: 0px; }
 
+		.item { display: flex; }
 		.item {
+			.clickable { width: calc(100% - 24px); }
+
 			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
-			.element { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
+			.clickable { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
 		}
 		.item:hover::before { opacity: 0.15; }
+		.item.active {
+			.icon.more { opacity: 1; background-color: rgba(172, 169, 150, 0.15); }
+		}
 
 		.item.add { padding: 14px 16px; border-top: 1px solid #e0ded2; }
 		.inputWithFile { border: 0px; padding: 0px; }

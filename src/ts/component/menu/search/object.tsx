@@ -44,7 +44,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 	
 	render () {
 		const { n, loading, filter } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { value, placeHolder, label } = data;
 		const items = this.getItems();
+		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
 
 		if (!this.cache) {
 			return null;
@@ -53,6 +57,17 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
+			const cn = [];
+			
+			if (item.id == 'add') {
+				cn.push('add');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+			if (value == item.id) {
+				cn.push('active');
+			};
 
 			return (
 				<CellMeasurer
@@ -73,17 +88,17 @@ class MenuSearchObject extends React.Component<Props, State> {
 						withCaption={true}
 						caption={type ? type.name : undefined}
 						style={param.style}
-						className={[ (item.id == 'add' ? 'add' : ''), (item.isHidden ? 'isHidden' : '') ].join(' ')}
+						className={cn.join(' ')}
 					/>
 				</CellMeasurer>
 			);
 		};
 
 		return (
-			<div className="wrap">
+			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : ''}
 
-				<Filter ref={(ref: any) => { this.ref = ref; }} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onChange={(e: any) => { this.onKeyUp(e, false); }} />
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
@@ -92,33 +107,37 @@ class MenuSearchObject extends React.Component<Props, State> {
 				) : ''}
 
 				{this.cache && items.length && !loading ? (
-					<div className="items">
-						<InfiniteLoader
-							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => index < items.length}
-							threshold={LIMIT}
-						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={registerChild}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={HEIGHT}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											scrollToIndex={n}
-										/>
-									)}
-								</AutoSizer>
-							)}
-						</InfiniteLoader>
-					</div>
+					<React.Fragment>
+						{label ? <div className="sectionName">{label}</div> : ''}
+
+						<div className="items">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => index < items.length}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={registerChild}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={HEIGHT}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToIndex={n}
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						</div>
+					</React.Fragment>
 				) : ''}
 			</div>
 		);
@@ -187,13 +206,19 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		const { param } = this.props;
+		const { data } = param;
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
-		const filters = [];
+		
+		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] },
+		].concat(data.filters || []);
+
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
-		];
+		].concat(data.sorts || []);
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
@@ -307,6 +332,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		if (onSelect) {
 			onSelect(item);
+		};
+
+		if (!type) {
+			return;
 		};
 
 		let newBlock: any = {};

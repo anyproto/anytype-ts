@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, keyboard, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { menuStore, popupStore } from 'ts/store';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -170,7 +170,7 @@ class Menu extends React.Component<Props, {}> {
 					</div>
 				</div>
 				{!noDimmer ? (
-					<Dimmer onClick={() => { commonStore.menuClose(id); }} className={cd.join(' ')} />
+					<Dimmer onClick={() => { menuStore.close(id); }} className={cd.join(' ')} />
 				) : ''}
 			</div>
 		);
@@ -185,9 +185,9 @@ class Menu extends React.Component<Props, {}> {
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 
-		win.on('resize.' + this.getId(), () => { this.position(); });
+		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
 
-		if (commonStore.popupIsOpen()) {
+		if (popupStore.isOpen()) {
 			node.addClass('fromPopup');
 		};
 	};
@@ -205,7 +205,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	unbind () {
-		$(window).unbind('resize.' + this.getId());
+		$(window).unbind('resizeMenu.' + this.getId());
 	};
 	
 	animate () {
@@ -218,7 +218,7 @@ class Menu extends React.Component<Props, {}> {
 			const menu = node.find('.menu');
 
 			menu.addClass('show');
-			window.setTimeout(() => { menu.css({ transform: 'none' }); }, 210);
+			window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);
 		});
 	};
 	
@@ -226,7 +226,7 @@ class Menu extends React.Component<Props, {}> {
 		const { id, param } = this.props;
 		const { element, rect, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
 		const platform = Util.getPlatform();
-		
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -375,7 +375,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	close () {
-		commonStore.menuClose(this.props.id);
+		menuStore.close(this.props.id);
 	};
 	
 	onMouseLeave (e: any) {

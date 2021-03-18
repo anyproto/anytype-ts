@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, SmileUtil, translate, DataUtil } from 'ts/lib';
 import { MenuItemVertical, Input, Button } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -73,7 +73,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 	onLayout (e: any) {
 		const { layout } = this.state;
 
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#item-object-layout',
 			offsetX: 224,
 			offsetY: 4,
@@ -95,7 +95,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 		const name = this.ref.getValue();
 		const { layout } = this.state;
 
-		C.ObjectTypeCreate({ name: name, layout: layout, iconEmoji: SmileUtil.random() }, (message: any) => {
+		C.ObjectTypeCreate({ name: name, layout: layout }, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

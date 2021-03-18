@@ -2,8 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { set } from 'mobx';
-import { commonStore, dbStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 
 import Controls from './dataview/controls';
 
@@ -137,7 +136,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		dbStore.metaSet(rootId, block.id, meta);
 		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
 
-		commonStore.menuCloseAll();
+		menuStore.closeAll();
 		$(window).trigger('resize.editor');
 	};
 

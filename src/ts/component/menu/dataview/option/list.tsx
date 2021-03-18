@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Icon, Tag, Filter } from 'ts/component';
-import { I, C, Util, DataUtil, keyboard, Key } from 'ts/lib';
+import { I, Util, DataUtil, keyboard, Key } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
@@ -210,7 +210,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		};
 
 		data.value = value;
-		commonStore.menuUpdateData(MENU_ID, { value: value });
+		menuStore.updateData(MENU_ID, { value: value });
 
 		onChange(value);
 	};
@@ -252,7 +252,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param, getId } = this.props;
 		const { data } = param;
 
-		commonStore.menuOpen('dataviewOptionEdit', { 
+		menuStore.open('dataviewOptionEdit', { 
 			element: '#' + getId() + ' #item-' + item.id,
 			offsetX: 288,
 			vertical: I.MenuDirection.Center,
@@ -271,14 +271,12 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const relation = data.relation.get();
-		const { menus } = commonStore;
-		const menu = menus.find((item: I.Menu) => { return item.id == this.props.id; });
 
 		relation.selectDict = arrayMove(relation.selectDict, oldIndex, newIndex);
 		data.relation.set(relation);
 		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
 
-		commonStore.menuUpdateData(this.props.id, { relation: observable.box(relation) });
+		menuStore.updateData(this.props.id, { relation: observable.box(relation) });
 	};
 
 	getItems (): I.SelectOption[] {

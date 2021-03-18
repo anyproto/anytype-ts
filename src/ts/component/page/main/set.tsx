@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
 import { I, C, Util, DataUtil, translate } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {};
 
@@ -57,7 +57,7 @@ class PageMainSet extends React.Component<Props, {}> {
 	onAdd (e: any) {
 		const { objectTypes } = dbStore;
 
-		commonStore.menuOpen('objectTypeEdit', { 
+		menuStore.open('objectTypeEdit', { 
 			element: '#button-add',
 			offsetX: 28,
 			offsetY: 4,

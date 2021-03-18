@@ -168,7 +168,8 @@ class DbStore {
 	};
 
 	getObjectType (id: string): I.ObjectType {
-		return this.objectTypeMap.get(id);
+		const type = this.objectTypeMap.get(id);
+		return type ? { ...type, name: type.name || Constant.default.name } : null;
 	};
 
 	getRelations (rootId: string, blockId: string): I.Relation[] {

@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, IconObject } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -160,20 +160,17 @@ class MenuObjectValues extends React.Component<Props> {
 	onAdd () {
 		const { param, getId, close } = this.props;
 		const { data } = param;
-		const node = $('#' + getId());
 
-		if (commonStore.menuIsOpen('dataviewObjectList')) {
+		if (menuStore.isOpen('dataviewObjectList')) {
 			return;
 		};
 
 		window.setTimeout(() => {
-			commonStore.menuOpen('dataviewObjectList', {
-				...param,
+			menuStore.open('dataviewObjectList', {
 				element: `#${getId()} #item-add`,
 				width: 0,
-				offsetX: node.outerWidth(),
+				offsetX: param.width,
 				offsetY: -36,
-				noFlipY: true,
 				onClose: () => { close(); },
 				data: {
 					...data,

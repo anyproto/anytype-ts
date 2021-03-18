@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I, C, Mark, Util, DataUtil, focus, keyboard } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -18,7 +18,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onMenuClick = this.onMenuClick.bind(this);
 		this.onMark = this.onMark.bind(this);
 	};
 
@@ -62,7 +61,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		);
 		
 		return (
-			<div className="flex" onClick={this.onMenuClick}>
+			<div className="flex">
 				{block.canTurn() ? (
 					<div className="section">
 						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" menuId="blockStyle" className={[ icon, 'blockStyle' ].join(' ')} onClick={(e: any) => { this.onMark(e, 'style'); }} />
@@ -149,21 +148,21 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
 						if (item.type == I.BlockType.Text) {
-							C.BlockListTurnInto(rootId, blockIds, item.key, (message: any) => {
+							C.BlockListTurnInto(rootId, blockIds, item.itemId, (message: any) => {
 								focus.set(message.blockId, { from: length, to: length });
 								focus.apply();
 							});
 						};
 						
 						if (item.type == I.BlockType.Div) {
-							C.BlockListSetDivStyle(rootId, blockIds, item.key, (message: any) => {
+							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
 								focus.set(message.blockId, { from: 0, to: 0 });
 								focus.apply();
 							});
 						};
 						
 						if (item.type == I.BlockType.Page) {
-							C.BlockListConvertChildrenToPages(rootId, blockIds);
+							C.BlockListConvertChildrenToPages(rootId, blockIds, '');
 						};
 						
 						close();
@@ -180,7 +179,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			case I.MarkType.Link:
 				const offset = obj.offset();
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-				commonStore.menuClose(this.props.id);
+				close();
 
 				menuParam = Object.assign(menuParam, {
 					type: I.MenuType.Horizontal,
@@ -240,26 +239,28 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				break;
 		};
 
-		if (menuId && !commonStore.menuIsOpen(menuId)) {
-			commonStore.menuCloseAll([ 
-				'select',
-				'blockStyle', 
-				'blockMore',
-				'blockLink',
-				'blockColor',
-				'blockBackground',
-			]);
+		if (menuId && !menuStore.isOpen(menuId)) {
+			menuStore.closeAll(Constant.menuIds.context);
 
 			keyboard.disableContext(true);
 			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => { commonStore.menuOpen(menuId, menuParam); }, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
 	};
 	
-	onMenuClick () {
-		focus.apply();
+	componentDidMount () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()}`);
+
+		obj.unbind('click mousedown').on('click mousedown', (e: any) => {
+			const target = $(e.target);
+			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+		});
 	};
-	
+
 };
 
 export default MenuBlockContext;

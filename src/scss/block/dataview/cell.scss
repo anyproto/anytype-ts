@@ -21,6 +21,12 @@
 		.name { display: inline-block; }
 	}
 	.empty { display: block; }
+
+	.icon.clear { 
+		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
+		cursor: pointer; margin-top: -10px; transition: background-image 0.2s ease-in-out;
+	}
+	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {

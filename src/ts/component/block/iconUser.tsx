@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -30,7 +30,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 	onClick (e: any) {
 		const { rootId } = this.props;
 		
-		commonStore.menuOpen('select', { 
+		menuStore.open('select', { 
 			element: '#block-' + rootId + '-icon .iconObject',
 			offsetY: 4,
 			data: {

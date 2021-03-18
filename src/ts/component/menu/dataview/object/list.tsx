@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, Util, Key, keyboard } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { Filter, MenuItemVertical, Icon } from 'ts/component';
+import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
+import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -57,15 +57,16 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type) || {};
 
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-					hasFixedWidth={() => {}}
-				>
+			let content = null;
+			if (item.id == 'add') {
+				content =  (
+					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+						<Icon className="plus" />
+						<div className="name">{item.name}</div>
+					</div>
+				);
+			} else {
+				content = (
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
@@ -76,6 +77,19 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>
+				);
+			};
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -180,7 +194,17 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		return this.items;
+		const { param } = this.props;
+		const { data } = param;
+		const { canAdd } = data;
+		
+		let ret = Util.objectCopy(this.items);
+
+		if (data.filter && canAdd) {
+			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });
+		};
+
+		return ret;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
@@ -297,7 +321,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange, maxCount } = data;
+		const { onChange, maxCount, filter } = data;
+		const relation = data.relation.get();
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -307,19 +332,47 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			return;
 		};
 
-		let value = this.getValue();
-		value.push(item.id);
-		value = Util.arrayUnique(value);
+		const cb = (id: string) => {
+			if (!id) {
+				return;
+			};
 
-		if (maxCount) {
-			value = value.slice(value.length - maxCount, value.length);
+			let value = this.getValue();
+			value.push(id);
+			value = Util.arrayUnique(value);
+
+			if (maxCount) {
+				value = value.slice(value.length - maxCount, value.length);
+			};
+
+			data.value = value;
+
+			menuStore.updateData(MENU_ID, { value: value });
+			onChange(value);
+			position();
 		};
 
-		data.value = value;
+		if (item.id == 'add') {
+			const details: any = {
+				name: filter,
+			};
 
-		commonStore.menuUpdateData(MENU_ID, { value: value });
-		onChange(value);
-		position();
+			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+			if (typeId) {
+				const type = dbStore.getObjectType(typeId);
+				if (type) {
+					details.type = type.id;
+					details.layout = type.layout;
+				};
+			};
+
+			DataUtil.pageCreate(e, '', '', details, I.BlockPosition.Bottom, (message: any) => {
+				cb(message.targetId);
+				close();
+			});
+		} else {
+			cb(item.id);
+		};
 	};
 
 	getValue (): any[] {

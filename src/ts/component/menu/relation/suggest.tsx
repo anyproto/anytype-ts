@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Filter, Icon } from 'ts/component';
-import { I, C, Util, DataUtil, Key, keyboard } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, Util, DataUtil, Key, keyboard } from 'ts/lib';
+import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -322,7 +322,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 		if (item.id == 'add') {
 			const obj = $(`#${getId()}`);
 
-			commonStore.menuOpen(menuIdEdit, { 
+			menuStore.open(menuIdEdit, { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: obj.outerWidth(),
 				offsetY: -76,

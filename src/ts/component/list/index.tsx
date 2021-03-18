@@ -52,7 +52,7 @@ class ListIndex extends React.Component<Props, {}> {
 
 			if (_objectEmpty_) {
 				return (
-					<div className="item">
+					<div className="item" data-target-block-id={content.targetBlockId}>
 						<div className="iconObject c48" />
 						<div className="line animatedBackground" />
 					</div>

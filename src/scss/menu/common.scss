@@ -10,7 +10,7 @@
 	.menu * { user-select: none; }
 	
 	.menu { 
-		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; 
+		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
@@ -32,16 +32,12 @@
 	.menu.v5.h4 { transform-origin: 100% 50%; } /* right center */
 	
 	.menu {
-		.content { opacity: 0; transition: opacity 0.05s ease-in-out; transition-delay: 0.05s; }
 		.input { user-select: text; }
-	}
-	.menu.show {
-		.content { opacity: 1; }
 	}
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; }
+		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
 		.loaderWrapper { 
@@ -70,9 +66,9 @@
 	
 		.item { 
 			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
-			transition: all 0.05s ease-in-out; width: 100%; background: #fff;
+			width: 100%; background: #fff;
 		}
-		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
+		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadOnly { cursor: default; }
 		
 		.item::before {
@@ -110,12 +106,7 @@
 			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.15); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			
-			.iconObject { vertical-align: top; }
-
-			.iconObject { margin-right: 4px; }
-			.iconEmoji {
-				.icon.blank { margin: 0px; }
-			}
+			.iconObject { margin-right: 4px; vertical-align: top; flex-shrink: 0; }
 		}
 
 		.item.empty { color: $colorDarkGrey; }
@@ -169,13 +160,13 @@
 		.icon:last-child { margin: 0px; }
 		
 		.icon {
-			.arrow { 
+			.icon.arrow { 
 				width: 8px; height: 8px; background-image: url('~img/icon/menu/action/arrow0.svg'); position: absolute; right: 0px; top: 50%; 
-				margin-top: -4px;
+				margin-top: -4px; background-size: contain;
 			}
 		}
 		.icon.active {
-			 .arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
+			 .icon.arrow { background-image: url('~img/icon/menu/action/arrow1.svg'); }
 		}
 	}
 

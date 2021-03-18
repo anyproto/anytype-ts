@@ -97,7 +97,6 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const Item = (item: any) => {
-			let isRoot = item.id == root;
 			let type = dbStore.getObjectType(item.type);
 			let description = item.description || item.snippet;
 
@@ -107,7 +106,7 @@ class PopupSearch extends React.Component<Props, State> {
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
 					onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{isRoot ? iconHome : <IconObject object={item} size={18} /> }
+					{item.isRoot ? iconHome : <IconObject object={item} size={18} /> }
 					
 					<div className="name">{item.name}</div>
 
@@ -435,7 +434,9 @@ class PopupSearch extends React.Component<Props, State> {
 	load () {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		const filters = [];
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] },
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -460,35 +461,23 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const filter = new RegExp(Util.filterFix(this.state.filter), 'gi');
-		const { pages } = this.state;
-		const { recent } = blockStore;
-		const children = blockStore.getChildren(recent, recent).reverse();
-		const sections = [
-			{ 
-				id: 'recent', name: 'Recent objects', children: children.map((it: I.Block) => {
-					const details = blockStore.getDetails(recent, it.content.targetBlockId);
-					return { ...details, id: it.content.targetBlockId };
-				}).filter((it: any) => { return it.name.match(filter); }),
-			},
-			{ id: 'search', name: 'Search results', children: pages }
-		];
+		const { root } = blockStore;
+		const pages = Util.objectCopy(this.state.pages);
+		const recent = blockStore.getChildren(blockStore.recent, blockStore.recent).map((it: I.Block) => { return it.content.targetBlockId; });
 
-		let ret: any[] = [];
-
-		for (let section of sections) {
-			if (!section.children.length) {
-				continue;
-			};
-			ret.push({ id: section.id, name: section.name, isSection: true });
-			ret = ret.concat(section.children);
+		for (let page of pages) {
+			page.order = recent.findIndex((id: string) => { return id == page.id; });
 		};
 
-		ret = ret.map((it: any) => {
-			return { ...it, name: String(it.name || Constant.default.name) };
+		pages.sort((c1: any, c2: any) => {
+			if (c1.order > c2.order) return -1;
+			if (c2.order < c1.order) return 1;
+			return 0;
 		});
 
-		return ret;
+		return pages.map((it: any) => {
+			return { ...it, isRoot: it.id == root, name: String(it.name || Constant.default.name) }
+		});
 	};
 
 	filterMapper (it: any) {
@@ -542,23 +531,22 @@ class PopupSearch extends React.Component<Props, State> {
 		close();
 
 		let newBlock: any = {};
-
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, item);
+					DataUtil.objectOpenEvent(e, { ...item, id: item.itemId });
 				});
 				break;
 
 			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
+				C.BlockListMove(rootId, item.itemId, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
-						targetBlockId: String(item.id || ''),
+						targetBlockId: String(item.itemId || ''),
 					}
 				};
 				C.BlockCreate(newBlock, rootId, blockId, position);
@@ -571,7 +559,7 @@ class PopupSearch extends React.Component<Props, State> {
 						targetBlockId: blockId,
 					}
 				};
-				C.BlockCreate(newBlock, item.id, '', position);
+				C.BlockCreate(newBlock, item.itemId, '', position);
 				break;
 		};
 	};

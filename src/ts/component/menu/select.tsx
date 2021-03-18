@@ -289,7 +289,7 @@ class MenuSelect extends React.Component<Props, {}> {
 			offset += 8;
 		};
 
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
+		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
 
 		content.css({ height: height });
 

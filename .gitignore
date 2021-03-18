@@ -3,6 +3,7 @@
 .settings/
 node_modules/
 build.zip
+build/
 addon
 protobuf
 todo.md
@@ -14,3 +15,4 @@ dist/*.node
 *.txt
 src/json/schema
 dist/bundle-back.js
+dist/builder-debug.yml

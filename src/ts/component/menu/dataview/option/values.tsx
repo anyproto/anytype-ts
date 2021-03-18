@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, Tag } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -150,20 +150,17 @@ class MenuOptionValues extends React.Component<Props> {
 	onAdd () {
 		const { param, getId, close } = this.props;
 		const { data } = param;
-		const node = $('#' + getId());
 
-		if (commonStore.menuIsOpen('dataviewOptionList')) {
+		if (menuStore.isOpen('dataviewOptionList')) {
 			return;
 		};
 
 		window.setTimeout(() => {
-			commonStore.menuOpen('dataviewOptionList', {
-				...param,
+			menuStore.open('dataviewOptionList', {
 				element: '#' + getId() + ' #item-add',
 				width: 0,
-				offsetX: node.outerWidth(),
-				offsetY: -36,
-				noFlipY: true,
+				offsetX: param.width,
+				offsetY: -64,
 				passThrough: true,
 				onClose: () => { close(); },
 				data: {
@@ -180,7 +177,7 @@ class MenuOptionValues extends React.Component<Props> {
 		const { param, getId } = this.props;
 		const { data } = param;
 
-		commonStore.menuOpen('dataviewOptionEdit', { 
+		menuStore.open('dataviewOptionEdit', { 
 			element: '#' + getId() + ' #item-' + item.id,
 			offsetX: 288,
 			vertical: I.MenuDirection.Center,
@@ -206,7 +203,7 @@ class MenuOptionValues extends React.Component<Props> {
 		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;
-		commonStore.menuUpdateData('dataviewOptionList', { value: value });
+		menuStore.updateData('dataviewOptionList', { value: value });
 
 		onChange(value);
 	};

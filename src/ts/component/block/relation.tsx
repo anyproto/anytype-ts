@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon, Input, Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { menuStore, blockStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
@@ -34,7 +34,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { key } = content;
 		const details = blockStore.getDetails(rootId, rootId);
 		const relation = dbStore.getRelation(rootId, rootId, key);
-		const idPrefix = 'blockRelationCell';
+		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
 
 		return (
@@ -92,7 +92,7 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any) {
-		commonStore.menuUpdateData('blockRelationList', { filter: this.refInput.getValue() });
+		menuStore.updateData('blockRelationList', { filter: this.refInput.getValue() });
 	};
 
 	onFocus () {
@@ -112,7 +112,7 @@ class BlockRelation extends React.Component<Props, {}> {
 	onMenu (e: any) {
 		const { rootId, block } = this.props;
 
-		commonStore.menuOpen('blockRelationList', {
+		menuStore.open('blockRelationList', {
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
 			offsetY: 4,
