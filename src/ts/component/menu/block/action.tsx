@@ -231,7 +231,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 					children: [
 						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-						{ id: 'move', icon: 'move', name: 'Move to' },
+						{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 					] 
 				},
 				{ 
@@ -435,9 +435,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			isSub: true,
 			passThrough: true,
 			data: {
+				rootId: rootId,
 				blockId: blockId,
 				blockIds: blockIds,
-				rootId: rootId,
 				rebind: this.rebind,
 				dataset: dataset,
 			},
@@ -480,6 +480,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 						this.moveToPage(item.id);
 						close();
 					}
+				});
+				break;
+
+			case 'move':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Move, 
+					skipId: rootId,
+					position: I.BlockPosition.Bottom,
+					onSelect: () => { close(); }
 				});
 				break;
 				
@@ -541,44 +553,22 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, getId } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
-		const node = $(ReactDOM.findDOMNode(this));
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
 		};
 
-		let ids = DataUtil.selectionGet(blockId, false, data);
-		let close = true;
+		const ids = DataUtil.selectionGet(blockId, false, data);
 
 		switch (item.itemId) {
 			case 'download':
 				Action.download(block);
 				break;
 					
-			case 'move':
-				close = false;
-				window.setTimeout(() => {
-					menuStore.open('searchObject', { 
-						element: `#${getId()} #item-${item.id}`,
-						offsetX: node.outerWidth(),
-						offsetY: -36,
-						data: { 
-							type: I.NavigationType.Move, 
-							rootId: rootId,
-							skipId: rootId,
-							blockId: blockId,
-							blockIds: blockIds,
-							position: I.BlockPosition.Bottom,
-							onSelect: () => { this.props.close(); }
-						}, 
-					});
-				}, Constant.delay.menu);
-				break;
-				
 			case 'copy':
 				Action.duplicate(rootId, ids[ids.length - 1], ids);
 				break;
@@ -621,9 +611,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (close) {
-			this.props.close();
-		};
+		close();
 	};
 
 	moveToPage (type: string) {
