@@ -542,7 +542,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
+		if (menuId) {
 			menuStore.closeAll(Constant.menuIds.action);
 			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};
