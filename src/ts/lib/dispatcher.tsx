@@ -12,7 +12,7 @@ const SORT_IDS = [ 'blockShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds'
 
 /// #if USE_ADDON
 const { app } = remote;
-const bindings = require('bindings')({
+const bindings = window.require('bindings')({
 	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
 });
