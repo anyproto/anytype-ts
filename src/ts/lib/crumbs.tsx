@@ -5,14 +5,10 @@ interface CrumbsObject {
 	ids: string[];
 };
 
-const PREFIX = 'crumbs-';
 const LIMIT_RECENT = 100;
+const ID = 'crumbs';
 
 class Crumbs {
-	
-	getKey (key: string): string {
-		return Util.toCamelCase(PREFIX + key);
-	};
 	
 	init (): void {
 		if (!blockStore.breadcrumbs) {
@@ -27,11 +23,22 @@ class Crumbs {
 			});
 		};
 	};
+
+	getKey (key: I.CrumbsType): string {
+		return Util.toCamelCase(key);
+	};
+
+	getObj () {
+		return Storage.get(ID) || {};
+	};
 	
-	get (key: I.CrumbsType): CrumbsObject {
-		let obj = (Storage.get(this.getKey(key)) || { ids: [] }) as CrumbsObject;
-		obj.ids = obj.ids || [];
-		return obj;
+	get (key: I.CrumbsType, suffix?: string): CrumbsObject {
+		const obj = this.getObj();
+		const item = (obj[this.getKey(key) + (suffix || '')] || {}) as CrumbsObject;
+
+		item.ids = item.ids || [];
+
+		return item;
 	};
 	
 	add (key: I.CrumbsType, id: string, callBack?: () => void): CrumbsObject {
@@ -39,55 +46,62 @@ class Crumbs {
 			return;
 		};
 		
-		let k = this.getKey(key);
-		let obj = this.get(key);
+		const item = this.get(key);
 
-		Storage.set(k + 'Prev', obj, true);
+		this.savePrev(key, item);
 		
-		obj.ids = obj.ids || [];
-		obj.ids.push(id);
-		
-		this.save(key, obj, callBack);
-		return obj;
+		item.ids.push(id);
+		this.save(key, item, callBack);
+
+		return item;
 	};
 	
 	cut (key: I.CrumbsType, index: number, callBack?: () => void): CrumbsObject {
-		let k = this.getKey(key);
-		let obj = this.get(key);
+		let item = this.get(key);
 		
-		Storage.set(k + 'Prev', obj, true);
+		this.savePrev(key, item);
 		
-		obj.ids = obj.ids || [];
-		obj.ids = obj.ids.slice(0, index);
-		
-		this.save(key, obj, callBack);
-		return obj;
+		item.ids = item.ids.slice(0, index);
+		this.save(key, item, callBack);
+
+		return item;
 	};
 	
 	restore (key: I.CrumbsType, callBack?: () => void): CrumbsObject {
-		let k = this.getKey(key);
-		let obj = this.get(key);
-		let prev: CrumbsObject = (Storage.get(k + 'Prev') || { ids: [] }) as CrumbsObject;
-		
-		Storage.set(k + 'Prev', obj, true);
+		const item = this.get(key);
+		const prev = this.get(key, 'Prev');
+
+		this.savePrev(key, item);
 		this.save(key, prev, callBack);
-		return obj;
+		return item;
 	};
 
-	save (key: I.CrumbsType, obj: CrumbsObject, callBack?: () => void) {
-		if (!obj) {
+	savePrev (key: I.CrumbsType, item: any) {
+		const obj = this.getObj();
+
+		obj[this.getKey(key) + 'Prev'] = item;
+		Storage.set(ID, obj, true);
+	};
+
+	save (key: I.CrumbsType, item: CrumbsObject, callBack?: () => void) {
+		if (!item) {
 			return;
 		};
 
-		Storage.set(this.getKey(key), obj, true);
+		const obj = this.getObj();
+		obj[this.getKey(key)] = item;
+		Storage.set(ID, obj, true);
 
-		let id = blockStore.breadcrumbs;
+		let id = '';
+		if (key == I.CrumbsType.Page) {
+			id = blockStore.breadcrumbs;
+		};
 		if (key == I.CrumbsType.Recent) {
 			id = blockStore.recent;
 		};
 		
 		if (id) {
-			C.BlockSetBreadcrumbs(id, obj.ids, (message: any) => {
+			C.BlockSetBreadcrumbs(id, item.ids, (message: any) => {
 				if (message.error.code) {
 					this.delete(key);
 				};
@@ -100,7 +114,9 @@ class Crumbs {
 	};
 	
 	delete (key: I.CrumbsType) {
-		Storage.delete(this.getKey(key));
+		const obj = this.getObj();
+		delete(obj[this.getKey(key)]);
+		Storage.set(ID, obj, true);
 	};
 
 	addCrumbs (id: string) {
