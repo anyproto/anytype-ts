@@ -534,19 +534,19 @@ class PopupSearch extends React.Component<Props, State> {
 		switch (type) {
 			case I.NavigationType.Go:
 				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, { ...item, id: item.itemId });
+					DataUtil.objectOpenEvent(e, { ...item, id: item.id });
 				});
 				break;
 
 			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.itemId, blockIds, '', I.BlockPosition.Bottom);
+				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
 				break;
 
 			case I.NavigationType.Link:
 				newBlock = {
 					type: I.BlockType.Link,
 					content: {
-						targetBlockId: String(item.itemId || ''),
+						targetBlockId: String(item.id || ''),
 					}
 				};
 				C.BlockCreate(newBlock, rootId, blockId, position);
@@ -559,7 +559,7 @@ class PopupSearch extends React.Component<Props, State> {
 						targetBlockId: blockId,
 					}
 				};
-				C.BlockCreate(newBlock, item.itemId, '', position);
+				C.BlockCreate(newBlock, item.id, '', position);
 				break;
 		};
 	};
