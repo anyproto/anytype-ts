@@ -31,10 +31,9 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 
 		const check = DataUtil.checkDetails(rootId);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
-		const title = blockStore.getLeaf(rootId, 'title') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: title.align, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: title.align, childrenIds: [], fields: {}, content: {} });
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: title.align, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: check.object.align, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.align, childrenIds: [], fields: {}, content: {} });
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: check.object.align, childrenIds: [], fields: {}, content: {} });
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;

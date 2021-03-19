@@ -408,6 +408,17 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
+	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
+		const details = [ 
+			{ key: 'align', value: align },
+		];
+
+		C.BlockListSetAlign(rootId, [ 'title' ], align);
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
+	};
+
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		if (!block) {
 			return;
