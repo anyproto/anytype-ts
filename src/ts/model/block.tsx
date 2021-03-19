@@ -52,7 +52,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isTextTitle() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isImage() || this.isVideo());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isImage() || this.isVideo());
 	};
 
 	canHaveColor (): boolean {

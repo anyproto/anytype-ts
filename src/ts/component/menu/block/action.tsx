@@ -535,7 +535,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
-					onChange: (align: I.BlockAlign) => {
+					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
