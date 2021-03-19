@@ -45,7 +45,7 @@ class Controls extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				className={[ 'editorControls', 'align' + check.object.align ].join(' ')}
+				className={[ 'editorControls', 'align' + check.object.layoutAlign ].join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}

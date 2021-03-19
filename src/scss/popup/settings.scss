@@ -92,10 +92,14 @@
 			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; filter: blur(3px); }
 			.textarea:focus { filter: blur(0px); }
 
-			.path { margin-bottom: 16px; }
-			.path .label { margin: 0px; }
-
-			canvas { display: block; }
+			.path { margin-bottom: 16px; height: 128px; display: flex; }
+			.path { 
+				b { margin-bottom: 5px; display: block; }
+				.label { margin: 0px; }
+				.side { width: 100%; line-height: 128px; }
+				.side.right { text-align: right; font-size: 0px; }
+				canvas { display: inline-block; }
+			}
 
 			.inputs { margin-bottom: 16px; }
 			.buttons { margin-top: 32px; }

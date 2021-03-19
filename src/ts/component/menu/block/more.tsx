@@ -176,7 +176,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const linkRoot = { id: 'linkRoot', icon: 'existing', name: 'Add to dashboard' };
 		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
 		const move = { id: 'move', name: 'Move to' };
-		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.align) ].join(' '), arrow: true };
+		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let items = [];
 		if (block.isObjectSet()) {

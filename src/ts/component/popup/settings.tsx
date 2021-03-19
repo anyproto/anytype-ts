@@ -182,11 +182,15 @@ class PopupSettings extends React.Component<Props, State> {
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
 						</div>
 						<div className="path">
-							<b>{translate('popupSettingsMobileQRSubTitle')}</b><br/>
-							<Label text={translate('popupSettingsMobileQRText')} />
-						</div>
-						<div className="qr">
-							<QRCode value={entropy} />
+							<div className="side left">
+								<div className="txt">
+									<b>{translate('popupSettingsMobileQRSubTitle')}</b>
+									<Label text={translate('popupSettingsMobileQRText')} />
+								</div>
+							</div>
+							<div className="side right">
+								<QRCode value={entropy} />
+							</div>
 						</div>
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
