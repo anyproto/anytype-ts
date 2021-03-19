@@ -15,7 +15,6 @@ const $ = require('jquery');
 @observer
 class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
-	timeout: number = 0;
 	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
 	ref: any = null;
@@ -143,7 +142,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rebind } = data;
 
-		window.clearTimeout(this.timeout);
 		this.unbind();
 		
 		if (rebind) {
@@ -257,10 +255,9 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
-		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { menuStore.open(id, param); }, Constant.delay.menu);
+		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ], () => {
+			menuStore.open(id, param);
+		});
 	};
 
 	onOpen (e: any) {

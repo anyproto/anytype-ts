@@ -135,8 +135,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll();
-		window.setTimeout(() => { menuStore.open('blockMore', param); }, Constant.delay.menu);
+		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
 	};
 
 	onAdd (e: any) {
@@ -185,8 +184,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll();
-		window.setTimeout(() => { menuStore.open('threadList', param); }, Constant.delay.menu);
+		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
 	};
 
 	onNavigation (e: any) {
@@ -261,8 +259,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll();
-		window.setTimeout(() => { menuStore.open('blockRelationView', param); }, Constant.delay.menu);
+		menuStore.closeAll(null, () => {
+			menuStore.open('blockRelationView', param);
+		});
 	};
 
 	getContainer () {

@@ -15,7 +15,6 @@ const $ = require('jquery');
 @observer
 class MenuRelationEdit extends React.Component<Props, {}> {
 
-	timeout: number = 0;
 	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
 	ref: any = null;
@@ -144,8 +143,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rebind } = data;
 
-		window.clearTimeout(this.timeout);
-
 		if (rebind) {
 			rebind();
 		};
@@ -214,10 +211,9 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	menuOpen (id: string, param: I.MenuParam) {
-		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ]);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { menuStore.open(id, param); }, Constant.delay.menu);
+		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ], () => {
+			menuStore.open(id, param);
+		});
 	};
 
 	onChangeTime (v: boolean) {
@@ -234,15 +230,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onDateSettings (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 
-		menuStore.closeAll([ 'dataviewRelationType', 'dataviewDate' ]);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
+		menuStore.closeAll([ 'dataviewRelationType', 'dataviewDate' ], () => {
 			menuStore.open('dataviewDate', { 
-				element: '#item-date-settings',
+				element: `#${getId()} #item-date-settings`,
 				offsetX: 224,
 				offsetY: -38,
 				onClose: () => {
@@ -250,7 +243,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				},
 				data: data
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onOpen (e: any) {

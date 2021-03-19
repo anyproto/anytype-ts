@@ -6,6 +6,8 @@ const $ = require('jquery');
 
 class MenuStore {
 	@observable public menuList: I.Menu[] = [];
+
+	timeout: number = 0;
 	
 	@computed
 	get list(): I.Menu[] {
@@ -103,12 +105,21 @@ class MenuStore {
 	};
 	
 	@action
-	closeAll (ids?: string[]) {
+	closeAll (ids?: string[], callBack?: () => void) {
 		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
 
 		for (let id of ids) {
 			this.close(id);
 		};
+
+		if (callBack) {
+			this.clearTimeout();
+			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+		};
+	};
+
+	clearTimeout () {
+		window.clearTimeout(this.timeout);
 	};
 	
 };

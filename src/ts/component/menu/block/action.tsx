@@ -16,7 +16,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	focus: boolean = false;
-	timeout: number = 0;
 	n: number = 0;
 	ref: any = null;
 	state = {
@@ -96,9 +95,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				this.ref.focus();
 			};
 		}, 15);
-		
+
 		menu.unbind('mouseleave').on('mouseleave', () => {
-			window.clearTimeout(this.timeout);
+			menuStore.clearTimeout();
 		});
 	};
 
@@ -114,9 +113,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this._isMounted = false;
 		this.unbind();
 
-		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
 		menuStore.closeAll(Constant.menuIds.action);
+		menuStore.clearTimeout();
 	};
 	
 	onFilterFocus (e: any) {
@@ -421,7 +420,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
-		window.clearTimeout(this.timeout);
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.action);
@@ -549,8 +547,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (menuId && (this.lastId != item.itemId)) {
 			this.lastId = item.itemId;
 
-			menuStore.closeAll(Constant.menuIds.action);
-			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
+			menuStore.closeAll(Constant.menuIds.action, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
