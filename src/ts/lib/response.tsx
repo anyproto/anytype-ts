@@ -59,6 +59,13 @@ const WalletRecover = (response: any) => {
 	return {};
 };
 
+const WalletConvert = (response: any) => {
+	return {
+		mnemonic: response.getMnemonic(),
+		entropy: response.getEntropy(),
+	};
+};
+
 const AccountCreate = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
@@ -446,6 +453,7 @@ export {
 
 	WalletCreate,
 	WalletRecover,
+	WalletConvert,
 
 	AccountCreate,
 	AccountRecover,

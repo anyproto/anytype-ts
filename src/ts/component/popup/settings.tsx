@@ -11,6 +11,7 @@ interface State {
 	page: string;
 	loading: boolean;
 	error: string;
+	entropy: string;
 };
 
 const { dialog } = window.require('electron').remote;
@@ -28,6 +29,7 @@ class PopupSettings extends React.Component<Props, State> {
 		page: 'index',
 		loading: false,
 		error: '',
+		entropy: '',
 	};
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
@@ -48,9 +50,9 @@ class PopupSettings extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { account } = authStore;
+		const { account, phrase } = authStore;
 		const { cover, coverImage } = commonStore;
-		const { page, loading, error } = this.state;
+		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
 		let content = null;
@@ -177,21 +179,18 @@ class PopupSettings extends React.Component<Props, State> {
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
 						<div className="inputs">
-							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
+							<Textarea ref={(ref: any) => this.phraseRef = ref} value={phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
 						</div>
 						<div className="path">
-							<br/><b>{translate('popupSettingsMobileQRSubTitle')}</b><br/>
-							— Launch Anytype<br/>
-							— Press "Login"<br/>
-							— "Scan QR code"<br/>
-							— Point your phone to this screen<br/>
+							<b>{translate('popupSettingsMobileQRSubTitle')}</b><br/>
+							<Label text={translate('popupSettingsMobileQRText')} />
 						</div>
 						<div className="qr">
-							<QRCode value={authStore.phrase} />
+							<QRCode value={entropy} />
 						</div>
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => {	this.onConfirmPhrase();	}} />
+								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => { this.onConfirmPhrase(); }} />
 							</div>
 						) : ''}
 					</div>
@@ -350,6 +349,10 @@ class PopupSettings extends React.Component<Props, State> {
 		if (page) {
 			this.onPage(page);
 		};
+
+		C.WalletConvert(authStore.phrase, '', (message: any) => {
+			this.setState({ entropy: message.entropy });
+		});
 
 		this.init();
 	};

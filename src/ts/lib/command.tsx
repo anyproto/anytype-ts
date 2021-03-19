@@ -98,6 +98,15 @@ const WalletRecover = (path: string, mnemonic: string, callBack?: (message: any)
 	dispatcher.request('walletRecover', request, callBack);
 };
 
+const WalletConvert = (mnemonic: string, entropy: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Wallet.Convert.Request();
+
+	request.setMnemonic(mnemonic);
+	request.setEntropy(entropy);
+
+	dispatcher.request('walletConvert', request, callBack);
+};
+
 const AccountCreate = (name: string, path: string, code: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 	
@@ -951,6 +960,7 @@ export {
 
 	WalletCreate,
 	WalletRecover,
+	WalletConvert,
 
 	AccountCreate,
 	AccountRecover,
