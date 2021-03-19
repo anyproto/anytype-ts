@@ -179,6 +179,13 @@ class PopupSettings extends React.Component<Props, State> {
 						<div className="inputs">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
 						</div>
+						<div className="path">
+							<br/><b>{translate('popupSettingsMobileQRSubTitle')}</b><br/>
+							— Launch Anytype<br/>
+							— Press "Login"<br/>
+							— "Scan QR code"<br/>
+							— Point your phone to this screen<br/>
+						</div>
 						<div className="qr">
 							<QRCode value={authStore.phrase} />
 						</div>
