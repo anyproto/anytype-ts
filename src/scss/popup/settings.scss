@@ -90,7 +90,7 @@
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
 			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; filter: blur(3px); }
-			.textarea:hover { filter: blur(0px); }
+			.textarea:focus { filter: blur(0px); }
 
 			.inputs { margin-bottom: 16px; }
 			canvas { display: block; }
