@@ -41,7 +41,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });

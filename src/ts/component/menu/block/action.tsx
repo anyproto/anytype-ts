@@ -633,8 +633,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			ids = [ blockId ];
 		};
 
-		console.log(type);
-		
 		C.BlockListConvertChildrenToPages(rootId, ids, type);
 	};
 

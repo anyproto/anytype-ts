@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, focus } from 'ts/lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -13,7 +13,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -135,8 +134,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		//menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
-		menuStore.open('blockMore', param);
+		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
 	};
 
 	onAdd (e: any) {
@@ -185,8 +183,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		//menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
-		menuStore.open('threadList', param);
+		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
 	};
 
 	onNavigation (e: any) {
@@ -261,8 +258,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		//menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
-		menuStore.open('blockRelationView', param);
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 
 	getContainer () {

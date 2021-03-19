@@ -353,8 +353,6 @@ class Menu extends React.Component<Props, {}> {
 				css.width = param.width;
 			};
 
-			console.log();
-
 			menu.css(css);
 			
 			if (isSub) {
