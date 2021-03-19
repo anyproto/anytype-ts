@@ -6,7 +6,30 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 8 December, 2020` },
+	{ style: I.TextStyle.Title, text: `Updates for 18 March, 2021` },
+	{ style: I.TextStyle.Header1, text:  `Sync enhancements` },
+	{ text: `This release is all about reliability and sync speed.` },
+	{ text: `Readers beware, these are some hardcore technical release notes:` },
+	{ style: I.TextStyle.Bulleted, text: `Multi-stream simultaneous connections should be fixed, as a result of our updating to the latest <span class="${sc}">libp2p</span> libraries.` },
+	{ style: I.TextStyle.Bulleted, text: `We’ve updated the request rate for adaptive changes. They are now based on persistent sync statuses, and this has reduced the polling rate of inactive devices. This helps us keep any further complexities that may arise from polling at bay.` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype is now efficient at checking an object’s information is in sync between any two nodes, by using heads/address edges. This feature also helps reduce communication overhead between synced and inactive peers.` },
+	{ style: I.TextStyle.Bulleted, text: `Address edge computation implemented. This includes a deterministic digest of all peer addresses involved in the object’s creation and changes.` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="${sc}">Object diagnostics</span> are now in the system menu. This tool will help us diagnose sync issues. It generates a file, which you can share with the team using the feedback tool. The result is confidential.` },
+	{ style: I.TextStyle.Bulleted, text: `Many minor fixes and improvements. Thank you so much for the data on Telegram and the <a href="https://community.anytype.io/d/231-desktop-app-is-not-syncing">Desktop app is not syncing</a> thread.` },
+	{ text: ``},
+	{ text: ``},
+	{ text: `I’m sure it feels like we’ve been saying this forever, but we really are very close to our databases update. It will feature a refreshed design, rapid semantic search, move-to & linking optimisations, and much more.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 26 January, 2021` },
+	{ style: I.TextStyle.Header2, text:  `No connection → Synced` },
+	{ text: `This is a patch that fixes the backup node connection status. The sync mechanism itself worked well and all of your data was backed up successfully in January.` },
+	{ text: `We release fewer features as we're going to release a big update in February, so stay tuned!` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 8 December, 2020` },
 
 	{ text: `Happy holidays from the Anytypers!` },
 	{ text: `As we near the end of 2020, we want to say thanks for all your support this year.` },

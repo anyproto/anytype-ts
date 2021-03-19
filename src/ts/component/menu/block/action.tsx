@@ -22,6 +22,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	state = {
 		filter: '',
 	};
+	lastId = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -434,6 +435,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			offsetY: offsetY,
 			isSub: true,
 			passThrough: true,
+			onClose: () => {
+				this.lastId = '';
+			},
 			data: {
 				rootId: rootId,
 				blockId: blockId,
@@ -542,7 +546,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
+		if (menuId && (this.lastId != item.itemId)) {
+			this.lastId = item.itemId;
+
 			menuStore.closeAll(Constant.menuIds.action);
 			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
 		};

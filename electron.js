@@ -16,6 +16,7 @@ const windowStateKeeper = require('electron-window-state');
 const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 const keytar = require('keytar');
+const bindings = require('bindings');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 980;
