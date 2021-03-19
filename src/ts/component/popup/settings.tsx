@@ -183,10 +183,8 @@ class PopupSettings extends React.Component<Props, State> {
 						</div>
 						<div className="path">
 							<div className="side left">
-								<div className="txt">
-									<b>{translate('popupSettingsMobileQRSubTitle')}</b>
-									<Label text={translate('popupSettingsMobileQRText')} />
-								</div>
+								<b>{translate('popupSettingsMobileQRSubTitle')}</b>
+								<Label text={translate('popupSettingsMobileQRText')} />
 							</div>
 							<div className="side right">
 								<QRCode value={entropy} />

@@ -354,7 +354,7 @@ class PopupStore extends React.Component<Props, State> {
 	onCreateType () {
 		const { objectTypes } = dbStore;
 		const param: any = { 
-			name: Constant.default.nameType, 
+			name: '',
 			layout: I.ObjectLayout.Page, 
 		};
 

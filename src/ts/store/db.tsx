@@ -24,13 +24,14 @@ class DbStore {
 	@action
 	objectTypesSet (types: I.ObjectType[]) {
 		for (let type of types) {
-			this.objectTypeMap.set(type.id, type);
+			this.objectTypeMap.set(type.id, observable(type));
 		};
 	};
 
 	@action
 	objectTypeUpdate (type: any) {
 		const item = this.getObjectType(type.id);
+		console.log(type.id, item);
 		set(item, type);
 	};
 
@@ -168,8 +169,7 @@ class DbStore {
 	};
 
 	getObjectType (id: string): I.ObjectType {
-		const type = this.objectTypeMap.get(id);
-		return type ? { ...type, name: type.name || Constant.default.name } : null;
+		return this.objectTypeMap.get(id);
 	};
 
 	getRelations (rootId: string, blockId: string): I.Relation[] {

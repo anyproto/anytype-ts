@@ -50,15 +50,15 @@ class PageMainType extends React.Component<Props, {}> {
 			description: 'Add description',
 		};
 
+		if (object.name == Constant.default.name) {
+			object.name = '';
+		};
+
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
 		relations.sort(DataUtil.sortByHidden);
-
-		if (this.isDefaultName() || (object.name == Constant.default.name)) {
-			object.name = '';
-		};
 
 		let data = dbStore.getData(rootId, block.id).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
@@ -217,10 +217,6 @@ class PageMainType extends React.Component<Props, {}> {
 			this.placeHolderCheck(id);
 		};
 
-		if (this.isDefaultName()) {
-			focus.set('name', { from: 0, to: 0 });
-		};
-
 		window.setTimeout(() => { focus.apply(); }, 10);
 	};
 
@@ -238,13 +234,6 @@ class PageMainType extends React.Component<Props, {}> {
 		if (close) {
 			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
 		};
-	};
-
-	isDefaultName () {
-		const rootId = this.getRootId();
-		const object = blockStore.getDetails(rootId, rootId);
-
-		return [ Constant.default.nameType ].indexOf(object.name) >= 0;
 	};
 
 	open () {
@@ -347,9 +336,7 @@ class PageMainType extends React.Component<Props, {}> {
 		this.placeHolderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
-		window.setTimeout(() => {
-			this.save();
-		}, 300);
+		window.setTimeout(() => { this.save(); }, 500);
 	};
 
 	onSelectText (e: any, item: any) {
