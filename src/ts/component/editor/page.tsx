@@ -1287,7 +1287,8 @@ class EditorPage extends React.Component<Props, {}> {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
-				offsetY: 8,
+				fixedY: 40,
+				className: 'fixed',
 				data: {
 					container: node,
 				},
