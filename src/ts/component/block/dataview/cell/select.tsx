@@ -41,9 +41,11 @@ class CellSelect extends React.Component<Props, State> {
 			<div className="wrap">
 				{value.length ? (
 					<React.Fragment>
-						{value.map((item: any, i: number) => {
-							return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
-						})}
+						<span className="over">
+							{value.map((item: any, i: number) => {
+								return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
+							})}
+						</span>
 						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (

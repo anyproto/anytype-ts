@@ -66,8 +66,12 @@ class MenuOptionList extends React.Component<Props, State> {
 			} else {
 				content = (
 					<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
-						<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
-						<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+						<div className="clickable">
+							<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
+						</div>
+						<div className="buttons">
+							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+						</div>
 					</div>
 				);
 			};

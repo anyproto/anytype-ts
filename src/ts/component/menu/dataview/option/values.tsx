@@ -38,11 +38,15 @@ class MenuOptionValues extends React.Component<Props> {
 
 		const Item = SortableElement((item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item withCaption" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
-					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
-					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					<div className="clickable">
+						<Tag {...item} className={DataUtil.tagClass(relation.format)} />
+					</div>
+					<div className="buttons">
+						<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
+						<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					</div>
 				</div>
 			);
 		});
