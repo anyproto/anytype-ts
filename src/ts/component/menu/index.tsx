@@ -74,6 +74,7 @@ class Menu extends React.Component<Props, {}> {
 		this.close = this.close.bind(this);
 		this.setHover = this.setHover.bind(this);
 		this.getId = this.getId.bind(this);
+		this.getSize = this.getSize.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
@@ -164,6 +165,7 @@ class Menu extends React.Component<Props, {}> {
 							{...this.props} 
 							setHover={this.setHover} 
 							getId={this.getId} 
+							getSize={this.getSize}
 							position={this.position} 
 							close={this.close} 
 						/>
@@ -239,6 +241,7 @@ class Menu extends React.Component<Props, {}> {
 			const wh = win.scrollTop() + win.height();
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
+			const scrollTop = win.scrollTop();
 
 			let ew = 0;
 			let eh = 0;
@@ -328,6 +331,10 @@ class Menu extends React.Component<Props, {}> {
 					break;
 			};
 
+			if (menu.css('position') == 'fixed') {
+				y -= scrollTop;
+			};
+
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
 
@@ -341,6 +348,8 @@ class Menu extends React.Component<Props, {}> {
 			if (param.width) {
 				css.width = param.width;
 			};
+
+			console.log();
 
 			menu.css(css);
 			
@@ -412,6 +421,11 @@ class Menu extends React.Component<Props, {}> {
 
 	getId (): string {
 		return Util.toCamelCase('menu-' + this.props.id);
+	};
+
+	getSize () {
+		const obj = $(`#${this.getId()}`);
+		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
 };

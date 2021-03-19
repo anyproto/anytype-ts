@@ -362,16 +362,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onLayout (e: any) {
-		const { param, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		menuStore.open('select', { 
-			element: '#item-object-layout',
-			offsetX: 256,
-			offsetY: -36,
-			horizontal: I.MenuDirection.Right,
+			element: `#${getId()} #item-object-layout`,
+			offsetX: getSize().width,
+			offsetY: 0,
+			vertical: I.MenuDirection.Center,
+			className: param.className,
 			data: {
 				options: DataUtil.menuTurnLayouts(),
 				value: object.layout,
@@ -384,17 +385,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { getId, param, close } = this.props;
+		const { getId, getSize, param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		menuStore.open('searchObject', { 
 			element: `#${getId()} #item-object-type`,
-			offsetX: 256,
-			offsetY: -36,
+			offsetX: getSize().width,
 			horizontal: I.MenuDirection.Right,
-			className: 'single',
+			className: [ 'single', param.className ].join(' '),
+			fixedY: param.offsetY,
 			data: {
 				placeHolder: 'Find a type of object...',
 				label: 'Your object type library',
