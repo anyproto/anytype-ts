@@ -18,6 +18,7 @@ const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
+const QRCode = require('qrcode.react');
 
 @observer
 class PopupSettings extends React.Component<Props, State> {
@@ -177,6 +178,9 @@ class PopupSettings extends React.Component<Props, State> {
 						<Label text={translate('popupSettingsPhraseText')} />
 						<div className="inputs">
 							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
+						</div>
+						<div className="qr">
+							<QRCode value={authStore.phrase} />
 						</div>
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
