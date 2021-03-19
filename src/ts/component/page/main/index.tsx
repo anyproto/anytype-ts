@@ -166,7 +166,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const options = [
 			{ id: 'page', icon: 'page', name: 'Draft' },
-			{ id: 'link', icon: 'existing', name: 'Link to object' },
+			{ id: 'link', icon: 'existing', name: 'Link to object', arrow: true },
 		];
 		const width = 176;
 
