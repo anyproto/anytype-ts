@@ -22,14 +22,17 @@ class MenuStore {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 
-		this.close(id, () => {
+		const item = this.get(id);
+		if (item) {
+			this.update(id, param);
+		} else {
 			this.menuList.push(observable({ id: id, param: param }));
-			
-			if (param.onOpen) {
-				param.onOpen();
-			};
-		});
-		
+		};
+
+		if (param.onOpen) {
+			param.onOpen();
+		};
+
 		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 
@@ -37,7 +40,7 @@ class MenuStore {
 	update (id: string, param: any) {
 		const item = this.get(id);
 		if (item) {
-			set(item, observable({ param: Object.assign(item.param, param) }));
+			set(item, { param: Object.assign(item.param, param) });
 		};
 	};
 

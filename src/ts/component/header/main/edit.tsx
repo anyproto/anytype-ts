@@ -135,7 +135,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
+		//menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
+		menuStore.open('blockMore', param);
 	};
 
 	onAdd (e: any) {
@@ -184,14 +185,15 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
+		//menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
+		menuStore.open('threadList', param);
 	};
 
 	onNavigation (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match, rootId } = this.props;
+		const { rootId } = this.props;
 
 		popupStore.open('navigation', {
 			preventResize: true, 
@@ -259,9 +261,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll(null, () => {
-			menuStore.open('blockRelationView', param);
-		});
+		//menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+		menuStore.open('blockRelationView', param);
 	};
 
 	getContainer () {

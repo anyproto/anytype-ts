@@ -194,6 +194,10 @@ class Menu extends React.Component<Props, {}> {
 		};
 	};
 
+	componentDidUpdate () {
+		console.log('UPDATE COMPONENT');
+	};
+
 	componentWillUnmount () {
 		const { param } = this.props;
 		const { isSub } = param;
