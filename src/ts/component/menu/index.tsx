@@ -195,7 +195,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		console.log('UPDATE COMPONENT');
+		this.position();
 	};
 
 	componentWillUnmount () {
