@@ -181,6 +181,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let items = [];
 		if (block.isObjectSet()) {
 			items = [
+				align,
 				undo,
 				redo,
 				print,
@@ -194,7 +195,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
 		} else
-		if (block.isObjectType() || block.isObjectRelation()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
 		} else
 		if (block.isPage()) {
 			items = [
@@ -217,7 +218,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
 		} else 
-		if (block.isLinkPage()) {
+		if (block.isLink()) {
 			items = [
 				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
