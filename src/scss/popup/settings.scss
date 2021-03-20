@@ -4,6 +4,8 @@
 	.popupSettings {
 		.innerWrap { width: 672px; }
 		.content { height: 100%; }
+
+		.isBlurred { filter: blur(3px); }
 	
 		.icon { transition: none; }
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 18px; }
@@ -89,8 +91,7 @@
 		
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
-			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; filter: blur(3px); }
-			.textarea:focus { filter: blur(0px); }
+			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
 
 			.path { margin-bottom: 16px; height: 128px; display: flex; }
 			.path { 
