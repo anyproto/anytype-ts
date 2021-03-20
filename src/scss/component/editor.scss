@@ -93,11 +93,11 @@
 	}
 
 	.editorControls { height: 86px; }
-	.editorControls { 
-		#button-add-cover { display: none; }
-	}
 }
 .editorWrapper.isSet.withIcon { padding-top: 68px; }
+.editorWrapper.isSet.withIcon {
+	.editorControls { height: 170px; }
+}
 .editorWrapper.isSet.withIconAndCover { padding-top: 232px; }
 
 .editor.help {
