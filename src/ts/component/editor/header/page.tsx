@@ -36,8 +36,6 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
-		console.log(check);
-
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
 		};
