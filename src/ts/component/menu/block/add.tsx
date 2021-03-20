@@ -385,7 +385,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 								skipId: rootId,
 								blockId: blockId,
 								blockIds: [ blockId ],
-								position: I.BlockPosition.Bottom,
+								position: I.BlockPosition.Replace,
 								onSelect: close,
 							}, 
 						});
