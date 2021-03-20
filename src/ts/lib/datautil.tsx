@@ -804,7 +804,7 @@ class DataUtil {
 		const layout = Number(details.layout) || I.ObjectLayout.Page;
 		const ret: any = {
 			object: details,
-			withCover: (coverType != I.CoverType.None) && coverId,
+			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [],
 		};

@@ -13,6 +13,7 @@ interface Props extends RouteComponentProps<any> {
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
 	onPaste? (e: any): void;
+	getWrapper? (): any;
 };
 
 const $ = require('jquery');
@@ -34,6 +35,8 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+
+		console.log(check);
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
@@ -71,10 +74,10 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 	};
 
 	init () {
-		const { rootId } = this.props;
+		const { rootId, getWrapper } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 
-		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		getWrapper().attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 	};
 	
 };
