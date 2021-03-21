@@ -116,6 +116,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const title = node.find('#title');
 		const oy = node.find('#documents').offset().top;
+		const menu = $('#menuSelect.add');
 		const offset = 256;
 
 		let y = 0;
@@ -124,6 +125,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		};
 
 		title.css({ transform: `translate3d(0px,${y}px,0px)` });
+		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
 	};
 	
 	onAccount () {
@@ -183,6 +185,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			width: width,
+			className: 'add fixed',
 			data: {
 				value: '',
 				options: options,
