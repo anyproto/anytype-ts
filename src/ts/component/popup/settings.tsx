@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
@@ -11,6 +12,7 @@ interface State {
 	page: string;
 	loading: boolean;
 	error: string;
+	entropy: string;
 };
 
 const { dialog } = window.require('electron').remote;
@@ -18,6 +20,7 @@ const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
+const QRCode = require('qrcode.react');
 
 @observer
 class PopupSettings extends React.Component<Props, State> {
@@ -27,6 +30,7 @@ class PopupSettings extends React.Component<Props, State> {
 		page: 'index',
 		loading: false,
 		error: '',
+		entropy: '',
 	};
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
@@ -40,16 +44,18 @@ class PopupSettings extends React.Component<Props, State> {
 		this.onCover = this.onCover.bind(this);
 		this.onLogout = this.onLogout.bind(this);
 		this.onFocusPhrase = this.onFocusPhrase.bind(this);
+		this.onBlurPhrase = this.onBlurPhrase.bind(this);
 		this.onCheckPin = this.onCheckPin.bind(this);
 		this.onSelectPin = this.onSelectPin.bind(this);
 		this.onTurnOffPin = this.onTurnOffPin.bind(this);
 		this.onFileClick = this.onFileClick.bind(this);
+		this.elementBlur = this.elementBlur.bind(this);
 	};
 
 	render () {
-		const { account } = authStore;
+		const { account, phrase } = authStore;
 		const { cover, coverImage } = commonStore;
-		const { page, loading, error } = this.state;
+		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
 		let content = null;
@@ -176,11 +182,29 @@ class PopupSettings extends React.Component<Props, State> {
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
 						<div className="inputs">
-							<Textarea ref={(ref: any) => this.phraseRef = ref} value={authStore.phrase} onFocus={this.onFocusPhrase} placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" readOnly={true} />
+							<Textarea 
+								ref={(ref: any) => this.phraseRef = ref} 
+								id="phrase" 
+								value={phrase} 
+								className="isBlurred"
+								onFocus={this.onFocusPhrase} 
+								onBlur={this.onBlurPhrase} 
+								placeHolder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
+								readOnly={true} 
+							/>
+						</div>
+						<div className="path">
+							<div className="side left">
+								<b>{translate('popupSettingsMobileQRSubTitle')}</b>
+								<Label text={translate('popupSettingsMobileQRText')} />
+							</div>
+							<div className="side right isBlurred" onClick={this.elementUnblur}>
+								<QRCode value={entropy} />
+							</div>
 						</div>
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => {	this.onConfirmPhrase();	}} />
+								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => { this.onConfirmPhrase(); }} />
 							</div>
 						) : ''}
 					</div>
@@ -340,6 +364,10 @@ class PopupSettings extends React.Component<Props, State> {
 			this.onPage(page);
 		};
 
+		C.WalletConvert(authStore.phrase, '', (message: any) => {
+			this.setState({ entropy: message.entropy });
+		});
+
 		this.init();
 	};
 
@@ -381,6 +409,20 @@ class PopupSettings extends React.Component<Props, State> {
 
 	onFocusPhrase (e: any) {
 		this.phraseRef.select();
+		this.elementUnblur(e);
+	};
+
+	onBlurPhrase (e: any) {
+		this.elementBlur(e);
+		window.getSelection().removeAllRanges();
+	};
+
+	elementBlur (e: any) {
+		$(e.currentTarget).addClass('isBlurred');
+	};
+
+	elementUnblur (e: any) {
+		$(e.currentTarget).removeClass('isBlurred');
 	};
 
 	onCheckPin (pin: string) {

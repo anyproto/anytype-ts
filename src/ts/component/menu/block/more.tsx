@@ -40,10 +40,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const readOnly = block.isObjectRelation() || block.isObjectType();
 
 			sectionPage = (
-				<React.Fragment>
+				<div className="section">
 					{type ? (
 						<React.Fragment>
-							<div className="sectionName">Type</div>
+							<div className="name">Type</div>
 							<MenuItemVertical 
 								id="object-type" 
 								object={{...type, layout: I.ObjectLayout.ObjectType }}
@@ -55,7 +55,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						</React.Fragment>
 					) : ''}
 
-					<div className="sectionName">Layout</div>
+					<div className="name">Layout</div>
 					<MenuItemVertical 
 						id="object-layout" 
 						icon={layout ? layout.icon : ''} 
@@ -64,14 +64,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						arrow={!readOnly}
 						className={readOnly ? 'isReadOnly' : ''}
 					/>
-				</React.Fragment>
+				</div>
 			);
 		};
 
 		return (
 			<div>
 				{sectionPage}
-				{sectionPage && items.length ? <div className="line" /> : ''}
 
 				{items.length ? (
 					<div className="section">
@@ -177,10 +176,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const linkRoot = { id: 'linkRoot', icon: 'existing', name: 'Add to dashboard' };
 		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
 		const move = { id: 'move', name: 'Move to' };
+		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let items = [];
 		if (block.isObjectSet()) {
 			items = [
+				align,
 				undo,
 				redo,
 				print,
@@ -194,10 +195,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
 		} else
-		if (block.isObjectType() || block.isObjectRelation()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
 		} else
 		if (block.isPage()) {
 			items = [
+				align,
 				undo,
 				redo,
 				print,
@@ -216,7 +218,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
 			};
 		} else 
-		if (block.isLinkPage()) {
+		if (block.isLink()) {
 			items = [
 				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
@@ -240,7 +242,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, history, getId } = this.props;
+		const { param, history, getId, getSize } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
 		const { root, breadcrumbs } = blockStore;
@@ -293,7 +295,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				close = false;
 				menuStore.open('searchObject', { 
 					element: `#${getId()} #item-${item.id}`,
-					offsetX: node.outerWidth(),
+					offsetX: getSize().width,
 					offsetY: -36,
 					data: { 
 						type: I.NavigationType.Move, 
@@ -303,6 +305,24 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						blockIds: [ blockId ],
 						position: I.BlockPosition.Bottom,
 					}, 
+				});
+				break;
+
+			case 'align':
+				close = false;
+				menuStore.open('blockAlign', { 
+					element: `#${getId()} #item-${item.id}`,
+					offsetX: getSize().width,
+					vertical: I.MenuDirection.Center,
+					className: param.className,
+					data: {
+						rootId: rootId,
+						blockId: blockId,
+						blockIds: [ blockId ],
+						onSelect: (align: I.BlockAlign) => {
+							DataUtil.pageSetAlign(rootId, align);
+						}
+					}
 				});
 				break;
 				
@@ -362,16 +382,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onLayout (e: any) {
-		const { param, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		menuStore.open('select', { 
-			element: '#item-object-layout',
-			offsetX: 256,
-			offsetY: -36,
-			horizontal: I.MenuDirection.Right,
+			element: `#${getId()} #item-object-layout`,
+			offsetX: getSize().width,
+			offsetY: 0,
+			vertical: I.MenuDirection.Center,
+			className: param.className,
 			data: {
 				options: DataUtil.menuTurnLayouts(),
 				value: object.layout,
@@ -384,17 +405,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { getId, param, close } = this.props;
+		const { getId, getSize, param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		menuStore.open('searchObject', { 
 			element: `#${getId()} #item-object-type`,
-			offsetX: 256,
-			offsetY: -36,
-			horizontal: I.MenuDirection.Right,
-			className: 'single',
+			offsetX: getSize().width,
+			className: [ 'single', param.className ].join(' '),
+			fixedY: param.offsetY,
 			data: {
 				placeHolder: 'Find a type of object...',
 				label: 'Your object type library',

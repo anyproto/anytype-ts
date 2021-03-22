@@ -125,6 +125,7 @@
 		"portfinder-sync": "0.0.2",
 		"prismjs": "^1.21.0",
 		"protobufjs": "^6.10.1",
+		"qrcode.react": "^1.0.1",
 		"raf": "^3.4.1",
 		"react": "^16.13.1",
 		"react-addons-shallow-compare": "^15.6.2",

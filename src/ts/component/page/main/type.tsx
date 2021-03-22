@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block, Pager } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -41,13 +41,17 @@ class PageMainType extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const meta = dbStore.getMeta(rootId, block.id);
+		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.nameType,
 			description: 'Add description',
+		};
+
+		if (object.name == Constant.default.name) {
+			object.name = '';
 		};
 
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
@@ -56,14 +60,22 @@ class PageMainType extends React.Component<Props, {}> {
 		};
 		relations.sort(DataUtil.sortByHidden);
 
-		if (this.isDefaultName() || (object.name == Constant.default.name)) {
-			object.name = '';
-		};
-
 		let data = dbStore.getData(rootId, block.id).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
 			return it;
 		});
+
+		let pager = null;
+		if (total && data.length) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
+			);
+		};
 
 		const Editor = (item: any) => {
 			return (
@@ -198,6 +210,8 @@ class PageMainType extends React.Component<Props, {}> {
 									)}
 								</tbody>
 							</table>
+
+							{pager}
 						</div>
 					</div>
 				</div>
@@ -217,10 +231,6 @@ class PageMainType extends React.Component<Props, {}> {
 			this.placeHolderCheck(id);
 		};
 
-		if (this.isDefaultName()) {
-			focus.set('name', { from: 0, to: 0 });
-		};
-
 		window.setTimeout(() => { focus.apply(); }, 10);
 	};
 
@@ -238,13 +248,6 @@ class PageMainType extends React.Component<Props, {}> {
 		if (close) {
 			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
 		};
-	};
-
-	isDefaultName () {
-		const rootId = this.getRootId();
-		const object = blockStore.getDetails(rootId, rootId);
-
-		return [ Constant.default.nameType ].indexOf(object.name) >= 0;
 	};
 
 	open () {
@@ -347,9 +350,7 @@ class PageMainType extends React.Component<Props, {}> {
 		this.placeHolderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
-		window.setTimeout(() => {
-			this.save();
-		}, 300);
+		window.setTimeout(() => { this.save(); }, 500);
 	};
 
 	onSelectText (e: any, item: any) {
@@ -393,6 +394,14 @@ class PageMainType extends React.Component<Props, {}> {
 		const value = node.find('#editor-' + id);
 
 		return value.length ? String(value.get(0).innerText || '') : '';
+	};
+
+	getData (id: string, offset: number, callBack?: (message: any) => void) {
+		const rootId = this.getRootId();
+		const meta: any = { offset: offset };
+
+		dbStore.metaSet(rootId, BLOCK_ID, meta);
+		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.dataview.records, callBack);
 	};
 
 	placeHolderCheck (id: string) {

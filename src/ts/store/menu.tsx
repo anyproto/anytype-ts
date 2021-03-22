@@ -6,6 +6,8 @@ const $ = require('jquery');
 
 class MenuStore {
 	@observable public menuList: I.Menu[] = [];
+
+	timeout: number = 0;
 	
 	@computed
 	get list(): I.Menu[] {
@@ -20,14 +22,17 @@ class MenuStore {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 
-		this.close(id, () => {
+		const item = this.get(id);
+		if (item) {
+			this.update(id, param);
+		} else {
 			this.menuList.push(observable({ id: id, param: param }));
-			
-			if (param.onOpen) {
-				param.onOpen();
-			};
-		});
-		
+		};
+
+		if (param.onOpen) {
+			param.onOpen();
+		};
+
 		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 
@@ -35,7 +40,7 @@ class MenuStore {
 	update (id: string, param: any) {
 		const item = this.get(id);
 		if (item) {
-			set(item, observable({ param: Object.assign(item.param, param) }));
+			set(item, { param: Object.assign(item.param, param) });
 		};
 	};
 
@@ -103,12 +108,22 @@ class MenuStore {
 	};
 	
 	@action
-	closeAll (ids?: string[]) {
+	closeAll (ids?: string[], callBack?: () => void) {
 		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
 
 		for (let id of ids) {
 			this.close(id);
 		};
+
+		this.clearTimeout();
+
+		if (callBack) {
+			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+		};
+	};
+
+	clearTimeout () {
+		window.clearTimeout(this.timeout);
 	};
 	
 };

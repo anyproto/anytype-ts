@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, SmileUtil, DataUtil, crumbs, focus } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, focus } from 'ts/lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -13,7 +13,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -117,8 +116,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onMore (e: any) {
-		const { isPopup, match, rootId } = this.props;
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
 
+		const { isPopup, match, rootId } = this.props;
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
 			horizontal: I.MenuDirection.Right,
@@ -135,8 +138,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll();
-		window.setTimeout(() => { menuStore.open('blockMore', param); }, Constant.delay.menu);
+		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
 	};
 
 	onAdd (e: any) {
@@ -171,6 +173,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
+
 		const { isPopup, rootId } = this.props;
 		const param: any = {
 			element: `${this.getContainer()} #button-header-sync`,
@@ -185,15 +192,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll();
-		window.setTimeout(() => { menuStore.open('threadList', param); }, Constant.delay.menu);
+		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
 	};
 
 	onNavigation (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match, rootId } = this.props;
+		const { rootId } = this.props;
 
 		popupStore.open('navigation', {
 			preventResize: true, 
@@ -223,25 +229,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		});
 	};
 
-	onPathOver () {
-		const { isPopup } = this.props;
-		if (isPopup) {
+	onRelation () {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const path = node.find('.path');
-
-		Util.tooltipShow('Click to search', path, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Util.tooltipHide();
-	};
-
-	onRelation () {
 		const { isPopup, rootId } = this.props;
-
 		const param: any = {
 			element: `${this.getContainer()} #button-header-relation`,
 			horizontal: I.MenuDirection.Center,
@@ -261,8 +255,23 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			param.className = 'fixed';
 		};
 
-		menuStore.closeAll();
-		window.setTimeout(() => { menuStore.open('blockRelationView', param); }, Constant.delay.menu);
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
+
+	onPathOver () {
+		const { isPopup } = this.props;
+		if (isPopup) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const path = node.find('.path');
+
+		Util.tooltipShow('Click to search', path, I.MenuDirection.Bottom);
+	};
+
+	onPathOut () {
+		Util.tooltipHide();
 	};
 
 	getContainer () {

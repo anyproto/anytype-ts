@@ -8,12 +8,24 @@
 		.item.add {
 			.name { @include text-overflow-nw; width: calc(100% - 24px); }
 		}
+
+		.item { display: flex; height: 28px; }
+		.item {
+			.buttons { display: none; }
+		}
+		.item:hover {
+			.clickable { margin-right: 6px; }
+			.buttons { display: block; }
+		}
 	}
 
 	.menu.menuDataviewOptionValues {
 		.content { max-height: 280px; }
 		.item {
-			.icon.more { right: 34px; }
+			.clickable { width: calc(100% - 22px); }
+		}
+		.item:hover {
+			.clickable { width: calc(100% - 74px); }
 		}
 	}
 
@@ -25,6 +37,14 @@
 		}
 
 		.items { height: calc(100% - 34px); }
+
+		.item { display: flex; height: 28px; }
+		.item {
+			.clickable { width: 100%; }
+		}
+		.item:hover {
+			.clickable { width: calc(100% - 24px); }
+		}
 	}
 	
 	.menu.menuDataviewOptionEdit {

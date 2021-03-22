@@ -107,6 +107,7 @@ export interface Cell {
 	scrollContainer?: string;
 	pageContainer?: string;
 	isInline?: boolean;
+	iconSize?: number;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(data: any): void;

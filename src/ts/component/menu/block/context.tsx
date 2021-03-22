@@ -13,8 +13,6 @@ const Constant = require('json/constant.json');
 @observer
 class MenuBlockContext extends React.Component<Props, {}> {
 	
-	timeout: number = 0;
-	
 	constructor (props: any) {
 		super(props);
 		
@@ -240,11 +238,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId)) {
-			menuStore.closeAll(Constant.menuIds.context);
-
 			keyboard.disableContext(true);
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
+			menuStore.closeAll(Constant.menuIds.context, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 	

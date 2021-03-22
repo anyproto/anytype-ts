@@ -66,6 +66,7 @@ const BORDER = 12;
 class Menu extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	timeoutPoly: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -74,6 +75,7 @@ class Menu extends React.Component<Props, {}> {
 		this.close = this.close.bind(this);
 		this.setHover = this.setHover.bind(this);
 		this.getId = this.getId.bind(this);
+		this.getSize = this.getSize.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
@@ -164,6 +166,7 @@ class Menu extends React.Component<Props, {}> {
 							{...this.props} 
 							setHover={this.setHover} 
 							getId={this.getId} 
+							getSize={this.getSize}
 							position={this.position} 
 							close={this.close} 
 						/>
@@ -190,6 +193,10 @@ class Menu extends React.Component<Props, {}> {
 		if (popupStore.isOpen()) {
 			node.addClass('fromPopup');
 		};
+	};
+
+	componentDidUpdate () {
+		this.position();
 	};
 
 	componentWillUnmount () {
@@ -239,6 +246,7 @@ class Menu extends React.Component<Props, {}> {
 			const wh = win.scrollTop() + win.height();
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
+			const scrollTop = win.scrollTop();
 
 			let ew = 0;
 			let eh = 0;
@@ -328,6 +336,10 @@ class Menu extends React.Component<Props, {}> {
 					break;
 			};
 
+			if (menu.css('position') == 'fixed') {
+				y -= scrollTop;
+			};
+
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
 
@@ -344,32 +356,33 @@ class Menu extends React.Component<Props, {}> {
 
 			menu.css(css);
 			
-			if (isSub) {
+			if (isSub && (type == I.MenuType.Vertical)) {
 				const coords = keyboard.coords;
 				const poly = $('#menu-polygon');
 				
-				if (type == I.MenuType.Vertical) {
-					let px = Math.abs(x - coords.x);
-					let py = Math.abs(y - coords.y);
-					let w = px - 4;
-					let t = '';
-					let l = coords.x + 4;
+				let px = Math.abs(x - coords.x);
+				let py = Math.abs(y - coords.y) + 4;
+				let w = px - 4;
+				let t = '';
+				let l = coords.x + 4;
 
-					if (flipX) {
-						w -= width;
-						l -= w + 8;
-						t = 'scaleX(-1)';
-					};
-
-					poly.show().css({
-						width: w,
-						height: height,
-						left: l,
-						top: y,
-						clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
-						transform: t,
-					});
+				if (flipX) {
+					w -= width;
+					l -= w + 8;
+					t = 'scaleX(-1)';
 				};
+
+				poly.show().css({
+					width: w,
+					height: height,
+					left: l,
+					top: y,
+					clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
+					transform: t,
+				});
+
+				window.clearTimeout(this.timeoutPoly);
+				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
 			};
 		});
 	};
@@ -412,6 +425,11 @@ class Menu extends React.Component<Props, {}> {
 
 	getId (): string {
 		return Util.toCamelCase('menu-' + this.props.id);
+	};
+
+	getSize () {
+		const obj = $(`#${this.getId()}`);
+		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
 };

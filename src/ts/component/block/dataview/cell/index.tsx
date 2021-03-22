@@ -309,12 +309,13 @@ class Cell extends React.Component<Props, {}> {
 			menuStore.closeAll(Constant.menuIds.cell);
 
 			if (commonStore.cellId != cellId) {
-				window.setTimeout(() => {
-					commonStore.cellId = cellId;
+				commonStore.cellId = cellId;
 
-					menuStore.open(menuId, param); 
+				window.setTimeout(() => {
+					menuStore.open(menuId, param);
+
 					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					//win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				}, Constant.delay.menu);
 			};
 		} else {

@@ -16,7 +16,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	focus: boolean = false;
-	timeout: number = 0;
 	n: number = 0;
 	ref: any = null;
 	state = {
@@ -49,15 +48,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 						};
+
 						if (action.isBgColor) {
 							icn.push('bgColor bgColor-' + action.value);
 						};
+
 						if (action.isTextColor || action.isBgColor) {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
+
 						if (action.isObject) {
-							action.object = { ...action,layout: I.ObjectLayout.ObjectType };
+							action.object = { ...action, layout: I.ObjectLayout.ObjectType };
 						};
 
 						return <MenuItemVertical 
@@ -96,9 +98,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				this.ref.focus();
 			};
 		}, 15);
-		
+
 		menu.unbind('mouseleave').on('mouseleave', () => {
-			window.clearTimeout(this.timeout);
+			menuStore.clearTimeout();
 		});
 	};
 
@@ -114,9 +116,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this._isMounted = false;
 		this.unbind();
 
-		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
 		menuStore.closeAll(Constant.menuIds.action);
+		menuStore.clearTimeout();
 	};
 	
 	onFilterFocus (e: any) {
@@ -412,21 +414,20 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content } = block;
 		const { color, bgColor } = content;
-		
 		const items = this.getItems();
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#item-' + item.id);
-		const offsetX = node.outerWidth();
-		const offsetY = -el.outerHeight() - 8;
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
-		window.clearTimeout(this.timeout);
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.action);
 			return;
 		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#item-' + item.id);
+		const offsetX = node.outerWidth();
+		const offsetY = -el.outerHeight() - 8;
 		
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -535,7 +536,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
-					onChange: (align: I.BlockAlign) => {
+					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
 						});
@@ -549,8 +550,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 		if (menuId && (this.lastId != item.itemId)) {
 			this.lastId = item.itemId;
 
-			menuStore.closeAll(Constant.menuIds.action);
-			this.timeout = window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
+			menuStore.closeAll(Constant.menuIds.action, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
@@ -634,8 +636,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			ids = [ blockId ];
 		};
 
-		console.log(type);
-		
 		C.BlockListConvertChildrenToPages(rootId, ids, type);
 	};
 

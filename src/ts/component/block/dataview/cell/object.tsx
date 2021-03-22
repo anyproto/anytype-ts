@@ -27,7 +27,7 @@ class CellObject extends React.Component<Props, State> {
 
 	render () {
 		const { config } = commonStore;
-		const { rootId, block, readOnly, getRecord, index, canEdit, relation } = this.props;
+		const { rootId, block, readOnly, getRecord, index, canEdit, relation, iconSize } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -48,7 +48,7 @@ class CellObject extends React.Component<Props, State> {
 					}}
 				>
 					<div className="flex">
-						<IconObject object={item} />
+						<IconObject object={item} size={iconSize} />
 						<div className="name">{item.name}</div>
 					</div>
 				</div>

@@ -117,6 +117,10 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
+		const log = (rootId: string, type: string, data: any) => { 
+			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', 'rootId', rootId);
+			console.log(Util.objectClear(data.toObject())); 
+		};
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -170,16 +174,10 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
-			let log = () => { 
-				console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold', 'rootId', rootId);
-				console.log(JSON.stringify(Util.objectClear(data.toObject()), null, 2)); 
-			};
-
-			if (debugThread && (type == 'threadStatus')) {
-				log();
-			} else
-			if (debugCommon && (type != 'threadStatus')) {
-				log();
+			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
+			
+			if (needLog) {
+				log(rootId, type, data);
 			};
 
 			switch (type) {
@@ -640,7 +638,8 @@ class Dispatcher {
 		let t2 = 0;
 
 		if (debug) {
-			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
+			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
+			console.log(Util.objectClear(data.toObject()));
 		};
 
 		try {
@@ -652,7 +651,7 @@ class Dispatcher {
 				t1 = performance.now();
 
 				if (error) {
-					console.error('[Dispatcher.error]', error.code, error.description);
+					console.error('Error', error.code, error.description);
 					return;
 				};
 
@@ -669,13 +668,14 @@ class Dispatcher {
 				message.error = { code: code, description: description };
 
 				if (message.error.code) {
-					console.error('[Dispatcher.error]', type, 'code:', message.error.code, 'description:', message.error.description);
+					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 					Sentry.captureMessage(type + ': ' + message.error.description);
 					analytics.event('Error', { cmd: type, code: message.error.code });
 				};
 
 				if (debug) {
-					console.log('[Dispatcher.callback]', type, JSON.stringify(Util.objectClear(response.toObject()), null, 3));
+					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
+					console.log(Util.objectClear(response.toObject())); 
 				};
 
 				if (message.event) {
@@ -696,13 +696,12 @@ class Dispatcher {
 				analytics.event(upper, data);
 
 				if (debug) {
-					console.log(
-						'[Dispatcher.callback]',
-						type,
+					const times = [
 						'Middle time:', middleTime + 'ms',
 						'Render time:', renderTime + 'ms',
-						'Total time:', totalTime + 'ms'
-					);
+						'Total time:', totalTime + 'ms',
+					]
+					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;', times.join('\t'));
 				};
 			});
 		} catch (err) {

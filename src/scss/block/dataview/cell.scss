@@ -24,9 +24,14 @@
 
 	.icon.clear { 
 		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
-		cursor: pointer; margin-top: -10px; transition: background-image 0.2s ease-in-out;
+		cursor: pointer; transition: background-image 0.2s ease-in-out; margin: -10px 0px 0px 0px !important;
 	}
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
+}
+
+.cell.isEditing.c-select.isStatus {
+	.icon.clear { display: block; }
+	.over { display: inline-block; vertical-align: middle; font-size: 0px; width: calc(100% - 30px); }
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
@@ -40,6 +45,8 @@
 .cellContent { cursor: default; border-radius: 4px; }
 .cellContent {
 	.iconObject { margin-right: 4px; vertical-align: top; flex-shrink: 0; }
+	.icon.clear { display: none; }
+
 	.name { display: inline-block; vertical-align: top; }
 	.empty { color: $colorDarkGrey; display: none; }
 }

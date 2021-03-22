@@ -17,7 +17,7 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, index, getRecord, canEdit } = this.props;
+		const { rootId, block, readOnly, index, getRecord, canEdit, iconSize } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -45,7 +45,7 @@ class CellFile extends React.Component<Props, {}> {
 			return(
 				<div className="element">
 					<div className="flex">
-						<IconObject object={item} />
+						<IconObject object={item} size={iconSize} />
 						<div className="name">{item.name}</div>
 					</div>
 				</div>

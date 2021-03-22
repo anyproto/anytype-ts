@@ -26,31 +26,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, iconSize } = this.props;
-		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const object = blockStore.getDetails(rootId, rootId);
-		const type = dbStore.getObjectType(object.type);
-		const creator = blockStore.getDetails(rootId, object.creator);
 		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object.featuredRelations).filter((it: any) => {
 			return object[it];
 		}));
-
-		/*
-		const featured = [];
-
-		if (type) {
-			featured.push({ ...type, layout: I.ObjectLayout.ObjectType });
-		};
-		if (!creator._objectEmpty_) {
-			featured.push(creator);
-		};
-
-		const Element = (item: any) => (
-			<div className="element" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-				<IconObject size={iconSize} object={item} />
-				{item.name}
-			</div>
-		);
-		*/
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
@@ -67,6 +46,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 							index={0}
 							scrollContainer=""
 							pageContainer=""
+							iconSize={iconSize}
 							readOnly={true}
 							isInline={true}
 						/>

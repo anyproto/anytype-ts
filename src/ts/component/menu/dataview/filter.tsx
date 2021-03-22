@@ -574,9 +574,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ]);
-
-		window.setTimeout(() => {
+		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
 			menuStore.open('dataviewOptionValues', { 
 				element: '#' + getId() + ' #' + id,
 				offsetY: 4,
@@ -592,7 +590,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					},
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onObject (e: any, item: any) {
@@ -602,9 +600,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 		const id = [ 'item', item.id, 'value' ].join('-');
 
-		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList' ]);
-
-		window.setTimeout(() => {
+		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList' ], () => {
 			menuStore.open('dataviewObjectValues', { 
 				element: '#' + getId() + ' #' + id,
 				offsetY: 4,
@@ -620,7 +616,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					},
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	save () {

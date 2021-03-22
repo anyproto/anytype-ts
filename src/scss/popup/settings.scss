@@ -4,6 +4,8 @@
 	.popupSettings {
 		.innerWrap { width: 672px; }
 		.content { height: 100%; }
+
+		.isBlurred { filter: blur(3px); }
 	
 		.icon { transition: none; }
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; margin-bottom: 18px; }
@@ -89,7 +91,19 @@
 		
 		.tabPhrase {
 			.label { margin-bottom: 25px; }
-			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce;  }
+			.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
+
+			.path { margin-bottom: 16px; height: 128px; display: flex; }
+			.path { 
+				b { margin-bottom: 5px; display: block; }
+				.label { margin: 0px; }
+				.side { width: 100%; }
+				.side.right { text-align: right; font-size: 0px; }
+				canvas { display: inline-block; }
+			}
+
+			.inputs { margin-bottom: 16px; }
+			.buttons { margin-top: 32px; }
 		}
 		
 		.tabPinIndex {

@@ -49,6 +49,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onPrint = this.onPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
+		this.getWrapper = this.getWrapper.bind(this);
 	};
 
 	render () {
@@ -63,8 +64,6 @@ class EditorPage extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		//const details = blockStore.getDetails(rootId, rootId);
-		//const { iconEmoji, iconImage, coverType, coverId } = details;
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
@@ -84,6 +83,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							readOnly={false}
+							getWrapper={this.getWrapper}
 						/>
 					
 						{children.map((block: I.Block, i: number) => {
@@ -190,6 +190,10 @@ class EditorPage extends React.Component<Props, {}> {
 	getScrollContainer () {
 		const { isPopup } = this.props;
 		return isPopup ? $('#popupEditorPage .selection') : $(window);
+	};
+
+	getWrapper () {
+		return $(ReactDOM.findDOMNode(this));
 	};
 
 	open (skipInit?: boolean) {
@@ -1287,7 +1291,8 @@ class EditorPage extends React.Component<Props, {}> {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
-				offsetY: 8,
+				fixedY: 40,
+				className: 'fixed',
 				data: {
 					container: node,
 				},

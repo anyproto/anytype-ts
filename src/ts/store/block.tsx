@@ -424,6 +424,7 @@ class BlockStore {
 		return {
 			...item,
 			name: String(item.name || Constant.default.name || ''),
+			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
 		};
 	};
 

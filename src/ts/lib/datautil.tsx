@@ -408,6 +408,17 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
+	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
+		const details = [ 
+			{ key: 'layoutAlign', value: align },
+		];
+
+		C.BlockListSetAlign(rootId, [ 'title' ], align);
+		
+		blockStore.detailsUpdateArray(rootId, rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
+	};
+
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
 		if (!block) {
 			return;
@@ -793,7 +804,7 @@ class DataUtil {
 		const layout = Number(details.layout) || I.ObjectLayout.Page;
 		const ret: any = {
 			object: details,
-			withCover: (coverType != I.CoverType.None) && coverId,
+			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [],
 		};

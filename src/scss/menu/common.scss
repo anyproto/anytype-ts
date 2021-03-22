@@ -94,7 +94,7 @@
 		
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; }
-			
+
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
@@ -105,6 +105,11 @@
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.15); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
+
+			.buttons { flex-shrink: 0; margin-top: -2px; }
+			.buttons {
+				.icon { position: static; margin: 0px; }
+			}
 			
 			.iconObject { margin-right: 4px; vertical-align: top; flex-shrink: 0; }
 		}

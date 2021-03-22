@@ -37,7 +37,6 @@ class Controls extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const title = blockStore.getLeaf(rootId, 'title') || {};
 		const check = DataUtil.checkDetails(rootId);
 
 		if (readOnly) {
@@ -46,7 +45,7 @@ class Controls extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				className={[ 'editorControls', 'align' + title.align ].join(' ')}
+				className={[ 'editorControls', 'align' + check.object.layoutAlign ].join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
