@@ -605,7 +605,7 @@ function autoUpdaterInit () {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
 		app.isQuiting = true;
-		autoUpdater.quitAndInstall();
+		exit(true);
 	});
 };
 
@@ -639,10 +639,7 @@ app.on('before-quit', (e) => {
 });
 
 app.on('activate', () => {
-	if (win === null) {
-		createWindow();
-	};
-	win.show();
+	win ? win.show() : createWindow();
 });
 
 function send () {
