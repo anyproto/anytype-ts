@@ -116,8 +116,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onMore (e: any) {
-		const { isPopup, match, rootId } = this.props;
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
 
+		const { isPopup, match, rootId } = this.props;
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
 			horizontal: I.MenuDirection.Right,
@@ -169,6 +173,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onSync (e: any) {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
+
 		const { isPopup, rootId } = this.props;
 		const param: any = {
 			element: `${this.getContainer()} #button-header-sync`,
@@ -220,25 +229,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		});
 	};
 
-	onPathOver () {
-		const { isPopup } = this.props;
-		if (isPopup) {
+	onRelation () {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
-		const path = node.find('.path');
-
-		Util.tooltipShow('Click to search', path, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Util.tooltipHide();
-	};
-
-	onRelation () {
 		const { isPopup, rootId } = this.props;
-
 		const param: any = {
 			element: `${this.getContainer()} #button-header-relation`,
 			horizontal: I.MenuDirection.Center,
@@ -259,6 +256,22 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
+
+	onPathOver () {
+		const { isPopup } = this.props;
+		if (isPopup) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const path = node.find('.path');
+
+		Util.tooltipShow('Click to search', path, I.MenuDirection.Bottom);
+	};
+
+	onPathOut () {
+		Util.tooltipHide();
 	};
 
 	getContainer () {
