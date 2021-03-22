@@ -118,8 +118,8 @@ class Dispatcher {
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
 		const log = (rootId: string, type: string, data: any) => { 
-			console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold', 'rootId', rootId);
-			console.log(data.toObject()); 
+			console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold; color: #ad139b;', 'rootId', rootId);
+			console.log(Util.objectClear(data.toObject())); 
 		};
 
 		let globalParentIds: any = {};
@@ -638,8 +638,8 @@ class Dispatcher {
 		let t2 = 0;
 
 		if (debug) {
-			console.log(`[Dispatcher.request] %c${type}`, 'font-weight: bold');
-			console.log(data.toObject());
+			console.log(`[Dispatcher.request] %c${type}`, 'font-weight: bold; color: blue;');
+			console.log(Util.objectClear(data.toObject()));
 		};
 
 		try {
@@ -674,8 +674,8 @@ class Dispatcher {
 				};
 
 				if (debug) {
-					console.log(`[Dispatcher.callback] %c${type}`, 'font-weight: bold');
-					console.log(response.toObject()); 
+					console.log(`[Dispatcher.callback] %c${type}`, 'font-weight: bold; color: green;');
+					console.log(Util.objectClear(response.toObject())); 
 				};
 
 				if (message.event) {
