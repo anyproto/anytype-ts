@@ -38,7 +38,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit, isInline } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -131,7 +131,7 @@ class CellText extends React.Component<Props, State> {
 		let content: any = null;
 
 		if (relation.relationKey == 'name') {
-			let size = 20;
+			let size = iconSize;
 
 			switch (viewType) {
 				case I.ViewType.List:
