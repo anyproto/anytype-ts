@@ -11,7 +11,7 @@
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
 			.clickable { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
 		}
-		.item:hover {
+		.item:hover, .item.active {
 			.clickable { width: calc(100% - 46px); }
 		}
 		.item:hover::before { opacity: 0.15; }
