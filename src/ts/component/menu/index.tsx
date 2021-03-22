@@ -66,6 +66,7 @@ const BORDER = 12;
 class Menu extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	timeoutPoly: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -380,6 +381,9 @@ class Menu extends React.Component<Props, {}> {
 						clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
 						transform: t,
 					});
+
+					window.clearTimeout(this.timeoutPoly);
+					this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
 				};
 			};
 		});
