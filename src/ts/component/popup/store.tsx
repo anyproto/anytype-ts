@@ -115,7 +115,7 @@ class PopupStore extends React.Component<Props, State> {
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={64} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
+							<IconObject size={64} object={item} />
 							<div className="info">
 								<div className="txt">
 									<div className="name">{item.name}</div>

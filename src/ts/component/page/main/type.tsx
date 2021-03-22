@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block, Pager } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -43,7 +43,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const meta = dbStore.getMeta(rootId, block.id);
+		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.nameType,
@@ -64,6 +64,18 @@ class PageMainType extends React.Component<Props, {}> {
 			it.name = String(it.name || Constant.default.name || '');
 			return it;
 		});
+
+		let pager = null;
+		if (total && data.length) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
+			);
+		};
 
 		const Editor = (item: any) => {
 			return (
@@ -198,6 +210,8 @@ class PageMainType extends React.Component<Props, {}> {
 									)}
 								</tbody>
 							</table>
+
+							{pager}
 						</div>
 					</div>
 				</div>
@@ -380,6 +394,14 @@ class PageMainType extends React.Component<Props, {}> {
 		const value = node.find('#editor-' + id);
 
 		return value.length ? String(value.get(0).innerText || '') : '';
+	};
+
+	getData (id: string, offset: number, callBack?: (message: any) => void) {
+		const rootId = this.getRootId();
+		const meta: any = { offset: offset };
+
+		dbStore.metaSet(rootId, BLOCK_ID, meta);
+		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.dataview.records, callBack);
 	};
 
 	placeHolderCheck (id: string) {

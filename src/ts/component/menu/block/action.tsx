@@ -48,15 +48,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + action.value);
 						};
+
 						if (action.isBgColor) {
 							icn.push('bgColor bgColor-' + action.value);
 						};
+
 						if (action.isTextColor || action.isBgColor) {
 							action.icon = 'color';
 							action.inner = <div className={icn.join(' ')} />;
 						};
+
 						if (action.isObject) {
-							action.object = { ...action,layout: I.ObjectLayout.ObjectType };
+							action.object = { ...action, layout: I.ObjectLayout.ObjectType };
 						};
 
 						return <MenuItemVertical 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
 import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
-import { commonStore, dbStore, menuStore } from 'ts/store';
+import { dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
