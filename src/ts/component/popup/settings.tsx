@@ -414,6 +414,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 	onBlurPhrase (e: any) {
 		this.elementBlur(e);
+		window.getSelection().removeAllRanges();
 	};
 
 	elementBlur (e: any) {
