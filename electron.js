@@ -639,10 +639,7 @@ app.on('before-quit', (e) => {
 });
 
 app.on('activate', () => {
-	if (win === null) {
-		createWindow();
-	};
-	win.show();
+	win ? win.show() : createWindow();
 });
 
 function send () {
