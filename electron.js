@@ -605,7 +605,7 @@ function autoUpdaterInit () {
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
 		app.isQuiting = true;
-		autoUpdater.quitAndInstall();
+		exit(true);
 	});
 };
 
