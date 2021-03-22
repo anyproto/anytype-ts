@@ -117,6 +117,10 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
+		const log = (rootId: string, type: string, data: any) => { 
+			console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold', 'rootId', rootId);
+			console.log(data.toObject()); 
+		};
 
 		let globalParentIds: any = {};
 		let globalChildrenIds: any = {};
@@ -170,16 +174,10 @@ class Dispatcher {
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
-			let log = () => { 
-				console.log(`[Dispatcher.event] %c${type}`, 'font-weight: bold', 'rootId', rootId);
-				console.log(JSON.stringify(Util.objectClear(data.toObject()), null, 2)); 
-			};
-
-			if (debugThread && (type == 'threadStatus')) {
-				log();
-			} else
-			if (debugCommon && (type != 'threadStatus')) {
-				log();
+			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
+			
+			if (needLog) {
+				log(rootId, type, data);
 			};
 
 			switch (type) {
@@ -640,7 +638,8 @@ class Dispatcher {
 		let t2 = 0;
 
 		if (debug) {
-			console.log('[Dispatcher.request]', type, JSON.stringify(data.toObject(), null, 3));
+			console.log(`[Dispatcher.request] %c${type}`, 'font-weight: bold');
+			console.log(data.toObject());
 		};
 
 		try {
@@ -675,7 +674,8 @@ class Dispatcher {
 				};
 
 				if (debug) {
-					console.log('[Dispatcher.callback]', type, JSON.stringify(Util.objectClear(response.toObject()), null, 3));
+					console.log(`[Dispatcher.callback] %c${type}`, 'font-weight: bold');
+					console.log(response.toObject()); 
 				};
 
 				if (message.event) {
