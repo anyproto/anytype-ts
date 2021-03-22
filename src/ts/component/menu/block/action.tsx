@@ -414,12 +414,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content } = block;
 		const { color, bgColor } = content;
-		
 		const items = this.getItems();
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#item-' + item.id);
-		const offsetX = node.outerWidth();
-		const offsetY = -el.outerHeight() - 8;
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
@@ -428,6 +423,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 			menuStore.closeAll(Constant.menuIds.action);
 			return;
 		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#item-' + item.id);
+		const offsetX = node.outerWidth();
+		const offsetY = -el.outerHeight() - 8;
 		
 		let menuId = '';
 		let menuParam: I.MenuParam = {

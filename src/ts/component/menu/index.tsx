@@ -356,35 +356,33 @@ class Menu extends React.Component<Props, {}> {
 
 			menu.css(css);
 			
-			if (isSub) {
+			if (isSub && (type == I.MenuType.Vertical)) {
 				const coords = keyboard.coords;
 				const poly = $('#menu-polygon');
 				
-				if (type == I.MenuType.Vertical) {
-					let px = Math.abs(x - coords.x);
-					let py = Math.abs(y - coords.y);
-					let w = px - 4;
-					let t = '';
-					let l = coords.x + 4;
+				let px = Math.abs(x - coords.x);
+				let py = Math.abs(y - coords.y) + 4;
+				let w = px - 4;
+				let t = '';
+				let l = coords.x + 4;
 
-					if (flipX) {
-						w -= width;
-						l -= w + 8;
-						t = 'scaleX(-1)';
-					};
-
-					poly.show().css({
-						width: w,
-						height: height,
-						left: l,
-						top: y,
-						clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
-						transform: t,
-					});
-
-					window.clearTimeout(this.timeoutPoly);
-					this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
+				if (flipX) {
+					w -= width;
+					l -= w + 8;
+					t = 'scaleX(-1)';
 				};
+
+				poly.show().css({
+					width: w,
+					height: height,
+					left: l,
+					top: y,
+					clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
+					transform: t,
+				});
+
+				window.clearTimeout(this.timeoutPoly);
+				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
 			};
 		});
 	};
