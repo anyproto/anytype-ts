@@ -570,7 +570,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-default', name: 'Default', value: 'default', className: 'default', isTextColor: true }
+			{ id: 'color-default', name: 'Default', value: '', className: 'default', isTextColor: true }
 		];
 		for (let color of Constant.textColor) {
 			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
