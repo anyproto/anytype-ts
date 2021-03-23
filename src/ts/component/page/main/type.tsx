@@ -54,6 +54,8 @@ class PageMainType extends React.Component<Props, {}> {
 			object.name = '';
 		};
 
+		console.log(JSON.stringify(object, null, 5));
+
 		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
