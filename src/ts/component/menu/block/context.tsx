@@ -121,7 +121,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		let menuId = '';
 		let menuParam = {
 			element: '#button-' + blockId + '-' + type,
-			offsetY: 15,
+			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			onClose: () => {
 				keyboard.disableContext(false);
