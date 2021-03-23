@@ -802,7 +802,7 @@ class DataUtil {
 		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId, layout } = details;
-		const l = Number(block.layout) || I.ObjectLayout.Page;
+		const l = Number(block?.layout) || I.ObjectLayout.Page;
 		const ret: any = {
 			object: details,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
