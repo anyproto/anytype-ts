@@ -537,12 +537,26 @@ class Dispatcher {
 					break;
 
 				case 'objectDetailsSet':
-				case 'objectDetailsAmend':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
 					details = Decode.decodeStruct(data.getDetails());
-					blockStore.detailsUpdate(rootId, { id: id, details: details }, (type == 'objectDetailsSet'));
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, true);
+
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
+						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+					};
+					break;
+
+				case 'objectDetailsAmend':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+
+					details = {};
+					for (let item of (data.getDetailsList() || [])) {
+						details[item.getKey()] = item.getValue();
+					};
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, false);
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });

@@ -416,6 +416,7 @@ class BlockStore {
 		const item = map.get(id) || { _objectEmpty_: true };
 		return {
 			...item,
+			id: id,
 			name: String(item.name || Constant.default.name || ''),
 			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
 		};
