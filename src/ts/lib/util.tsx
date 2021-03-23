@@ -62,12 +62,28 @@ class Util {
 		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
 	};
 
+	fieldsMap(array: any[]) {
+		let o = {};
+		for (let i = 0; i < array.length; ++i) {
+			if ((array[i].constructor === Array) && (array[i].length == 2)) {
+				o[array[i][0]] = array[i][1];
+			};
+		};
+		// print small map as json so it will be not collapsed in console
+		if ((array.length) <= 3) {
+			return JSON.stringify(o);
+		};
+		return o;
+	};
+
 	objectClear (o: any) {
 		for (let k in o) {
 			if ('object' == typeof(o[k])) {
 				o[k] = this.objectClear(o[k]);
 				if (!this.objectLength(o[k])) {
 					delete(o[k]);
+				} else if (o[k].hasOwnProperty('fieldsMap')){
+					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
 			if (!o[k]) {
