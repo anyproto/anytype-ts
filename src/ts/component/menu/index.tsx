@@ -386,7 +386,7 @@ class Menu extends React.Component<Props, {}> {
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
+				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 1000);
 			};
 		});
 	};
