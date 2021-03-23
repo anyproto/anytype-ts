@@ -121,7 +121,7 @@ const BlockOpen = (response: any) => {
 	return {};
 };
 
-const BlockShow = (response: any) => {
+const ObjectShow = (response: any) => {
 	return {
 		rootId: response.getRootid(),
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
@@ -381,7 +381,7 @@ const HistoryVersions = (response: any) => {
 const HistoryShow = (response: any) => {
 	return {
 		version: Mapper.From.HistoryVersion(response.getVersion()),
-		blockShow: this.BlockShow(response.getBlockshow()),
+		objectShow: ObjectShow(response.getBlockshow()),
 	};
 };
 
@@ -471,7 +471,6 @@ export {
 	BlockOpen,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
-	BlockShow,
 	
 	BlockUnlink,
 	BlockClose,
@@ -536,6 +535,8 @@ export {
 	HistoryVersions,
 	HistoryShow,
 	HistorySetVersion,
+
+	ObjectShow,
 
 	ObjectTypeList,
 	ObjectTypeCreate,

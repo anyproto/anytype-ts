@@ -131,6 +131,7 @@ class Crumbs {
 
 		item = this.add(I.CrumbsType.Recent, id);
 		item.ids = Util.arrayUnique(item.ids);
+
 		if (item.ids.length > LIMIT_RECENT) {
 			item.ids = item.ids.slice(item.ids.length - LIMIT_RECENT, item.ids.length);
 		};

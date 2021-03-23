@@ -8,7 +8,8 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
-const SORT_IDS = [ 'blockShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
+
+const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
 const { app } = remote;
@@ -86,10 +87,8 @@ class Dispatcher {
 		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
 		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
-		if (v == V.BLOCKSETDETAILS)				 t = 'blockSetDetails';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
-		if (v == V.BLOCKSETRELATIONS)			 t = 'blockSetRelations';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -102,11 +101,14 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWRECORDSUPDATE)	 t = 'blockDataviewRecordsUpdate';
 		if (v == V.BLOCKDATAVIEWRECORDSDELETE)	 t = 'blockDataviewRecordsDelete';
 
-		if (v == V.BLOCKSHOW)					 t = 'blockShow';
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
 		if (v == V.PROCESSDONE)					 t = 'processDone';
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
+
+		if (v == V.OBJECTSHOW)					 t = 'objectShow';
+		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
+		if (v == V.OBJECTRELATIONSSSET)			 t = 'objectRelationsSet';
 
 		return t;
 	};
@@ -117,9 +119,11 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
-		const log = (rootId: string, type: string, data: any) => { 
+		const log = (rootId: string, type: string, data: any, v: any) => { 
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', 'rootId', rootId);
-			console.log(Util.objectClear(data.toObject())); 
+			if (data && data.toObject) {
+				console.log(Util.objectClear(data.toObject())); 
+			};
 		};
 
 		let globalParentIds: any = {};
@@ -177,7 +181,7 @@ class Dispatcher {
 			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
 			
 			if (needLog) {
-				log(rootId, type, data);
+				log(rootId, type, data, message.getValueCase());
 			};
 
 			switch (type) {
@@ -194,12 +198,12 @@ class Dispatcher {
 					});
 					break;
 
-				case 'blockShow':
+				case 'objectShow':
 					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
 					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
 
-					let res = Response.BlockShow(data);
-					this.onBlockShow(rootId, res);
+					let res = Response.ObjectShow(data);
+					this.onObjectShow(rootId, res);
 					break;
 
 				case 'blockAdd':
@@ -230,7 +234,7 @@ class Dispatcher {
 					blockStore.blockUpdateStructure(rootId, id, childrenIds);
 					break;
 
-				case 'blockSetDetails':
+				case 'objectDetailsSet':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
@@ -402,7 +406,7 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
-				case 'blockSetRelations':
+				case 'objectRelationsSet':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
@@ -596,7 +600,7 @@ class Dispatcher {
 		return 0;
 	};
 
-	onBlockShow (rootId: string, message: any) {
+	onObjectShow (rootId: string, message: any) {
 		let { blocks, details } = message;
 
 		blockStore.detailsSet(rootId, details);
