@@ -115,7 +115,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const top = win.scrollTop();
 		const node = $(ReactDOM.findDOMNode(this));
 		const title = node.find('#title');
-		const oy = node.find('#documents').offset().top;
+		const list = node.find('#documents');
+		if (!list.length) {
+			return;
+		};
+
+		const oy = list.offset().top;
 		const menu = $('#menuSelect.add');
 		const offset = 256;
 
