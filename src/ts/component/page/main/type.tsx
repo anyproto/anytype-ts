@@ -368,8 +368,6 @@ class PageMainType extends React.Component<Props, {}> {
 			details.push({ key: id, value: value });
 			object[id] = value;
 		};
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		dbStore.objectTypeUpdate(object);
 
 		C.BlockSetDetails(rootId, details);

@@ -108,7 +108,11 @@ class Dispatcher {
 
 		if (v == V.OBJECTSHOW)					 t = 'objectShow';
 		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
-		if (v == V.OBJECTRELATIONSSSET)			 t = 'objectRelationsSet';
+		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
+		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
+		if (v == V.OBJECTRELATIONSSET)			 t = 'objectRelationsSet';
+		if (v == V.OBJECTRELATIONSAMEND)		 t = 'objectRelationsAmend';
+		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
 
 		return t;
 	};
@@ -176,9 +180,11 @@ class Dispatcher {
 
 		for (let message of messages) {
 			let block: any = null;
+			let details: any = null;
 			let viewId: string = '';
 			let view: any = null;
 			let childrenIds: string[] = [];
+			let keys: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
@@ -236,18 +242,6 @@ class Dispatcher {
 					childrenIds = data.getChildrenidsList() || [];
 
 					blockStore.blockUpdateStructure(rootId, id, childrenIds);
-					break;
-
-				case 'objectDetailsSet':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-
-					const details = Decode.decodeStruct(data.getDetails());
-					blockStore.detailsUpdate(rootId, { id: id, details: details });
-
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
-						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
-					};
 					break;
 
 				case 'blockSetFields':
@@ -410,16 +404,6 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
-				case 'objectRelationsSet':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					break;
-
 				case 'blockSetRelation':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -552,16 +536,65 @@ class Dispatcher {
 					dbStore.relationRemove(rootId, id, data.getRelationkey());
 					break;
 
+				case 'objectDetailsSet':
+				case 'objectDetailsAmend':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+
+					details = Decode.decodeStruct(data.getDetails());
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, (type == 'objectDetailsSet'));
+
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
+						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+					};
+					break;
+
+				case 'objectDetailsUnset':
+					id = data.getId();
+					keys = data.getKeysList() || [];
+
+					details = blockStore.getDetails(rootId, id);
+					for (let key of keys) {
+						delete(details[key]);
+					};
+
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, true);
+					break;
+
+				case 'objectRelationsSet':
+				case 'objectRelationsAmend':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (type == 'objectRelationsSet') {
+						dbStore.relationsRemove(rootId, rootId);
+					};
+
+					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					break;
+
+				case 'objectRelationsRemove':
+					id = data.getId();
+					keys = data.getKeysList() || [];
+
+					for (let key of keys) {
+						dbStore.relationRemove(rootId, id, key);
+					};
+					break;
+
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
 					const process = data.getProcess();
 					const progress = process.getProgress();
 					const state = process.getState();
-					const type = process.getType();
+					const pt = process.getType();
 
 					let isUnlocked = true;
-					if (type == I.ProgressType.Import) {
+					if (pt == I.ProgressType.Import) {
 						isUnlocked = false;
 					};
 
@@ -570,7 +603,7 @@ class Dispatcher {
 						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
-								status: translate('progress' + type),
+								status: translate('progress' + pt),
 								current: progress.getDone(),
 								total: progress.getTotal(),
 								isUnlocked: isUnlocked,

@@ -110,9 +110,13 @@ class BlockStore {
 	};
 
 	@action
-	detailsUpdate (rootId: string, item: any) {
+	detailsUpdate (rootId: string, item: any, clear: boolean) {
 		if (!item.id || !item.details) {
 			return;
+		};
+
+		if (clear) {
+			this.detailMap.delete(rootId);
 		};
 
 		let map = this.detailMap.get(rootId);
@@ -141,7 +145,7 @@ class BlockStore {
 		for (let item of details) {
 			obj[item.key] = item.value;
 		};
-		this.detailsUpdate(rootId, { id: blockId, details: obj });
+		this.detailsUpdate(rootId, { id: blockId, details: obj }, false);
 	};
 
 	@action

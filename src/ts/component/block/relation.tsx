@@ -134,8 +134,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		const details = [ 
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
 		];
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details);
 	};
 
