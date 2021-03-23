@@ -240,7 +240,7 @@ class MenuSelect extends React.Component<Props, {}> {
 	onOver (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { canSelectInitial } = data;
+		const { canSelectInitial, onMouseEnter } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
@@ -248,6 +248,10 @@ class MenuSelect extends React.Component<Props, {}> {
 
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
+
+			if (onMouseEnter) {
+				onMouseEnter(e, item);
+			};
 		};
 	};
 	

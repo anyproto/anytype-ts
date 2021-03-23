@@ -190,6 +190,34 @@ class PageMainIndex extends React.Component<Props, {}> {
 				value: '',
 				options: options,
 				noClose: true,
+				onMouseEnter: (event: any, item: any) => {
+					if (!item.arrow) {
+						menuStore.closeAll(Constant.menuIds.index);
+						return;
+					};
+
+					if (item.id == 'link') {
+						menuStore.closeAll(Constant.menuIds.index, () => {
+							menuStore.open('searchObject', { 
+								element: '#menuSelect #item-link',
+								offsetX: width,
+								offsetY: -36,
+								isSub: true,
+								passThrough: true,
+								data: { 
+									type: I.NavigationType.Link, 
+									rootId: root,
+									skipId: root,
+									blockId: '',
+									position: I.BlockPosition.Bottom,
+									onSelect: (item: any) => {
+										close();
+									}
+								}, 
+							});
+						});
+					};
+				},
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'page') {
 						DataUtil.pageCreate(e, root, '', {}, I.BlockPosition.Bottom, (message: any) => {
@@ -197,24 +225,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 						});
 
 						close();
-					};
-
-					if (item.id == 'link') {
-						menuStore.open('searchObject', { 
-							element: '#menuSelect #item-link',
-							offsetX: width,
-							offsetY: -36,
-							data: { 
-								type: I.NavigationType.Link, 
-								rootId: root,
-								skipId: root,
-								blockId: '',
-								position: I.BlockPosition.Bottom,
-								onSelect: (item: any) => {
-									close();
-								}
-							}, 
-						});
 					};
 
 					if (item.id == 'set') {

@@ -65,6 +65,9 @@
 		],
 		"more": [
 			"select", "searchObject", "blockAlign"
+		],
+		"index": [
+			"searchObject"
 		]
 	},
 

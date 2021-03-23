@@ -228,6 +228,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else {
 			items = [
 				move,
+				align,
 				//{ id: 'copy', name: 'Duplicate' },
 				{ id: 'remove', name: 'Delete' },
 			];
@@ -366,6 +367,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 
 	onOver (item: any) {
+		if (!item.arrow) {
+			menuStore.closeAll(Constant.menuIds.more);
+			return;
+		};
+
 		switch (item.id) {
 			case 'align':
 				this.onAlign();
@@ -377,6 +383,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		menuStore.closeAll(Constant.menuIds.more, () => {
 			menuStore.open('blockAlign', { 
@@ -391,7 +398,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					blockId: blockId,
 					blockIds: [ blockId ],
 					onSelect: (align: I.BlockAlign) => {
-						DataUtil.pageSetAlign(rootId, align);
+						if (block.isPage()) {
+							DataUtil.pageSetAlign(rootId, align);
+						} else {
+							C.BlockListSetAlign(rootId, [ blockId ], align, (message: any) => {
+								focus.apply();
+							});
+						};
 						close();
 					}
 				}
