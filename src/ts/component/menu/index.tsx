@@ -187,6 +187,11 @@ class Menu extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const el = this.getElement();
+
+		if (el && el.length) {
+			el.addClass('hover');
+		};
 
 		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
 
@@ -202,9 +207,14 @@ class Menu extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		const { param } = this.props;
 		const { isSub } = param;
-		
+		const el = this.getElement();
+
 		this._isMounted = false;
 		this.unbind();
+
+		if (el && el.length) {
+			el.removeClass('hover');
+		};
 		
 		if (isSub) {
 			$('#menu-polygon').hide();
@@ -263,13 +273,7 @@ class Menu extends React.Component<Props, {}> {
 				ox = Number(rect.x) || 0;
 				oy = Number(rect.y) || 0;
 			} else {
-				let el = null;
-				if ('object' == typeof(element)) {
-					el = $(element);
-				} else {
-					el = $(element.replace(/\//g, '\\/'));
-				};
-				
+				const el = this.getElement();
 				if (!el || !el.length) {
 					console.log('[Menu.position]', id, 'element not found', element);
 					return;
@@ -401,6 +405,10 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	setHover (item?: any, scroll?: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const menu = node.find('.menu');
 
@@ -425,6 +433,13 @@ class Menu extends React.Component<Props, {}> {
 
 	getId (): string {
 		return Util.toCamelCase('menu-' + this.props.id);
+	};
+
+	getElement () {
+		const { param } = this.props;
+		const { element } = param;
+
+		return $(element);
 	};
 
 	getSize () {

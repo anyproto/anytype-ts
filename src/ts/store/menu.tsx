@@ -118,7 +118,7 @@ class MenuStore {
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => { callBack(); }, ids.length ? Constant.delay.menu : 0);
 		};
 	};
 

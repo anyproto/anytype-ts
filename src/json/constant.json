@@ -62,6 +62,9 @@
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
+		],
+		"more": [
+			"select", "searchObject", "blockAlign"
 		]
 	},
 

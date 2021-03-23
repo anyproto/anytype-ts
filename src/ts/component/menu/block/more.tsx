@@ -10,6 +10,7 @@ interface Props extends I.Menu {
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
+const Constant = require('json/constant.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
@@ -48,7 +49,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								id="object-type" 
 								object={{...type, layout: I.ObjectLayout.ObjectType }}
 								name={type.name}
-								onClick={!readOnly ? this.onObjectType : undefined} 
+								onMouseEnter={!readOnly ? this.onObjectType : undefined} 
 								arrow={!readOnly}
 								className={readOnly ? 'isReadOnly' : ''}
 							/>
@@ -60,7 +61,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						id="object-layout" 
 						icon={layout ? layout.icon : ''} 
 						name={layout ? layout.name : 'Select layout'}
-						onClick={!readOnly ? this.onLayout : undefined} 
+						onMouseEnter={!readOnly ? this.onLayout : undefined} 
 						arrow={!readOnly}
 						className={readOnly ? 'isReadOnly' : ''}
 					/>
@@ -81,7 +82,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								icon={action.icon || action.id}
 								withCaption={action.caption}
 								onClick={(e: any) => { this.onClick(e, action); }} 
-								onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
 							/>
 						))}
 					</div>
@@ -235,9 +236,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		return items;
 	};
 
-	onOver (e: any, item: any) {
+	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
+			this.onOver(item);
 		};
 	};
 	
@@ -308,24 +310,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'align':
-				close = false;
-				menuStore.open('blockAlign', { 
-					element: `#${getId()} #item-${item.id}`,
-					offsetX: getSize().width,
-					vertical: I.MenuDirection.Center,
-					className: param.className,
-					data: {
-						rootId: rootId,
-						blockId: blockId,
-						blockIds: [ blockId ],
-						onSelect: (align: I.BlockAlign) => {
-							DataUtil.pageSetAlign(rootId, align);
-						}
-					}
-				});
-				break;
-				
 			case 'copy':
 				break;
 
@@ -381,26 +365,63 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 	};
 
+	onOver (item: any) {
+		switch (item.id) {
+			case 'align':
+				this.onAlign();
+				break;
+		};
+	};
+
+	onAlign () {
+		const { param, getId, getSize, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+
+		menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.open('blockAlign', { 
+				element: `#${getId()} #item-align`,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center,
+				className: param.className,
+				isSub: true,
+				passThrough: true,
+				data: {
+					rootId: rootId,
+					blockId: blockId,
+					blockIds: [ blockId ],
+					onSelect: (align: I.BlockAlign) => {
+						DataUtil.pageSetAlign(rootId, align);
+						close();
+					}
+				}
+			});
+		});
+	};
+
 	onLayout (e: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		menuStore.open('select', { 
-			element: `#${getId()} #item-object-layout`,
-			offsetX: getSize().width,
-			offsetY: 0,
-			vertical: I.MenuDirection.Center,
-			className: param.className,
-			data: {
-				options: DataUtil.menuTurnLayouts(),
-				value: object.layout,
-				onSelect: (e: any, item: any) => {
-					DataUtil.pageSetLayout(rootId, item.id);
-					close();
+		menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.open('select', { 
+				element: `#${getId()} #item-object-layout`,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center,
+				className: param.className,
+				isSub: true,
+				passThrough: true,
+				data: {
+					options: DataUtil.menuTurnLayouts(),
+					value: object.layout,
+					onSelect: (e: any, item: any) => {
+						DataUtil.pageSetLayout(rootId, item.id);
+						close();
+					}
 				}
-			}
+			});
 		});
 	};
 
@@ -410,23 +431,27 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		menuStore.open('searchObject', { 
-			element: `#${getId()} #item-object-type`,
-			offsetX: getSize().width,
-			className: [ 'single', param.className ].join(' '),
-			fixedY: param.offsetY,
-			data: {
-				placeHolder: 'Find a type of object...',
-				label: 'Your object type library',
-				value: object.id,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
-				],
-				onSelect: (item: any) => {
-					C.BlockObjectTypeSet(rootId, item.id);
-					close();
+		menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.open('searchObject', { 
+				element: `#${getId()} #item-object-type`,
+				offsetX: getSize().width,
+				className: [ 'single', param.className ].join(' '),
+				fixedY: param.offsetY,
+				isSub: true,
+				passThrough: true,
+				data: {
+					placeHolder: 'Find a type of object...',
+					label: 'Your object type library',
+					value: object.id,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					],
+					onSelect: (item: any) => {
+						C.BlockObjectTypeSet(rootId, item.id);
+						close();
+					}
 				}
-			}
+			});
 		});
 	};
 
