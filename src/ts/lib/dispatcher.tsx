@@ -119,8 +119,12 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
-		const log = (rootId: string, type: string, data: any, v: any) => { 
+		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', 'rootId', rootId);
+			if (!type) {
+				console.error('Event not found for valueCase', valueCase);
+			};
+
 			if (data && data.toObject) {
 				console.log(Util.objectClear(data.toObject())); 
 			};
