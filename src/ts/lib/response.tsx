@@ -381,7 +381,7 @@ const HistoryVersions = (response: any) => {
 const HistoryShow = (response: any) => {
 	return {
 		version: Mapper.From.HistoryVersion(response.getVersion()),
-		objectShow: ObjectShow(response.getBlockshow()),
+		objectShow: ObjectShow(response.getObjectshow()),
 	};
 };
 

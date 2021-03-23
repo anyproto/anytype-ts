@@ -111,8 +111,6 @@ class BlockStore {
 
 	@action
 	detailsUpdate (rootId: string, item: any, clear: boolean) {
-		console.log('detailsUpdate', rootId, item, clear);
-
 		if (!item.id || !item.details) {
 			return;
 		};
