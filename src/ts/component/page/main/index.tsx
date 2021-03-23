@@ -108,6 +108,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		$(window).unbind('scroll');
+		menuStore.closeAll(Constant.menuIds.index);
 	};
 
 	onScroll () {

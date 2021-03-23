@@ -15,13 +15,12 @@ const Constant = require('json/constant.json');
 class MenuBlockMore extends React.Component<Props, {}> {
 	
 	n: number = -1;
+	lastId: string = '';
 	
 	constructor (props: any) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
-		this.onLayout = this.onLayout.bind(this);
-		this.onObjectType = this.onObjectType.bind(this);
 	};
 
 	render () {
@@ -40,17 +39,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
 			const readOnly = block.isObjectRelation() || block.isObjectType();
 
+			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: !readOnly };
+			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: !readOnly };
+
 			sectionPage = (
 				<div className="section">
 					{type ? (
 						<React.Fragment>
 							<div className="name">Type</div>
 							<MenuItemVertical 
-								id="object-type" 
-								object={{...type, layout: I.ObjectLayout.ObjectType }}
-								name={type.name}
-								onMouseEnter={!readOnly ? this.onObjectType : undefined} 
-								arrow={!readOnly}
+								{...itemType}
+								onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemType) } : undefined} 
 								className={readOnly ? 'isReadOnly' : ''}
 							/>
 						</React.Fragment>
@@ -58,11 +57,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 					<div className="name">Layout</div>
 					<MenuItemVertical 
-						id="object-layout" 
-						icon={layout ? layout.icon : ''} 
-						name={layout ? layout.name : 'Select layout'}
-						onMouseEnter={!readOnly ? this.onLayout : undefined} 
-						arrow={!readOnly}
+						{...itemLayout}
+						onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemLayout) } : undefined} 
 						className={readOnly ? 'isReadOnly' : ''}
 					/>
 				</div>
@@ -101,6 +97,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	
 	componentWillUnmount () {
 		this.unbind();
+		menuStore.closeAll(Constant.menuIds.more);
 	};
 	
 	unbind () {
@@ -176,7 +173,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
 		const linkRoot = { id: 'linkRoot', icon: 'existing', name: 'Add to dashboard' };
 		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
-		const move = { id: 'move', name: 'Move to' };
+		const move = { id: 'move', name: 'Move to', arrow: true };
+		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let items = [];
@@ -227,6 +225,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 		} else {
 			items = [
+				turn,
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
@@ -294,23 +293,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				history.push('/main/history/' + blockId);
 				break;
 			
-			case 'move':
-				close = false;
-				menuStore.open('searchObject', { 
-					element: `#${getId()} #item-${item.id}`,
-					offsetX: getSize().width,
-					offsetY: -36,
-					data: { 
-						type: I.NavigationType.Move, 
-						rootId: rootId,
-						skipId: rootId,
-						blockId: blockId,
-						blockIds: [ blockId ],
-						position: I.BlockPosition.Bottom,
-					}, 
-				});
-				break;
-
 			case 'copy':
 				break;
 
@@ -372,31 +354,63 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 
-		switch (item.id) {
-			case 'align':
-				this.onAlign();
-				break;
-		};
-	};
-
-	onAlign () {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const object = blockStore.getDetails(rootId, rootId);
 
-		menuStore.closeAll(Constant.menuIds.more, () => {
-			menuStore.open('blockAlign', { 
-				element: `#${getId()} #item-align`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				className: param.className,
-				isSub: true,
-				passThrough: true,
-				data: {
-					rootId: rootId,
-					blockId: blockId,
-					blockIds: [ blockId ],
+		let menuId = '';
+		let menuParam: I.MenuParam = {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			passThrough: true,
+			className: param.className,
+			onClose: () => {
+				this.lastId = '';
+			},
+			data: {
+				rootId: rootId,
+				blockId: blockId,
+				blockIds: [ blockId ],
+			},
+		};
+
+		switch (item.id) {
+			case 'turnObject':
+				menuId = 'searchObject';
+				menuParam.className = [ param.className, 'single' ].join(' ');
+
+				menuParam.data = Object.assign(menuParam.data, {
+					placeHolder: 'Find a type of object...',
+					label: 'Your object type library',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					],
+					onSelect: (item: any) => {
+						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
+						close();
+					}
+				});
+				break;
+
+			case 'move':
+				menuId = 'searchObject';
+				menuParam.className = [ param.className, 'single' ].join(' ');
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Move, 
+					skipId: rootId,
+					position: I.BlockPosition.Bottom,
+				});
+				break;
+
+			case 'align':
+				menuId = 'blockAlign';
+
+				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (align: I.BlockAlign) => {
 						if (block.isPage()) {
 							DataUtil.pageSetAlign(rootId, align);
@@ -407,55 +421,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						};
 						close();
 					}
-				}
-			});
-		});
-	};
+				});
+				break;
 
-	onLayout (e: any) {
-		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const object = blockStore.getDetails(rootId, rootId);
+			case 'type':
+				menuId = 'searchObject';
+				menuParam.className = [ param.className, 'single' ].join(' ');
+				menuParam.fixedY = param.offsetY;
 
-		menuStore.closeAll(Constant.menuIds.more, () => {
-			menuStore.open('select', { 
-				element: `#${getId()} #item-object-layout`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				className: param.className,
-				isSub: true,
-				passThrough: true,
-				data: {
-					options: DataUtil.menuTurnLayouts(),
-					value: object.layout,
-					onSelect: (e: any, item: any) => {
-						DataUtil.pageSetLayout(rootId, item.id);
-						close();
-					}
-				}
-			});
-		});
-	};
-
-	onObjectType (e: any) {
-		const { getId, getSize, param, close } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const object = blockStore.getDetails(rootId, rootId);
-
-		menuStore.closeAll(Constant.menuIds.more, () => {
-			menuStore.open('searchObject', { 
-				element: `#${getId()} #item-object-type`,
-				offsetX: getSize().width,
-				className: [ 'single', param.className ].join(' '),
-				fixedY: param.offsetY,
-				isSub: true,
-				passThrough: true,
-				data: {
+				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',
 					label: 'Your object type library',
-					value: object.id,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
 					],
@@ -463,8 +439,25 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						C.BlockObjectTypeSet(rootId, item.id);
 						close();
 					}
-				}
-			});
+				});
+				break;
+
+			case 'layout':
+				menuId = 'select';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					options: DataUtil.menuTurnLayouts(),
+					value: object.layout,
+					onSelect: (e: any, item: any) => {
+						DataUtil.pageSetLayout(rootId, item.id);
+						close();
+					}
+				});
+				break;
+		};
+
+		menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.open(menuId, menuParam);
 		});
 	};
 

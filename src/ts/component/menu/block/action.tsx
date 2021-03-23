@@ -403,7 +403,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -431,7 +431,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		let menuId = '';
 		let menuParam: I.MenuParam = {
-			element: '#item-' + item.id,
+			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
 			offsetY: offsetY,
 			isSub: true,

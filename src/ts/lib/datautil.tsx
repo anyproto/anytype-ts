@@ -799,9 +799,10 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
+		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = details;
-		const layout = Number(details.layout) || I.ObjectLayout.Page;
+		const { iconEmoji, iconImage, coverType, coverId, layout } = details;
+		const l = Number(block.layout) || I.ObjectLayout.Page;
 		const ret: any = {
 			object: details,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
@@ -809,7 +810,7 @@ class DataUtil {
 			className: [],
 		};
 
-		switch (layout) {
+		switch (l) {
 			default:
 			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
@@ -839,6 +840,16 @@ class DataUtil {
 				ret.withIcon = true;
 				ret.className.push('isFile');
 				break;
+
+			case I.ObjectLayout.ObjectType:
+				ret.withIcon = true;
+				ret.className.push('isObjectType');
+				break;
+
+			case I.ObjectLayout.Relation:
+				ret.withIcon = true;
+				ret.className.push('isRelation');
+				break;
 		};
 
 		if (ret.withIcon && ret.withCover) {
@@ -852,7 +863,6 @@ class DataUtil {
 		};
 
 		ret.className = ret.className.join(' ');
-
 		return ret;
 	};
 

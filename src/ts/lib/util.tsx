@@ -66,7 +66,17 @@ class Util {
 		let o = {};
 		for (let i = 0; i < array.length; ++i) {
 			if ((array[i].constructor === Array) && (array[i].length == 2)) {
-				o[array[i][0]] = array[i][1];
+				let value = array[i][1];
+				let v = '';
+
+				for (let k in value) {
+					if (value[k]) {
+						v = value[k];
+						break;
+					};
+				};
+
+				o[array[i][0]] = v;
 			};
 		};
 		// print small map as json so it will be not collapsed in console
@@ -82,7 +92,8 @@ class Util {
 				o[k] = this.objectClear(o[k]);
 				if (!this.objectLength(o[k])) {
 					delete(o[k]);
-				} else if (o[k].hasOwnProperty('fieldsMap')){
+				} else 
+				if (o[k].hasOwnProperty('fieldsMap')){
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
