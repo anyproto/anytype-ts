@@ -60,16 +60,10 @@ class PopupSearch extends React.Component<Props, State> {
 	
 	render () {
 		const { pageId, filter, loading, showIcon, n } = this.state;
-		const { root, breadcrumbs, recent } = blockStore;
+		const { root, breadcrumbs } = blockStore;
 		const details = blockStore.getDetails(breadcrumbs, pageId);
 		const isRoot = pageId == root;
 		const items = this.getItems();
-		const childrenIds = blockStore.getChildrenIds(recent, recent);
-
-		for (let id of childrenIds) {
-			const d = blockStore.getDetails(recent, id);
-			const { iconImage, iconEmoji, layout, type, name } = d;
-		};
 
 		const div = (
 			<div className="div">
@@ -463,7 +457,7 @@ class PopupSearch extends React.Component<Props, State> {
 	getItems () {
 		const { root } = blockStore;
 		const pages = Util.objectCopy(this.state.pages);
-		const recent = blockStore.getChildren(blockStore.recent, blockStore.recent).map((it: I.Block) => { return it.content.targetBlockId; });
+		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 
 		for (let page of pages) {
 			page.order = recent.findIndex((id: string) => { return id == page.id; });
@@ -515,9 +509,6 @@ class PopupSearch extends React.Component<Props, State> {
 		let cr = crumbs.get(I.CrumbsType.Page);
 		cr = crumbs.add(I.CrumbsType.Page, id);
 		crumbs.save(I.CrumbsType.Page, cr);
-
-		let recent = crumbs.get(I.CrumbsType.Recent);
-		crumbs.save(I.CrumbsType.Recent, recent);
 	};
 	
 	onClick (e: any, item: any) {

@@ -16,12 +16,6 @@ class Crumbs {
 				blockStore.breadcrumbsSet(message.blockId);
 			});
 		};
-
-		if (!blockStore.recent) {
-			C.BlockOpenBreadcrumbs((message: any) => {
-				blockStore.recentSet(message.blockId);
-			});
-		};
 	};
 
 	getKey (key: I.CrumbsType): string {
@@ -37,7 +31,6 @@ class Crumbs {
 		const item = (obj[this.getKey(key) + (suffix || '')] || {}) as CrumbsObject;
 
 		item.ids = item.ids || [];
-
 		return item;
 	};
 	
@@ -96,10 +89,7 @@ class Crumbs {
 		if (key == I.CrumbsType.Page) {
 			id = blockStore.breadcrumbs;
 		};
-		if (key == I.CrumbsType.Recent) {
-			id = blockStore.recent;
-		};
-		
+
 		if (id) {
 			C.BlockSetBreadcrumbs(id, item.ids, (message: any) => {
 				if (message.error.code) {
@@ -137,14 +127,15 @@ class Crumbs {
 			return;
 		};
 
-		let recent = this.get(I.CrumbsType.Recent);
-		recent = this.add(I.CrumbsType.Recent, id);
+		let item = this.get(I.CrumbsType.Recent);
 
-		recent.ids = Util.arrayUnique(recent.ids);
-		if (recent.ids.length > LIMIT_RECENT) {
-			recent.ids = recent.ids.slice(recent.ids.length - LIMIT_RECENT, recent.ids.length);
+		item = this.add(I.CrumbsType.Recent, id);
+		item.ids = Util.arrayUnique(item.ids);
+		if (item.ids.length > LIMIT_RECENT) {
+			item.ids = item.ids.slice(item.ids.length - LIMIT_RECENT, item.ids.length);
 		};
-		this.save(I.CrumbsType.Recent, recent);
+
+		this.save(I.CrumbsType.Recent, item);
 	};
 		
 };
