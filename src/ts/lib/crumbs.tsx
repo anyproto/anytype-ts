@@ -130,11 +130,13 @@ class Crumbs {
 		let item = this.get(I.CrumbsType.Recent);
 
 		item = this.add(I.CrumbsType.Recent, id);
-		item.ids = Util.arrayUnique(item.ids);
+		item.ids = Util.arrayUnique(item.ids.reverse());
 
 		if (item.ids.length > LIMIT_RECENT) {
 			item.ids = item.ids.slice(item.ids.length - LIMIT_RECENT, item.ids.length);
 		};
+
+		item.ids = item.ids.reverse();
 
 		this.save(I.CrumbsType.Recent, item);
 	};
