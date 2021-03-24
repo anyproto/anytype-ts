@@ -68,13 +68,22 @@ class Block extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
 		let canSelect = true;
-		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align, (readOnly ? 'isReadOnly' : '')];
+		let cn: string[] = [ 'block', 'align' + align ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
 		
 		if (className) {
 			cn.push(className);
+		};
+		if (index) {
+			cn.push('index-' + index);
+		};
+		if (fields.isUnwrapped) {
+			cn.push('isUnwrapped');
+		};
+		if (readOnly) {
+			cn.push('isReadOnly');
 		};
 		
 		if (bgColor) {

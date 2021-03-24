@@ -10,6 +10,8 @@
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
 			width: 100%; height: 100%; cursor: text; pointer-events: none;
 		}
+
+		.additional { display: none; }
 		
 		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; text-decoration: none; }
 		
@@ -77,10 +79,10 @@
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeHolder { display: none; }
 
 	.block.blockText.isReadOnly.code {
-		.select { display: none; }
+		.additional { display: none; }
 	}
 	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
-	
+
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
@@ -126,14 +128,20 @@
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code {
 		.value { font-family: 'Plex'; @include text-common; tab-size: 4; }
-		.select { 
-			position: absolute; top: 9px; left: 16px; z-index: 1; border: 0px;  color: $colorDarkGrey; @include text-common; border-radius: 0px; 
-			padding: 0px 20px 0px 0px;
+		.additional { position: absolute; top: 9px; left: 16px; z-index: 1; display: block; }
+		.additional {
+			.select { border: 0px; color: $colorDarkGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
+			.select {
+				.name { overflow: visible; }
+			}
+			.select:hover, .select.active { background: none; }
+			
+			.icon.codeWrap { width: 20px; height: 20px; background-color: rgba(0, 0, 255, 0.1); }
 		}
-		.select {
-			.name { overflow: visible; }
-		}
-		.select:hover, .select.active { background: none; }
+	}
+
+	.block.blockText.code.isUnwrapped > .wrapContent > .selectable > .dropTarget .value {
+		white-space: nowrap; overflow-x: auto;
 	}
 
 	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 

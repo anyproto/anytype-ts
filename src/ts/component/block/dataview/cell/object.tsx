@@ -23,6 +23,7 @@ class CellObject extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 	
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -42,10 +43,7 @@ class CellObject extends React.Component<Props, State> {
 			return (
 				<div 
 					className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onClick={(e: any) => { 
-						e.stopPropagation();
-						DataUtil.objectOpenPopup(item); 
-					}}
+					onClick={(e: any) => { this.onClick(e, item); }}
 				>
 					<div className="flex">
 						<IconObject object={item} size={iconSize} />
@@ -104,6 +102,15 @@ class CellObject extends React.Component<Props, State> {
 		const filter = node.find('#filter');
 
 		filter.text('');
+	};
+
+	onClick (e: any, item: any) {
+		const { canEdit } = this.props;
+
+		if (!canEdit) {
+			e.stopPropagation();
+			DataUtil.objectOpenPopup(item);
+		};
 	};
 
 	onSort (value: any[]) {

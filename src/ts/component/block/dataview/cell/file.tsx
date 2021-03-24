@@ -14,6 +14,7 @@ class CellFile extends React.Component<Props, {}> {
 
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -43,7 +44,7 @@ class CellFile extends React.Component<Props, {}> {
 
 		const Item = (item: any) => {
 			return(
-				<div className="element">
+				<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
 					<div className="flex">
 						<IconObject object={item} size={iconSize} />
 						<div className="name">{item.name}</div>
@@ -70,6 +71,15 @@ class CellFile extends React.Component<Props, {}> {
 			value = [];
 		};
 		return Util.objectCopy(value);
+	};
+
+	onClick (e: any, item: any) {
+		const { canEdit } = this.props;
+
+		if (!canEdit) {
+			e.stopPropagation();
+			DataUtil.objectOpenPopup(item);
+		};
 	};
 
 	onChangeUrl (e: any, url: string) {

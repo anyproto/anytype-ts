@@ -62,7 +62,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{isDate && relation ? (
 					<React.Fragment>
 						<div className="line" />
-						<div className="item">
+
+						<div className="item" onMouseEnter={this.menuClose}>
 							<Icon className="clock" />
 							<div className="name">Include time</div>
 							<Switch value={viewRelation ? viewRelation.includeTime : false} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
