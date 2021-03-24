@@ -374,8 +374,8 @@ class Block extends React.Component<Props, {}> {
 		const rect = { x: offset.left, y: keyboard.coords.y, width: element.width(), height: 0 };
 
 		menuStore.open('blockAction', { 
+			offsetX: element.outerWidth(),
 			rect: rect,
-			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: block.id,
 				blockIds: DataUtil.selectionGet(block.id, true, this.props),

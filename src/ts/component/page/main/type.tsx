@@ -244,7 +244,6 @@ class PageMainType extends React.Component<Props, {}> {
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
 
-
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
