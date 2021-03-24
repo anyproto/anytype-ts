@@ -218,6 +218,7 @@ class Menu extends React.Component<Props, {}> {
 		
 		if (isSub) {
 			$('#menu-polygon').hide();
+			window.clearTimeout(this.timeoutPoly);
 		};
 	};
 	

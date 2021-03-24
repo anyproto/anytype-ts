@@ -68,6 +68,9 @@
 		],
 		"index": [
 			"searchObject"
+		],
+		"relationEdit": [
+			"dataviewRelationType", "searchObject", "select", "dataviewDate"
 		]
 	},
 

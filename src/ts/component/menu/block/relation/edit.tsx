@@ -40,9 +40,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const objectType = dbStore.getObjectType(type);
 
 		let ccn = [ 'item' ];
-		if (menuStore.isOpen('dataviewRelationType')) {
-			ccn.push('active');
-		};
 		if (relation) {
 			ccn.push('disabled');
 		};
@@ -56,13 +53,13 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							id="object-type" 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							name={objectType ? objectType.name : 'Select object type'} 
-							onClick={this.onObjectType} 
-							arrow={true}
+							onMouseEnter={this.onObjectType} 
+							arrow={relation && !relation.isReadOnly}
 						/>
 					</React.Fragment>
 				) : ''}
 
-				{isDate ? (
+				{isDate && relation ? (
 					<React.Fragment>
 						<div className="line" />
 						<div className="item">
@@ -71,7 +68,13 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							<Switch value={relation ? relation.includeTime : false} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 						</div>
 
-						<MenuItemVertical id="date-settings" icon="settings" name="Preferences" arrow={true} onClick={this.onDateSettings} />
+						<MenuItemVertical 
+							id="date-settings" 
+							icon="settings" 
+							name="Preferences" 
+							arrow={relation && !relation.isReadOnly} 
+							onMouseEnter={this.onDateSettings} 
+						/>
 					</React.Fragment>
 				) : ''}
 			</React.Fragment>
@@ -89,7 +92,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 					id="relation-type" 
 					icon={'relation ' + DataUtil.relationClass(this.format)} 
 					name={translate('relationName' + this.format)} 
-					onClick={this.onRelationType} 
+					onMouseEnter={this.onRelationType} 
 					arrow={!relation}
 				/>
 				
@@ -102,9 +105,9 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				{relation ? (
 					<React.Fragment>
 						<div className="line" />
-						<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} />
-						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} />
-						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} />
+						<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />
+						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} />
+						<MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} />
 					</React.Fragment>
 				) : ''}
 			</form>
@@ -147,6 +150,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		if (rebind) {
 			rebind();
 		};
+
+		this.menuClose();
 	};
 
 	unbind () {
@@ -179,8 +184,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	isReadOnly () {
-		const { param } = this.props;
-		const { data } = param;
 		const relation = this.getRelation();
 		return relation && relation.isReadOnly;
 	};
@@ -196,9 +199,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 		this.menuOpen('dataviewRelationType', { 
 			element: `#${getId()} #item-relation-type`,
-			offsetX: 224,
-			offsetY: 4,
-			vertical: I.MenuDirection.Center,
 			data: {
 				...data,
 				value: this.format,
@@ -213,13 +213,15 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	onObjectType (e: any) {
 		const { getId } = this.props;
 		const relation = this.getRelation();
+
+		if (relation.isReadOnly) {
+			return;
+		};
+
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 
-		menuStore.open('searchObject', { 
+		this.menuOpen('searchObject', { 
 			element: `#${getId()} #item-object-type`,
-			offsetX: 224,
-			offsetY: 0,
-			vertical: I.MenuDirection.Center,
 			className: 'single',
 			data: {
 				value: value,
@@ -234,19 +236,17 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		});
 	};
 
-	onChangeTime (v: boolean) {
-		const relation = this.getRelation();
-		relation.includeTime = v;
-	};
-
 	onDateSettings (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
+		const relation = this.getRelation();
+
+		if (relation.isReadOnly) {
+			return;
+		};
 
 		this.menuOpen('dataviewDate', { 
-			element: '#item-date-settings',
-			offsetX: 224,
-			offsetY: -38,
+			element: `#${getId()} #item-date-settings`,
 			onClose: () => {
 				menuStore.close('select');
 			},
@@ -254,10 +254,26 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		});
 	};
 
+	onChangeTime (v: boolean) {
+		const relation = this.getRelation();
+		relation.includeTime = v;
+	};
+
 	menuOpen (id: string, param: I.MenuParam) {
-		menuStore.closeAll([ 'select', 'dataviewRelationType', 'dataviewDate' ], () => {
+		const { getSize } = this.props;
+
+		param.isSub = true;
+		param.passThrough = true;
+		param.offsetX = getSize().width;
+		param.vertical = I.MenuDirection.Center;
+
+		menuStore.closeAll(Constant.menuIds.relationEdit, () => {
 			menuStore.open(id, param);
 		});
+	};
+
+	menuClose () {
+		 menuStore.closeAll(Constant.menuIds.relationEdit);
 	};
 
 	onOpen (e: any) {
