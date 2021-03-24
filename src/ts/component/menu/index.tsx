@@ -231,6 +231,9 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	animate () {
+		const { param } = this.props;
+		const { noAnimation } = param;
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -238,6 +241,10 @@ class Menu extends React.Component<Props, {}> {
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
 			const menu = node.find('.menu');
+
+			if (noAnimation) {
+				menu.addClass('no-anim');
+			};
 
 			menu.addClass('show');
 			window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);

@@ -21,7 +21,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	state = {
 		filter: '',
 	};
-	lastId = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -103,7 +102,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		this.rebind();
-		this.focus();
 
 		this.props.setHover(items[this.n]);
 		this.props.position();
@@ -441,9 +439,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			offsetY: offsetY,
 			isSub: true,
 			passThrough: true,
-			onClose: () => {
-				this.lastId = '';
-			},
 			data: {
 				rootId: rootId,
 				blockId: blockId,
@@ -552,9 +547,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId && (this.lastId != item.itemId)) {
-			this.lastId = item.itemId;
-
+		if (menuId) {
 			menuStore.closeAll(Constant.menuIds.action, () => {
 				menuStore.open(menuId, menuParam);
 			});

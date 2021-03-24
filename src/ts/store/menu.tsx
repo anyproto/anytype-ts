@@ -26,6 +26,10 @@ class MenuStore {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 
+		if (param.isSub) {
+			param.noAnimation = true;
+		};
+
 		const item = this.get(id);
 		if (item) {
 			this.update(id, param);
@@ -78,7 +82,7 @@ class MenuStore {
 	};
 	
 	@action
-	close (id: string, callBack?: () => void) {
+	close (id: string, callBack?: () => void) {	
 		const item = this.get(id);
 
 		if (!item) {
@@ -122,7 +126,7 @@ class MenuStore {
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, ids.length ? Constant.delay.menu : 0);
+			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};
 	};
 
