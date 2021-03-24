@@ -368,11 +368,13 @@ class Block extends React.Component<Props, {}> {
 		
 		const { dataset, rootId, block } = this.props;
 		const { selection } = dataset || {};
-		
+		const elementId = `#button-block-menu-${block.id}`;
+		const element = $(elementId);
+		const offset = element.offset();
+		const rect = { x: offset.left, y: keyboard.coords.y, width: element.width(), height: 0 };
+
 		menuStore.open('blockAction', { 
-			element: '#button-block-menu-' + block.id,
-			offsetX: 20,
-			vertical: I.MenuDirection.Center,
+			rect: rect,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				blockId: block.id,

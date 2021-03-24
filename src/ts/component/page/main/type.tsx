@@ -51,8 +51,6 @@ class PageMainType extends React.Component<Props, {}> {
 		};
 		const title = blockStore.getLeaf(rootId, 'title');
 
-		console.log('TITLE', title);
-
 		if (object.name == Constant.default.name) {
 			object.name = '';
 		};
@@ -242,7 +240,10 @@ class PageMainType extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 
 		this._isMounted = false;
+		this.save();
 		focus.clear(true);
+		window.clearTimeout(this.timeout);
+
 
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {
@@ -342,6 +343,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onBlur (e: any, item: any) {
 		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
 		this.save();
 	};
 
@@ -353,7 +355,7 @@ class PageMainType extends React.Component<Props, {}> {
 		this.placeHolderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
-		window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
 	onSelectText (e: any, item: any) {
