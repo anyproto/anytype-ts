@@ -554,7 +554,7 @@ class Dispatcher {
 
 					details = {};
 					for (let item of (data.getDetailsList() || [])) {
-						details[item.getKey()] = item.getValue();
+						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
 					blockStore.detailsUpdate(rootId, { id: id, details: details }, false);
 

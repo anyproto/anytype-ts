@@ -49,6 +49,9 @@ class PageMainType extends React.Component<Props, {}> {
 			name: Constant.default.nameType,
 			description: 'Add description',
 		};
+		const title = blockStore.getLeaf(rootId, 'title');
+
+		console.log('TITLE', title);
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
