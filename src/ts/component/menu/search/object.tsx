@@ -98,7 +98,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : ''}
 
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} placeHolderFocus="Filter objects..." onChange={(e: any) => { this.onKeyUp(e, false); }} />
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
