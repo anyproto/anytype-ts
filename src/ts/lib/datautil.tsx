@@ -783,8 +783,9 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
+		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
-		const { iconEmoji, iconImage, coverType, coverId, layout } = details;
+		const { iconEmoji, iconImage, coverType, coverId } = details;
 		const ret: any = {
 			object: details,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
@@ -792,7 +793,7 @@ class DataUtil {
 			className: [],
 		};
 
-		switch (layout) {
+		switch (block?.layout) {
 			default:
 			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
