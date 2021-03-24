@@ -15,7 +15,7 @@ const Constant = require('json/constant.json');
 class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
-	focus: boolean = false;
+	isFocused: boolean = false;
 	n: number = 0;
 	ref: any = null;
 	state = {
@@ -92,12 +92,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		this._isMounted = true;
 		this.rebind();
-
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+		this.focus();
 
 		menu.unbind('mouseleave').on('mouseleave', () => {
 			menuStore.clearTimeout();
@@ -108,6 +103,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		this.rebind();
+		this.focus();
+
 		this.props.setHover(items[this.n]);
 		this.props.position();
 	};
@@ -120,16 +117,24 @@ class MenuBlockAction extends React.Component<Props, State> {
 		menuStore.closeAll(Constant.menuIds.action);
 		menuStore.clearTimeout();
 	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
+	};
 	
 	onFilterFocus (e: any) {
 		menuStore.closeAll(Constant.menuIds.action);
 		
-		this.focus = true;
+		this.isFocused = true;
 		this.props.setHover();
 	};
 	
 	onFilterBlur (e: any) {
-		this.focus = false;
+		this.isFocused = false;
 	};
 	
 	onFilterChange (v: string) {
@@ -334,7 +339,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const k = e.key.toLowerCase();
 
-		if (this.focus) {
+		if (this.isFocused) {
 			if (k == Key.down) {
 				this.ref.blur();
 				this.n = -1;

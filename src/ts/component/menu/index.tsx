@@ -201,7 +201,11 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this)); 
+		const menu = node.find('.menu');
+
 		this.position();
+		menu.css({ transform: 'none' });
 	};
 
 	componentWillUnmount () {
@@ -258,6 +262,7 @@ class Menu extends React.Component<Props, {}> {
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
+			const isFixed = menu.css('position') == 'fixed';
 
 			let ew = 0;
 			let eh = 0;
@@ -341,7 +346,8 @@ class Menu extends React.Component<Props, {}> {
 					break;
 			};
 
-			if (menu.css('position') == 'fixed') {
+			
+			if (isFixed) {
 				y -= scrollTop;
 			};
 
@@ -362,8 +368,12 @@ class Menu extends React.Component<Props, {}> {
 			menu.css(css);
 			
 			if (isSub && (type == I.MenuType.Vertical)) {
-				const coords = keyboard.coords;
+				const coords = Util.objectCopy(keyboard.coords);
 				const poly = $('#menu-polygon');
+
+				if (isFixed) {
+					coords.y -= scrollTop;
+				};
 				
 				let px = Math.abs(x - coords.x);
 				let py = Math.abs(y - coords.y) + 4;
@@ -384,6 +394,7 @@ class Menu extends React.Component<Props, {}> {
 					top: y,
 					clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
 					transform: t,
+					position: (isFixed ? 'fixed' : 'absolute'),
 				});
 
 				window.clearTimeout(this.timeoutPoly);

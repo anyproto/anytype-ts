@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockRelationList, 
 	.menu.menuBlockRelationEdit {
-		.item:hover::before { opacity: 0.15; }
+		.item:hover::before { background: rgba(172, 169, 150, 0.15); }
 	}
 
 	.menu.menuBlockRelationList,
