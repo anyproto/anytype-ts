@@ -13,14 +13,14 @@
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
-			.element { margin-bottom: 0px; vertical-align: middle; }
+			.element { margin-bottom: 0px; vertical-align: middle; line-height: inherit; }
 			.element:last-child { margin-right: 0px; }
 
 			.tagItem { margin-right: 6px; }
 			.tagItem:last-child { margin-right: 0px; }
 
 			.iconObject { vertical-align: middle; margin-right: 6px; }
-			.name { vertical-align: middle; }
+			.name { vertical-align: middle; line-height: inherit; }
 		}
 	}
 }
