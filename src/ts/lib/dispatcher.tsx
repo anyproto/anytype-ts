@@ -185,6 +185,7 @@ class Dispatcher {
 			let view: any = null;
 			let childrenIds: string[] = [];
 			let keys: string[] = [];
+			let ids: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
@@ -506,10 +507,9 @@ class Dispatcher {
 						break;
 					};
 
-					data.records = data.getRecordsList() || [];
-					for (let item of data.records) {
-						item = Decode.decodeStruct(item) || {};
-						dbStore.recordDelete(rootId, block.id, item.id);
+					ids = data.getRemovedList() || [];
+					for (let id of ids) {
+						dbStore.recordDelete(rootId, block.id, id);
 					};
 					break;
 

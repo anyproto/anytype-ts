@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Textarea } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -66,11 +66,12 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		this.resize();
 	};
 
 	onKeyUp (e: any) {
-		this.resize();
+		keyboard.shortcut('enter, backspace', e, (pressed: string) => {
+			this.resize();
+		});
 	};
 
 	onBlur (e: any) {

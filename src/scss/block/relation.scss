@@ -13,8 +13,8 @@
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
 		.input { 
-			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
-			height: 20px; padding: 0px;
+			@include text-common; line-height: 22px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
+			height: 22px; padding: 0px;
 		}
 
 		.sides { display: flex; }
@@ -34,7 +34,7 @@
 
 		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
-			.cellContent { position: static; height: auto !important; padding: 5px 8px !important; }
+			.cellContent { position: static; height: auto !important; padding: 5px 7px !important; }
 		}
 
 		.cell.c-select.isEditing {
@@ -43,6 +43,15 @@
 
 		.cell.c-object.isEditing {
 			.cellContent { padding-bottom: 3px !important; }
+		}
+
+		.cell.isEditing.c-shortText, 
+		.cell.isEditing.c-number, 
+		.cell.isEditing.c-url, 
+		.cell.isEditing.c-phone, 
+		.cell.isEditing.c-email 
+		{
+			.cellContent { padding: 4px 7px !important; }
 		}
 
 		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
