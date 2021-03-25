@@ -17,8 +17,7 @@ class MenuText extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
 	
@@ -33,9 +32,8 @@ class MenuText extends React.Component<Props, {}> {
 					ref={(ref: any) => { this.ref = ref; }} 
 					id="input" 
 					value={value}
-					onKeyDown={this.onKeyDown} 
-					onKeyUp={this.onKeyUp} 
 					onBlur={this.onBlur}
+					onInput={this.onInput}
 				/>
 			</div>
 		);
@@ -65,13 +63,8 @@ class MenuText extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 
-	onKeyDown (e: any) {
-	};
-
-	onKeyUp (e: any) {
-		keyboard.shortcut('enter, backspace', e, (pressed: string) => {
-			this.resize();
-		});
+	onInput (e: any) {
+		this.resize();
 	};
 
 	onBlur (e: any) {

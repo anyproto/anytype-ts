@@ -16,6 +16,7 @@ interface Props {
 	onChange?(e: any, value: string): void;
 	onKeyDown?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
+	onInput?(e: any, value: string): void;
 	onFocus?(e: any, value: string): void;
 	onBlur?(e: any, value: string): void;
 };
@@ -41,6 +42,7 @@ class Textarea extends React.Component<Props, State> {
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
@@ -66,6 +68,7 @@ class Textarea extends React.Component<Props, State> {
 				onChange={this.onChange}
 				onKeyDown={this.onKeyDown}
 				onKeyUp={this.onKeyUp}
+				onInput={this.onInput}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				maxLength={maxLength ? maxLength : undefined}
@@ -100,6 +103,12 @@ class Textarea extends React.Component<Props, State> {
 		this.setValue(e.target.value);
 		if (this.props.onKeyUp) {
 			this.props.onKeyUp(e, e.target.value);
+		};
+	};
+
+	onInput (e: any) {
+		if (this.props.onInput) {
+			this.props.onInput(e, e.target.value);
 		};
 	};
 	
