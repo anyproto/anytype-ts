@@ -366,7 +366,7 @@ class PopupStore extends React.Component<Props, State> {
 			objectTypes.push(message.objectType);
 			dbStore.objectTypesSet(objectTypes);
 
-			DataUtil.objectOpenPopup({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
+			DataUtil.objectOpen({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
 		});
 	};
 
