@@ -17,7 +17,6 @@ import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
 import HeaderMainHistory from './header/main/history';
 import HeaderMainSet from './header/main/set';
-import HeaderHelpIndex from './header/help/index';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
 import FooterMainEdit from './footer/main/edit';
@@ -76,7 +75,6 @@ export {
 	HeaderMainEdit,
 	HeaderMainHistory,
 	HeaderMainSet,
-	HeaderHelpIndex,
 	FooterAuth,
 	FooterMainIndex,
 	FooterMainEdit,

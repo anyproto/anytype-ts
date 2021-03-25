@@ -144,7 +144,7 @@ class IconObject extends React.Component<Props, {}> {
 			default:
 			case I.ObjectLayout.Page:
 				cn.push('isPage');
-				if (iconEmoji || iconImage) {
+				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				};
 				break;
