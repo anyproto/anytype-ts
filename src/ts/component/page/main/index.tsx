@@ -165,7 +165,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 
 	onStore (e: any) {
-		popupStore.open('store', { save: true });
+		popupStore.open('store', {});
 	};
 	
 	onAdd (e: any) {

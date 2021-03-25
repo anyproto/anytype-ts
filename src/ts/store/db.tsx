@@ -160,7 +160,9 @@ class DbStore {
 	@action
 	recordDelete (rootId: string, blockId: string, id: string) {
 		let data = this.getData(rootId, blockId);
-		data = data.filter((it: any) => { return it.id == id; });
+		data = data.filter((it: any) => { return it.id != id; });
+
+		this.dataMap.set(this.getId(rootId, blockId), data);
 	};
 
 	getId (rootId: string, blockId: string) {
