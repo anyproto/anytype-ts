@@ -130,7 +130,8 @@ class Dispatcher {
 			};
 
 			if (data && data.toObject) {
-				console.log(Util.objectClear(data.toObject())); 
+				const d = Util.objectClear(data.toObject());
+				console.log(config.debug.js ? JSON.stringify(d, null, 3) : d); 
 			};
 		};
 
@@ -691,10 +692,12 @@ class Dispatcher {
 		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
+		let d = null;
 
 		if (debug) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			console.log(Util.objectClear(data.toObject()));
+			d = Util.objectClear(data.toObject());
+			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 		};
 
 		try {
@@ -730,7 +733,8 @@ class Dispatcher {
 
 				if (debug) {
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
-					console.log(Util.objectClear(response.toObject())); 
+					d = Util.objectClear(response.toObject());
+					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 				};
 
 				if (message.event) {
