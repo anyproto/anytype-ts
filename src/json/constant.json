@@ -38,7 +38,7 @@
 	
 	"extension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
-		"video": [ "mp4", "m4v" ]
+		"video": [ "mp4", "m4v", "mov" ]
 	},
 
 	"limit": {
