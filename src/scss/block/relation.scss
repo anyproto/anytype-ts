@@ -5,8 +5,6 @@
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
-		.info { padding: 5px 2px; }
-
 		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
 		.icon.expand { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
@@ -19,7 +17,7 @@
 
 		.sides { display: flex; }
 
-		.info { width: 215px; flex-shrink: 0; @include text-overflow-nw; }
+		.info { padding: 6px 2px; width: 215px; flex-shrink: 0; @include text-overflow-nw; }
 		.info {
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 

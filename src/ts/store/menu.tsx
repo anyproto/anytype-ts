@@ -119,6 +119,8 @@ class MenuStore {
 	closeAll (ids?: string[], callBack?: () => void) {
 		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
 
+		const isOpen = this.isOpenList(ids);
+
 		for (let id of ids) {
 			this.close(id);
 		};
@@ -126,7 +128,11 @@ class MenuStore {
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+			if (isOpen) {
+				this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+			} else {
+				callBack();
+			};
 		};
 	};
 
