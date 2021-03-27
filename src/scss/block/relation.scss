@@ -55,6 +55,10 @@
 			.cellContent { padding: 4px 7px !important; }
 		}
 
+		.cell.isEditing.c-file {
+			.cellContent { visibility: hidden; }
+		}
+
 		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
 			.cellContent { box-shadow: 0px 0px; border: 0px; }
 		}
