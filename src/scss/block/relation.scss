@@ -35,6 +35,7 @@
 		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
 			.cellContent { position: static; height: auto !important; padding: 5px 7px !important; }
+			.empty { line-height: 18px; }
 		}
 
 		.cell.c-select.isEditing {
