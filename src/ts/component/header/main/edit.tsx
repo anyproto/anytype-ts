@@ -13,6 +13,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
@@ -113,7 +114,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			window.setTimeout(() => {
 				this.isHidden = true;
 				node.removeClass('show');
-			}, 5000);
+			}, Constant.delay.header);
 		};
 	};
 

@@ -28,7 +28,8 @@
 	
 	"delay": {
 		"menu": 60,
-		"popup": 60
+		"popup": 60,
+		"header": 2000
 	},
 	
 	"placeHolder": {
