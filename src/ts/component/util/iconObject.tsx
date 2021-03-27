@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
 import { I, Util, SmileUtil } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -218,9 +218,44 @@ class IconObject extends React.Component<Props, {}> {
 		if (onClick) {
 			onClick(e);
 		};
-		if (canEdit && (layout == I.ObjectLayout.Task)) {
-			onCheckbox(e);
+
+		if (canEdit) {
+			if (layout == I.ObjectLayout.Task) {
+				onCheckbox(e);
+			};
+
+			if ([ I.ObjectLayout.Page, I.ObjectLayout.ObjectType ].indexOf(layout) >= 0) {
+				this.onEmoji(e);
+			};
 		};
+	};
+
+	onEmoji (e: any) {
+		e.stopPropagation();
+
+		const { id, offsetX, offsetY, object, onSelect, onUpload } = this.props;
+		const layout = Number(object.layout) || I.ObjectLayout.Page;
+		const noUpload = layout == I.ObjectLayout.ObjectType;
+
+		menuStore.open('smile', { 
+			element: '#' + id,
+			offsetX: offsetX,
+			offsetY: offsetY,
+			data: {
+				noUpload: noUpload,
+				onSelect: (icon: string) => {
+					if (onSelect) {
+						onSelect(icon);
+					};
+				},
+
+				onUpload: (hash: string) => {
+					if (onUpload) {
+						onUpload(hash);
+					};
+				}
+			}
+		});
 	};
 
 	iconSize (layout: I.ObjectLayout, size: number) {

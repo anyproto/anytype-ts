@@ -99,6 +99,4 @@
 
 .iconObject.isUser { border-radius: 100%; }
 
-.iconObject.isTask.canEdit {
-	.iconCheckbox { cursor: pointer; }
-}
+.iconObject.canEdit { cursor: pointer; }

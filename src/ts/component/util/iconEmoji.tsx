@@ -21,43 +21,25 @@ interface Props {
 	onUpload?(hash: string): void;
 };
 
-interface State {
-	icon: string;
-	hash: string;
-};
-
 const Constant = require('json/constant.json');
 const IconSrc = {
 	newSet: require('img/icon/set/new.svg'),
 };
 
 @observer
-class IconEmoji extends React.Component<Props, State> {
+class IconEmoji extends React.Component<Props, {}> {
 	
 	public static defaultProps = {
 		offsetX: 0,
 		offsetY: 0,
 		size: 18,
-		className: 'c20',
+		className: '',
 		native: true,
 		asImage: true,
 	};
 	
-	state = {
-		icon: '',
-		hash: '',
-	};
-	
-	constructor (props: any) {
-		super(props);
-		
-		this.onClick = this.onClick.bind(this);
-	};
-	
 	render () {
-		const { id, size, native, asImage, className, canEdit, menuId, iconClass } = this.props;
-		const icon = String(this.state.icon || this.props.icon || '');
-		const hash = String(this.state.hash || this.props.hash || '');
+		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
 		
 		let cn = [ 'iconEmoji' ];
 		if (className) {
@@ -106,44 +88,12 @@ class IconEmoji extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} onClick={this.onClick}>
+			<div id={id} className={cn.join(' ')}>
 				{element}
 			</div>
 		);
 	};
 
-	onClick (e: any) {
-		const { id, canEdit, offsetX, offsetY, onSelect, onUpload } = this.props;
-		if (!id || !canEdit) {
-			return;
-		};
-
-		e.stopPropagation();
-		
-		menuStore.open('smile', { 
-			element: '#' + id,
-			offsetX: offsetX,
-			offsetY: offsetY,
-			data: {
-				onSelect: (icon: string) => {
-					this.setState({ icon: icon, hash: '' });
-					
-					if (onSelect) {
-						onSelect(icon);
-					};
-				},
-
-				onUpload: (hash: string) => {
-					this.setState({ icon: '', hash: hash });
-					
-					if (onUpload) {
-						onUpload(hash);
-					};
-				}
-			}
-		});
-	};
-	
 };
 
 export default IconEmoji;
