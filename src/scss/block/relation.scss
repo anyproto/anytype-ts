@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockRelation { line-height: 20px; }
+	.block.blockRelation { @include text-common; }
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
@@ -30,19 +30,18 @@
 		.cell { @include text-common; width: calc(100% - 216px); position: relative; padding: 5px 8px; border-radius: 4px; transition: background 0.2s ease-in-out; }
 		.cell:hover { background: rgba(172,169,150,0.15); }
 		
-		.cell.c-select { padding: 7px 8px 0px 8px; }
+		.cell.c-select { padding: 6px 8px 0px 8px; }
 
 		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
-			.cellContent { position: static; height: auto !important; padding: 5px 7px !important; }
-			.empty { line-height: 18px; }
+			.cellContent { position: static; height: auto !important; min-height: 32px; }
 		}
 
-		.cell.c-select.isEditing {
-			.cellContent { padding-bottom: 0px !important; }
+		.cell.isEditing.c-select {
+			.cellContent { padding: 6px 8px 0px 8px; }
 		}
 
-		.cell.c-object.isEditing {
+		.cell.isEditing.c-object {
 			.cellContent { padding-bottom: 3px !important; }
 		}
 
@@ -52,15 +51,15 @@
 		.cell.isEditing.c-phone, 
 		.cell.isEditing.c-email 
 		{
-			.cellContent { padding: 4px 7px !important; }
+			.cellContent { padding: 5px 8px !important; }
 		}
 
-		.cell.isEditing.c-file {
-			.cellContent { visibility: hidden; }
+		.cell.isEditing.c-longText {
+			.cellContent span:empty { height: 22px; }
 		}
 
 		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
-			.cellContent { box-shadow: 0px 0px; border: 0px; }
+			.cellContent { box-shadow: 0px 0px; border: 0px; visibility: hidden; }
 		}
 	}
 }

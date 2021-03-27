@@ -15,7 +15,7 @@
 	.icon.expand { display: none !important; }
 	.cellContent { 
 		position: absolute; left: -1px; top: -1px; overflow: visible !important; height: auto !important; white-space: normal !important; 
-		box-shadow: 0px 0px 0px 1px $colorOrange inset; background: #fff; z-index: 10; min-height: 100%; border: 1px solid $colorOrange;
+		background: #fff; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 1px $colorOrange inset, 0px 0px 0px 1px $colorOrange;
 	}
 	.cellContent {
 		.name { display: inline-block; }
@@ -31,7 +31,7 @@
 
 .cell.isEditing.c-select.isStatus {
 	.icon.clear { display: block; }
-	.over { display: inline-block; vertical-align: middle; font-size: 0px; width: calc(100% - 30px); }
+	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
