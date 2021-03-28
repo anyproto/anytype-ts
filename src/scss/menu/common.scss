@@ -14,7 +14,6 @@
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
-	.menu.noAnimation { transition: none; }
 	.menu.fixed { position: fixed; }
 	.menu * { user-select: none; }
 

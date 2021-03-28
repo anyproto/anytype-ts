@@ -243,7 +243,7 @@ class Menu extends React.Component<Props, {}> {
 			const menu = node.find('.menu');
 
 			if (noAnimation) {
-				menu.addClass('no-anim');
+				menu.addClass('noAnimation');
 			};
 			menu.addClass('show');
 		});

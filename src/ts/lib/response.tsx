@@ -21,6 +21,7 @@ const ConfigGet = (response: any) => {
 		profileBlockId: response.getProfileblockid(),
 		gatewayUrl: response.getGatewayurl(),
 		marketplaceTypeId: response.getMarketplacetypeid(),
+		marketplaceTemplateId: response.getMarketplacetemplateid(),
 		marketplaceRelationId: response.getMarketplacerelationid(),
 	};
 };

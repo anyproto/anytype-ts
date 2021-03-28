@@ -206,6 +206,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = this.state;
@@ -227,6 +231,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		C.ObjectSearch(filters, sorts, filter, 0, 1000000, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -381,6 +389,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');

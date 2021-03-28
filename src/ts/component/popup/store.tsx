@@ -33,7 +33,6 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		]
 	},
-	/*
 	{ 
 		id: Tab.Template, 'name': 'Templates', active: 'library', 
 		children: [
@@ -41,7 +40,6 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		], 
 	},
-	*/
 	{ 
 		id: Tab.Relation, 'name': 'Relations', active: 'library', 
 		children: [

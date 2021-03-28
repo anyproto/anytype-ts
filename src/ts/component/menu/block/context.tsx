@@ -123,6 +123,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			element: '#button-' + blockId + '-' + type,
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
+			noAnimation: true,
 			onClose: () => {
 				keyboard.disableContext(false);
 			},

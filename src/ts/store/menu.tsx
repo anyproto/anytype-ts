@@ -96,13 +96,13 @@ class MenuStore {
 		const t = item.param.noAnimation ? 0 : Constant.delay.menu;
 
 		if (el.length) {
-			el.css({ transform: '' }).removeClass('show');
 			if (item.param.noAnimation) {
 				el.addClass('noAnimation');
 			};
+			el.css({ transform: '' }).removeClass('show');
 		};
 
-		window.setTimeout(() => {
+		const cb = () => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
 			if (item.param.onClose) {
@@ -112,27 +112,28 @@ class MenuStore {
 			if (callBack) {
 				callBack();
 			};
-		}, t);
+		};
+
+		window.setTimeout(cb, t);
 	};
 	
 	@action
 	closeAll (ids?: string[], callBack?: () => void) {
-		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
+		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.menuList;
 
-		const isOpen = this.isOpenList(ids);
+		let t = 0;
+		for (let item of items) {
+			if (!item.param.noAnimation) {
+				t = Constant.delay.menu;
+			};
 
-		for (let id of ids) {
-			this.close(id);
+			this.close(item.id);
 		};
 
 		this.clearTimeout();
 
 		if (callBack) {
-			if (isOpen) {
-				this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
-			} else {
-				callBack();
-			};
+			this.timeout = window.setTimeout(() => { callBack(); }, t);
 		};
 	};
 
