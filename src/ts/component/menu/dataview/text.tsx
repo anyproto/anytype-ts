@@ -55,7 +55,7 @@ class MenuText extends React.Component<Props, {}> {
 			input.get(0).setSelectionRange(length, length);
 		};
 
-		this.resize();
+		window.setTimeout(() => { this.resize(); });
 	};
 
 	componentWillUnmount () {
@@ -78,23 +78,23 @@ class MenuText extends React.Component<Props, {}> {
 	resize () {
 		raf(() => {
 			if (!this._isMounted) {
-			return;
-		};
+				return;
+			};
 
-		const { position } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const win = $(window);
-		const wh = win.height();
+			const { position } = this.props;
+			const node = $(ReactDOM.findDOMNode(this));
+			const win = $(window);
+			const wh = win.height();
 
-		node.css({ height: 'auto' });
-		const sh = node.get(0).scrollHeight;
+			node.css({ height: 'auto' });
+			const sh = node.get(0).scrollHeight;
 
-		console.log(sh);
+			console.log(sh);
 
-		node.css({ height: Math.min(wh - 78, sh) });
-		node.scrollTop(sh);
+			node.css({ height: Math.min(wh - 78, sh) });
+			node.scrollTop(sh);
 
-		position();
+			position();
 		});
 	};
 

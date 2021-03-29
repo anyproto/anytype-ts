@@ -215,7 +215,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { getId } = this.props;
 		const relation = this.getRelation();
 
-		if (relation.isReadOnly) {
+		if (relation && relation.isReadOnly) {
 			return;
 		};
 

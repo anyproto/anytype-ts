@@ -155,6 +155,7 @@ class Cell extends React.Component<Props, {}> {
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
+			offsetY: 1,
 			noAnimation: true,
 			noFlipY: true,
 			passThrough: true,
@@ -242,6 +243,7 @@ class Cell extends React.Component<Props, {}> {
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
 					width: width,
+					height: height,
 				});
 
 				menuId = 'dataviewText';
@@ -314,8 +316,8 @@ class Cell extends React.Component<Props, {}> {
 				window.setTimeout(() => {
 					menuStore.open(menuId, param);
 
-					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					//$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					//win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				}, Constant.delay.menu);
 			};
 		} else {

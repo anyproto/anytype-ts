@@ -35,7 +35,7 @@
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
-	.cellContent { height: 20px !important; padding-right: 1px !important; }
+	.cellContent { height: 20px !important; }
 }
 
 .cell.isEditing.c-file {
@@ -80,9 +80,11 @@
 
 .cellContent.canEdit.c-shortText, 
 .cellContent.canEdit.c-longText, 
-.cellContent.canEdit.c-date, 
-.cellContent.canEdit.c-object, 
-.cellContent.canEdit.c-select { cursor: text; }
+.cellContent.canEdit.c-number, 
+.cellContent.canEdit.c-url, 
+.cellContent.canEdit.c-phone, 
+.cellContent.canEdit.c-email, 
+.cellContent.canEdit.c-date { cursor: text; }
 .cellContent.canEdit.c-checkbox { cursor: pointer; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {

@@ -67,10 +67,7 @@
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorDarkGrey; }
 	
-		.item { 
-			padding: 4px 14px; font-size: 14px; line-height: 20px; letter-spacing: 0.2px; position: relative; cursor: pointer; 
-			width: 100%; background: #fff;
-		}
+		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: #fff; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadOnly { cursor: default; }
 		

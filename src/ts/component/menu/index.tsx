@@ -369,6 +369,9 @@ class Menu extends React.Component<Props, {}> {
 			if (param.width) {
 				css.width = param.width;
 			};
+			if (param.height) {
+				css.height = param.height;
+			};
 
 			menu.css(css);
 			

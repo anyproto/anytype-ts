@@ -2,7 +2,7 @@
 
 .tagItem {
 	padding: 0px 4px; @include text-small; border-radius: 3px; white-space: nowrap; position: relative;
-	display: inline-block; vertical-align: middle; cursor: pointer; max-width: 100%; height: 18px;
+	display: inline-block; vertical-align: middle; max-width: 100%; height: 18px;
 }
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw;  vertical-align: top; }
