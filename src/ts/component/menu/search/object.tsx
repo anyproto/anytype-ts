@@ -230,7 +230,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter, 0, 1000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};

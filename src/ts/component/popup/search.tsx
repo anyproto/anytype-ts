@@ -441,7 +441,7 @@ class PopupSearch extends React.Component<Props, State> {
 
 		this.setState({ loading: true, n: -1 });
 
-		C.ObjectSearch(filters, sorts, filter, 0, 100000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;

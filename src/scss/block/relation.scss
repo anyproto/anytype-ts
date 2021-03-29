@@ -57,7 +57,7 @@
 		}
 
 		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
-			.cellContent { box-shadow: 0px 0px; border: 0px; visibility: hidden; }
+			.cellContent { box-shadow: 0px 0px; border: 0px; padding: 5px 8px; }
 		}
 	}
 }

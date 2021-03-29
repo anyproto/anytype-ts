@@ -178,7 +178,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter.text, 0, 1000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter.text, 0, 0, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
