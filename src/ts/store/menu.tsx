@@ -82,7 +82,7 @@ class MenuStore {
 	};
 	
 	@action
-	close (id: string, callBack?: () => void) {	
+	close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 
 		if (!item) {
@@ -121,19 +121,14 @@ class MenuStore {
 	closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.menuList;
 
-		let t = 0;
 		for (let item of items) {
-			if (!item.param.noAnimation) {
-				t = Constant.delay.menu;
-			};
-
 			this.close(item.id);
 		};
 
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, t);
+			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};
 	};
 

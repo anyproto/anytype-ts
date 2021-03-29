@@ -239,12 +239,12 @@ class Menu extends React.Component<Props, {}> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this)); 
-			const menu = node.find('.menu');
+			const menu = $('#' + this.getId());
 
 			if (noAnimation) {
 				menu.addClass('noAnimation');
 			};
+
 			menu.addClass('show');
 		});
 	};
@@ -460,7 +460,7 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	getSize () {
-		const obj = $(`#${this.getId()}`);
+		const obj = $('#' + this.getId());
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 

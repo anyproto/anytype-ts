@@ -164,8 +164,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return [];
 		};
 		
-		const { content } = block;
-		const object = blockStore.getDetails(rootId, content.targetBlockId);
+		const object = blockStore.getDetails(rootId, blockId);
 		const cmd = Util.ctrlSymbol();
 
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
@@ -178,22 +177,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let items = [];
-		if (block.isObjectSet()) {
-			items = [
-				align,
-				undo,
-				redo,
-				print,
-				search,
-				linkRoot,
-			];
-
-			if (object.isArchived) {
-				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
-			} else {
-				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
-			};
-		} else
 		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
 		} else
 		if (block.isPage()) {
@@ -256,7 +239,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
-		const node = $(ReactDOM.findDOMNode(this));
 		
 		let close = true;
 		

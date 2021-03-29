@@ -32,7 +32,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { rootId, block, readOnly, isPopup } = this.props;
 		const { content } = block;
 		const { key } = content;
-		const details = blockStore.getDetails(rootId, rootId);
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
@@ -73,7 +72,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
-								getRecord={() => { return details; }}
+								getRecord={() => { return blockStore.getDetails(rootId, rootId); }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}
