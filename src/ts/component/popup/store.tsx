@@ -138,6 +138,20 @@ class PopupStore extends React.Component<Props, State> {
 				break;
 
 			case Tab.Template:
+				Item = (item: any) => {
+					const author = blockStore.getDetails(rootId, item.creator);
+					return (
+						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+							<div className="img" />
+							<div className="info">
+								<div className="name">{item.name}</div>
+								<div className="descr">{item.description}</div>
+								<Author {...author} />
+							</div>
+						</div>
+					);
+				};
+
 				mid = (
 					<div className="mid">
 						<Title text="Template space" />
@@ -320,7 +334,7 @@ class PopupStore extends React.Component<Props, State> {
 
 		let h = 0;
 		if (tab == Tab.Type) h = 96;
-		if (tab == Tab.Template) h = 2;
+		if (tab == Tab.Template) h = 280;
 		if (tab == Tab.Relation) h = 64;
 		return h;
 	};

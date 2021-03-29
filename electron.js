@@ -25,6 +25,7 @@ const KEYTAR_SERVICE = 'Anytype';
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
+let tmpPath = path.join(userPath, 'tmp');
 let waitLibraryPromise;
 let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
@@ -61,9 +62,7 @@ if (app.isPackaged && !app.requestSingleInstanceLock()) {
 storage.setDataPath(userPath);
 
 if (process.env.DATA_PATH) {
-	try {
-		fs.mkdirSync(process.env.DATA_PATH);
-	} catch (err) {};
+	try { fs.mkdirSync(process.env.DATA_PATH); } catch (e) {};
 
 	dataPath.push(process.env.DATA_PATH);
 } else {
@@ -73,6 +72,8 @@ if (process.env.DATA_PATH) {
 	};
 	dataPath.push('data');
 };
+
+try { fs.mkdirSync(tmpPath); } catch (e) {};
 
 if (useGRPC) {
 	console.log('Connect via gRPC');
@@ -289,6 +290,20 @@ function createWindow () {
 
 		args.shift();
 		send.apply(this, args);
+	});
+
+	ipcMain.on('screenshot', (event, arg) => {
+		win.webContents.capturePage().then((image) => {
+			const fp = path.join(tmpPath, 'screenshot.jpg');
+
+			fs.writeFile(fp, image.toJPEG(90), (err) => {
+          		if (err) {
+					throw err;
+				};
+
+				send('commandEditor', 'screenshot', fp);
+          	});
+		});
 	});
 
 	ipcMain.on('winCommand', (e, cmd) => {

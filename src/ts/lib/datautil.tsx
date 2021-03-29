@@ -458,8 +458,7 @@ class DataUtil {
 
 	menuGetBlockObject () {
 		const { config } = commonStore;
-		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-
+		
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
@@ -470,6 +469,11 @@ class DataUtil {
 
 		let i = 0;
 		if (config.allowDataview) {
+			let objectTypes = Util.objectCopy(dbStore.objectTypes);
+			if (!config.debug.ho) {
+				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
+			};
+
 			for (let type of objectTypes) {
 				ret.push({ 
 					type: I.BlockType.Page, 
@@ -479,6 +483,7 @@ class DataUtil {
 					name: type.name || Constant.default.name, 
 					description: type.description,
 					isObject: true,
+					isHidden: type.isHidden,
 				});
 			};
 		} else {

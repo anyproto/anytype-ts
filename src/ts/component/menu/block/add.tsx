@@ -64,7 +64,16 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 							action.iconSize = 40;
 						};
 						
-						return <MenuItemVertical key={action.id + '-' + i} {...action} withDescription={action.isBlock} onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} onClick={(e: any) => { this.onClick(e, action); }} />;
+						return (
+							<MenuItemVertical 
+								key={action.id + '-' + i} 
+								{...action} 
+								className={action.isHidden ? 'isHidden' : ''}
+								withDescription={action.isBlock} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+								onClick={(e: any) => { this.onClick(e, action); }} 
+							/>
+						);
 					})}
 				</div>
 			</div>

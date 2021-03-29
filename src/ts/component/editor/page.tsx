@@ -23,6 +23,7 @@ const Errors = require('json/error.json');
 const $ = require('jquery');
 const THROTTLE = 20;
 const fs = window.require('fs');
+const path = window.require('path');
 
 @observer
 class EditorPage extends React.Component<Props, {}> {
@@ -142,7 +143,7 @@ class EditorPage extends React.Component<Props, {}> {
 		Storage.set('askSurvey', 1);
 
 		ipcRenderer.removeAllListeners('commandEditor');
-		ipcRenderer.on('commandEditor', (e: any, cmd: string) => { this.onCommand(cmd); });
+		ipcRenderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
 	componentDidUpdate () {
@@ -222,9 +223,7 @@ class EditorPage extends React.Component<Props, {}> {
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => {
-						history.push('/main/index');
-					});
+					Util.onErrorUpdate(() => { history.push('/main/index'); });
 				} else {
 					history.push('/main/index');
 				};
@@ -237,6 +236,13 @@ class EditorPage extends React.Component<Props, {}> {
 			this.resize();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
+			const object = blockStore.getDetails(rootId, rootId);
+			if (object.type == '_ottemplate') {
+				window.setInterval(() => {
+					ipcRenderer.send('screenshot');
+				}, 3000);
+			};
+
 			blockStore.setNumbers(rootId);
 
 			if (onOpen) {
@@ -245,7 +251,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 
-	onCommand (cmd: string) {
+	onCommand (cmd: string, arg: any) {
 		if (keyboard.isFocused) {
 			return;
 		};
@@ -273,6 +279,20 @@ class EditorPage extends React.Component<Props, {}> {
 
 			case 'search':
 				this.onSearch();
+				break;
+
+			case 'screenshot':
+				if (!arg) {
+					break;
+				};
+
+				C.UploadFile('', arg, I.FileType.Image, true, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash, 0, -0.5);
+				});
 				break;
 		};
 	};
@@ -1122,7 +1142,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		const { path } = authStore;
+		const filePath = authStore.path;
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
@@ -1156,26 +1176,19 @@ class EditorPage extends React.Component<Props, {}> {
 					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
 
 					for (let file of files) {
-						const dir = path + '/tmp';
-						const fn = dir + '/' + file.name;
+						const dir = path.join(filePath, 'tmp');
+						const fn = path.join(dir, file.name);
 						const reader = new FileReader();
 
 						reader.readAsBinaryString(file); 
 						reader.onloadend = () => {
-							try {
-								fs.mkdirSync(dir);
-							} catch (e) {};
-
 							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
 								if (err) {
 									console.error(err);
 									return;
 								};
 
-								data.files.push({
-									name: file.name,
-									path: fn,
-								});
+								data.files.push({ name: file.name, path: fn });
 
 								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
 
