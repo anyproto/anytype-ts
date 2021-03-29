@@ -359,14 +359,17 @@ class PopupSettings extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data || {};
+		const { phrase } = authStore;
 
 		if (page) {
 			this.onPage(page);
 		};
 
-		C.WalletConvert(authStore.phrase, '', (message: any) => {
-			this.setState({ entropy: message.entropy });
-		});
+		if (phrase) {
+			C.WalletConvert(phrase, '', (message: any) => {
+				this.setState({ entropy: message.entropy });
+			});
+		};
 
 		this.init();
 	};

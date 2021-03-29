@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader } from 'ts/component';
-import { I, C, DataUtil, SmileUtil } from 'ts/lib';
+import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
+import { I, C, DataUtil } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -139,13 +139,16 @@ class PopupStore extends React.Component<Props, State> {
 
 			case Tab.Template:
 				Item = (item: any) => {
+					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
 					const author = blockStore.getDetails(rootId, item.creator);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<div className="img" />
+							<div className="img">
+								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+							</div>
 							<div className="info">
-								<div className="name">{item.name}</div>
-								<div className="descr">{item.description}</div>
+								<div className="name">{name}</div>
+								<div className="descr">{description}</div>
 								<Author {...author} />
 							</div>
 						</div>

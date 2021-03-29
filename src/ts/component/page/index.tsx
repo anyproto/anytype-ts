@@ -133,13 +133,13 @@ class Page extends React.Component<Props, {}> {
 		Util.linkPreviewHide(true);
 		keyboard.setMatch(match);
 		
-		if (isMain && !popupNewBlock) {
-			popupStore.open('help', { data: { document: 'whatsNew' } });
-		};
-
 		if (!isPopup) {
 			popupStore.closeAll();
 			menuStore.closeAll();
+
+			if (isMain && !popupNewBlock) {
+				popupStore.open('help', { data: { document: 'whatsNew' } });
+			};
 
 			if (isMainIndex) {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
