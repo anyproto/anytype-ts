@@ -18,8 +18,6 @@ const Constant = require('json/constant.json');
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
 
-	isHidden: boolean = false;
-
 	constructor (props: any) {
 		super(props);
 		
@@ -107,15 +105,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	init () {
-		if (!this.isHidden) {
-			const node = $(ReactDOM.findDOMNode(this));
-			node.addClass('show');
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('show');
 
-			window.setTimeout(() => {
-				this.isHidden = true;
-				node.removeClass('show');
-			}, Constant.delay.header);
-		};
+		window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
 	};
 
 	onHome (e: any) {
