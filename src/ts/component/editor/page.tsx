@@ -308,6 +308,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	uiHide () {
+		if (this.uiHidden) {
+			return;
+		};
+
 		$('.footer').css({ opacity: 0 });
 		$('#button-add').css({ opacity: 0 });
 		
@@ -320,6 +324,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	uiShow () {
+		if (!this.uiHidden) {
+			return;
+		};
+
 		const win = $(window);
 		
 		$('.footer').css({ opacity: 1 });

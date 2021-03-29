@@ -601,6 +601,10 @@ class Util {
 	};
 	
 	linkPreviewHide (force: boolean) {
+		if (!this.linkPreviewOpen) {
+			return;
+		};
+
 		const obj = $('#linkPreview');
 		
 		window.clearTimeout(this.timeoutLinkPreviewShow);
