@@ -30,7 +30,7 @@
 
 		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
-			.cellContent { position: static; height: auto !important; min-height: 32px; }
+			.cellContent { position: relative; height: auto !important; min-height: 32px; }
 			.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
 			.icon.clear { right: 8px; }
 		}
