@@ -12,6 +12,7 @@ export interface MenuParam {
 	offsetX?: number;
 	offsetY?: number;
 	width?: number;
+	height?: number;
 	data?: any;
 	isSub?: boolean;
 	passThrough?: boolean;

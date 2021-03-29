@@ -28,7 +28,8 @@
 	
 	"delay": {
 		"menu": 60,
-		"popup": 60
+		"popup": 60,
+		"header": 2000
 	},
 	
 	"placeHolder": {
@@ -38,7 +39,7 @@
 	
 	"extension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
-		"video": [ "mp4", "m4v" ]
+		"video": [ "mp4", "m4v", "mov" ]
 	},
 
 	"limit": {
@@ -62,6 +63,15 @@
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
+		],
+		"more": [
+			"select", "searchObject", "blockAlign"
+		],
+		"index": [
+			"searchObject"
+		],
+		"relationEdit": [
+			"dataviewRelationType", "searchObject", "select", "dataviewDate"
 		]
 	},
 

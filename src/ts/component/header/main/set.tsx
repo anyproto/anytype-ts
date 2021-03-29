@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon } from 'ts/component';
+import { Icon, IconObject } from 'ts/component';
 import { I, Util, crumbs } from 'ts/lib';
 import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -46,7 +46,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<Icon className="new-set" />
+							<IconObject object={{ iconClass: 'newSet' }} />
 							<div className="name">New set</div>
 						</div>
 					</div>

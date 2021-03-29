@@ -134,9 +134,7 @@ class Page extends React.Component<Props, {}> {
 		keyboard.setMatch(match);
 		
 		if (isMain && !popupNewBlock) {
-			popupStore.open('help', { 
-				data: { document: 'whatsNew' },
-			});
+			popupStore.open('help', { data: { document: 'whatsNew' } });
 		};
 
 		if (!isPopup) {

@@ -310,7 +310,7 @@ class PageMainHistory extends React.Component<Props, State> {
 
 			this.version = message.version;
 
-			dispatcher.onBlockShow(rootId, message.blockShow);
+			dispatcher.onObjectShow(rootId, message.objectShow);
 			this.forceUpdate();
 		});
 	};

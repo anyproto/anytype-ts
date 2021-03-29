@@ -22,9 +22,13 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			<div className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						return <MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
-					})}
+					{item.children.map((action: any, i: number) => (
+						<MenuItemVertical 
+							key={i} 
+							{...action} 
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+						/>
+					))}
 				</div>
 			</div>
 		);
@@ -90,6 +94,10 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			relation = dbStore.getRelation(rootId, rootId, relationKey);
 		};
 
+		if (!relation) {
+			return [];
+		};
+
 		if (relation) {
 			const dateOptions = this.getOptions('dateFormat');
 			const timeOptions = this.getOptions('timeFormat');
@@ -101,12 +109,12 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		let sections = [
 			{ 
 				id: 'date', name: 'Date format', children: [
-					{ id: 'dateFormat', name: dateFormat.name, arrow: true }
+					{ id: 'dateFormat', name: dateFormat?.name, arrow: true }
 				] 
 			},
 			{ 
 				id: 'time', name: 'Time format', children: [
-					{ id: 'timeFormat', name: timeFormat.name, arrow: true }
+					{ id: 'timeFormat', name: timeFormat?.name, arrow: true }
 				] 
 			},
 		];
@@ -194,7 +202,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			case Key.enter:
 				e.preventDefault();
 				if (item) {
-					this.onClick(e, item);
+					this.onOver(e, item);
 				};
 				break;
 				
@@ -204,8 +212,8 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		};
 	};
 
-	onClick (e: any, item: any) {
-		const { param, close } = this.props;
+	onOver (e: any, item: any) {
+		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 
@@ -226,12 +234,13 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const value = options.find((it: any) => { return it.id == relation[item.itemId]; }) || options[0];
 
 		menuStore.open('select', {
-			element: '#item-' + item.id,
-			offsetX: 208,
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
 			offsetY: -38,
-			horizontal: I.MenuDirection.Right,
+			isSub: true,
+			passThrough: true,
 			data: {
-				value: value.name,
+				value: value.id,
 				options: options,
 				onSelect: (e: any, el: any) => {
 					if (view) {
@@ -244,9 +253,10 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		});
 	};
 
-	onOver (e: any, item: any) {
+	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
+			this.onOver(e, item);
 		};
 	};
 

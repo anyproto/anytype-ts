@@ -68,13 +68,22 @@ class Block extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
 		let canSelect = true;
-		let cn: string[] = [ 'block', (index ? 'index-' + index : ''), 'align' + align, (readOnly ? 'isReadOnly' : '')];
+		let cn: string[] = [ 'block', 'align' + align ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
 		
 		if (className) {
 			cn.push(className);
+		};
+		if (index) {
+			cn.push('index-' + index);
+		};
+		if (fields.isUnwrapped) {
+			cn.push('isUnwrapped');
+		};
+		if (readOnly) {
+			cn.push('isReadOnly');
 		};
 		
 		if (bgColor) {
@@ -359,12 +368,14 @@ class Block extends React.Component<Props, {}> {
 		
 		const { dataset, rootId, block } = this.props;
 		const { selection } = dataset || {};
-		
+		const elementId = `#button-block-menu-${block.id}`;
+		const element = $(elementId);
+		const offset = element.offset();
+		const rect = { x: offset.left, y: keyboard.coords.y, width: element.width(), height: 0 };
+
 		menuStore.open('blockAction', { 
-			element: '#button-block-menu-' + block.id,
-			offsetX: 20,
-			vertical: I.MenuDirection.Center,
-			horizontal: I.MenuDirection.Right,
+			offsetX: element.outerWidth(),
+			rect: rect,
 			data: {
 				blockId: block.id,
 				blockIds: DataUtil.selectionGet(block.id, true, this.props),

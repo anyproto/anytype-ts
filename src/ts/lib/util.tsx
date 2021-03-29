@@ -62,17 +62,44 @@ class Util {
 		return o.hasOwnProperty('length') ? o.length : Object.keys(o).length;
 	};
 
+	// Clear object for smaller console output
 	objectClear (o: any) {
 		for (let k in o) {
 			if ('object' == typeof(o[k])) {
 				o[k] = this.objectClear(o[k]);
 				if (!this.objectLength(o[k])) {
 					delete(o[k]);
+				} else 
+				if (o[k].hasOwnProperty('fieldsMap')){
+					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
 			if (!o[k]) {
 				delete(o[k]);
 			};
+		};
+		return o;
+	};
+
+	fieldsMap (a: any[]) {
+		let o = {};
+		for (let i = 0; i < a.length; ++i) {
+			if ((a[i].constructor === Array) && (a[i].length == 2)) {
+				let value = a[i][1];
+				let v = '';
+
+				for (let k in value) {
+					if (value[k]) {
+						v = value[k];
+						break;
+					};
+				};
+
+				o[a[i][0]] = v;
+			};
+		};
+		if ((a.length) <= 3) {
+			return JSON.stringify(o);
 		};
 		return o;
 	};
@@ -574,6 +601,10 @@ class Util {
 	};
 	
 	linkPreviewHide (force: boolean) {
+		if (!this.linkPreviewOpen) {
+			return;
+		};
+
 		const obj = $('#linkPreview');
 		
 		window.clearTimeout(this.timeoutLinkPreviewShow);

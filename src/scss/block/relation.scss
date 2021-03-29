@@ -1,26 +1,22 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockRelation { line-height: 20px; }
+	.block.blockRelation { @include text-common; }
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
-		.info { padding: 5px 2px; }
-
 		.icon.relation { width: 20px; height: 20px; margin-right: 4px; vertical-align: top; }
 		.icon.expand { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
-		.input { 
-			@include text-common; line-height: 20px; vertical-align: top; display: inline-block; width: calc(100% - 24px); 
-			height: 20px; padding: 0px;
-		}
+		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; }
 
 		.sides { display: flex; }
 
-		.info { width: 215px; flex-shrink: 0; @include text-overflow-nw; }
+		.info { padding: 6px 2px; line-height: 20px; width: 215px; flex-shrink: 0; @include text-overflow-nw; }
 		.info {
+			.input { width: calc(100% - 24px); height: 20px; line-height: 20px; }
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
 				width: calc(100% - 24px); color: #6c6a5f;
@@ -30,23 +26,48 @@
 		.cell { @include text-common; width: calc(100% - 216px); position: relative; padding: 5px 8px; border-radius: 4px; transition: background 0.2s ease-in-out; }
 		.cell:hover { background: rgba(172,169,150,0.15); }
 		
-		.cell.c-select { padding: 7px 8px 0px 8px; }
+		.cell.c-select { padding: 4px 8px; }
+		.cell.c-select {
+			.tagItem { margin: 3px 6px 3px 0px; } 
+		}
 
 		.cell.isEditing { padding: 0px; }
 		.cell.isEditing {
-			.cellContent { position: static; height: auto !important; padding: 5px 8px !important; }
+			.cellContent { position: relative; height: auto !important; min-height: 32px; }
+			.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
+			.icon.clear { right: 8px; }
 		}
 
-		.cell.c-select.isEditing {
-			.cellContent { padding-bottom: 0px !important; }
+		.cell.isEditing.c-select {
+			.cellContent { padding: 4px 8px; }
+		}
+		.cell.isEditing.c-select.isStatus {
+			.over { width: calc(100% - 26px); }
 		}
 
-		.cell.c-object.isEditing {
-			.cellContent { padding-bottom: 3px !important; }
+		.cell.isEditing.c-shortText, 
+		.cell.isEditing.c-number, 
+		.cell.isEditing.c-url, 
+		.cell.isEditing.c-phone, 
+		.cell.isEditing.c-email,
+		.cell.isEditing.c-date
+		{
+			.cellContent { padding: 5px 8px !important; }
+		}
+
+		.cell.c-object {
+			.element { margin-top: 1px; margin-bottom: 1px; }
+		}
+		.cell.isEditing.c-object {
+			.cellContent { padding: 5px 8px 3px 8px !important; }
+		}
+
+		.cell.isEditing.c-longText {
+			.cellContent span:empty { height: 22px; }
 		}
 
 		.cell.isEditing.c-longText, .cell.isEditing.c-file { 
-			.cellContent { box-shadow: 0px 0px; border: 0px; }
+			.cellContent { box-shadow: 0px 0px; border: 0px; padding: 5px 8px; }
 		}
 	}
 }

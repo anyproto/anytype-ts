@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util } from 'ts/lib';
+import { I, Util, Storage } from 'ts/lib';
 import { Dimmer } from 'ts/component';
 import { menuStore, popupStore } from 'ts/store';
 import { RouteComponentProps } from 'react-router';

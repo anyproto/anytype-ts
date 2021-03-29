@@ -14,13 +14,13 @@
 	.input-text { padding: 0px; height: 20px; }
 	.icon.expand { display: none !important; }
 	.cellContent { 
-		position: absolute; left: -1px; top: -1px; overflow: visible !important; height: auto !important; white-space: normal !important; 
-		box-shadow: 0px 0px 0px 1px $colorOrange inset; background: #fff; z-index: 10; min-height: 100%; border: 1px solid $colorOrange;
+		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
+		background: #fff; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 1px $colorOrange inset, 0px 0px 0px 1px $colorOrange;
 	}
 	.cellContent {
 		.name { display: inline-block; }
 	}
-	.empty { display: block; }
+	.empty { display: inline-block; }
 
 	.icon.clear { 
 		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
@@ -31,11 +31,11 @@
 
 .cell.isEditing.c-select.isStatus {
 	.icon.clear { display: block; }
-	.over { display: inline-block; vertical-align: middle; font-size: 0px; width: calc(100% - 30px); }
+	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
 }
 
 .cell.isEditing.c-object, .cell.isEditing.c-select {
-	.cellContent { height: 20px !important; padding-right: 1px !important; }
+	.cellContent { height: 20px !important; }
 }
 
 .cell.isEditing.c-file {
@@ -48,7 +48,7 @@
 	.icon.clear { display: none; }
 
 	.name { display: inline-block; vertical-align: top; }
-	.empty { color: $colorDarkGrey; display: none; }
+	.empty { vertical-align: middle; color: $colorDarkGrey; display: none; }
 }
 
 .cellContent.c-file {
@@ -80,9 +80,11 @@
 
 .cellContent.canEdit.c-shortText, 
 .cellContent.canEdit.c-longText, 
-.cellContent.canEdit.c-date, 
-.cellContent.canEdit.c-object, 
-.cellContent.canEdit.c-select { cursor: text; }
+.cellContent.canEdit.c-number, 
+.cellContent.canEdit.c-url, 
+.cellContent.canEdit.c-phone, 
+.cellContent.canEdit.c-email, 
+.cellContent.canEdit.c-date { cursor: text; }
 .cellContent.canEdit.c-checkbox { cursor: pointer; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {

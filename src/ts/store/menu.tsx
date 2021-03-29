@@ -16,11 +16,19 @@ class MenuStore {
 	
 	@action
 	open (id: string, param: I.MenuParam) {
+		if (!id) {
+			return;
+		};
+
 		param.type = Number(param.type) || I.MenuType.Vertical;
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
+
+		if (param.isSub) {
+			param.noAnimation = true;
+		};
 
 		const item = this.get(id);
 		if (item) {
@@ -88,13 +96,13 @@ class MenuStore {
 		const t = item.param.noAnimation ? 0 : Constant.delay.menu;
 
 		if (el.length) {
-			el.css({ transform: '' }).removeClass('show');
 			if (item.param.noAnimation) {
 				el.addClass('noAnimation');
 			};
+			el.css({ transform: '' }).removeClass('show');
 		};
 
-		window.setTimeout(() => {
+		const cb = () => {
 			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
 			
 			if (item.param.onClose) {
@@ -104,15 +112,17 @@ class MenuStore {
 			if (callBack) {
 				callBack();
 			};
-		}, t);
+		};
+
+		window.setTimeout(cb, t);
 	};
 	
 	@action
 	closeAll (ids?: string[], callBack?: () => void) {
-		ids = ids || this.menuList.map((it: I.Menu) => { return it.id; });
+		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.menuList;
 
-		for (let id of ids) {
-			this.close(id);
+		for (let item of items) {
+			this.close(item.id);
 		};
 
 		this.clearTimeout();

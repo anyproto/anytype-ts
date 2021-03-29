@@ -13,7 +13,6 @@ class BlockStore {
 	@observable public storeIdType: string = '';
 	@observable public storeIdTemplate: string = '';
 	@observable public storeIdRelation: string = '';
-	@observable public recentId: string = '';
 
 	public treeMap: Map<string, any[]> = new Map();
 	public blockMap: Map<string, any[]> = new Map();
@@ -37,11 +36,6 @@ class BlockStore {
 	@computed
 	get breadcrumbs (): string {
 		return this.breadcrumbsId;
-	};
-
-	@computed
-	get recent (): string {
-		return this.recentId;
 	};
 
 	@computed
@@ -95,11 +89,6 @@ class BlockStore {
 	};
 
 	@action
-	recentSet (id: string) {
-		this.recentId = String(id || '');
-	};
-
-	@action
 	detailsSet (rootId: string, details: any[]) {
 		let map = this.detailMap.get(rootId);
 
@@ -121,7 +110,7 @@ class BlockStore {
 	};
 
 	@action
-	detailsUpdate (rootId: string, item: any) {
+	detailsUpdate (rootId: string, item: any, clear: boolean) {
 		if (!item.id || !item.details) {
 			return;
 		};
@@ -132,6 +121,9 @@ class BlockStore {
 		if (!map) {
 			map = observable.map(new Map());
 			create = true;
+		} else 
+		if (clear) {
+			map.delete(item.id);
 		};
 
 		const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
@@ -152,7 +144,7 @@ class BlockStore {
 		for (let item of details) {
 			obj[item.key] = item.value;
 		};
-		this.detailsUpdate(rootId, { id: blockId, details: obj });
+		this.detailsUpdate(rootId, { id: blockId, details: obj }, false);
 	};
 
 	@action
@@ -423,6 +415,7 @@ class BlockStore {
 		const item = map.get(id) || { _objectEmpty_: true };
 		return {
 			...item,
+			id: id,
 			name: String(item.name || Constant.default.name || ''),
 			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
 		};

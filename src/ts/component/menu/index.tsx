@@ -187,6 +187,11 @@ class Menu extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const el = this.getElement();
+
+		if (el && el.length) {
+			el.addClass('hover');
+		};
 
 		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
 
@@ -196,18 +201,28 @@ class Menu extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this)); 
+		const menu = node.find('.menu');
+
 		this.position();
+		menu.css({ transform: 'none' });
 	};
 
 	componentWillUnmount () {
 		const { param } = this.props;
 		const { isSub } = param;
-		
+		const el = this.getElement();
+
 		this._isMounted = false;
 		this.unbind();
+
+		if (el && el.length) {
+			el.removeClass('hover');
+		};
 		
 		if (isSub) {
 			$('#menu-polygon').hide();
+			window.clearTimeout(this.timeoutPoly);
 		};
 	};
 	
@@ -216,16 +231,21 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	animate () {
+		const { param } = this.props;
+		const { noAnimation } = param;
+
 		raf(() => {
 			if (!this._isMounted) {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this)); 
-			const menu = node.find('.menu');
+			const menu = $('#' + this.getId());
+
+			if (noAnimation) {
+				menu.addClass('noAnimation');
+			};
 
 			menu.addClass('show');
-			window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);
 		});
 	};
 	
@@ -247,6 +267,7 @@ class Menu extends React.Component<Props, {}> {
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
+			const isFixed = menu.css('position') == 'fixed';
 
 			let ew = 0;
 			let eh = 0;
@@ -263,13 +284,7 @@ class Menu extends React.Component<Props, {}> {
 				ox = Number(rect.x) || 0;
 				oy = Number(rect.y) || 0;
 			} else {
-				let el = null;
-				if ('object' == typeof(element)) {
-					el = $(element);
-				} else {
-					el = $(element.replace(/\//g, '\\/'));
-				};
-				
+				const el = this.getElement();
 				if (!el || !el.length) {
 					console.log('[Menu.position]', id, 'element not found', element);
 					return;
@@ -336,7 +351,8 @@ class Menu extends React.Component<Props, {}> {
 					break;
 			};
 
-			if (menu.css('position') == 'fixed') {
+			
+			if (isFixed) {
 				y -= scrollTop;
 			};
 
@@ -353,12 +369,19 @@ class Menu extends React.Component<Props, {}> {
 			if (param.width) {
 				css.width = param.width;
 			};
+			if (param.height) {
+				css.height = param.height;
+			};
 
 			menu.css(css);
 			
 			if (isSub && (type == I.MenuType.Vertical)) {
-				const coords = keyboard.coords;
+				const coords = Util.objectCopy(keyboard.coords);
 				const poly = $('#menu-polygon');
+
+				if (isFixed) {
+					coords.y -= scrollTop;
+				};
 				
 				let px = Math.abs(x - coords.x);
 				let py = Math.abs(y - coords.y) + 4;
@@ -379,10 +402,11 @@ class Menu extends React.Component<Props, {}> {
 					top: y,
 					clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
 					transform: t,
+					position: (isFixed ? 'fixed' : 'absolute'),
 				});
 
 				window.clearTimeout(this.timeoutPoly);
-				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 500);
+				this.timeoutPoly = window.setTimeout(() => { poly.hide(); }, 1000);
 			};
 		});
 	};
@@ -401,6 +425,10 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	setHover (item?: any, scroll?: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const menu = node.find('.menu');
 
@@ -427,8 +455,15 @@ class Menu extends React.Component<Props, {}> {
 		return Util.toCamelCase('menu-' + this.props.id);
 	};
 
+	getElement () {
+		const { param } = this.props;
+		const { element } = param;
+
+		return $(element);
+	};
+
 	getSize () {
-		const obj = $(`#${this.getId()}`);
+		const obj = $('#' + this.getId());
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 

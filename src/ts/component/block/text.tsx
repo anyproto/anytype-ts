@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject } from 'ts/component';
+import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -57,6 +57,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.onLang = this.onLang.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onInput = this.onInput.bind(this);
+		this.onToggleWrap = this.onToggleWrap.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
 		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
@@ -102,7 +103,10 @@ class BlockText extends React.Component<Props, {}> {
 				};
 				
 				additional = (
-					<Select id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+					<React.Fragment>
+						<Select id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+						<Icon className="codeWrap" onClick={this.onToggleWrap} />
+					</React.Fragment>
 				);
 				break;
 				
@@ -150,7 +154,9 @@ class BlockText extends React.Component<Props, {}> {
 				<div className="markers">
 					{marker ? <Marker {...marker} id={id} color={color} /> : ''}
 				</div>
-				{additional}
+				<div className="additional">
+					{additional}
+				</div>
 				<div className="wrap">
 					<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{placeHolder}</span>
 					{editor}
@@ -563,7 +569,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !menuOpenAdd) {
+		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !menuOpenAdd && !block.isTextCode()) {
 			value = Util.stringCut(value, range.from - 1, range.from);
 			onMenuAdd(id, value, range);
 		};
@@ -837,6 +843,16 @@ class BlockText extends React.Component<Props, {}> {
 
 			focus.set(id, { from: l, to: l });
 			focus.apply();
+		});
+	};
+
+	onToggleWrap (e: any) {
+		const { rootId, block } = this.props;
+		const { id, fields } = block;
+
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { isUnwrapped: !fields.isUnwrapped } },
+		], (message: any) => {
 		});
 	};
 	

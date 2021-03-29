@@ -50,7 +50,7 @@ class MenuSmile extends React.Component<Props, State> {
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { noHead } = data;
+		const { noHead, noUpload } = data;
 		const sections = this.getSections();
 		const items = this.getItems();
 
@@ -102,7 +102,7 @@ class MenuSmile extends React.Component<Props, State> {
 				{!noHead ? (
 					<div className="head">
 						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
-						<div className="btn" onClick={this.onUpload}>{translate('menuSmileUpload')}</div>
+						{!noUpload ? <div className="btn" onClick={this.onUpload}>{translate('menuSmileUpload')}</div> : ''}
 						<div className="btn" onClick={this.onRemove}>{translate('menuSmileRemove')}</div>
 					</div>
 				) : ''}

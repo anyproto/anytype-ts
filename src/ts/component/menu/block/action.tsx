@@ -15,13 +15,12 @@ const Constant = require('json/constant.json');
 class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
-	focus: boolean = false;
+	isFocused: boolean = false;
 	n: number = 0;
 	ref: any = null;
 	state = {
 		filter: '',
 	};
-	lastId = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -92,12 +91,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		this._isMounted = true;
 		this.rebind();
-
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+		this.focus();
 
 		menu.unbind('mouseleave').on('mouseleave', () => {
 			menuStore.clearTimeout();
@@ -108,6 +102,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		this.rebind();
+
 		this.props.setHover(items[this.n]);
 		this.props.position();
 	};
@@ -120,16 +115,24 @@ class MenuBlockAction extends React.Component<Props, State> {
 		menuStore.closeAll(Constant.menuIds.action);
 		menuStore.clearTimeout();
 	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
+	};
 	
 	onFilterFocus (e: any) {
 		menuStore.closeAll(Constant.menuIds.action);
 		
-		this.focus = true;
+		this.isFocused = true;
 		this.props.setHover();
 	};
 	
 	onFilterBlur (e: any) {
-		this.focus = false;
+		this.isFocused = false;
 	};
 	
 	onFilterChange (v: string) {
@@ -334,7 +337,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const k = e.key.toLowerCase();
 
-		if (this.focus) {
+		if (this.isFocused) {
 			if (k == Key.down) {
 				this.ref.blur();
 				this.n = -1;
@@ -403,7 +406,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -431,14 +434,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		let menuId = '';
 		let menuParam: I.MenuParam = {
-			element: '#item-' + item.id,
+			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
 			offsetY: offsetY,
 			isSub: true,
 			passThrough: true,
-			onClose: () => {
-				this.lastId = '';
-			},
 			data: {
 				rootId: rootId,
 				blockId: blockId,
@@ -547,9 +547,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId && (this.lastId != item.itemId)) {
-			this.lastId = item.itemId;
-
+		if (menuId) {
 			menuStore.closeAll(Constant.menuIds.action, () => {
 				menuStore.open(menuId, menuParam);
 			});

@@ -49,6 +49,7 @@ class PageMainType extends React.Component<Props, {}> {
 			name: Constant.default.nameType,
 			description: 'Add description',
 		};
+		const title = blockStore.getLeaf(rootId, 'title');
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -239,7 +240,9 @@ class PageMainType extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 
 		this._isMounted = false;
+		this.save();
 		focus.clear(true);
+		window.clearTimeout(this.timeout);
 
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {
@@ -339,6 +342,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onBlur (e: any, item: any) {
 		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
 		this.save();
 	};
 
@@ -350,7 +354,7 @@ class PageMainType extends React.Component<Props, {}> {
 		this.placeHolderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
-		window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
 	onSelectText (e: any, item: any) {
@@ -368,8 +372,6 @@ class PageMainType extends React.Component<Props, {}> {
 			details.push({ key: id, value: value });
 			object[id] = value;
 		};
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		dbStore.objectTypeUpdate(object);
 
 		C.BlockSetDetails(rootId, details);

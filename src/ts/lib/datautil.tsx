@@ -214,6 +214,7 @@ class DataUtil {
 			blockStore.rootSet(root);
 			blockStore.archiveSet(message.archiveBlockId);
 			blockStore.storeSetType(message.marketplaceTypeId);
+			blockStore.storeSetTemplate(message.marketplaceTemplateId);
 			blockStore.storeSetRelation(message.marketplaceRelationId);
 
 			C.ObjectTypeList((message: any) => {
@@ -331,8 +332,6 @@ class DataUtil {
 			{ key: 'iconEmoji', value: emoji },
 			{ key: 'iconImage', value: image },
 		];
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
@@ -340,8 +339,6 @@ class DataUtil {
 		const details = [ 
 			{ key: 'name', value: name },
 		];
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
@@ -357,8 +354,6 @@ class DataUtil {
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -370,8 +365,6 @@ class DataUtil {
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
 		];
-		
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -381,8 +374,6 @@ class DataUtil {
 		const details = [ 
 			{ key: 'coverScale', value: scale },
 		];
-		
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -392,8 +383,6 @@ class DataUtil {
 		const details = [ 
 			{ key: 'done', value: done },
 		];
-		
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
@@ -403,8 +392,6 @@ class DataUtil {
 		const details = [
 			{ key: 'layout', value: layout },
 		];
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -414,8 +401,6 @@ class DataUtil {
 		];
 
 		C.BlockListSetAlign(rootId, [ 'title' ], align);
-		
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -586,7 +571,7 @@ class DataUtil {
 	
 	menuGetTextColors () {
 		let items: any[] = [
-			{ id: 'color-default', name: 'Default', value: 'default', className: 'default', isTextColor: true }
+			{ id: 'color-default', name: 'Default', value: '', className: 'default', isTextColor: true }
 		];
 		for (let color of Constant.textColor) {
 			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
@@ -799,9 +784,9 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
+		const block = blockStore.getLeaf(rootId, rootId);
 		const details = blockStore.getDetails(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = details;
-		const layout = Number(details.layout) || I.ObjectLayout.Page;
 		const ret: any = {
 			object: details,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
@@ -809,7 +794,7 @@ class DataUtil {
 			className: [],
 		};
 
-		switch (layout) {
+		switch (block?.layout) {
 			default:
 			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
@@ -839,6 +824,16 @@ class DataUtil {
 				ret.withIcon = true;
 				ret.className.push('isFile');
 				break;
+
+			case I.ObjectLayout.ObjectType:
+				ret.withIcon = true;
+				ret.className.push('isObjectType');
+				break;
+
+			case I.ObjectLayout.Relation:
+				ret.withIcon = true;
+				ret.className.push('isRelation');
+				break;
 		};
 
 		if (ret.withIcon && ret.withCover) {
@@ -852,7 +847,6 @@ class DataUtil {
 		};
 
 		ret.className = ret.className.join(' ');
-
 		return ret;
 	};
 

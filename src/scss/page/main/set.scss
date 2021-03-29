@@ -3,7 +3,6 @@
 .pageMainSet {
 	.wrapper { width: 704px; margin: 0px auto; padding: 96px 0px 80px 0px; }
 	.wrapper {
-		.icon.new-set { width: 54px; height: 64px; margin-bottom: 18px; }
 		.title { @include text-title; padding: 10px 0px 22px 0px; }
 		.label { @include text-paragraph; margin-bottom: 28px; color: $colorDarkGrey; }
 

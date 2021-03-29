@@ -138,8 +138,10 @@ class LinkPreview extends React.Component<Props, {}> {
 	};
 	
 	onEdit (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { linkPreview } = commonStore;
-		const node = $(ReactDOM.findDOMNode(this));
 		
 		let { marks, range, onChange } = linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
@@ -149,6 +151,9 @@ class LinkPreview extends React.Component<Props, {}> {
 			element: linkPreview.element,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
+			onOpen: () => {
+				Util.linkPreviewHide(false);
+			},
 			data: {
 				value: (mark ? mark.param : ''),
 				onChange: (param: string) => {
@@ -157,8 +162,6 @@ class LinkPreview extends React.Component<Props, {}> {
 				}
 			}
 		});
-		
-		Util.linkPreviewHide(false);
 	};
 	
 	onUnlink (e: any) {

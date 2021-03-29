@@ -98,7 +98,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : ''}
 
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} placeHolderFocus="Filter objects..." onChange={(e: any) => { this.onKeyUp(e, false); }} />
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
@@ -206,6 +206,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = this.state;
@@ -226,7 +230,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter, 0, 1000000, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -381,6 +389,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');

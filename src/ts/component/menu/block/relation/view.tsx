@@ -71,7 +71,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
-						{item.name}
+						<div className="name">{item.name}</div>
 					</div>
 					<div
 						id={id} 
@@ -204,8 +204,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const details = [ 
 			{ key: 'featuredRelations', value: featured },
 		];
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
 		C.BlockSetDetails(rootId, details);
 	};
 
@@ -277,9 +275,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
-		]
-
-		blockStore.detailsUpdateArray(rootId, rootId, details);
+		];
 		C.BlockSetDetails(rootId, details);
 	};
 

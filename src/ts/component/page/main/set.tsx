@@ -37,7 +37,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			<div>
 				<Header {...this.props} rootId="" />
 				<div className="wrapper">
-					<IconObject size={64} object={{ iconClass: 'newSet' }} />
+					<IconObject size={96} object={{ iconClass: 'newSet' }} />
 					<Title text={translate('setTitle')} />
 					<Label text={translate('setText')} />
 					<div className="items">

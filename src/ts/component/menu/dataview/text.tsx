@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Textarea } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const raf = require('raf');
 
 @observer
 class MenuText extends React.Component<Props, {}> {
@@ -17,8 +18,7 @@ class MenuText extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onInput = this.onInput.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
 	
@@ -28,23 +28,20 @@ class MenuText extends React.Component<Props, {}> {
 		const { value } = data;
 
 		return (
-			<div>
-				<Textarea 
-					ref={(ref: any) => { this.ref = ref; }} 
-					id="input" 
-					value={value}
-					onKeyDown={this.onKeyDown} 
-					onKeyUp={this.onKeyUp} 
-					onBlur={this.onBlur}
-				/>
-			</div>
+			<Textarea 
+				ref={(ref: any) => { this.ref = ref; }} 
+				id="input" 
+				value={value}
+				onBlur={this.onBlur}
+				onInput={this.onInput}
+			/>
 		);
 	};
 
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { value } = data;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -58,18 +55,14 @@ class MenuText extends React.Component<Props, {}> {
 			input.get(0).setSelectionRange(length, length);
 		};
 
-		window.setTimeout(() => { this.resize(); }, 15);
+		window.setTimeout(() => { this.resize(); });
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
-	onKeyDown (e: any) {
-		this.resize();
-	};
-
-	onKeyUp (e: any) {
+	onInput (e: any) {
 		this.resize();
 	};
 
@@ -83,23 +76,26 @@ class MenuText extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		if (!this._isMounted) {
-			return;
-		};
+		raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
 
-		const { position } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-		const win = $(window);
-		const wh = win.height();
+			const { position } = this.props;
+			const node = $(ReactDOM.findDOMNode(this));
+			const win = $(window);
+			const wh = win.height();
 
-		input.css({ height: 'auto' });
-		const sh = input.get(0).scrollHeight;
+			node.css({ height: 'auto' });
+			const sh = node.get(0).scrollHeight;
 
-		input.css({ height: Math.min(wh - 78, sh) });
-		input.scrollTop(sh);
+			console.log(sh);
 
-		position();
+			node.css({ height: Math.min(wh - 78, sh) });
+			node.scrollTop(sh);
+
+			position();
+		});
 	};
 
 };

@@ -8,7 +8,8 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
-const SORT_IDS = [ 'blockShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
+
+const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
 const { app } = remote;
@@ -86,10 +87,8 @@ class Dispatcher {
 		if (v == V.BLOCKSETLINK)				 t = 'blockSetLink';
 		if (v == V.BLOCKSETBOOKMARK)			 t = 'blockSetBookmark';
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
-		if (v == V.BLOCKSETDETAILS)				 t = 'blockSetDetails';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
-		if (v == V.BLOCKSETRELATIONS)			 t = 'blockSetRelations';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -102,11 +101,18 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWRECORDSUPDATE)	 t = 'blockDataviewRecordsUpdate';
 		if (v == V.BLOCKDATAVIEWRECORDSDELETE)	 t = 'blockDataviewRecordsDelete';
 
-		if (v == V.BLOCKSHOW)					 t = 'blockShow';
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
 		if (v == V.PROCESSDONE)					 t = 'processDone';
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
+
+		if (v == V.OBJECTSHOW)					 t = 'objectShow';
+		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
+		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
+		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
+		if (v == V.OBJECTRELATIONSSET)			 t = 'objectRelationsSet';
+		if (v == V.OBJECTRELATIONSAMEND)		 t = 'objectRelationsAmend';
+		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
 
 		return t;
 	};
@@ -117,9 +123,16 @@ class Dispatcher {
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
-		const log = (rootId: string, type: string, data: any) => { 
+		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', 'rootId', rootId);
-			console.log(Util.objectClear(data.toObject())); 
+			if (!type) {
+				console.error('Event not found for valueCase', valueCase);
+			};
+
+			if (data && data.toObject) {
+				const d = Util.objectClear(data.toObject());
+				console.log(config.debug.js ? JSON.stringify(d, null, 3) : d); 
+			};
 		};
 
 		let globalParentIds: any = {};
@@ -168,16 +181,19 @@ class Dispatcher {
 
 		for (let message of messages) {
 			let block: any = null;
+			let details: any = null;
 			let viewId: string = '';
 			let view: any = null;
 			let childrenIds: string[] = [];
+			let keys: string[] = [];
+			let ids: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
 			
 			if (needLog) {
-				log(rootId, type, data);
+				log(rootId, type, data, message.getValueCase());
 			};
 
 			switch (type) {
@@ -194,12 +210,12 @@ class Dispatcher {
 					});
 					break;
 
-				case 'blockShow':
+				case 'objectShow':
 					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
 					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
 
-					let res = Response.BlockShow(data);
-					this.onBlockShow(rootId, res);
+					let res = Response.ObjectShow(data);
+					this.onObjectShow(rootId, res);
 					break;
 
 				case 'blockAdd':
@@ -228,18 +244,6 @@ class Dispatcher {
 					childrenIds = data.getChildrenidsList() || [];
 
 					blockStore.blockUpdateStructure(rootId, id, childrenIds);
-					break;
-
-				case 'blockSetDetails':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-
-					const details = Decode.decodeStruct(data.getDetails());
-					blockStore.detailsUpdate(rootId, { id: id, details: details });
-
-					if ((id == rootId) && block && (block.layout !== details.layout)) {
-						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
-					};
 					break;
 
 				case 'blockSetFields':
@@ -402,16 +406,6 @@ class Dispatcher {
 					blockStore.blockUpdate(rootId, block);
 					break;
 
-				case 'blockSetRelations':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					break;
-
 				case 'blockSetRelation':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -514,10 +508,9 @@ class Dispatcher {
 						break;
 					};
 
-					data.records = data.getRecordsList() || [];
-					for (let item of data.records) {
-						item = Decode.decodeStruct(item) || {};
-						dbStore.recordDelete(rootId, block.id, item.id);
+					ids = data.getRemovedList() || [];
+					for (let id of ids) {
+						dbStore.recordDelete(rootId, block.id, id);
 					};
 					break;
 
@@ -544,16 +537,79 @@ class Dispatcher {
 					dbStore.relationRemove(rootId, id, data.getRelationkey());
 					break;
 
+				case 'objectDetailsSet':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+
+					details = Decode.decodeStruct(data.getDetails());
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, true);
+
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
+						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+					};
+					break;
+
+				case 'objectDetailsAmend':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+
+					details = {};
+					for (let item of (data.getDetailsList() || [])) {
+						details[item.getKey()] = Decode.decodeValue(item.getValue());
+					};
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, false);
+
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
+						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+					};
+					break;
+
+				case 'objectDetailsUnset':
+					id = data.getId();
+					keys = data.getKeysList() || [];
+
+					details = blockStore.getDetails(rootId, id);
+					for (let key of keys) {
+						delete(details[key]);
+					};
+
+					blockStore.detailsUpdate(rootId, { id: id, details: details }, true);
+					break;
+
+				case 'objectRelationsSet':
+				case 'objectRelationsAmend':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (type == 'objectRelationsSet') {
+						dbStore.relationsRemove(rootId, rootId);
+					};
+
+					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
+					break;
+
+				case 'objectRelationsRemove':
+					id = data.getId();
+					keys = data.getKeysList() || [];
+
+					for (let key of keys) {
+						dbStore.relationRemove(rootId, id, key);
+					};
+					break;
+
 				case 'processNew':
 				case 'processUpdate':
 				case 'processDone':
 					const process = data.getProcess();
 					const progress = process.getProgress();
 					const state = process.getState();
-					const type = process.getType();
+					const pt = process.getType();
 
 					let isUnlocked = true;
-					if (type == I.ProgressType.Import) {
+					if (pt == I.ProgressType.Import) {
 						isUnlocked = false;
 					};
 
@@ -562,7 +618,7 @@ class Dispatcher {
 						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
-								status: translate('progress' + type),
+								status: translate('progress' + pt),
 								current: progress.getDone(),
 								total: progress.getTotal(),
 								isUnlocked: isUnlocked,
@@ -596,7 +652,7 @@ class Dispatcher {
 		return 0;
 	};
 
-	onBlockShow (rootId: string, message: any) {
+	onObjectShow (rootId: string, message: any) {
 		let { blocks, details } = message;
 
 		blockStore.detailsSet(rootId, details);
@@ -636,10 +692,12 @@ class Dispatcher {
 		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
+		let d = null;
 
 		if (debug) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			console.log(Util.objectClear(data.toObject()));
+			d = Util.objectClear(data.toObject());
+			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 		};
 
 		try {
@@ -675,7 +733,8 @@ class Dispatcher {
 
 				if (debug) {
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
-					console.log(Util.objectClear(response.toObject())); 
+					d = Util.objectClear(response.toObject());
+					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 				};
 
 				if (message.event) {

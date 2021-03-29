@@ -13,9 +13,12 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
+
+	isHidden: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -77,13 +80,14 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 							<div className="name">{Util.shorten(object.name, 32)}</div>
 						</div>
 					</div>
-
-					{!isPopup && canAdd ? (
-						<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
-					) : ''}
-					{config.allowDataview && canAdd ? (
-						<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
-					) : ''}
+					<div className="icons">
+						{!isPopup && canAdd ? (
+							<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+						) : ''}
+						{config.allowDataview && canAdd ? (
+							<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+						) : ''}
+					</div>
 				</div>
 
 				<div className="side right">
@@ -92,6 +96,26 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.init();
+	};
+
+	componentDidUpdate () {
+		this.init();
+	};
+
+	init () {
+		if (!this.isHidden) {
+			const node = $(ReactDOM.findDOMNode(this));
+			node.addClass('show');
+
+			window.setTimeout(() => {
+				this.isHidden = true;
+				node.removeClass('show');
+			}, Constant.delay.header);
+		};
 	};
 
 	onHome (e: any) {

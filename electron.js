@@ -457,7 +457,15 @@ function menuInit () {
 	if (config.allowDebug) {
 		config.debug = config.debug || {};
 
-		const flags = { ui: 'Interface', ho: 'Hidden objects', mw: 'Middleware', th: 'Threads', an: 'Analytics', dm: 'Dark Mode' };
+		const flags = { 
+			ui: 'Interface', 
+			ho: 'Hidden objects', 
+			mw: 'Middleware', 
+			th: 'Threads', 
+			an: 'Analytics', 
+			dm: 'Dark Mode',
+			js: 'JSON',
+		};
 		const flagMenu = [];
 
 		for (let i in flags) {
