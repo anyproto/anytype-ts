@@ -138,6 +138,14 @@ class PopupStore extends React.Component<Props, State> {
 				break;
 
 			case Tab.Template:
+				mid = (
+					<div className="mid">
+						<Title text="Template space" />
+						<Label text="Our beautifully-designed templates come with hundreds" />
+
+						<Button text="Create tempate" className="orange" onClick={(e: any) => { this.onCreateTemplate(); }} />
+					</div>
+				);
 				break;
 
 			case Tab.Relation:
@@ -366,6 +374,9 @@ class PopupStore extends React.Component<Props, State> {
 
 			DataUtil.objectOpen({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
 		});
+	};
+
+	onCreateTemplate () {
 	};
 
 	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
