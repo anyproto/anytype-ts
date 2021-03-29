@@ -20,7 +20,7 @@
 	.cellContent {
 		.name { display: inline-block; }
 	}
-	.empty { display: block; }
+	.empty { display: inline-block; }
 
 	.icon.clear { 
 		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
@@ -48,7 +48,7 @@
 	.icon.clear { display: none; }
 
 	.name { display: inline-block; vertical-align: top; }
-	.empty { color: $colorDarkGrey; display: none; }
+	.empty { vertical-align: middle; color: $colorDarkGrey; display: none; }
 }
 
 .cellContent.c-file {
