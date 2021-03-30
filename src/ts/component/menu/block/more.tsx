@@ -408,7 +408,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'type':
 				menuId = 'searchObject';
+				menuParam.vertical = I.MenuDirection.Bottom;
 				menuParam.className = [ param.className, 'single' ].join(' ');
+				menuParam.offsetY = -36;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',
