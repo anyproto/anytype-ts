@@ -18,6 +18,8 @@ const Constant = require('json/constant.json');
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
 
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -110,7 +112,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.addClass('show');
 
-		window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
 	};
 
 	onHome (e: any) {
