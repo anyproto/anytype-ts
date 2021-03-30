@@ -190,7 +190,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 	getScrollContainer () {
 		const { isPopup } = this.props;
-		return isPopup ? $('#popupEditorPage .selection') : $(window);
+		return isPopup ? $('#popupPage .selection') : $(window);
 	};
 
 	getWrapper () {
@@ -1572,7 +1572,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
 		const { isPopup } = this.props;
-		const container = isPopup ? $('#popupEditorPage #innerWrap .content') : $(window);
+		const container = isPopup ? $('#popupPage #innerWrap .content') : $(window);
 
 		focus.set(id, { from: from, to: to });
 		focus.apply();

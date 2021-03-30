@@ -41,6 +41,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { breadcrumbs } = blockStore;
 		const root = blockStore.getLeaf(rootId, rootId);
 
+		console.log(rootId, root);
+
 		if (!root) {
 			return null;
 		};

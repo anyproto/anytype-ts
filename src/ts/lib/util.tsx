@@ -760,7 +760,7 @@ class Util {
 				return 'body';
 
 			case 'popup':
-				return '#popupEditorPage .selection';
+				return '#popupPage .selection';
 			
 			case 'menuBlockRelationList':
 			case 'menuBlockRelationView':
@@ -775,7 +775,7 @@ class Util {
 				return '.pageMainEdit';
 
 			case 'popup':
-				return '#popupEditorPage';
+				return '#popupPage';
 
 			case 'menuBlockRelationList':
 			case 'menuBlockRelationView':

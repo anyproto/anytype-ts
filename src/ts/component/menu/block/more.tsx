@@ -409,7 +409,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'type':
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
-				menuParam.fixedY = param.offsetY;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',

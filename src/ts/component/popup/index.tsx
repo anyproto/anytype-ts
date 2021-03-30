@@ -12,7 +12,6 @@ import PopupSearch from './search';
 import PopupHelp from './help';
 import PopupPrompt from './prompt';
 import PopupPreview from './preview';
-import PopupEditorPage from './editor/page';
 import PopupFeedback from './feedback';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
@@ -49,7 +48,6 @@ class Popup extends React.Component<Props, {}> {
 			prompt: PopupPrompt,
 			help: PopupHelp,
 			preview: PopupPreview,
-			editorPage: PopupEditorPage,
 			feedback: PopupFeedback,
 			shortcut: PopupShortcut,
 			store: PopupStore,

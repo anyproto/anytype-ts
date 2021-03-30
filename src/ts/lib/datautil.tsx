@@ -280,21 +280,30 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
-		let param: any = { data: { rootId: object.id } };
-		let popupId = '';
+		const popupId = 'page';
+		const param: any = { 
+			data: { 
+				rootId: object.id, 
+				matchPopup: { 
+					params: {
+						page: 'main', 
+						id: object.id,
+					},
+				},
+			},
+		};
 
 		switch (object.layout) {
 			default:
-				popupId = 'editorPage';
+				param.data.matchPopup.params.action = 'edit';
 				break;
 
 			case I.ObjectLayout.ObjectType:
-				popupId = 'page';
-				param.data.matchPopup = { params: { page: 'main', action: 'type', id: object.id } };
+				param.data.matchPopup.params.action = 'type';
 				break;
+
 			case I.ObjectLayout.Relation:
-				popupId = 'page';
-				param.data.matchPopup = { params: { page: 'main', action: 'relation', id: object.id } };
+				param.data.matchPopup.params.action = 'relation';
 				break;
 		};
 
