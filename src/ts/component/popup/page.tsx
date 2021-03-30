@@ -38,6 +38,7 @@ class PopupPage extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+		this.resize();
 	};
 
 	rebind () {
