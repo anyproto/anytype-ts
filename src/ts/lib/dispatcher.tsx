@@ -23,6 +23,7 @@ class Dispatcher {
 
 	service: any = null;
 	stream: any = null;
+	timeout: number = 0;
 
 	constructor () {
 		/// #if USE_ADDON
@@ -67,7 +68,9 @@ class Dispatcher {
 
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
-			this.listenEvents();
+
+			window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(() => { this.listenEvents(); }, 1000);
 		});
 	};
 

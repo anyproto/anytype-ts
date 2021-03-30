@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const fs = require('fs');
 const path = require('path');
 const proccess = require('process');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -93,7 +94,18 @@ module.exports = (env) => {
 			//new BundleAnalyzerPlugin(),
 			new webpack.DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify(env.NODE_ENV),
-			})
+			}),
+
+			function () {
+				this.plugin('compilation', (stats) => {
+					const dst = path.join(__dirname, 'electron', 'env.json');
+					const content = {
+						USE_GRPC: useGRPC
+					};
+					
+					fs.writeFileSync(dst, JSON.stringify(content, null, 3));
+				});
+			},
 		],
 		externals: {
 			bindings: 'require("bindings")'

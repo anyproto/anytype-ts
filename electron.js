@@ -17,16 +17,20 @@ const port = process.env.SERVER_PORT;
 const openAboutWindow = require('about-window').default;
 const keytar = require('keytar');
 const bindings = require('bindings');
+const envPath = path.join(__dirname, 'electron', 'env.json');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 980;
 const MIN_HEIGHT = 640;
 const KEYTAR_SERVICE = 'Anytype';
 
+let env = {};
+try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
+
 let isUpdating = false;
 let userPath = app.getPath('userData');
 let waitLibraryPromise;
-let useGRPC = !process.env.ANYTYPE_USE_ADDON && (process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
+let useGRPC = !process.env.ANYTYPE_USE_ADDON && (env.USE_GRPC || process.env.ANYTYPE_USE_GRPC || (process.platform == "win32") || is.development);
 let defaultChannel = version.match('alpha') ? 'alpha' : 'latest';
 let timeoutUpdate = 0;
 let server;
@@ -564,6 +568,7 @@ function autoUpdaterInit () {
 	autoUpdater.autoDownload = false;
 	autoUpdater.channel = config.channel;
 
+	clearTimeout(timeoutUpdate);
 	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
 
 	autoUpdater.on('checking-for-update', () => {
@@ -612,7 +617,6 @@ function autoUpdaterInit () {
 		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
-		app.isQuiting = true;
 		exit(true);
 	});
 };
@@ -640,10 +644,14 @@ app.on('window-all-closed', (e) => {
 });
 
 app.on('before-quit', (e) => {
-	e.preventDefault();
 	Util.log('info', 'before-quit');
 
-	exit(false);
+	if (app.isQuiting) {
+		exit(0);
+	} else {
+		e.preventDefault();
+		exit(false);
+	};
 });
 
 app.on('activate', () => {
@@ -651,23 +659,33 @@ app.on('activate', () => {
 });
 
 function send () {
+	console.log('SEND', arguments);
+
 	if (win) {
 		win.webContents.send.apply(win.webContents, arguments);
 	};
 };
 
 function shutdown (relaunch) {
+	Util.log('info', 'Shutdown, relaunch: ' + relaunch);
+
 	setTimeout(() => {
 		if (relaunch) {
 			Util.log('info', 'Relaunch');
-			app.relaunch();
+			app.isQuiting = true;
+			autoUpdater.quitAndInstall();
+		} else {
+			app.exit(0);
 		};
-		app.exit(0);
-	}, 2000);
+	}, 3000);
 };
 
 function exit (relaunch) {
-	Util.log('info', 'MW shutdown is starting');
+	if (app.isQuiting) {
+		return;
+	};
+
+	Util.log('info', 'MW shutdown is starting, relaunch: ' + relaunch);
 
 	if (useGRPC) {
 		if (server) {
@@ -678,7 +696,7 @@ function exit (relaunch) {
 		} else {
 			Util.log('warn', 'MW server not set');
 			shutdown(relaunch);
-		}
+		};
 	} else {
 		send('shutdown', relaunch);
 	};

@@ -15,16 +15,15 @@ let maxStdErrChunksBuffer = 10;
 class Server {
 	start (binPath, workingDir) {
 		return new Promise((resolve, reject) => {
+
 			// stop will resolve immediately in case child process is not running
 			this.stop().then(() => {
 				
 				this.isRunning = false;
 				let logsDir = path.join(workingDir, 'logs');
-				
-				try {
-					fs.mkdirSync(logsDir);
-				} catch (err) {};
-				
+
+				try { fs.mkdirSync(logsDir); } catch (e) {};
+
 				try {
 					let env = process.env;
 					
@@ -47,7 +46,7 @@ class Server {
 				
 				this.cp.stdout.on('data', data => {
 					let str = data.toString();
-					
+
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						var regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
 						this.address = 'http://' + regex.exec(str)[1];

@@ -9,7 +9,7 @@ class Util {
             method = 'info';
         };
         log[method](text);
-    }
+    };
 
 };
 

@@ -13,6 +13,7 @@ commands.md
 tools
 dist/*.node
 *.txt
+electron/env.json
 src/json/schema
 dist/bundle-back.js
 dist/builder-debug.yml
