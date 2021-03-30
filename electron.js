@@ -107,7 +107,7 @@ function trayIcon () {
 	if (is.windows) {
 		return path.join(__dirname, '/electron/icon64x64.png');
 	} else {
-		const dark = nativeTheme.shouldUseDarkColors;
+		const dark = nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
 		return path.join(__dirname, '/electron/icon-tray-' + (dark ? 'white' : 'black') + '.png');
 	};
 };
