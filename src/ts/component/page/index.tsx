@@ -137,35 +137,37 @@ class Page extends React.Component<Props, {}> {
 			popupStore.closeAll();
 			menuStore.closeAll();
 
-			if (isMain && !popupNewBlock) {
-				popupStore.open('help', { data: { document: 'whatsNew' } });
-			};
-
-			if (isMainIndex) {
-				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-					popupStore.open('confirm', {
-						data: {
-							title: 'We need your opinion',
-							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
-							textConfirm: 'Let\'s go!',
-							textCancel: 'Skip',
-							canCancel: true,
-							onConfirm: () => {
-								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
-								Storage.set('lastSurveyTime', Util.time());
-							},
-							onCancel: () => {
-								Storage.set('lastSurveyCanceled', 1);
-								Storage.set('lastSurveyTime', Util.time());
-							},
-						},
-					});
+			window.setTimeout(() => {
+				if (isMain && !popupNewBlock) {
+					popupStore.open('help', { data: { document: 'whatsNew' } });
 				};
 
-				Storage.delete('redirect');
-			} else {
-				Storage.set('redirect', history.location.pathname);
-			};
+				if (isMainIndex) {
+					if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+						popupStore.open('confirm', {
+							data: {
+								title: 'We need your opinion',
+								text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
+								textConfirm: 'Let\'s go!',
+								textCancel: 'Skip',
+								canCancel: true,
+								onConfirm: () => {
+									ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+									Storage.set('lastSurveyTime', Util.time());
+								},
+								onCancel: () => {
+									Storage.set('lastSurveyCanceled', 1);
+									Storage.set('lastSurveyTime', Util.time());
+								},
+							},
+						});
+					};
+
+					Storage.delete('redirect');
+				} else {
+					Storage.set('redirect', history.location.pathname);
+				};
+			}, Constant.delay.popup);
 		};
 
 		$(window).on('resize.page', () => { this.resize(); });
