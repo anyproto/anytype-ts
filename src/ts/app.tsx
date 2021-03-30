@@ -47,6 +47,7 @@ import 'scss/page/main/history.scss';
 import 'scss/page/main/set.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
+import 'scss/page/main/store.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -80,7 +81,6 @@ import 'scss/popup/help.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
-import 'scss/popup/store.scss';
 import 'scss/popup/page.scss';
 
 import 'emoji-mart/css/emoji-mart.css';

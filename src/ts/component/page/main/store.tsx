@@ -6,8 +6,8 @@ import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
+interface Props extends RouteComponentProps<any> {
+	isPopup?: boolean;
 };
 
 interface State {
@@ -52,7 +52,7 @@ const Tabs = [
 const BLOCK_ID = 'dataview';
 
 @observer
-class PopupStore extends React.Component<Props, State> {
+class PageMainStore extends React.Component<Props, State> {
 
 	state = {
 		tab: Tab.Type,
@@ -68,7 +68,6 @@ class PopupStore extends React.Component<Props, State> {
 
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getRowHeight = this.getRowHeight.bind(this);
-		this.resize = this.resize.bind(this);
 	};
 	
 	render () {
@@ -132,7 +131,7 @@ class PopupStore extends React.Component<Props, State> {
 						<Title text="Type every object" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
 
-						<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(); }} />
+						<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(e); }} />
 					</div>
 				);
 				break;
@@ -267,8 +266,6 @@ class PopupStore extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.rebind();
-		this.resize();
 		this.onTab(null, Tabs[0]);
 	};
 
@@ -280,45 +277,10 @@ class PopupStore extends React.Component<Props, State> {
 			defaultHeight: this.getRowHeight(),
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
-
-
-		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		this.unbind();
-		
-		const win = $(window);
-		win.unbind('resize.store').on('resize.store', () => { this.resize(); });
-	};
-
-	unbind () {
-		$(window).unbind('resize.store');
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		raf(() => {
-			const { getId, position } = this.props;
-			const win = $(window);
-			const obj = $(`#${getId()} #innerWrap`);
-			const height = Math.max(648, win.height() - 128);
-
-			obj.css({ height: height });
-			position();
-		});
 	};
 
 	getRootId () {
@@ -371,10 +333,11 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpenEvent(e, item);
+		const { isPopup } = this.props;
+		isPopup ? DataUtil.objectOpenPopup(item) : DataUtil.objectOpenEvent(e, item);
 	};
 
-	onCreateType () {
+	onCreateType (e: any) {
 		const { objectTypes } = dbStore;
 		const param: any = { 
 			name: '',
@@ -389,7 +352,7 @@ class PopupStore extends React.Component<Props, State> {
 			objectTypes.push(message.objectType);
 			dbStore.objectTypesSet(objectTypes);
 
-			DataUtil.objectOpen({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
+			this.onClick(e, { ...message.objectType, layout: I.ObjectLayout.ObjectType });
 		});
 	};
 
@@ -462,4 +425,4 @@ class PopupStore extends React.Component<Props, State> {
 
 };
 
-export default PopupStore;
+export default PageMainStore;

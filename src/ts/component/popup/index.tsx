@@ -15,7 +15,6 @@ import PopupPreview from './preview';
 import PopupFeedback from './feedback';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
-import PopupStore from './store';
 import PopupPage from './page';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -50,7 +49,6 @@ class Popup extends React.Component<Props, {}> {
 			preview: PopupPreview,
 			feedback: PopupFeedback,
 			shortcut: PopupShortcut,
-			store: PopupStore,
 			page: PopupPage,
 		};
 		

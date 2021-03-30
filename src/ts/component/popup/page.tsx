@@ -32,6 +32,7 @@ class PopupPage extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -64,7 +65,7 @@ class PopupPage extends React.Component<Props, {}> {
 		raf(() => {
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const width = Math.max(732, Math.min(960, win.width() - 128));
+			const width = Math.max(732, Math.min(1152, win.width() - 128));
 
 			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
 		});
