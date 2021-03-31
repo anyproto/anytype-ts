@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
 import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -254,7 +254,10 @@ class DataUtil {
 	};
 
 	objectOpenEvent (e: any, object: any) {
-		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object);
 		} else {
 			this.objectOpen(object);
@@ -283,7 +286,6 @@ class DataUtil {
 		const popupId = 'page';
 		const param: any = { 
 			data: { 
-				rootId: object.id, 
 				matchPopup: { 
 					params: {
 						page: 'main', 
@@ -306,6 +308,8 @@ class DataUtil {
 				param.data.matchPopup.params.action = 'relation';
 				break;
 		};
+
+		historyPopup.pushMatch(param.data.matchPopup);
 
 		if (popupStore.isOpen(popupId)) {
 			popupStore.update(popupId, param);
