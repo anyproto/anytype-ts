@@ -70,9 +70,7 @@ class PopupPage extends React.Component<Props, {}> {
 		raf(() => {
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const width = Math.max(980, Math.min(1152, win.width() - 128));
-
-			console.log('width', width);
+			const width = Math.max(1000, Math.min(1152, win.width() - 128));
 
 			obj.css({ width: width });
 			position();
