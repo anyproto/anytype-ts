@@ -674,8 +674,6 @@ app.on('activate', () => {
 });
 
 function send () {
-	console.log('SEND', arguments);
-
 	if (win) {
 		win.webContents.send.apply(win.webContents, arguments);
 	};
