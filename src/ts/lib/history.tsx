@@ -10,10 +10,16 @@ class History {
 
 	push (route: string) {
 		const last = this.list[this.list.length - 1];
-		if (!last || (last && (last != route))) {
-			this.list.push(route);
-			this.index = this.list.length - 1;
+		if (last && (last == route)) {
+			return;
 		};
+
+		if (this.index < this.list.length - 1) {
+			this.list = this.list.slice(0, this.index + 1);
+		};
+
+		this.list.push(route);
+		this.index = this.list.length - 1;
 	};
 
 	pushMatch (match: any) {
