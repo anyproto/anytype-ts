@@ -305,7 +305,7 @@ class IconObject extends React.Component<Props, {}> {
 	onMouseLeave (e: any) {
 		const { onMouseLeave } = this.props;
 		
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);

@@ -497,7 +497,7 @@ class App extends React.Component<Props, State> {
 		}, THROTTLE));
 		
 		win.on('blur.common', () => {
-			Util.tooltipHide();
+			Util.tooltipHide(true);
 			Util.linkPreviewHide(true);
 		});
 	};

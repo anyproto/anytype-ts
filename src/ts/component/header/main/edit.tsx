@@ -293,7 +293,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onPathOut () {
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 	};
 
 	getContainer () {

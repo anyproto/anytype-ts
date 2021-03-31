@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .pageMainStore {
-	.wrapper { height: 100%; width: 1000px; margin: 0px 0px 0px -480px; position: absolute; left: 50%; top: 0px; }
+	.wrapper { height: 100%; width: 1000px; margin: 0px 0px 0px -500px; position: absolute; left: 50%; top: 0px; }
 
 	.content { height: 100%; padding-top: 40px; }
 
@@ -42,7 +42,7 @@
 			.item:last-child { margin: 0px; }
 		}
 
-		.loaderWrapper { position: relative; }
+		.loaderWrapper { position: relative !important; }
 
 		.ReactVirtualized__List { padding: 48px 20px 48px 20px; }
 

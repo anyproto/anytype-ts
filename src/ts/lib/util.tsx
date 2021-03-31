@@ -564,12 +564,12 @@ class Util {
 		}, 250);
 	};
 	
-	tooltipHide () {
+	tooltipHide (force: boolean) {
 		let obj = $('#tooltip');
 		
 		obj.css({ opacity: 0 });
 		window.clearTimeout(this.timeoutTooltip);
-		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, 200);
+		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
 	
 	linkPreviewShow (url: string, node: any, param: any) {

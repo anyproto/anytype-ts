@@ -32,6 +32,7 @@ class EditorPage extends React.Component<Props, {}> {
 	id: string = '';
 	timeoutHover: number = 0;
 	timeoutMove: number = 0;
+	timeoutScreen: number = 0;
 	hoverId: string =  '';
 	hoverPosition: number = 0;
 	scrollTop: number = 0;
@@ -185,6 +186,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		focus.clear(false);
 		Storage.delete('editorId');
+		window.clearInterval(this.timeoutScreen);
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 
@@ -237,10 +239,9 @@ class EditorPage extends React.Component<Props, {}> {
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			const object = blockStore.getDetails(rootId, rootId);
-			if (object.type == '_ottemplate') {
-				window.setInterval(() => {
-					ipcRenderer.send('screenshot');
-				}, 3000);
+			if (!isPopup && (object.type == '_ottemplate')) {
+				window.clearInterval(this.timeoutScreen);
+				this.timeoutScreen = window.setInterval(() => { ipcRenderer.send('screenshot'); }, 3000);
 			};
 
 			blockStore.setNumbers(rootId);
