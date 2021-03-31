@@ -122,6 +122,7 @@ class Page extends React.Component<Props, {}> {
 		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
 		const askSurvey = Number(Storage.get('askSurvey')) || 0;
 		const days = lastSurveyTime ? 30 : 14;
+		const win = $(window);
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
 			history.push('/auth/pin-check');
@@ -173,11 +174,12 @@ class Page extends React.Component<Props, {}> {
 			}, Constant.delay.popup);
 		};
 
-		$(window).on('resize.page', () => { this.resize(); });
+		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 	};
 	
 	unbind () {
-		$(window).unbind('resize.page');
+		const { isPopup } = this.props;
+		$(window).unbind('resize.page' + (isPopup ? 'Popup' : ''));
 	};
 	
 	event () {

@@ -53,11 +53,11 @@ class PopupPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.popup.page').on('resize.popup.page', () => { this.resize(); });
+		win.unbind('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('resize.popup.page');
+		$(window).unbind('resize.popupPage');
 	};
 
 	resize () {
@@ -70,7 +70,9 @@ class PopupPage extends React.Component<Props, {}> {
 		raf(() => {
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const width = Math.max(960, Math.min(1152, win.width() - 128));
+			const width = Math.max(980, Math.min(1152, win.width() - 128));
+
+			console.log('width', width);
 
 			obj.css({ width: width });
 			position();

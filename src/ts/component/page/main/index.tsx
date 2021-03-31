@@ -308,6 +308,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	resize () {
+		console.log('resize.index');
+
 		const list = this.getList();
 		const size = Constant.size.index;
 		const win = $(window);
