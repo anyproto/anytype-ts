@@ -55,9 +55,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			cn.push('active');
 		};
 
-		console.log('historyPopup.checkBack()', historyPopup.checkBack());
-		console.log('historyPopup.checkForward()', historyPopup.checkForward());
-
 		return (
 			<div id="header" className={cn.join(' ')}>
 				{isPopup ? (

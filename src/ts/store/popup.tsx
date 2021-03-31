@@ -42,9 +42,6 @@ class PopupStore {
 		const item = this.get(id);
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
-
-			console.log('UPDATE', item);
-
 			this.update(id, item.param);
 		};
 	};

@@ -142,13 +142,18 @@ class LinkPreview extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const { linkPreview } = commonStore;
+		if (!linkPreview.element || !linkPreview.element.length) {
+			return;
+		};
+
+		const rect = Util.objectCopy(linkPreview.element.get(0).getBoundingClientRect());
 		
 		let { marks, range, onChange } = linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
-		
+
 		menuStore.open('blockLink', {
 			type: I.MenuType.Horizontal,
-			element: linkPreview.element,
+			rect: { ...rect, y: rect.y + $(window).scrollTop() },
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {

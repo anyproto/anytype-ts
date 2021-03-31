@@ -38,9 +38,6 @@ class History {
 	};
 
 	go (route: string, callBack: (match: any) => void) {
-		console.log(JSON.stringify(this.list, null, 5));
-		console.log(route);
-
 		callBack({ route, params: this.getParams(route) });
 	};
 
