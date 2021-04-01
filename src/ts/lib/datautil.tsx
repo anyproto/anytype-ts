@@ -1,5 +1,5 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, popupStore, menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -310,6 +310,7 @@ class DataUtil {
 		};
 
 		historyPopup.pushMatch(param.data.matchPopup);
+		menuStore.closeAll();
 
 		if (popupStore.isOpen(popupId)) {
 			popupStore.update(popupId, param);
