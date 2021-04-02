@@ -366,7 +366,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 				};
 			};
 
-			DataUtil.pageCreate(e, '', '', details, I.BlockPosition.Bottom, '', (message: any) => {
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', (message: any) => {
 				cb(message.targetId);
 				close();
 			});

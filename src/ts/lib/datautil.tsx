@@ -307,6 +307,10 @@ class DataUtil {
 			case I.ObjectLayout.Relation:
 				param.data.matchPopup.params.action = 'relation';
 				break;
+
+			case I.ObjectLayout.Store:
+				param.data.matchPopup.params.action = 'store';
+				break;
 		};
 
 		historyPopup.pushMatch(param.data.matchPopup);
@@ -319,16 +323,12 @@ class DataUtil {
 		};
 	};
 	
-	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
+	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
 		details = details || {};
-		
-		if (e && e.persist) {
-			e.persist();
-		};
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
-		C.BlockCreatePage(rootId, targetId, details, position, '', (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, templateId, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (message.error.code) {

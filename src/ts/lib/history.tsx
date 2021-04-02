@@ -9,6 +9,8 @@ class History {
 	};
 
 	push (route: string) {
+		console.log('PUSH', route);
+
 		const last = this.list[this.list.length - 1];
 		if (last && (last == route)) {
 			return;

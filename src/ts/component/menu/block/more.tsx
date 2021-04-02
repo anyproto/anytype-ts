@@ -175,7 +175,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const move = { id: 'move', name: 'Move to', arrow: true };
 		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		const template = { id: 'template', name: 'Create a template' };
 
 		let items = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
@@ -188,12 +187,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				print,
 				search,
 				linkRoot,
-				template,
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
+			if (object.type == '_ottemplate') {	
+				items.push({ id: 'createPage', icon: 'template', name: 'Create object' },);
+			} else {
+				items.push({ id: 'createTemplate', icon: 'template', name: 'Create a template' });
+			};
+
 			if (block.canHaveHistory()) {
-				items.push({ id: 'history', name: 'Version history' },);
+				items.push({ id: 'history', name: 'Version history' });
 			};
 			
 			if (object.isArchived) {
@@ -318,9 +322,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'template':
+			case 'createTemplate':
 				C.MakeTemplate(rootId, (message: any) => {
-					console.log(message);
+				});
+				break;
+
+			case 'createPage':
+				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.targetId });
 				});
 				break;
 

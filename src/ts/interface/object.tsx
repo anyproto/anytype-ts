@@ -11,6 +11,8 @@ export enum ObjectLayout {
 	Dashboard	 = 7,
 	Image		 = 9,
 	Database	 = 20,
+
+	Store		 = 100,
 };
 
 export enum RelationType { 

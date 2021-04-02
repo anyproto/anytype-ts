@@ -1,4 +1,4 @@
-import { I, Util, DataUtil, SmileUtil, Storage, focus } from 'ts/lib';
+import { I, Util, DataUtil, SmileUtil, Storage, focus, history as historyPopup } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
@@ -138,7 +138,7 @@ class Keyboard {
 				};
 			};
 			
-			DataUtil.pageCreate(e, rootId, targetId, {}, position, '', (message: any) => {
+			DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
 				if (isMainIndex) {
 					DataUtil.objectOpen({ id: message.targetId });
 				} else {
@@ -158,23 +158,38 @@ class Keyboard {
 
 	back () {
 		const { account } = authStore;
+		const isPopup = popupStore.isOpen('page');
+		
+		if (isPopup) {
+			historyPopup.goBack((match: any) => { 
+				popupStore.updateData('page', { matchPopup: match }); 
+			});
+		} else {
+			const prev = this.history.entries[this.history.index - 1];
+			if (prev) {
+				let route = Util.getRoute(prev.pathname);
+				if ((route.page == 'auth') && account) {
+					return;
+				};
+				if ((route.page == 'main') && !account) {
+					return;
+				};
+			};
 
-		const prev = this.history.entries[this.history.index - 1];
-		if (prev) {
-			let route = Util.getRoute(prev.pathname);
-			if ((route.page == 'auth') && account) {
-				return;
-			};
-			if ((route.page == 'main') && !account) {
-				return;
-			};
+			this.history.goBack();
 		};
-
-		this.history.goBack();
 	};
 
 	forward () {
-		this.history.goForward();
+		const isPopup = popupStore.isOpen('page');
+
+		if (isPopup) {
+			historyPopup.goForward((match: any) => { 
+				popupStore.updateData('page', { matchPopup: match }); 
+			});
+		} else {
+			this.history.goForward();
+		};
 	};
 
 	ctrlByPlatform (e: any) {
