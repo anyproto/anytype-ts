@@ -92,7 +92,7 @@
 
 			.cell.c-select { padding: 4px 8px; }
 			.cell.c-select {
-				.empty { display: inline-block; vertical-align: middle; }
+				.empty { vertical-align: middle; }
 				.tagItem { margin: 3px 6px 3px 0px; } 
 			}
 
@@ -104,6 +104,7 @@
 			}
 
 			.cell.isEditing.c-select {
+				.empty { display: inline-block; }
 				.cellContent { padding: 4px 8px; }
 			}
 			.cell.isEditing.c-select.isStatus {
