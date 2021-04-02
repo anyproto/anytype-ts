@@ -193,15 +193,17 @@ class PopupSettings extends React.Component<Props, State> {
 								readOnly={true} 
 							/>
 						</div>
-						<div className="path">
-							<div className="side left">
-								<b>{translate('popupSettingsMobileQRSubTitle')}</b>
-								<Label text={translate('popupSettingsMobileQRText')} />
+						{!this.onConfirmPhrase ? (
+							<div className="path">
+								<div className="side left">
+									<b>{translate('popupSettingsMobileQRSubTitle')}</b>
+									<Label text={translate('popupSettingsMobileQRText')} />
+								</div>
+								<div className="side right isBlurred" onClick={this.elementUnblur}>
+									<QRCode value={entropy} />
+								</div>
 							</div>
-							<div className="side right isBlurred" onClick={this.elementUnblur}>
-								<QRCode value={entropy} />
-							</div>
-						</div>
+						) : ''}
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
 								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => { this.onConfirmPhrase(); }} />
