@@ -48,6 +48,8 @@
 
 		.items { height: 100%; }
 		.items {
+			.row { white-space: nowrap; }
+
 			.item { display: inline-block; vertical-align: top; position: relative; cursor: pointer; }
 
 			.item {
