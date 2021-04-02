@@ -190,7 +190,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
-			if (object.type == '_ottemplate') {	
+			if (object.type == Constant.typeId.template) {	
 				items.push({ id: 'createPage', icon: 'template', name: 'Create object' },);
 			} else {
 				items.push({ id: 'createTemplate', icon: 'template', name: 'Create a template' });

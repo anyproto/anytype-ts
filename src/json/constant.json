@@ -76,6 +76,10 @@
 		]
 	},
 
+	"typeId": {
+		"template": "_ottemplate"
+	},
+
 	"featuredRelations": [ "type", "creator" ],
 	
 	"size": {

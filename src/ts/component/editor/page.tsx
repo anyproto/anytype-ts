@@ -239,7 +239,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			const object = blockStore.getDetails(rootId, rootId);
-			if (!isPopup && (object.type == '_ottemplate')) {
+			if (!isPopup && (object.type == Constant.typeId.template)) {
 				window.clearInterval(this.timeoutScreen);
 				this.timeoutScreen = window.setInterval(() => { ipcRenderer.send('screenshot'); }, 3000);
 			};
