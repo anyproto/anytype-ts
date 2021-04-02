@@ -10,6 +10,7 @@ import { throttle } from 'lodash';
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
+	isPopup: boolean;
 };
 
 const $ = require('jquery');
@@ -152,7 +153,7 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDragStart (e: any, type: string, ids: string[], component: any) {
-		const { rootId, dataset } = this.props;
+		const { rootId, dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -178,7 +179,7 @@ class DragProvider extends React.Component<Props, {}> {
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));
 
 		$('.colResize.active').removeClass('active');
-		scrollOnMove.onMouseDown(e);
+		scrollOnMove.onMouseDown(e, isPopup);
 
 		if (selection) {
 			selection.set(this.ids);

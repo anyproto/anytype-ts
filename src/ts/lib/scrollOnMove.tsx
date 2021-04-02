@@ -1,4 +1,5 @@
 const raf = require('raf');
+const $ = require('jquery');
 
 const BORDER = 100;
 const THROTTLE = 30;
@@ -10,37 +11,52 @@ class ScrollOnMove {
 	viewportHeight: number = 0;
 	documentWidth: number = 0;
 	documentHeight: number = 0;
-	
-	onMouseDown (e: any) {
-		this.viewportWidth = document.documentElement.clientWidth;
-		this.viewportHeight = document.documentElement.clientHeight;
+	isPopup: boolean = false;
 
-		this.documentWidth = Math.max(
-			document.body.scrollWidth,
-			document.body.offsetWidth,
-			document.body.clientWidth,
-			document.documentElement.scrollWidth,
-			document.documentElement.offsetWidth,
-			document.documentElement.clientWidth
-		);
-		
-		this.documentHeight = Math.max(
-			document.body.scrollHeight,
-			document.body.offsetHeight,
-			document.body.clientHeight,
-			document.documentElement.scrollHeight,
-			document.documentElement.offsetHeight,
-			document.documentElement.clientHeight
-		);
+	onMouseDown (e: any, isPopup: boolean) {
+		this.isPopup = isPopup;
+
+		if (isPopup) {
+			const container = $('#popupPage #innerWrap');
+			const content = container.find('.content');
+
+			this.viewportWidth = container.width();
+			this.viewportHeight = container.height();
+			this.documentWidth = content.width();
+			this.documentHeight = content.height();
+		} else {
+			this.viewportWidth = document.documentElement.clientWidth;
+			this.viewportHeight = document.documentElement.clientHeight;
+
+			this.documentWidth = Math.max(
+				document.body.scrollWidth,
+				document.body.offsetWidth,
+				document.body.clientWidth,
+				document.documentElement.scrollWidth,
+				document.documentElement.offsetWidth,
+				document.documentElement.clientWidth
+			);
+			
+			this.documentHeight = Math.max(
+				document.body.scrollHeight,
+				document.body.offsetHeight,
+				document.body.clientHeight,
+				document.documentElement.scrollHeight,
+				document.documentElement.offsetHeight,
+				document.documentElement.clientHeight
+			);
+		};
+	};
+
+	getContainer () {
+		return this.isPopup ? $('#popupPage #innerWrap').get(0) : window;
 	};
 
 	checkForWindowScroll (param: any) {
 		window.clearTimeout(this.timeout);
 
 		if (this.adjustWindowScroll(param)) {
-			this.timeout = window.setTimeout(() => { 
-				this.checkForWindowScroll(param); 
-			}, THROTTLE);
+			this.timeout = window.setTimeout(() => { this.checkForWindowScroll(param); }, THROTTLE);
 		};
 	};
 
@@ -53,8 +69,21 @@ class ScrollOnMove {
 
 		let maxScrollX = this.documentWidth - this.viewportWidth; 
 		let maxScrollY = this.documentHeight - this.viewportHeight;
-		let currentScrollX = window.pageXOffset;
-		let currentScrollY = window.pageYOffset;
+		let currentScrollX = 0;
+		let currentScrollY = 0;
+		let container;
+
+		if (this.isPopup) {
+			container = $('#popupPage #innerWrap');
+			currentScrollX = container.scrollLeft();
+			currentScrollY = container.scrollTop();
+			container = container.get(0);
+		} else {
+			container = window;
+			currentScrollX = window.pageXOffset;
+			currentScrollY = window.pageYOffset;
+		};
+
 		let canScrollUp = (currentScrollY > 0);
 		let canScrollDown = (currentScrollY < maxScrollY);
 		let canScrollLeft = (currentScrollX > 0 );
@@ -93,7 +122,7 @@ class ScrollOnMove {
 			(nextScrollY !== currentScrollY)
 		) {
 			raf(() => {
-				window.scrollTo(nextScrollX, nextScrollY);
+				container.scrollTo(nextScrollX, nextScrollY);
 			});
 			return true;
 		} else {

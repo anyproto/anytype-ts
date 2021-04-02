@@ -1571,15 +1571,13 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
 		const { isPopup } = this.props;
-		const container = isPopup ? $('#popupPage #innerWrap .content') : $(window);
 
 		focus.set(id, { from: from, to: to });
 		focus.apply();
 
 		if (scroll) {
-			focus.scroll(container);
+			focus.scroll(isPopup);
 		};
-
 		this.resize();
 	};
 

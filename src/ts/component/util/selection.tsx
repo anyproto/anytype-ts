@@ -9,6 +9,7 @@ import { throttle } from 'lodash';
 interface Props {
 	className?: string;
 	rootId: string;
+	isPopup: boolean;
 };
 
 const $ = require('jquery');
@@ -69,7 +70,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
-		win.on('scroll.selection', (e: any) => { this.onScroll(e); });
+		this.getScrollContainer().on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
 	componentWillUnmount () {
@@ -139,17 +140,23 @@ class SelectionProvider extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 	};
 
+	getScrollContainer () {
+		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
+	};
+
 	onScroll (e: any) {
 		if (!this.selecting || !this.moved) {
 			return;
 		};
 
-		const win = $(window);
-		const top = win.scrollTop();
+		const top = this.getScrollContainer().scrollTop();
 		const d = top > this.top ? 1 : -1;
 
 		e.pageX = keyboard.coords.x;
 		e.pageY = keyboard.coords.y + Math.abs(top - this.top) * d;
+
+		console.log('top', top);
+		console.log(e.pageX, e.pageY, Math.abs(top - this.top), d);
 
 		const rect = this.getRect(e);
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
@@ -173,6 +180,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { isPopup } = this.props;
 		const { focused } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -204,7 +212,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
-		scrollOnMove.onMouseDown(e);
+		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -228,7 +236,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.top = $(window).scrollTop();
+		this.top = this.getScrollContainer().scrollTop();
 		this.checkNodes(e);
 		this.drawRect(rect);
 		
@@ -307,12 +315,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	getRect (e: any) {
-		return {
+		const rect = {
 			x: Math.min(this.x, e.pageX),
 			y: Math.min(this.y, e.pageY),
 			width: Math.abs(e.pageX - this.x) - 10,
 			height: Math.abs(e.pageY - this.y) - 10
 		};
+		console.log(rect);
+		return rect;
 	};
 	
 	cacheRect (obj: any) {
@@ -348,7 +358,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 			
 		const cached = this.cacheRect(item);
-
 		if (!cached || !Util.rectsCollide(rect, cached)) {
 			return;
 		};
@@ -467,7 +476,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	unbindKeyboard () {
-		$(window).unbind('keydown.selection keyup.selection scroll.selection');
+		$(window).unbind('keydown.selection keyup.selection');
+		this.getScrollContainer().unbind('scroll.selection');
 	};
 	
 	preventSelect (v: boolean) {

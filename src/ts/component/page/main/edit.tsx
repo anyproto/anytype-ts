@@ -24,8 +24,8 @@ class PageMainEdit extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<SelectionProvider rootId={match.params.id}>
-					<DragProvider {...this.props} rootId={rootId}>
+				<SelectionProvider rootId={match.params.id} isPopup={isPopup}>
+					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
 						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 	
 						<div id="bodyWrapper" className="wrapper">
