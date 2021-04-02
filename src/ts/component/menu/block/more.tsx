@@ -175,6 +175,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const move = { id: 'move', name: 'Move to', arrow: true };
 		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		const template = { id: 'template', name: 'Create a template' };
 
 		let items = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
@@ -187,6 +188,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				print,
 				search,
 				linkRoot,
+				template,
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
@@ -313,6 +315,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if (block.isPage()) {
 						history.push('/main/index');
 					};
+				});
+				break;
+
+			case 'template':
+				C.MakeTemplate(rootId, (message: any) => {
+					console.log(message);
 				});
 				break;
 

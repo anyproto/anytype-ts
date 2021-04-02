@@ -946,6 +946,14 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 	dispatcher.request('objectRelationListAvailable', request, callBack);
 };
 
+const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MakeTemplate.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('makeTemplate', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1062,5 +1070,7 @@ export {
 	ObjectRelationUpdate,
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
+
+	MakeTemplate,
 
 };
