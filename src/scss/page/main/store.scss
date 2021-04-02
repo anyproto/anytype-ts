@@ -22,7 +22,7 @@
 
 	.body { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
 	.body {
-		.mid { text-align: center; padding: 96px 0px 56px 0px; margin: 0px auto; }
+		.mid { text-align: center; padding: 96px 0px 56px 0px; margin: 0px auto; padding-bottom: 0px; }
 		.mid {
 			.title { margin-bottom: 8px; }
 			.label { @include text-paragraph; margin-bottom: 18px; }
@@ -32,7 +32,7 @@
 			}
 		}
 
-		.tabs { white-space: nowrap; margin-bottom: 26px; margin: 0px auto; }
+		.tabs { white-space: nowrap; margin-bottom: 26px; margin: 0px auto; display: none; }
 		.tabs {
 			.item { 
 				display: inline-block; margin-right: 20px; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;

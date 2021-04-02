@@ -324,6 +324,7 @@ class PageMainStore extends React.Component<Props, State> {
 		this.setState({ tab: item.id, loading: true });
 
 		C.BlockOpen(this.getRootId(), (message: any) => {
+			this.getData('library', true);
 			this.setState({ loading: false });
 		});
 	};
