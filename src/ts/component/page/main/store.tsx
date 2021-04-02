@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Util } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -395,7 +395,7 @@ class PageMainStore extends React.Component<Props, State> {
 	getItems () {
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
-		const data = dbStore.getData(rootId, BLOCK_ID).map((it: any) => {
+		const data = Util.objectCopy(dbStore.getData(rootId, BLOCK_ID)).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
 			return it;
 		});
