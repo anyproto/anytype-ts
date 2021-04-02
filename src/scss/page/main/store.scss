@@ -80,7 +80,7 @@
 			.item.template:nth-child(3n + 3) { margin-right: 0px; }
 			.item.template {
 				.img { width: 100%; height: 180px; border-radius: 8px; margin-bottom: 12px; background-color: $colorBlack; }
-				.cover { width: 100%; height: 100%; position: relative; opacity: 0.95; border-radius: inherit; }
+				.cover { width: 100%; height: 100%; position: relative; border-radius: inherit; }
 			}
 
 			.item.relation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; line-height: 48px; }
