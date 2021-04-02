@@ -309,7 +309,7 @@ class PageMainStore extends React.Component<Props, State> {
 
 		let l = 0;
 		if (tab == Tab.Type) l = 2;
-		if (tab == Tab.Template) l = 2;
+		if (tab == Tab.Template) l = 3;
 		if (tab == Tab.Relation) l = 3;
 		return l;
 	};
