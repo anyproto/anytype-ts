@@ -235,7 +235,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				},
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'page') {
-						DataUtil.pageCreate(e, root, '', {}, I.BlockPosition.Bottom, (message: any) => {
+						DataUtil.pageCreate(e, root, '', {}, I.BlockPosition.Bottom, '', (message: any) => {
 							DataUtil.objectOpen({ id: message.targetId });
 						});
 

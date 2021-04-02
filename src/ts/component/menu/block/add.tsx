@@ -409,7 +409,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 							};
 						};
 
-						DataUtil.pageCreate(e, rootId, blockId, details, position, (message: any) => {
+						DataUtil.pageCreate(e, rootId, blockId, details, position, '', (message: any) => {
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 						});
 					};

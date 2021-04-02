@@ -18,6 +18,8 @@
 			.selection { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 			.editor { margin-top: 38px; }
 
+			.editorWrapper { padding-top: 58px; }
+
 			.editorWrapper.isSet { width: calc(100% - 96px); }
 			.editorWrapper.isSet {
 				.block.blockCover {

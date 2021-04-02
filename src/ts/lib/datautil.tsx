@@ -319,7 +319,7 @@ class DataUtil {
 		};
 	};
 	
-	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
+	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
 		details = details || {};
 		
 		if (e && e.persist) {
@@ -328,7 +328,7 @@ class DataUtil {
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
-		C.BlockCreatePage(rootId, targetId, details, position, (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, '', (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (message.error.code) {

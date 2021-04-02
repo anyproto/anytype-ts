@@ -291,8 +291,6 @@ class EditorPage extends React.Component<Props, {}> {
 					if (message.error.code) {
 						return;
 					};
-
-					DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash, 0, -0.5);
 				});
 				break;
 		};

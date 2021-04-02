@@ -138,7 +138,7 @@ class Keyboard {
 				};
 			};
 			
-			DataUtil.pageCreate(e, rootId, targetId, {}, position, (message: any) => {
+			DataUtil.pageCreate(e, rootId, targetId, {}, position, '', (message: any) => {
 				if (isMainIndex) {
 					DataUtil.objectOpen({ id: message.targetId });
 				} else {
