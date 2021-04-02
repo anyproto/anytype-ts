@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util, Storage } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -219,7 +219,7 @@ class PageMainStore extends React.Component<Props, State> {
 				<div className="head">
 					<div className="tabs">
 						{Tabs.map((item: any, i: number) => (
-							<div key={item.id} className={[ 'item', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(e, item); }}>
+							<div key={item.id} className={[ 'item', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
 								{item.name}
 							</div>
 						))}
@@ -266,7 +266,7 @@ class PageMainStore extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.onTab(null, Tabs[0]);
+		this.onTab(Storage.get('storeTab') || Tabs[0].id);
 	};
 
 	componentDidUpdate () {
@@ -314,14 +314,11 @@ class PageMainStore extends React.Component<Props, State> {
 		return l;
 	};
 
-	onTab (e: any, item: any) {
-		const tabItem = Tabs.find((it: any) => { return it.id == item.id; });
-		if (!tabItem) {
-			return;
-		};
+	onTab (id: Tab) {
+		Storage.set('storeTab', id);
 
-		this.state.tab = tabItem.id;
-		this.setState({ tab: item.id, loading: true });
+		this.state.tab = id;
+		this.setState({ tab: id, loading: true });
 
 		C.BlockOpen(this.getRootId(), (message: any) => {
 			this.getData('library', true);

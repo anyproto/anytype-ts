@@ -15,6 +15,7 @@
 		.sides { display: flex; }
 
 		.info { padding: 6px 2px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; }
+		.info.noValue { width: 100%; }
 		.info {
 			.input { width: calc(100% - 24px); height: 20px; line-height: 20px; }
 			.name { 
