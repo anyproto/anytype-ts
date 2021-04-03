@@ -35,6 +35,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	rects: Map<string, any> = new Map();
 	selecting: boolean = false;
 	top: number = 0;
+	containerOffset = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -57,6 +58,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
+				<div id="selection-rect" />
 				{children}
 			</div>
 		);
@@ -155,10 +157,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		e.pageX = keyboard.coords.x;
 		e.pageY = keyboard.coords.y + Math.abs(top - this.top) * d;
 
-		console.log('top', top);
-		console.log(e.pageX, e.pageY, Math.abs(top - this.top), d);
-
-		const rect = this.getRect(e);
+		const rect = this.getRect(e.pageX, e.pageY);
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
@@ -184,7 +183,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = $('#selection-rect');
+		const el = node.find('#selection-rect');	
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
@@ -195,6 +194,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = focused;
 		this.selecting = true;
+		this.top = this.getScrollContainer().scrollTop();
+
+		if (isPopup) {
+			this.containerOffset = $('#popupPage #innerWrap').offset();
+			this.x -= this.containerOffset.left;
+			this.y -= this.containerOffset.top - this.top;
+		};
 
 		keyboard.disablePreview(true);
 		
@@ -231,7 +237,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const rect = this.getRect(e);
+		const rect = this.getRect(e.pageX, e.pageY);
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
@@ -307,21 +313,31 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
-		$('#selection-rect').css({ 
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#selection-rect');
+
+		el.css({ 
 			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
 			width: rect.width - 10, 
 			height: rect.height - 10,
 		});
 	};
 	
-	getRect (e: any) {
-		const rect = {
-			x: Math.min(this.x, e.pageX),
-			y: Math.min(this.y, e.pageY),
-			width: Math.abs(e.pageX - this.x) - 10,
-			height: Math.abs(e.pageY - this.y) - 10
+	getRect (ex: number, ey: number) {
+		const { isPopup } = this.props;
+		
+		if (isPopup) {
+			const top = this.getScrollContainer().scrollTop();
+			ex -= this.containerOffset.left;
+			ey -= this.containerOffset.top - top;
 		};
-		console.log(rect);
+
+		const rect = {
+			x: Math.min(this.x, ex),
+			y: Math.min(this.y, ey),
+			width: Math.abs(ex - this.x) - 10,
+			height: Math.abs(ey - this.y) - 10
+		};
 		return rect;
 	};
 	
@@ -336,15 +352,19 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return cached;
 		};
 		
+		const { isPopup } = this.props;
 		const offset = obj.offset();
 		const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 		
-		cached = {
-			x: offset.left,
-			y: offset.top,
-			width: rect.width,
-			height: rect.height,
+		let x = offset.left;
+		let y = offset.top;
+
+		if (isPopup) {
+			x -= this.containerOffset.top;
+			y -= this.containerOffset.left;
 		};
+		
+		cached = { x: x, y: y, width: rect.width, height: rect.height };
 
 		this.rects.set(id, cached);
 		return cached;
@@ -393,13 +413,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const { focused, range } = focus;
-		const rect = this.getRect(e);
+		const rect = this.getRect(e.pageX, e.pageY);
 		
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
 		};
 		
-		this.nodes.each((i: number, item: any) => { this.checkEachNode(e, rect, $(item)); });
+		this.nodes.each((i: number, item: any) => { 
+			this.checkEachNode(e, rect, $(item)); 
+		});
 		
 		const selected = $('.selectable.isSelected');
 		const length = selected.length;
@@ -450,8 +472,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		$('#selection-rect').hide();
+		const el = node.find('#selection-rect');
 		
+		el.hide();
 		this.unbindMouse();
 	};
 	

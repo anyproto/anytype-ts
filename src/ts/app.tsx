@@ -249,8 +249,6 @@ class App extends React.Component<Props, State> {
 							</div>
 						</div>
 
-						<div id="selection-rect" />
-							
 						{Routes.map((item: RouteElement, i: number) => (
 							<Route path={item.path} exact={true} key={i} component={Page} />
 						))}
