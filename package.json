@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.17.42-alpha",
+	"version": "0.17.41-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -217,7 +217,6 @@
 			"node_modules/electron-updater",
 			"node_modules/electron-util",
 			"node_modules/electron-window-state",
-			"node_modules/esprima",
 			"node_modules/ext-list",
 			"node_modules/ext-name",
 			"node_modules/file-type",

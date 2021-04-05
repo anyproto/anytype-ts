@@ -566,6 +566,7 @@ function autoUpdaterInit () {
 	autoUpdater.logger = log;
 	autoUpdater.logger.transports.file.level = 'debug';
 	autoUpdater.autoDownload = false;
+	autoUpdater.autoInstallOnAppQuit = false;
 	autoUpdater.channel = config.channel;
 
 	clearTimeout(timeoutUpdate);
