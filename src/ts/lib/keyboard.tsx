@@ -7,7 +7,10 @@ const KeyCode = require('json/key.json');
 class Keyboard {
 	
 	history: any = null;
-	coords: any = { x: 0, y: 0 };
+	mouse: any = { 
+		page: { x: 0, y: 0 },
+		client: { x: 0, y: 0 },
+	};
 	timeoutPin: number = 0;
 	pressed: string[] = [];
 	match: any = {};
@@ -268,8 +271,11 @@ class Keyboard {
 		this.isPreviewDisabled = v;
 	};
 	
-	setCoords (x: number, y: number) {
-		this.coords = { x: x, y: y };
+	setCoords (e: any) {
+		this.mouse = {
+			page: { x: e.pageX, y: e.pageY },
+			client: { x: e.clientX, y: e.clientY },
+		};
 	};
 	
 	isArrow (k: string): boolean {

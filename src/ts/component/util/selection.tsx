@@ -151,13 +151,16 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const top = this.getScrollContainer().scrollTop();
 		const d = top > this.top ? 1 : -1;
 
-		e.pageX = keyboard.coords.x;
-		e.pageY = keyboard.coords.y + Math.abs(top - this.top) * d;
+		let { x, y } = keyboard.mouse.page;
+		if (!isPopup) {
+			y += Math.abs(top - this.top) * d;
+		};
 
-		const rect = this.getRect(e.pageX, e.pageY);
+		const rect = this.getRect(x, y);
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
@@ -165,7 +168,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.checkNodes(e);
 		this.drawRect(rect);
 
-		scrollOnMove.onMouseMove(e);
+		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
 		this.moved = true;
 	};
 	
@@ -246,7 +249,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.checkNodes(e);
 		this.drawRect(rect);
 		
-		scrollOnMove.onMouseMove(e);
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		this.moved = true;
 	};
 	
@@ -323,20 +326,20 @@ class SelectionProvider extends React.Component<Props, {}> {
 		});
 	};
 	
-	getRect (ex: number, ey: number) {
+	getRect (x: number, y: number) {
 		const { isPopup } = this.props;
 		
 		if (isPopup) {
 			const top = this.getScrollContainer().scrollTop();
-			ex -= this.containerOffset.left;
-			ey -= this.containerOffset.top - top;
+			x -= this.containerOffset.left;
+			y -= this.containerOffset.top - top;
 		};
 
 		const rect = {
-			x: Math.min(this.x, ex),
-			y: Math.min(this.y, ey),
-			width: Math.abs(ex - this.x) - 10,
-			height: Math.abs(ey - this.y) - 10
+			x: Math.min(this.x, x),
+			y: Math.min(this.y, y),
+			width: Math.abs(x - this.x) - 10,
+			height: Math.abs(y - this.y) - 10
 		};
 		return rect;
 	};
@@ -360,10 +363,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 		let y = offset.top;
 
 		if (isPopup) {
-			x -= this.containerOffset.top;
-			y -= this.containerOffset.left;
+			const top = this.getScrollContainer().scrollTop();
+			x -= this.containerOffset.left;
+			y -= this.containerOffset.top - top;
 		};
-		
+
 		cached = { x: x, y: y, width: rect.width, height: rect.height };
 
 		this.rects.set(id, cached);

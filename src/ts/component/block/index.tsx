@@ -371,7 +371,7 @@ class Block extends React.Component<Props, {}> {
 		const elementId = `#button-block-menu-${block.id}`;
 		const element = $(elementId);
 		const offset = element.offset();
-		const rect = { x: offset.left, y: keyboard.coords.y, width: element.width(), height: 0 };
+		const rect = { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
 
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),

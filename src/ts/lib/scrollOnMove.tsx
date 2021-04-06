@@ -2,7 +2,7 @@ const raf = require('raf');
 const $ = require('jquery');
 
 const BORDER = 100;
-const THROTTLE = 20;
+const THROTTLE = 30;
 
 class ScrollOnMove {
 	
@@ -53,7 +53,7 @@ class ScrollOnMove {
 	};
 
 	checkForWindowScroll (param: any) {
-		window.clearTimeout(this.timeout);
+		this.clear();
 
 		if (this.adjustWindowScroll(param)) {
 			this.timeout = window.setTimeout(() => { this.checkForWindowScroll(param); }, THROTTLE);
@@ -130,28 +130,25 @@ class ScrollOnMove {
 		};
 	};
 	
-	onMouseMove (e: any) {
-		let viewportX = e.clientX;
-		let viewportY = e.clientY;
-	
+	onMouseMove (x: number, y: number) {
 		let edgeTop = BORDER;
 		let edgeLeft = BORDER;
 		let edgeBottom = this.viewportHeight - BORDER;
 		let edgeRight = this.viewportWidth - BORDER;
 	
-		let isInLeftEdge = (viewportX < edgeLeft);
-		let isInRightEdge = (viewportX > edgeRight);
-		let isInTopEdge = (viewportY < edgeTop );
-		let isInBottomEdge = (viewportY > edgeBottom);
+		let isInLeftEdge = x < edgeLeft;
+		let isInRightEdge = x > edgeRight;
+		let isInTopEdge = y < edgeTop;
+		let isInBottomEdge = y > edgeBottom;
 	
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
-			window.clearTimeout(this.timeout);
+			this.clear();
 			return;
 		};
 	
 		this.checkForWindowScroll({
-			viewportX:		 viewportX, 
-			viewportY:		 viewportY,
+			viewportX:		 x, 
+			viewportY:		 y,
 			isInLeftEdge:	 isInLeftEdge, 
 			isInRightEdge:	 isInRightEdge, 
 			isInTopEdge:	 isInTopEdge, 
@@ -164,6 +161,10 @@ class ScrollOnMove {
 	};
 	
 	onMouseUp (e: any) {
+		this.clear();
+	};
+
+	clear () {
 		window.clearTimeout(this.timeout);
 	};
 	

@@ -311,7 +311,7 @@ class DragProvider extends React.Component<Props, {}> {
 			}, 10);
 		};
 
-		scrollOnMove.onMouseMove(e);
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
 	onDragEnd (e: any) {
