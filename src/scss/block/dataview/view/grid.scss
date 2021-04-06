@@ -31,6 +31,9 @@
 			tbody { border-top: 1px solid #e0ded2; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+			.cellContent {
+				.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
+			}
 
 			.cell.c-object, .cell.c-file { padding-right: 0px; }
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {

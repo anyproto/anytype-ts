@@ -243,6 +243,8 @@ class Menu extends React.Component<Props, {}> {
 
 			if (noAnimation) {
 				menu.addClass('noAnimation');
+			} else {
+				window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);
 			};
 
 			menu.addClass('show');
