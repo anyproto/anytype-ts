@@ -9,7 +9,7 @@ export enum ObjectLayout {
 	Relation	 = 5,
 	File		 = 6,
 	Dashboard	 = 7,
-	Image		 = 9,
+	Image		 = 8,
 	Database	 = 20,
 
 	Store		 = 100,

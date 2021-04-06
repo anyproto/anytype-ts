@@ -189,12 +189,17 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDragMove (e: any) {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 
 		const ex = e.pageX;
-		const ey = e.pageY;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
+		const top = this.getScrollContainer().scrollTop();
+
+		let ey = e.pageY;
+		if (isPopup) {
+			ey += top;
+		};
 
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
@@ -204,11 +209,15 @@ class DragProvider extends React.Component<Props, {}> {
 		};
 
 		this.objectData.forEach((value: any) => {
-			let { x, y, width, height, dropType, index } = value;
+			let { x, y, width, height, dropType } = value;
 
 			if (dropType == I.DragItem.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
+			};
+
+			if (isPopup) {
+				y += top;
 			};
 
 			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
@@ -342,6 +351,8 @@ class DragProvider extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const element = map[targetId];
 
+		console.log(target, element);
+
 		if (!target || !element) {
 			return;
 		};
@@ -393,6 +404,10 @@ class DragProvider extends React.Component<Props, {}> {
 		for (let id of this.ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
+	};
+
+	getScrollContainer () {
+		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getParentIds (id: string, parentIds: string[]) {
