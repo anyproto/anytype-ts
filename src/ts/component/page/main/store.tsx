@@ -315,6 +315,10 @@ class PageMainStore extends React.Component<Props, State> {
 	};
 
 	onTab (id: Tab) {
+		if (this.state.tab == id) {
+			return;
+		};
+
 		Storage.set('storeTab', id);
 
 		this.state.tab = id;
