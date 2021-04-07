@@ -16,6 +16,7 @@ interface State {
 };
 
 enum Tab {
+	None = '',
 	Type = 'type',
 	Template = 'template',
 	Relation = 'relation',
@@ -55,7 +56,7 @@ const BLOCK_ID = 'dataview';
 class PageMainStore extends React.Component<Props, State> {
 
 	state = {
-		tab: Tab.Type,
+		tab: '',
 		loading: false,
 	};
 
