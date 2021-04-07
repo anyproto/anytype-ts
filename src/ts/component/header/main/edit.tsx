@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, focus } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, focus, history as historyPopup } from 'ts/lib';
 import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -18,7 +18,7 @@ const Constant = require('json/constant.json');
 @observer
 class HeaderMainEdit extends React.Component<Props, {}> {
 
-	isHidden: boolean = false;
+	timeout: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -59,9 +59,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			<div id="header" className={cn.join(' ')}>
 				{isPopup ? (
 					<div className="side left">
-						<div className="item" onClick={this.onOpen}>
+						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+
+						<div className="btn" onClick={this.onOpen}>
 							<Icon className="expand" />
-							Open as page
+							<div className="txt">Open as page</div>
 						</div>
 					</div>
 				) : (
@@ -107,15 +110,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	init () {
-		if (!this.isHidden) {
-			const node = $(ReactDOM.findDOMNode(this));
-			node.addClass('show');
+		const node = $(ReactDOM.findDOMNode(this));
+		node.addClass('show');
 
-			window.setTimeout(() => {
-				this.isHidden = true;
-				node.removeClass('show');
-			}, Constant.delay.header);
-		};
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { node.removeClass('show'); }, Constant.delay.header);
 	};
 
 	onHome (e: any) {
@@ -123,13 +122,29 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
+		const { isPopup, history } = this.props;
+
 		crumbs.restore(I.CrumbsType.Page);
-		this.props.history.goBack();
+		if (isPopup) {
+			historyPopup.goBack((match: any) => { 
+				popupStore.updateData('page', { matchPopup: match }); 
+			});
+		} else {
+			history.goBack();
+		};
 	};
 	
 	onForward (e: any) {
+		const { isPopup, history } = this.props;
+
 		crumbs.restore(I.CrumbsType.Page);
-		this.props.history.goForward();
+		if (isPopup) {
+			historyPopup.goForward((match: any) => { 
+				popupStore.updateData('page', { matchPopup: match }); 
+			});
+		} else {
+			history.goForward();
+		};
 	};
 
 	onOpen () {
@@ -191,7 +206,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(e, rootId, targetId, {}, position, (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
 			DataUtil.objectOpen({ id: message.targetId });
 		});
 	};
@@ -295,7 +310,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 
 	onPathOut () {
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 	};
 
 	getContainer () {

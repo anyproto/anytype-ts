@@ -47,6 +47,7 @@ import 'scss/page/main/history.scss';
 import 'scss/page/main/set.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
+import 'scss/page/main/store.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -80,9 +81,7 @@ import 'scss/popup/help.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
-import 'scss/popup/store.scss';
 import 'scss/popup/page.scss';
-import 'scss/popup/editor/page.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -250,8 +249,6 @@ class App extends React.Component<Props, State> {
 							</div>
 						</div>
 
-						<div id="selection-rect" />
-							
 						{Routes.map((item: RouteElement, i: number) => (
 							<Route path={item.path} exact={true} key={i} component={Page} />
 						))}
@@ -494,11 +491,11 @@ class App extends React.Component<Props, State> {
 		win.on('mousemove.common', throttle((e: any) => {
 			keyboard.initPinCheck();
 			keyboard.disableMouse(false);
-			keyboard.setCoords(e.pageX, e.pageY);
+			keyboard.setCoords(e);
 		}, THROTTLE));
 		
 		win.on('blur.common', () => {
-			Util.tooltipHide();
+			Util.tooltipHide(true);
 			Util.linkPreviewHide(true);
 		});
 	};

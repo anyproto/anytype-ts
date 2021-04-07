@@ -428,8 +428,14 @@ class PopupSearch extends React.Component<Props, State> {
 	load () {
 		const { config } = commonStore;
 		const { filter } = this.state;
+		
+		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image ];
+		if (!config.allowDataview) {
+			skipLayouts = skipLayouts.concat(I.ObjectLayout.Human, I.ObjectLayout.Set, I.ObjectLayout.ObjectType, I.ObjectLayout.Relation);
+		};
+
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },

@@ -41,7 +41,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				{!relation ? 
 				(
 					<div className="sides">
-						<div className="info">
+						<div className="info noValue">
 							<Icon key="icon-default" className="relation default" />
 							<Input 
 								id="input"

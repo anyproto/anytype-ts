@@ -56,7 +56,7 @@ class Sync extends React.Component<Props, {}> {
 	};
 	
 	onMouseLeave (e: any) {
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 	};
 	
 };

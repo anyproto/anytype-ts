@@ -22,6 +22,7 @@ import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
 import PageMainType from './main/type';
 import PageMainRelation from './main/relation';
+import PageMainStore from './main/store';
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -46,6 +47,7 @@ const Components: any = {
 	'main/set':				 PageMainSet,
 	'main/type':			 PageMainType,
 	'main/relation':		 PageMainRelation,
+	'main/store':			 PageMainStore,
 };
 
 interface Props extends RouteComponentProps<any> {
@@ -62,6 +64,7 @@ class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const match = this.getMatch();
+
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 		
@@ -119,6 +122,7 @@ class Page extends React.Component<Props, {}> {
 		const lastSurveyCanceled = Number(Storage.get('lastSurveyCanceled')) || 0;
 		const askSurvey = Number(Storage.get('askSurvey')) || 0;
 		const days = lastSurveyTime ? 30 : 14;
+		const win = $(window);
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
 			history.push('/auth/pin-check');
@@ -170,11 +174,12 @@ class Page extends React.Component<Props, {}> {
 			}, Constant.delay.popup);
 		};
 
-		$(window).on('resize.page', () => { this.resize(); });
+		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 	};
 	
 	unbind () {
-		$(window).unbind('resize.page');
+		const { isPopup } = this.props;
+		$(window).unbind('resize.page' + (isPopup ? 'Popup' : ''));
 	};
 	
 	event () {

@@ -68,7 +68,7 @@ class Focus {
 		return this;
 	};
 	
-	scroll (container: any, id?: string) {
+	scroll (isPopup: boolean, id?: string) {
 		id = String(id || this.focused || '');
 		if (!id) {
 			return;
@@ -79,17 +79,24 @@ class Focus {
 			return;
 		};
 
-		const wh = container.height();
-		const y = node.offset().top;
-		const offset = Constant.size.lastBlock + Constant.size.header;
+		const container = isPopup ? $('#popupPage #innerWrap') : $(window);
+		const h = container.height();
+		const o = Constant.size.lastBlock + Constant.size.header;
 		const st = container.scrollTop();
 
-		if ((y >= st) && (y <= st + wh - offset)) {
+		let y = 0;
+		if (isPopup) {
+			y = node.offset().top - container.offset().top + st;
+		} else {
+			y = node.offset().top;
+		};
+
+		if ((y >= st) && (y <= st + h - o)) {
 			return;
 		};
 
-		if (y >= wh - offset) {
-			container.scrollTop(y - wh + offset);
+		if (y >= h - o) {
+			container.scrollTop(y - h + o);
 		};
 	};
 	

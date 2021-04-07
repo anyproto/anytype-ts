@@ -243,6 +243,8 @@ class Menu extends React.Component<Props, {}> {
 
 			if (noAnimation) {
 				menu.addClass('noAnimation');
+			} else {
+				window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);
 			};
 
 			menu.addClass('show');
@@ -376,7 +378,7 @@ class Menu extends React.Component<Props, {}> {
 			menu.css(css);
 			
 			if (isSub && (type == I.MenuType.Vertical)) {
-				const coords = Util.objectCopy(keyboard.coords);
+				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
 
 				if (isFixed) {

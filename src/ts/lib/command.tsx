@@ -232,7 +232,7 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
-const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.Block.CreatePage.Request();
@@ -241,6 +241,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	request.setTargetid(targetId);
 	request.setPosition(position);
 	request.setDetails(Encode.encodeStruct(details));
+	request.setTemplateid(templateId);
 
 	dispatcher.request('blockCreatePage', request, callBack);
 };
@@ -946,6 +947,14 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 	dispatcher.request('objectRelationListAvailable', request, callBack);
 };
 
+const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MakeTemplate.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('makeTemplate', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1062,5 +1071,7 @@ export {
 	ObjectRelationUpdate,
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
+
+	MakeTemplate,
 
 };

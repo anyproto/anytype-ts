@@ -12,11 +12,9 @@ import PopupSearch from './search';
 import PopupHelp from './help';
 import PopupPrompt from './prompt';
 import PopupPreview from './preview';
-import PopupEditorPage from './editor/page';
 import PopupFeedback from './feedback';
 import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
-import PopupStore from './store';
 import PopupPage from './page';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -49,10 +47,8 @@ class Popup extends React.Component<Props, {}> {
 			prompt: PopupPrompt,
 			help: PopupHelp,
 			preview: PopupPreview,
-			editorPage: PopupEditorPage,
 			feedback: PopupFeedback,
 			shortcut: PopupShortcut,
-			store: PopupStore,
 			page: PopupPage,
 		};
 		
@@ -134,6 +130,9 @@ class Popup extends React.Component<Props, {}> {
 	};
 
 	close () {
+		Util.linkPreviewHide(true);
+		Util.tooltipHide(true);
+
 		menuStore.closeAll();
 		popupStore.close(this.props.id);
 	};

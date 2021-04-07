@@ -190,8 +190,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				//{ id: 'export', icon: 'export', name: 'Export to web' },
 			];
 
+			if (object.type == Constant.typeId.template) {	
+				items.push({ id: 'createPage', icon: 'template', name: 'Create object' },);
+			} else {
+				items.push({ id: 'createTemplate', icon: 'template', name: 'Create a template' });
+			};
+
 			if (block.canHaveHistory()) {
-				items.push({ id: 'history', name: 'Version history' },);
+				items.push({ id: 'history', name: 'Version history' });
 			};
 			
 			if (object.isArchived) {
@@ -316,6 +322,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
+			case 'createTemplate':
+				C.MakeTemplate(rootId, (message: any) => {
+				});
+				break;
+
+			case 'createPage':
+				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.targetId });
+				});
+				break;
+
 			case 'removePage':
 				C.BlockListDeletePage([ blockId ], (message: any) => {
 					if (block.isPage()) {
@@ -408,8 +425,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'type':
 				menuId = 'searchObject';
+				menuParam.vertical = I.MenuDirection.Bottom;
 				menuParam.className = [ param.className, 'single' ].join(' ');
-				menuParam.fixedY = param.offsetY;
+				menuParam.offsetY = -36;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',

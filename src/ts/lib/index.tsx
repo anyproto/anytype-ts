@@ -10,6 +10,7 @@ import { Encode, Decode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
 import { analytics } from './analytics';
 import { crumbs } from './crumbs';
+import { history } from './history';
 import * as I from 'ts/interface';
 import * as M from 'ts/model';
 import * as C from './command';
@@ -50,6 +51,7 @@ export {
 	translate,
 	analytics,
 	crumbs,
+	history,
 	scrollOnMove,
 	Encode,
 	Decode,

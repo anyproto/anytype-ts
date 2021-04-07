@@ -440,6 +440,12 @@ const ObjectRelationOptionAdd = (response: any) => {
 	};
 };
 
+const MakeTemplate = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -548,5 +554,7 @@ export {
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
+
+	MakeTemplate,
 
 };

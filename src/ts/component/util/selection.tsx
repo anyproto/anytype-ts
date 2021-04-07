@@ -9,6 +9,7 @@ import { throttle } from 'lodash';
 interface Props {
 	className?: string;
 	rootId: string;
+	isPopup: boolean;
 };
 
 const $ = require('jquery');
@@ -34,6 +35,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	rects: Map<string, any> = new Map();
 	selecting: boolean = false;
 	top: number = 0;
+	containerOffset = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -56,6 +58,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
+				<div id="selection-rect" />
 				{children}
 			</div>
 		);
@@ -69,7 +72,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
 		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
-		win.on('scroll.selection', (e: any) => { this.onScroll(e); });
+		this.getScrollContainer().on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
 	componentWillUnmount () {
@@ -139,19 +142,25 @@ class SelectionProvider extends React.Component<Props, {}> {
 	onKeyUp (e: any) {
 	};
 
+	getScrollContainer () {
+		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
+	};
+
 	onScroll (e: any) {
 		if (!this.selecting || !this.moved) {
 			return;
 		};
 
-		const win = $(window);
-		const top = win.scrollTop();
+		const { isPopup } = this.props;
+		const top = this.getScrollContainer().scrollTop();
 		const d = top > this.top ? 1 : -1;
 
-		e.pageX = keyboard.coords.x;
-		e.pageY = keyboard.coords.y + Math.abs(top - this.top) * d;
+		let { x, y } = keyboard.mouse.page;
+		if (!isPopup) {
+			y += Math.abs(top - this.top) * d;
+		};
 
-		const rect = this.getRect(e);
+		const rect = this.getRect(x, y);
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
@@ -159,7 +168,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.checkNodes(e);
 		this.drawRect(rect);
 
-		scrollOnMove.onMouseMove(e);
+		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
 		this.moved = true;
 	};
 	
@@ -173,10 +182,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const { isPopup } = this.props;
 		const { focused } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = $('#selection-rect');
+		const el = node.find('#selection-rect');	
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
@@ -187,6 +197,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 		this.lastIds = [];
 		this.focused = focused;
 		this.selecting = true;
+		this.top = this.getScrollContainer().scrollTop();
+
+		if (isPopup) {
+			this.containerOffset = $('#popupPage #innerWrap').offset();
+			this.x -= this.containerOffset.left;
+			this.y -= this.containerOffset.top - this.top;
+		};
 
 		keyboard.disablePreview(true);
 		
@@ -204,7 +221,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			};
 		};
 		
-		scrollOnMove.onMouseDown(e);
+		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
 		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
@@ -223,16 +240,16 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const rect = this.getRect(e);
+		const rect = this.getRect(e.pageX, e.pageY);
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
 
-		this.top = $(window).scrollTop();
+		this.top = this.getScrollContainer().scrollTop();
 		this.checkNodes(e);
 		this.drawRect(rect);
 		
-		scrollOnMove.onMouseMove(e);
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 		this.moved = true;
 	};
 	
@@ -299,20 +316,32 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
-		$('#selection-rect').css({ 
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#selection-rect');
+
+		el.css({ 
 			transform: `translate3d(${rect.x + 10}px, ${rect.y + 10}px, 0px)`,
 			width: rect.width - 10, 
 			height: rect.height - 10,
 		});
 	};
 	
-	getRect (e: any) {
-		return {
-			x: Math.min(this.x, e.pageX),
-			y: Math.min(this.y, e.pageY),
-			width: Math.abs(e.pageX - this.x) - 10,
-			height: Math.abs(e.pageY - this.y) - 10
+	getRect (x: number, y: number) {
+		const { isPopup } = this.props;
+		
+		if (isPopup) {
+			const top = this.getScrollContainer().scrollTop();
+			x -= this.containerOffset.left;
+			y -= this.containerOffset.top - top;
 		};
+
+		const rect = {
+			x: Math.min(this.x, x),
+			y: Math.min(this.y, y),
+			width: Math.abs(x - this.x) - 10,
+			height: Math.abs(y - this.y) - 10
+		};
+		return rect;
 	};
 	
 	cacheRect (obj: any) {
@@ -326,15 +355,20 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return cached;
 		};
 		
+		const { isPopup } = this.props;
 		const offset = obj.offset();
 		const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 		
-		cached = {
-			x: offset.left,
-			y: offset.top,
-			width: rect.width,
-			height: rect.height,
+		let x = offset.left;
+		let y = offset.top;
+
+		if (isPopup) {
+			const top = this.getScrollContainer().scrollTop();
+			x -= this.containerOffset.left;
+			y -= this.containerOffset.top - top;
 		};
+
+		cached = { x: x, y: y, width: rect.width, height: rect.height };
 
 		this.rects.set(id, cached);
 		return cached;
@@ -348,7 +382,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 			
 		const cached = this.cacheRect(item);
-
 		if (!cached || !Util.rectsCollide(rect, cached)) {
 			return;
 		};
@@ -384,13 +417,15 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const { focused, range } = focus;
-		const rect = this.getRect(e);
+		const rect = this.getRect(e.pageX, e.pageY);
 		
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
 		};
 		
-		this.nodes.each((i: number, item: any) => { this.checkEachNode(e, rect, $(item)); });
+		this.nodes.each((i: number, item: any) => { 
+			this.checkEachNode(e, rect, $(item)); 
+		});
 		
 		const selected = $('.selectable.isSelected');
 		const length = selected.length;
@@ -441,8 +476,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		$('#selection-rect').hide();
+		const el = node.find('#selection-rect');
 		
+		el.hide();
 		this.unbindMouse();
 	};
 	
@@ -467,7 +503,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	unbindKeyboard () {
-		$(window).unbind('keydown.selection keyup.selection scroll.selection');
+		$(window).unbind('keydown.selection keyup.selection');
+		this.getScrollContainer().unbind('scroll.selection');
 	};
 	
 	preventSelect (v: boolean) {

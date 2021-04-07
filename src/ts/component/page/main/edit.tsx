@@ -3,7 +3,10 @@ import { RouteComponentProps } from 'react-router';
 import { Storage } from 'ts/lib';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	rootId: string;
+	isPopup?: boolean;
+};
 
 class PageMainEdit extends React.Component<Props, {}> {
 	
@@ -16,17 +19,17 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { history, location, match } = this.props;
-		const rootId = match.params.id;
+		const { history, location, match, isPopup } = this.props;
+		const rootId = this.getRootId();
 		
 		return (
 			<div>
-				<SelectionProvider rootId={match.params.id}>
-					<DragProvider {...this.props} rootId={rootId}>
-						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={false} />
+				<SelectionProvider rootId={match.params.id} isPopup={isPopup}>
+					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
+						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 	
-						<div className="wrapper">
-							<EditorPage key="editorPage" {...this.props} isPopup={false} rootId={rootId} onOpen={this.onOpen} />
+						<div id="bodyWrapper" className="wrapper">
+							<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
 						</div>
 					</DragProvider>
 				</SelectionProvider>
@@ -40,6 +43,11 @@ class PageMainEdit extends React.Component<Props, {}> {
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();
 		};
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
 	};
 	
 };

@@ -29,7 +29,8 @@
 	"delay": {
 		"menu": 60,
 		"popup": 60,
-		"header": 2000
+		"header": 2000,
+		"tooltip": 200
 	},
 	
 	"placeHolder": {
@@ -73,6 +74,10 @@
 		"relationEdit": [
 			"dataviewRelationType", "searchObject", "select", "dataviewDate"
 		]
+	},
+
+	"typeId": {
+		"template": "_ottemplate"
 	},
 
 	"featuredRelations": [ "type", "creator" ],

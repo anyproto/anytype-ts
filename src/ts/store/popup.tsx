@@ -36,6 +36,15 @@ class PopupStore {
 		
 		set(item, { param: param });
 	};
+
+	@action
+	updateData (id: string, data: any) {
+		const item = this.get(id);
+		if (item) {
+			item.param.data = Object.assign(item.param.data, data);
+			this.update(id, item.param);
+		};
+	};
 	
 	isOpen (id?: string): boolean {
 		if (!id) {

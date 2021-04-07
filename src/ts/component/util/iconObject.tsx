@@ -36,7 +36,7 @@ const Size = {
 	18: 18,
 	20: 18,
 	24: 20,
-	26: 20,
+	26: 22,
 	28: 22,
 	32: 28,
 	40: 24,
@@ -305,7 +305,7 @@ class IconObject extends React.Component<Props, {}> {
 	onMouseLeave (e: any) {
 		const { onMouseLeave } = this.props;
 		
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);

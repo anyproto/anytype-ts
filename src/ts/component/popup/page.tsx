@@ -1,30 +1,34 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, history as historyPopup } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 import { Page } from 'ts/component';
-import { commonStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const raf = require('raf');
 
+@observer
 class PopupPage extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	ref: any = null;
 
-	constructor (props: any) {
-		super(props);
-	};
-	
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, matchPopup } = data;
-		
+		const { matchPopup } = data;
+
 		return (
 			<div id="wrap">
-				<Page {...this.props} rootId={rootId} isPopup={true} matchPopup={matchPopup} />
+				<Page 
+					ref={(ref: any) => { this.ref = ref; }} 
+					{...this.props} 
+					rootId={matchPopup.params.id} 
+					isPopup={true} 
+					matchPopup={matchPopup} 
+				/>
 			</div>
 		);
 	};
@@ -32,11 +36,13 @@ class PopupPage extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
+		this.resize();
 	};
-	
+
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+		historyPopup.clear();
 	};
 
 	rebind () {
@@ -47,11 +53,11 @@ class PopupPage extends React.Component<Props, {}> {
 		this.unbind();
 		
 		const win = $(window);
-		win.unbind('resize.popup.page').on('resize.popup.page', () => { this.resize(); });
+		win.unbind('resize.popupPage').on('resize.popupPage', () => { this.resize(); });
 	};
 
 	unbind () {
-		$(window).unbind('resize.popup.page');
+		$(window).unbind('resize.popupPage');
 	};
 
 	resize () {
@@ -59,14 +65,15 @@ class PopupPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { getId } = this.props;
+		const { getId, position } = this.props;
 
 		raf(() => {
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const width = Math.max(732, Math.min(960, win.width() - 128));
+			const width = Math.max(1000, Math.min(1152, win.width() - 128));
 
-			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
+			obj.css({ width: width });
+			position();
 		});
 	};
 

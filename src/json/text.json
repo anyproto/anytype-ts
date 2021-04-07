@@ -198,7 +198,7 @@
 	"popupSettingsColor": { "en": "Colours" },
 	"popupSettingsPhraseTitle": { "en": "Keychain phrase" },
 	"popupSettingsMobileQRSubTitle": { "en": "To use Anytype on Android & iOS" },
-	"popupSettingsMobileQRText": { "en": "— Launch Anytype<br/>— Press \"Login\"<br/>— \"Scan QR code\"<br/>— Point your phone to this screen" },
+	"popupSettingsMobileQRText": { "en": "— Launch Anytype<br/>— Press \"Login\"<br/>— \"Scan QR code\"<br/>— Click on the QR code to display it clearly<br/>— Point your phone to this screen" },
 	"popupSettingsPhraseText": { "en": "Your Keychain phrase protects your account. You’ll need it to sign in if you don’t have access to your devices. Keep it in a safe place. Click to show:" },
 	"popupSettingsPhraseOk": { "en": "I've written it down" },
 	"popupSettingsPinTitle": { "en": "Pin code" },

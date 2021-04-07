@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader } from 'ts/component';
-import { I, C, DataUtil, SmileUtil } from 'ts/lib';
+import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
+import { I, C, DataUtil, Util, Storage } from 'ts/lib';
 import { dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
+interface Props extends RouteComponentProps<any> {
+	isPopup?: boolean;
 };
 
 interface State {
@@ -16,6 +16,7 @@ interface State {
 };
 
 enum Tab {
+	None = '',
 	Type = 'type',
 	Template = 'template',
 	Relation = 'relation',
@@ -52,10 +53,10 @@ const Tabs = [
 const BLOCK_ID = 'dataview';
 
 @observer
-class PopupStore extends React.Component<Props, State> {
+class PageMainStore extends React.Component<Props, State> {
 
 	state = {
-		tab: Tab.Type,
+		tab: '',
 		loading: false,
 	};
 
@@ -68,7 +69,6 @@ class PopupStore extends React.Component<Props, State> {
 
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.getRowHeight = this.getRowHeight.bind(this);
-		this.resize = this.resize.bind(this);
 	};
 	
 	render () {
@@ -132,12 +132,37 @@ class PopupStore extends React.Component<Props, State> {
 						<Title text="Type every object" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
 
-						<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(); }} />
+						<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(e); }} />
 					</div>
 				);
 				break;
 
 			case Tab.Template:
+				Item = (item: any) => {
+					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
+					const author = blockStore.getDetails(rootId, item.creator);
+					return (
+						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
+							<div className="img">
+								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+							</div>
+							<div className="info">
+								<div className="name">{name}</div>
+								<div className="descr">{description}</div>
+								<Author {...author} />
+							</div>
+						</div>
+					);
+				};
+
+				mid = (
+					<div className="mid">
+						<Title text="Template space" />
+						<Label text="Our beautifully-designed templates come with hundreds" />
+
+						<Button text="Create tempate" className="orange" onClick={(e: any) => { this.onCreateTemplate(); }} />
+					</div>
+				);
 				break;
 
 			case Tab.Relation:
@@ -195,7 +220,7 @@ class PopupStore extends React.Component<Props, State> {
 				<div className="head">
 					<div className="tabs">
 						{Tabs.map((item: any, i: number) => (
-							<div key={item.id} className={[ 'item', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(e, item); }}>
+							<div key={item.id} className={[ 'item', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
 								{item.name}
 							</div>
 						))}
@@ -242,9 +267,7 @@ class PopupStore extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.rebind();
-		this.resize();
-		this.onTab(null, Tabs[0]);
+		this.onTab(Storage.get('storeTab') || Tabs[0].id);
 	};
 
 	componentDidUpdate () {
@@ -255,45 +278,10 @@ class PopupStore extends React.Component<Props, State> {
 			defaultHeight: this.getRowHeight(),
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
-
-
-		this.resize();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-	};
-
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		this.unbind();
-		
-		const win = $(window);
-		win.unbind('resize.store').on('resize.store', () => { this.resize(); });
-	};
-
-	unbind () {
-		$(window).unbind('resize.store');
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		raf(() => {
-			const { getId, position } = this.props;
-			const win = $(window);
-			const obj = $(`#${getId()} #innerWrap`);
-			const height = Math.max(648, win.height() - 128);
-
-			obj.css({ height: height });
-			position();
-		});
 	};
 
 	getRootId () {
@@ -312,7 +300,7 @@ class PopupStore extends React.Component<Props, State> {
 
 		let h = 0;
 		if (tab == Tab.Type) h = 96;
-		if (tab == Tab.Template) h = 2;
+		if (tab == Tab.Template) h = 280;
 		if (tab == Tab.Relation) h = 64;
 		return h;
 	};
@@ -322,21 +310,23 @@ class PopupStore extends React.Component<Props, State> {
 
 		let l = 0;
 		if (tab == Tab.Type) l = 2;
-		if (tab == Tab.Template) l = 2;
+		if (tab == Tab.Template) l = 3;
 		if (tab == Tab.Relation) l = 3;
 		return l;
 	};
 
-	onTab (e: any, item: any) {
-		const tabItem = Tabs.find((it: any) => { return it.id == item.id; });
-		if (!tabItem) {
+	onTab (id: Tab) {
+		if (this.state.tab == id) {
 			return;
 		};
 
-		this.state.tab = tabItem.id;
-		this.setState({ tab: item.id, loading: true });
+		Storage.set('storeTab', id);
+
+		this.state.tab = id;
+		this.setState({ tab: id, loading: true });
 
 		C.BlockOpen(this.getRootId(), (message: any) => {
+			this.getData('library', true);
 			this.setState({ loading: false });
 		});
 	};
@@ -346,10 +336,11 @@ class PopupStore extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpenEvent(e, item);
+		const { isPopup } = this.props;
+		isPopup ? DataUtil.objectOpenPopup(item) : DataUtil.objectOpenEvent(e, item);
 	};
 
-	onCreateType () {
+	onCreateType (e: any) {
 		const { objectTypes } = dbStore;
 		const param: any = { 
 			name: '',
@@ -364,8 +355,11 @@ class PopupStore extends React.Component<Props, State> {
 			objectTypes.push(message.objectType);
 			dbStore.objectTypesSet(objectTypes);
 
-			DataUtil.objectOpen({ ...message.objectType, layout: I.ObjectLayout.ObjectType });
+			this.onClick(e, { ...message.objectType, layout: I.ObjectLayout.ObjectType });
 		});
+	};
+
+	onCreateTemplate () {
 	};
 
 	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
@@ -403,7 +397,7 @@ class PopupStore extends React.Component<Props, State> {
 	getItems () {
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
-		const data = dbStore.getData(rootId, BLOCK_ID).map((it: any) => {
+		const data = Util.objectCopy(dbStore.getData(rootId, BLOCK_ID)).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
 			return it;
 		});
@@ -434,4 +428,4 @@ class PopupStore extends React.Component<Props, State> {
 
 };
 
-export default PopupStore;
+export default PageMainStore;

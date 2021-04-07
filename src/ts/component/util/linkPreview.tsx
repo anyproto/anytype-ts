@@ -134,7 +134,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		const { linkPreview } = commonStore;
 		
 		Util.clipboardCopy({ text: linkPreview.url });
-		Util.linkPreviewHide(false);
+		Util.linkPreviewHide(true);
 	};
 	
 	onEdit (e: any) {
@@ -142,17 +142,19 @@ class LinkPreview extends React.Component<Props, {}> {
 		e.stopPropagation();
 
 		const { linkPreview } = commonStore;
-		
+		const rect = Util.objectCopy($('#linkPreview').get(0).getBoundingClientRect());
+
 		let { marks, range, onChange } = linkPreview;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
-		
+
 		menuStore.open('blockLink', {
 			type: I.MenuType.Horizontal,
-			element: linkPreview.element,
+			rect: { ...rect, height: 0, y: rect.y + $(window).scrollTop() },
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
+			offsetY: 44,
 			onOpen: () => {
-				Util.linkPreviewHide(false);
+				Util.linkPreviewHide(true);
 			},
 			data: {
 				value: (mark ? mark.param : ''),
@@ -171,7 +173,7 @@ class LinkPreview extends React.Component<Props, {}> {
 		marks = Mark.toggle(marks, { type: I.MarkType.Link, param: '', range: { from: range.from, to: range.to } });
 		onChange(marks);
 		
-		Util.linkPreviewHide(false);
+		Util.linkPreviewHide(true);
 	};
 	
 	show () {

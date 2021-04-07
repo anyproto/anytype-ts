@@ -110,7 +110,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 	};
 
 	onPathOut () {
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 	};
 	
 };

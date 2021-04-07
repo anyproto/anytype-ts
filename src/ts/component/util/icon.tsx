@@ -67,7 +67,7 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 	};
 	
 	onMouseEnter (e: any) {
@@ -86,7 +86,7 @@ class Icon extends React.Component<Props, {}> {
 	onMouseLeave (e: any) {
 		const { onMouseLeave } = this.props;
 		
-		Util.tooltipHide();
+		Util.tooltipHide(false);
 		
 		if (onMouseLeave) {
 			onMouseLeave(e);
@@ -96,7 +96,7 @@ class Icon extends React.Component<Props, {}> {
 	onMouseDown (e: any) {
 		const { onMouseDown } = this.props;
 		
-		Util.tooltipHide();
+		Util.tooltipHide(true);
 		
 		if (onMouseDown) {
 			onMouseDown(e);
@@ -106,7 +106,7 @@ class Icon extends React.Component<Props, {}> {
 	onContextMenu (e: any) {
 		const { onContextMenu } = this.props;
 		
-		Util.tooltipHide();
+		Util.tooltipHide(true);
 		
 		if (onContextMenu) {
 			onContextMenu(e);

@@ -98,11 +98,11 @@
 				b { margin-bottom: 5px; display: block; }
 				.label { margin: 0px; }
 				.side { width: 100%; }
-				.side.right { text-align: right; font-size: 0px; }
+				.side.right { text-align: right; font-size: 0px; width: 50%; padding: 6px;}
 				canvas { display: inline-block; }
 			}
 
-			.inputs { margin-bottom: 16px; }
+			.inputs { margin-bottom: 20px; }
 			.buttons { margin-top: 32px; }
 		}
 		

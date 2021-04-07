@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util } from 'ts/lib';
-import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
+import { commonStore, blockStore, dbStore, popupStore, menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -254,7 +254,10 @@ class DataUtil {
 	};
 
 	objectOpenEvent (e: any, object: any) {
-		if (e && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object);
 		} else {
 			this.objectOpen(object);
@@ -280,23 +283,38 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
-		let param: any = { data: { rootId: object.id } };
-		let popupId = '';
+		const popupId = 'page';
+		const param: any = { 
+			data: { 
+				matchPopup: { 
+					params: {
+						page: 'main', 
+						id: object.id,
+					},
+				},
+			},
+		};
 
 		switch (object.layout) {
 			default:
-				popupId = 'editorPage';
+				param.data.matchPopup.params.action = 'edit';
 				break;
 
 			case I.ObjectLayout.ObjectType:
-				popupId = 'page';
-				param.data.matchPopup = { params: { page: 'main', action: 'type', id: object.id } };
+				param.data.matchPopup.params.action = 'type';
 				break;
+
 			case I.ObjectLayout.Relation:
-				popupId = 'page';
-				param.data.matchPopup = { params: { page: 'main', action: 'relation', id: object.id } };
+				param.data.matchPopup.params.action = 'relation';
+				break;
+
+			case I.ObjectLayout.Store:
+				param.data.matchPopup.params.action = 'store';
 				break;
 		};
+
+		historyPopup.pushMatch(param.data.matchPopup);
+		menuStore.closeAll();
 
 		if (popupStore.isOpen(popupId)) {
 			popupStore.update(popupId, param);
@@ -305,16 +323,12 @@ class DataUtil {
 		};
 	};
 	
-	pageCreate (e: any, rootId: string, targetId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) {
+	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
 		details = details || {};
-		
-		if (e && e.persist) {
-			e.persist();
-		};
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
-		C.BlockCreatePage(rootId, targetId, details, position, (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, templateId, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (message.error.code) {
@@ -458,8 +472,7 @@ class DataUtil {
 
 	menuGetBlockObject () {
 		const { config } = commonStore;
-		const objectTypes = dbStore.objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-
+		
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
@@ -470,6 +483,11 @@ class DataUtil {
 
 		let i = 0;
 		if (config.allowDataview) {
+			let objectTypes = Util.objectCopy(dbStore.objectTypes);
+			if (!config.debug.ho) {
+				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
+			};
+
 			for (let type of objectTypes) {
 				ret.push({ 
 					type: I.BlockType.Page, 
@@ -479,6 +497,7 @@ class DataUtil {
 					name: type.name || Constant.default.name, 
 					description: type.description,
 					isObject: true,
+					isHidden: type.isHidden,
 				});
 			};
 		} else {
