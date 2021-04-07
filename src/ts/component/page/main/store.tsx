@@ -22,8 +22,6 @@ enum Tab {
 	Relation = 'relation',
 }
 
-const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 
 const Tabs = [
@@ -267,7 +265,7 @@ class PageMainStore extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.onTab(Storage.get('storeTab') || Tabs[0].id);
+		this.onTab(Storage.get('storeTab') || Tab.Type);
 	};
 
 	componentDidUpdate () {
