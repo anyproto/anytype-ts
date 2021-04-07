@@ -158,7 +158,7 @@ class PageMainStore extends React.Component<Props, State> {
 						<Title text="Template space" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
 
-						<Button text="Create tempate" className="orange" onClick={(e: any) => { this.onCreateTemplate(); }} />
+						<Button text="Create a new template" className="orange" onClick={(e: any) => { this.onCreateTemplate(); }} />
 					</div>
 				);
 				break;

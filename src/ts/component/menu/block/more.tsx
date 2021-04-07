@@ -239,7 +239,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
-		if (!block) {
+		if (!block || item.arrow) {
 			return;
 		};
 		
