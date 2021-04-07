@@ -259,7 +259,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				rootId: root,
 				blockId: item.id,
 				blockIds: [ item.id ],
-				match: match
+				match: match,
 			},
 			onOpen: () => {
 				raf(() => {

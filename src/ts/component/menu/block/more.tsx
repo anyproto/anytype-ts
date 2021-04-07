@@ -403,6 +403,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					type: I.NavigationType.Move, 
 					skipId: rootId,
 					position: I.BlockPosition.Bottom,
+					onSelect: (item: any) => {
+						close();
+					}
 				});
 				break;
 
