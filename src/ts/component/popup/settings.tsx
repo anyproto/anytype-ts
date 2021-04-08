@@ -405,8 +405,10 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 
 				this.setState({ loading: false });
+
 				commonStore.coverSetUploadedImage(message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
+
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
 			});
 		});
@@ -484,7 +486,7 @@ class PopupSettings extends React.Component<Props, State> {
 
 	onImport (format: string) {
 		const platform = Util.getPlatform();
-		const { history } = this.props;
+		const { history, close } = this.props;
 		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ],
@@ -503,18 +505,13 @@ class PopupSettings extends React.Component<Props, State> {
 				return;
 			};
 
-			this.setState({ loading: true });
-			C.BlockImportMarkdown(root, files[0], () => {
-				this.props.close();
-				this.setState({ loading: false });
-				
-				history.push('/main/index');
-			});
+			close();
+			C.BlockImportMarkdown(root, files[0]);
 		});
 	};
 
 	onExport (format: I.ExportFormat) {
-		const { root } = blockStore;
+		const { close } = this.props;
 
 		let options: any = {};
 
@@ -530,11 +527,9 @@ class PopupSettings extends React.Component<Props, State> {
 						return;
 					};
 
-					this.setState({ loading: true });
+					close();
 
 					C.Export(files[0], [], format, true, (message: any) => {	
-						this.setState({ loading: false });
-
 						if (message.error.code) {
 							popupStore.open('confirm', {
 								data: {
@@ -548,9 +543,7 @@ class PopupSettings extends React.Component<Props, State> {
 							});
 							return;
 						};
-
 						ipcRenderer.send('pathOpen', files[0]);
-						this.props.close();
 					});
 				});
 				break;
