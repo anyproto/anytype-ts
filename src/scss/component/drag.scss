@@ -13,6 +13,6 @@
 
 .dragWrap { height: 24px; background: rgba(0,0,0,0.5); border-radius: 4px; padding: 0px 8px; display: flex; }
 .dragWrap {
-	.input-drag { width: 100%; margin-right: 8px; }
-	.number { @include text-common; flex-shrink: 0; line-height: 24px; color: #fff; font-weight: 500; text-align: right; }
+	.input-drag { width: calc(100% - 38px); margin-right: 8px; }
+	.number { width: 38px; @include text-common; flex-shrink: 0; line-height: 24px; color: #fff; font-weight: 500; text-align: right; }
 }
