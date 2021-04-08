@@ -196,7 +196,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'createTemplate', icon: 'template', name: 'Create a template' });
 			};
 
-			items.push({ id: 'resize', name: 'Resize page' });
+			if (!block.isObjectSet()) {
+				items.push({ id: 'resize', name: 'Resize page' });
+			};
 
 			if (block.canHaveHistory()) {
 				items.push({ id: 'history', name: 'Version history' });

@@ -20,10 +20,10 @@
 	
 	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.buttons { position: absolute; bottom: 0px; opacity: 0; transition: $transitionFast; }
+		.buttons { position: absolute; bottom: 0px; opacity: 0; }
 		
 		.btn { 
-			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: $transitionFast;
+			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out;
 			margin-right: 10px; height: 28px; line-height: 26px; padding: 0px 10px; border-radius: 6px;
 		}
 		.btn:last-child { margin: 0px; }
