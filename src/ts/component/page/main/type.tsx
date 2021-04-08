@@ -47,7 +47,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.nameType,
-			description: 'Add description',
+			description: 'Add a description',
 		};
 		const title = blockStore.getLeaf(rootId, 'title');
 

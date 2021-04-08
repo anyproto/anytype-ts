@@ -231,6 +231,10 @@ class Block implements I.Block {
 		return this.isText() && (this.content.style == I.TextStyle.Title);
 	};
 
+	isTextDescription (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Description);
+	};
+
 	isTextParagraph (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Paragraph);
 	}; 

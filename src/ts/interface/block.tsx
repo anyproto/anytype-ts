@@ -130,6 +130,7 @@ export interface Block {
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;
+	isTextDescription?(): boolean;
 	isTextParagraph?(): boolean;
 	isTextHeader?(): boolean;
 	isTextHeader1?(): boolean;

@@ -90,6 +90,11 @@ class BlockText extends React.Component<Props, {}> {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
 				};
 				break;
+
+			case I.TextStyle.Description:
+				placeHolder = 'Add a description';
+				break;
+
 			case I.TextStyle.Quote:
 				additional = (
 					<div className="line" />
