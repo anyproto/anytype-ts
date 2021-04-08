@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, M, C, DataUtil } from 'ts/lib';
 import { Block, Drag } from 'ts/component';
@@ -12,10 +13,13 @@ interface Props extends RouteComponentProps<any> {
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
+	onPaste?(e: any): void;
 	onResize?(v: number): void;
-	getWrapper? (): any;
+	getWrapper?(): any;
+	getWrapperWidth?(): number;
 };
+
+const $ = require('jquery');
 
 @observer
 class EditorHeaderPage extends React.Component<Props, {}> {
@@ -60,6 +64,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 						onMove={this.onScaleMove} 
 						onEnd={this.onScaleEnd} 
 					/>
+					<div id="dragValue" className="number">100%</div>
 				</div>
 
 				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
@@ -113,6 +118,11 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 	};
 	
 	onScaleMove (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#dragValue');
+
+		value.text(Math.ceil(v * 100) + '%');
+
 		this.props.onResize(v);
 	};
 	

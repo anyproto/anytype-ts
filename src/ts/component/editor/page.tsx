@@ -21,9 +21,10 @@ const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
-const THROTTLE = 20;
 const fs = window.require('fs');
 const path = window.require('path');
+
+const THROTTLE = 20;
 
 @observer
 class EditorPage extends React.Component<Props, {}> {
@@ -38,6 +39,7 @@ class EditorPage extends React.Component<Props, {}> {
 	scrollTop: number = 0;
 	uiHidden: boolean = false;
 	loading: boolean = false;
+	width: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -52,6 +54,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
+		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 	};
 
 	render () {
@@ -88,6 +91,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onResize={(v: number) => { this.onResize(v); }}
 							readOnly={false}
 							getWrapper={this.getWrapper}
+							getWrapperWidth={this.getWrapperWidth}
 						/>
 					
 						{children.map((block: I.Block, i: number) => {
@@ -105,6 +109,8 @@ class EditorPage extends React.Component<Props, {}> {
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
 									readOnly={root.isObjectReadOnly()}
+									getWrapper={this.getWrapper}
+									getWrapperWidth={this.getWrapperWidth}
 								/>
 							)
 						})}
@@ -199,6 +205,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 	getWrapper () {
 		return $(ReactDOM.findDOMNode(this));
+	};
+
+	getWrapperWidth (): number {
+		return this.width;
 	};
 
 	open (skipInit?: boolean) {
@@ -1597,8 +1607,10 @@ class EditorPage extends React.Component<Props, {}> {
 		const mw = container.width() - 120;
 
 		w = Number(w) || 0;
-		w = (mw - Constant.size.page) * w;
-		return Math.max(Constant.size.page, Math.min(mw, Constant.size.page + w));
+		w = (mw - Constant.size.editor) * w;
+		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
+		
+		return w;
 	};
 
 };

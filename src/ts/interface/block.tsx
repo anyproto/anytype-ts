@@ -56,7 +56,9 @@ export interface BlockComponent {
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
-	onPaste? (e: any): void;
+	onPaste?(e: any): void;
+	getWrapper?(): any;
+	getWrapperWidth?(): number;
 };
 
 export interface Block {

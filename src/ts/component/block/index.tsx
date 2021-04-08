@@ -497,7 +497,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	calcWidth (x: number, index: number) {
-		const { rootId, block } = this.props;
+		const { rootId, block, getWrapperWidth } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
@@ -511,13 +511,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 
+		const width = getWrapperWidth();
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
-		x = Math.min(sum * Constant.size.page - offset, x);
-		x = x / (sum * Constant.size.page);
+		x = Math.min(sum * width - offset, x);
+		x = x / (sum * width);
 		
 		// Snap
 		if (x > 0.5 - SNAP && x < 0.5) {
@@ -543,11 +544,12 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const width = $('#editorWrapper').width();
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const p = (e.pageX - rect.x) / (Constant.size.page + Constant.size.blockMenu);
+		const p = (e.pageX - rect.x) / (width + Constant.size.blockMenu);
 		
 		let c = 0;
 		let num = 0;

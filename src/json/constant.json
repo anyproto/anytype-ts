@@ -83,7 +83,7 @@
 	"featuredRelations": [ "type", "creator" ],
 	
 	"size": {
-		"page": 704,
+		"editor": 704,
 
 		"blockMenu": 48,
 		"image": 2048,

@@ -73,6 +73,10 @@ class Drag extends React.Component<Props, {}> {
 		return this.checkValue(this.value);
 	};
 
+	resize () {
+		this.setValue(this.value);
+	};
+
 	start (e: any) {
 		e.preventDefault();
 		e.stopPropagation();

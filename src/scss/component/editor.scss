@@ -14,10 +14,7 @@
 		.blockLast { margin-left: -50px; }
 	}
 
-	#editorSize { 
-		position: absolute; width: 400px; height: 24px; top: 48px; left: 50%; margin-left: -200px; z-index: 50; background: rgba(0,0,0,0.5);
-		border-radius: 4px; padding: 0px 8px; opacity: 0;
-	}
+	#editorSize { position: absolute; width: 400px; top: 48px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
@@ -47,7 +44,7 @@
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
-.editorWrapper.isResizing #editorSize { opacity: 1; }
+.editorWrapper.isResizing #editorSize { visibility: visible; }
 
 /* Page */
 

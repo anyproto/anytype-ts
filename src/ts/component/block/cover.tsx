@@ -80,7 +80,7 @@ class BlockCover extends React.Component<Props, State> {
 					
 					<div className="dragWrap">
 						<Drag ref={(ref: any) => { this.refDrag = ref; }} onStart={this.onScaleStart} onMove={this.onScaleMove} onEnd={this.onScaleEnd} />
-						<div id="drag-value" className="number">100%</div>
+						<div id="dragValue" className="number">100%</div>
 					</div>
 					
 					<div className="buttons">
@@ -381,7 +381,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const details = blockStore.getDetails(rootId, rootId);
 		const { coverX, coverY } = details;
-		const value = node.find('#drag-value');
+		const value = node.find('#dragValue');
 
 		v = (v + 1) * 100;
 		value.text(Math.ceil(v) + '%');
