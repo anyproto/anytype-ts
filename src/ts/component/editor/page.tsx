@@ -69,6 +69,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
+		const width = root?.fields?.width;
 
 		return (
 			<div id="editorWrapper">
@@ -84,6 +85,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
+							onResize={(v: number) => { this.onResize(v); }}
 							readOnly={false}
 							getWrapper={this.getWrapper}
 						/>
@@ -1354,9 +1356,7 @@ class EditorPage extends React.Component<Props, {}> {
 		let blockCnt = Number(Storage.get('blockCnt')) || 0;
 		blockCnt++;
 		if (blockCnt == 10) {
-			popupStore.open('settings', { 
-				data: { page: 'phrase' } 
-			});
+			popupStore.open('settings', { data: { page: 'phrase' } });
 		};
 		if (blockCnt <= 11) {
 			Storage.set('blockCnt', blockCnt);
@@ -1548,25 +1548,26 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	resize () {
-		if (!this._isMounted) {
+		if (this.loading || !this._isMounted) {
 			return;
 		};
 		
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
+		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (!blocks.length || !last.length) {
-			return;
+		if (blocks.length && last.length) {
+			const container = this.getScrollContainer();
+			const ct = isPopup ? container.offset().top : 0;
+			const h = container.height();
+			const height = blocks.outerHeight() + blocks.offset().top - ct;
+
+			last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
 		};
-		
-		const container = this.getScrollContainer();
-		const ct = isPopup ? container.offset().top : 0;
-		const h = container.height();
-		const height = blocks.outerHeight() + blocks.offset().top - ct;
 
-		last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
+		this.onResize(root?.fields?.width);
 	};
 	
 	focus (id: string, from: number, to: number, scroll: boolean) {
@@ -1578,7 +1579,26 @@ class EditorPage extends React.Component<Props, {}> {
 		if (scroll) {
 			focus.scroll(isPopup);
 		};
+
 		this.resize();
+	};
+
+	onResize (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const width = this.getWidth(v);
+		const elements = node.find('#elements');
+
+		node.css({ width: width });
+		elements.css({ width: width, marginLeft: -width / 2 });
+	};
+
+	getWidth (w: number) {
+		const container = this.getScrollContainer();
+		const mw = container.width() - 120;
+
+		w = Number(w) || 0;
+		w = (mw - Constant.size.page) * w;
+		return Math.max(Constant.size.page, Math.min(mw, Constant.size.page + w));
 	};
 
 };

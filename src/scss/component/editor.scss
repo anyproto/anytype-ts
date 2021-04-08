@@ -14,6 +14,11 @@
 		.blockLast { margin-left: -50px; }
 	}
 
+	#editorSize { 
+		position: absolute; width: 400px; height: 24px; top: 48px; left: 50%; margin-left: -200px; z-index: 50; background: rgba(0,0,0,0.5);
+		border-radius: 4px; padding: 0px 8px; opacity: 0;
+	}
+
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
 	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
@@ -41,6 +46,8 @@
 	}
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
+
+.editorWrapper.isResizing #editorSize { opacity: 1; }
 
 /* Page */
 

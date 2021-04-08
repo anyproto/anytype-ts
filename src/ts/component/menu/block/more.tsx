@@ -196,6 +196,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				items.push({ id: 'createTemplate', icon: 'template', name: 'Create a template' });
 			};
 
+			items.push({ id: 'resize', name: 'Resize page' });
+
 			if (block.canHaveHistory()) {
 				items.push({ id: 'history', name: 'Version history' });
 			};
@@ -275,6 +277,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						ipcRenderer.send('urlOpen', message.url);
 					};
 				});
+				break;
+
+			case 'resize':
+				$('#editorWrapper').addClass('isResizing');
 				break;
 
 			case 'history':

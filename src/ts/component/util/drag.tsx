@@ -4,14 +4,17 @@ import { Util } from 'ts/lib';
 import { Icon } from 'ts/component';
 
 interface Props {
+	id?: string;
 	className: string;
 	value: number;
+	snap?: number;
 	onStart?(v: number): void;
 	onMove?(v: number): void;
 	onEnd?(v: number): void;
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 
 class Drag extends React.Component<Props, {}> {
 
@@ -37,7 +40,7 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { className } = this.props;
+		const { id, className } = this.props;
 		
 		let cn: string[] = [ 'input-drag' ];
 		if (className) {
@@ -45,7 +48,7 @@ class Drag extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onMouseDown={this.start}>
+			<div id={id} className={cn.join(' ')} onMouseDown={this.start}>
 				<div id="back" className="back"></div>
 				<div id="fill" className="fill"></div>
 				<Icon id="icon" />
@@ -54,17 +57,11 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const win = $(window);
-		
 		this.node = $(ReactDOM.findDOMNode(this));
 		this.back = this.node.find('#back');
 		this.fill = this.node.find('#fill');
 		this.icon = this.node.find('#icon');
-		
-		this.nw = this.node.width();
-		this.iw = this.icon.width();
-		this.ox = this.node.offset().left;
-		
+
 		this.setValue(this.props.value);
 	};
 	
@@ -75,19 +72,21 @@ class Drag extends React.Component<Props, {}> {
 	getValue () {
 		return this.checkValue(this.value);
 	};
-	
+
 	start (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		
 		const { onStart } = this.props;
 		const win = $(window);
+		const iw = this.icon.width();
+		const ox = this.node.offset().left;
 		
-		this.move(e.pageX - this.ox - this.iw / 2);
+		this.move(e.pageX - ox - iw / 2);
 		this.node.addClass('isDragging');
 		
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
-			this.move(e.pageX - this.ox - this.iw / 2);
+			this.move(e.pageX - ox - iw / 2);
 		});
 		
 		win.unbind('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
@@ -100,18 +99,25 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	move (x: number) {
-		const { onMove } = this.props;
+		const { onMove, snap } = this.props;
+		const nw = this.node.width();
+		const iw = this.icon.width();
+		const mw = this.maxWidth();
 		
 		x = Math.max(0, x);
-		x = Math.min(this.maxWidth(), x);
-		
-		let w = Math.min(this.nw, x + this.iw / 2);
+		x = Math.min(mw, x);
+
+		this.value = this.checkValue(x / mw);
+		if (snap && (this.value > snap - 0.025) && (this.value < snap + 0.025)) {
+			this.value = snap;
+		};
+		x = this.value * mw;
+
+		const w = Math.min(nw, x + iw / 2);
 		
 		this.icon.css({ left: x });
-		this.back.css({ left: (w + 8), width: (this.nw - w - 8) });
+		this.back.css({ left: (w + 8), width: (nw - w - 8) });
 		this.fill.css({ width: (w - 2) });
-		
-		this.value = this.checkValue(x / this.maxWidth());
 		
 		if (onMove) {
 			onMove(this.value);
@@ -119,7 +125,7 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	maxWidth () {
-		return this.nw - this.iw;
+		return this.node.width() - this.icon.width();
 	};
 	
 	end (e: any) {
