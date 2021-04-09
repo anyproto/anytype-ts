@@ -611,11 +611,6 @@ class Dispatcher {
 					const state = process.getState();
 					const pt = process.getType();
 
-					let isUnlocked = true;
-					if (pt == I.ProgressType.Import) {
-						isUnlocked = false;
-					};
-
 					switch (state) {
 						case I.ProgressState.Running:
 						case I.ProgressState.Done:
@@ -624,7 +619,7 @@ class Dispatcher {
 								status: translate('progress' + pt),
 								current: progress.getDone(),
 								total: progress.getTotal(),
-								isUnlocked: isUnlocked,
+								isUnlocked: true,
 								canCancel: true,
 							});
 							break;
