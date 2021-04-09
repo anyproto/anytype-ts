@@ -68,6 +68,7 @@ class Block extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
 		let canSelect = true;
+		let canDrop = !readOnly;
 		let cn: string[] = [ 'block', 'align' + align ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
@@ -104,6 +105,10 @@ class Block extends React.Component<Props, {}> {
 					);
 				};
 
+				if (block.isTextTitle() || block.isTextDescription()) {
+					canDrop = false;
+				};
+
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} />;
 				break;
 
@@ -114,12 +119,14 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.IconPage:
 				canSelect = false;
+				canDrop = false;
 				cn.push('blockIconPage');
 				blockComponent = <BlockIconPage {...this.props} />;
 				break;
 				
 			case I.BlockType.IconUser:
 				canSelect = false;
+				canDrop = false;
 				cn.push('blockIconUser');
 				blockComponent = <BlockIconUser {...this.props} />;
 				break;
@@ -182,6 +189,7 @@ class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Featured:
 				canSelect = false;
+				canDrop = false;
 				cn.push('blockFeatured');
 				blockComponent = <BlockFeatured {...this.props} />;
 				break;
@@ -189,17 +197,17 @@ class Block extends React.Component<Props, {}> {
 		
 		let object = null;
 
-		if (readOnly) {
-			object = (
-				<div className="dropTarget">
-					{blockComponent}
-				</div>
-			);
-		} else {
+		if (canDrop) {
 			object = (
 				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
 					{blockComponent}
 				</DropTarget>
+			);
+		} else {
+			object = (
+				<div className="dropTarget">
+					{blockComponent}
+				</div>
 			);
 		};
 		
