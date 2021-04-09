@@ -273,6 +273,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				if (block.isTextTitle())		 hasTitle = true;
 				if (block.isTextDescription())	 hasTitle = true;
+				if (block.isFeatured())			 hasTitle = true;
 			};
 
 			if (hasTurnObject && config.allowDataview) {
