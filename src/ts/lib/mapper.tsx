@@ -57,15 +57,18 @@ const Mapper = {
 
 		BlockType: (v: number): I.BlockType => {
 			let t = I.BlockType.Empty;
-			if (v == ContentCase.SMARTBLOCK) t = I.BlockType.Page;
-			if (v == ContentCase.TEXT)		 t = I.BlockType.Text;
-			if (v == ContentCase.FILE)		 t = I.BlockType.File;
-			if (v == ContentCase.LAYOUT)	 t = I.BlockType.Layout;
-			if (v == ContentCase.DIV)		 t = I.BlockType.Div;
-			if (v == ContentCase.BOOKMARK)	 t = I.BlockType.Bookmark;
-			if (v == ContentCase.LINK)		 t = I.BlockType.Link;
-			if (v == ContentCase.DATAVIEW)	 t = I.BlockType.Dataview;
-			if (v == ContentCase.RELATION)	 t = I.BlockType.Relation;
+			let V = Model.Block.ContentCase;
+
+			if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
+			if (v == V.TEXT)				 t = I.BlockType.Text;
+			if (v == V.FILE)				 t = I.BlockType.File;
+			if (v == V.LAYOUT)				 t = I.BlockType.Layout;
+			if (v == V.DIV)					 t = I.BlockType.Div;
+			if (v == V.BOOKMARK)			 t = I.BlockType.Bookmark;
+			if (v == V.LINK)				 t = I.BlockType.Link;
+			if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
+			if (v == V.RELATION)			 t = I.BlockType.Relation;
+			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
 			return t;
 		},
 

@@ -80,10 +80,6 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					onMenuAdd={onMenuAdd}
 					onPaste={onPaste}
 				/>
-
-				{config.allowDataview ? (
-					<Block {...this.props} key={featured.id} block={featured} />
-				) : ''}
 			</div>
 		);
 	};
