@@ -18,7 +18,7 @@ $transitionFast: all 0.2s ease-in-out;
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 @mixin text-very-small { font-size: 11px; line-height: 18px; letter-spacing: 0.4px; color: $colorDarkGrey; }
-@mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0.2px; }
+@mixin text-small { font-size: 12px; line-height: 18px; letter-spacing: 0.16px; }
 @mixin text-common { font-size: 14px; line-height: 22px; letter-spacing: 0.04px; }
 @mixin text-paragraph { font-size: 16px; line-height: 24px; letter-spacing: -0.08px; }
 @mixin text-header1 { font-family: 'Lcg'; font-size: 28px; line-height: 32px; letter-spacing: -0.48px; font-weight: 600; }
