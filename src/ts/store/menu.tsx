@@ -65,11 +65,17 @@ class MenuStore {
 		return this.menuList.find((item: I.Menu) => { return item.id == id; });
 	};
 
-	isOpen (id?: string): boolean {
+	isOpen (id?: string, key?: string): boolean {
 		if (!id) {
 			return this.menuList.length > 0;
 		};
-		return this.get(id) ? true : false;
+
+		const item = this.get(id);
+		if (!item) {
+			return false;
+		};
+
+		return key ? (item.param.menuKey == key) : true;
 	};
 
 	isOpenList (ids: string[]) {

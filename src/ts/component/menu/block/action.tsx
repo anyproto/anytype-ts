@@ -436,6 +436,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		let menuId = '';
 		let menuParam: I.MenuParam = {
+			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
 			offsetY: offsetY,
@@ -549,7 +550,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId) {
+		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
 			menuStore.closeAll(Constant.menuIds.action, () => {
 				menuStore.open(menuId, menuParam);
 			});
