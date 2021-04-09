@@ -1490,7 +1490,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 
-		menuStore.closeAll([ 'blockAdd', 'blockAction', 'blockContext' ]);
+		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
 		let next: any = null;
