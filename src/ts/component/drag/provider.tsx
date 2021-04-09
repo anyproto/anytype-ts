@@ -246,6 +246,8 @@ class DragProvider extends React.Component<Props, {}> {
 			const style = Number(obj.attr('data-style')) || 0;
 			const col1 = x - Constant.size.blockMenu / 4;
 			const col2 = x + width;
+			const isText = type == I.BlockType.Text;
+			const isFeatured = type == I.BlockType.Featured;
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
@@ -265,19 +267,19 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			// You can't drop on Icon
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(this.hoverData.type) >= 0) {
+			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
 				this.position = I.BlockPosition.None;
 			};
 
-			// You can't drop on Title
-			if ((this.hoverData.type == I.BlockType.Text) && (this.hoverData.style == I.TextStyle.Title)) {
+			// You can't drop on Title and Description
+			if (isText && ([ I.TextStyle.Title, I.TextStyle.Description ].indexOf(style) >= 0)) {
 				this.position = I.BlockPosition.None;
 			};
 
 			// You cant only drop into Paragraphs and list
 			if (
 				(this.position == I.BlockPosition.Inner) &&
-				(type == I.BlockType.Text) &&
+				isText &&
 				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
 			) {
 				this.position = I.BlockPosition.None;
@@ -287,6 +289,11 @@ class DragProvider extends React.Component<Props, {}> {
 				(this.position == I.BlockPosition.Inner) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
+				this.position = I.BlockPosition.None;
+			};
+
+			// You can't drop on Featured
+			if (isFeatured) {
 				this.position = I.BlockPosition.None;
 			};
 
