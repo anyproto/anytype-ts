@@ -209,6 +209,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
+				if (block.isFeatured())			 hasAction = false;
 				if (block.isTextQuote())		 hasQuote = true;
 				if (block.isFile())				 hasFile = true;
 			};
