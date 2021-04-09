@@ -7,6 +7,8 @@ const $ = require('jquery');
 
 class PopupStore {
 	@observable public popupList: I.Popup[] = [];
+
+	timeout: number = 0;
 	
 	@computed
 	get list(): I.Popup[] {
@@ -92,12 +94,22 @@ class PopupStore {
 	};
 	
 	@action
-	closeAll () {
-		menuStore.closeAll();
+	closeAll (ids?: string[], callBack?: () => void) {
+		const items = ids && ids.length ? this.popupList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.popupList;
 
-		for (let item of this.popupList) {
+		for (let item of items) {
 			this.close(item.id);
 		};
+
+		this.clearTimeout();
+
+		if (callBack) {
+			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.popup);
+		};
+	};
+
+	clearTimeout () {
+		window.clearTimeout(this.timeout);
 	};
 	
 };

@@ -72,15 +72,15 @@ class Block implements I.Block {
 	};
 
 	canTurn (): boolean {
-		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isDiv() || this.isLink());
+		return !this.isSystem() && ((this.isText() && !this.isTextTitle() && !this.isTextDescription()) || this.isDiv() || this.isLink());
 	};
 
 	canTurnText (): boolean {
-		return !this.isSystem() && ((this.isText() && !this.isTextTitle()) || this.isLink());
+		return !this.isSystem() && ((this.isText() && !this.isTextTitle() && !this.isTextDescription()) || this.isLink());
 	};
 
 	canTurnPage (): boolean {
-		return !this.isSystem() && this.isText() && !this.isTextTitle();
+		return !this.isSystem() && this.isText() && !this.isTextTitle() && !this.isTextDescription();
 	};
 
 	canTurnList (): boolean {
@@ -92,11 +92,11 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isTextTitle() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured();
+		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured();
 	};
 
 	isIndentable (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
 	};
 	
 	isFocusable (): boolean {
@@ -104,11 +104,11 @@ class Block implements I.Block {
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription();
 	};
 
 	isPage (): boolean { 

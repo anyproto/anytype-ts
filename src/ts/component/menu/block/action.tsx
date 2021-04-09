@@ -208,6 +208,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 
 				if (block.isTextTitle())		 hasAction = false;
+				if (block.isTextDescription())	 hasAction = false;
 				if (block.isTextQuote())		 hasQuote = true;
 				if (block.isFile())				 hasFile = true;
 			};
@@ -271,6 +272,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 
 				if (block.isTextTitle())		 hasTitle = true;
+				if (block.isTextDescription())	 hasTitle = true;
 			};
 
 			if (hasTurnObject && config.allowDataview) {

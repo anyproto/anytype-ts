@@ -635,7 +635,7 @@ class EditorPage extends React.Component<Props, {}> {
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const next = blockStore.getNextBlock(rootId, first.id, -1);
 			const obj = shift ? parent : next;
-			const canTab = obj && !first.isTextTitle() && obj.canHaveChildren() && first.isIndentable();
+			const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 			
 			if (canTab) {
 				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
@@ -764,7 +764,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		// Mark-up
-		if (!block.isTextTitle() && range.to && (range.from != range.to)) {
+		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
 
 			// Bold
@@ -1491,6 +1491,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { selection } = dataset || {};
 
 		menuStore.closeAll([ 'blockAdd', 'blockAction', 'blockContext' ]);
+		popupStore.closeAll([ 'preview' ]);
 
 		let next: any = null;
 		let ids = selection.get();
