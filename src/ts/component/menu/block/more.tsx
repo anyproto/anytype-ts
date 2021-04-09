@@ -369,6 +369,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -467,9 +468,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 		};
 
-		menuStore.closeAll(Constant.menuIds.more, () => {
-			menuStore.open(menuId, menuParam);
-		});
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll(Constant.menuIds.more, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
 	};
 
 };
