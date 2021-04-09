@@ -153,7 +153,7 @@
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
+		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-menu-sub-category; display: block; font-weight: 400; }
 	}
 
 	.menu.horizontal {
