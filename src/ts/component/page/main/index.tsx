@@ -202,9 +202,10 @@ class PageMainIndex extends React.Component<Props, {}> {
 						return;
 					};
 
-					if (item.id == 'link') {
+					if ((item.id == 'link') && !menuStore.isOpen('searchObject', item.id)) {
 						menuStore.closeAll(Constant.menuIds.index, () => {
 							menuStore.open('searchObject', { 
+								menuKey: item.id,
 								element: '#menuSelect #item-link',
 								offsetX: width,
 								offsetY: -36,
