@@ -206,9 +206,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 						menuStore.closeAll(Constant.menuIds.index, () => {
 							menuStore.open('searchObject', { 
 								menuKey: item.id,
-								element: '#menuSelect #item-link',
+								element: '#menuSelect',
 								offsetX: width,
-								offsetY: -36,
+								offsetY: -$('#menuSelect').height(),
 								isSub: true,
 								passThrough: true,
 								data: { 
