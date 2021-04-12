@@ -479,7 +479,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 
 		let i = 0;
@@ -569,7 +569,7 @@ class DataUtil {
 		let cmd = Util.ctrlSymbol();
 
 		let items: any[] = [
-			{ id: 'move', icon: 'move', name: 'Move to' },
+			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
 			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }

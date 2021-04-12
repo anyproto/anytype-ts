@@ -62,6 +62,9 @@
 		"context": [
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
+		"add": [
+			"searchObject"
+		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
 		],

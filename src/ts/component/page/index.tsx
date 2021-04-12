@@ -142,7 +142,7 @@ class Page extends React.Component<Props, {}> {
 			menuStore.closeAll();
 
 			window.setTimeout(() => {
-				if (isMain && !popupNewBlock) {
+				if (isMain && account && !popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 				};
 

@@ -15,7 +15,6 @@ const Constant = require('json/constant.json');
 class MenuBlockMore extends React.Component<Props, {}> {
 	
 	n: number = -1;
-	lastId: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -376,9 +375,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			isSub: true,
 			passThrough: true,
 			className: param.className,
-			onClose: () => {
-				this.lastId = '';
-			},
 			data: {
 				rootId: rootId,
 				blockId: blockId,
