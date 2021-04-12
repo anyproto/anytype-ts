@@ -1606,6 +1606,12 @@ class EditorPage extends React.Component<Props, {}> {
 	getWidth (w: number) {
 		const container = this.getScrollContainer();
 		const mw = container.width() - 120;
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		
+		if (root && root.isObjectSet()) {
+			return container.width() - 192;
+		};
 
 		w = Number(w) || 0;
 		w = (mw - Constant.size.editor) * w;
