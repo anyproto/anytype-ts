@@ -64,7 +64,7 @@ class Block implements I.Block {
 	};
 
 	canHaveMarks () {
-		return this.isText() && !this.isTextTitle() && !this.isTextCode();
+		return this.isText() && !this.isTextTitle() && !this.isTextDescription() && !this.isTextCode();
 	};
 
 	canHaveHistory (): boolean {
