@@ -122,7 +122,9 @@ class ScrollOnMove {
 			(nextScrollY !== currentScrollY)
 		) {
 			raf(() => {
-				container.scrollTo(nextScrollX, nextScrollY);
+				if (container) {
+					container.scrollTo(nextScrollX, nextScrollY);
+				};
 			});
 			return true;
 		} else {

@@ -71,18 +71,6 @@ class DragProvider extends React.Component<Props, {}> {
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 
-		let { isPopup } = this.props;
-		let containerOffset = null;
-		let top = 0;
-		let xFix = 0;
-
-		if (isPopup) {
-			const container = $('#popupPage #innerWrap');
-			containerOffset = container.offset();
-			xFix = (container.width() - container.find('#editorWrapper').width()) / 2;
-			top = this.getScrollContainer().scrollTop();
-		};
-
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
 			const data = item.data();
@@ -110,11 +98,6 @@ class DragProvider extends React.Component<Props, {}> {
 					y -= top + 2;
 					h += top + bot + 2;
 				};
-			};
-
-			if (isPopup) {
-				x -= containerOffset.left - xFix;
-				y -= containerOffset.top - top - 40;
 			};
 
 			this.objectData.set(key, {
@@ -211,20 +194,18 @@ class DragProvider extends React.Component<Props, {}> {
 		const ex = e.pageX;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
-
-		let top = 0; 
-		let ey = e.pageY;
-
-		if (isPopup) {
-			top = this.getScrollContainer().scrollTop();
-			ey += top;
-		};
+		const top = this.getScrollContainer().scrollTop();
 
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
 		if (this.emptyObj) {
 			this.emptyObj.remove();
+		};
+
+		let ey = e.pageY;
+		if (isPopup) {
+			ey += top;
 		};
 
 		this.objectData.forEach((value: any) => {
@@ -373,8 +354,6 @@ class DragProvider extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const element = map[targetId];
 
-		console.log(target, element);
-
 		if (!target || !element) {
 			return;
 		};
@@ -414,8 +393,7 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	unbind () {
-		const win = $(window);
-		win.unbind('dragend.drag drag.drag');
+		$(window).unbind('dragend.drag drag.drag');
 	};
 
 	set (type: string, ids: string[]) {
