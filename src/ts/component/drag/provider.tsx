@@ -71,6 +71,18 @@ class DragProvider extends React.Component<Props, {}> {
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 
+		let { isPopup } = this.props;
+		let containerOffset = null;
+		let top = 0;
+		let xFix = 0;
+
+		if (isPopup) {
+			const container = $('#popupPage #innerWrap');
+			containerOffset = container.offset();
+			xFix = (container.width() - container.find('#editorWrapper').width()) / 2;
+			top = this.getScrollContainer().scrollTop();
+		};
+
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
 			const data = item.data();
@@ -98,6 +110,11 @@ class DragProvider extends React.Component<Props, {}> {
 					y -= top + 2;
 					h += top + bot + 2;
 				};
+			};
+
+			if (isPopup) {
+				x -= containerOffset.left - xFix;
+				y -= containerOffset.top - top - 40;
 			};
 
 			this.objectData.set(key, {
@@ -194,10 +211,12 @@ class DragProvider extends React.Component<Props, {}> {
 		const ex = e.pageX;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
-		const top = this.getScrollContainer().scrollTop();
 
+		let top = 0; 
 		let ey = e.pageY;
+
 		if (isPopup) {
+			top = this.getScrollContainer().scrollTop();
 			ey += top;
 		};
 
@@ -214,10 +233,6 @@ class DragProvider extends React.Component<Props, {}> {
 			if (dropType == I.DragItem.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
-			};
-
-			if (isPopup) {
-				y += top;
 			};
 
 			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
