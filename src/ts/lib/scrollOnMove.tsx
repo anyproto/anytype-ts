@@ -2,7 +2,7 @@ const raf = require('raf');
 const $ = require('jquery');
 
 const BORDER = 100;
-const THROTTLE = 30;
+const THROTTLE = 20;
 
 class ScrollOnMove {
 	
