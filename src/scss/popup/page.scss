@@ -32,6 +32,10 @@
 				}
 			}
 
+			.editorWrapper.isSet.withIcon {
+				.editorControls { height: 188px; }
+			}
+
 			.editorWrapper.withIcon { padding-top: 84px; }
 
 			.editorWrapper.withCover { padding-top: 318px; }

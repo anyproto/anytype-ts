@@ -76,7 +76,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} readOnly={false} />
+				<Controls key="editorControls" {...this.props} readOnly={root.isObjectFile()} />
 				
 				<div className="editor">
 					<div className="blocks">
