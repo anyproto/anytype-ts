@@ -32,6 +32,7 @@ class DragProvider extends React.Component<Props, {}> {
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
 	init: boolean = false;
+	top: number = 0;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -164,6 +165,7 @@ class DragProvider extends React.Component<Props, {}> {
 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
+		this.top = this.getScrollContainer().scrollTop();
 		this.map = blockStore.getMap(rootId);
 		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
@@ -189,137 +191,14 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDragMove (e: any) {
-		const { rootId, isPopup } = this.props;
-
-		const ex = e.pageX;
+		const { isPopup } = this.props;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = this.getScrollContainer().scrollTop();
+		const d = top > this.top ? 1 : -1;
+		const diff = isPopup ? Math.abs(top - this.top) * d : 0;
 
-		let ey = e.pageY;
-		if (isPopup) {
-			ey += top;
-		};
-
-		this.hoverData = null;
-		this.position = I.BlockPosition.None;
-
-		if (this.emptyObj) {
-			this.emptyObj.remove();
-		};
-
-		this.objectData.forEach((value: any) => {
-			let { x, y, width, height, dropType } = value;
-
-			if (dropType == I.DragItem.Block) {
-				x -= OFFSET;
-				width += OFFSET * 2;
-			};
-
-			if (isPopup) {
-				y += top;
-			};
-
-			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
-				this.hoverData = value;
-			};
-		});
-
-		this.canDrop = true;
-
-		if (this.hoverData) {
-			if (!isFileDrag && (this.type == I.DragItem.Block)) {
-				let parentIds: string[] = [];
-				this.getParentIds(this.hoverData.id, parentIds);
-
-				for (let dropId of this.ids) {
-					if ((dropId == this.hoverData.id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
-						this.canDrop = false;
-						break;
-					};
-				};
-			};
-
-			const { x, y, width, height } = this.hoverData;
-			const obj = $(this.hoverData.obj);
-			const type = obj.attr('data-type');
-			const style = Number(obj.attr('data-style')) || 0;
-			const col1 = x - Constant.size.blockMenu / 4;
-			const col2 = x + width;
-
-			if (ex <= col1) {
-				this.position = I.BlockPosition.Left;
-			} else
-			if ((ex > col1) && (ex <= col2)) {
-				if (ey <= y + height * 0.15) {
-					this.position = I.BlockPosition.Top;
-				} else
-				if (ey >= y + height * 0.85) {
-					this.position = I.BlockPosition.Bottom;
-				} else {
-					this.position = I.BlockPosition.Inner;
-				};
-			} else
-			if (ex > col2) {
-				this.position = I.BlockPosition.Right;
-			};
-
-			// You can't drop on Icon
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(this.hoverData.type) >= 0) {
-				this.position = I.BlockPosition.None;
-			};
-
-			// You can't drop on Title
-			if ((this.hoverData.type == I.BlockType.Text) && (this.hoverData.style == I.TextStyle.Title)) {
-				this.position = I.BlockPosition.None;
-			};
-
-			// You cant only drop into Paragraphs and list
-			if (
-				(this.position == I.BlockPosition.Inner) &&
-				(type == I.BlockType.Text) &&
-				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
-			) {
-				this.position = I.BlockPosition.None;
-			};
-
-			if (
-				(this.position == I.BlockPosition.Inner) &&
-				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
-			) {
-				this.position = I.BlockPosition.None;
-			};
-
-			// You can drop vertically on Layout.Row
-			if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
-				if (this.hoverData.isTargetTop) {
-					this.position = I.BlockPosition.Top;
-				};
-				if (this.hoverData.isTargetBot) {
-					this.position = I.BlockPosition.Bottom;
-				};
-			};
-
-			// You can only drop inside of menu items
-			if ((this.hoverData.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
-				this.position = I.BlockPosition.Inner;
-
-				if (rootId == this.hoverData.targetContextId) {
-					this.position = I.BlockPosition.None;
-				};
-			};
-		};
-
-		window.clearTimeout(this.timeoutHover);
-		if ((this.position != I.BlockPosition.None) && this.canDrop) {
-			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
-		} else {
-			this.timeoutHover = window.setTimeout(() => {
-				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
-			}, 10);
-		};
-
+		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
 		scrollOnMove.onMouseMove(e.clientX, e.clientY);
 	};
 
@@ -350,8 +229,6 @@ class DragProvider extends React.Component<Props, {}> {
 		const target = blockStore.getLeaf(rootId, targetId);
 		const map = blockStore.getMap(rootId);
 		const element = map[targetId];
-
-		console.log(target, element);
 
 		if (!target || !element) {
 			return;
@@ -391,9 +268,134 @@ class DragProvider extends React.Component<Props, {}> {
 		});
 	};
 
+	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
+		const { rootId } = this.props;
+
+		this.hoverData = null;
+		this.position = I.BlockPosition.None;
+
+		if (this.emptyObj) {
+			this.emptyObj.remove();
+		};
+
+		this.objectData.forEach((value: any) => {
+			let { x, y, width, height, dropType } = value;
+
+			if (dropType == I.DragItem.Block) {
+				x -= OFFSET;
+				width += OFFSET * 2;
+			};
+
+			if ((ex >= x) && (ex <= x + width) && (ey >= y) && (ey <= y + height)) {
+				this.hoverData = value;
+			};
+		});
+
+		this.canDrop = true;
+
+		if (this.hoverData) {
+			if (!isFileDrag && (this.type == I.DragItem.Block)) {
+				let parentIds: string[] = [];
+				this.getParentIds(this.hoverData.id, parentIds);
+
+				for (let dropId of this.ids) {
+					if ((dropId == this.hoverData.id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
+						this.canDrop = false;
+						break;
+					};
+				};
+			};
+
+			const { x, y, width, height } = this.hoverData;
+			const obj = $(this.hoverData.obj);
+			const type = obj.attr('data-type');
+			const style = Number(obj.attr('data-style')) || 0;
+			const col1 = x - Constant.size.blockMenu / 4;
+			const col2 = x + width;
+			const isText = type == I.BlockType.Text;
+			const isFeatured = type == I.BlockType.Featured;
+
+			if (ex <= col1) {
+				this.position = I.BlockPosition.Left;
+			} else
+			if ((ex > col1) && (ex <= col2)) {
+				if (ey <= y + height * 0.15) {
+					this.position = I.BlockPosition.Top;
+				} else
+				if (ey >= y + height * 0.85) {
+					this.position = I.BlockPosition.Bottom;
+				} else {
+					this.position = I.BlockPosition.Inner;
+				};
+			} else
+			if (ex > col2) {
+				this.position = I.BlockPosition.Right;
+			};
+
+			// You can't drop on Icon
+			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
+				this.position = I.BlockPosition.None;
+			};
+
+			// You can't drop on Title and Description
+			if (isText && ([ I.TextStyle.Title, I.TextStyle.Description ].indexOf(style) >= 0)) {
+				this.position = I.BlockPosition.None;
+			};
+
+			// You cant only drop into Paragraphs and list
+			if (
+				(this.position == I.BlockPosition.Inner) &&
+				isText &&
+				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
+			) {
+				this.position = I.BlockPosition.None;
+			};
+
+			if (
+				(this.position == I.BlockPosition.Inner) &&
+				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
+			) {
+				this.position = I.BlockPosition.None;
+			};
+
+			// You can't drop on Featured
+			if (isFeatured) {
+				this.position = I.BlockPosition.None;
+			};
+
+			// You can drop vertically on Layout.Row
+			if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
+				if (this.hoverData.isTargetTop) {
+					this.position = I.BlockPosition.Top;
+				};
+				if (this.hoverData.isTargetBot) {
+					this.position = I.BlockPosition.Bottom;
+				};
+			};
+
+			// You can only drop inside of menu items
+			if ((this.hoverData.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
+				this.position = I.BlockPosition.Inner;
+
+				if (rootId == this.hoverData.targetContextId) {
+					this.position = I.BlockPosition.None;
+				};
+			};
+		};
+
+		window.clearTimeout(this.timeoutHover);
+		if ((this.position != I.BlockPosition.None) && this.canDrop) {
+			$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+			this.hoverData.obj.addClass('isOver ' + this.getDirectionClass(this.position));
+		} else {
+			this.timeoutHover = window.setTimeout(() => {
+				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
+			}, 10);
+		};
+	}; 
+
 	unbind () {
-		const win = $(window);
-		win.unbind('dragend.drag drag.drag');
+		$(window).unbind('dragend.drag drag.drag');
 	};
 
 	set (type: string, ids: string[]) {

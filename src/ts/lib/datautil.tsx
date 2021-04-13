@@ -75,17 +75,18 @@ class DataUtil {
 		let c = '';
 		switch (v) {
 			default:
-			case I.TextStyle.Title:		 c = 'title'; break;
-			case I.TextStyle.Paragraph:	 c = 'paragraph'; break;
-			case I.TextStyle.Header1:	 c = 'header1'; break;
-			case I.TextStyle.Header2:	 c = 'header2'; break;
-			case I.TextStyle.Header3:	 c = 'header3'; break;
-			case I.TextStyle.Quote:		 c = 'quote'; break;
-			case I.TextStyle.Code:		 c = 'code'; break;
-			case I.TextStyle.Bulleted:	 c = 'bulleted'; break;
-			case I.TextStyle.Numbered:	 c = 'numbered'; break;
-			case I.TextStyle.Toggle:	 c = 'toggle'; break;
-			case I.TextStyle.Checkbox:	 c = 'checkbox'; break;
+			case I.TextStyle.Paragraph:		 c = 'paragraph'; break;
+			case I.TextStyle.Header1:		 c = 'header1'; break;
+			case I.TextStyle.Header2:		 c = 'header2'; break;
+			case I.TextStyle.Header3:		 c = 'header3'; break;
+			case I.TextStyle.Quote:			 c = 'quote'; break;
+			case I.TextStyle.Code:			 c = 'code'; break;
+			case I.TextStyle.Bulleted:		 c = 'bulleted'; break;
+			case I.TextStyle.Numbered:		 c = 'numbered'; break;
+			case I.TextStyle.Toggle:		 c = 'toggle'; break;
+			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
+			case I.TextStyle.Title:			 c = 'title'; break;
+			case I.TextStyle.Description:	 c = 'description'; break;
 		};
 		return c;
 	};
@@ -414,7 +415,7 @@ class DataUtil {
 			{ key: 'layoutAlign', value: align },
 		];
 
-		C.BlockListSetAlign(rootId, [ 'title' ], align);
+		C.BlockListSetAlign(rootId, [ 'title', 'description', 'featuredRelations' ], align);
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -478,7 +479,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
-			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing' },
+			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 
 		let i = 0;
@@ -568,7 +569,7 @@ class DataUtil {
 		let cmd = Util.ctrlSymbol();
 
 		let items: any[] = [
-			{ id: 'move', icon: 'move', name: 'Move to' },
+			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
 			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
@@ -905,6 +906,7 @@ class DataUtil {
 			case I.RelationType.Relations:
 				value = Util.objectCopy(value || []);
 				value = Util.arrayUnique(value);
+				value = value.map((it: any) => { return String(it || ''); });
 
 				if (relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);

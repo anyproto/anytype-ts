@@ -21,7 +21,7 @@ class Progress extends React.Component<Props, {}> {
 	render () {
 		const { progress } = commonStore;
 		const { status, current, total, isUnlocked, canCancel } = progress || {};
-		
+
 		if (!status) {
 			return null;
 		};

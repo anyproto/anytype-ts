@@ -165,7 +165,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.checkNodes(e);
+		this.checkNodes({ ...e, pageX: x, pageY: y });
 		this.drawRect(rect);
 
 		scrollOnMove.onMouseMove(keyboard.mouse.client.x, keyboard.mouse.client.y);
@@ -232,7 +232,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		e.preventDefault();
 		
 		if (!this._isMounted) {
-			return
+			return;
 		};
 		
 		if (this.isSelectionPrevented) {
@@ -418,13 +418,13 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		const { focused, range } = focus;
 		const rect = this.getRect(e.pageX, e.pageY);
-		
+
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 			this.clear();
 		};
 		
 		this.nodes.each((i: number, item: any) => { 
-			this.checkEachNode(e, rect, $(item)); 
+			this.checkEachNode(e, Util.objectCopy(rect), $(item)); 
 		});
 		
 		const selected = $('.selectable.isSelected');

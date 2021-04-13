@@ -202,12 +202,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 						return;
 					};
 
-					if (item.id == 'link') {
+					if ((item.id == 'link') && !menuStore.isOpen('searchObject', item.id)) {
 						menuStore.closeAll(Constant.menuIds.index, () => {
 							menuStore.open('searchObject', { 
-								element: '#menuSelect #item-link',
+								menuKey: item.id,
+								element: '#menuSelect',
 								offsetX: width,
-								offsetY: -36,
+								offsetY: -$('#menuSelect').height(),
 								isSub: true,
 								passThrough: true,
 								data: { 
@@ -259,7 +260,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				rootId: root,
 				blockId: item.id,
 				blockIds: [ item.id ],
-				match: match
+				match: match,
 			},
 			onOpen: () => {
 				raf(() => {

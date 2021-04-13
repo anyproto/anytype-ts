@@ -141,6 +141,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (rebind) {
 			rebind();
 		};
+
+		menuStore.closeAll(Constant.menuIds.add);
 	};
 	
 	rebind () {
@@ -276,6 +278,55 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	onOver (e: any, item: any) {
 		this.setActive(item, false);
+
+		const { param, getId, getSize, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+
+		let menuId = '';
+		let menuParam: I.MenuParam = {
+			menuKey: item.itemId,
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			passThrough: true,
+			className: param.className,
+			data: {
+				rootId: rootId,
+				skipId: rootId,
+				blockId: blockId,
+				blockIds: [ blockId ],
+				position: I.BlockPosition.Bottom,
+				onSelect: close,
+			},
+		};
+
+		switch (item.itemId) {	
+			case 'move':
+				menuId = 'searchObject';
+				menuParam.offsetY = -36;
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Move, 
+				});
+				break;
+
+			case 'existing':
+				menuId = 'searchObject';
+				menuParam.offsetY = -64;
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Link, 
+				});
+				break;
+		};
+
+		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
+			menuStore.closeAll(Constant.menuIds.add, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
 	};
 	
 	onClick (e: any, item: any) {
@@ -298,13 +349,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
-		const obj = $('#menuBlockAdd');
 		const onCommand = (message: any) => {
 			focus.set(message.blockId || blockId, { from: length, to: length });
 			focus.apply();
 		};
-
-		let needClose = true;
 
 		const cb = () => {
 			text = Util.stringCut(text, filter.from - 1, filter.from + filter.text.length);
@@ -325,25 +373,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				switch (item.itemId) {
 					case 'download':
 						Action.download(block);
-						break;
-
-					case 'move':
-						needClose = false;
-
-						menuStore.open('searchObject', { 
-							element: `#${getId()} #item-${item.id}`,
-							offsetX: obj.width(),
-							offsetY: -36,
-							data: { 
-								type: I.NavigationType.Move, 
-								rootId: rootId,
-								skipId: rootId,
-								blockId: blockId,
-								blockIds: [ blockId ],
-								position: I.BlockPosition.Bottom,
-								onSelect: close,
-							}, 
-						});
 						break;
 
 					case 'copy':
@@ -381,46 +410,25 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				};
 				
 				if (item.type == I.BlockType.Page) {
-					if (item.itemId == 'existing') {
-						needClose = false;
-
-						menuStore.open('searchObject', { 
-							element: `#${getId()} #item-${item.id}`,
-							offsetX: obj.width(),
-							offsetY: -64,
-							data: { 
-								type: I.NavigationType.Link, 
-								rootId: rootId,
-								skipId: rootId,
-								blockId: blockId,
-								blockIds: [ blockId ],
-								position: I.BlockPosition.Replace,
-								onSelect: close,
-							}, 
-						});
-					} else {
-						const details: any = {};
-						
-						if (item.isObject) {
-							const type = dbStore.getObjectType(item.objectTypeId);
-							if (type) {
-								details.type = type.id;
-								details.layout = type.layout;
-							};
+					const details: any = {};
+					
+					if (item.isObject) {
+						const type = dbStore.getObjectType(item.objectTypeId);
+						if (type) {
+							details.type = type.id;
+							details.layout = type.layout;
 						};
-
-						DataUtil.pageCreate(rootId, blockId, details, position, '', (message: any) => {
-							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-						});
 					};
+
+					DataUtil.pageCreate(rootId, blockId, details, position, '', (message: any) => {
+						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+					});
 				} else {
 					blockCreate(block, position, param);
 				};
 			};
 
-			if (needClose) {
-				close();
-			};
+			close();
 		};
 
 		if (onSelect) {

@@ -144,7 +144,7 @@
 		.line { height: 1px; margin: 8px 14px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
-		.sectionName { padding: 5px 14px; @include text-very-small; font-weight: 500; }
+		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; }
 		
 		.section { padding: 8px 0px 0px 0px; }
 		.section::after {
@@ -153,7 +153,7 @@
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-very-small; display: block; font-weight: 500; }
+		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; }
 	}
 
 	.menu.horizontal {

@@ -68,6 +68,7 @@ class Block extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
 		let canSelect = true;
+		let canDrop = !readOnly;
 		let cn: string[] = [ 'block', 'align' + align ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
@@ -114,12 +115,14 @@ class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.IconPage:
 				canSelect = false;
+				canDrop = false;
 				cn.push('blockIconPage');
 				blockComponent = <BlockIconPage {...this.props} />;
 				break;
 				
 			case I.BlockType.IconUser:
 				canSelect = false;
+				canDrop = false;
 				cn.push('blockIconUser');
 				blockComponent = <BlockIconUser {...this.props} />;
 				break;
@@ -181,7 +184,6 @@ class Block extends React.Component<Props, {}> {
 				break;
 
 			case I.BlockType.Featured:
-				canSelect = false;
 				cn.push('blockFeatured');
 				blockComponent = <BlockFeatured {...this.props} />;
 				break;
@@ -189,17 +191,17 @@ class Block extends React.Component<Props, {}> {
 		
 		let object = null;
 
-		if (readOnly) {
-			object = (
-				<div className="dropTarget">
-					{blockComponent}
-				</div>
-			);
-		} else {
+		if (canDrop) {
 			object = (
 				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
 					{blockComponent}
 				</DropTarget>
+			);
+		} else {
+			object = (
+				<div className="dropTarget">
+					{blockComponent}
+				</div>
 			);
 		};
 		
@@ -497,7 +499,7 @@ class Block extends React.Component<Props, {}> {
 	};
 	
 	calcWidth (x: number, index: number) {
-		const { rootId, block } = this.props;
+		const { rootId, block, getWrapperWidth } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		
@@ -511,13 +513,14 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 
+		const width = getWrapperWidth();
 		const dw = 1 / childrenIds.length;
 		const sum = (prevBlock.fields.width || dw) + (currentBlock.fields.width || dw);
 		const offset = Constant.size.blockMenu * 2;
 		
 		x = Math.max(offset, x);
-		x = Math.min(sum * Constant.size.page - offset, x);
-		x = x / (sum * Constant.size.page);
+		x = Math.min(sum * width - offset, x);
+		x = x / (sum * width);
 		
 		// Snap
 		if (x > 0.5 - SNAP && x < 0.5) {
@@ -543,11 +546,12 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const width = $('#editorWrapper').width();
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const p = (e.pageX - rect.x) / (Constant.size.page + Constant.size.blockMenu);
+		const p = (e.pageX - rect.x) / (width + Constant.size.blockMenu);
 		
 		let c = 0;
 		let num = 0;

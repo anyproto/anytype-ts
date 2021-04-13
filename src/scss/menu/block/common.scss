@@ -7,12 +7,15 @@
 
 	.menu.menuBlockMore { width: 256px; }
 	.menu.menuBlockMore {
+		.content { overflow: visible; max-height: unset; }
 		.item { display: flex; }
 		.item {
 			.name { @include text-overflow-nw; }
 		}
 		.item:hover::before { background: rgba(172, 169, 150, 0.15); }
 		.item.isReadOnly:hover::before { opacity: 0; }
+
+		#section-page0 { padding-top: 0px; }
 	}
 	.menu.menuBlockMore.fromIndex { width: 230px; }
 	
@@ -54,6 +57,8 @@
 
 			.icon.relation { background-image: url('~img/icon/menu/action/block/relation1.svg'); }
 		}
+
+		.icon.arrow { width: 20px !important; height: 20px !important; background-color: unset !important; left: auto !important; top: 50% !important; }
 	}
 }
 

@@ -1,9 +1,8 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFeatured { @include text-paragraph; color: #6c6a5f; white-space: nowrap; padding: 2px 0px 30px 0px; }
+	.block.blockFeatured { @include text-paragraph; color: #6c6a5f; white-space: nowrap; padding: 2px 0px 30px 0px; display: none; }
 	.block.blockFeatured {
-		.wrapMenu { visibility: hidden; }
 		.wrap { white-space: normal; }
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: 0px 10px; }
@@ -23,4 +22,8 @@
 			.name { vertical-align: middle; line-height: inherit; display: inline; word-break: break-word; }
 		}
 	}
+}
+
+html.withDataview {
+	.blocks .block.blockFeatured { display: flex; }
 }

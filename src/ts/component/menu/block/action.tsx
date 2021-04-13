@@ -208,6 +208,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 
 				if (block.isTextTitle())		 hasAction = false;
+				if (block.isTextDescription())	 hasAction = false;
+				if (block.isFeatured())			 hasAction = false;
 				if (block.isTextQuote())		 hasQuote = true;
 				if (block.isFile())				 hasFile = true;
 			};
@@ -271,6 +273,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 
 				if (block.isTextTitle())		 hasTitle = true;
+				if (block.isTextDescription())	 hasTitle = true;
+				if (block.isFeatured())			 hasTitle = true;
 			};
 
 			if (hasTurnObject && config.allowDataview) {
@@ -434,6 +438,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		let menuId = '';
 		let menuParam: I.MenuParam = {
+			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
 			offsetY: offsetY,
@@ -547,7 +552,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				break;
 		};
 
-		if (menuId) {
+		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
 			menuStore.closeAll(Constant.menuIds.action, () => {
 				menuStore.open(menuId, menuParam);
 			});

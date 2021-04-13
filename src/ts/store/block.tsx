@@ -421,23 +421,6 @@ class BlockStore {
 		};
 	};
 
-	blockType (v: number): I.BlockType {
-		let t = I.BlockType.Empty;
-		let V = Model.Block.ContentCase;
-
-		if (v == V.SMARTBLOCK)	 t = I.BlockType.Page;
-		if (v == V.TEXT)		 t = I.BlockType.Text;
-		if (v == V.FILE)		 t = I.BlockType.File;
-		if (v == V.LAYOUT)		 t = I.BlockType.Layout;
-		if (v == V.DIV)			 t = I.BlockType.Div;
-		if (v == V.BOOKMARK)	 t = I.BlockType.Bookmark;
-		if (v == V.LINK)		 t = I.BlockType.Link;
-		if (v == V.DATAVIEW)	 t = I.BlockType.Dataview;
-		if (v == V.RELATION)	 t = I.BlockType.Relation;
-
-		return t;
-	};
-
 };
 
 export let blockStore: BlockStore = new BlockStore();
