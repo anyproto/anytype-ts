@@ -26,10 +26,28 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = blockStore.getDetails(rootId, rootId);
 		const { config } = commonStore;
+		const sections = this.getSections();
+		
+		const Section = (item: any) => (
+			<div id={'section-' + item.id} className="section">
+				{item.name ? <div className="name">{item.name}</div> : ''}
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						return <MenuItemVertical 
+							key={i} 
+							{...action} 
+							icon={action.icon || action.id}
+							withCaption={action.caption} 
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+							onClick={(e: any) => { this.onClick(e, action); }} 
+						/>;
+					})}
+				</div>
+			</div>
+		);
 
 		let sectionPage = null;
 		if (block && block.isPage() && config.allowDataview) {
@@ -42,10 +60,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: !readOnly };
 
 			sectionPage = (
-				<div className="section">
+				<React.Fragment>
 					{type ? (
 						<React.Fragment>
-							<div className="name">Type</div>
+							<div className="sectionName">Type</div>
 							<MenuItemVertical 
 								{...itemType}
 								onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemType) } : undefined} 
@@ -54,34 +72,22 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						</React.Fragment>
 					) : ''}
 
-					<div className="name">Layout</div>
+					<div className="sectionName">Layout</div>
 					<MenuItemVertical 
 						{...itemLayout}
 						onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemLayout) } : undefined} 
 						className={readOnly ? 'isReadOnly' : ''}
 					/>
-				</div>
+				</React.Fragment>
 			);
 		};
 
 		return (
 			<div>
 				{sectionPage}
-
-				{items.length ? (
-					<div className="section">
-						{items.map((action: any, i: number) => (
-							<MenuItemVertical 
-								key={i} 
-								{...action}
-								icon={action.icon || action.id}
-								withCaption={action.caption}
-								onClick={(e: any) => { this.onClick(e, action); }} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							/>
-						))}
-					</div>
-				) : ''}
+				{sections.map((item: any, i: number) => (
+					<Section key={i} index={i} {...item} />
+				))}
 			</div>
 		);
 	};
@@ -121,6 +127,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
+
+		console.log(item);
 		
 		switch (k) {
 			case Key.up:
@@ -152,8 +160,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 		};
 	};
-	
-	getItems () {
+
+	getSections () {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
@@ -175,54 +183,80 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
-		let items = [];
+		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
 		} else
 		if (block.isPage()) {
-			items = [
-				align,
-				undo,
-				redo,
-				print,
-				search,
-				linkRoot,
-				//{ id: 'export', icon: 'export', name: 'Export to web' },
-			];
+			let template = null;
+			let archive = null;
 
 			if (object.type == Constant.typeId.template) {	
-				items.push({ id: 'createPage', icon: 'template', name: 'Create object' },);
+				template = { id: 'createPage', icon: 'template', name: 'Create object' };
 			} else {
-				items.push({ id: 'createTemplate', icon: 'template', name: 'Create a template' });
+				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
 			};
+
+			if (object.isArchived) {
+				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+			} else {
+				archive = { id: 'archivePage', icon: 'remove', name: 'Archive' };
+			};
+
+			sections = [
+				{ children: [] },
+				{
+					children: [
+						linkRoot,
+						template,
+						search,
+					] 
+				},
+				{ children: [ undo, redo ] },
+				{ children: [ print ] },
+				{ children: [ archive ] }
+			];
 
 			if (!block.isObjectSet()) {
-				items.push({ id: 'resize', name: 'Resize page' });
+				sections[0].children.push({ id: 'resize', name: 'Resize page' });
 			};
 
+			sections[0].children.push(align);
+
 			if (block.canHaveHistory()) {
-				items.push({ id: 'history', name: 'Version history' });
+				sections[2].children.unshift({ id: 'history', name: 'Version history' });
 			};
-			
-			if (object.isArchived) {
-				items.push({ id: 'removePage', icon: 'remove', name: 'Delete' });
-			} else {
-				items.push({ id: 'archivePage', icon: 'remove', name: 'Archive' });
-			};
+
+			sections = sections.map((it: any, i: number) => {
+				it.id = 'page' + i;
+				return it;
+			});
+
 		} else 
 		if (block.isLink()) {
-			items = [
+			sections.push({ children: [
 				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
 				{ id: 'remove', icon: 'remove', name: 'Remove from dashboard' },
-			];
+			]});
 		} else {
-			items = [
+			sections.push({ children: [
 				turn,
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
 				{ id: 'remove', name: 'Delete' },
-			];
+			]});
+		};
+
+		return sections;
+	};
+	
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
 		};
 		
 		return items;
@@ -236,7 +270,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, history, getId, getSize } = this.props;
+		const { param, history } = this.props;
 		const { data } = param;
 		const { blockId, rootId, onSelect } = data;
 		const { root, breadcrumbs } = blockStore;

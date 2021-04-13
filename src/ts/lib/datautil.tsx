@@ -906,6 +906,7 @@ class DataUtil {
 			case I.RelationType.Relations:
 				value = Util.objectCopy(value || []);
 				value = Util.arrayUnique(value);
+				value = value.map((it: any) => { return String(it || ''); });
 
 				if (relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
