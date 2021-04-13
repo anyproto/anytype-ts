@@ -128,8 +128,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const l = items.length;
 		const item = items[this.n];
 
-		console.log(item);
-		
 		switch (k) {
 			case Key.up:
 				this.n--;

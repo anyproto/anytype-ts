@@ -232,7 +232,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		e.preventDefault();
 		
 		if (!this._isMounted) {
-			return
+			return;
 		};
 		
 		if (this.isSelectionPrevented) {

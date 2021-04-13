@@ -32,6 +32,7 @@ class DragProvider extends React.Component<Props, {}> {
 	canDrop: boolean = false;
 	timeoutHover: number = 0;
 	init: boolean = false;
+	top: number = 0;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
@@ -164,6 +165,7 @@ class DragProvider extends React.Component<Props, {}> {
 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
+		this.top = this.getScrollContainer().scrollTop();
 		this.map = blockStore.getMap(rootId);
 		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
@@ -189,23 +191,91 @@ class DragProvider extends React.Component<Props, {}> {
 	};
 
 	onDragMove (e: any) {
-		const { rootId, isPopup } = this.props;
-
-		const ex = e.pageX;
+		const { isPopup } = this.props;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = this.getScrollContainer().scrollTop();
+		const d = top > this.top ? 1 : -1;
+		const diff = isPopup ? Math.abs(top - this.top) * d : 0;
+
+		this.checkNodes(e.pageX, e.pageY + diff, isFileDrag);
+		scrollOnMove.onMouseMove(e.clientX, e.clientY);
+	};
+
+	onDragEnd (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const node = $(ReactDOM.findDOMNode(this));
+
+		this.refLayer.hide();
+		this.unbind();
+		this.clear();
+
+		keyboard.setDrag(false);
+		node.removeClass('isDragging');
+
+		if (selection) {
+			selection.preventSelect(false);
+			selection.preventClear(false);
+		};
+
+		$('.block.isDragging').removeClass('isDragging');
+		scrollOnMove.onMouseUp(e);
+	};
+
+	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const target = blockStore.getLeaf(rootId, targetId);
+		const map = blockStore.getMap(rootId);
+		const element = map[targetId];
+
+		if (!target || !element) {
+			return;
+		};
+
+		const parent = blockStore.getLeaf(rootId, element.parentId);
+
+		let targetContextId = rootId;
+		let contextId = rootId;
+
+		if (target.isLink() && (position == I.BlockPosition.Inner)) {
+			contextId = this.props.rootId;
+			targetContextId = target.content.targetBlockId;
+			targetId = '';
+
+			if (contextId == targetContextId) {
+				console.log('[dragProvider.onDrop] Contexts are equal');
+				return;
+			};
+		};
+
+		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+			targetId = parent.id;
+		};
+
+		if (selection) {
+			selection.preventClear(false);
+			selection.clearState();
+		};
+
+		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
+
+		C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+			if (selection) {
+				selection.set(this.ids);
+			};
+		});
+	};
+
+	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
+		const { rootId } = this.props;
 
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
 
 		if (this.emptyObj) {
 			this.emptyObj.remove();
-		};
-
-		let ey = e.pageY;
-		if (isPopup) {
-			ey += top;
 		};
 
 		this.objectData.forEach((value: any) => {
@@ -322,75 +392,7 @@ class DragProvider extends React.Component<Props, {}> {
 				$('.dropTarget.isOver').removeClass('isOver top bottom left right middle');
 			}, 10);
 		};
-
-		scrollOnMove.onMouseMove(e.clientX, e.clientY);
-	};
-
-	onDragEnd (e: any) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
-
-		this.refLayer.hide();
-		this.unbind();
-		this.clear();
-
-		keyboard.setDrag(false);
-		node.removeClass('isDragging');
-
-		if (selection) {
-			selection.preventSelect(false);
-			selection.preventClear(false);
-		};
-
-		$('.block.isDragging').removeClass('isDragging');
-		scrollOnMove.onMouseUp(e);
-	};
-
-	onDrop (e: any, type: string, rootId: string, targetId: string, position: I.BlockPosition) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const target = blockStore.getLeaf(rootId, targetId);
-		const map = blockStore.getMap(rootId);
-		const element = map[targetId];
-
-		if (!target || !element) {
-			return;
-		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-
-		let targetContextId = rootId;
-		let contextId = rootId;
-
-		if (target.isLink() && (position == I.BlockPosition.Inner)) {
-			contextId = this.props.rootId;
-			targetContextId = target.content.targetBlockId;
-			targetId = '';
-
-			if (contextId == targetContextId) {
-				console.log('[dragProvider.onDrop] Contexts are equal');
-				return;
-			};
-		};
-
-		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
-			targetId = parent.id;
-		};
-
-		if (selection) {
-			selection.preventClear(false);
-			selection.clearState();
-		};
-
-		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
-
-		C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-			if (selection) {
-				selection.set(this.ids);
-			};
-		});
-	};
+	}; 
 
 	unbind () {
 		$(window).unbind('dragend.drag drag.drag');
