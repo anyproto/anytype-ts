@@ -141,6 +141,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (rebind) {
 			rebind();
 		};
+
+		menuStore.closeAll(Constant.menuIds.add);
 	};
 	
 	rebind () {
