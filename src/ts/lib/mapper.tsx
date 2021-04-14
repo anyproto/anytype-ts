@@ -443,7 +443,7 @@ const Mapper = {
 			item.setRelationkey(obj.relationKey);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
-			item.setValue(Encode.encodeValue(obj.value || ''));
+			item.setValue(Encode.encodeValue(obj.value));
 
 			return item;
 		},

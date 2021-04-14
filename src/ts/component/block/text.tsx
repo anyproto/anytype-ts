@@ -238,6 +238,10 @@ class BlockText extends React.Component<Props, {}> {
 			this.renderMentions();
 			this.renderEmoji();
 		};
+
+		if (block.isTextDescription()) {
+			this.placeHolderCheck();
+		};
 	};
 	
 	renderLinks () {
