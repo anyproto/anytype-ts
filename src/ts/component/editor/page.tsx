@@ -89,7 +89,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readOnly={false}
+							readOnly={root.isObjectFile()}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>

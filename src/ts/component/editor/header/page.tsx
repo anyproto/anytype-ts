@@ -47,7 +47,6 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
