@@ -140,7 +140,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 			className: 'single',
 			horizontal: I.MenuDirection.Center,
 			data: {
-				placeHolder: 'Find a file...',
+				placeHolderFocus: 'Find a file...',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
