@@ -7,8 +7,8 @@ import { I, DataUtil, translate, Util } from 'ts/lib';
 
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
+const MENU_ID = 'threadStatus';
 
 @observer
 class MenuThreadList extends React.Component<Props, {}> {
@@ -106,6 +106,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		window.clearTimeout(this.timeoutClose);
 		window.clearTimeout(this.timeoutMenu);
+		menuStore.close(MENU_ID);
 	};
 
 	onMouseEnter (id: string, isCafe: boolean) {
@@ -113,39 +114,35 @@ class MenuThreadList extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
-		const { list } = menuStore;
-		const menu = list.find((it: I.Menu) => { return it.id == 'threadStatus'; });
-
-		if (menu && (menu.param.data.accountId == id)) {
-			return;
-		};
-
 		const node = $(ReactDOM.findDOMNode(this));
 		const item = node.find('#item-' + id);
+
 		if (!item.length) {
 			return;
 		};
 
 		const top = item.offset().top - $(window).scrollTop();
 
-		window.clearTimeout(this.timeoutMenu);
-		this.timeoutMenu = window.setTimeout(() => {
-			menuStore.open('threadStatus', {
-				element: '#item-' + id,
-				horizontal: I.MenuDirection.Right,
-				offsetX: 272,
-				fixedY: top,
-				className: 'fixed',
-				noDimmer: true,
-				data: {
-					...data,
-					accountId: id,
-					isCafe: isCafe,
-				},
+		if (!menuStore.isOpen(MENU_ID, id)) {
+			menuStore.close(MENU_ID, () => {
+				menuStore.open(MENU_ID, {
+					menuKey: id,
+					element: `#${getId()} #item-${id}`,
+					horizontal: I.MenuDirection.Right,
+					offsetX: 272,
+					fixedY: top,
+					className: 'fixed',
+					noDimmer: true,
+					data: {
+						...data,
+						accountId: id,
+						isCafe: isCafe,
+					},
+				});
 			});
-		}, Constant.delay.menu);
+		};
 	};
 	
 };
