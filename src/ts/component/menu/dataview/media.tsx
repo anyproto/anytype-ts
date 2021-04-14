@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, InputWithFile } from 'ts/component';
+import { Icon, InputWithFile, IconObject, MenuItemVertical } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'ts/store';
@@ -10,6 +10,7 @@ import arrayMove from 'array-move';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const { dialog } = window.require('electron').remote;
 
 @observer
 class MenuDataviewMedia extends React.Component<Props, {}> {
@@ -20,8 +21,8 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		super(props);
 
 		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onChangeFile = this.onChangeFile.bind(this);
+		this.onAdd = this.onAdd.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render () {
@@ -40,7 +41,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		const File = (item: any) => (
 			<React.Fragment>
-				<Icon className={[ 'iconFile', Util.fileIcon(item) ].join(' ')} />
+				<IconObject object={item} />
 				<div className="name">{item.name}</div>
 			</React.Fragment>
 		);
@@ -55,12 +56,12 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 			switch (item.layout) {
 				case I.ObjectLayout.File:
-					cn.push('file');
+					cn.push('isFile');
 					content = <File {...item} />;
 					break;
 
 				case I.ObjectLayout.Image:
-					cn.push('image');
+					cn.push('isImage');
 					content = <Image {...item} />;
 					break;
 			};
@@ -81,26 +82,32 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 					{value.map((item: any, i: number) => (
 						<Item key={i} {...item} index={i} />
 					))}
-					<div className="item add">
-						<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} canResize={false} />
-					</div>
 				</div>
 			);
 		});
 
 		return (
 			<div className="items">
-                <List 
-                    axis="y" 
-                    lockAxis="y"
-                    lockToContainerEdges={true}
-                    transitionDuration={150}
-                    distance={10}
-                    onSortEnd={this.onSortEnd}
-                    useDragHandle={true}
-                    helperClass="isDragging"
-                    helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
-                />
+				<div className="section">
+					<MenuItemVertical id="add" icon="plus" name="Add" onClick={this.onAdd} />
+					<MenuItemVertical id="upload" icon="upload" name="Upload" onClick={this.onUpload} />
+				</div>
+
+				{value.length ? (
+					<div className="section">
+						<List 
+							axis="y" 
+							lockAxis="y"
+							lockToContainerEdges={true}
+							transitionDuration={150}
+							distance={10}
+							onSortEnd={this.onSortEnd}
+							useDragHandle={true}
+							helperClass="isDragging"
+							helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+						/>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -109,11 +116,9 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		this._isMounted = true;
 	};
 
-	componentDidUpdate () {
-	};
-	
 	componentWillUnmount () {
 		this._isMounted = false;
+		menuStore.close('searchObject');
     };
     
     onSortEnd (result: any) {
@@ -127,19 +132,41 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		this.save(value);
     };
 
-	onChangeUrl (e: any, url: string) {
-		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
-			if (!message.error.code) {
-				this.add(message.hash);
-			};
+	onAdd (e: any) {
+		const { getId, close } = this.props;
+
+		menuStore.open('searchObject', {
+			element: `#${getId()} #item-add`,
+			className: 'single',
+			horizontal: I.MenuDirection.Center,
+			data: {
+				placeHolder: 'Find a file...',
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+				],
+				onSelect: (item: any) => {
+					this.add(item.id);
+					close();
+				}
+			}
 		});
 	};
 	
-	onChangeFile (e: any, path: string) {
-		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
-			if (!message.error.code) {
-				this.add(message.hash);
-			};
+	onUpload (e: any) {
+		const options: any = { 
+			properties: [ 'openFile' ], 
+			filters: [  ] 
+		};
+		
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			const file = files && files.length ? files[0] : '';
+
+			C.UploadFile('', file, I.FileType.None, false, (message: any) => {
+				if (!message.error.code) {
+					this.add(message.hash);
+				};
+			});
 		});
 	};
 
