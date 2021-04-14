@@ -694,7 +694,8 @@ class Dispatcher {
 
 		if (debug) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			d = Util.objectClear(data.toObject());
+			//d = Util.objectClear(data.toObject());
+			d = data.toObject();
 			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 		};
 

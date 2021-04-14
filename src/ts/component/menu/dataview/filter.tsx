@@ -169,7 +169,7 @@ class MenuFilter extends React.Component<Props, {}> {
 							key={id}
 							ref={refGet} 
 							value={item.value} 
-							onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', v, true); }} 
+							onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', Boolean(v), true); }} 
 						/>
 					);
 					break;
