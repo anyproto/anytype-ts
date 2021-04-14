@@ -222,7 +222,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
-		const filters: any[] = data.filters;
+		const filters: any[] = data.filters || [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		].concat(data.sorts || []);

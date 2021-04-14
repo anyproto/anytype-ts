@@ -362,6 +362,8 @@ class MenuFilter extends React.Component<Props, {}> {
 	valueByType (type: I.RelationType): any {
 		let ret: any = null;
 
+		console.log(type);
+
 		switch (type) {
 			case I.RelationType.ShortText: 
 			case I.RelationType.LongText: 
@@ -411,6 +413,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				name: relation.name, 
 				icon: 'relation ' + DataUtil.relationClass(relation.format),
 				isHidden: relation.isHidden,
+				format: relation.format,
 			};
 		});
 
@@ -431,6 +434,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		const first = relationOptions[0];
 		const conditions = this.conditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+
+		console.log(first);
 
 		view.filters.push({ 
 			relationKey: first.id, 
