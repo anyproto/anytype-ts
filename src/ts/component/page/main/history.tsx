@@ -11,6 +11,7 @@ interface Props extends RouteComponentProps<any> { };
 
 interface State {
 	versions: I.HistoryVersion[];
+	loading: boolean;
 };
 
 const $ = require('jquery');
@@ -22,13 +23,13 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
 		versions: [] as I.HistoryVersion[],
+		loading: false,
 	};
 	
 	version: I.HistoryVersion = null;
 	refHeader: any = null;
 	scrollLeft: number = 0;
 	scrollRight: number = 0;
-	loading: boolean = false;
 	lastId: string = '';
 
 	constructor (props: any) {
@@ -274,18 +275,18 @@ class PageMainHistory extends React.Component<Props, State> {
 	
 	loadList (lastId: string) { 
 		const { match } = this.props;
-		const { versions } = this.state;
+		const { versions, loading } = this.state;
 		const rootId = match.params.id;
 		
-		if (this.loading || (this.lastId && (lastId == this.lastId))) {
+		if (loading || (this.lastId && (lastId == this.lastId))) {
 			return;
 		};
 
-		this.loading = true;
+		this.setState({ loading: true });
 		this.lastId = lastId;
 
 		C.HistoryVersions(rootId, lastId, LIMIT, (message: any) => {
-			this.loading = false;
+			this.setState({ loading: false });
 
 			if (message.error.code || !message.versions.length) {
 				this.forceUpdate();
