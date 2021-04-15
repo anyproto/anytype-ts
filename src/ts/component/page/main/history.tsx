@@ -288,6 +288,7 @@ class PageMainHistory extends React.Component<Props, State> {
 			this.loading = false;
 
 			if (message.error.code || !message.versions.length) {
+				this.forceUpdate();
 				return;
 			};
 
