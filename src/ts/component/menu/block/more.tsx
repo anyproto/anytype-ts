@@ -224,7 +224,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			sections[0].children.push(align);
 
 			if (block.canHaveHistory()) {
-				sections[2].children.unshift({ id: 'history', name: 'Version history' });
+				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd} + Y` });
 			};
 
 			sections = sections.map((it: any, i: number) => {
