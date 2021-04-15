@@ -130,7 +130,7 @@ class CellText extends React.Component<Props, State> {
 
 		let content: any = null;
 
-		if (relation.relationKey == 'name') {
+		if (relation.relationKey == Constant.relationKey.name) {
 			let size = iconSize;
 
 			switch (viewType) {
