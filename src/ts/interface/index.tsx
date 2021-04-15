@@ -4,6 +4,7 @@ import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
+import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
 import {
@@ -72,6 +73,9 @@ export {
 	Relation,
 	OptionScope,
 	SelectOption,
+
+	RestrictionObject, 
+	RestrictionDataview,
 	
 	PageInfo,
 
