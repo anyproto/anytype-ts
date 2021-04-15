@@ -79,6 +79,7 @@ class Dispatcher {
 		let V = Events.Event.Message.ValueCase;
 
 		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
+		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 		if (v == V.BLOCKADD)					 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
@@ -203,6 +204,9 @@ class Dispatcher {
 
 				case 'accountShow':
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
+					break;
+
+				case 'accountDetails':
 					break;
 
 				case 'threadStatus':

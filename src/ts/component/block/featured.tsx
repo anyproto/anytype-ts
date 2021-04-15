@@ -27,8 +27,8 @@ class BlockFeatured extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, iconSize } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
-		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object.featuredRelations).filter((it: any) => {
-			return (it != 'description') && object[it];
+		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object[Constant.relationKey.featured]).filter((it: any) => {
+			return (it != Constant.relationKey.description) && object[it];
 		}));
 
 		return (

@@ -536,9 +536,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
-		e.persist();
-
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
 
@@ -580,7 +578,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 		};
 
-		this.props.close();
+		close();
 	};
 
 	withButtons (item: I.PageInfo) {

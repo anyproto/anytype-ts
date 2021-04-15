@@ -856,7 +856,7 @@ class DataUtil {
 				break;
 		};
 
-		if ((details.featuredRelations || []).indexOf(Constant.relationKey.description) >= 0) {
+		if ((details[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
 			ret.className.push('withDescription');
 		};
 
