@@ -249,6 +249,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			]});
 		};
 
+		sections = sections.filter((section: any) => {
+			section.children = section.children.filter((child: any) => { return child; });
+			return section.children.length > 0;
+		});
+
 		return sections;
 	};
 	
