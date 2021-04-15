@@ -189,12 +189,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			let template = null;
 			let archive = null;
 
-			if (config.allowDataview) {
-				if (object.type == Constant.typeId.template) {	
-					template = { id: 'createPage', icon: 'template', name: 'Create object' };
-				} else {
-					template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
-				};
+			if (object.type == Constant.typeId.template) {	
+				template = { id: 'createPage', icon: 'template', name: 'Create object' };
+			} else {
+				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
 			};
 
 			if (object.isArchived) {
@@ -208,7 +206,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{
 					children: [
 						linkRoot,
-						template,
+						config.allowDataview ? template : null,
 						search,
 					] 
 				},
@@ -241,7 +239,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			]});
 		} else {
 			sections.push({ children: [
-				turn,
+				config.allowDataview ? turn : null,
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },

@@ -280,6 +280,8 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { onChange } = data;
 
 		const cb = (id: string, name: string) => {
+			console.log(id, name);
+
 			let from = filter.from;
 			let to = from + name.length + 1;
 			let marks = Util.objectCopy(data.marks || []);
@@ -295,12 +297,13 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.id == 'add') {
-			C.PageCreate({ name: filter.text }, (message: any) => {
+			const name = filter.text.replace(/\\/g, '');
+			C.PageCreate({ name: name }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				cb(message.pageId, (filter.text || Constant.default.name));
+				cb(message.pageId, (name || Constant.default.name));
 			});
 		} else {
 			cb(item.id, item.name);
