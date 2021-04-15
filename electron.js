@@ -20,8 +20,8 @@ const bindings = require('bindings');
 const envPath = path.join(__dirname, 'electron', 'env.json');
 
 const TIMEOUT_UPDATE = 600 * 1000;
-const MIN_WIDTH = 980;
-const MIN_HEIGHT = 640;
+const MIN_WIDTH = 752;
+const MIN_HEIGHT = 480;
 const KEYTAR_SERVICE = 'Anytype';
 
 let env = {};
