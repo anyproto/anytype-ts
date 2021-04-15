@@ -279,6 +279,11 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	onOver (e: any, item: any) {
 		this.setActive(item, false);
 
+		if (!item.arrow) {
+			menuStore.closeAll(Constant.menuIds.add);
+			return;
+		};
+
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
