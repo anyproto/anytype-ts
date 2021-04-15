@@ -39,7 +39,7 @@
 	#documents {
 		.item { 
 			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
-			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
+			margin: 0px 16px 16px 0px; padding: 16px 38px 16px 16px; position: relative; cursor: pointer; user-select: none;
 		}
 		
 		.item {
@@ -47,7 +47,7 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; line-height: 20px; max-height: 60px; width: 100%; word-break: break-word; margin-bottom: 1px;
+				@include text-common; line-height: 20px; max-height: 60px; width: 100%; word-break: break-word;
 				-webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; display: -webkit-box;
 			}
 			.type { @include text-small; color: $colorDarkGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
