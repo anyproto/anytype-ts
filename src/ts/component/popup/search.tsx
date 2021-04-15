@@ -444,6 +444,9 @@ class PopupSearch extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
+		if (!config.allowDataview) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
+		};
 
 		this.setState({ loading: true, n: -1 });
 
