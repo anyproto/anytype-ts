@@ -395,6 +395,10 @@ class BlockStore {
 
 		let ret = [] as I.Block[];
 		for (let item of tree) {
+			if (!item) {
+				continue;
+			};
+
 			let cb = item.childBlocks;
 			delete(item.childBlocks);
 

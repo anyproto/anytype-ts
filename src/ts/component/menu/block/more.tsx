@@ -163,6 +163,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
+		const { config } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -188,10 +189,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			let template = null;
 			let archive = null;
 
-			if (object.type == Constant.typeId.template) {	
-				template = { id: 'createPage', icon: 'template', name: 'Create object' };
-			} else {
-				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
+			if (config.allowDataview) {
+				if (object.type == Constant.typeId.template) {	
+					template = { id: 'createPage', icon: 'template', name: 'Create object' };
+				} else {
+					template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
+				};
 			};
 
 			if (object.isArchived) {
