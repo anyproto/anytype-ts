@@ -82,6 +82,7 @@
 	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
 
 	.block.blockText.description.isReadOnly { display: none; }
+	.block.blockText.description { display: none; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 

@@ -79,6 +79,11 @@
 		]
 	},
 
+	"relationKey": {
+		"name": "name",
+		"description": "description"
+	},
+
 	"typeId": {
 		"template": "_ottemplate"
 	},

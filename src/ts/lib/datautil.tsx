@@ -856,6 +856,10 @@ class DataUtil {
 				break;
 		};
 
+		if ((details.featuredRelations || []).indexOf(Constant.relationKey.description) >= 0) {
+			ret.className.push('withDescription');
+		};
+
 		if (ret.withIcon && ret.withCover) {
 			ret.className.push('withIconAndCover');
 		} else
