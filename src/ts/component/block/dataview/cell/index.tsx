@@ -47,7 +47,7 @@ class Cell extends React.Component<Props, {}> {
 			'cellContent', 
 			DataUtil.relationClass(relation.format), 
 			(this.canEdit() ? 'canEdit' : ''), 
-			(relationKey == 'name' ? 'isName' : ''),
+			(relationKey == Constant.relationKey.name ? 'isName' : ''),
 		];
 
 		let CellComponent: React.ReactType<Props>;
@@ -192,12 +192,7 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.File:
-				if (!value.length) {
-					break;
-				};
-
 				param = Object.assign(param, {
-					offsetY: -height + 1,
 					width: width,
 				});
 				param.data = Object.assign(param.data, {

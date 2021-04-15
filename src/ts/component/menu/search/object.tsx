@@ -49,6 +49,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { value, placeHolder, label } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
+		const placeHolderFocus = data.placeHolderFocus || 'Filter objects...';
 
 		if (!this.cache) {
 			return null;
@@ -98,7 +99,12 @@ class MenuSearchObject extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : ''}
 
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolder={placeHolder} placeHolderFocus="Filter objects..." onChange={(e: any) => { this.onKeyUp(e, false); }} />
+				<Filter 
+					ref={(ref: any) => { this.ref = ref; }} 
+					placeHolder={placeHolder} 
+					placeHolderFocus={placeHolderFocus} 
+					onChange={(e: any) => { this.onKeyUp(e, false); }} 
+				/>
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
@@ -216,10 +222,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
-		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] },
-		].concat(data.filters || []);
-
+		const filters: any[] = data.filters || [];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		].concat(data.sorts || []);

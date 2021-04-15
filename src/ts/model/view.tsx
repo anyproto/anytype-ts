@@ -152,7 +152,7 @@ class Filter implements I.Filter {
 		self.relationKey = String(props.relationKey || '');
 		self.operator = Number(props.operator) || I.FilterOperator.And;
 		self.condition = Number(props.condition) || I.FilterCondition.Equal;
-		self.value = props.value || '';
+		self.value = props.value;
 
 		decorate(self, {
 			relationKey: observable,

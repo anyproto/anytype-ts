@@ -132,7 +132,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		let featured = Constant.featuredRelations.concat(object.featuredRelations);
+		let featured = Constant.featuredRelations.concat(object[Constant.relationKey.featured]);
 
 		if (!config.debug.ho) {
 			items = items.filter((it: any) => { return !it.isHidden; });
@@ -192,7 +192,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
-		let featured = Util.objectCopy(object.featuredRelations || []);
+		let featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
 		let idx = featured.findIndex((it: string) => { return it == item.relationKey; });
 
 		if (idx >= 0) {
@@ -202,7 +202,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		};
 
 		const details = [ 
-			{ key: 'featuredRelations', value: featured },
+			{ key: Constant.relationKey.featured, value: featured },
 		];
 		C.BlockSetDetails(rootId, details);
 	};

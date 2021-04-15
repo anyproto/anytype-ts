@@ -46,6 +46,10 @@
 
 .editorWrapper.isResizing #editorSize { visibility: visible; }
 
+.editorWrapper.withDescription {
+	.blocks .block.blockText.description { display: flex; }
+}
+
 /* Page */
 
 .editorWrapper.withIcon { padding-top: 122px; }

@@ -12,8 +12,6 @@ class CellFile extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -29,17 +27,7 @@ class CellFile extends React.Component<Props, {}> {
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
 		if (!value.length) {
-			return !canEdit ? null : (
-				<InputWithFile 
-					block={block} 
-					icon="file" 
-					textFile="Upload a file" 
-					onChangeUrl={this.onChangeUrl} 
-					onChangeFile={this.onChangeFile} 
-					readOnly={readOnly} 
-					canResize={false}
-				/>
-			);
+			return <div className="empty">Add a file</div>;
 		};
 
 		const Item = (item: any) => {
@@ -80,32 +68,6 @@ class CellFile extends React.Component<Props, {}> {
 			e.stopPropagation();
 			DataUtil.objectOpenPopup(item);
 		};
-	};
-
-	onChangeUrl (e: any, url: string) {
-		C.UploadFile(url, '', I.FileType.None, false, (message: any) => {
-			if (!message.error.code) {
-				this.save(message.hash);
-			};
-		});
-	};
-	
-	onChangeFile (e: any, path: string) {
-		C.UploadFile('', path, I.FileType.None, false, (message: any) => {
-			if (!message.error.code) {
-				this.save(message.hash);
-			};
-		});
-	};
-
-	save (hash: string) {
-		const { onChange } = this.props;
-		
-		let value = this.getValue();
-		value.push(hash);
-		value = Util.arrayUnique(value);
-
-		onChange(value);
 	};
 
 };
