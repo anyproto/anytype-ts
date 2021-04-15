@@ -71,7 +71,6 @@ class Storage {
 
 	logout () {
 		this.delete('accountId');
-		this.delete('popupNewBlock');
 		this.delete('scroll');
 		this.delete('toggle');
 		this.delete('crumbs');

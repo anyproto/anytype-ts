@@ -136,45 +136,51 @@ class Page extends React.Component<Props, {}> {
 
 		Util.linkPreviewHide(true);
 		keyboard.setMatch(match);
-		
-		if (!isPopup) {
-			popupStore.closeAll();
-			menuStore.closeAll();
 
-			window.setTimeout(() => {
-				if (isMain && account && !popupNewBlock) {
+		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+		
+		if (isPopup) {
+			return;
+		};
+
+
+		popupStore.closeAll();
+		menuStore.closeAll();
+
+		window.setTimeout(() => {
+			if (isMain && account) {
+				if (!popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 				};
 
-				if (isMainIndex) {
-					if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-						popupStore.open('confirm', {
-							data: {
-								title: 'We need your opinion',
-								text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
-								textConfirm: 'Let\'s go!',
-								textCancel: 'Skip',
-								canCancel: true,
-								onConfirm: () => {
-									ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
-									Storage.set('lastSurveyTime', Util.time());
-								},
-								onCancel: () => {
-									Storage.set('lastSurveyCanceled', 1);
-									Storage.set('lastSurveyTime', Util.time());
-								},
+				Storage.set('redirect', history.location.pathname);
+			};
+
+			if (isMainIndex) {
+				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					popupStore.open('confirm', {
+						data: {
+							title: 'We need your opinion',
+							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
+							textConfirm: 'Let\'s go!',
+							textCancel: 'Skip',
+							canCancel: true,
+							onConfirm: () => {
+								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+								Storage.set('lastSurveyTime', Util.time());
 							},
-						});
-					};
-
-					Storage.delete('redirect');
-				} else {
-					Storage.set('redirect', history.location.pathname);
+							onCancel: () => {
+								Storage.set('lastSurveyCanceled', 1);
+								Storage.set('lastSurveyTime', Util.time());
+							},
+						},
+					});
 				};
-			}, Constant.delay.popup);
-		};
 
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+				Storage.delete('redirect');
+			};
+		}, Constant.delay.popup);
+		
 	};
 	
 	unbind () {
