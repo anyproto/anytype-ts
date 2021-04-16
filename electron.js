@@ -330,7 +330,7 @@ function createWindow () {
 		};
 	});
 
-	storage.get('config', (error, data) => {
+	storage.get('devconfig', (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
 
@@ -534,6 +534,21 @@ function menuInit () {
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
 					click: () => { win.webContents.openDevTools(); }
+				}
+			]
+		});
+	};
+
+	if (config.sudo) {
+		menuParam.push({
+			label: 'Sudo',
+			submenu: [
+				{
+					label: 'Dataview', type: 'checkbox', checked: config.allowDataview,
+					click: () => { 
+						setConfig({ allowDataview: !config.allowDataview });
+						win.reload();
+					}
 				}
 			]
 		});
