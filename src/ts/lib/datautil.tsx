@@ -417,7 +417,7 @@ class DataUtil {
 
 		C.BlockListSetAlign(rootId, [ 
 			Constant.blockId.title, 
-			Constant.blockId.description, 
+			//Constant.blockId.description, 
 			Constant.blockId.featured,
 		], align);
 
