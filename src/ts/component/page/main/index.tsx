@@ -203,6 +203,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 					};
 
 					if ((item.id == 'link') && !menuStore.isOpen('searchObject', item.id)) {
+						const filters = [];
+
+						if (!config.allowDataview) {
+							filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Page ] });
+						};
+
 						menuStore.closeAll(Constant.menuIds.index, () => {
 							menuStore.open('searchObject', { 
 								menuKey: item.id,
@@ -211,7 +217,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 								offsetY: -$('#menuSelect').height(),
 								isSub: true,
 								passThrough: true,
-								data: { 
+								data: {
+									filters: filters,
 									type: I.NavigationType.Link, 
 									rootId: root,
 									skipId: root,

@@ -239,7 +239,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			]});
 		} else {
 			sections.push({ children: [
-				config.allowDataview ? turn : null,
+				turn,
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
@@ -403,6 +403,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = blockStore.getDetails(rootId, rootId);
+		const { config } = commonStore;
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -425,12 +426,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
+				const filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',
 					label: 'Your object type library',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
-					],
+					filters: filters,
 					onSelect: (item: any) => {
 						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
 						close();

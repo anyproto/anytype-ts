@@ -277,7 +277,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isFeatured())			 hasTitle = true;
 			};
 
-			if (hasTurnObject && config.allowDataview) {
+			if (hasTurnObject) {
 				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
@@ -414,6 +414,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const { config } = commonStore;
 		
 		if (!block) {
 			return;
@@ -480,12 +481,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
+				const filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',
 					label: 'Your object type library',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
-					],
+					filters: filters,
 					onSelect: (item: any) => {
 						this.moveToPage(item.id);
 						close();

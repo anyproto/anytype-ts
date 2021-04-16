@@ -86,6 +86,7 @@
 	},
 
 	"typeId": {
+		"page": "_otpage",
 		"template": "_ottemplate"
 	},
 
