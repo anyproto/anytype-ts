@@ -8,16 +8,26 @@ export default [
 
 	{ style: I.TextStyle.Title, text: `Updates for 16 April, 2021` },
 
-	{ style: I.TextStyle.Bulleted, text: `Full-text search that can find matches inside the text and new search pane on top.` },
-	{ style: I.TextStyle.Bulleted, text: `Markdown export. You can find it in setting panel and be sure, that your data will be exported in popular format.` },
-	{ style: I.TextStyle.Bulleted, text: `Wide mode in object three dots menu.` },
-	{ style: I.TextStyle.Bulleted, text: `Add to dashboard / remove from dashboard buttons.` },
-	{ style: I.TextStyle.Bulleted, text: `Refreshed design. With object types, bigger emojis (disabled by default btw).` },
-	{ style: I.TextStyle.Bulleted, text: `It's tough to login in to the mobile app with a mnemonic keychain, so you can do that with the QR code.` },
-	{ style: I.TextStyle.Bulleted, text: `Menus refactoring. Secondary menu flips when and moves on another side when no free space. Some options work on mouse over instead of click.` },
-	{ style: I.TextStyle.Bulleted, text: `Link to, move to now working through search, instead of navigation.` },
-	{ style: I.TextStyle.Bulleted, text: `Backspace or delete could open previous page instead of deleting the blocks.` },
-	{ style: I.TextStyle.Bulleted, text: `Title. When you type text, a letter jumps after the carriage. Not anymore! Thread: <a href="https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing">https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing</a>` },
+	{ text: `Hold onto your desks, this is a big one!` },
+	{ text: `Previous updates focused on the unseen: bugs, sync, speed, and reliability. Those were difficult and necessary updates. It’s important Anytype’s foundation supports multiple object types and rich data views. With this release, however, you’ll begin to see some of the visual changes we’re putting in place for our next major release. We want Anytype to be a delightful experience for its users, and we hope you enjoy this sneak peek at what’s coming.` },
+
+	{ style: I.TextStyle.Header2, text: `New Features` },
+	{ style: I.TextStyle.Bulleted, text: `We’ve spruced up Anytype with a refreshed design. We hope you’ll enjoy larger icons and more object descriptions.` },
+	{ style: I.TextStyle.Bulleted, text: `A new search pane, featuring full-text search that can find matches inside your objects & pages.` },
+	{ style: I.TextStyle.Bulleted, text: `Markdown <b>export</b> Located in Settings, you can now export your Anytype pages into markdown.` },
+	{ style: I.TextStyle.Bulleted, text: `Greater page customisation options. Users can now change page alignment, and make changes to overall page size. This can be found in the menu while editing a page on the top-right of Anytype.` },
+	{ style: I.TextStyle.Bulleted, text: `You can now add/remove pages to/from the dashboard. Simply click the menu from any page.` },
+	{ style: I.TextStyle.Bulleted, text: `It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Keychain phrase.` },
+	{ text: `<span class="${sc}">Please don’t share your keychain phrase or your QR code with anyone.</span>` },
+
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+	{ style: I.TextStyle.Bulleted, text: `Men-oeuvres. Menus will now flip vertically/horizontally when they run out of space.` },
+	{ style: I.TextStyle.Bulleted, text: `Saved you a click. Sub-menus will now open on mouseover.` },
+	{ style: I.TextStyle.Bulleted, text: `Link-to and move to functions are now available through the search pane.` },
+
+	{ style: I.TextStyle.Header2, text: `Bug fixes` },
+	{ style: I.TextStyle.Bulleted, text: `Backspace or delete would sometimes open the previous page instead of deleting blocks.` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes, when you typed title text, an errant letter may chase after the carriage. Not anymore. Thread: <a href="https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing">https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing</a>` },
 
 	{ style: I.TextStyle.Header1, text: `Updates for 18 March, 2021` },
 	{ style: I.TextStyle.Header2, text:  `Sync enhancements` },
