@@ -18,6 +18,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Greater page customisation options. Users can now change page alignment, and make changes to overall page size. This can be found in the menu while editing a page on the top-right of Anytype.` },
 	{ style: I.TextStyle.Bulleted, text: `You can now add/remove pages to/from the dashboard. Simply click the menu from any page.` },
 	{ style: I.TextStyle.Bulleted, text: `It can be tough to login to the mobile app with a mnemonic phrase, so you can do that with a QR code. Your unique QR code is found under Settings > Keychain phrase.` },
+	{ text: ``},
 	{ text: `<span class="${sc}">Please don’t share your keychain phrase or your QR code with anyone.</span>` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
@@ -28,6 +29,8 @@ export default [
 	{ style: I.TextStyle.Header2, text: `Bug fixes` },
 	{ style: I.TextStyle.Bulleted, text: `Backspace or delete would sometimes open the previous page instead of deleting blocks.` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes, when you typed title text, an errant letter may chase after the carriage. Not anymore. Thread: <a href="https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing">https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing</a>` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
 	{ style: I.TextStyle.Header1, text: `Updates for 18 March, 2021` },
 	{ style: I.TextStyle.Header2, text:  `Sync enhancements` },
