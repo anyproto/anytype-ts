@@ -15,6 +15,8 @@ interface State {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
+
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
 
@@ -34,6 +36,8 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
+
+		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 	};
 
 	render () {
@@ -127,6 +131,7 @@ class PageMainHistory extends React.Component<Props, State> {
 												onKeyUp={() => {}} 
 												onMenuAdd={() => {}}
 												onPaste={() => {}}
+												getWrapperWidth={this.getWrapperWidth}
 												readOnly={true}
 											/>
 										)
@@ -383,6 +388,10 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		sideLeft.css({ height: height });
 		sideRight.css({ height: height });
+	};
+
+	getWrapperWidth (): number {
+		return Constant.size.editor;
 	};
 
 };
