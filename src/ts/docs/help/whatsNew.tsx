@@ -6,8 +6,21 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 18 March, 2021` },
-	{ style: I.TextStyle.Header1, text:  `Sync enhancements` },
+	{ style: I.TextStyle.Title, text: `Updates for 16 April, 2021` },
+
+	{ style: I.TextStyle.Bulleted, text: `Full-text search that can find matches inside the text and new search pane on top.` },
+	{ style: I.TextStyle.Bulleted, text: `Markdown export. You can find it in setting panel and be sure, that your data will be exported in popular format.` },
+	{ style: I.TextStyle.Bulleted, text: `Wide mode in object three dots menu.` },
+	{ style: I.TextStyle.Bulleted, text: `Add to dashboard / remove from dashboard buttons.` },
+	{ style: I.TextStyle.Bulleted, text: `Refreshed design. With object types, bigger emojis (disabled by default btw).` },
+	{ style: I.TextStyle.Bulleted, text: `It's tough to login in to the mobile app with a mnemonic keychain, so you can do that with the QR code.` },
+	{ style: I.TextStyle.Bulleted, text: `Menus refactoring. Secondary menu flips when and moves on another side when no free space. Some options work on mouse over instead of click.` },
+	{ style: I.TextStyle.Bulleted, text: `Link to, move to now working through search, instead of navigation.` },
+	{ style: I.TextStyle.Bulleted, text: `Backspace or delete could open previous page instead of deleting the blocks.` },
+	{ style: I.TextStyle.Bulleted, text: `Title. When you type text, a letter jumps after the carriage. Not anymore! Thread: <a href="https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing">https://community.anytype.io/d/157-cursor-occasionally-jumps-back-when-typing</a>` },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 18 March, 2021` },
+	{ style: I.TextStyle.Header2, text:  `Sync enhancements` },
 	{ text: `This release is all about reliability and sync speed.` },
 	{ text: `Readers beware, these are some hardcore technical release notes:` },
 	{ style: I.TextStyle.Bulleted, text: `Multi-stream simultaneous connections should be fixed, as a result of our updating to the latest <span class="${sc}">libp2p</span> libraries.` },
