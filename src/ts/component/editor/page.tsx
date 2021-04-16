@@ -310,7 +310,7 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, 'title');
+		const block = blockStore.getLeaf(rootId, Constant.blockId.title);
 		if (!block) {
 			return;
 		};

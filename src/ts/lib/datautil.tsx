@@ -415,7 +415,12 @@ class DataUtil {
 			{ key: 'layoutAlign', value: align },
 		];
 
-		C.BlockListSetAlign(rootId, [ 'title', 'description', 'featuredRelations' ], align);
+		C.BlockListSetAlign(rootId, [ 
+			Constant.blockId.title, 
+			Constant.blockId.description, 
+			Constant.blockId.featured,
+		], align);
+
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 

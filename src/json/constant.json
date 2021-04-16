@@ -90,6 +90,13 @@
 		"template": "_ottemplate"
 	},
 
+	"blockId": {
+		"title": "title",
+		"description": "description",
+		"featured": "featuredRelations",
+		"dataview": "dataview"
+	},
+
 	"featuredRelations": [ "type", "creator" ],
 	
 	"size": {
