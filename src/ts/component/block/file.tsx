@@ -32,7 +32,6 @@ class BlockFile extends React.Component<Props, {}> {
 		let details = blockStore.getDetails(rootId, content.hash);
 		if (details._objectEmpty_) {
 			details = Util.objectCopy(content);
-			details.type = '/file';
 			details.sizeInBytes = details.size;
 		};
 
@@ -57,7 +56,7 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
-							<IconObject object={{ ...details }} size={24} />
+							<IconObject object={{ ...details, layout: I.ObjectLayout.File }} size={24} />
 							<span className="name">{details.name}</span>
 							<span className="size">{Util.fileSize(details.sizeInBytes)}</span>
 						</span>

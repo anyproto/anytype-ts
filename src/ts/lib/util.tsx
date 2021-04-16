@@ -465,8 +465,9 @@ class Util {
 	};
 
 	fileIcon (obj: any): string {
+		const n = obj.name.split('.');
 		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
-		const e = String(obj.fileExt || '');
+		const e = String(obj.fileExt || n[n.length - 1] || '');
 
 		let t: string[] = [];
 		let icon = '';

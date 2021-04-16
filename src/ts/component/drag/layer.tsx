@@ -57,7 +57,9 @@ class DragLayer extends React.Component<Props, State> {
 									block={block} 
 									rootId={rootId} 
 									index={i} 
-									readOnly={true} getWrapperWidth={() => { return Constant.size.editor; }} />
+									readOnly={true} 
+									getWrapperWidth={() => { return Constant.size.editor; }} 
+								/>
 							);
 						})}
 					</div>
