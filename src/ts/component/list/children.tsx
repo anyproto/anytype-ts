@@ -13,6 +13,8 @@ interface Props extends RouteComponentProps<any> {
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
+	getWrapperWidth?(): number;
+	getWrapper?(): any;
 };
 
 @observer

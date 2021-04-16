@@ -29,7 +29,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const { url, title, description, imageHash, faviconHash } = content;
-		
+
 		let element = null;
 		if (url) {
 			let style: any = {};
