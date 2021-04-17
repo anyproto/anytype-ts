@@ -44,6 +44,10 @@
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
+html.platformWindows {
+	.editorWrapper #editorSize { top: 78px; }
+}
+
 .editorWrapper.isResizing #editorSize { visibility: visible; }
 
 .editorWrapper.withDescription {
