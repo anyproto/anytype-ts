@@ -108,7 +108,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
-						<Label text={Util.sprintf(translate('popupNavigationEmptyFilter'), filter)} />
+						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
 					</div>
 				) : ''}
 

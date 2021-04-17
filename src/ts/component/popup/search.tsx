@@ -154,7 +154,7 @@ class PopupSearch extends React.Component<Props, State> {
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						value={details.name} 
-						placeHolder={translate('popupNavigationPlaceholder')} 
+						placeHolder={translate('popupSearchPlaceholder')} 
 						onKeyDown={this.onKeyDownSearch} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 						onFocus={this.onFocus}
@@ -164,7 +164,7 @@ class PopupSearch extends React.Component<Props, State> {
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
-						<Label text={Util.sprintf(translate('popupNavigationEmptyFilter'), filter)} />
+						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
 					</div>
 				) : ''}
 				
