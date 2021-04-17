@@ -222,13 +222,16 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
-		const filters: any[] = data.filters || [];
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false }
+		].concat(data.filters || []);
+
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		].concat(data.sorts || []);
 
 		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 		if (!config.allowDataview) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });

@@ -435,6 +435,7 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 		const sorts = [
