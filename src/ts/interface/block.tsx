@@ -100,6 +100,7 @@ export interface Block {
 	isObjectTask?(): boolean;
 	isObjectSet?(): boolean;
 	isObjectFile?(): boolean;
+	isObjectImage?(): boolean;
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
 	isObjectReadOnly?(): boolean;

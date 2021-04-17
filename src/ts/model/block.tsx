@@ -135,6 +135,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.File);
 	};
 
+	isObjectImage (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Image);
+	};
+
 	isObjectType (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.ObjectType);
 	};
@@ -144,7 +148,7 @@ class Block implements I.Block {
 	};
 
 	isObjectReadOnly (): boolean { 
-		return this.isObjectSet() || this.isObjectFile();
+		return this.isObjectSet() || this.isObjectFile() || this.isObjectImage() || this.isObjectType() || this.isObjectRelation();
 	};
 
 	isFeatured (): boolean {

@@ -54,7 +54,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const readOnly = block.isObjectRelation() || block.isObjectType();
+			const readOnly = block.isObjectReadOnly(); 
 
 			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: !readOnly };
 			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: !readOnly };
@@ -183,7 +183,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isLinkArchive()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive()) {
 		} else
 		if (block.isPage()) {
 			let template = null;
