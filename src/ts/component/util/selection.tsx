@@ -65,13 +65,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const win = $(window); 
+		const ns = this.nameSpace();
+
 		this._isMounted = true;
 		this.unbind();
 		
-		let win = $(window); 
-
-		win.on('keydown.selection', (e: any) => { this.onKeyDown(e); })
-		win.on('keyup.selection', (e: any) => { this.onKeyUp(e); });
+		win.on('keydown.selection' + ns, (e: any) => { this.onKeyDown(e); })
+		win.on('keyup.selection' + ns, (e: any) => { this.onKeyUp(e); });
 		this.getScrollContainer().on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
@@ -104,7 +105,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				} else {
 					next = blockStore.getNextBlock(rootId, idsWithChildren[idsWithChildren.length - 1], dir);
 				};
-				
+
 				if (next && ids.indexOf(next.id) < 0) {
 					C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
 				};
@@ -119,7 +120,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 				if (ids.length == 1) {
 					this.dir = dir;
 				};
-				
+
 				if (this.dir && (dir != this.dir)) {
 					method = dir < 0 ? 'pop' : 'shift';
 					ids[method]();
@@ -127,7 +128,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 					const next = blockStore.getNextBlock(rootId, ids[idx], dir, (item: any) => {
 						return item.type != I.BlockType.Layout;
 					});
-	
+
 					method = dir < 0 ? 'unshift' : 'push';
 					if (next) {
 						ids[method](next.id);
@@ -499,12 +500,20 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	unbindMouse () {
-		$(window).unbind('mousemove.selection mouseup.selection');
+		const ns = this.nameSpace();
+
+		$(window).unbind(`mousemove.selection${ns} mouseup.selection${ns}`);
 	};
 	
 	unbindKeyboard () {
-		$(window).unbind('keydown.selection keyup.selection');
+		const ns = this.nameSpace();
+
+		$(window).unbind(`keydown.selection${ns} keyup.selection${ns}`);
 		this.getScrollContainer().unbind('scroll.selection');
+	};
+
+	nameSpace () {
+		return this.props.isPopup ? 'Popup' : '';
 	};
 	
 	preventSelect (v: boolean) {
@@ -525,28 +534,33 @@ class SelectionProvider extends React.Component<Props, {}> {
 		if (!ids.length) {
 			return;
 		};
+
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		ids = [ ...new Set(ids) ];
 		this.lastIds = ids;
 
 		for (let id of ids) {
-			$('#block-' + id).addClass('isSelected');
-			$('#selectable-' + id).addClass('isSelected');
-			$('#block-children-' + id + ' .block').addClass('isSelected');
+			node.find('#block-' + id).addClass('isSelected');
+			node.find('#selectable-' + id).addClass('isSelected');
+			node.find('#block-children-' + id + ' .block').addClass('isSelected');
 		};
 
-		$('.block.isSelected .children .selectable.isSelected').removeClass('isSelected');
+		node.find('.block.isSelected .children .selectable.isSelected').removeClass('isSelected');
 		
 		// Hide placeholder and remove focus
 		if (ids.length) {
 			focus.clear(true);
-			$('.placeHolder').hide();
+			node.find('.placeHolder').hide();
 		};
 	};
 	
 	get (withChildren?: boolean): string[] {
+		const node = $(ReactDOM.findDOMNode(this));
+
 		let ids = [] as string[];
-		$('.selectable.isSelected').each((i: number, item: any) => {
+
+		node.find('.selectable.isSelected').each((i: number, item: any) => {
 			let id = String($(item).data('id') || '');
 			if (!id) {
 				return;
