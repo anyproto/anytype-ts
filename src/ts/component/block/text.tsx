@@ -656,7 +656,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		// Make code
-		if ((value == '/code' || value == '```') && !block.isTextCode()) {
+		if ((value == '/code' || value == '``` ') && !block.isTextCode()) {
 			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
