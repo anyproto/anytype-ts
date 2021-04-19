@@ -57,14 +57,19 @@
 				right: 16px; top: 16px; opacity: 0; z-index: 2; transition: none;
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
-
-			.line { width: 88px; height: 10px; background-color: #dfddd0; }
 		}
 		.item.withIcon {
 			.name { -webkit-line-clamp: 1; }
 		}
 		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }
+
+		.item.isLoading {
+			.iconObject { background: #f3f2ec; border-radius: 10px; margin-bottom: 15px; }
+			.line { border-radius: 2px; }
+			.line.lineName { width: 88px; height: 10px; background-color: #dfddd0; margin-bottom: 10px; }
+			.line.lineType { width: 56px; height: 8px; background-color: #eae9e0; }
+		}
 
 		.item.isTask { padding-left: 40px; }
 		.item.isTask {
