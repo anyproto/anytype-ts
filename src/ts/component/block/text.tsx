@@ -131,28 +131,35 @@ class BlockText extends React.Component<Props, {}> {
 				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
 		};
-		
-		const editor = (
-			<div
-				id="value"
-				className={cv.join(' ')}
-				contentEditable={!readOnly}
-				suppressContentEditableWarning={true}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onSelect={this.onSelect}
-				onPaste={this.onPaste}
-				onMouseDown={this.onMouseDown}
-				onMouseUp={this.onMouseUp}
-				onInput={this.onInput}
-				onCompositionStart={this.onCompositionStart}
-				onCompositionUpdate={this.onCompositionUpdate}
-				onCompositionEnd={this.onCompositionEnd}
-				onDragStart={(e: any) => { e.preventDefault(); }}
-			/>
-		);
+
+		let editor = null;
+		if (readOnly) {
+			editor = (
+				<div id="value" className={cv.join(' ')} />
+			);
+		} else {
+			editor = (
+				<div
+					id="value"
+					className={cv.join(' ')}
+					contentEditable={!readOnly}
+					suppressContentEditableWarning={true}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onSelect={this.onSelect}
+					onPaste={this.onPaste}
+					onMouseDown={this.onMouseDown}
+					onMouseUp={this.onMouseUp}
+					onInput={this.onInput}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionUpdate={this.onCompositionUpdate}
+					onCompositionEnd={this.onCompositionEnd}
+					onDragStart={(e: any) => { e.preventDefault(); }}
+				/>
+			);
+		}
 		
 		return (
 			<div className="flex">

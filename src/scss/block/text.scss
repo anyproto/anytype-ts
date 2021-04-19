@@ -76,9 +76,6 @@
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeHolder { display: none; }
 
-	.block.blockText.isReadOnly.code {
-		.additional { display: none; }
-	}
 	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
 
 	.block.blockText.description.isReadOnly { display: none; }
@@ -142,6 +139,11 @@
 			
 			.icon.codeWrap { width: 20px; height: 20px; }
 		}
+	}
+
+	.block.blockText.code.isReadOnly > .wrapContent > .selectable > .dropTarget > .flex {
+		.value { white-space: pre !important; }
+		.additional { display: none; }
 	}
 
 	.block.blockText.code.isUnwrapped > .wrapContent > .selectable > .dropTarget .value {
