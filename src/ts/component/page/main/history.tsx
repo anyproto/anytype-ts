@@ -3,9 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainHistory as Header, Block, Loader, Icon } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, M, C, Util, dispatcher, Storage } from 'ts/lib';
+import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { DataUtil } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> { };
 
@@ -45,8 +44,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		const { versions } = this.state;
 		const rootId = match.params.id;
 		const groups = this.groupData(versions);
-
 		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (!this.version || !root) {
 			return <Loader />;
 		};
@@ -294,7 +293,6 @@ class PageMainHistory extends React.Component<Props, State> {
 			this.setState({ loading: false });
 
 			if (message.error.code || !message.versions.length) {
-				this.forceUpdate();
 				return;
 			};
 
