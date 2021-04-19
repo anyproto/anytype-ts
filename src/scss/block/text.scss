@@ -94,7 +94,6 @@
 		.value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.title > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
-	.block.blockText.title > .wrapContent > .selectable > .selectionOver { display: none; }
 
 	.block.blockText.description { @include text-description; }
 	.block.blockText.description > .wrapContent > .selectable > .selectionOver { display: none; }
