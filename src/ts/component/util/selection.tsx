@@ -41,7 +41,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseUp = this.onMouseUp.bind(this);
@@ -70,9 +69,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		this._isMounted = true;
 		this.unbind();
-		
-		win.on('keydown.selection' + ns, (e: any) => { this.onKeyDown(e); })
-		win.on('keyup.selection' + ns, (e: any) => { this.onKeyUp(e); });
+
+		win.on(`keydown.selection${ns}`, (e: any) => { this.onKeyDown(e); })
 		this.getScrollContainer().on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
@@ -88,6 +86,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const k = e.key.toLowerCase();
+
+		console.log('onKeyDown', rootId, this.props);
 		
 		let ids: any = this.get();
 		let idsWithChildren: any = this.get(true);
@@ -140,9 +140,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 	};
 	
-	onKeyUp (e: any) {
-	};
-
 	getScrollContainer () {
 		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
@@ -187,7 +184,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#selection-rect');	
+		const el = node.find('#selection-rect');
+		const ns = this.nameSpace();
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
@@ -225,8 +223,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on('mousemove.selection', throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('mouseup.selection', (e: any) => { this.onMouseUp(e); });
+		win.on(`mousemove.selection${ns}`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on(`mouseup.selection${ns}`, (e: any) => { this.onMouseUp(e); });
 	};
 	
 	onMouseMove (e: any) {

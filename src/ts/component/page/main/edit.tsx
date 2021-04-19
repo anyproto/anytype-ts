@@ -19,12 +19,12 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { history, location, match, isPopup } = this.props;
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		
 		return (
 			<div>
-				<SelectionProvider rootId={match.params.id} isPopup={isPopup}>
+				<SelectionProvider rootId={rootId} isPopup={isPopup}>
 					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
 						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 	
