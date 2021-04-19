@@ -5,8 +5,19 @@ const sc = 'bgColor bgColor-grey textColor textColor-red nw'
 export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
+	{ style: I.TextStyle.Title, text: `Updates for 19 April, 2021` },
 
-	{ style: I.TextStyle.Title, text: `Updates for 16 April, 2021` },
+	{ style: I.TextStyle.Header2, text: `Hotfixes` },
+	{ style: I.TextStyle.Bulleted, text: `Exclude archived items in search. <a href="https://community.anytype.io/d/288-option-to-exclude-archived-items-in-search/1">Community thread</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Set back the file icon after uploading a file. <a href="https://community.anytype.io/d/286-file-icon-is-missing-after-upload-a-file/1">Thread</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Fix the duplicating title in the profile page. <a href="https://community.anytype.io/d/277-duplicate-title-in-profile-page/1">Thread</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Search box and page resize slider fix in Windows. <a href="https://community.anytype.io/d/278-search-box-is-out-of-page/1">Thread about search</a>, <a href="https://community.anytype.io/d/283-resize-sliderline-where-small/1">resize</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Search bar description inconsistency fix. <a href="https://community.anytype.io/d/289-search-bar-description-inconsistency/1">Thread</a>` },
+	{ style: I.TextStyle.Bulleted, text: `After trying to drag a bookmark, the application window became inoperational` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 16 April, 2021` },
 
 	{ text: `Hold onto your desks, this is a big one!` },
 	{ text: `Previous updates focused on the unseen: bugs, sync, speed, and reliability. Those were difficult and necessary updates. It’s important Anytype’s foundation supports multiple object types and rich data views. With this release, however, you’ll begin to see some of the visual changes we’re putting in place for our next major release. We want Anytype to be a delightful experience for its users, and we hope you enjoy this sneak peek at what’s coming.` },
