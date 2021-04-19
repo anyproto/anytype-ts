@@ -61,17 +61,9 @@ class PageMainRelation extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { isPopup, match } = this.props;
-		const rootId = this.getRootId();
-
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (close) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
-		};
+		this.close();
 	};
+
 
 	open () {
 		const { history } = this.props;
@@ -101,6 +93,20 @@ class PageMainRelation extends React.Component<Props, {}> {
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	close () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId);
+		};
 	};
 
 	getRootId () {

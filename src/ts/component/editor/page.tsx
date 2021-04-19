@@ -178,19 +178,10 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		const { isPopup, rootId, match } = this.props;
-
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
-	
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (close) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
-		};
+		this.close();
 
 		focus.clear(false);
 		Storage.delete('editorId');
@@ -322,10 +313,16 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	close (id: string) {
-		const { isPopup, rootId } = this.props;
-		if (!isPopup) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
+	close () {
+		const { isPopup, rootId, match } = this.props;
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId);
 		};
 	};
 	

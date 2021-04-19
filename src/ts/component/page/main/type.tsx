@@ -236,21 +236,12 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { isPopup, match } = this.props;
-		const rootId = this.getRootId();
-
 		this._isMounted = false;
 		this.save();
+		this.close();
+
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (close) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
-		};
 	};
 
 	open () {
@@ -281,6 +272,20 @@ class PageMainType extends React.Component<Props, {}> {
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	close () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId);
+		};
 	};
 
 	onSelect (icon: string) {
