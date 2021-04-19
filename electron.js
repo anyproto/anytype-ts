@@ -164,7 +164,8 @@ function createWindow () {
 		webPreferences: {
 			nativeWindowOpen: true,
 			enableRemoteModule: true,
-			nodeIntegration: true
+			nodeIntegration: true,
+			contextIsolation: false,
 		},
 	};
 
