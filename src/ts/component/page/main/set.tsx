@@ -42,7 +42,6 @@ class PageMainSet extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
 		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
-		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.name,
@@ -51,23 +50,6 @@ class PageMainSet extends React.Component<Props, {}> {
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
-		};
-
-		let data = dbStore.getData(rootId, block.id).map((it: any) => {
-			it.name = String(it.name || Constant.default.name || '');
-			return it;
-		});
-
-		let pager = null;
-		if (total && data.length) {
-			pager = (
-				<Pager 
-					offset={offset} 
-					limit={Constant.limit.dataview.records} 
-					total={total} 
-					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
-				/>
-			);
 		};
 
 		const Editor = (item: any) => {
@@ -293,14 +275,6 @@ class PageMainSet extends React.Component<Props, {}> {
 		const value = node.find('#editor-' + id);
 
 		return value.length ? String(value.get(0).innerText || '') : '';
-	};
-
-	getData (id: string, offset: number, callBack?: (message: any) => void) {
-		const rootId = this.getRootId();
-		const meta: any = { offset: offset };
-
-		dbStore.metaSet(rootId, Constant.blockId.dataview, meta);
-		C.BlockDataviewViewSetActive(rootId, Constant.blockId.dataview, id, offset, Constant.limit.dataview.records, callBack);
 	};
 
 	placeHolderCheck (id: string) {

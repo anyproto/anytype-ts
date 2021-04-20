@@ -214,6 +214,7 @@ class IconObject extends React.Component<Props, {}> {
 	onClick (e: any) {
 		const { canEdit, object, onClick, onCheckbox } = this.props;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
+		const layoutsEmoji = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.ObjectType ];
 
 		if (onClick) {
 			onClick(e);
@@ -224,7 +225,7 @@ class IconObject extends React.Component<Props, {}> {
 				onCheckbox(e);
 			};
 
-			if ([ I.ObjectLayout.Page, I.ObjectLayout.ObjectType ].indexOf(layout) >= 0) {
+			if (layoutsEmoji.indexOf(layout) >= 0) {
 				this.onEmoji(e);
 			};
 		};
