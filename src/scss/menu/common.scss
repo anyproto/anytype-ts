@@ -61,6 +61,7 @@
 			.line { height: 1px; margin: 0px; background: $colorLightGrey; display: block; }
 		}
 		.filter.active { .icon.clear { opacity: 1; } }
+		.filter.isName .input { font-weight: 600; }
 
 		.inputWrap { padding: 0px 14px 8px 14px; }
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }

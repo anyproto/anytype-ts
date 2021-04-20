@@ -15,6 +15,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	focus: boolean = false;
 	timeout: number = 0;
 
+	type: I.ViewType = I.ViewType.Grid;
+	name: string = '';
+
 	constructor(props: any) {
 		super(props);
 		
@@ -27,32 +30,30 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
-		const view = getView();
+		const { view } = data;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						return <MenuItemVertical 
+					{item.children.map((action: any, i: number) => (
+						<MenuItemVertical 
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onClick={(e: any) => { this.onClick(e, action); }} 
-						/>;
-					})}
+						/>
+					))}
 				</div>
 			</div>
 		);
 
 		return (
 			<div>
-				<form onSubmit={this.onSubmit}>
-					<div className="sectionName">View name</div>
-					<div className="inputWrap">
+				<form className="filter isName" onSubmit={this.onSubmit}>
+					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={view.name} 
@@ -63,6 +64,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							onBlur={this.onNameBlur}
 						/>
 					</div>
+					<div className="line" />
 				</form>
 
 				{sections.map((item: any, i: number) => (
@@ -88,6 +90,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	
 	componentWillUnmount () {
 		this.unbind();
+		window.clearTimeout(this.timeout);
 	};
 	
 	unbind () {
@@ -163,45 +166,72 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any, v: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+
 		if (!this.focus) {
 			return;
 		};
 
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
-
-		if (v == view.name) {
-			return;
-		};
+		view.name = v;
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, name: v });
-		}, 500);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+	};
+
+	save () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, view, onSave } = data;
+
+		const cb = () => {
+			if (onSave) {
+				onSave();
+			};
+			this.forceUpdate();
+		};
+
+		if (view.id) {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, cb);
+		} else {
+			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
+				view.id = message.viewId;
+				cb();
+			});
+		};
 	};
 
 	onSubmit (e: any) {
 		e.preventDefault();
-		this.props.close();
+
+		window.clearTimeout(this.timeout);
+		this.save();
 	};
 
 	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
 			return it;
 		});
-		const sections = [
-			{ id: 'type', name: 'View as', children: types },
-			{
+
+		const sections: any[] = [
+			{ id: 'type', name: 'View as', children: types }
+		];
+
+		if (view.id) {
+			sections.push({
 				children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
 					{ id: 'remove', icon: 'remove', name: 'Remove view' },
 				]
-			}
-		];
+			});
+		};
 		return sections;
 	};
 
@@ -225,21 +255,19 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, onSelect } = data;
+		const { rootId, blockId, getData, getView, view, onSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const { content } = block;
-		const { views } = content;
-		const view = getView();
-		const viewId = view.id;
-
-		close();
-		if (onSelect) {
-			onSelect();
-		};
+		const views = block.content.views || [];
+		const current = getView();
 
 		if (item.sectionId == 'type') {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, type: item.id });
-		} else {
+			view.type = item.id;
+			this.forceUpdate();
+			this.save();
+		} else 
+		if (view.id) {
+			close();
+
 			switch (item.id) {
 				case 'copy':
 					C.BlockDataviewViewCreate(rootId, blockId, view);
@@ -250,12 +278,18 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					const next = filtered[filtered.length - 1];
 
 					if (next) {
-						C.BlockDataviewViewDelete(rootId, blockId, viewId, () => {
-							getData(next.id, 0);
+						C.BlockDataviewViewDelete(rootId, blockId, view.id, () => {
+							if (current.id == view.id) {
+								getData(next.id, 0);
+							};
 						});
 					};
 					break;
 			};
+		};
+
+		if (onSelect) {
+			onSelect();
 		};
 	};
 	

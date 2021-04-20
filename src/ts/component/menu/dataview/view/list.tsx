@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon } from 'ts/component';
-import { I, C, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
+import { I, M, Util, keyboard, Key } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -10,7 +10,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class MenuViewList extends React.Component<Props> {
@@ -61,16 +60,17 @@ class MenuViewList extends React.Component<Props> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<ItemAdd index={0} disabled={true} />
 					{items.map((item: any, i: number) => (
-						<Item key={i + 1} {...item} index={i + 1} />
+						<Item key={i} {...item} index={i} />
 					))}
+					<ItemAdd index={items.length} disabled={true} />
 				</div>
 			);
 		});
 		
 		return (
 			<div>
+				<div className="label">Views</div>
 				<List 
 					axis="y" 
 					transitionDuration={150}
@@ -133,7 +133,10 @@ class MenuViewList extends React.Component<Props> {
 
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		this.props.setHover((item ? item : items[this.n]), scroll);
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+		this.props.setHover(items[this.n], scroll);
 	};
 
 	onOver (e: any, item: any) {
@@ -150,31 +153,30 @@ class MenuViewList extends React.Component<Props> {
 
 		menuStore.open('dataviewViewEdit', {
 			element: `#${getId()} #item-add`,
+			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
 				view: { 
-					name: Constant.default.viewName,
+					type: I.ViewType.Grid,
 					relations: Util.objectCopy(view.relations),
 				},
 			},
-			horizontal: I.MenuDirection.Center,
 		});
 	};
 
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId, getSize, close } = this.props;
+		const { param, getId, close } = this.props;
 		const { data } = param;
 
 		menuStore.open('dataviewViewEdit', { 
-			element: '#' + getId() + ' #item-' + item.id,
+			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
 			data: {
 				...data,
-				option: item,
+				view: item,
+				onSave: () => { this.forceUpdate(); },
 				onSelect: () => { close(); }
 			}
 		});

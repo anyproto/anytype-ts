@@ -3,6 +3,8 @@
 .menus {
 	.menu.menuDataviewViewList { width: 360px; }
 	.menu.menuDataviewViewList {
+		.label { font-weight: 600; margin-bottom: 3px; @include text-common; color: $colorBlack; }
+
 		.item { display: flex; line-height: 40px; padding: 8px 14px; }
 		.item {
 			.icon.dnd { height: 40px; background-size: 20px 20px; vertical-align: middle; }
@@ -18,6 +20,7 @@
 
 			.clickable { width: calc(100% - 22px); }
 		}
-
 	}
+
+	.menu.menuDataviewViewEdit { width: 296px; }
 }
