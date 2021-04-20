@@ -67,7 +67,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 					</React.Fragment>
 				)}
 				{arrow ? <Icon className="arrow" /> : ''}
-				{checkbox ? <Icon className="checkbox" /> : ''}
+				{checkbox ? <Icon className="chk" /> : ''}
 			</div>
 		);
     };

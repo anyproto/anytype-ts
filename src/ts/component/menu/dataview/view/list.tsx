@@ -167,7 +167,7 @@ class MenuViewList extends React.Component<Props> {
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId, close } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 
 		menuStore.open('dataviewViewEdit', { 
@@ -177,7 +177,6 @@ class MenuViewList extends React.Component<Props> {
 				...data,
 				view: item,
 				onSave: () => { this.forceUpdate(); },
-				onSelect: () => { close(); }
 			}
 		});
 	};

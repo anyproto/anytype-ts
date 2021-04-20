@@ -194,7 +194,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		if (view.id) {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, cb);
-		} else {
+		} else 
+		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
 				cb();
