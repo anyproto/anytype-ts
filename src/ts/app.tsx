@@ -115,6 +115,7 @@ import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/option.scss';
 import 'scss/menu/dataview/media.scss';
 import 'scss/menu/dataview/text.scss';
+import 'scss/menu/dataview/view.scss';
 
 import 'scss/media/print.scss';
 import 'scss/media/dark.scss';

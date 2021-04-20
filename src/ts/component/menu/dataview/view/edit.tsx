@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, keyboard, Key, translate } from 'ts/lib';
+import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
 import { blockStore } from 'ts/store';
 
@@ -188,19 +188,13 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	getSections () {
+		const types = DataUtil.menuGetViews().map((it: any) => {
+			it.sectionId = 'type';
+			it.icon = 'view c' + it.id;
+			return it;
+		});
 		const sections = [
-			{ 
-				id: 'type', name: 'View as', children: [
-					{ id: I.ViewType.Grid, name: 'Grid' },
-					{ id: I.ViewType.Gallery, name: 'Gallery' },
-					{ id: I.ViewType.List, name: 'List' },
-					{ id: I.ViewType.Board, name: 'Kanban' },
-				].map((it: any) => {
-					it.sectionId = 'type';
-					it.icon = 'view c' + it.id;
-					return it;
-				})
-			},
+			{ id: 'type', name: 'View as', children: types },
 			{
 				children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
@@ -208,7 +202,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				]
 			}
 		];
-
 		return sections;
 	};
 
@@ -232,7 +225,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView } = data;
+		const { rootId, blockId, getData, getView, onSelect } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { content } = block;
 		const { views } = content;
@@ -240,6 +233,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const viewId = view.id;
 
 		close();
+		if (onSelect) {
+			onSelect();
+		};
 
 		if (item.sectionId == 'type') {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, type: item.id });

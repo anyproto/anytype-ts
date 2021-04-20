@@ -662,6 +662,15 @@ class DataUtil {
 			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
 		});
 	};
+
+	menuGetViews () {
+		return [
+			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Gallery, name: 'Gallery' },
+			{ id: I.ViewType.List, name: 'List' },
+			{ id: I.ViewType.Board, name: 'Kanban' },
+		];
+	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
 		const reg = new RegExp(Util.filterFix(filter), 'gi');

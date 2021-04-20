@@ -1,0 +1,23 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewViewList { width: 360px; }
+	.menu.menuDataviewViewList {
+		.item { display: flex; line-height: 40px; padding: 8px 14px; }
+		.item {
+			.icon.dnd { height: 40px; background-size: 20px 20px; vertical-align: middle; }
+			.buttons {
+				.icon { vertical-align: middle; }
+			}
+
+			.icon.view { width: 40px; height: 40px; margin-right: 10px; }
+			.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid1.svg'); }
+			.icon.view.c1 { background-image: url('~img/icon/dataview/view/list1.svg'); }
+			.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
+			.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
+
+			.clickable { width: calc(100% - 22px); }
+		}
+
+	}
+}

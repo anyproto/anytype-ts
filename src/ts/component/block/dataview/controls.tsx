@@ -26,7 +26,6 @@ class Controls extends React.Component<Props, State> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
-		this.onViewAdd = this.onViewAdd.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
@@ -78,7 +77,7 @@ class Controls extends React.Component<Props, State> {
 					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
 				))}
 
-				<div id="item-button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewEdit'); }}>
+				<div id="item-button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
 					<Icon className="more" />
 				</div>
 
@@ -134,39 +133,6 @@ class Controls extends React.Component<Props, State> {
 				getData: getData,
 				getView: getView,
 			},
-		});
-	};
-
-	onViewAdd (e: any) {
-		const { rootId, block, getData, getView } = this.props;
-		const { content } = block;
-		const { views } = content;
-		const view = getView();
-		const newView: any = { 
-			name: Constant.default.viewName,
-			relations: Util.objectCopy(view.relations),
-		};
-
-		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
-			getData(message.viewId, 0);
-
-			const view = views.find((item: any) => { return item.id == message.viewId; });
-			if (!view) {
-				return;
-			};
-
-			menuStore.open('dataviewViewEdit', {
-				element: '#button-view-add',
-				offsetY: 4,
-				horizontal: I.MenuDirection.Center,
-				data: {
-					rootId: rootId,
-					blockId: block.id,
-					view: view,
-					getData: getData,
-					getView: getView,
-				},
-			});
 		});
 	};
 
