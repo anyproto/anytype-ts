@@ -46,6 +46,7 @@ export interface MenuItem {
 	inner?: any;
 	color?: string;
 	arrow?: boolean;
+	checkbox?: boolean;
 	className?: string;
 	isActive?: boolean;
 	menuId?: string;

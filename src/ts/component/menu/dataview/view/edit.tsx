@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { I, C, keyboard, Key, translate } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
-import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -9,7 +8,6 @@ interface Props extends I.Menu {};
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
 class MenuViewEdit extends React.Component<Props, {}> {
 	
 	n: number = -1;
@@ -31,8 +29,25 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
-		const items = this.getItems();
+		const sections = this.getSections();
 		
+		const Section = (item: any) => (
+			<div id={'section-' + item.id} className="section">
+				{item.name ? <div className="name">{item.name}</div> : ''}
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						return <MenuItemVertical 
+							key={i} 
+							{...action} 
+							icon={action.icon || action.id}
+							checkbox={(view.type == action.id) && (item.id == 'type')}
+							onClick={(e: any) => { this.onClick(e, action); }} 
+						/>;
+					})}
+				</div>
+			</div>
+		);
+
 		return (
 			<div>
 				<form onSubmit={this.onSubmit}>
@@ -49,11 +64,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						/>
 					</div>
 				</form>
-				<div className="section">
-					{items.map((action: any, i: number) => (
-						<MenuItemVertical key={i} {...action} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />
-					))}
-				</div>
+
+				{sections.map((item: any, i: number) => (
+					<Section key={i} index={i} {...item} />
+				))}
 			</div>
 		);
 	};
@@ -173,16 +187,40 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		this.props.close();
 	};
 
-	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView } = data;
-		const view = getView();
+	getSections () {
+		const sections = [
+			{ 
+				id: 'type', name: 'View as', children: [
+					{ id: I.ViewType.Grid, name: 'Grid' },
+					{ id: I.ViewType.Gallery, name: 'Gallery' },
+					{ id: I.ViewType.List, name: 'List' },
+					{ id: I.ViewType.Board, name: 'Kanban' },
+				].map((it: any) => {
+					it.sectionId = 'type';
+					it.icon = 'view c' + it.id;
+					return it;
+				})
+			},
+			{
+				children: [
+					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
+					{ id: 'remove', icon: 'remove', name: 'Remove view' },
+				]
+			}
+		];
 
-		return view ? [
-			{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
-			{ id: 'remove', icon: 'remove', name: 'Remove view' },
-		] : [];
+		return sections;
+	};
+
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		
+		return items;
 	};
 	
 	onOver (e: any, item: any) {
@@ -192,7 +230,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any, item: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getData, getView } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -201,23 +239,27 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const view = getView();
 		const viewId = view.id;
 
-		this.props.close();
+		close();
 
-		switch (item.id) {
-			case 'copy':
-				C.BlockDataviewViewCreate(rootId, blockId, view);
-				break;
+		if (item.sectionId == 'type') {
+			C.BlockDataviewViewUpdate(rootId, blockId, view.id, { ...view, type: item.id });
+		} else {
+			switch (item.id) {
+				case 'copy':
+					C.BlockDataviewViewCreate(rootId, blockId, view);
+					break;
 
-			case 'remove':
-				const filtered = views.filter((it: I.View) => { return it.id != view.id; });
-				const next = filtered[filtered.length - 1];
+				case 'remove':
+					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
+					const next = filtered[filtered.length - 1];
 
-				if (next) {
-					C.BlockDataviewViewDelete(rootId, blockId, viewId, () => {
-						getData(next.id, 0);
-					});
-				};
-				break;
+					if (next) {
+						C.BlockDataviewViewDelete(rootId, blockId, viewId, () => {
+							getData(next.id, 0);
+						});
+					};
+					break;
+			};
 		};
 	};
 	

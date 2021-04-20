@@ -48,7 +48,6 @@ class Controls extends React.Component<Props, State> {
 			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },
 			{ id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0 },
 			{ id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList' },
 		];
 
 		const ButtonItem = (item: any) => {

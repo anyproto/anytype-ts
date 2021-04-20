@@ -105,6 +105,7 @@
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
 			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.15); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
+			.icon.checkbox { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 
 			.buttons { flex-shrink: 0; margin-top: -2px; }
 			.buttons {
