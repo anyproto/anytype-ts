@@ -369,7 +369,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			if (it.content.style == I.LinkStyle.Archive) {
 				return true;
 			};
-			if (!config.allowDataview && (object.layout != I.ObjectLayout.Page) && !object._objectEmpty_) {
+			if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(object.layout) < 0) && !object._objectEmpty_) {
 				return false;
 			};
 			if (object.isArchived) {
