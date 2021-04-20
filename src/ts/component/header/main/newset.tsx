@@ -30,6 +30,7 @@ class HeaderMainSet extends React.Component<Props, {}> {
 
 	render () {
 		const cn = [ 'header', 'headerMainEdit' ];
+
 		if (popupStore.isOpen('navigation')) {
 			cn.push('active');
 		};

@@ -1,87 +1,407 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
-import { I, C, Util, DataUtil, translate } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block, Pager } from 'ts/component';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { getRange } from 'selection-ranges';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	rootId: string;
+	isPopup?: boolean;
+};
+
+const $ = require('jquery');
+const BLOCK_ID = 'dataview';
+const EDITOR_IDS = [ 'name', 'description' ];
+const Constant = require('json/constant.json');
 
 @observer
 class PageMainSet extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
+	id: string = '';
+	refHeader: any = null;
+	loading: boolean = false;
+	timeout: number = 0;
+
 	constructor (props: any) {
 		super(props);
-
-		this.onAdd = this.onAdd.bind(this);
+		
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render () {
-		const { config } = commonStore;
-
-		let objectTypes = Util.objectCopy(dbStore.objectTypes);
-		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		if (this.loading) {
+			return <Loader />;
 		};
 
-		const Item = (item: any) => {
+		const { config } = commonStore;
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
+		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
+		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
+		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const placeHolder = {
+			name: Constant.default.nameType,
+			description: 'Add a description',
+		};
+		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
+
+		if (object.name == Constant.default.name) {
+			object.name = '';
+		};
+
+		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
+		if (!config.debug.ho) {
+			relations = relations.filter((it: any) => { return !it.isHidden; });
+		};
+		relations.sort(DataUtil.sortByHidden);
+
+		let data = dbStore.getData(rootId, block.id).map((it: any) => {
+			it.name = String(it.name || Constant.default.name || '');
+			return it;
+		});
+
+		let pager = null;
+		if (total && data.length) {
+			pager = (
+				<Pager 
+					offset={offset} 
+					limit={Constant.limit.dataview.records} 
+					total={total} 
+					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
+				/>
+			);
+		};
+
+		const Editor = (item: any) => {
 			return (
-				<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} onClick={(e: any) => { this.setCreate(item); }}>
-					<IconObject object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
-					<div className="name">{item.name}</div>
+				<div className={[ 'wrap', item.className ].join(' ')}>
+					<div 
+						id={'editor-' + item.id}
+						className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
+						contentEditable={true}
+						suppressContentEditableWarning={true}
+						onFocus={(e: any) => { this.onFocus(e, item); }}
+						onBlur={(e: any) => { this.onBlur(e, item); }}
+						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+						onInput={(e: any) => { this.onInput(e, item); }}
+						onSelect={(e: any) => { this.onSelectText(e, item); }}
+					>
+						{object[item.id]}
+					</div>
+					<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
 				</div>
+			);
+		};
+
+		const Row = (item: any) => {
+			const author = blockStore.getDetails(rootId, item.creator);
+			return (
+				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
+					<td className="cell">
+						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
+							<IconObject object={item} />
+							<div className="name">{item.name}</div>
+						</div>
+					</td>
+					<td className="cell">
+						{item.lastModifiedDate ? (
+							<div className="cellContent">
+								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
+							</div>
+						) : ''}
+					</td>
+					<td className="cell">
+						{!author._objectEmpty_ ? (
+							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
+								<IconObject object={author} />
+								<div className="name">{author.name}</div>
+							</div>
+						) : ''}
+					</td>
+				</tr>
 			);
 		};
 
 		return (
 			<div>
-				<Header {...this.props} rootId="" />
-				<div className="wrapper">
-					<IconObject size={96} object={{ iconClass: 'newSet' }} />
-					<Title text={translate('setTitle')} />
-					<Label text={translate('setText')} />
-					<div className="items">
-						<div id="button-add" className="item add" onClick={this.onAdd}>
-							<Icon className="add" />
-							<div className="name">Create new object type</div>
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+
+				<div className="blocks wrapper">
+					<div className="head">
+						<div className="side left">
+							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
-						{objectTypes.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
+						<div className="side right">
+							<Editor className="title" id="name" />
+							<Editor className="descr" id="description" />
+
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+						</div>
+					</div>
+					
+					<div className="section set">
+						<div className="title">Set of objects</div>
+						<div className="content">
+							<table>
+								<thead>
+									<tr className="row">
+										<th className="cellHead">
+											<div className="name">Name</div>
+										</th>
+										<th className="cellHead">
+											<div className="name">Updated</div>
+										</th>
+										<th className="cellHead">
+											<div className="name">Owner</div>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{!data.length ? (
+										<tr>
+											<td className="cell empty" colSpan={3}>No objects yet</td>
+										</tr>
+									) : (
+										<React.Fragment>
+											{data.map((item: any, i: number) => (
+												<Row key={i} {...item} />
+											))}
+										</React.Fragment>
+									)}
+								</tbody>
+							</table>
+
+							{pager}
+						</div>
 					</div>
 				</div>
 			</div>
 		);
 	};
 
-	onAdd (e: any) {
-		const { objectTypes } = dbStore;
+	componentDidMount () {
+		this._isMounted = true;
+		this.open();
+	};
 
-		menuStore.open('objectTypeEdit', { 
-			element: '#button-add',
-			offsetX: 28,
+	componentDidUpdate () {
+		this.open();
+
+		for (let id of EDITOR_IDS) {
+			this.placeHolderCheck(id);
+		};
+
+		window.setTimeout(() => { focus.apply(); }, 10);
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.close();
+
+		focus.clear(true);
+		window.clearTimeout(this.timeout);
+	};
+
+	open () {
+		const { history } = this.props;
+		const rootId = this.getRootId();
+
+		if (this.id == rootId) {
+			return;
+		};
+
+		this.id = rootId;
+		this.loading = true;
+		this.forceUpdate();
+
+		crumbs.addCrumbs(rootId);
+		crumbs.addRecent(rootId);
+
+		C.BlockOpen(rootId, (message: any) => {
+			if (message.error.code) {
+				history.push('/main/index');
+				return;
+			};
+
+			this.loading = false;
+			this.forceUpdate();
+
+			if (this.refHeader) {
+				this.refHeader.forceUpdate();
+			};
+		});
+	};
+
+	close () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId);
+		};
+	};
+
+	onSelect (icon: string) {
+		const rootId = this.getRootId();
+		DataUtil.pageSetIcon(rootId, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const rootId = this.getRootId();
+		DataUtil.pageSetIcon(rootId, '', hash);
+	};
+
+	onAdd (e: any) {
+		const rootId = this.getRootId();
+		const relations = dbStore.getRelations(rootId, rootId);
+
+		menuStore.open('relationSuggest', { 
+			element: $(e.currentTarget),
+			offsetX: 32,
 			offsetY: 4,
 			data: {
-				onCreate: (type: I.ObjectType) => {
-					objectTypes.push(type);
-					dbStore.objectTypesSet(objectTypes);
-				}
+				filter: '',
+				rootId: rootId,
+				menuIdEdit: 'blockRelationEdit',
+				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.ObjectRelationListAvailable(rootId, callBack);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+				},
 			}
 		});
 	};
 
-	setCreate (item: any) {
-		const { root } = blockStore;
-
-		C.BlockCreateSet(root, '', item.id, { name: item.name + ' set', iconEmoji: item.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			DataUtil.objectOpen({ id: message.targetId });
+	onEdit (e: any, relationKey: string) {
+		const rootId = this.getRootId();
+		
+		menuStore.open('blockRelationEdit', { 
+			element: $(e.currentTarget),
+			offsetY: 4,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				relationKey: relationKey,
+				readOnly: false,
+				updateCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationUpdate(rootId, relation);
+				},
+			}
 		});
 	};
+
+	onFocus (e: any, item: any) {
+		keyboard.setFocus(true);
+
+		this.placeHolderCheck(item.id);
+	};
+
+	onBlur (e: any, item: any) {
+		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
+		this.save();
+	};
+
+	onInput (e: any, item: any) {
+		this.placeHolderCheck(item.id);
+	};
+
+	onKeyUp (e: any, item: any) {
+		this.placeHolderCheck(item.id);
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+	};
+
+	onSelectText (e: any, item: any) {
+		focus.set(item.id, this.getRange(item.id));
+	};
+
+	save () {
+		const rootId = this.getRootId();
+		const details = [];
+		const object: any = { id: rootId };
+
+		for (let id of EDITOR_IDS) {
+			const value = this.getValue(id);
+
+			details.push({ key: id, value: value });
+			object[id] = value;
+		};
+
+		C.BlockSetDetails(rootId, details);
+	};
+
+	getRange (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const range = getRange(node.find('#editor-' + id).get(0) as Element);
+		return range ? { from: range.start, to: range.end } : null;
+	};
+
+	getValue (id: string): string {
+		if (!this._isMounted) {
+			return '';
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#editor-' + id);
+
+		return value.length ? String(value.get(0).innerText || '') : '';
+	};
+
+	getData (id: string, offset: number, callBack?: (message: any) => void) {
+		const rootId = this.getRootId();
+		const meta: any = { offset: offset };
+
+		dbStore.metaSet(rootId, BLOCK_ID, meta);
+		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.dataview.records, callBack);
+	};
+
+	placeHolderCheck (id: string) {
+		const value = this.getValue(id);
+		value.length ? this.placeHolderHide(id) : this.placeHolderShow(id);			
+	};
+
+	placeHolderHide (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder.c' + id).hide();
+	};
 	
+	placeHolderShow (id: string) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.placeHolder.c' + id).show();
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
+	};
+
 };
 
 export default PageMainSet;

@@ -31,7 +31,9 @@ class DbStore {
 	@action
 	objectTypeUpdate (type: any) {
 		const item = this.getObjectType(type.id);
-		set(item, type);
+		if (item) {
+			set(item, type);
+		};
 	};
 
 	@action

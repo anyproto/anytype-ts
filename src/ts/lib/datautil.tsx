@@ -273,12 +273,20 @@ class DataUtil {
 				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
 				break;
 
+			case I.ObjectLayout.Set:
+				this.history.push('/main/set/' + object.id);
+				break;
+
 			case I.ObjectLayout.ObjectType:
 				this.history.push('/main/type/' + object.id);
 				break;
 
 			case I.ObjectLayout.Relation:
 				this.history.push('/main/relation/' + object.id);
+				break;
+
+			case I.ObjectLayout.Store:
+				this.history.push('/main/store');
 				break;
 		};
 	};
@@ -299,6 +307,10 @@ class DataUtil {
 		switch (object.layout) {
 			default:
 				param.data.matchPopup.params.action = 'edit';
+				break;
+
+			case I.ObjectLayout.Set:
+				param.data.matchPopup.params.action = 'set';
 				break;
 
 			case I.ObjectLayout.ObjectType:

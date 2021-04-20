@@ -1,24 +1,89 @@
 @import "~scss/_vars";
 
 .pageMainSet {
-	.wrapper { width: 704px; margin: 0px auto; padding: 96px 0px 80px 0px; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 128px 0px 80px 0px; user-select: none; }
 	.wrapper {
-		.title { @include text-title; padding: 10px 0px 22px 0px; }
-		.label { @include text-paragraph; margin-bottom: 28px; color: $colorDarkGrey; }
 
-		.items {
-			.item { line-height: 32px; transition: $transitionFast; cursor: pointer; }
+		.block {
+			.wrapMenu { display: none; }
+		}
+		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 20px; }
+		.block.blockFeatured {
+			.bullet { margin-top: -2px; }
+		}
+
+		.head { display: flex; margin-bottom: 35px; }
+		.head {
+			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
+			.side.right { width: calc(100% - 128px); }
+
+			.title { @include text-header1; }
+			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
+
+			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
+
+			.wrap { position: relative; }
+			.wrap {
+				.placeHolder { position: absolute; left: 0px; top: 0px; color: $colorDarkGrey; }
+			}
+		}
+
+		.section { margin-bottom: 32px; }
+		.section:last-child { margin: 0px; }
+
+		.section {
+			.title { @include text-header3; margin-bottom: 14px; }
+		}
+
+		.section.relation {
+			.item { display: flex; }
 			.item {
-				.icon { width: 20px; height: 20px; margin-right: 8px; }
-				.iconObject { margin-right: 8px; vertical-align: middle; }
-				.name { 
-					display: inline-block; @include text-paragraph; @include text-overflow-nw; width: calc(100% - 28px); line-height: 32px;
-					vertical-align: middle;
-				}
+				.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
+
+				.clickable { width: 228px; padding: 4px; display: flex; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
+				.clickable:hover { background: rgba(172,169,150,0.15); }
+
+				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
+				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: #6c6a5f; }
+				.value { color: $colorDarkGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
 			}
 
-			.item:hover { background: #f3f2ec; }
-			.icon.add { background-image: url('~img/icon/set/add.svg'); }
+			.item.add { color: $colorDarkGrey; line-height: 20px; }
+			.item.add:hover { color: $colorBlack; }
+			.item.add:hover {
+				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+			}
+		}
+
+		table { width: 100%; border-collapse: collapse; border-bottom: 1px solid #eae9e0; table-layout: fixed; border-top: 1px solid #eae9e0; }
+		table {
+			.cellHead { 
+				text-align: left; color: #6c6a5f; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+				@include text-overflow-nw;
+			}
+			.cellHead {
+				.name { 
+					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
+					@include text-overflow-nw; border-right: 1px solid #eae9e0;
+				}
+			}
+			.cellHead:last-child {
+				.name { border: 0px; }
+			}
+
+			tbody { border-top: 1px solid #eae9e0; }
+
+			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+
+			.cellContent.c-object {
+				.wrap { white-space: nowrap; }
+			}
+
+			.cell { padding: 14px; border-bottom: 1px solid #eae9e0; vertical-align: top; position: relative; word-break: break-word; }
+			.cell.c-select { padding-bottom: 8px; }
+			.cell.empty { color: $colorDarkGrey; }
 		}
 	}
 }
+
+.pageMainType > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }

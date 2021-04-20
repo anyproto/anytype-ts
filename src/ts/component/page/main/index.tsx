@@ -243,7 +243,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 					if (item.id == 'set') {
 						close();
-						history.push('/main/set');
+						history.push('/main/newset');
 					};
 				},
 			}
