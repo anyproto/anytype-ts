@@ -49,7 +49,6 @@ class Controls extends React.Component<Props, State> {
 			{ id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0 },
 			{ id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0 },
 			{ id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList' },
-			{ id: 'more', menu: 'dataviewViewEdit' },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -80,9 +79,10 @@ class Controls extends React.Component<Props, State> {
 					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
 				))}
 
-				<div className="item">
-					<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
+				<div id="item-button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewEdit'); }}>
+					<Icon className="more" />
 				</div>
+
 				<div className="item dn">
 					<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
 					<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
@@ -92,31 +92,29 @@ class Controls extends React.Component<Props, State> {
 		
 		return (
 			<div className="dataviewControls">
-				<Views 
-					axis="x" 
-					lockAxis="x"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortEnd={this.onSortEnd}
-					helperClass="isDragging"
-					helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
-				/>
-				
 				<div className="buttons">
 					<div className="side left">
-						{!readOnly ? (
-							<div className="item" onClick={onRowAdd}>
-								<Icon className="plus" />
-								<div className="name">{translate('blockDataviewNew')}</div>
-							</div>
-						) : ''}
+						<Views 
+							axis="x" 
+							lockAxis="x"
+							lockToContainerEdges={true}
+							transitionDuration={150}
+							distance={10}
+							onSortEnd={this.onSortEnd}
+							helperClass="isDragging"
+							helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
+						/>
 					</div>
 
 					<div className="side right">
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
-						))}
+						))}	
+						{!readOnly ? (
+							<div className="item" onClick={onRowAdd}>
+								<Icon className="plus" />
+							</div>
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -129,7 +127,7 @@ class Controls extends React.Component<Props, State> {
 		menuStore.open(menu, { 
 			element: '#item-button-' + id,
 			offsetY: 4,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
 			data: {
 				readOnly: readOnly,
 				rootId: rootId,
