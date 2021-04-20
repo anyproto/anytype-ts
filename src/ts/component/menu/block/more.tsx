@@ -183,7 +183,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
 		} else
 		if (block.isPage()) {
 			let template = null;
@@ -202,7 +202,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [] },
+				{ 
+					children: [
+						{ id: 'resize', name: 'Set layout width' }
+					]
+				},
 				{
 					children: [
 						linkRoot,
@@ -216,7 +220,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 
 			if (!block.isObjectSet()) {
-				sections[0].children.push({ id: 'resize', name: 'Resize page' });
+				sections[0].children.push();
 			};
 
 			sections[0].children.push(align);

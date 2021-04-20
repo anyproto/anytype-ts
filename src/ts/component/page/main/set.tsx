@@ -13,9 +13,9 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const $ = require('jquery');
-const BLOCK_ID = 'dataview';
-const EDITOR_IDS = [ 'name', 'description' ];
 const Constant = require('json/constant.json');
+
+const EDITOR_IDS = [ 'name', 'description' ];
 
 @observer
 class PageMainSet extends React.Component<Props, {}> {
@@ -38,28 +38,20 @@ class PageMainSet extends React.Component<Props, {}> {
 			return <Loader />;
 		};
 
-		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
-		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
+		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
-			name: Constant.default.nameType,
+			name: Constant.default.name,
 			description: 'Add a description',
 		};
-		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
 		};
-
-		let relations = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		if (!config.debug.ho) {
-			relations = relations.filter((it: any) => { return !it.isHidden; });
-		};
-		relations.sort(DataUtil.sortByHidden);
 
 		let data = dbStore.getData(rootId, block.id).map((it: any) => {
 			it.name = String(it.name || Constant.default.name || '');
@@ -99,35 +91,6 @@ class PageMainSet extends React.Component<Props, {}> {
 			);
 		};
 
-		const Row = (item: any) => {
-			const author = blockStore.getDetails(rootId, item.creator);
-			return (
-				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-					<td className="cell">
-						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-							<IconObject object={item} />
-							<div className="name">{item.name}</div>
-						</div>
-					</td>
-					<td className="cell">
-						{item.lastModifiedDate ? (
-							<div className="cellContent">
-								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
-							</div>
-						) : ''}
-					</td>
-					<td className="cell">
-						{!author._objectEmpty_ ? (
-							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
-								<IconObject object={author} />
-								<div className="name">{author.name}</div>
-							</div>
-						) : ''}
-					</td>
-				</tr>
-			);
-		};
-
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
@@ -145,41 +108,7 @@ class PageMainSet extends React.Component<Props, {}> {
 						</div>
 					</div>
 					
-					<div className="section set">
-						<div className="title">Set of objects</div>
-						<div className="content">
-							<table>
-								<thead>
-									<tr className="row">
-										<th className="cellHead">
-											<div className="name">Name</div>
-										</th>
-										<th className="cellHead">
-											<div className="name">Updated</div>
-										</th>
-										<th className="cellHead">
-											<div className="name">Owner</div>
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{!data.length ? (
-										<tr>
-											<td className="cell empty" colSpan={3}>No objects yet</td>
-										</tr>
-									) : (
-										<React.Fragment>
-											{data.map((item: any, i: number) => (
-												<Row key={i} {...item} />
-											))}
-										</React.Fragment>
-									)}
-								</tbody>
-							</table>
-
-							{pager}
-						</div>
-					</div>
+					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
 				</div>
 			</div>
 		);
@@ -370,8 +299,8 @@ class PageMainSet extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 		const meta: any = { offset: offset };
 
-		dbStore.metaSet(rootId, BLOCK_ID, meta);
-		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.dataview.records, callBack);
+		dbStore.metaSet(rootId, Constant.blockId.dataview, meta);
+		C.BlockDataviewViewSetActive(rootId, Constant.blockId.dataview, id, offset, Constant.limit.dataview.records, callBack);
 	};
 
 	placeHolderCheck (id: string) {
