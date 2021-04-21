@@ -44,22 +44,23 @@ class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 
 		const buttons: any[] = [
+			{ id: 'search', name: 'Search', menu: '' },
+			{ id: 'manager', name: 'Customize view', menu: 'dataviewManager', on: (filterCnt > 0 || sortCnt > 0) },
 			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },
-			{ id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0 },
-			{ id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'filter', name: 'Filters', menu: 'dataviewFilter', on: filterCnt > 0 },
+			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort', on: sortCnt > 0 },
 		];
 
+		const inner = <div className="dot" />;
+
 		const ButtonItem = (item: any) => {
-			let icn = [ item.id, String(item.className || '') ];
-			let cn = [ 'item', (item.on ? 'on' : '') ].concat(icn);
+			let cn = [ item.id, (item.on ? 'on' : '') ];
 			return (
-				<MenuItemVertical 
+				<Icon 
 					id={'button-' + item.id} 
-					menuId={item.menu}
-					name={item.name}
-					className={cn.join(' ')} 
-					icon={icn.join(' ')}
-					arrow={item.arrow}
+					className={cn.join(' ')}
+					inner={inner}
+					tooltip={item.name}
 					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
 				/>
 			);
@@ -109,9 +110,7 @@ class Controls extends React.Component<Props, State> {
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{!readOnly ? (
-							<div className="item" onClick={onRowAdd}>
-								<Icon className="plus" />
-							</div>
+							<Icon className="plus" onClick={onRowAdd} />
 						) : ''}
 					</div>
 				</div>
@@ -120,10 +119,14 @@ class Controls extends React.Component<Props, State> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
+		if (!menu) {
+			return;
+		};
+
 		const { rootId, block, readOnly, getData, getView } = this.props;
 
 		menuStore.open(menu, { 
-			element: '#item-button-' + id,
+			element: `#button-${id}`,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {

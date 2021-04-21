@@ -147,7 +147,7 @@ class Menu extends React.Component<Props, {}> {
 		const cd = [];
 		
 		if (!Component) {
-			return <div>Component {id} not found</div>
+			return null;
 		};
 		
 		if (param.className) {

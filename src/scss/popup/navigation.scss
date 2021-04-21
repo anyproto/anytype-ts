@@ -6,20 +6,6 @@
 		.innerWrap { top: 38px; transform: scale3d(1,1,1); transition: none; }
 		.dimmer { transition: none; }
 
-		.head { 
-			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 400px; border-radius: 6px;
-			transform: translateX(-50%); padding: 4px 8px;
-		}
-		.head {
-			.iconObject { margin-right: 6px; }
-			.icon {  width: 20px; height: 20px; vertical-align: top; margin-right: 6px; }
-			.icon.search { background-size: 18px 18px; background-image: url('~img/icon/search.svg'); }
-			.input { 
-				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
-				vertical-align: top;
-			}
-		}
-
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
