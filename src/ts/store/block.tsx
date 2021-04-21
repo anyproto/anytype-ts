@@ -421,6 +421,7 @@ class BlockStore {
 			...item,
 			id: id,
 			name: String(item.name || Constant.default.name || ''),
+			layout: Number(item.layout) || I.ObjectLayout.Page,
 			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
 		};
 	};
