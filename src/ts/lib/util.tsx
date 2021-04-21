@@ -325,9 +325,11 @@ class Util {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
-	date (format: string, timestamp: number) {
+	date (format: string, timestamp: number, local?: boolean) {
 		timestamp = Number(timestamp) || 0;
-		const jsdate = new Date(timestamp ? timestamp * 1000 : null);
+		const d = new Date(timestamp ? timestamp * 1000 : null);
+		const fn = local ? '' : 'UTC';
+
 		const pad = (n: number, c: number) => {
 			let s = String(n);
 			if ((s = s + '').length < c ) {
@@ -338,7 +340,7 @@ class Util {
 				return s;
 			};
 		};
-		
+
 		const f: any = {
 			// Day
 			d: () => {
@@ -349,7 +351,7 @@ class Util {
 				return t.substr(0,3);
 			},
 			j: () => {
-				return jsdate.getUTCDate();
+				return d[`get${fn}Date`]();
 			},
 			// Month
 			F: () => {
@@ -362,39 +364,39 @@ class Util {
 				return f.F().substr(0, 3);
 			},
 			n: () => {
-				return jsdate.getUTCMonth() + 1;
+				return d[`get${fn}Month`]() + 1;
 			},
 			// Year
 			Y: () => {
-				return jsdate.getUTCFullYear();
+				return d[`get${fn}FullYear`]();
 			},
 			y: () => {
-				return (jsdate.getUTCFullYear() + '').slice(2);
+				return (d[`get${fn}FullYear`]() + '').slice(2);
 			},
 			// Time
 			a: () => {
-				return jsdate.getUTCHours() > 11 ? 'pm' : 'am';
+				return d[`get${fn}Hours`]() > 11 ? 'pm' : 'am';
 			},
 			A: () => {
-				return jsdate.getUTCHours() > 11 ? 'PM' : 'AM';
+				return d[`get${fn}Hours`]() > 11 ? 'PM' : 'AM';
 			},
 			g: () => {
-				return jsdate.getUTCHours() % 12 || 12;
+				return d[`get${fn}Hours`]() % 12 || 12;
 			},
 			h: () => {
 				return pad(f.g(), 2);
 			},
 			H: () => {
-				return pad(jsdate.getUTCHours(), 2);
+				return pad(d[`get${fn}Hours`](), 2);
 			},
 			i: () => {
-				return pad(jsdate.getUTCMinutes(), 2);
+				return pad(d[`get${fn}Minutes`](), 2);
 			},
 			s: () => {
-				return pad(jsdate.getUTCSeconds(), 2);
+				return pad(d[`get${fn}Seconds`](), 2);
 			},
 			w: () => {
-				return jsdate.getUTCDay();
+				return d[`get${fn}Day`]();
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
