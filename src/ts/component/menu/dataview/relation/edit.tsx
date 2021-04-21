@@ -216,7 +216,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onDateSettings (e: any) {
-		const { param, getId, getSize } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 
 		this.menuOpen('dataviewDate', { 
@@ -236,9 +236,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		param.offsetX = getSize().width;
 		param.vertical = I.MenuDirection.Center;
 
-		menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-			menuStore.open(id, param);
-		});
+		if (!menuStore.isOpen(id)) {
+			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
+				menuStore.open(id, param);
+			});
+		};
 	};
 
 	menuClose () {
@@ -344,6 +346,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
+
+		this.menuClose();
 		close();
 	};
 

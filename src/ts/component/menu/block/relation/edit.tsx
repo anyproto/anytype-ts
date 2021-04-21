@@ -268,9 +268,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		param.offsetX = getSize().width;
 		param.vertical = I.MenuDirection.Center;
 
-		menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-			menuStore.open(id, param);
-		});
+		if (!menuStore.isOpen(id)) {
+			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
+				menuStore.open(id, param);
+			});
+		};
 	};
 
 	menuClose () {
