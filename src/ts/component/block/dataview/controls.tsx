@@ -78,7 +78,7 @@ class Controls extends React.Component<Props, State> {
 					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
 				))}
 
-				<div id="item-button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
+				<div id="button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
 					<Icon className="more" />
 				</div>
 

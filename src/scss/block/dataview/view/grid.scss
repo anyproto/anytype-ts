@@ -24,7 +24,7 @@
 		}
 		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 
-        .viewItem.viewGrid { border-collapse: collapse; border-bottom: 1px solid #e0ded2; table-layout: fixed; }
+        .viewItem.viewGrid { border-collapse: collapse; table-layout: fixed; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
 
@@ -45,6 +45,8 @@
 					.icon.expand { display: block; }
 				}
 			}
+
+			tr:last-child .cell { border: 0px; }
 				
 			.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
 
