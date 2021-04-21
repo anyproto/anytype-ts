@@ -237,7 +237,6 @@ class PageMainType extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.save();
 		this.close();
 
 		focus.clear(true);
