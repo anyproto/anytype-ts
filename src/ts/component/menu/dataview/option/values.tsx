@@ -142,7 +142,10 @@ class MenuOptionValues extends React.Component<Props> {
 
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		this.props.setHover((item ? item : items[this.n]), scroll);
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+		this.props.setHover(items[this.n], scroll);
 	};
 
 	onOver (e: any, item: any) {
