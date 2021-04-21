@@ -178,19 +178,22 @@ class MenuOptionValues extends React.Component<Props> {
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
-			element: '#' + getId() + ' #item-' + item.id,
-			offsetX: 288,
-			vertical: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
-			data: {
-				...data,
-				option: item,
-			}
+		menuStore.close('dataviewOptionEdit', () => {
+			menuStore.open('dataviewOptionEdit', { 
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
+				noFlipY: true,
+				noAnimation: true,
+				data: {
+					...data,
+					option: item,
+				}
+			});
 		});
 	};
 
