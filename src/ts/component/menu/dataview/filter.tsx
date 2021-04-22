@@ -60,6 +60,11 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
+
+		const checkboxOptions: I.Option[] = [
+			{ id: '1', name: 'Checked' },
+			{ id: '0', name: 'Unchecked' },
+		];
 		
 		const relationOptions = this.getRelationOptions();
 
@@ -77,7 +82,12 @@ class MenuFilter extends React.Component<Props, {}> {
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
 			let Item = null;
 			let cn = [];
+			let cv = [ 'value' ];
 			let list = [];
+
+			if (item.id == filters.length - 1) {
+				cv.push('last');
+			};
 
 			switch (relation.format) {
 
@@ -164,12 +174,13 @@ class MenuFilter extends React.Component<Props, {}> {
 
 				case I.RelationType.Checkbox:
 					value = (
-						<Checkbox 
-							id={id}
-							key={id}
-							ref={refGet} 
-							value={item.value} 
-							onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', Boolean(v), true); }} 
+						<Select 
+							id={[ 'filter', 'checkbox', item.id ].join('-')} 
+							className="operator" 
+							arrowClassName="light"
+							options={checkboxOptions} 
+							value={item.value ? '1' : '0'} 
+							onChange={(v: string) => { this.onChange(item.id, 'value', Boolean(Number(v)), true); }} 
 						/>
 					);
 					break;
@@ -250,9 +261,7 @@ class MenuFilter extends React.Component<Props, {}> {
 						/>
 					</div>
 
-					<div className="value">
-						{value}
-					</div>
+					<div className={cv.join(' ')}>{value}</div>
 
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
@@ -359,8 +368,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			case I.RelationType.Checkbox:
 			default:
 				ret = [ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' },
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
 				];
 				break;
 		};
