@@ -181,7 +181,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	save () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, view, onSave } = data;
 
@@ -199,6 +199,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
 				cb();
+				close();
 			});
 		};
 	};

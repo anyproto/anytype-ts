@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon } from 'ts/component';
-import { I, M, Util, keyboard, Key } from 'ts/lib';
+import { I, M, Util, DataUtil, keyboard, Key } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -150,6 +150,18 @@ class MenuViewList extends React.Component<Props> {
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
+		const relations = Util.objectCopy(view.relations);
+		const filters: I.Filter[] = [];
+
+		for (let relation of relations) {
+			const conditions = DataUtil.filterConditionsByType(relation.format);
+			filters.push({
+				relationKey: relation.relationKey,
+				operator: I.FilterOperator.And,
+				condition: conditions.length ? conditions[0].id : I.FilterCondition.Equal,
+				value: null,
+			});
+		};
 
 		menuStore.open('dataviewViewEdit', {
 			element: `#${getId()} #item-add`,
@@ -158,7 +170,11 @@ class MenuViewList extends React.Component<Props> {
 				...data,
 				view: { 
 					type: I.ViewType.Grid,
-					relations: Util.objectCopy(view.relations),
+					relations: relations,
+					filters: filters,
+				},
+				onSave: () => {
+					this.forceUpdate();
 				},
 			},
 		});

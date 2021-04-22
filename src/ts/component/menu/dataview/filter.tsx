@@ -74,7 +74,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			const relation = item.relation;
-			const conditionOptions = this.conditionsByType(relation.format);
+			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 			const id = [ 'item', item.id, 'value' ].join('-');
 
@@ -321,61 +321,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 	};
 
-	conditionsByType (type: I.RelationType): I.Option[] {
-		let ret = [];
-
-		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
-				ret = [ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
-					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				];
-				break;
-
-			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
-				ret = [ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
-					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				];
-				break;
-			
-			case I.RelationType.Number:
-			case I.RelationType.Date:
-				ret = [ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-				];
-				break;
-			
-			case I.RelationType.Checkbox:
-			default:
-				ret = [ 
-					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
-				];
-				break;
-		};
-		return ret;
-	};
-
 	valueByType (type: I.RelationType): any {
 		let ret: any = null;
 
@@ -447,7 +392,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		};
 
 		const first = relationOptions[0];
-		const conditions = this.conditionsByType(first.format);
+		const conditions = DataUtil.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 
 		view.filters.push({ 
@@ -514,7 +459,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
 				const relation = dbStore.getRelation(rootId, blockId, v);
-				const conditions = this.conditionsByType(relation.format);
+				const conditions = DataUtil.filterConditionsByType(relation.format);
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
 				item.value = this.valueByType(relation.format);
