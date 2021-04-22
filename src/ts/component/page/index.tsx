@@ -102,6 +102,9 @@ class Page extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		popupStore.closeAll();
+		menuStore.closeAll();
 	};
 
 	getMatch () {

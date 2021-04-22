@@ -214,8 +214,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			return (
 				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
-					{item.id > 0 ? (
-						/*
+					{/*item.id > 0 ? (
+						
 						<Select 
 							id={[ 'filter', 'operator', item.id ].join('-')} 
 							className="operator" 
@@ -224,28 +224,36 @@ class MenuFilter extends React.Component<Props, {}> {
 							value={item.operator} 
 							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
 						/>
-						*/
 						<div className="txt">And</div>
 					) : (
 						<div className="txt">Where</div>
-					)}
-					<Select 
-						id={[ 'filter', 'relation', item.id ].join('-')} 
-						className="relation" 
-						arrowClassName="light"
-						options={relationOptions}
-						value={item.relationKey} 
-						onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
-					/>
-					<Select 
-						id={[ 'filter', 'condition', item.id ].join('-')} 
-						className="condition" 
-						arrowClassName="light"
-						options={conditionOptions} 
-						value={item.condition} 
-						onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
-					/>
-					{value}
+					)*/}
+
+					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
+
+					<div className="txt">
+						<Select 
+							id={[ 'filter', 'relation', item.id ].join('-')} 
+							className="relation" 
+							arrowClassName="light"
+							options={relationOptions}
+							value={item.relationKey} 
+							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+						/>
+						<Select 
+							id={[ 'filter', 'condition', item.id ].join('-')} 
+							className="condition grey" 
+							arrowClassName="light"
+							options={conditionOptions} 
+							value={item.condition} 
+							onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
+						/>
+					</div>
+
+					<div className="value">
+						{value}
+					</div>
+
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
 			);
@@ -254,7 +262,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
 				<Icon className="plus" />
-				<div className="name">New filter</div>
+				<div className="name">Add a filter</div>
 			</div>
 		));
 		
@@ -409,7 +417,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			return { 
 				id: relation.relationKey, 
 				name: relation.name, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
+				//icon: 'relation ' + DataUtil.relationClass(relation.format),
 				isHidden: relation.isHidden,
 				format: relation.format,
 			};
@@ -630,20 +638,6 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		raf(() => {
-			const { getId } = this.props;
-			const obj = $('#' + getId());
-			const items = obj.find('.item');
-
-			let width = Constant.size.menuDataviewFilter;
-			items.each((i: number, item: any) => {
-				item = $(item);
-				width = Math.max(width, this.getWidth(item));
-			});
-
-			obj.css({ width: width });
-			this.props.position();
-		});
 	};
 
 	getWidth (obj: any) {

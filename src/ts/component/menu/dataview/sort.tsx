@@ -43,7 +43,7 @@ class MenuSort extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
 				<div className="item">
 					<Handle />
