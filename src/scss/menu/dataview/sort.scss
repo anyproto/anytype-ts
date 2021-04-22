@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewSort { width: 400px; }
+	.menu.menuDataviewSort { width: 352px; }
 	.menu.menuDataviewSort {
 		.content { max-height: 350px; }
 
@@ -15,7 +15,6 @@
 			.select:hover, .select.active { background: none; }
 			.select.grey { color: $colorDarkGrey; }
 			.select {
-				.name { max-width: unset; }
 				.icon.arrow { display: none; }
 			}
 

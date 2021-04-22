@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewViewList { width: 360px; }
+	.menu.menuDataviewViewList { width: 352px; }
 	.menu.menuDataviewViewList {
 		.label { font-weight: 600; margin-bottom: 3px; @include text-common; color: $colorBlack; }
 

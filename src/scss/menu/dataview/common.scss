@@ -12,7 +12,7 @@
 	.menu.menuDataviewOptionList,
 	.menu.menuDataviewOptionValues,
 	.menu.menuDataviewFilter,
-	.menu.menuDataviewSort,
+	.menu.menuDataviewSort
 	{
         .item:hover::before { background: rgba(172, 169, 150, 0.15); }
 		.item {
@@ -24,12 +24,6 @@
 		.item.empty:hover::before { opacity: 0; }
 
 		.label { color: $colorDarkGrey; @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
-    }
-
-    .menu.menuDataviewRelationList, 
-    .menu.menuDataviewFilter,
-    .menu.menuDataviewSort {
-		.select > .name { max-width: 102px; }
     }
 
     .menu.menuDataviewFilter,

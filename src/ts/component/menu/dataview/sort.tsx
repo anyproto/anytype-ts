@@ -148,6 +148,7 @@ class MenuSort extends React.Component<Props, {}> {
 		
 		item[k] = v;
 		this.save();
+		this.forceUpdate();
 	};
 	
 	onDelete (e: any, id: number) {
