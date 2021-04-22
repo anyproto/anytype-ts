@@ -6,5 +6,19 @@
 		.content { max-height: 350px; }
 
 		.item { padding: 4px 40px 4px 10px; white-space: nowrap; }
+		.item {
+			.txt { width: calc(100% - 72px); }
+
+			.iconObject { margin-right: 10px; }
+			
+			.select { border: 0px; padding: 0px; display: block; }
+			.select:hover, .select.active { background: none; }
+			.select.grey { color: $colorDarkGrey; }
+			.select {
+				.name { max-width: unset; }
+				.icon.arrow { display: none; }
+			}
+
+		}
 	}	
 }

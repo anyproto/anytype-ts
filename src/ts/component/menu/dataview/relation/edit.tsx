@@ -54,7 +54,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							name={objectType ? objectType.name : 'Select object type'} 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							onMouseEnter={this.onObjectType} 
-							arrow={relation && !relation.isReadOnly}
+							arrow={!this.isReadOnly()}
 						/>
 					</React.Fragment>
 				) : ''}
@@ -188,13 +188,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { getId } = this.props;
-		const relation = this.getRelation();
-
-		if (relation.isReadOnly) {
+		if (this.isReadOnly()) {
 			return;
 		};
 
+		const { getId } = this.props;
+		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 
 		this.menuOpen('searchObject', { 

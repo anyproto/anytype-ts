@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select } from 'ts/component';
+import { Icon, IconObject, Select } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, dbStore } from 'ts/store';
@@ -27,7 +27,7 @@ class MenuSort extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const sortCnt = view.sorts.length;
 		
@@ -42,14 +42,20 @@ class MenuSort extends React.Component<Props, {}> {
 			<Icon className="dnd" />
 		));
 		
-		const Item = SortableElement((item: any) => (
-			<div className="item">
-				<Handle />
-				<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
-				<Select id={[ 'filter', 'type', item.id ].join('-')} options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
-				<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
-			</div>
-		));
+		const Item = SortableElement((item: any) => {
+			const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+			return (
+				<div className="item">
+					<Handle />
+					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
+					<div className="txt">
+						<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
+						<Select id={[ 'filter', 'type', item.id ].join('-')} className="grey" options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
+					</div>
+					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+				</div>
+			);
+		});
 		
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
@@ -107,7 +113,6 @@ class MenuSort extends React.Component<Props, {}> {
 			return { 
 				id: relation.relationKey, 
 				name: relation.name, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
 			};
 		});
 
