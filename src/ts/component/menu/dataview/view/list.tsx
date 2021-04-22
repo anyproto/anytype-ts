@@ -154,11 +154,14 @@ class MenuViewList extends React.Component<Props> {
 		const filters: I.Filter[] = [];
 
 		for (let relation of relations) {
-			const conditions = DataUtil.filterConditionsByType(relation.format);
+			if (relation.isHidden || !relation.isVisible) {
+				continue;
+			};
+
 			filters.push({
 				relationKey: relation.relationKey,
 				operator: I.FilterOperator.And,
-				condition: conditions.length ? conditions[0].id : I.FilterCondition.Equal,
+				condition: I.FilterCondition.None,
 				value: null,
 			});
 		};

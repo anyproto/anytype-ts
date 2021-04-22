@@ -73,6 +73,8 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
+			console.log(item);
+
 			const relation = item.relation;
 			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
@@ -261,7 +263,11 @@ class MenuFilter extends React.Component<Props, {}> {
 						/>
 					</div>
 
-					<div className={cv.join(' ')}>{value}</div>
+					{item.condition != I.FilterCondition.None ? (
+						<div className={cv.join(' ')}>
+							{value}
+						</div>
+					) : ''}
 
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
@@ -393,7 +399,7 @@ class MenuFilter extends React.Component<Props, {}> {
 
 		const first = relationOptions[0];
 		const conditions = DataUtil.filterConditionsByType(first.format);
-		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 
 		view.filters.push({ 
 			relationKey: first.id, 
@@ -461,7 +467,7 @@ class MenuFilter extends React.Component<Props, {}> {
 				const relation = dbStore.getRelation(rootId, blockId, v);
 				const conditions = DataUtil.filterConditionsByType(relation.format);
 
-				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				item.value = this.valueByType(relation.format);
 
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 

@@ -301,6 +301,7 @@
 	"linkPreviewEdit": { "en": "Edit link" },
 	"linkPreviewUnlink": { "en": "Unlink" },
 
+	"filterConditionNone": { "en": "all" },
 	"filterConditionEqual": { "en": "is exactly" },
 	"filterConditionNotEqual": { "en": "is not" },
 	"filterConditionGreater": { "en": "is greater" },

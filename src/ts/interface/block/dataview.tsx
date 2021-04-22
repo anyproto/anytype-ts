@@ -31,19 +31,20 @@ export enum FilterOperator {
 };
 
 export enum FilterCondition { 
-	Equal			 = 0,
-	NotEqual		 = 1,
-	Greater			 = 2,
-	Less			 = 3,
-	GreaterOrEqual	 = 4,
-	LessOrEqual		 = 5,
-	Like			 = 6,
-	NotLike			 = 7,
-	In				 = 8,
-	NotIn			 = 9,
-	Empty			 = 10,
-	NotEmpty		 = 11,
-	AllIn			 = 12,
+	None			 = 0,
+	Equal			 = 1,
+	NotEqual		 = 2,
+	Greater			 = 3,
+	Less			 = 4,
+	GreaterOrEqual	 = 5,
+	LessOrEqual		 = 6,
+	Like			 = 7,
+	NotLike			 = 8,
+	In				 = 9,
+	NotIn			 = 10,
+	Empty			 = 11,
+	NotEmpty		 = 12,
+	AllIn			 = 13,
 };
 
 export interface Sort {

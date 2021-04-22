@@ -175,9 +175,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		};
 
 		view.name = v;
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
 	save () {

@@ -23,6 +23,7 @@ const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
 const MIN_HEIGHT = 480;
 const KEYTAR_SERVICE = 'Anytype';
+const CONFIG_NAME = 'devconfig';
 
 let env = {};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
@@ -331,7 +332,7 @@ function createWindow () {
 		};
 	});
 
-	storage.get('devconfig', (error, data) => {
+	storage.get(CONFIG_NAME, (error, data) => {
 		config = data || {};
 		config.channel = String(config.channel || defaultChannel);
 
@@ -571,7 +572,7 @@ function setChannel (channel) {
 
 function setConfig (obj, callBack) {
 	config = Object.assign(config, obj);
-	storage.set('config', config, (error) => {
+	storage.set(CONFIG_NAME, config, (error) => {
 		send('config', config);
 		if (callBack) {
 			callBack(error);
