@@ -314,6 +314,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.resize();
 	};
 
+	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
+	};
+
 	componentDidUpdate () {
 		this.resize();
 

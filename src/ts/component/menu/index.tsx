@@ -240,10 +240,16 @@ class Menu extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { noAnimation } = param;
 		const node = $(ReactDOM.findDOMNode(this)); 
 		const menu = node.find('.menu');
 
-		menu.addClass('noAnimation show').css({ transform: 'none' });
+		if (noAnimation) {
+			menu.addClass('noAnimation');
+		};
+
+		menu.addClass('show').css({ transform: 'none' });
 		this.position();
 	};
 

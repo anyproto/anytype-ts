@@ -97,6 +97,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 		this.props.position();
 	};
 
+	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
+	};
+
 	onAdd (e: any) {
 		const { param, getId, close } = this.props;
 		const { data } = param;

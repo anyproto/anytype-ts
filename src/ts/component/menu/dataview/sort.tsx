@@ -10,6 +10,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuSort extends React.Component<Props, {}> {
@@ -95,6 +96,10 @@ class MenuSort extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.props.position();
+	};
+
+	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
 	};
 
 	getRelationOptions () {
