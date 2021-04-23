@@ -81,12 +81,22 @@ class PopupHelp extends React.Component<Props, {}> {
 
 		node.find('a').unbind('click').click(function (e: any) {
 			e.preventDefault();
-			self.onUrl($(this).attr('href'));
+			const el = $(this);
+
+			if (el.hasClass('path')) {
+				self.onPath(el.attr('href'));
+			} else {
+				self.onUrl(el.attr('href'));
+			};
 		});
 	};
 	
 	onUrl (url: string) {
 		ipcRenderer.send('urlOpen', url);
+	};
+
+	onPath (path: string) {
+		ipcRenderer.send('pathOpen', path);
 	};
 
 	rebind () {

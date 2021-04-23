@@ -281,8 +281,8 @@ function createWindow () {
 	});
 
 	ipcMain.on('pathOpen', async (e, path) => {
-		shell.openPath(path).catch((error) => {
-			console.log(error);
+		shell.openPath(path).catch((err) => {
+			console.log(err);
 		});
 	});
 

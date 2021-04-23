@@ -18,7 +18,7 @@ const Status = [
 	{ style: I.TextStyle.Header3, text:  'Backups' },
 	{ text: `In this version, all the data becomes encrypted and syncs with our servers.
 			You can restore the latest snapshot at any moment even if your device is offline, but it is an experimental feature.
-			The 100% working way for data backup is to manually copy and save Anytype's data folder, you can find it here <span id="button-path" class="cp bgColor bgColor-grey textColor textColor-red">${path}</span>.`
+			The 100% working way for data backup is to manually copy and save Anytype's data folder, you can find it here <a href="${path}" id="button-path" class="path cp bgColor bgColor-grey textColor textColor-red">${path}</a>.`
 	},
 
 	{ style: I.TextStyle.Header3, text:  'Help is under construction' },
