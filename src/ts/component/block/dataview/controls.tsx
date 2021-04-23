@@ -45,7 +45,7 @@ class Controls extends React.Component<Props, State> {
 
 		const buttons: any[] = [
 			{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
+			{ id: 'manager', name: 'Customize', menu: 'dataviewViewList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
 		const inner = <div className="dot" />;
@@ -76,7 +76,7 @@ class Controls extends React.Component<Props, State> {
 				))}
 
 				<div id="button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
-					<Icon className="more" />
+					<Icon className="more" tooltip="Views" />
 				</div>
 
 				<div className="item dn">
@@ -107,7 +107,7 @@ class Controls extends React.Component<Props, State> {
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{!readOnly ? (
-							<Icon className="plus" onClick={onRowAdd} />
+							<Icon className="plus" tooltip="New row" onClick={onRowAdd} />
 						) : ''}
 					</div>
 				</div>
@@ -125,6 +125,7 @@ class Controls extends React.Component<Props, State> {
 		let tabs = [];
 		if (id == 'manager') {
 			tabs = [
+				{ id: 'view', name: 'Views', component: 'dataviewViewList' },
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilter' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },

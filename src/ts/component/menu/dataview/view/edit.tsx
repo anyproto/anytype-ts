@@ -12,7 +12,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	
 	n: number = -1;
 	ref: any = null;
-	focus: boolean = false;
+	isFocused: boolean = false;
 	timeout: number = 0;
 
 	type: I.ViewType = I.ViewType.Grid;
@@ -77,20 +77,27 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	componentDidMount () {
 		this.unbind();
 		this.setActive();
-
-		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
-			};
-		}, 15);
+		this.focus();
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+
+	componentDidUpdate () {
+		this.focus();
 	};
 	
 	componentWillUnmount () {
 		this.unbind();
 		window.clearTimeout(this.timeout);
+	};
+
+	focus () {
+		window.setTimeout(() => {
+			if (this.ref) {
+				this.ref.focus();
+			};
+		}, 15);
 	};
 	
 	unbind () {
@@ -108,7 +115,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onKeyDown (e: any) {
 		const k = e.key.toLowerCase();
 
-		if (this.focus) {
+		if (this.isFocused) {
 			if (k != Key.down) {
 				return;
 			};
@@ -157,12 +164,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onNameFocus (e: any) {
-		this.focus = true;
+		this.isFocused = true;
 		this.props.setHover();
 	};
 	
 	onNameBlur (e: any) {
-		this.focus = false;
+		this.isFocused = false;
 	};
 
 	onKeyUp (e: any, v: string) {
@@ -170,7 +177,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { view } = data;
 
-		if (!this.focus) {
+		if (!this.isFocused) {
 			return;
 		};
 
@@ -254,7 +261,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, view, onSelect } = data;
+		const { rootId, blockId, getData, getView, view, onSelect, onSave } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const views = block.content.views || [];
 		const current = getView();
@@ -263,13 +270,18 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			view.type = item.id;
 			this.forceUpdate();
 			this.save();
+
 		} else 
 		if (view.id) {
 			close();
 
 			switch (item.id) {
 				case 'copy':
-					C.BlockDataviewViewCreate(rootId, blockId, view);
+					C.BlockDataviewViewCreate(rootId, blockId, view, () => {
+						if (onSave) {
+							onSave();
+						};
+					});
 					break;
 
 				case 'remove':
