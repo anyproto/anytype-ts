@@ -47,6 +47,13 @@
 			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;
 			background: rgba(255,255,255, 0.7);
 		}
+
+		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorDarkGrey; }
+		.tabs {
+			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; }
+			.tab:hover, .tab.active { color: $colorBlack; }
+			.tab:last-child { margin: 0px; }
+		}
 		
 		.filter { padding: 3px 14px 0px 14px; }
 		.filter {

@@ -25,6 +25,7 @@ class MenuStore {
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
+		param.tabs = param.tabs || [];
 
 		if (param.isSub) {
 			param.noAnimation = true;

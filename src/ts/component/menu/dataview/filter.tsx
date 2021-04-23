@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input, Checkbox, IconObject, Tag } from 'ts/component';
+import { Icon, Select, Input, IconObject, Tag } from 'ts/component';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -73,8 +73,6 @@ class MenuFilter extends React.Component<Props, {}> {
 		));
 		
 		const Item = SortableElement((item: any) => {
-			console.log(item);
-
 			const relation = item.relation;
 			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
@@ -598,21 +596,6 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	resize () {
-	};
-
-	getWidth (obj: any) {
-		if (obj.hasClass('empty')) {
-			return 0;
-		};
-		
-		let w = 0;
-		obj.children().each((i: number, item: any) => {
-			item = $(item);
-			if (!item.hasClass('icon delete')) {
-				w += item.outerWidth(true);
-			};
-		});
-		return w + 50;
 	};
 
 };

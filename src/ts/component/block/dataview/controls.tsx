@@ -45,10 +45,7 @@ class Controls extends React.Component<Props, State> {
 
 		const buttons: any[] = [
 			{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize view', menu: 'dataviewManager', on: (filterCnt > 0 || sortCnt > 0) },
-			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },
-			{ id: 'filter', name: 'Filters', menu: 'dataviewFilter', on: filterCnt > 0 },
-			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
 		const inner = <div className="dot" />;
@@ -125,10 +122,20 @@ class Controls extends React.Component<Props, State> {
 
 		const { rootId, block, readOnly, getData, getView } = this.props;
 
+		let tabs = [];
+		if (id == 'manager') {
+			tabs = [
+				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
+				{ id: 'filter', name: 'Filters', component: 'dataviewFilter' },
+				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+			];
+		};
+
 		menuStore.open(menu, { 
 			element: `#button-${id}`,
 			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
+			tabs: tabs,
 			data: {
 				readOnly: readOnly,
 				rootId: rootId,

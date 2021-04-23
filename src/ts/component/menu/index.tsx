@@ -58,15 +58,23 @@ interface Props extends I.Menu {
 	history: any;
 };
 
+interface State {
+	tab: string;
+};
+
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 const BORDER = 12;
 
-class Menu extends React.Component<Props, {}> {
+class Menu extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	timeoutPoly: number = 0;
+
+	state = {
+		tab: '',
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -81,7 +89,12 @@ class Menu extends React.Component<Props, {}> {
 
 	render () {
 		const { id, param } = this.props;
-		const { type, vertical, horizontal, passThrough, noDimmer } = param;
+		const { tabs, type, vertical, horizontal, passThrough, noDimmer } = param;
+		
+		let tab = '';
+		if (tabs.length) {
+			tab = this.state.tab || tabs[0].id;
+		};
 		
 		const Components: any = {
 			help:					 MenuHelp,
@@ -134,9 +147,8 @@ class Menu extends React.Component<Props, {}> {
 			dataviewMedia:			 MenuDataviewMedia,
 			dataviewText:			 MenuDataviewText,
 		};
-		
+
 		const menuId = this.getId();
-		const Component = Components[id];
 		const cn = [ 
 			'menu', 
 			menuId, 
@@ -145,7 +157,18 @@ class Menu extends React.Component<Props, {}> {
 			'h' + horizontal
 		];
 		const cd = [];
-		
+
+		let Component = null;
+		if (tab) {
+			const item = tabs.find((it: I.MenuTab) => { return it.id == tab; });
+			if (item) {
+				Component = Components[item.component];
+				cn.push(Util.toCamelCase('menu-' + item.component));
+			};
+		} else {
+			Component = Components[id];
+		};
+
 		if (!Component) {
 			return null;
 		};
@@ -157,10 +180,23 @@ class Menu extends React.Component<Props, {}> {
 		if (passThrough) {
 			cd.push('through');
 		};
+
+		const Tab = (item: any) => (
+			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
+				{item.name}
+			</div>
+		);
 		
 		return (
 			<div id={menuId + '-wrap'} className="menuWrap">
 				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
+					{tabs.length ? (
+						<div className="tabs">
+							{tabs.map((item: any, i: number) => (
+								<Tab key={i} {...item} />
+							))}
+						</div>
+					) : ''}
 					<div className="content">
 						<Component 
 							{...this.props} 
@@ -180,6 +216,9 @@ class Menu extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { param } = this.props;
+		const { tabs } = param;
+
 		this._isMounted = true;
 		this.position();
 		this.animate();
@@ -204,8 +243,8 @@ class Menu extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this)); 
 		const menu = node.find('.menu');
 
+		menu.addClass('noAnimation show').css({ transform: 'none' });
 		this.position();
-		menu.css({ transform: 'none' });
 	};
 
 	componentWillUnmount () {
@@ -454,6 +493,10 @@ class Menu extends React.Component<Props, {}> {
 			
 			content.stop(true, true).animate({ scrollTop: top }, 100);
 		};
+	};
+
+	onTab (id: string) {
+		this.setState({ tab: id });
 	};
 
 	getId (): string {
