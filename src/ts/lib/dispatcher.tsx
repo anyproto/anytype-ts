@@ -541,7 +541,7 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.relationRemove(rootId, id, data.getRelationkey());
+					dbStore.relationDelete(rootId, id, data.getRelationkey());
 					break;
 
 				case 'objectDetailsSet':
@@ -592,7 +592,7 @@ class Dispatcher {
 					};
 
 					if (type == 'objectRelationsSet') {
-						dbStore.relationsRemove(rootId, rootId);
+						dbStore.relationsClear(rootId, rootId);
 					};
 
 					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
@@ -603,7 +603,7 @@ class Dispatcher {
 					keys = data.getKeysList() || [];
 
 					for (let key of keys) {
-						dbStore.relationRemove(rootId, id, key);
+						dbStore.relationDelete(rootId, id, key);
 					};
 					break;
 

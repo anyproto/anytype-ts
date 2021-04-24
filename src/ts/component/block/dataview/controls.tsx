@@ -133,8 +133,8 @@ class Controls extends React.Component<Props, State> {
 			tabs = [
 				{ id: 'view', name: 'Views', component: 'dataviewViewList' },
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-				{ id: 'filter', name: 'Filters', component: 'dataviewFilter', badge: filterCnt },
-				{ id: 'sort', name: 'Sorts', component: 'dataviewSort', badge: sortCnt },
+				{ id: 'filter', name: 'Filters', component: 'dataviewFilter' },
+				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
 			];
 		};
 

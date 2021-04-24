@@ -60,7 +60,7 @@ class DbStore {
 	};
 
 	@action
-	relationsRemove (rootId: string, blockId: string) {
+	relationsClear (rootId: string, blockId: string) {
 		this.relationMap.delete(this.getId(rootId, blockId));
 	};
 
@@ -90,7 +90,7 @@ class DbStore {
 	};
 
 	@action
-	relationRemove (rootId: string, blockId: string, key: string) {
+	relationDelete (rootId: string, blockId: string, key: string) {
 		let relations = this.getRelations(rootId, blockId);
 		relations = relations.filter((it: I.Relation) => { return it.relationKey != key; });
 		this.relationsSet(rootId, blockId, relations);
@@ -118,6 +118,11 @@ class DbStore {
 	};
 
 	@action
+	metaClear (rootId: string, blockId: string) {
+		this.metaMap.delete(this.getId(rootId, blockId));
+	};
+
+	@action
 	recordsSet (rootId: string, blockId: string, list: any[]) {
 		list = list.map((obj: any) => {
 			obj = observable(obj);
@@ -131,6 +136,11 @@ class DbStore {
 		});
 
 		this.dataMap.set(this.getId(rootId, blockId), observable.array(list));
+	};
+
+	@action
+	recordsClear (rootId: string, blockId: string) {
+		this.dataMap.delete(this.getId(rootId, blockId));
 	};
 
 	@action
