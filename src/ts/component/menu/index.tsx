@@ -67,6 +67,58 @@ const raf = require('raf');
 const Constant = require('json/constant.json');
 const BORDER = 12;
 
+const Components: any = {
+	help:					 MenuHelp,
+	account:				 MenuAccount,
+	select:					 MenuSelect,
+	button:					 MenuButton,
+	smile:					 MenuSmile,
+	smileSkin:				 MenuSmileSkin,
+
+	searchText:				 MenuSearchText,
+	searchObject:			 MenuSearchObject,
+
+	threadList:				 MenuThreadList,
+	threadStatus:			 MenuThreadStatus,
+	
+	blockContext:			 MenuBlockContext,
+	blockAction:			 MenuBlockAction,
+	blockStyle:				 MenuBlockStyle,
+	blockAdd:				 MenuBlockAdd,
+	blockColor:				 MenuBlockColor,
+	blockBackground:		 MenuBlockBackground,
+	blockMore:				 MenuBlockMore,
+	blockAlign:				 MenuBlockAlign,
+	blockLink:				 MenuBlockLink,
+	blockCover:				 MenuBlockCover,
+	blockMention:			 MenuBlockMention,
+
+	blockRelationEdit:		 MenuBlockRelationEdit,
+	blockRelationList:		 MenuBlockRelationList,
+	blockRelationView:		 MenuBlockRelationView,
+
+	objectTypeEdit:			 MenuObjectTypeEdit,
+
+	relationSuggest:		 MenuRelationSuggest,
+
+	dataviewRelationList:	 MenuDataviewRelationList,
+	dataviewRelationEdit:	 MenuDataviewRelationEdit,
+	dataviewRelationType:	 MenuDataviewRelationType,
+	dataviewObjectList:		 MenuDataviewObjectList,
+	dataviewObjectValues:	 MenuDataviewObjectValues,
+	dataviewOptionList:		 MenuDataviewOptionList,
+	dataviewOptionEdit:		 MenuDataviewOptionEdit,
+	dataviewOptionValues:	 MenuDataviewOptionValues,
+	dataviewFilter:			 MenuDataviewFilter,
+	dataviewSort:			 MenuDataviewSort,
+	dataviewViewList:		 MenuDataviewViewList,
+	dataviewViewEdit:		 MenuDataviewViewEdit,
+	dataviewCalendar:		 MenuDataviewCalendar,
+	dataviewDate:			 MenuDataviewDate,
+	dataviewMedia:			 MenuDataviewMedia,
+	dataviewText:			 MenuDataviewText,
+};
+
 class Menu extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
@@ -96,74 +148,22 @@ class Menu extends React.Component<Props, State> {
 			tab = this.state.tab || tabs[0].id;
 		};
 		
-		const Components: any = {
-			help:					 MenuHelp,
-			account:				 MenuAccount,
-			select:					 MenuSelect,
-			button:					 MenuButton,
-			smile:					 MenuSmile,
-			smileSkin:				 MenuSmileSkin,
+		let menuId = this.getId();
+		let Component = null;
 
-			searchText:				 MenuSearchText,
-			searchObject:			 MenuSearchObject,
-
-			threadList:				 MenuThreadList,
-			threadStatus:			 MenuThreadStatus,
-			
-			blockContext:			 MenuBlockContext,
-			blockAction:			 MenuBlockAction,
-			blockStyle:				 MenuBlockStyle,
-			blockAdd:				 MenuBlockAdd,
-			blockColor:				 MenuBlockColor,
-			blockBackground:		 MenuBlockBackground,
-			blockMore:				 MenuBlockMore,
-			blockAlign:				 MenuBlockAlign,
-			blockLink:				 MenuBlockLink,
-			blockCover:				 MenuBlockCover,
-			blockMention:			 MenuBlockMention,
-
-			blockRelationEdit:		 MenuBlockRelationEdit,
-			blockRelationList:		 MenuBlockRelationList,
-			blockRelationView:		 MenuBlockRelationView,
-
-			objectTypeEdit:			 MenuObjectTypeEdit,
-
-			relationSuggest:		 MenuRelationSuggest,
-
-			dataviewRelationList:	 MenuDataviewRelationList,
-			dataviewRelationEdit:	 MenuDataviewRelationEdit,
-			dataviewRelationType:	 MenuDataviewRelationType,
-			dataviewObjectList:		 MenuDataviewObjectList,
-			dataviewObjectValues:	 MenuDataviewObjectValues,
-			dataviewOptionList:		 MenuDataviewOptionList,
-			dataviewOptionEdit:		 MenuDataviewOptionEdit,
-			dataviewOptionValues:	 MenuDataviewOptionValues,
-			dataviewFilter:			 MenuDataviewFilter,
-			dataviewSort:			 MenuDataviewSort,
-			dataviewViewList:		 MenuDataviewViewList,
-			dataviewViewEdit:		 MenuDataviewViewEdit,
-			dataviewCalendar:		 MenuDataviewCalendar,
-			dataviewDate:			 MenuDataviewDate,
-			dataviewMedia:			 MenuDataviewMedia,
-			dataviewText:			 MenuDataviewText,
-		};
-
-		const menuId = this.getId();
 		const cn = [ 
 			'menu', 
-			menuId, 
+			menuId,
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
 			'v' + vertical,
 			'h' + horizontal
 		];
 		const cd = [];
 
-		let Component = null;
 		if (tab) {
 			const item = tabs.find((it: I.MenuTab) => { return it.id == tab; });
 			if (item) {
 				Component = Components[item.component];
-				cn.push(Util.toCamelCase('menu-' + item.component));
 			};
 		} else {
 			Component = Components[id];
@@ -506,7 +506,22 @@ class Menu extends React.Component<Props, State> {
 	};
 
 	getId (): string {
-		return Util.toCamelCase('menu-' + this.props.id);
+		const { param } = this.props;
+		const { tabs } = param;
+		const { tab } = this.state;
+
+		let id = '';
+
+		if (tab) {
+			const item = tabs.find((it: I.MenuTab) => { return it.id == tab; });
+			if (item) {
+				id = item.component;
+			};
+		} else {
+			id = this.props.id;
+		};
+
+		return Util.toCamelCase('menu-' + id);
 	};
 
 	getElement () {
