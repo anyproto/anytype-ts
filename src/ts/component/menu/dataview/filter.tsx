@@ -389,7 +389,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
@@ -399,6 +399,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			return;
 		};
 
+		const obj = $(`#${getId()}`);
+		const content = obj.find('.content');
 		const first = relationOptions[0];
 		const conditions = DataUtil.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
@@ -409,6 +411,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			condition: condition as I.FilterCondition,
 			value: this.valueByType(first.format),
 		});
+
+		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
 		this.save();
 	};
 
