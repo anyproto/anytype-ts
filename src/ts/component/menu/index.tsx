@@ -184,6 +184,7 @@ class Menu extends React.Component<Props, State> {
 		const Tab = (item: any) => (
 			<div className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
 				{item.name}
+				{item.badge ? <div className="badge" /> : ''}
 			</div>
 		);
 		

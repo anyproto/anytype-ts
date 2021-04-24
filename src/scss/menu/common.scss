@@ -50,9 +50,13 @@
 
 		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorDarkGrey; }
 		.tabs {
-			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; }
+			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
 			.tab:last-child { margin: 0px; }
+
+			.tab {
+				.badge { width: 6px; height: 6px; border-radius: 100%; position: absolute; right: -6px; top: 0px; background: $colorOrange; }
+			}
 		}
 		
 		.filter { padding: 3px 14px 0px 14px; }

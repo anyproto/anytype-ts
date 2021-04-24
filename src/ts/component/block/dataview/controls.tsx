@@ -31,9 +31,9 @@ class Controls extends React.Component<Props, State> {
 
 	render () {
 		const { getData, rootId, block, getView, readOnly, onRowAdd } = this.props;
-		const view = getView();
 		const { content } = block;
 		const { views } = content;
+		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
@@ -121,14 +121,20 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readOnly, getData, getView } = this.props;
+		const view = getView();
+		const sortCnt = view.sorts.length;
+		const filters = view.filters.filter((it: any) => {
+			return dbStore.getRelation(rootId, block.id, it.relationKey);
+		});
+		const filterCnt = filters.length;
 
 		let tabs = [];
 		if (id == 'manager') {
 			tabs = [
 				{ id: 'view', name: 'Views', component: 'dataviewViewList' },
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-				{ id: 'filter', name: 'Filters', component: 'dataviewFilter' },
-				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+				{ id: 'filter', name: 'Filters', component: 'dataviewFilter', badge: filterCnt },
+				{ id: 'sort', name: 'Sorts', component: 'dataviewSort', badge: sortCnt },
 			];
 		};
 

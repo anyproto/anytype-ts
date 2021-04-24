@@ -5,6 +5,7 @@ export interface MenuTab {
 	id: string;
 	name: string;
 	component: string;
+	badge?: string;
 };
 
 export interface MenuParam {
