@@ -106,7 +106,7 @@ class Controls extends React.Component<Props, State> {
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{!readOnly ? (
-							<Icon className="plus" tooltip="New row" onClick={onRowAdd} />
+							<Icon className="plus" tooltip="New object" onClick={onRowAdd} />
 						) : ''}
 					</div>
 				</div>

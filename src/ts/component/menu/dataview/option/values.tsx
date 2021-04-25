@@ -169,6 +169,7 @@ class MenuOptionValues extends React.Component<Props> {
 				offsetX: param.width,
 				offsetY: -64,
 				passThrough: true,
+				noFlipY: true,
 				onClose: () => { close(); },
 				data: {
 					...data,
