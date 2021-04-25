@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -218,7 +218,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { rootId, blockId, view } = data;
+		const views = dbStore.getViews(rootId, blockId);
 
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
@@ -226,7 +227,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			return it;
 		});
 
-		const sections: any[] = [
+		let sections: any[] = [
 			{ id: 'type', name: 'View as', children: types }
 		];
 
@@ -234,10 +235,16 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			sections.push({
 				children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
-					{ id: 'remove', icon: 'remove', name: 'Remove view' },
+					(views.length > 1 ? { id: 'remove', icon: 'remove', name: 'Remove view' } : null),
 				]
 			});
 		};
+
+		sections = sections.map((s: any) => {
+			s.children = s.children.filter((it: any) => { return it; });
+			return s;
+		});
+
 		return sections;
 	};
 
@@ -262,8 +269,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getData, getView, view, onSelect, onSave } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-		const views = block.content.views || [];
 		const current = getView();
 
 		if (item.sectionId == 'type') {
@@ -285,6 +290,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					break;
 
 				case 'remove':
+					const views = dbStore.getViews(rootId, blockId);
 					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
 					const next = filtered[filtered.length - 1];
 

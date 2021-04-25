@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon } from 'ts/component';
 import { I, M, Util, DataUtil, keyboard, Key } from 'ts/lib';
 import arrayMove from 'array-move';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -114,9 +114,8 @@ class MenuViewList extends React.Component<Props> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
 
-		return block.content.views || [];
+		return dbStore.getViews(rootId, blockId);
 	};
 
 	getValue (): any[] {

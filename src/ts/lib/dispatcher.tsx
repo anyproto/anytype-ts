@@ -434,16 +434,7 @@ class Dispatcher {
 						break;
 					};
 
-					data.view = Mapper.From.View(data.getView());
-
-					view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
-					if (view) {
-						set(view, { ...data.view, relations: DataUtil.viewGetRelations(rootId, block.id, data.view) });
-					} else {
-						block.content.views.push(new M.View(data.view));
-					};
-
-					blockStore.blockUpdate(rootId, block);
+					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
 					break;
 
 				case 'blockDataviewViewDelete':
@@ -457,14 +448,12 @@ class Dispatcher {
 					
 					const deleteId = data.getViewid();
 
-					block.content.views = block.content.views.filter((it: I.View) => { return it.id != deleteId; });
-					blockStore.blockUpdate(rootId, block);
-
-					const length = block.content.views.length;
+					dbStore.viewDelete(rootId, id, deleteId);
 
 					if (deleteId == viewId) {
-						viewId = length ? block.content.views[length - 1] : '';
-						dbStore.metaSet (rootId, id, { viewId: viewId });
+						const views = dbStore.getViews(rootId, id);
+						viewId = views.length ? views[views.length - 1].id : '';
+						dbStore.metaSet(rootId, id, { viewId: viewId });
 					};
 					break;
 
@@ -669,11 +658,7 @@ class Dispatcher {
 
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
-
-				it.content.views = it.content.views.map((view: any) => {
-					view.relations = DataUtil.viewGetRelations(rootId, it.id, view);
-					return new M.View(view);
-				});
+				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
 			return new M.Block(it);
 		});

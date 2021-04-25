@@ -31,8 +31,7 @@ class Controls extends React.Component<Props, State> {
 
 	render () {
 		const { getData, rootId, block, getView, readOnly, onRowAdd } = this.props;
-		const { content } = block;
-		const { views } = content;
+		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
@@ -45,7 +44,7 @@ class Controls extends React.Component<Props, State> {
 
 		const buttons: any[] = [
 			{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize', menu: 'dataviewViewList', on: (filterCnt > 0 || sortCnt > 0) },
+			{ id: 'manager', name: 'Customize views', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
 		const inner = <div className="dot" />;
@@ -131,7 +130,6 @@ class Controls extends React.Component<Props, State> {
 		let tabs = [];
 		if (id == 'manager') {
 			tabs = [
-				{ id: 'view', name: 'Views', component: 'dataviewViewList' },
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilter' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
@@ -168,9 +166,8 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	getMaxPage () {
-		const { block } = this.props;
-		const { content } = block;
-		const { views } = content;
+		const { rootId, block } = this.props;
+		const views = dbStore.getViews(rootId, block.id);
 		const limit = Constant.limit.dataview.views;
 
 		return Math.ceil(views.length / limit) - 1;

@@ -36,8 +36,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, isPopup } = this.props;
-		const { content } = block;
-		const { views } = content;
+		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
 			return null;
@@ -149,7 +148,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	getView () {
 		const { rootId, block } = this.props;
-		const { views } = block.content;
+		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
 			return null;
