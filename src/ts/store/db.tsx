@@ -74,7 +74,6 @@ class DbStore {
 			this.relationUpdate(rootId, blockId, item);
 		} else {
 			relations.push(item);
-			this.relationMap.set(this.getId(rootId, blockId), relations);
 		};
 	};
 
@@ -132,8 +131,7 @@ class DbStore {
 		if (view) {
 			this.viewUpdate(rootId, blockId, item);
 		} else {
-			views.push(observable(item));
-			this.viewMap.set(this.getId(rootId, blockId), views);
+			views.push(new M.View(item));
 		};
 	};
 
