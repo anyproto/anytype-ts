@@ -555,7 +555,7 @@ class Dispatcher {
 					};
 					blockStore.detailsUpdate(rootId, { id: id, details: details }, false);
 
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
 					};
 					break;

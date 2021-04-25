@@ -1,8 +1,7 @@
 import { observable, action, computed, set, intercept, toJS } from 'mobx';
-import { I, M, Util, Decode } from 'ts/lib';
+import { I, M, Util } from 'ts/lib';
 
 const $ = require('jquery');
-const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Constant = require('json/constant.json');
 
 class BlockStore {
@@ -15,7 +14,7 @@ class BlockStore {
 	@observable public storeIdRelation: string = '';
 
 	public treeMap: Map<string, any[]> = new Map();
-	public blockMap: Map<string, any[]> = new Map();
+	public blockMap: Map<string, I.Block[]> = new Map();
 	public detailMap: Map<string, Map<string, any>> = new Map();
 
 	@computed
