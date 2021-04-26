@@ -5,6 +5,8 @@ import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
 
+import ItemObject from './item/object';
+
 interface Props extends I.Cell {};
 interface State { 
 	editing: boolean; 
@@ -27,38 +29,21 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { config } = commonStore;
-		const { rootId, block, readOnly, getRecord, index, canEdit, relation, iconSize } = this.props;
+		const { rootId, getRecord, index, relation, iconSize } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		let value = this.getValue();
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
-		value = value.filter((it: any) => { return !it._objectEmpty_; });
-
-		const Item = (item: any) => {
-			return (
-				<div 
-					className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onClick={(e: any) => { this.onClick(e, item); }}
-				>
-					<div className="flex">
-						<IconObject object={item} size={iconSize} />
-						<div className="name">{item.name}</div>
-					</div>
-				</div>
-			);
-		};
+		const value = this.getValue();
 
 		return (
 			<div className="wrap">
 				{value.length ? (
 					<React.Fragment>
-						{value.map((item: any, i: number) => {
-							return <Item key={i} {...item} />;
+						{value.map((id: string, i: number) => {
+							return <ItemObject key={i} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} />;
 						})}
 					</React.Fragment>
 				) : (
@@ -95,13 +80,6 @@ class CellObject extends React.Component<Props, State> {
 		if (canEdit && (v != editing)) {
 			this.setState({ editing: v });
 		};
-	};
-
-	onChange (value: string[]) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const filter = node.find('#filter');
-
-		filter.text('');
 	};
 
 	onClick (e: any, item: any) {
