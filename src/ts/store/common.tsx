@@ -31,7 +31,7 @@ class CommonStore {
 	@observable public progressObj: I.Progress = null;
 	@observable public filterObj: Filter = { from: 0, text: '' };
 	@observable public gatewayUrl: string = '';
-	@observable public linkPreviewObj: LinkPreview;
+	@observable public linkPreviewObj: LinkPreview = null;
 	@observable public configObj:any = {};
 	public cellId: string = '';
 	

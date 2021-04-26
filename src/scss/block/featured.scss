@@ -1,24 +1,25 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFeatured { @include text-paragraph; color: #6c6a5f; white-space: nowrap; padding: 2px 0px 30px 0px; display: none; }
+	.block.blockFeatured { @include text-common; line-height: 28px; color: #6c6a5f; white-space: nowrap; padding: 2px 0px 30px 0px; display: none; }
 	.block.blockFeatured {
 		.wrap { white-space: normal; }
 
-		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: 0px 10px; }
+		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #6c6a5f; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 		.element { display: inline-block; cursor: pointer; }
 
-		.cellContent { display: inline; vertical-align: middle; }
+		.cellContent { display: inline; vertical-align: middle; padding: 5.5px 6px; transition: background 0.2s ease-in-out; }
+		.cellContent:hover { background: rgba(172,169,150,0.1); }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
-			.element { margin-bottom: 0px; vertical-align: middle; line-height: inherit; background: none !important; }
+			.element { margin-bottom: 0px; vertical-align: top; line-height: inherit; background: none !important; }
 			.element:last-child { margin-right: 0px; }
 
-			.tagItem { margin-right: 6px; }
+			.tagItem { margin-top: -4px; margin-right: 6px; vertical-align: middle; }
 			.tagItem:last-child { margin-right: 0px; }
 
-			.iconObject { vertical-align: middle; margin-right: 6px; }
+			.iconObject { display: none; }
 			.name { vertical-align: middle; line-height: inherit; display: inline; word-break: break-word; }
 		}
 	}

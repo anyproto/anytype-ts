@@ -16,7 +16,7 @@
 		.block {
 			.wrapMenu { display: none; }
 		}
-		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; }
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 20px; }
 
 		.section { margin-bottom: 32px; }
 		.section:last-child { margin: 0px; }

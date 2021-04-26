@@ -1,9 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, Util, DataUtil } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { IconObject } from 'ts/component';
 
 import ItemObject from './item/object';
 
@@ -17,7 +14,6 @@ const $ = require('jquery');
 @observer
 class CellObject extends React.Component<Props, State> {
 
-	_isMounted: boolean = false;
 	state = {
 		editing: false,
 	};
@@ -51,14 +47,6 @@ class CellObject extends React.Component<Props, State> {
 				)}
 			</div>
 		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 
 	componentDidUpdate () {
