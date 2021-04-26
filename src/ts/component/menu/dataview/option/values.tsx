@@ -137,7 +137,7 @@ class MenuOptionValues extends React.Component<Props> {
 			value = value ? [ value ] : [];
 		};
 		value = value.filter((it: string) => { return it; });
-		return value;
+		return Util.arrayUnique(value);
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {

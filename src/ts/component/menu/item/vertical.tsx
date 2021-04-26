@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer } from 'mobx-react';
 import { menuStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
-@observer
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
