@@ -127,24 +127,15 @@ class Util {
 			(JSON.stringify(v1) === JSON.stringify(v2));
 	};
 
-	arrayUnique (array: any[]) {
-		let v = {};
-		for (let i = 0; i < array.length; ++i) {
-			if (v[array[i]]) {
-				array.splice(i, 1);
-				i--;
-			} else {
-				v[array[i]] = true;
-			};
-		};
-		return array;
+	arrayUnique (a: any[]) {
+		return [ ...new Set(a) ];
 	};
 	
-	arrayUniqueObjects (array: any[], k: string) {
+	arrayUniqueObjects (a: any[], k: string) {
 		const res: any[] = [];
 		const map = new Map();
 		
-		for (const item of array) {
+		for (const item of a) {
 			if (!map.has(item[k])){
 				map.set(item[k], true);
 				res.push(item);

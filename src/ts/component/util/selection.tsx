@@ -533,7 +533,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		ids = [ ...new Set(ids) ];
+		ids = Util.arrayUnique(ids);
 		this.lastIds = ids;
 
 		for (let id of ids) {

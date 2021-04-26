@@ -42,8 +42,8 @@ class CellObject extends React.Component<Props, State> {
 			<div className="wrap">
 				{value.length ? (
 					<React.Fragment>
-						{value.map((id: string, i: number) => {
-							return <ItemObject key={i} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} />;
+						{value.map((id: string) => {
+							return <ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} />;
 						})}
 					</React.Fragment>
 				) : (
@@ -104,7 +104,7 @@ class CellObject extends React.Component<Props, State> {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		return Util.objectCopy(value);
+		return Util.objectCopy(Util.arrayUnique(value));
 	};
 
 };
