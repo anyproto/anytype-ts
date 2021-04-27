@@ -260,10 +260,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasFields()) {
-						block.fields = Decode.decodeStruct(data.getFields());
-					};
-
+					block.fields = data.hasFields() ? Decode.decodeStruct(data.getFields()) : {};
 					blockStore.blockUpdate(rootId, block);
 					break;
 

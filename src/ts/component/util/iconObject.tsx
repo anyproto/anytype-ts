@@ -90,7 +90,6 @@ const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
 const ObjectType = require('img/icon/object/default.svg');
 
-const Lcg = require('font/lcg/medium.otf');
 const Color = {
 	grey:	 '#dfddd0',
 	black:	 '#2c2b27',
@@ -275,21 +274,9 @@ class IconObject extends React.Component<Props, {}> {
 		name = SmileUtil.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 
-		const defs = '';
-		/*
-		const defs = `<defs>
-			<style type="text/css">
-				@font-face {
-					font-family: 'Helvetica'; font-style: normal; font-weight: 500;
-					src: url('${Lcg}') format('opentype');
-				}
-			</style>
-		</defs>`;
-		*/
-
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Helvetica" font-weight="bold" font-size="${FontSize[size]}px">${name}</text>`;
-		const svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${circle}${defs}${text}</svg>`)));
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Helvetica" font-weight="medium" font-size="${FontSize[size]}px">${name}</text>`;
+		const svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${size} ${size}" xml:space="preserve" height="${size}px" width="${size}px">${circle}${text}</svg>`)));
 		return svg;
 	};
 

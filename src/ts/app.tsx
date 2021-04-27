@@ -49,6 +49,7 @@ import 'scss/page/main/newset.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/store.scss';
+import 'scss/page/main/media.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';

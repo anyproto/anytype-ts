@@ -342,6 +342,11 @@ class DataUtil {
 				this.history.push('/main/relation/' + object.id);
 				break;
 
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:
+				this.history.push('/main/media/' + object.id);
+				break;
+
 			case I.ObjectLayout.Store:
 				this.history.push('/main/store');
 				break;
@@ -350,37 +355,46 @@ class DataUtil {
 
 	objectOpenPopup (object: any) {
 		const popupId = 'page';
+
+		let action = '';
+
+		switch (object.layout) {
+			default:
+				action = 'edit';
+				break;
+
+			case I.ObjectLayout.Set:
+				action = 'set';
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				action = 'type';
+				break;
+
+			case I.ObjectLayout.Relation:
+				action = 'relation';
+				break;
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:
+				action = 'media';
+				break;
+
+			case I.ObjectLayout.Store:
+				action = 'store';
+				break;
+		};
+
 		const param: any = { 
 			data: { 
 				matchPopup: { 
 					params: {
-						page: 'main', 
+						page: 'main',
+						action: action,
 						id: object.id,
 					},
 				},
 			},
-		};
-
-		switch (object.layout) {
-			default:
-				param.data.matchPopup.params.action = 'edit';
-				break;
-
-			case I.ObjectLayout.Set:
-				param.data.matchPopup.params.action = 'set';
-				break;
-
-			case I.ObjectLayout.ObjectType:
-				param.data.matchPopup.params.action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				param.data.matchPopup.params.action = 'relation';
-				break;
-
-			case I.ObjectLayout.Store:
-				param.data.matchPopup.params.action = 'store';
-				break;
 		};
 
 		historyPopup.pushMatch(param.data.matchPopup);
