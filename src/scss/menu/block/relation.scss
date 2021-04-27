@@ -128,6 +128,10 @@
 				.cellContent { padding: 5px 8px 3px 8px !important; }
 			}
 
+			.cell.c-shortText {
+				.name { width: 100%: }
+			}
+
 			.cell.c-longText {
 				.name, span { -webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; }
 			}
