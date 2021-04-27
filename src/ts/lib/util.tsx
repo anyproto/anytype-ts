@@ -754,7 +754,7 @@ class Util {
 				return 'body';
 
 			case 'popup':
-				return '#popupPage .selection';
+				return '#popupPage #innerWrap';
 			
 			case 'menuBlockRelationList':
 			case 'menuBlockRelationView':
