@@ -155,6 +155,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 	rebind () {
 		const node = $(ReactDOM.findDOMNode(this));
+		const blocks = node.find('#blocks');
 		const img = node.find('img.media');
 		const wrap = node.find('.block.blockMedia .wrapContent');
 
@@ -163,7 +164,15 @@ class PageMainMedia extends React.Component<Props, {}> {
 				const w = img.width();
 				const h = img.height();
 
-				if (h < MAX_HEIGHT && w < wrap.width()) {
+				let ww = wrap.width();				
+				let wh = wrap.height();
+
+				if (wh < MAX_HEIGHT) {
+					wh = MAX_HEIGHT;
+					wrap.css({ height: MAX_HEIGHT });
+				};
+
+				if ((h < wh) || (w < ww)) {
 					img.css({ 
 						position: 'absolute',
 						left: '50%',
@@ -173,8 +182,6 @@ class PageMainMedia extends React.Component<Props, {}> {
 						marginTop: -h / 2, 
 						marginLeft: -w / 2,
 					});
-
-					wrap.css({ height: MAX_HEIGHT });
 				};
 			});
 		};
