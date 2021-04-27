@@ -30,7 +30,8 @@
 
 		.block.blockMedia { padding: 0px; overflow: hidden; border-radius: 6px; background: rgba(172,169,150,0.1); }
 		.block.blockMedia {
-			.media { max-width: 100%; max-height: 100%; }
+			.wrapContent { height: 100%; }
+			.wrap { position: static; overflow: visible; }
 		}
 
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 20px; }

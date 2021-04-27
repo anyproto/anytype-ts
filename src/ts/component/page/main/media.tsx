@@ -14,6 +14,8 @@ interface Props extends RouteComponentProps<any> {
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 
+const MAX_HEIGHT = 396;
+
 @observer
 class PageMainMedia extends React.Component<Props, {}> {
 
@@ -99,6 +101,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		this.open();
 		this.resize();
+		this.rebind();
 	};
 
 	componentWillUnmount () {
@@ -147,6 +150,33 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 		if (close) {
 			Action.pageClose(rootId);
+		};
+	};
+
+	rebind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const img = node.find('img.media');
+		const wrap = node.find('.block.blockMedia .wrapContent');
+
+		if (img.length) {
+			img.unbind('load').on('load', () => {
+				const w = img.width();
+				const h = img.height();
+
+				if (h < MAX_HEIGHT && w < wrap.width()) {
+					img.css({ 
+						position: 'absolute',
+						left: '50%',
+						top: '50%',
+						width: w, 
+						height: h, 
+						marginTop: -h / 2, 
+						marginLeft: -w / 2,
+					});
+
+					wrap.css({ height: MAX_HEIGHT });
+				};
+			});
 		};
 	};
 
