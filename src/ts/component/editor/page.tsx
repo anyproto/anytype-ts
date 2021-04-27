@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore, authStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -18,11 +18,13 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
+const { app } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const fs = window.require('fs');
 const path = window.require('path');
+const userPath = app.getPath('userData');
 
 const THROTTLE = 20;
 
@@ -241,12 +243,6 @@ class EditorPage extends React.Component<Props, {}> {
 			this.resize();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
-			const object = blockStore.getDetails(rootId, rootId);
-			if (!isPopup && (object.type == Constant.typeId.template)) {
-				window.clearInterval(this.timeoutScreen);
-				this.timeoutScreen = window.setInterval(() => { ipcRenderer.send('screenshot'); }, 3000);
-			};
-
 			blockStore.setNumbers(rootId);
 
 			if (onOpen) {
@@ -283,18 +279,6 @@ class EditorPage extends React.Component<Props, {}> {
 
 			case 'search':
 				this.onSearch();
-				break;
-
-			case 'screenshot':
-				if (!arg) {
-					break;
-				};
-
-				C.UploadFile('', arg, I.FileType.Image, true, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-				});
 				break;
 		};
 	};
@@ -1150,7 +1134,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		const filePath = authStore.path;
+		const filePath = path.join(userPath, 'tmp');
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
@@ -1181,11 +1165,10 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 
 				if (files.length) {
-					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
+					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
 
 					for (let file of files) {
-						const dir = path.join(filePath, 'tmp');
-						const fn = path.join(dir, file.name);
+						const fn = path.join(filePath, file.name);
 						const reader = new FileReader();
 
 						reader.readAsBinaryString(file); 
@@ -1193,12 +1176,13 @@ class EditorPage extends React.Component<Props, {}> {
 							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
 								if (err) {
 									console.error(err);
+									commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
 									return;
 								};
 
 								data.files.push({ name: file.name, path: fn });
 
-								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
+								commonStore.progressSet({ status: translate('commonProgress'), current: data.files.length, total: files.length });
 
 								if (data.files.length == files.length) {
 									this.onPaste(e, true, data);
@@ -1320,8 +1304,6 @@ class EditorPage extends React.Component<Props, {}> {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
-				fixedY: 40,
-				className: 'fixed',
 				data: {
 					container: node,
 				},

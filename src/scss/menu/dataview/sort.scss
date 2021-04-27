@@ -1,10 +1,23 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuDataviewSort { width: 400px; }
+	.menu.menuDataviewSort { width: 352px; }
 	.menu.menuDataviewSort {
 		.content { max-height: 350px; }
 
 		.item { padding: 4px 40px 4px 10px; white-space: nowrap; }
+		.item {
+			.txt { width: calc(100% - 72px); }
+
+			.iconObject { margin-right: 10px; }
+			
+			.select { border: 0px; padding: 0px; display: block; }
+			.select:hover, .select.active { background: none; }
+			.select.grey { color: $colorDarkGrey; }
+			.select {
+				.icon.arrow { display: none; }
+			}
+
+		}
 	}	
 }

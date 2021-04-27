@@ -155,6 +155,14 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Featured;
 	};
 
+	isDataview (): boolean {
+		return this.type == I.BlockType.Dataview;
+	};
+
+	isRelation (): boolean {
+		return this.type == I.BlockType.Relation;
+	};
+
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};

@@ -1,6 +1,12 @@
 export enum MenuType { Vertical = 1, Horizontal };
 export enum MenuDirection { Top = 1, Bottom, Left, Right, Center };
 
+export interface MenuTab {
+	id: string;
+	name: string;
+	component: string;
+};
+
 export interface MenuParam {
 	menuKey?: string;
 	element?: any;
@@ -14,6 +20,7 @@ export interface MenuParam {
 	offsetY?: number;
 	width?: number;
 	height?: number;
+	tabs?: MenuTab[];
 	data?: any;
 	isSub?: boolean;
 	passThrough?: boolean;
@@ -46,6 +53,7 @@ export interface MenuItem {
 	inner?: any;
 	color?: string;
 	arrow?: boolean;
+	checkbox?: boolean;
 	className?: string;
 	isActive?: boolean;
 	menuId?: string;

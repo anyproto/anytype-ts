@@ -137,12 +137,15 @@ class MenuOptionValues extends React.Component<Props> {
 			value = value ? [ value ] : [];
 		};
 		value = value.filter((it: string) => { return it; });
-		return value;
+		return Util.arrayUnique(value);
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		this.props.setHover((item ? item : items[this.n]), scroll);
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+		this.props.setHover(items[this.n], scroll);
 	};
 
 	onOver (e: any, item: any) {
@@ -166,6 +169,7 @@ class MenuOptionValues extends React.Component<Props> {
 				offsetX: param.width,
 				offsetY: -64,
 				passThrough: true,
+				noFlipY: true,
 				onClose: () => { close(); },
 				data: {
 					...data,
@@ -178,19 +182,22 @@ class MenuOptionValues extends React.Component<Props> {
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
-			element: '#' + getId() + ' #item-' + item.id,
-			offsetX: 288,
-			vertical: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
-			data: {
-				...data,
-				option: item,
-			}
+		menuStore.close('dataviewOptionEdit', () => {
+			menuStore.open('dataviewOptionEdit', { 
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
+				noFlipY: true,
+				noAnimation: true,
+				data: {
+					...data,
+					option: item,
+				}
+			});
 		});
 	};
 

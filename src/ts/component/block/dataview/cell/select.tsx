@@ -98,7 +98,7 @@ class CellSelect extends React.Component<Props, State> {
 		});
 		value = value.filter((it: any) => { return it && it.id; });
 
-		return value;
+		return Util.arrayUnique(value);
 	};
 
 	onClear (e: any) {

@@ -83,7 +83,7 @@ class PageMainHistory extends React.Component<Props, State> {
 				<React.Fragment>
 					<div id={'item-' + item.id} className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} onClick={(e: any) => { this.loadVersion(item.id); }}>
 						{withChildren ? <Icon className="arrow" onClick={(e: any) => { this.toggleChildren(e, item.id); }} /> : ''}
-						<div className="date">{Util.date('d F, H:i', item.time)}</div>
+						<div className="date">{Util.date('d F, H:i', item.time, true)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
 

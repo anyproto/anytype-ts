@@ -143,7 +143,7 @@ class Filter implements I.Filter {
 
 	relationKey: string = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
-	condition: I.FilterCondition = I.FilterCondition.Equal;
+	condition: I.FilterCondition = I.FilterCondition.None;
 	value: any = {};
 
 	constructor (props: I.Filter) {
@@ -151,7 +151,7 @@ class Filter implements I.Filter {
 		
 		self.relationKey = String(props.relationKey || '');
 		self.operator = Number(props.operator) || I.FilterOperator.And;
-		self.condition = Number(props.condition) || I.FilterCondition.Equal;
+		self.condition = Number(props.condition) || I.FilterCondition.None;
 		self.value = props.value;
 
 		decorate(self, {

@@ -139,7 +139,7 @@ class MenuObjectValues extends React.Component<Props> {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		return Util.objectCopy(value);
+		return Util.objectCopy(Util.arrayUnique(value));
 	};
 
 	onClick (e: any, item: any) {
@@ -171,6 +171,8 @@ class MenuObjectValues extends React.Component<Props> {
 				width: 0,
 				offsetX: param.width,
 				offsetY: -36,
+				passThrough: true,
+				noFlipY: true,
 				onClose: () => { close(); },
 				data: {
 					...data,

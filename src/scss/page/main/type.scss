@@ -7,10 +7,7 @@
 		.block {
 			.wrapMenu { display: none; }
 		}
-		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 20px; }
-		.block.blockFeatured {
-			.bullet { margin-top: -2px; }
-		}
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 20px; }
 
 		.head { display: flex; margin-bottom: 35px; }
 		.head {

@@ -2,7 +2,7 @@ import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Opt
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
-import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
+import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
@@ -59,6 +59,7 @@ export {
 	PopupParam,
 	Popup,
 
+	MenuTab,
 	MenuType,
 	MenuDirection,
 	MenuParam,

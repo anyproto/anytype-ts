@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input, Checkbox, IconObject, Tag } from 'ts/component';
+import { Icon, Select, Input, IconObject, Tag } from 'ts/component';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -60,6 +60,11 @@ class MenuFilter extends React.Component<Props, {}> {
 			{ id: String(I.FilterOperator.And), name: 'And' },
 			{ id: String(I.FilterOperator.Or), name: 'Or' },
 		];
+
+		const checkboxOptions: I.Option[] = [
+			{ id: '1', name: 'Checked' },
+			{ id: '0', name: 'Unchecked' },
+		];
 		
 		const relationOptions = this.getRelationOptions();
 
@@ -69,7 +74,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			const relation = item.relation;
-			const conditionOptions = this.conditionsByType(relation.format);
+			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
 			const id = [ 'item', item.id, 'value' ].join('-');
 
@@ -77,7 +82,12 @@ class MenuFilter extends React.Component<Props, {}> {
 			let onSubmit = (e: any) => { this.onSubmit(e, item); };
 			let Item = null;
 			let cn = [];
+			let cv = [ 'value' ];
 			let list = [];
+
+			if (item.id == filters.length - 1) {
+				cv.push('last');
+			};
 
 			switch (relation.format) {
 
@@ -164,12 +174,13 @@ class MenuFilter extends React.Component<Props, {}> {
 
 				case I.RelationType.Checkbox:
 					value = (
-						<Checkbox 
-							id={id}
-							key={id}
-							ref={refGet} 
-							value={item.value} 
-							onChange={(e: any, v: boolean) => { this.onChange(item.id, 'value', Boolean(v), true); }} 
+						<Select 
+							id={[ 'filter', 'checkbox', item.id ].join('-')} 
+							className="operator" 
+							arrowClassName="light"
+							options={checkboxOptions} 
+							value={item.value ? '1' : '0'} 
+							onChange={(v: string) => { this.onChange(item.id, 'value', Boolean(Number(v)), true); }} 
 						/>
 					);
 					break;
@@ -214,8 +225,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			return (
 				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
 					<Handle />
-					{item.id > 0 ? (
-						/*
+					{/*item.id > 0 ? (
+						
 						<Select 
 							id={[ 'filter', 'operator', item.id ].join('-')} 
 							className="operator" 
@@ -224,28 +235,38 @@ class MenuFilter extends React.Component<Props, {}> {
 							value={item.operator} 
 							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
 						/>
-						*/
 						<div className="txt">And</div>
 					) : (
 						<div className="txt">Where</div>
-					)}
-					<Select 
-						id={[ 'filter', 'relation', item.id ].join('-')} 
-						className="relation" 
-						arrowClassName="light"
-						options={relationOptions}
-						value={item.relationKey} 
-						onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
-					/>
-					<Select 
-						id={[ 'filter', 'condition', item.id ].join('-')} 
-						className="condition" 
-						arrowClassName="light"
-						options={conditionOptions} 
-						value={item.condition} 
-						onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
-					/>
-					{value}
+					)*/}
+
+					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
+
+					<div className="txt">
+						<Select 
+							id={[ 'filter', 'relation', item.id ].join('-')} 
+							className="relation" 
+							arrowClassName="light"
+							options={relationOptions}
+							value={item.relationKey} 
+							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+						/>
+						<Select 
+							id={[ 'filter', 'condition', item.id ].join('-')} 
+							className="condition grey" 
+							arrowClassName="light"
+							options={conditionOptions} 
+							value={item.condition} 
+							onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
+						/>
+					</div>
+
+					{item.condition != I.FilterCondition.None ? (
+						<div className={cv.join(' ')}>
+							{value}
+						</div>
+					) : ''}
+
 					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
 				</form>
 			);
@@ -254,7 +275,7 @@ class MenuFilter extends React.Component<Props, {}> {
 		const ItemAdd = SortableElement((item: any) => (
 			<div className="item add" onClick={this.onAdd}>
 				<Icon className="plus" />
-				<div className="name">New filter</div>
+				<div className="name">Add a filter</div>
 			</div>
 		));
 		
@@ -293,6 +314,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.resize();
 	};
 
+	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
+	};
+
 	componentDidUpdate () {
 		this.resize();
 
@@ -302,61 +327,6 @@ class MenuFilter extends React.Component<Props, {}> {
 				ref.setRange(this.range);
 			};
 		};
-	};
-
-	conditionsByType (type: I.RelationType): I.Option[] {
-		let ret = [];
-
-		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
-				ret = [ 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
-					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
-					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				];
-				break;
-
-			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
-				ret = [ 
-					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
-					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
-					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
-					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
-				];
-				break;
-			
-			case I.RelationType.Number:
-			case I.RelationType.Date:
-				ret = [ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
-				];
-				break;
-			
-			case I.RelationType.Checkbox:
-			default:
-				ret = [ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' },
-				];
-				break;
-		};
-		return ret;
 	};
 
 	valueByType (type: I.RelationType): any {
@@ -409,7 +379,7 @@ class MenuFilter extends React.Component<Props, {}> {
 			return { 
 				id: relation.relationKey, 
 				name: relation.name, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
+				//icon: 'relation ' + DataUtil.relationClass(relation.format),
 				isHidden: relation.isHidden,
 				format: relation.format,
 			};
@@ -419,7 +389,7 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 	
 	onAdd (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
@@ -429,9 +399,11 @@ class MenuFilter extends React.Component<Props, {}> {
 			return;
 		};
 
+		const obj = $(`#${getId()}`);
+		const content = obj.find('.content');
 		const first = relationOptions[0];
-		const conditions = this.conditionsByType(first.format);
-		const condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+		const conditions = DataUtil.filterConditionsByType(first.format);
+		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 
 		view.filters.push({ 
 			relationKey: first.id, 
@@ -439,6 +411,8 @@ class MenuFilter extends React.Component<Props, {}> {
 			condition: condition as I.FilterCondition,
 			value: this.valueByType(first.format),
 		});
+
+		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
 		this.save();
 	};
 
@@ -497,9 +471,9 @@ class MenuFilter extends React.Component<Props, {}> {
 			// Remove value when we change relation, filter non unique entries
 			if (k == 'relationKey') {
 				const relation = dbStore.getRelation(rootId, blockId, v);
-				const conditions = this.conditionsByType(relation.format);
+				const conditions = DataUtil.filterConditionsByType(relation.format);
 
-				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.Equal;
+				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				item.value = this.valueByType(relation.format);
 
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
@@ -630,35 +604,6 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		raf(() => {
-			const { getId } = this.props;
-			const obj = $('#' + getId());
-			const items = obj.find('.item');
-
-			let width = Constant.size.menuDataviewFilter;
-			items.each((i: number, item: any) => {
-				item = $(item);
-				width = Math.max(width, this.getWidth(item));
-			});
-
-			obj.css({ width: width });
-			this.props.position();
-		});
-	};
-
-	getWidth (obj: any) {
-		if (obj.hasClass('empty')) {
-			return 0;
-		};
-		
-		let w = 0;
-		obj.children().each((i: number, item: any) => {
-			item = $(item);
-			if (!item.hasClass('icon delete')) {
-				w += item.outerWidth(true);
-			};
-		});
-		return w + 50;
 	};
 
 };

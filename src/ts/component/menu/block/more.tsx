@@ -176,14 +176,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
 		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };
 		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
-		const linkRoot = { id: 'linkRoot', icon: 'existing', name: 'Add to dashboard' };
+		const linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
 		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
 		const move = { id: 'move', name: 'Move to', arrow: true };
 		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
 		} else
 		if (block.isPage()) {
 			let template = null;
@@ -202,7 +202,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [] },
+				{ 
+					children: [
+						{ id: 'resize', name: 'Set layout width' }
+					]
+				},
 				{
 					children: [
 						linkRoot,
@@ -216,7 +220,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 
 			if (!block.isObjectSet()) {
-				sections[0].children.push({ id: 'resize', name: 'Resize page' });
+				sections[0].children.push();
 			};
 
 			sections[0].children.push(align);

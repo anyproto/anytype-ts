@@ -522,7 +522,9 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		e.persist();
+		if (e.persist) {
+			e.persist();
+		};
 		e.stopPropagation();
 
 		const { param, close } = this.props;

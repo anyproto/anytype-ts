@@ -280,8 +280,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 		const { onChange } = data;
 
 		const cb = (id: string, name: string) => {
-			console.log(id, name);
-
 			let from = filter.from;
 			let to = from + name.length + 1;
 			let marks = Util.objectCopy(data.marks || []);

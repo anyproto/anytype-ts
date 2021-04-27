@@ -260,10 +260,7 @@ class Dispatcher {
 						break;
 					};
 
-					if (data.hasFields()) {
-						block.fields = Decode.decodeStruct(data.getFields());
-					};
-
+					block.fields = data.hasFields() ? Decode.decodeStruct(data.getFields()) : {};
 					blockStore.blockUpdate(rootId, block);
 					break;
 
@@ -434,16 +431,7 @@ class Dispatcher {
 						break;
 					};
 
-					data.view = Mapper.From.View(data.getView());
-
-					view = block.content.views.find((it: I.View) => { return it.id == data.view.id });
-					if (view) {
-						set(view, { ...data.view, relations: DataUtil.viewGetRelations(rootId, block.id, data.view) });
-					} else {
-						block.content.views.push(new M.View(data.view));
-					};
-
-					blockStore.blockUpdate(rootId, block);
+					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
 					break;
 
 				case 'blockDataviewViewDelete':
@@ -457,14 +445,12 @@ class Dispatcher {
 					
 					const deleteId = data.getViewid();
 
-					block.content.views = block.content.views.filter((it: I.View) => { return it.id != deleteId; });
-					blockStore.blockUpdate(rootId, block);
-
-					const length = block.content.views.length;
+					dbStore.viewDelete(rootId, id, deleteId);
 
 					if (deleteId == viewId) {
-						viewId = length ? block.content.views[length - 1] : '';
-						dbStore.metaSet (rootId, id, { viewId: viewId });
+						const views = dbStore.getViews(rootId, id);
+						viewId = views.length ? views[views.length - 1].id : '';
+						dbStore.metaSet(rootId, id, { viewId: viewId });
 					};
 					break;
 
@@ -541,7 +527,7 @@ class Dispatcher {
 						break;
 					};
 
-					dbStore.relationRemove(rootId, id, data.getRelationkey());
+					dbStore.relationDelete(rootId, id, data.getRelationkey());
 					break;
 
 				case 'objectDetailsSet':
@@ -566,7 +552,7 @@ class Dispatcher {
 					};
 					blockStore.detailsUpdate(rootId, { id: id, details: details }, false);
 
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
@@ -592,7 +578,7 @@ class Dispatcher {
 					};
 
 					if (type == 'objectRelationsSet') {
-						dbStore.relationsRemove(rootId, rootId);
+						dbStore.relationsClear(rootId, rootId);
 					};
 
 					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
@@ -603,7 +589,7 @@ class Dispatcher {
 					keys = data.getKeysList() || [];
 
 					for (let key of keys) {
-						dbStore.relationRemove(rootId, id, key);
+						dbStore.relationDelete(rootId, id, key);
 					};
 					break;
 
@@ -669,11 +655,7 @@ class Dispatcher {
 
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
-
-				it.content.views = it.content.views.map((view: any) => {
-					view.relations = DataUtil.viewGetRelations(rootId, it.id, view);
-					return new M.View(view);
-				});
+				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
 			return new M.Block(it);
 		});

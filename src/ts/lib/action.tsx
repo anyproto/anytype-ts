@@ -8,9 +8,16 @@ class Action {
 
 	pageClose (rootId: string) {
 		C.BlockClose(rootId, (message: any) => {
+			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
+			for (let block of blocks) {
+				dbStore.relationsClear(rootId, block.id);
+				dbStore.viewsClear(rootId, block.id);
+				dbStore.metaClear(rootId, block.id);
+				dbStore.recordsClear(rootId, block.id);
+			};
+
 			blockStore.blocksClear(rootId);
-			dbStore.relationsRemove(rootId, rootId);
-			dbStore.relationsRemove(rootId, 'dataview');
+			dbStore.relationsClear(rootId, rootId);
 			authStore.threadRemove(rootId);
 		});
 	};

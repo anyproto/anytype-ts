@@ -25,7 +25,6 @@ class HeadHandle extends React.Component<Props, {}> {
 
 		const Handle = SortableHandle(() => (
 			<div className="flex" onMouseDown={this.onMouseDown} onClick={onClick}>
-				<Icon className={'relation ' + DataUtil.relationClass(format)} />
 				<div className="name">{name}</div>
 			</div>
 		));

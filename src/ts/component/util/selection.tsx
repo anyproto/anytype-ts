@@ -87,8 +87,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const k = e.key.toLowerCase();
 
-		console.log('onKeyDown', rootId, this.props);
-		
 		let ids: any = this.get();
 		let idsWithChildren: any = this.get(true);
 		
@@ -535,7 +533,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		ids = [ ...new Set(ids) ];
+		ids = Util.arrayUnique(ids);
 		this.lastIds = ids;
 
 		for (let id of ids) {

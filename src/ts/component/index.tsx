@@ -16,7 +16,7 @@ import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
 import HeaderMainHistory from './header/main/history';
-import HeaderMainSet from './header/main/set';
+import HeaderMainSet from './header/main/newset';
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
 import FooterMainEdit from './footer/main/edit';

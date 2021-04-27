@@ -60,7 +60,7 @@ class BlockFile extends React.Component<Props, {}> {
 							<span className="name">{details.name}</span>
 							<span className="size">{Util.fileSize(details.sizeInBytes)}</span>
 						</span>
-						<span className="download" onMouseDown={this.onDownload}>{translate('blockFileDownload')}</span>
+						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>
 				);
 				break;

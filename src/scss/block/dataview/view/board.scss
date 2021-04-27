@@ -7,7 +7,7 @@
             .columns { white-space: nowrap; }
             .column { width: 240px; margin-right: 24px; display: inline-block; vertical-align: top; overflow-x: visible; overflow-y: auto; }
             .column {
-                .head { padding: 10px 4px; }
+                .head { padding: 10px 4px; width: 100%; }
             }
 
             .card { width: 100%; margin-bottom: 8px; background: #fff; }
@@ -20,6 +20,10 @@
             .card.add:hover {
                 .icon { background-image: url('~img/icon/plus/menu1.svg'); }
             }
+
+			.cellContent {
+				.name:empty { display: none; }
+			}
         }
     }
 }

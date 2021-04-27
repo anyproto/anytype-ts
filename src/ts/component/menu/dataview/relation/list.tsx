@@ -10,6 +10,7 @@ import arrayMove from 'array-move';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuRelationList extends React.Component<Props, {}> {
@@ -40,6 +41,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		));
 
 		const Item = SortableElement((item: any) => {
+			const canHide = item.relationKey != Constant.relationKey.name;
 			return (
 				<div id={'item-' + item.relationKey} className={[ 'item', (item.relation.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<Handle />
@@ -47,7 +49,13 @@ class MenuRelationList extends React.Component<Props, {}> {
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
-					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} />
+					{canHide ? (
+						<Switch 
+							value={item.isVisible} 
+							className="orange" 
+							onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} 
+						/>
+					 ) : ''}
 				</div>
 			);
 		});
@@ -87,6 +95,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.props.position();
+	};
+
+	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
 	};
 
 	onAdd (e: any) {

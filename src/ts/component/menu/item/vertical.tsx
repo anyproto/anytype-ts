@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
-import { observer } from 'mobx-react';
 import { menuStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
-@observer
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		let { id, icon, object, inner, name, menuId, description, caption, color, arrow, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
+		let { id, icon, object, inner, name, menuId, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
 		let cn = [ 'item' ];
 
 		if (className) {
@@ -67,6 +65,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 					</React.Fragment>
 				)}
 				{arrow ? <Icon className="arrow" /> : ''}
+				{checkbox ? <Icon className="chk" /> : ''}
 			</div>
 		);
     };

@@ -14,6 +14,7 @@
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
 	"commonValue": { "en": "Value" },
+	"commonProgress": { "en": "Processing..." },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -301,6 +302,7 @@
 	"linkPreviewEdit": { "en": "Edit link" },
 	"linkPreviewUnlink": { "en": "Unlink" },
 
+	"filterConditionNone": { "en": "all" },
 	"filterConditionEqual": { "en": "is exactly" },
 	"filterConditionNotEqual": { "en": "is not" },
 	"filterConditionGreater": { "en": "is greater" },

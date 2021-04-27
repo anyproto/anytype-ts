@@ -182,6 +182,63 @@ class DataUtil {
 		};
 		return icon;
 	};
+
+	filterConditionsByType (type: I.RelationType): any[] {
+		let ret = [
+			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
+		];
+
+		switch (type) {
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
+			case I.RelationType.Url: 
+			case I.RelationType.Email: 
+			case I.RelationType.Phone: 
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
+					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				]);
+				break;
+
+			case I.RelationType.Object: 
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
+					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				]);
+				break;
+			
+			case I.RelationType.Number:
+			case I.RelationType.Date:
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
+					{ id: I.FilterCondition.Greater,		 name: '>' }, 
+					{ id: I.FilterCondition.Less,			 name: '<' }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
+				]);
+				break;
+			
+			case I.RelationType.Checkbox:
+			default:
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
+				]);
+				break;
+		};
+		return ret;
+	};
 	
 	selectionGet (id: string, withChildren: boolean, props: any): string[] {
 		const { dataset } = props;
@@ -273,6 +330,10 @@ class DataUtil {
 				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
 				break;
 
+			case I.ObjectLayout.Set:
+				this.history.push('/main/set/' + object.id);
+				break;
+
 			case I.ObjectLayout.ObjectType:
 				this.history.push('/main/type/' + object.id);
 				break;
@@ -280,38 +341,60 @@ class DataUtil {
 			case I.ObjectLayout.Relation:
 				this.history.push('/main/relation/' + object.id);
 				break;
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:
+				this.history.push('/main/media/' + object.id);
+				break;
+
+			case I.ObjectLayout.Store:
+				this.history.push('/main/store');
+				break;
 		};
 	};
 
 	objectOpenPopup (object: any) {
 		const popupId = 'page';
+
+		let action = '';
+
+		switch (object.layout) {
+			default:
+				action = 'edit';
+				break;
+
+			case I.ObjectLayout.Set:
+				action = 'set';
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				action = 'type';
+				break;
+
+			case I.ObjectLayout.Relation:
+				action = 'relation';
+				break;
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:
+				action = 'media';
+				break;
+
+			case I.ObjectLayout.Store:
+				action = 'store';
+				break;
+		};
+
 		const param: any = { 
 			data: { 
 				matchPopup: { 
 					params: {
-						page: 'main', 
+						page: 'main',
+						action: action,
 						id: object.id,
 					},
 				},
 			},
-		};
-
-		switch (object.layout) {
-			default:
-				param.data.matchPopup.params.action = 'edit';
-				break;
-
-			case I.ObjectLayout.ObjectType:
-				param.data.matchPopup.params.action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				param.data.matchPopup.params.action = 'relation';
-				break;
-
-			case I.ObjectLayout.Store:
-				param.data.matchPopup.params.action = 'store';
-				break;
 		};
 
 		historyPopup.pushMatch(param.data.matchPopup);
@@ -649,6 +732,15 @@ class DataUtil {
 		return this.menuGetLayouts().filter((it: any) => {
 			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
 		});
+	};
+
+	menuGetViews () {
+		return [
+			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Gallery, name: 'Gallery' },
+			{ id: I.ViewType.List, name: 'List' },
+			{ id: I.ViewType.Board, name: 'Kanban' },
+		];
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
