@@ -164,15 +164,13 @@ class PageMainMedia extends React.Component<Props, {}> {
 				const w = img.width();
 				const h = img.height();
 
-				let ww = wrap.width();				
 				let wh = wrap.height();
-
 				if (wh < MAX_HEIGHT) {
 					wh = MAX_HEIGHT;
 					wrap.css({ height: MAX_HEIGHT });
 				};
 
-				if ((h < wh) || (w < ww)) {
+				if (h < wh) {
 					img.css({ 
 						position: 'absolute',
 						left: '50%',
