@@ -10,6 +10,7 @@ export enum ObjectLayout {
 	File		 = 6,
 	Dashboard	 = 7,
 	Image		 = 8,
+	Video		 = 9,
 	Database	 = 20,
 
 	Store		 = 100,

@@ -107,6 +107,7 @@ export interface Block {
 
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
+	isRelation?(): boolean;
 
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;
