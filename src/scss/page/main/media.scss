@@ -5,8 +5,8 @@
 	.blocks { margin: 0px auto; padding: 60px 0px; display: flex; }
 	.blocks.horizontal { width: 704px; flex-direction: column; }
 	.blocks.horizontal {
-		.side.left { height: 396px; margin-bottom: 25px; }
-		.block.blockMedia { height: 396px; }
+		.side.left { max-height: 396px; margin-bottom: 25px; }
+		.block.blockMedia { max-height: 396px; }
 	}
 
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; }
