@@ -18,11 +18,13 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
+const { app } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const fs = window.require('fs');
 const path = window.require('path');
+const userPath = app.getPath('userData');
 
 const THROTTLE = 20;
 
@@ -241,12 +243,6 @@ class EditorPage extends React.Component<Props, {}> {
 			this.resize();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
-			const object = blockStore.getDetails(rootId, rootId);
-			if (!isPopup && (object.type == Constant.typeId.template)) {
-				window.clearInterval(this.timeoutScreen);
-				this.timeoutScreen = window.setInterval(() => { ipcRenderer.send('screenshot'); }, 3000);
-			};
-
 			blockStore.setNumbers(rootId);
 
 			if (onOpen) {
@@ -283,18 +279,6 @@ class EditorPage extends React.Component<Props, {}> {
 
 			case 'search':
 				this.onSearch();
-				break;
-
-			case 'screenshot':
-				if (!arg) {
-					break;
-				};
-
-				C.UploadFile('', arg, I.FileType.Image, true, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-				});
 				break;
 		};
 	};
@@ -1150,7 +1134,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		const filePath = authStore.path;
+		const filePath = path.join(userPath, 'tmp');
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
@@ -1184,8 +1168,7 @@ class EditorPage extends React.Component<Props, {}> {
 					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
 
 					for (let file of files) {
-						const dir = path.join(filePath, 'tmp');
-						const fn = path.join(dir, file.name);
+						const fn = path.join(filePath, file.name);
 						const reader = new FileReader();
 
 						reader.readAsBinaryString(file); 

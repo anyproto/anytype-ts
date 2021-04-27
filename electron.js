@@ -298,20 +298,6 @@ function createWindow () {
 		send.apply(this, args);
 	});
 
-	ipcMain.on('screenshot', (event, arg) => {
-		win.webContents.capturePage().then((image) => {
-			const fp = path.join(tmpPath, 'screenshot.jpg');
-
-			fs.writeFile(fp, image.toJPEG(90), (err) => {
-          		if (err) {
-					throw err;
-				};
-
-				send('commandEditor', 'screenshot', fp);
-          	});
-		});
-	});
-
 	ipcMain.on('winCommand', (e, cmd) => {
 		switch (cmd) {
 			case 'menu':
