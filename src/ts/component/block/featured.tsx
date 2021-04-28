@@ -48,7 +48,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					return (
 						<React.Fragment key={i}>
 							{i > 0 ? <div className="bullet" /> : ''}
-							<span id={id} onClick={(e: any) => { this.onCellClick(e, relationKey, 0); }}>
+							<span id={id}>
 								<Cell 
 									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
 									rootId={rootId}

@@ -125,7 +125,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { rootId, isPopup } = this.props;
+		const { isPopup } = this.props;
 
 		this._isMounted = true;
 		const win = $(window);
@@ -356,8 +356,9 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, I.RestrictionObject.CreateBlock);
 
-		if (!root || root.isObjectReadOnly()) {
+		if (!root || !allowed) {
 			return;
 		};
 		

@@ -44,8 +44,13 @@ class MenuFilter extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+
+		if (!view) {
+			return null;
+		};
+
 		const filterCnt = view.filters.length;
-		const filters = Util.objectCopy(view.filters).map((it: any) => {
+		const filters = Util.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
 				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
