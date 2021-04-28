@@ -33,9 +33,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, iconSize } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
-		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object[Constant.relationKey.featured]).filter((it: any) => {
+		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			return (it != Constant.relationKey.description) && object[it];
-		}));
+		});
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
