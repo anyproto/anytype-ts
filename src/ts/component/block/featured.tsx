@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
-import { Cell } from 'ts/component';
+import { Cell, Button } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore, dbStore } from 'ts/store';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -32,6 +32,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 
 	render () {
@@ -40,6 +41,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			return (it != Constant.relationKey.description) && object[it];
 		});
+		const bullet = <div className="bullet" />;
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
@@ -47,7 +49,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
 					return (
 						<React.Fragment key={i}>
-							{i > 0 ? <div className="bullet" /> : ''}
+							{i > 0 ? bullet : ''}
 							<span id={id}>
 								<Cell 
 									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
@@ -72,6 +74,8 @@ class BlockFeatured extends React.Component<Props, {}> {
 						</React.Fragment>
 					);
 				})}
+				{featured.length ? bullet : ''}
+				<Button text="Edit relations" onClick={this.onRelation} />
 			</div>
 		);
 	};
@@ -116,7 +120,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	onMouseEnter (e: any, relationKey: string) {
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 		const cell = $('#' + DataUtil.cellId(PREFIX, relationKey, 0));
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
@@ -125,6 +128,35 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	onMouseLeave (e: any) {
 		Util.tooltipHide(false);
+	};
+
+	onRelation () {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
+
+		const { isPopup, rootId } = this.props;
+		const param: any = {
+			element: `#header`,
+			horizontal: I.MenuDirection.Right,
+			noFlipY: true,
+			onClose: () => {
+				menuStore.closeAll();
+			},
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
+		};
+
+		if (!isPopup) {
+			param.fixedY = 40;
+			param.className = 'fixed';
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 	
 };

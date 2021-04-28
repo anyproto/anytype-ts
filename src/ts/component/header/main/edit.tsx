@@ -64,7 +64,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 						<div className="btn" onClick={this.onOpen}>
 							<Icon className="expand" />
-							<div className="txt">Open as page</div>
+							<div className="txt">Open as object</div>
 						</div>
 					</div>
 				) : (

@@ -80,7 +80,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-							<Button text="Download" className="blank" onClick={this.onDownload} />
+							<Button text="Download" className="download blank" onClick={this.onDownload} />
 						</div>
 
 						<div className="section">

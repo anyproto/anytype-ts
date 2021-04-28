@@ -3,9 +3,13 @@
 .pageMainMedia {
 
 	.blocks { margin: 0px auto; padding: 60px 0px; display: flex; }
+	.blocks {
+		.side.right { padding-top: 25px; }
+	}
+
 	.blocks.horizontal { width: 704px; flex-direction: column; }
 	.blocks.horizontal {
-		.side.left { max-height: 396px; margin-bottom: 25px; }
+		.side.left { max-height: 396px; }
 		.block.blockMedia { max-height: 396px; }
 	}
 
@@ -45,7 +49,7 @@
 			.info .name { color: #929082; }
 		}
 
-		.button { @include text-paragraph; height: 36px; line-height: 30px; margin: 17px 0px 40px 0px; }
+		.button.download { @include text-paragraph; height: 36px; line-height: 30px; margin: 17px 0px 40px 0px; }
 	}
 }
 
