@@ -45,11 +45,13 @@ class PageMainMedia extends React.Component<Props, {}> {
 		file.align = I.BlockAlign.Center;
 
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
+		const isVideo = file.content.type == I.FileType.Video;
+		const isImage = file.content.type == I.FileType.Image;
 
 		let cn = [ 'blocks' ];
 
-		if ([ I.ObjectLayout.Video, I.ObjectLayout.Image ].indexOf(object.layout) >= 0) {
-			if ((object.layout == I.ObjectLayout.Video) || (object.widthInPixels > object.heightInPixels)) {
+		if (isVideo || isImage) {
+			if (isVideo || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
@@ -64,7 +66,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 				<div id="blocks" className={cn.join(' ')}>
 					<div className="side left">
-						{[ I.ObjectLayout.Video, I.ObjectLayout.Image ].indexOf(object.layout) >= 0 ? (
+						{isVideo || isImage ? (
 							<Block {...this.props} key={file.id} rootId={rootId} block={file} readOnly={true} />
 						) : (
 							<IconObject object={object} size={96} />
