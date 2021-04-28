@@ -316,7 +316,14 @@ class MenuFilter extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { getId } = this.props;
+
 		this.resize();
+
+		const obj = $(`#${getId()} .content`);
+		obj.unbind('click').on('click', () => {
+			menuStore.closeAll(Constant.menuIds.cell);
+		});
 	};
 
 	componentWillUnmount () {
