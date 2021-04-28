@@ -87,9 +87,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						{!isPopup && canAdd ? (
 							<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 						) : ''}
-						{config.allowDataview && canAdd ? (
-							<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
-						) : ''}
 					</div>
 				</div>
 

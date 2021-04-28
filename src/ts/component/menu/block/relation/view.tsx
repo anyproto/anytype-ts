@@ -117,6 +117,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
 		$('body').removeClass('over');
 	};
 

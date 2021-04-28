@@ -50,7 +50,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 					return (
 						<React.Fragment key={i}>
 							{i > 0 ? bullet : ''}
-							<span id={id}>
+							<span id={id} onClick={(e: any) => { 
+								e.persist(); 
+								this.onRelation(e, relationKey); 
+							}}>
 								<Cell 
 									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
 									rootId={rootId}
@@ -63,10 +66,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readOnly={false}
+									readOnly={true}
 									isInline={true}
 									idPrefix={PREFIX}
-									onCellChange={this.onCellChange}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
 									onMouseLeave={this.onMouseLeave}
 								/>
@@ -74,8 +76,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 						</React.Fragment>
 					);
 				})}
-				{featured.length ? bullet : ''}
-				<Button text="Edit relations" className="edit" onClick={this.onRelation} />
 			</div>
 		);
 	};
@@ -130,7 +130,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 		Util.tooltipHide(false);
 	};
 
-	onRelation () {
+	onRelation (e: any, relationKey: string) {
+		e.stopPropagation();
+
 		if (menuStore.isOpen()) {
 			menuStore.closeAll();
 			return;
@@ -141,6 +143,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 			element: `#header`,
 			horizontal: I.MenuDirection.Right,
 			noFlipY: true,
+			noAnimation: true,
+			onOpen: (component: any) => {
+				component?.ref?.onCellClick(e, relationKey, 0);
+			},
 			onClose: () => {
 				menuStore.closeAll();
 			},
