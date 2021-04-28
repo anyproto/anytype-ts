@@ -9,8 +9,11 @@
 
 	.blocks.horizontal { width: 704px; flex-direction: column; }
 	.blocks.horizontal {
-		.side.left { max-height: 396px; }
 		.block.blockMedia { max-height: 396px; }
+	}
+
+	.blocks.isVideo {
+		.block.blockMedia { max-height: unset; }
 	}
 
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; }

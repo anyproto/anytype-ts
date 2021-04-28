@@ -56,6 +56,12 @@ class PageMainMedia extends React.Component<Props, {}> {
 			} else {
 				cn.push('vertical');
 			};
+			if (isVideo) {
+				cn.push('isVideo');
+			};
+			if (isImage) {
+				cn.push('isImage');
+			};
 		} else {
 			cn.push('vertical');
 		};
