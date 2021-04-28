@@ -75,7 +75,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					);
 				})}
 				{featured.length ? bullet : ''}
-				<Button text="Edit relations" onClick={this.onRelation} />
+				<Button text="Edit relations" className="edit" onClick={this.onRelation} />
 			</div>
 		);
 	};

@@ -8,8 +8,8 @@
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: #929082; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 		.element { display: inline-block; cursor: pointer; }
 
-		.button { padding: 5px 6px; color: #e88b00; @include text-common; height: 28px; line-height: 17px; vertical-align: top; }
-		.button:hover { background: #fef3c5; }
+		.button.edit { padding: 5px 6px; opacity: 0; color: #e88b00; @include text-common; height: 28px; line-height: 17px; vertical-align: top; }
+		.button.edit:hover { background: #fef3c5; }
 
 		.cellContent { display: inline; vertical-align: middle; padding: 5px 6px; transition: background 0.2s ease-in-out; cursor: default; }
 		.cellContent:hover { background: rgba(172,169,150,0.1); }
@@ -27,6 +27,10 @@
 			.iconObject { display: none; }
 			.name { vertical-align: middle; line-height: inherit; display: inline; word-break: break-word; }
 		}
+	}
+
+	.block.blockFeatured:hover {
+		.button.edit { opacity: 1; }
 	}
 }
 
