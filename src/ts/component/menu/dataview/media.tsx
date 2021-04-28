@@ -32,8 +32,6 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		let value = Util.objectCopy(data.value || []);
-		console.log(value);
-
 		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
