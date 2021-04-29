@@ -15,7 +15,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 
 	ref: any = null;
 	state = {
-		layout: null,
+		layout: I.ObjectLayout.Page,
 	};
 	
 	constructor(props: any) {
@@ -28,11 +28,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 	render () {
 		const options = DataUtil.menuGetLayouts();
 		const { layout } = this.state;
-
-		let item = null;
-		if (layout !== null) {
-			item = options.find((it: any) => { return it.id == layout; });
-		};
+		const item = options.find((it: any) => { return it.id == layout; });
 
 		return (
 			<div>
