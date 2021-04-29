@@ -1,19 +1,25 @@
 import * as React from 'react';
-import { I, Util, focus } from 'ts/lib';
-import { Cell } from 'ts/component';
+import * as ReactDOM from 'react-dom';
+import { I, C, DataUtil, Util, focus } from 'ts/lib';
+import { Cell, Button } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore, dbStore } from 'ts/store';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
+
+const PREFIX = 'blockFeatured';
 
 @observer
 class BlockFeatured extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	cellRefs: Map<string, any> = new Map();
+
 	public static defaultProps = {
 		iconSize: 24,
 	};
@@ -22,36 +28,54 @@ class BlockFeatured extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onFocus = this.onFocus.bind(this);
+		this.onCellClick = this.onCellClick.bind(this);
+		this.onCellChange = this.onCellChange.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 	};
 
 	render () {
-		const { rootId, block, iconSize } = this.props;
+		const { rootId, block, iconSize, isPopup } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
-		const featured = Util.arrayUnique(Constant.featuredRelations.concat(object[Constant.relationKey.featured]).filter((it: any) => {
+		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			return (it != Constant.relationKey.description) && object[it];
-		}));
+		});
+		const bullet = <div className="bullet" />;
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
-				{featured.map((relationKey: any, i: any) => (
-					<React.Fragment key={i}>
-						{i > 0 ? <div className="bullet" /> : ''}
-						<Cell 
-							rootId={rootId}
-							storeId={rootId}
-							block={block}
-							relationKey={relationKey}
-							getRecord={() => { return object; }}
-							viewType={I.ViewType.Grid}
-							index={0}
-							scrollContainer=""
-							pageContainer=""
-							iconSize={iconSize}
-							readOnly={true}
-							isInline={true}
-						/>
-					</React.Fragment>
-				))}
+				{featured.map((relationKey: any, i: any) => {
+					const id = DataUtil.cellId(PREFIX, relationKey, 0);
+					return (
+						<React.Fragment key={i}>
+							{i > 0 ? bullet : ''}
+							<span id={id} onClick={(e: any) => { 
+								e.persist(); 
+								this.onRelation(e, relationKey); 
+							}}>
+								<Cell 
+									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+									rootId={rootId}
+									storeId={rootId}
+									block={block}
+									relationKey={relationKey}
+									getRecord={() => { return object; }}
+									viewType={I.ViewType.Grid}
+									index={0}
+									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
+									pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
+									iconSize={iconSize}
+									readOnly={true}
+									isInline={true}
+									idPrefix={PREFIX}
+									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
+									onMouseLeave={this.onMouseLeave}
+								/>
+							</span>
+						</React.Fragment>
+					);
+				})}
 			</div>
 		);
 	};
@@ -67,6 +91,78 @@ class BlockFeatured extends React.Component<Props, {}> {
 	onFocus () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	onCellClick (e: any, relationKey: string, index: number) {
+		const { rootId } = this.props;
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+
+		if (!relation || relation.isReadOnly) {
+			return;
+		};
+
+		const id = DataUtil.cellId(PREFIX, relationKey, index);
+		const ref = this.cellRefs.get(id);
+
+		if (ref) {
+			ref.onClick(e);
+		};
+	};
+
+	onCellChange (id: string, relationKey: string, value: any) {
+		const { rootId } = this.props;
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+		const details = [ 
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+		];
+		C.BlockSetDetails(rootId, details);
+	};
+
+	onMouseEnter (e: any, relationKey: string) {
+		const { rootId } = this.props;
+		const cell = $('#' + DataUtil.cellId(PREFIX, relationKey, 0));
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+
+		Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+	};
+
+	onMouseLeave (e: any) {
+		Util.tooltipHide(false);
+	};
+
+	onRelation (e: any, relationKey: string) {
+		e.stopPropagation();
+
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
+
+		const { isPopup, rootId } = this.props;
+		const param: any = {
+			element: `#header`,
+			horizontal: I.MenuDirection.Right,
+			noFlipY: true,
+			noAnimation: true,
+			onOpen: (component: any) => {
+				component?.ref?.onCellClick(e, relationKey, 0);
+			},
+			onClose: () => {
+				menuStore.closeAll();
+			},
+			data: {
+				relationKey: '',
+				readOnly: false,
+				rootId: rootId,
+			},
+		};
+
+		if (!isPopup) {
+			param.fixedY = 40;
+			param.className = 'fixed';
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 	
 };

@@ -164,6 +164,20 @@ const Mapper = {
 			return item;
 		},
 
+		Restrictions: (obj: any): any => {
+			return {
+				object: obj.getObjectList() || [],
+				dataview: (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview),
+			};
+		},
+
+		RestrictionsDataview: (obj: any): any => {
+			return {
+				blockId: obj.getBlockid(),
+				restrictions: obj.getRestrictionsList(),
+			};
+		},
+
 		ObjectType: (obj: any): I.ObjectType => {
 			return {
 				id: obj.getUrl(),

@@ -16,6 +16,7 @@ class BlockStore {
 	public treeMap: Map<string, any[]> = new Map();
 	public blockMap: Map<string, I.Block[]> = new Map();
 	public detailMap: Map<string, Map<string, any>> = new Map();
+	public restrictionMap: Map<string, Map<string, any>> = new Map();
 
 	@computed
 	get root (): string {
@@ -163,6 +164,7 @@ class BlockStore {
 		this.blockMap = new Map();
 		this.treeMap = new Map();
 		this.detailMap = new Map();
+		this.restrictionMap = new Map();
 	};
 
 	@action
@@ -219,6 +221,22 @@ class BlockStore {
 
 		blocks = blocks.filter((it: any) => { return it.id != id; });
 		delete(map[id]);
+	};
+
+	restrictionsSet (rootId: string, restrictions: any) {
+		let map = this.restrictionMap.get(rootId);
+
+		if (!map) {
+			map = new Map();
+		};
+
+		map.set(rootId, restrictions.object);
+
+		for (let item of restrictions.dataview) {
+			map.set(item.blockId, item.restrictions);
+		};
+
+		this.restrictionMap.set(rootId, map);
 	};
 
 	getMap (rootId: string) {
@@ -423,6 +441,16 @@ class BlockStore {
 			layout: Number(item.layout) || I.ObjectLayout.Page,
 			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
 		};
+	};
+
+	isAllowed (rootId: string, blockId: string, flag: any) {
+		const map = this.restrictionMap.get(rootId);
+		if (!map) {
+			return false;
+		};
+
+		const restrictions = map.get(blockId) || [];
+		return restrictions.indexOf(flag) < 0;
 	};
 
 };

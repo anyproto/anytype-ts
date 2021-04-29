@@ -45,14 +45,22 @@ class PageMainMedia extends React.Component<Props, {}> {
 		file.align = I.BlockAlign.Center;
 
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
+		const isVideo = file.content.type == I.FileType.Video;
+		const isImage = file.content.type == I.FileType.Image;
 
 		let cn = [ 'blocks' ];
 
-		if ([ I.ObjectLayout.Video, I.ObjectLayout.Image ].indexOf(object.layout) >= 0) {
-			if ((object.layout == I.ObjectLayout.Video) || (object.widthInPixels > object.heightInPixels)) {
+		if (isVideo || isImage) {
+			if (isVideo || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
+			};
+			if (isVideo) {
+				cn.push('isVideo');
+			};
+			if (isImage) {
+				cn.push('isImage');
 			};
 		} else {
 			cn.push('vertical');
@@ -64,7 +72,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 				<div id="blocks" className={cn.join(' ')}>
 					<div className="side left">
-						{[ I.ObjectLayout.Video, I.ObjectLayout.Image ].indexOf(object.layout) >= 0 ? (
+						{isVideo || isImage ? (
 							<Block {...this.props} key={file.id} rootId={rootId} block={file} readOnly={true} />
 						) : (
 							<IconObject object={object} size={96} />
@@ -78,7 +86,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-							<Button text="Download" className="blank" onClick={this.onDownload} />
+							<Button text="Download" className="download blank" onClick={this.onDownload} />
 						</div>
 
 						<div className="section">
@@ -155,6 +163,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 	rebind () {
 		const node = $(ReactDOM.findDOMNode(this));
+		const blocks = node.find('#blocks');
 		const img = node.find('img.media');
 		const wrap = node.find('.block.blockMedia .wrapContent');
 
@@ -163,7 +172,13 @@ class PageMainMedia extends React.Component<Props, {}> {
 				const w = img.width();
 				const h = img.height();
 
-				if (h < MAX_HEIGHT && w < wrap.width()) {
+				let wh = wrap.height();
+				if (wh < MAX_HEIGHT) {
+					wh = MAX_HEIGHT;
+					wrap.css({ height: MAX_HEIGHT });
+				};
+
+				if (h < wh) {
 					img.css({ 
 						position: 'absolute',
 						left: '50%',
@@ -173,8 +188,6 @@ class PageMainMedia extends React.Component<Props, {}> {
 						marginTop: -h / 2, 
 						marginLeft: -w / 2,
 					});
-
-					wrap.css({ height: MAX_HEIGHT });
 				};
 			});
 		};

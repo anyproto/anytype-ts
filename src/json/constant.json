@@ -97,8 +97,6 @@
 		"dataview": "dataview"
 	},
 
-	"featuredRelations": [ "type", "creator" ],
-	
 	"size": {
 		"editor": 704,
 

@@ -123,6 +123,7 @@ class Menu extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	timeoutPoly: number = 0;
+	ref: any = null;
 
 	state = {
 		tab: '',
@@ -199,6 +200,7 @@ class Menu extends React.Component<Props, State> {
 					) : ''}
 					<div className="content">
 						<Component 
+							ref={(ref: any) => { this.ref = ref; }}
 							{...this.props} 
 							setHover={this.setHover} 
 							getId={this.getId} 
@@ -217,7 +219,7 @@ class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { param } = this.props;
-		const { tabs } = param;
+		const { tabs, onOpen } = param;
 
 		this._isMounted = true;
 		this.position();
@@ -233,6 +235,10 @@ class Menu extends React.Component<Props, State> {
 		};
 
 		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
+
+		if (onOpen) {
+			onOpen(this);
+		};
 
 		if (popupStore.isOpen()) {
 			node.addClass('fromPopup');

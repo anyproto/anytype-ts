@@ -38,10 +38,6 @@ class MenuStore {
 			this.menuList.push(observable({ id: id, param: param }));
 		};
 
-		if (param.onOpen) {
-			param.onOpen();
-		};
-
 		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 

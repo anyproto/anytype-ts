@@ -36,7 +36,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relationKey, index, onClick, idPrefix } = this.props;
+		const { relationKey, index, onClick, onMouseEnter, onMouseLeave, idPrefix } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
 			return null;
@@ -85,7 +85,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onClick={onClick}>
+			<div className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
 					id={DataUtil.cellId(idPrefix, relation.relationKey, index)} 

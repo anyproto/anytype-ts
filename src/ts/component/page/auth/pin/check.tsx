@@ -11,8 +11,6 @@ interface State {
 	error: string;
 };
 
-const Constant: any = require('json/constant.json');
-
 @observer
 class PageAuthPinCheck extends React.Component<Props, State> {
 	
@@ -51,13 +49,14 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 	};
 
 	onSuccess (pin: string) {
-		const { match, history } = this.props;
+		const { history } = this.props;
 		const { account } = authStore;
+		const redirect = Storage.get('redirect');
 
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			history.push('/main/index');
+			history.push(redirect || '/main/index');
 				
 			if (!Storage.get('popupNewBlock')) {
 				popupStore.open('help', { 

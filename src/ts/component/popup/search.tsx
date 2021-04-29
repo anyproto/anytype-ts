@@ -21,7 +21,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 const HEIGHT = 32;
 
@@ -107,7 +106,7 @@ class PopupSearch extends React.Component<Props, State> {
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name}</div>
+							<div className="type descr">{type.name || Constant.default.name}</div>
 						</React.Fragment>
 					) : ''}
 

@@ -114,6 +114,8 @@ export interface Cell {
 	getRecord(index: number): any;
 	onChange?(data: any): void;
 	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
 	onCellChange?: (id: string, key: string, value: any) => void;
 };
 

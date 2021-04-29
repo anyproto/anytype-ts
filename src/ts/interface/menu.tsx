@@ -30,7 +30,7 @@ export interface MenuParam {
 	noFlipX?: boolean;
 	noFlipY?: boolean;
 	onClose?(): void;
-	onOpen?(): void;
+	onOpen?(component?: any): void;
 };
 
 export interface Menu {

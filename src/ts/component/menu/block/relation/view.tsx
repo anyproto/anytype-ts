@@ -63,10 +63,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
 			const fcn = [ 'fav', (item.isFeatured ? 'active' : '') ];
 
-			if (Constant.featuredRelations.indexOf(item.relationKey) >= 0) {
-				fcn.push('disabled');
-			};
-
 			return (
 				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
@@ -121,6 +117,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
 		$('body').removeClass('over');
 	};
 
@@ -132,7 +129,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		let featured = Constant.featuredRelations.concat(object[Constant.relationKey.featured]);
+		let featured = object[Constant.relationKey.featured] || [];
 
 		if (!config.debug.ho) {
 			items = items.filter((it: any) => { return !it.isHidden; });
@@ -183,10 +180,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onFav (e: any, item: any) {
-		if (Constant.featuredRelations.indexOf(item.relationKey) >= 0) {
-			return;
-		};
-
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;

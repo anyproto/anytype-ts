@@ -51,7 +51,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<div className="sectionName">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
-							name={objectType ? objectType.name : 'Select object type'} 
+							name={objectType ? (objectType.name || Constant.default.name) : 'Select object type'} 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							onMouseEnter={this.onObjectType} 
 							arrow={!this.isReadOnly()}
@@ -382,7 +382,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { relationKey, getView } = data;
 
-		return getView().getRelation(relationKey);
+		return getView()?.getRelation(relationKey);
 	};
 
 };

@@ -641,9 +641,10 @@ class Dispatcher {
 	};
 
 	onObjectShow (rootId: string, message: any) {
-		let { blocks, details } = message;
-
+		let { blocks, details, restrictions } = message;
+		
 		blockStore.detailsSet(rootId, details);
+		blockStore.restrictionsSet(rootId, restrictions);
 
 		const object = blockStore.getDetails(rootId, rootId);
 
