@@ -42,7 +42,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			return ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) < 0) && object[it];
 		});
-		const type = dbStore.getObjectType(object.type);
+		const type: any = dbStore.getObjectType(object.type) || {};
 		const bullet = <div className="bullet" />;
 
 		return (
