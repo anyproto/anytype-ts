@@ -50,10 +50,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 			if (relation.format == I.RelationType.Checkbox) {
 				return true;
 			};
-			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
+			if (!object[it]) {
 				return false;
 			};
-			if (!object[it]) {
+			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
 				return false;
 			};
 			return true;
