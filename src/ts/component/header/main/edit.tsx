@@ -32,6 +32,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onRelation = this.onRelation.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -86,6 +87,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<div className="icons">
 						{!isPopup && canAdd ? (
 							<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
+						) : ''}
+						{config.allowDataview && canAdd ? (
+							<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
 						) : ''}
 					</div>
 				</div>
