@@ -66,7 +66,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readOnly={true}
+									readOnly={false}
 									isInline={true}
 									idPrefix={PREFIX}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
