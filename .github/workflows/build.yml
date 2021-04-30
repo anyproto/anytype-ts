@@ -80,9 +80,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
 
-#      - name: Delete old releases
-#        uses: dev-drprasad/delete-older-releases@v0.2.0
-#        with:
-#          keep_latest: 5
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - name: Delete old releases
+        uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          keep_latest: 3
+          delete_tag_pattern: alpha
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
