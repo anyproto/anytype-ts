@@ -251,8 +251,7 @@ class Keyboard {
 				this.setPinChecked(false);
 				this.history.push('/auth/pin-check');
 			};
-		//}, 5 * 60 * 1000);
-		}, 5 * 1000);
+		}, 5 * 60 * 1000);
 	};
 
 	setMatch (match: any) {
