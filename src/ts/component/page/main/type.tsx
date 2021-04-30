@@ -161,7 +161,7 @@ class PageMainType extends React.Component<Props, {}> {
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 					</div>
 					

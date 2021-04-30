@@ -46,7 +46,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 		const opts = (
 			<React.Fragment>
-				{isObject ? (
+				{/*isObject ? (
 					<React.Fragment>
 						<div className="sectionName">Type of target object</div>
 						<MenuItemVertical 
@@ -57,7 +57,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							arrow={relation && !relation.isReadOnly}
 						/>
 					</React.Fragment>
-				) : ''}
+				) : ''*/}
 
 				{isDate && relation ? (
 					<React.Fragment>

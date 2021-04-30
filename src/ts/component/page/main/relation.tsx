@@ -44,7 +44,8 @@ class PageMainRelation extends React.Component<Props, {}> {
 						<div className="side right">
 							<div className="title">{object.name}</div>
 							<div className="descr">{object.description}</div>
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 					</div>
 				</div>

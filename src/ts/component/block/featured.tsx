@@ -37,7 +37,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup } = this.props;
+		const { rootId, block, iconSize, isPopup, readOnly } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelation(rootId, rootId, it);
@@ -94,7 +94,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readOnly={false}
+									readOnly={readOnly}
 									isInline={true}
 									idPrefix={PREFIX}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
@@ -159,7 +159,15 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const object = blockStore.getDetails(rootId, rootId);
+
+		if (readOnly || root.isObjectSet()) {
+			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
+			return;
+		};
+
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
 		];
