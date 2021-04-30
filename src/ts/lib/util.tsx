@@ -542,11 +542,11 @@ class Util {
 			let y = 0;
 			
 			if (typeY == I.MenuDirection.Top) {
-				y = offset.top - obj.outerHeight() - 12 - st;
+				y = offset.top - obj.outerHeight() - 6 - st;
 			};
 			
 			if (typeY == I.MenuDirection.Bottom) {
-				y = offset.top + node.outerHeight() + 12 - st;
+				y = offset.top + node.outerHeight() + 6 - st;
 			};
 
 			x = Math.max(12, x);
