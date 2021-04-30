@@ -82,7 +82,8 @@
 	"relationKey": {
 		"name": "name",
 		"description": "description",
-		"featured": "featuredRelations"
+		"featured": "featuredRelations",
+		"type": "type"
 	},
 
 	"typeId": {
