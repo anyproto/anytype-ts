@@ -40,7 +40,20 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId, block, iconSize, isPopup } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
-			return ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) < 0) && object[it];
+			const relation = dbStore.getRelation(rootId, rootId, it);
+			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
+				return false;
+			};
+			if (relation.format == I.RelationType.Checkbox) {
+				return true;
+			};
+			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
+				return false;
+			};
+			if (!object[it]) {
+				return false;
+			};
+			return true;
 		});
 		const type: any = dbStore.getObjectType(object.type) || {};
 		const bullet = <div className="bullet" />;
@@ -179,6 +192,17 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const object = blockStore.getDetails(rootId, rootId);
+		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+
+		if (relation.format == I.RelationType.Checkbox) {
+			const details = [ 
+				{ key: relationKey, value: DataUtil.formatRelationValue(relation, !object[relationKey]) },
+			];
+			C.BlockSetDetails(rootId, details);
+			return;
+		};
+
 		const param: any = {
 			element: `#header`,
 			horizontal: I.MenuDirection.Right,
