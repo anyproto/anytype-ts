@@ -16,7 +16,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
 const LIMIT = 10;
 
 @observer
@@ -46,10 +45,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { n, loading, filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeHolder, label } = data;
+		const { value, placeHolder, label, isBig } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
 		const placeHolderFocus = data.placeHolderFocus || 'Filter objects...';
+		const rowHeight = this.getHeight();
 
 		if (!this.cache) {
 			return null;
@@ -70,6 +70,19 @@ class MenuSearchObject extends React.Component<Props, State> {
 				cn.push('active');
 			};
 
+			const props = {
+				...item,
+				object: (item.id == 'add' ? undefined : item),
+			};
+
+			if (isBig) {
+				props.withDescription = true;
+				props.iconSize = 40;
+			} else {
+				props.withCaption = true;
+				props.caption = (type ? type.name : undefined);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -80,14 +93,9 @@ class MenuSearchObject extends React.Component<Props, State> {
 					hasFixedWidth={() => {}}
 				>
 					<MenuItemVertical 
-						id={item.id}
-						object={item.id == 'add' ? undefined : item}
-						icon={item.icon}
-						name={item.name}
+						{...props}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withCaption={true}
-						caption={type ? type.name : undefined}
 						style={param.style}
 						className={cn.join(' ')}
 					/>
@@ -132,7 +140,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 												height={height}
 												deferredMeasurmentCache={this.cache}
 												rowCount={items.length}
-												rowHeight={HEIGHT}
+												rowHeight={rowHeight}
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
@@ -160,6 +168,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { n, filter } = this.state;
 		const items = this.getItems();
+		const rowHeight = this.getHeight();
 
 		if (this.filter != filter) {
 			this.load(true);
@@ -170,7 +179,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: rowHeight,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -408,13 +417,20 @@ class MenuSearchObject extends React.Component<Props, State> {
 			return;
 		};
 
-		const { getId, position } = this.props;
+		const { param, getId, position } = this.props;
+		const { data } = param;
+		const { isBig } = data;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(300, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const h = this.getHeight();
+		const height = Math.max(300, Math.min(isBig ? 320 : h * LIMIT, items.length * h + 16));
 
 		obj.css({ height: height });
 		position();
+	};
+
+	getHeight () {
+		return this.props.param.data.isBig ? 56 : 28;
 	};
 	
 };

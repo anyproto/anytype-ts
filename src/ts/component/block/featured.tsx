@@ -27,6 +27,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onType = this.onType.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -39,17 +40,28 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId, block, iconSize, isPopup } = this.props;
 		const object = blockStore.getDetails(rootId, rootId);
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
-			return (it != Constant.relationKey.description) && object[it];
+			return ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) < 0) && object[it];
 		});
+		const type = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
+				<div 
+					id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
+					className="cellContent type"
+					onClick={this.onType}
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+					onMouseLeave={this.onMouseLeave}
+				>
+					<div className="name">{type.name || Constant.default.name}</div>
+				</div>
+
 				{featured.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
 					return (
 						<React.Fragment key={i}>
-							{i > 0 ? bullet : ''}
+							{bullet}
 							<span id={id} onClick={(e: any) => { 
 								e.persist(); 
 								this.onRelation(e, relationKey); 
@@ -128,6 +140,34 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	onMouseLeave (e: any) {
 		Util.tooltipHide(false);
+	};
+
+	onType (e: any) {
+		const { rootId, block } = this.props;
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+		];
+
+		menuStore.closeAll(null, () => { 
+			menuStore.open('searchObject', {
+				element: '#' + DataUtil.cellId(PREFIX, Constant.relationKey.type, 0),
+				className: 'big single',
+				horizontal: I.MenuDirection.Center,
+				offsetY: 4,
+				data: {
+					isBig: true,
+					rootId: rootId,
+					blockId: block.id,
+					blockIds: [ block.id ],
+					placeHolder: 'Change object type',
+					placeHolderFocus: 'Change object type',
+					filters: filters,
+					onSelect: (item: any) => {
+						C.BlockObjectTypeSet(rootId, item.id);
+					}
+				}
+			}); 
+		});
 	};
 
 	onRelation (e: any, relationKey: string) {
