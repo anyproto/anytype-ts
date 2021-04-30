@@ -42,7 +42,6 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info noValue">
-							<Icon key="icon-default" className="relation default" />
 							<Input 
 								id="input"
 								ref={(ref: any) => { this.refInput = ref; }} 
@@ -58,7 +57,6 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info">
-							<Icon key="icon-relation" className={'relation ' + DataUtil.relationClass(relation.format)} />
 							<div className="name">{relation.name}</div>
 						</div>
 						<div 

@@ -66,7 +66,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			return (
 				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
-						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
 						<div className="name">{item.name}</div>
 					</div>
 					<div
