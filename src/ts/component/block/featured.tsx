@@ -41,6 +41,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const object = blockStore.getDetails(rootId, rootId);
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelation(rootId, rootId, it);
+			if (!relation) {
+				return false;
+			};
 			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
 				return false;
 			};
