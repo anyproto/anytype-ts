@@ -13,9 +13,9 @@
 		.item.isFile:hover, .item.isFile.active {
 			.clickable { width: calc(100% - 46px); }
 		}
-		.item:hover::before { background: rgba(172, 169, 150, 0.15); }
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 		.item.active {
-			.icon.more { opacity: 1; background-color: rgba(172, 169, 150, 0.15); }
+			.icon.more { opacity: 1; background-color: rgba(172, 169, 150, 0.1); }
 		}
 
 		.section:last-child { padding-bottom: 8px; }

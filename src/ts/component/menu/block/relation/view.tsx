@@ -91,7 +91,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							optionCommand={this.optionCommand}
 						/>
 					</div>
-					<Icon className={fcn.join(' ')} onClick={(e: any) => { this.onFav(e, item); }} />
+					<Icon className={fcn.join(' ')} onClick={(e: any) => { this.onFav(e, item); }} tooltip={item.isFeatured ? 'Remove from featured relations' : 'Add to featured relations'} />
 				</div>
 			);
 		};
