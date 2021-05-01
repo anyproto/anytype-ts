@@ -757,9 +757,11 @@ class DataUtil {
 				} else 
 				if (c.name && c.name.match(reg)) {
 					ret = true;
+					c._sortWeight_ = 100;
 				} else 
 				if (c.description && c.description.match(reg)) {
 					ret = true;
+					c._sortWeight_ = 10;
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
@@ -769,8 +771,12 @@ class DataUtil {
 						};
 					};
 				};
-				
 				return ret; 
+			});
+			s.children.sort((c1: any, c2: any) => {
+				if (c1._sortWeight_ > c2._sortWeight_) return -1;
+				if (c1._sortWeight_ < c2._sortWeight_) return 1;
+				return 0;
 			});
 			return s.children.length > 0;
 		});
