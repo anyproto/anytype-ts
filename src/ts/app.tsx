@@ -366,6 +366,9 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
+			param.data = param.data || {};
+			param.data.rootId = keyboard.getRootId();
+
 			popupStore.closeAll();
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
