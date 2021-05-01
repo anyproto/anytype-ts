@@ -26,6 +26,7 @@ class MenuStore {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 		param.tabs = param.tabs || [];
+		param.data = param.data || {};
 
 		if (param.isSub) {
 			param.noAnimation = true;

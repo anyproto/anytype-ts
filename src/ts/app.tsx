@@ -365,11 +365,9 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
+		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
 			popupStore.closeAll();
-			window.setTimeout(() => {
-				popupStore.open(id, { data: data || {} });
-			}, Constant.delay.popup);
+			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {

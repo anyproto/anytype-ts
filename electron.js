@@ -150,14 +150,22 @@ function initTray () {
 			label: 'Import',
 			click: () => { 
 				win.show(); 
-				send('popup', 'settings', { page: 'importIndex' }); 
+				send('popup', 'settings', { data: { page: 'importIndex' } }); 
 			}
 		},
 		{
 			label: 'Export',
 			click: () => { 
 				win.show(); 
-				send('popup', 'settings', { page: 'exportMarkdown' }); 
+				send('popup', 'settings', { data: { page: 'exportMarkdown' } }); 
+			}
+		},
+		{ type: 'separator' },
+		{
+			label: 'Search object',
+			click: () => { 
+				win.show(); 
+				send('popup', 'search', { preventResize: true }); 
 			}
 		},
 		{ type: 'separator' },
@@ -435,11 +443,11 @@ function menuInit () {
 				},
 				{
 					label: 'Import',
-					click: () => { send('popup', 'settings', { page: 'importIndex' }); }
+					click: () => { send('popup', 'settings', { data: { page: 'importIndex' } }); }
 				},
 				{
 					label: 'Export',
-					click: () => { send('popup', 'settings', { page: 'exportMarkdown' }); }
+					click: () => { send('popup', 'settings', { data: { page: 'exportMarkdown' } }); }
 				},
 				{
 					label: 'Object diagnostics',
@@ -495,7 +503,7 @@ function menuInit () {
 			submenu: [
 				{
 					label: 'Status',
-					click: () => { send('popup', 'help', { document: 'status' }); }
+					click: () => { send('popup', 'help', { data: { document: 'status' } }); }
 				},
 				{
 					label: 'Shortcuts',
@@ -503,7 +511,7 @@ function menuInit () {
 				},
 				{
 					label: 'What\'s new',
-					click: () => { send('popup', 'help', { document: 'whatsNew' }); }
+					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
 				},
 			]
 		},
