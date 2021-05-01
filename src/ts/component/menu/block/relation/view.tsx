@@ -270,7 +270,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		container.scrollTop(y);
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -278,7 +278,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const details = [ 
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
 		];
-		C.BlockSetDetails(rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

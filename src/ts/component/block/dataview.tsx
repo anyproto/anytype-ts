@@ -185,7 +185,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(rootId, block.id);
 		const record = data.find((it: any) => { return it.id == id; });
@@ -198,7 +198,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		obj[relationKey] = value;
 
 		dbStore.recordUpdate(rootId, block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj);
+		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

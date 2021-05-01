@@ -235,11 +235,11 @@ class CellText extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			menuStore.closeAll(Constant.menuIds.cell);
-			this.setState({ editing: false });
-
 			if (onChange) {
-				onChange(value);
+				onChange(value, () => {
+					menuStore.closeAll(Constant.menuIds.cell);
+					this.setState({ editing: false });
+				});
 			};
 		});
 	};
@@ -252,10 +252,10 @@ class CellText extends React.Component<Props, State> {
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
-			menuStore.close(MENU_ID);
-
 			if (onChange) {
-				onChange(value);
+				onChange(value, () => {
+					menuStore.close(MENU_ID);
+				});
 			};
 		});
 	};
@@ -273,12 +273,13 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		keyboard.setFocus(false);
-		if (!menuStore.isOpen(MENU_ID)) {
-			this.setState({ editing: false });
-		};
 
 		if (onChange) {
-			onChange(value);
+			onChange(value, () => {
+				if (!menuStore.isOpen(MENU_ID)) {
+					this.setState({ editing: false });
+				};
+			});
 		};
 	};
 

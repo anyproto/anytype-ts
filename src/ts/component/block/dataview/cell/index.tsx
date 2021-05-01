@@ -84,11 +84,14 @@ class Cell extends React.Component<Props, {}> {
 				break;
 		};
 		
+		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+
 		return (
 			<div className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
-					id={DataUtil.cellId(idPrefix, relation.relationKey, index)} 
+					id={id} 
+					key={id}
 					{...this.props} 
 					canEdit={canEdit}
 					relation={relation}
@@ -320,7 +323,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 	};
 
-	onChange (value: any) {
+	onChange (value: any, callBack?: (message: any) => void) {
 		const { onCellChange, index, getRecord } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
@@ -328,8 +331,8 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const record = getRecord(index);
-		if (onCellChange) {
-			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value));
+		if (record && onCellChange) {
+			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value), callBack);
 		};
 	};
 
