@@ -150,7 +150,7 @@ class IconObject extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Human:
 				cn.push('isUser');
-				icn = icn.concat([ 'iconImage', 'c' + size ]);
+				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, size * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 

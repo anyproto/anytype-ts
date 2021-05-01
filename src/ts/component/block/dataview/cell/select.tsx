@@ -68,8 +68,6 @@ class CellSelect extends React.Component<Props, State> {
 		const { id } = this.props;
 		const cell = $('#' + id);
 
-		console.log(id, cell, editing);
-
 		if (editing) {
 			cell.addClass('isEditing');
 		} else {
