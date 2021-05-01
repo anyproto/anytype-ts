@@ -22,7 +22,7 @@
 			.tagItem:last-child { margin-right: 0px; }
 
 			.iconObject { display: none; }
-			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; }
+			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; white-space: normal; }
 		}
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
