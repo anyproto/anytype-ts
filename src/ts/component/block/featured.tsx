@@ -222,6 +222,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
 				component?.ref?.onCellClick(e, relationKey, 0);
+				component?.ref?.scrollTo(relationKey, 0);
 			},
 			onClose: () => {
 				menuStore.closeAll();

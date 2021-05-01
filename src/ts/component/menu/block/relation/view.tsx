@@ -19,6 +19,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
+		this.scrollTo = this.scrollTo.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
@@ -256,6 +257,17 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		if (ref) {
 			ref.onClick(e);
 		};
+	};
+
+	scrollTo (relationKey: string, index: number) {
+		const { getId } = this.props;
+		const id = DataUtil.cellId(PREFIX, relationKey, index);
+		const obj = $(`#${getId()}`);
+		const container = obj.find('.content');
+		const cell = obj.find(`#${id}`);
+		const y = Math.max(0, cell.offset().top - container.offset().top);
+
+		container.scrollTop(y);
 	};
 
 	onCellChange (id: string, relationKey: string, value: any) {
