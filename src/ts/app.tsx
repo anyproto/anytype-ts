@@ -368,7 +368,7 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
 			popupStore.closeAll();
 			window.setTimeout(() => {
-				popupStore.open(id, { data: data });
+				popupStore.open(id, { data: data || {} });
 			}, Constant.delay.popup);
 		});
 
