@@ -502,18 +502,19 @@ class App extends React.Component<Props, State> {
 	};
 
 	onCommand (e: any, key: string) {
-		const id = String(Storage.get('editorId') || '');
-		if (!id || keyboard.isFocused) {
-			return;
-		};
+		const rootId = keyboard.getRootId();
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(id);
+				C.BlockUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(id);
+				C.BlockRedo(rootId);
+				break;
+
+			case 'create':
+				keyboard.pageCreate();
 				break;
 		};
 	};

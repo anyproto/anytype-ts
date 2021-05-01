@@ -162,6 +162,13 @@ function initTray () {
 		},
 		{ type: 'separator' },
 		{
+			label: 'New object',
+			click: () => { 
+				win.show(); 
+				send('command', 'create');
+			}
+		},
+		{
 			label: 'Search object',
 			click: () => { 
 				win.show(); 
