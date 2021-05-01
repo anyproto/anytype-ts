@@ -94,30 +94,33 @@ class MenuStore {
 			};
 			return;
 		};
-		
+
+		const { param } = item;
+		const { noAnimation, subIds, onClose } = param;
 		const el = $('#' + Util.toCamelCase('menu-' + id));
-		const t = item.param.noAnimation ? 0 : Constant.delay.menu;
-
-		if (el.length) {
-			if (item.param.noAnimation) {
-				el.addClass('noAnimation');
-			};
-			el.css({ transform: '' }).removeClass('show');
-		};
-
+		const t = noAnimation ? 0 : Constant.delay.menu;
 		const cb = () => {
-			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
-			
-			if (item.param.onClose) {
-				item.param.onClose();
+			if (el.length) {
+				if (noAnimation) {
+					el.addClass('noAnimation');
+				};
+				el.css({ transform: '' }).removeClass('show');
 			};
-			
-			if (callBack) {
-				callBack();
-			};
+
+			window.setTimeout(() => {
+				this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
+				
+				if (onClose) {
+					onClose();
+				};
+				
+				if (callBack) {
+					callBack();
+				};
+			}, t);
 		};
 
-		window.setTimeout(cb, t);
+		subIds && subIds.length ? this.closeAll(subIds, cb) : cb();
 	};
 	
 	@action

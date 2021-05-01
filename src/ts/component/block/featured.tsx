@@ -219,6 +219,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			noFlipY: true,
 			noAnimation: true,
+			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
 				component?.ref?.onCellClick(e, relationKey, 0);
 			},

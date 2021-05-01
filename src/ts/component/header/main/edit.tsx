@@ -165,6 +165,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
 			horizontal: I.MenuDirection.Right,
+			subIds: Constant.menuIds.more,
 			data: {
 				rootId: rootId,
 				blockId: rootId,
@@ -280,6 +281,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			element: `${this.getContainer()} #button-header-relation`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
+			subIds: Constant.menuIds.cell,
 			onClose: () => {
 				menuStore.closeAll();
 			},

@@ -119,7 +119,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		let marks = Util.objectCopy(content.marks);
 		let mark: any = null;
 		let menuId = '';
-		let menuParam = {
+		let menuParam: any = {
 			element: '#button-' + blockId + '-' + type,
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
@@ -173,6 +173,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				
 			case 'more':
 				menuId = 'blockMore';
+				menuParam.subIds = Constant.menuIds.more;
 				break;
 				
 			case I.MarkType.Link:

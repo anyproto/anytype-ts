@@ -107,7 +107,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.resize();
-
 		$('body').addClass('over');
 	};
 
@@ -116,7 +115,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		menuStore.closeAll(Constant.menuIds.cell);
 		$('body').removeClass('over');
 	};
 

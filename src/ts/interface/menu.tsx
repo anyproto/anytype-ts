@@ -23,6 +23,7 @@ export interface MenuParam {
 	tabs?: MenuTab[];
 	data?: any;
 	isSub?: boolean;
+	subIds?: string[];
 	passThrough?: boolean;
 	className?: string;
 	noAnimation?: boolean;

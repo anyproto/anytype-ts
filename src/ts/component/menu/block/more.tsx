@@ -102,7 +102,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	
 	componentWillUnmount () {
 		this.unbind();
-		menuStore.closeAll(Constant.menuIds.more);
 	};
 	
 	unbind () {
