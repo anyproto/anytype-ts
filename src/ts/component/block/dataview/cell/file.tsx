@@ -5,9 +5,18 @@ import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 
 interface Props extends I.Cell {};
+interface State { 
+	editing: boolean; 
+};
+
+const $ = require('jquery');
 
 @observer
-class CellFile extends React.Component<Props, {}> {
+class CellFile extends React.Component<Props, State> {
+
+	state = {
+		editing: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -48,6 +57,27 @@ class CellFile extends React.Component<Props, {}> {
 				))}
 			</div>
 		);
+	};
+
+	componentDidUpdate () {
+		const { editing } = this.state;
+		const { id } = this.props;
+		const cell = $('#' + id);
+
+		if (editing) {
+			cell.addClass('isEditing');
+		} else {
+			cell.removeClass('isEditing');
+		};
+	};
+
+	setEditing (v: boolean) {
+		const { canEdit } = this.props;
+		const { editing } = this.state;
+
+		if (canEdit && (v != editing)) {
+			this.setState({ editing: v });
+		};
 	};
 
 	getValue () {

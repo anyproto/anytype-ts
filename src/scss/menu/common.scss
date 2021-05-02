@@ -95,10 +95,6 @@
 		}
 
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
-		.item.add:hover { color: $colorBlack; }
-		.item.add:hover {
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-		}
 		
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; }

@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { Icon, Cell } from 'ts/component';
+import { Icon } from 'ts/component';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import 'react-virtualized/styles.css';
+
+import Item from 'ts/component/menu/item/relationView';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const PREFIX = 'menuBlockRelationViewCell';
+const PREFIX = 'menuBlockRelationView';
 
 @observer
 class MenuBlockRelationView extends React.Component<Props, {}> {
@@ -29,9 +31,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, readOnly } = data;
-		const block = blockStore.getLeaf(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
 		const sections = this.getSections();
+		const block = blockStore.getLeaf(rootId, rootId);
 
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
@@ -43,7 +44,20 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 						if (section.id == 'featured') {
 							item.isFeatured = true;
 						};
-						return <Item key={i} {...item} />;
+						return (
+							<Item 
+								key={i} 
+								{...item}
+								rootId={rootId}
+								block={block}
+								onEdit={this.onEdit}
+								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
+								onFav={this.onFav}
+								onCellClick={this.onCellClick}
+								onCellChange={this.onCellChange}
+								optionCommand={this.optionCommand}
+							/>
+						);
 					})}
 					{!readOnly && (section.index == sections.length - 1) ? <ItemAdd /> : ''}
 				</div>
@@ -59,43 +73,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				<div className="cell" />
 			</div>
 		);
-
-		const Item = (item: any) => {
-			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
-			const fcn = [ 'fav', (item.isFeatured ? 'active' : '') ];
-
-			return (
-				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
-						<div className="name">{item.name}</div>
-					</div>
-					<div
-						id={id} 
-						className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-						onClick={(e: any) => { this.onCellClick(e, item.relationKey, 0); }}
-					>
-						<Cell 
-							ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-							rootId={rootId}
-							storeId={rootId}
-							block={block}
-							relationKey={item.relationKey}
-							getRecord={() => { return details; }}
-							viewType={I.ViewType.Grid}
-							index={0}
-							idPrefix={PREFIX}
-							menuClassName="fromBlock"
-							scrollContainer={Util.getEditorScrollContainer('menuBlockRelationView')}
-							pageContainer={Util.getEditorPageContainer('menuBlockRelationView')}
-							readOnly={false}
-							onCellChange={this.onCellChange}
-							optionCommand={this.optionCommand}
-						/>
-					</div>
-					<Icon className={fcn.join(' ')} onClick={(e: any) => { this.onFav(e, item); }} tooltip={item.isFeatured ? 'Remove from featured relations' : 'Add to featured relations'} />
-				</div>
-			);
-		};
 
 		return (
 			<div className="sections">
@@ -177,19 +154,19 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		return items;
 	};
 
-	onFav (e: any, item: any) {
+	onFav (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const object = blockStore.getDetails(rootId, rootId);
 
 		let featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
-		let idx = featured.findIndex((it: string) => { return it == item.relationKey; });
+		let idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx >= 0) {
-			featured = featured.filter((it: any) => { return it != item.relationKey; });
+			featured = featured.filter((it: any) => { return it != relationKey; });
 		} else {
-			featured.push(item.relationKey);
+			featured.push(relationKey);
 		};
 
 		const details = [ 

@@ -133,20 +133,21 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
     };
 
 	onAdd (e: any) {
-		const { getId, close } = this.props;
+		const { getId, close, param } = this.props;
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #item-add`,
 			className: 'single',
-			horizontal: I.MenuDirection.Center,
+			offsetX: param.width,
+			offsetY: -36,
 			data: {
+				noClose: true,
 				placeHolderFocus: 'Find a file...',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
 				onSelect: (item: any) => {
 					this.add(item.id);
-					close();
 				}
 			}
 		});
