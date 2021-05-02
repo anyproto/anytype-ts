@@ -44,9 +44,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
+		const opts = null;
+		/*
 		const opts = (
 			<React.Fragment>
-				{/*isObject ? (
+				{isObject ? (
 					<React.Fragment>
 						<div className="sectionName">Type of target object</div>
 						<MenuItemVertical 
@@ -57,7 +59,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							arrow={relation && !relation.isReadOnly}
 						/>
 					</React.Fragment>
-				) : ''*/}
+				) : ''}
 
 				{isDate && relation ? (
 					<React.Fragment>
@@ -80,6 +82,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				) : ''}
 			</React.Fragment>
 		);
+		*/
 
 		return (
 			<form onSubmit={this.onSubmit}>

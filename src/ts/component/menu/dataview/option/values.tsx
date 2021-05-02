@@ -106,12 +106,23 @@ class MenuOptionValues extends React.Component<Props> {
 	};
 
 	rebind () {
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		obj.on('click', () => { menuStore.close('dataviewOptionEdit'); });
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
+		win.unbind('keydown.menu');
+		obj.unbind('click');
 	};
 
 	getItems () {
