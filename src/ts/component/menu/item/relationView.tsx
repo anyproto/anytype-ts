@@ -15,14 +15,14 @@ interface Props extends I.Relation {
 	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void): void;
 };
 
-const MENU_ID = 'menuBlockRelationView';
+const PREFIX = 'menuBlockRelationView';
 
 class MenuItemRelationView extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, relationKey, format, name, isHidden, isFeatured, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
-		const id = DataUtil.cellId(MENU_ID,relationKey, '0');
+		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav', (isFeatured ? 'active' : '') ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
 
@@ -45,7 +45,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						getRecord={() => { return blockStore.getDetails(rootId, rootId); }}
 						viewType={I.ViewType.Grid}
 						index={0}
-						idPrefix={MENU_ID}
+						idPrefix={PREFIX}
 						menuClassName="fromBlock"
 						scrollContainer={Util.getEditorScrollContainer('menuBlockRelationView')}
 						pageContainer={Util.getEditorPageContainer('menuBlockRelationView')}

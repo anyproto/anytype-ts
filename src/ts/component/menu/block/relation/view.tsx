@@ -23,6 +23,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		this.scrollTo = this.scrollTo.bind(this);
 		this.onFav = this.onFav.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
@@ -42,12 +43,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
-						if (section.id == 'featured') {
-							item.isFeatured = true;
-						};
+						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
+						item.isFeatured = section.id == 'featured';
+
 						return (
 							<Item 
-								key={i} 
+								key={id} 
 								{...item}
 								rootId={rootId}
 								block={block}
@@ -91,6 +92,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		this.resize();
+		
+		if (commonStore.cellId) {
+			$(`#${commonStore.cellId}`).addClass('isEditing');
+		};
 	};
 
 	componentWillUnmount () {

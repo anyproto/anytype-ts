@@ -119,7 +119,7 @@ class Cell extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $('#' + cellId).addClass('isEditing');
+		const cell = $(`#${cellId}`).addClass('isEditing');
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
