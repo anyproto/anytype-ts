@@ -98,30 +98,31 @@ class MenuStore {
 
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
-		const el = $('#' + Util.toCamelCase('menu-' + id));
 		const t = noAnimation ? 0 : Constant.delay.menu;
-		const cb = () => {
-			if (el.length) {
-				if (noAnimation) {
-					el.addClass('noAnimation');
-				};
-				el.css({ transform: '' }).removeClass('show');
-			};
+		const el = $('#' + Util.toCamelCase('menu-' + id));
 
-			window.setTimeout(() => {
-				this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
-				
-				if (onClose) {
-					onClose();
-				};
-				
-				if (callBack) {
-					callBack();
-				};
-			}, t);
+		if (subIds && subIds.length) {
+			this.closeAll(subIds);
 		};
 
-		subIds && subIds.length ? this.closeAll(subIds, cb) : cb();
+		if (el.length) {
+			if (noAnimation) {
+				el.addClass('noAnimation');
+			};
+			el.css({ transform: '' }).removeClass('show');
+		};
+
+		window.setTimeout(() => {
+			this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
+			
+			if (onClose) {
+				onClose();
+			};
+			
+			if (callBack) {
+				callBack();
+			};
+		}, t);
 	};
 	
 	@action
