@@ -30,7 +30,6 @@ class BlockIconPage extends React.Component<Props, {}> {
 					offsetY={16} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
-					menuId="smile"
 					size={96} 
 				/>
 			</React.Fragment>

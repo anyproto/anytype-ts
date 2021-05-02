@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'ts/component';
 import { I } from 'ts/lib';
-import { menuStore } from 'ts/store';
 
 interface Props extends I.MenuItem {};
 
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		let { id, icon, object, inner, name, menuId, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
+		let { id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, className, onClick, onMouseEnter, style, iconSize } = this.props;
 		let cn = [ 'item' ];
 
 		if (className) {
@@ -27,9 +26,6 @@ class MenuItemVertical extends React.Component<Props, {}> {
 			cn.push('withCaption');
 		};
 		if (isActive) {
-			cn.push('active');
-		};
-		if (menuId && menuStore.isOpen(menuId)) {
 			cn.push('active');
 		};
 

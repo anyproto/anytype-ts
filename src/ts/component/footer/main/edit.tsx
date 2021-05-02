@@ -19,7 +19,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 	render () {
 		return (
 			<div className="footer">
-				<Icon id="button-help" menuId="help" className="help" onMouseDown={this.onHelp} />
+				<Icon id="button-help" className="help" onMouseDown={this.onHelp} />
 			</div>
 		);
 	};

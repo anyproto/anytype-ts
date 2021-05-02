@@ -59,7 +59,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
 						
 						<div className="rightMenu">
-							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							{config.allowDataview ? (
 								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />

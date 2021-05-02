@@ -57,7 +57,6 @@ export interface MenuItem {
 	checkbox?: boolean;
 	className?: string;
 	isActive?: boolean;
-	menuId?: string;
 	withDescription?: boolean;
 	withCaption?: boolean;
 	style?: any;
