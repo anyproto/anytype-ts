@@ -25,6 +25,12 @@
 			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; white-space: normal; }
 		}
 
+		.cellContent.c-file { padding: 5px 3px; }
+		.cellContent.c-file {
+			.element { margin-right: 2px; }
+			.iconObject { display: inline; margin: 0px; }
+			.name { display: none; }
+		}
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
 

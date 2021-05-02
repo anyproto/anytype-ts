@@ -22,6 +22,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		super(props);
 
 		this.scrollTo = this.scrollTo.bind(this);
+		this.onFav = this.onFav.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
