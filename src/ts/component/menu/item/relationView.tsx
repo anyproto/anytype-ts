@@ -29,7 +29,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 		return (
 			<div className={[ 'item', 'sides', (isHidden ? 'isHidden' : '') ].join(' ')}>
 				<div id={`item-${relationKey}`} className="info" onClick={(e: any) => { onEdit(e, relationKey); }}>
-					<div className="name">{name}</div>
+					{name}
 				</div>
 				<div
 					id={id} 

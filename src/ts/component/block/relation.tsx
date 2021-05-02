@@ -57,7 +57,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info">
-							<div className="name">{relation.name}</div>
+							{relation.name}
 						</div>
 						<div 
 							id={id} 
