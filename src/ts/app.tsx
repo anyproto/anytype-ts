@@ -366,6 +366,7 @@ class App extends React.Component<Props, State> {
 		});
 
 		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
+			param = param || {};
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
 
