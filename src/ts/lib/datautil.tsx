@@ -1,5 +1,5 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, dbStore, popupStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -908,7 +908,7 @@ class DataUtil {
 
 	checkDetails (rootId: string) {
 		const block = blockStore.getLeaf(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId } = details;
 		const ret: any = {
 			object: details,

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
 import { I, Util, DataUtil, crumbs, focus, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -49,7 +49,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
-		const object = blockStore.getDetails(breadcrumbs, rootId);
+		const object = detailStore.get(breadcrumbs, rootId);
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (popupStore.isOpenList([ 'navigation', 'search' ]) || menuStore.isOpen('blockRelationView')) {
@@ -150,7 +150,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
 		DataUtil.objectOpen(object);
 	};

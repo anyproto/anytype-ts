@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
 import { I, C, Util, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, popupStore } from 'ts/store';
+import { commonStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -29,7 +29,7 @@ class BlockFile extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		
-		let details = blockStore.getDetails(rootId, content.hash);
+		let details = detailStore.get(rootId, content.hash);
 		if (details._objectEmpty_) {
 			details = Util.objectCopy(content);
 			details.sizeInBytes = details.size;

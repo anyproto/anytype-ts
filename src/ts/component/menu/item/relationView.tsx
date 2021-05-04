@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Cell, Icon } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 interface Props extends I.Relation {
 	rootId: string;
@@ -42,7 +42,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						storeId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => { return blockStore.getDetails(rootId, rootId); }}
+						getRecord={() => { return detailStore.get(rootId, rootId); }}
 						viewType={I.ViewType.Grid}
 						index={0}
 						idPrefix={PREFIX}

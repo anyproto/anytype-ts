@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -27,7 +26,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		const { config } = commonStore;
 		const sections = this.getSections();
 		
@@ -169,7 +168,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return [];
 		};
 		
-		const object = blockStore.getDetails(rootId, blockId);
+		const object = detailStore.get(rootId, blockId);
 		const cmd = Util.ctrlSymbol();
 
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
@@ -405,7 +404,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		const { config } = commonStore;
 
 		let menuId = '';

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, InputWithFile, IconObject, MenuItemVertical } from 'ts/component';
+import { Icon, IconObject, MenuItemVertical } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {};
@@ -32,7 +32,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		let value = Util.objectCopy(data.value || []);
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
         const Handle = SortableHandle(() => (

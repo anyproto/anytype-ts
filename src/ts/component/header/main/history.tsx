@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
 import { C, Util, DataUtil, I, translate } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	version: I.HistoryVersion;
@@ -44,7 +44,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 	onBack (e: any) {
 		const { match } = this.props;
 		const rootId = match.params.id;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
 		DataUtil.objectOpen(object);
 	};
@@ -52,7 +52,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 	onRestore (e: any) {
 		const { match, version } = this.props;
 		const rootId = match.params.id;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
 			DataUtil.objectOpen(object);

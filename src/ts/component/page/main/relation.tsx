@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
 import { I, M, C, crumbs, Action } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
@@ -29,7 +29,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		return (

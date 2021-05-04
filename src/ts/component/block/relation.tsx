@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Cell } from 'ts/component';
+import { Input, Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, dbStore } from 'ts/store';
+import { menuStore, detailStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
@@ -70,7 +70,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
-								getRecord={() => { return blockStore.getDetails(rootId, rootId); }}
+								getRecord={() => { return detailStore.get(rootId, rootId); }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}

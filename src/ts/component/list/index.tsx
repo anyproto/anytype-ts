@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { blockStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil } from 'ts/lib';
 
@@ -40,12 +40,10 @@ class ListIndex extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = getList();
-		const map = blockStore.getDetailsMap(root);
-		const size = map.size;
 		
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
-			const object = blockStore.getDetails(root, content.targetBlockId);
+			const object = detailStore.get(root, content.targetBlockId);
 			const { _objectEmpty_, name, layout, iconEmoji, iconImage } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];

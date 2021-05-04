@@ -2,7 +2,6 @@ import { observable, action, computed, set, intercept, toJS } from 'mobx';
 import { I, M, Util } from 'ts/lib';
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -89,65 +88,6 @@ class BlockStore {
 	};
 
 	@action
-	detailsSet (rootId: string, details: any[]) {
-		let map = this.detailMap.get(rootId);
-
-		if (!map) {
-			map = observable.map(new Map());
-			intercept(map as any, (change: any) => {
-				const item = map.get(change.name);
-				return Util.objectCompare(change.newValue, item) ? null :change;
-			});
-		};
-
-		for (let item of details) {
-			const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
-			intercept(object as any, (change: any) => { return Util.intercept(object, change); });
-			map.set(item.id, object);
-		};
-
-		this.detailMap.set(rootId, map);
-	};
-
-	@action
-	detailsUpdate (rootId: string, item: any, clear: boolean) {
-		if (!item.id || !item.details) {
-			return;
-		};
-
-		let map = this.detailMap.get(rootId);
-		let create = false;
-
-		if (!map) {
-			map = observable.map(new Map());
-			create = true;
-		} else 
-		if (clear) {
-			map.delete(item.id);
-		};
-
-		const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
-		intercept(object as any, (change: any) => { return Util.intercept(object, change); });
-		map.set(item.id, object);
-
-		if (create) {
-			intercept(map as any, (change: any) => {
-				const item = map.get(change.name);
-				return Util.objectCompare(change.newValue, item) ? null :change;
-			});
-			this.detailMap.set(rootId, map);
-		};
-	};
-
-	detailsUpdateArray (rootId: string, blockId: string, details: any[]) {
-		let obj: any = {};
-		for (let item of details) {
-			obj[item.key] = item.value;
-		};
-		this.detailsUpdate(rootId, { id: blockId, details: obj }, false);
-	};
-
-	@action
 	blocksSet (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
 		this.treeMap.set(rootId, this.getStructure(blocks));
@@ -163,7 +103,6 @@ class BlockStore {
 	blocksClearAll () {
 		this.blockMap = new Map();
 		this.treeMap = new Map();
-		this.detailMap = new Map();
 		this.restrictionMap = new Map();
 	};
 
@@ -425,22 +364,6 @@ class BlockStore {
 			};
 		};
 		return ret;
-	};
-
-	getDetailsMap (rootId: string) {
-		return this.detailMap.get(rootId) || new Map();
-	};
-
-	getDetails (rootId: string, id: string): any {
-		const map = this.getDetailsMap(rootId);
-		const item = map.get(id) || { _objectEmpty_: true };
-		return {
-			...item,
-			id: id,
-			name: String(item.name || Constant.default.name || ''),
-			layout: Number(item.layout) || I.ObjectLayout.Page,
-			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
-		};
 	};
 
 	isAllowed (rootId: string, blockId: string, flag: any) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon } from 'ts/component';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import 'react-virtualized/styles.css';
 
@@ -107,7 +107,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		let featured = object[Constant.relationKey.featured] || [];
@@ -164,7 +164,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
 		let featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
 		let idx = featured.findIndex((it: string) => { return it == relationKey; });

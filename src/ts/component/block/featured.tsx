@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
-import { Cell, Button } from 'ts/component';
+import { Cell } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -38,7 +37,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readOnly } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelation(rootId, rootId, it);
 			if (!relation) {
@@ -161,7 +160,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 	onType (e: any) {
 		const { rootId, block, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
 		if (readOnly || root.isObjectSet()) {
 			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
@@ -203,7 +202,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (relation.format == I.RelationType.Checkbox) {

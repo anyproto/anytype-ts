@@ -1,6 +1,5 @@
-import { authStore, commonStore, blockStore, dbStore } from 'ts/store';
-import { set } from 'mobx';
-import { Util, DataUtil, I, M, Decode, translate, analytics, Response, Mapper, Storage } from 'ts/lib';
+import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -535,7 +534,7 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 
 					details = Decode.decodeStruct(data.getDetails());
-					blockStore.detailsUpdate(rootId, { id: id, details: details }, true);
+					detailStore.update(rootId, { id: id, details: details }, true);
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
@@ -550,7 +549,7 @@ class Dispatcher {
 					for (let item of (data.getDetailsList() || [])) {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
-					blockStore.detailsUpdate(rootId, { id: id, details: details }, false);
+					detailStore.update(rootId, { id: id, details: details }, false);
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
@@ -561,12 +560,12 @@ class Dispatcher {
 					id = data.getId();
 					keys = data.getKeysList() || [];
 
-					details = blockStore.getDetails(rootId, id);
+					details = detailStore.get(rootId, id);
 					for (let key of keys) {
 						delete(details[key]);
 					};
 
-					blockStore.detailsUpdate(rootId, { id: id, details: details }, true);
+					detailStore.update(rootId, { id: id, details: details }, true);
 					break;
 
 				case 'objectRelationsSet':
@@ -643,10 +642,10 @@ class Dispatcher {
 	onObjectShow (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
 		
-		blockStore.detailsSet(rootId, details);
+		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
 
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {

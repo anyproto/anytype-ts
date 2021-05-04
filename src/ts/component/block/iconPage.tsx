@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject } from 'ts/component';
 import { I, DataUtil } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -18,7 +18,7 @@ class BlockIconPage extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId, readOnly } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		
 		return (
 			<React.Fragment>

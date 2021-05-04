@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { HeaderMainEdit as Header, Loader, Block, Button, IconObject } from 'ts/component';
 import { I, M, C, Util, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -33,7 +33,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId));
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const blocks = blockStore.getBlocks(rootId);
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });

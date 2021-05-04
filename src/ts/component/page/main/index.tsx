@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -40,13 +40,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const details = blockStore.getDetails(profile, profile);
+		const details = detailStore.get(profile, profile);
 		const { iconImage, name } = details;
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const list = this.getList();
-		const map = blockStore.getDetailsMap(root);
-		const size = map.size;
 
 		return (
 			<div>
@@ -144,7 +142,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = blockStore.getDetails(profile, profile);
+		const object = detailStore.get(profile, profile);
 
 		DataUtil.objectOpen(object);
 	};
@@ -153,7 +151,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		e.persist();
 
 		const { root } = blockStore;
-		const object = blockStore.getDetails(root, block.content.targetBlockId);
+		const object = detailStore.get(root, block.content.targetBlockId);
 
 		if (block.content.style == I.LinkStyle.Archive) {
 			popupStore.open('archive', {});
@@ -365,7 +363,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { config } = commonStore;
 
 		return blockStore.getChildren(root, root, (it: any) => {
-			const object = blockStore.getDetails(root, it.content.targetBlockId);
+			const object = detailStore.get(root, it.content.targetBlockId);
 			if (it.content.style == I.LinkStyle.Archive) {
 				return true;
 			};

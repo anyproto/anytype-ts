@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Select, Input, IconObject, Tag } from 'ts/component';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -149,7 +149,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					cn = [ 'select', 'isList' ];
 
 					list = (item.value || []).map((it: string) => { 
-						const details = blockStore.getDetails(rootId, it);
+						const details = detailStore.get(rootId, it);
 						const { iconImage, iconEmoji, name } = details;
 						return details;
 					});

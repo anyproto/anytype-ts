@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Drag, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -63,7 +63,7 @@ class BlockCover extends React.Component<Props, State> {
 	render () {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		const { coverType, coverId } = details;
 		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -253,7 +253,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		const { coverId, coverType } = details;
 		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -271,7 +271,7 @@ class BlockCover extends React.Component<Props, State> {
 			};
 
 			const cb = () => {
-				const details = blockStore.getDetails(rootId, rootId);
+				const details = detailStore.get(rootId, rootId);
 				const { coverScale } = details;
 
 				if (this.refDrag) {
@@ -333,7 +333,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		const { coverScale } = details;
 		const { x, y} = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
 		
@@ -379,7 +379,7 @@ class BlockCover extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		const { coverX, coverY } = details;
 		const value = node.find('#dragValue');
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon, Cell } from 'ts/component';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -40,7 +40,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		const { rootId, filter } = data;
 		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
+		const details = detailStore.get(rootId, rootId);
 		const idPrefix = 'menuBlockRelationListCell';
 		const items = this.getItems();
 

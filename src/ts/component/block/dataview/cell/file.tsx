@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { InputWithFile, IconObject } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { IconObject } from 'ts/component';
+import { I, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 interface Props extends I.Cell {};
 interface State { 
@@ -32,7 +32,7 @@ class CellFile extends React.Component<Props, State> {
 		};
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
 		if (!value.length) {

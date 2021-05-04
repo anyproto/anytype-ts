@@ -5,7 +5,7 @@ import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
@@ -78,7 +78,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				const details = blockStore.getDetails(rootId, mark.param);
+				const details = detailStore.get(rootId, mark.param);
 			};
 		};
 		
@@ -304,7 +304,7 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			const object = blockStore.getDetails(rootId, data.param);
+			const object = detailStore.get(rootId, data.param);
 			const smile = item.find('smile');
 			const { _objectEmpty_, iconEmoji, iconImage } = object;
 			const cn = [];
@@ -332,7 +332,7 @@ class BlockText extends React.Component<Props, {}> {
 			e.preventDefault();
 			const el = $(this);
 			if (!el.hasClass('dis')) {
-				const object = blockStore.getDetails(rootId, el.data('param'));
+				const object = detailStore.get(rootId, el.data('param'));
 				DataUtil.objectOpenEvent(e, object);
 			};
 		});

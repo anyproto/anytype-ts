@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -20,7 +20,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 		
 		return (
 			<IconObject object={object} onClick={this.onClick} size={128} />

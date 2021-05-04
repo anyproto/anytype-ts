@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
@@ -26,7 +26,7 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
-		const details = blockStore.getDetails(rootId, content.targetBlockId);
+		const details = detailStore.get(rootId, content.targetBlockId);
 		const { _objectEmpty_, name, isArchived } = details;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 
@@ -77,7 +77,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const object = blockStore.getDetails(rootId, targetBlockId);
+		const object = detailStore.get(rootId, targetBlockId);
 		const { _objectEmpty_ } = object;
 		
 		if (!_objectEmpty_ && (targetBlockId != rootId)) {
@@ -105,7 +105,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const details = blockStore.getDetails(rootId, targetBlockId);
+		const details = detailStore.get(rootId, targetBlockId);
 
 		DataUtil.pageSetDone(targetBlockId, !details.done);
 	};

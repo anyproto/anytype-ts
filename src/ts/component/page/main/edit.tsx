@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Storage } from 'ts/lib';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {
