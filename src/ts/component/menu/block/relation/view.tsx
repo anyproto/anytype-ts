@@ -3,6 +3,7 @@ import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { trace } from 'mobx';
 import 'react-virtualized/styles.css';
 
 import Item from 'ts/component/menu/item/relationView';
@@ -107,7 +108,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
 		let featured = object[Constant.relationKey.featured] || [];

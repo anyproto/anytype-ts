@@ -20,10 +20,13 @@ class BlockIconUser extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
 		
 		return (
-			<IconObject object={object} onClick={this.onClick} size={128} />
+			<IconObject 
+				getObject={() => { return detailStore.get(rootId, rootId, [ 'id' ]); }} 
+				onClick={this.onClick} 
+				size={128} 
+			/>
 		);
 	};
 	

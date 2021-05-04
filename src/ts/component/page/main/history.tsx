@@ -53,7 +53,6 @@ class PageMainHistory extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
-		const length = childrenIds.length;
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper', check.className ];

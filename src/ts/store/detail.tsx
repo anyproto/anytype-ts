@@ -108,6 +108,7 @@ class DetailStore {
 		let object: any = {};
 
 		if (keys && keys.length) {
+			keys = keys.concat([ 'id', 'name', 'iconEmoji', 'iconImage', 'layout' ]);
 			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
 		};
 

@@ -158,10 +158,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
-		const check = DataUtil.checkDetails(rootId);
 		
 		this.open();
 		

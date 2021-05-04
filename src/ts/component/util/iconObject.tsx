@@ -124,8 +124,8 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { getObject, className, size, canEdit } = this.props;
-		const object = getObject ? getObject() : this.props.object;
+		const { className, size, canEdit } = this.props;
+		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		
@@ -212,8 +212,14 @@ class IconObject extends React.Component<Props, {}> {
 		);
 	};
 
+	getObject () {
+		const { getObject } = this.props;
+		return getObject ? getObject() : this.props.object;
+	};
+
 	onClick (e: any) {
-		const { canEdit, object, onClick, onCheckbox } = this.props;
+		const { canEdit, onClick, onCheckbox } = this.props;
+		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const layoutsEmoji = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.ObjectType ];
 
@@ -235,7 +241,8 @@ class IconObject extends React.Component<Props, {}> {
 	onEmoji (e: any) {
 		e.stopPropagation();
 
-		const { id, offsetX, offsetY, object, onSelect, onUpload } = this.props;
+		const { id, offsetX, offsetY, onSelect, onUpload } = this.props;
+		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const noUpload = layout == I.ObjectLayout.ObjectType;
 
@@ -270,7 +277,8 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	userSvg (): string {
-		const { object, size, color } = this.props;
+		const { size, color } = this.props;
+		const object = this.getObject();
 
 		let name = String(object.name || '');
 		name = SmileUtil.strip(name);

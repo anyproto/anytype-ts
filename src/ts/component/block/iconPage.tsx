@@ -18,14 +18,13 @@ class BlockIconPage extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId, readOnly } = this.props;
-		const object = detailStore.get(rootId, rootId);
 		
 		return (
 			<React.Fragment>
 				<IconObject 
 					id={'block-icon-' + rootId} 
 					canEdit={!readOnly} 
-					object={object} 
+					getObject={() => { return detailStore.get(rootId, rootId, [ 'id' ]); }} 
 					offsetX={0} 
 					offsetY={16} 
 					onSelect={this.onSelect} 
