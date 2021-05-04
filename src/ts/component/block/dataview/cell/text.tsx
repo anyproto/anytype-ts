@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
-import { commonStore, menuStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
