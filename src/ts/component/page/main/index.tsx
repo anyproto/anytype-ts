@@ -40,7 +40,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const object = detailStore.get(profile, profile);
+		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
 

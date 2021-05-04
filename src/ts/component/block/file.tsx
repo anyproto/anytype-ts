@@ -29,12 +29,13 @@ class BlockFile extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		
-		let object = detailStore.get(rootId, content.hash);
+		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._objectEmpty_) {
 			object = Util.objectCopy(content);
 			object.sizeInBytes = object.size;
 		};
 
+		let { name, sizeInBytes } = object;
 		let element = null;
 		let cn = [ 'focusable', 'c' + id ];
 
@@ -42,7 +43,14 @@ class BlockFile extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
+					<InputWithFile 
+						block={block} 
+						icon="file" 
+						textFile="Upload a file" 
+						onChangeUrl={this.onChangeUrl} 
+						onChangeFile={this.onChangeFile} 
+						readOnly={readOnly} 
+					/>
 				);
 				break;
 				
@@ -57,8 +65,8 @@ class BlockFile extends React.Component<Props, {}> {
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
 							<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
-							<span className="name">{object.name}</span>
-							<span className="size">{Util.fileSize(object.sizeInBytes)}</span>
+							<span className="name">{name}</span>
+							<span className="size">{Util.fileSize(sizeInBytes)}</span>
 						</span>
 						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>

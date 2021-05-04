@@ -23,7 +23,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 		
 		return (
 			<IconObject 
-				getObject={() => { return detailStore.get(rootId, rootId, [ 'id' ]); }} 
+				getObject={() => { return detailStore.get(rootId, rootId, []); }} 
 				onClick={this.onClick} 
 				size={128} 
 			/>
@@ -34,7 +34,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		
 		menuStore.open('select', { 
-			element: '#block-' + rootId + '-icon .iconObject',
+			element: `#block-${rootId}-icon .iconObject`,
 			offsetY: 4,
 			data: {
 				value: '',

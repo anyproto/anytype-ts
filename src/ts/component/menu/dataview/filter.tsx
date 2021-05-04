@@ -149,7 +149,7 @@ class MenuFilter extends React.Component<Props, {}> {
 					cn = [ 'select', 'isList' ];
 
 					list = (item.value || []).map((it: string) => { 
-						const object = detailStore.get(rootId, it, [ 'iconImage', 'iconEmoji', 'name' ]);
+						const object = detailStore.get(rootId, it, []);
 						const { iconImage, iconEmoji, name } = object;
 						return object;
 					});

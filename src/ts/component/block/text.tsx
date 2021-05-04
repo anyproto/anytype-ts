@@ -304,9 +304,9 @@ class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			const object = detailStore.get(rootId, data.param);
+			const object = detailStore.get(rootId, data.param, []);
 			const smile = item.find('smile');
-			const { _objectEmpty_, iconEmoji, iconImage } = object;
+			const { _objectEmpty_ } = object;
 			const cn = [];
 
 			if (smile && smile.length) {

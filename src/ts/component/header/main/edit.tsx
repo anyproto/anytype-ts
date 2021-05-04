@@ -49,7 +49,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
-		const object = detailStore.get(breadcrumbs, rootId);
+		const object = detailStore.get(breadcrumbs, rootId, []);
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (popupStore.isOpenList([ 'navigation', 'search' ]) || menuStore.isOpen('blockRelationView')) {

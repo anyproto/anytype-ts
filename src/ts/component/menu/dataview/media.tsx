@@ -32,7 +32,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		let value = Util.objectCopy(data.value || []);
-		value = value.map((it: string) => { return detailStore.get(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
         const Handle = SortableHandle(() => (

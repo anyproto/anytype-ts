@@ -40,7 +40,7 @@ class PageMainSet extends React.Component<Props, {}> {
 
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {

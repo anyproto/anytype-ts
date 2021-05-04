@@ -26,7 +26,7 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
-		const object = detailStore.get(rootId, content.targetBlockId);
+		const object = detailStore.get(rootId, content.targetBlockId, [ 'isArchived' ]);
 		const { _objectEmpty_, name, isArchived } = object;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 

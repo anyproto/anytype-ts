@@ -32,7 +32,7 @@ class CellFile extends React.Component<Props, State> {
 		};
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return detailStore.get(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
 		if (!value.length) {
