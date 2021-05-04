@@ -559,13 +559,8 @@ class Dispatcher {
 				case 'objectDetailsUnset':
 					id = data.getId();
 					keys = data.getKeysList() || [];
-
-					details = detailStore.get(rootId, id);
-					for (let key of keys) {
-						delete(details[key]);
-					};
-
-					detailStore.update(rootId, { id: id, details: details }, true);
+					
+					detailStore.delete(rootId, id, keys);
 					break;
 
 				case 'objectRelationsSet':
@@ -645,10 +640,10 @@ class Dispatcher {
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
 
-		const object = detailStore.get(rootId, rootId);
-
 		blocks = blocks.map((it: any) => {
 			if (it.id == rootId) {
+				const object = detailStore.get(rootId, rootId, [ 'layout' ]);
+
 				it.type = I.BlockType.Page;
 				it.layout = object.layout;
 			};

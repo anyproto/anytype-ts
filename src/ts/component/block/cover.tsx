@@ -63,8 +63,8 @@ class BlockCover extends React.Component<Props, State> {
 	render () {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
-		const details = detailStore.get(rootId, rootId);
-		const { coverType, coverId } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ]);
+		const { coverType, coverId } = object;
 		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
@@ -253,8 +253,8 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = detailStore.get(rootId, rootId);
-		const { coverId, coverType } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ]);
+		const { coverId, coverType } = object;
 		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const node = $(ReactDOM.findDOMNode(this));
 		
@@ -271,8 +271,8 @@ class BlockCover extends React.Component<Props, State> {
 			};
 
 			const cb = () => {
-				const details = detailStore.get(rootId, rootId);
-				const { coverScale } = details;
+				const object = detailStore.get(rootId, rootId, [ 'coverScale' ]);
+				const { coverScale } = object;
 
 				if (this.refDrag) {
 					this.refDrag.setValue(coverScale);
@@ -332,11 +332,7 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		const { rootId } = this.props;
-		const details = detailStore.get(rootId, rootId);
-		const { coverScale } = details;
 		const { x, y} = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
-		
 		this.cx = x;
 		this.cy = y;
 	};
@@ -379,8 +375,8 @@ class BlockCover extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
-		const details = detailStore.get(rootId, rootId);
-		const { coverX, coverY } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ]);
+		const { coverX, coverY } = object;
 		const value = node.find('#dragValue');
 
 		v = (v + 1) * 100;

@@ -26,8 +26,8 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
-		const details = detailStore.get(rootId, content.targetBlockId);
-		const { _objectEmpty_, name, isArchived } = details;
+		const object = detailStore.get(rootId, content.targetBlockId);
+		const { _objectEmpty_, name, isArchived } = object;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 
 		if (_objectEmpty_) {
@@ -42,7 +42,7 @@ class BlockLink extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				<IconObject 
-					object={details} 
+					object={object} 
 					id={'block-page-' + id} 
 					offsetX={28} 
 					offsetY={-24} 
@@ -105,9 +105,9 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const details = detailStore.get(rootId, targetBlockId);
+		const object = detailStore.get(rootId, targetBlockId, [ 'done' ]);
 
-		DataUtil.pageSetDone(targetBlockId, !details.done);
+		DataUtil.pageSetDone(targetBlockId, !object.done);
 	};
 	
 };

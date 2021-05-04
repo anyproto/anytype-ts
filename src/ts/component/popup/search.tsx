@@ -60,7 +60,7 @@ class PopupSearch extends React.Component<Props, State> {
 	render () {
 		const { pageId, filter, loading, showIcon, n } = this.state;
 		const { root, breadcrumbs } = blockStore;
-		const details = detailStore.get(breadcrumbs, pageId);
+		const object = detailStore.get(breadcrumbs, pageId);
 		const isRoot = pageId == root;
 		const items = this.getItems();
 
@@ -83,7 +83,7 @@ class PopupSearch extends React.Component<Props, State> {
 			if (isRoot) {
 				iconSearch = <Icon key="icon-home" className="home big" />;
 			} else {
-				iconSearch = <IconObject object={details} />;
+				iconSearch = <IconObject object={object} />;
 			};
 		} else {
 			iconSearch = <Icon key="icon-search" className="search" />;
@@ -152,7 +152,7 @@ class PopupSearch extends React.Component<Props, State> {
 					{iconSearch}
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
-						value={details.name} 
+						value={object.name} 
 						placeHolder={translate('popupSearchPlaceholder')} 
 						onKeyDown={this.onKeyDownSearch} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
@@ -274,11 +274,11 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const { root, breadcrumbs } = blockStore;
-		const details = detailStore.get(breadcrumbs, id);
+		const object = detailStore.get(breadcrumbs, id, [ 'name' ]);
 		const isRoot = id == root;
 
 		if (this.ref) {
-			this.ref.setValue(isRoot ? 'Home' : details.name);
+			this.ref.setValue(isRoot ? 'Home' : object.name);
 			this.ref.select();
 		};
 	};

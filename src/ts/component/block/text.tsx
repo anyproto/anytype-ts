@@ -78,7 +78,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				const details = detailStore.get(rootId, mark.param);
+				const object = detailStore.get(rootId, mark.param);
 			};
 		};
 		

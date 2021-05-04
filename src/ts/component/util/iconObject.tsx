@@ -21,6 +21,7 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
 	color?: string;
+	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -123,7 +124,8 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { object, className, size, canEdit, onClick, color } = this.props;
+		const { getObject, className, size, canEdit } = this.props;
+		const object = getObject ? getObject() : this.props.object;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		

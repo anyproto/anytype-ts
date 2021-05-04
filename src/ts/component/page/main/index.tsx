@@ -40,10 +40,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const details = detailStore.get(profile, profile);
-		const { iconImage, name } = details;
-		const childrenIds = blockStore.getChildrenIds(root, root);
-		const length = childrenIds.length;
+		const object = detailStore.get(profile, profile);
+		const { name } = object;
 		const list = this.getList();
 
 		return (
@@ -54,7 +52,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
-						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
+						{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
 						
 						<div className="rightMenu">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
@@ -62,7 +60,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							{config.allowDataview ? (
 								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
 							) : ''}
-							<IconObject object={{ ...details, layout: I.ObjectLayout.Human }} size={64} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					

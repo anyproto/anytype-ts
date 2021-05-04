@@ -908,10 +908,10 @@ class DataUtil {
 
 	checkDetails (rootId: string) {
 		const block = blockStore.getLeaf(rootId, rootId);
-		const details = detailStore.get(rootId, rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = details;
+		const object = detailStore.get(rootId, rootId);
+		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
-			object: details,
+			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [],
@@ -959,7 +959,7 @@ class DataUtil {
 				break;
 		};
 
-		if ((details[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
+		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
 			ret.className.push('withDescription');
 		};
 

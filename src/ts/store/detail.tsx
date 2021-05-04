@@ -1,11 +1,16 @@
-import { observable, action, computed, set, intercept, toJS } from 'mobx';
-import { I, Util } from 'ts/lib';
+import { observable, action, set, intercept, decorate } from 'mobx';
+import { I } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
+interface Detail {
+	relationKey: string;
+	value: any;
+};
+
 class DetailStore {
 
-	public map: Map<string, Map<string, any>> = new Map();
+	public map: Map<string, Map<string, Detail[]>> = new Map();
 
 	@action
 	set (rootId: string, details: any[]) {
@@ -13,16 +18,21 @@ class DetailStore {
 
 		if (!map) {
 			map = observable.map(new Map());
-			intercept(map as any, (change: any) => {
-				const item = map.get(change.name);
-				return Util.objectCompare(change.newValue, item) ? null :change;
-			});
 		};
 
 		for (let item of details) {
-			const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
-			intercept(object as any, (change: any) => { return Util.intercept(object, change); });
-			map.set(item.id, object);
+			const list: Detail[] = [];
+			for (let k in item.details) {
+				const el = { relationKey: k, value: item.details[k] };
+				decorate(el, { value: observable });
+
+				intercept(el as any, (change: any) => { 
+					return (change.newValue === el[change.name] ? null : change); 
+				});
+
+				list.push(el);
+			};
+			map.set(item.id, list);
 		};
 
 		this.map.set(rootId, map);
@@ -35,38 +45,82 @@ class DetailStore {
 		};
 
 		let map = this.map.get(rootId);
-		let create = false;
+		let createMap = false;
+		let createList = false;
 
 		if (!map) {
 			map = observable.map(new Map());
-			create = true;
+			createMap = true;
 		} else 
 		if (clear) {
 			map.delete(item.id);
 		};
 
-		const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
-		intercept(object as any, (change: any) => { return Util.intercept(object, change); });
-		map.set(item.id, object);
+		let list = map.get(item.id);
+		if (!list) {
+			list = [];
+			createList = true;
+		};
 
-		if (create) {
-			intercept(map as any, (change: any) => {
-				const item = map.get(change.name);
-				return Util.objectCompare(change.newValue, item) ? null :change;
-			});
+		for (let k in item.details) {
+			let el = list.find((it: Detail) => { return it.relationKey == k; });
+			if (el) {
+				set(el, { value: item.details[k] });
+			} else {
+				el = { relationKey: k, value: item.details[k] };
+				decorate(el, { value: observable });
+
+				intercept(el as any, (change: any) => { 
+					return (change.newValue === el[change.name] ? null : change); 
+				});
+
+				list.push(el);
+			};
+			if (createList) {
+				map.set(item.id, list);
+			};
+		};
+
+		if (createMap) {
 			this.map.set(rootId, map);
 		};
 	};
 
-	get (rootId: string, id: string): any {
-		const map = this.map.get(rootId) || new Map();
-		const item = map.get(id) || { _objectEmpty_: true };
+	@action 
+	delete (rootId: string, id: string, keys: string[]) {
+		const map = this.map.get(rootId);
+		if (!map) {
+			return;
+		};
+
+		let list = map.get(id);
+		if (!list) {
+			return;
+		};
+
+		list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) < 0 });
+		map.set(id, list);
+	};
+
+	get (rootId: string, id: string, keys?: string[]): any {
+		let map = this.map.get(rootId) || new Map();
+		let list = map.get(id) || [];
+		let object: any = {};
+
+		if (keys && keys.length) {
+			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
+		};
+
+		for (let item of list) {
+			object[item.relationKey] = item.value;
+		};
+
 		return {
-			...item,
+			...object,
 			id: id,
-			name: String(item.name || Constant.default.name || ''),
-			layout: Number(item.layout) || I.ObjectLayout.Page,
-			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
+			name: String(object.name || Constant.default.name || ''),
+			layout: Number(object.layout) || I.ObjectLayout.Page,
+			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 		};
 	};
 

@@ -29,10 +29,10 @@ class BlockFile extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		
-		let details = detailStore.get(rootId, content.hash);
-		if (details._objectEmpty_) {
-			details = Util.objectCopy(content);
-			details.sizeInBytes = details.size;
+		let object = detailStore.get(rootId, content.hash);
+		if (object._objectEmpty_) {
+			object = Util.objectCopy(content);
+			object.sizeInBytes = object.size;
 		};
 
 		let element = null;
@@ -56,9 +56,9 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
-							<IconObject object={{ ...details, layout: I.ObjectLayout.File }} size={24} />
-							<span className="name">{details.name}</span>
-							<span className="size">{Util.fileSize(details.sizeInBytes)}</span>
+							<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
+							<span className="name">{object.name}</span>
+							<span className="size">{Util.fileSize(object.sizeInBytes)}</span>
 						</span>
 						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>

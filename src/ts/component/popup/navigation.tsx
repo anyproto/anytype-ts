@@ -61,9 +61,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type, rootId, blockId } = data;
-		const { root, breadcrumbs } = blockStore;
-		const details = detailStore.get(breadcrumbs, pageId);
+		const { type } = data;
+		const { root } = blockStore;
 		const isRoot = pageId == root;
 
 		let confirm = '';

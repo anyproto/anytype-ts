@@ -39,13 +39,13 @@ class PopupArchive extends React.Component<Props, State> {
 		
 		const Item = (item: any) => {
 			const content = item.content || {};
-			const details = detailStore.get(archive, content.targetBlockId);
+			const object = detailStore.get(archive, content.targetBlockId);
 			
 			return (
 				<div id={'item-' + content.targetBlockId} className="item" onClick={(e: any) => { this.onSelect(item); }}>
 					<Icon className="checkbox" />
-					<IconObject object={details} size={24} />
-					<div className="name">{details.name}</div>
+					<IconObject object={object} size={24} />
+					<div className="name">{object.name}</div>
 				</div>
 			);
 		};
