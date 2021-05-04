@@ -120,7 +120,7 @@ class PageMainType extends React.Component<Props, {}> {
 		);
 
 		const Row = (item: any) => {
-			const author = detailStore.get(rootId, item.creator);
+			const author = detailStore.get(rootId, item.creator, []);
 			return (
 				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">

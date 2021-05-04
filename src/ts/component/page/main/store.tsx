@@ -107,7 +107,7 @@ class PageMainStore extends React.Component<Props, State> {
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
@@ -138,7 +138,7 @@ class PageMainStore extends React.Component<Props, State> {
 			case Tab.Template:
 				Item = (item: any) => {
 					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
@@ -165,7 +165,7 @@ class PageMainStore extends React.Component<Props, State> {
 
 			case Tab.Relation:
 				Item = (item: any) => {
-					const author = detailStore.get(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
