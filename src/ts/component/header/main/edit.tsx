@@ -150,7 +150,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 
 		DataUtil.objectOpen(object);
 	};

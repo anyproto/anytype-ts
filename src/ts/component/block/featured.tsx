@@ -160,9 +160,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 	onType (e: any) {
 		const { rootId, block, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId);
 
 		if (readOnly || root.isObjectSet()) {
+			const object = detailStore.get(rootId, rootId, [ 'type' ]);
 			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
 			return;
 		};
@@ -173,7 +173,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 		menuStore.closeAll(null, () => { 
 			menuStore.open('searchObject', {
-				element: '#' + DataUtil.cellId(PREFIX, Constant.relationKey.type, 0),
+				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				offsetY: 4,
@@ -202,10 +202,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (relation.format == I.RelationType.Checkbox) {
+			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
 				{ key: relationKey, value: DataUtil.formatRelationValue(relation, !object[relationKey]) },
 			];

@@ -2,7 +2,7 @@ import { observable, action, set, intercept, decorate } from 'mobx';
 import { I } from 'ts/lib';
 
 const Constant = require('json/constant.json');
-const DEFAULT_KEYS = [ 'id', 'name', 'description', 'iconEmoji', 'iconImage', 'layout', 'isHidden', 'done' ];
+const DEFAULT_KEYS = [ 'id', 'name', 'description', 'iconEmoji', 'iconImage', 'type', 'layout', 'isHidden', 'done' ];
 
 interface Detail {
 	relationKey: string;

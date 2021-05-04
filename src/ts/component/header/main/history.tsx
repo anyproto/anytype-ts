@@ -44,7 +44,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 	onBack (e: any) {
 		const { match } = this.props;
 		const rootId = match.params.id;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 
 		DataUtil.objectOpen(object);
 	};
@@ -52,7 +52,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 	onRestore (e: any) {
 		const { match, version } = this.props;
 		const rootId = match.params.id;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
 			DataUtil.objectOpen(object);

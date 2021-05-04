@@ -40,7 +40,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		const { rootId, filter } = data;
 		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId);
 		const idPrefix = 'menuBlockRelationListCell';
 		const items = this.getItems();
 
@@ -80,7 +79,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return object; }}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ]); }}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}

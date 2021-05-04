@@ -26,7 +26,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		const sections = this.getSections();
 		
@@ -404,7 +404,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 
 		let menuId = '';
