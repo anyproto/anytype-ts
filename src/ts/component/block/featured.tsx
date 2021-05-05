@@ -159,7 +159,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const cell = $('#' + DataUtil.cellId(PREFIX, relationKey, 0));
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+		if (relation) {
+			Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+		};
 	};
 
 	onMouseLeave (e: any) {

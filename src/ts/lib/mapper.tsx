@@ -165,9 +165,16 @@ const Mapper = {
 		},
 
 		Restrictions: (obj: any): any => {
+			if (!obj) {
+				return {
+					object: [],
+					dataview: [],
+				};
+			};
+
 			return {
-				object: obj.getObjectList() || [],
-				dataview: (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview),
+				object: obj.getObjectList ? (obj.getObjectList() || []) : [],
+				dataview: obj.getDataviewList ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
 			};
 		},
 
