@@ -17,6 +17,7 @@ const MENU_ID = 'dataviewCalendar';
 @observer
 class CellText extends React.Component<Props, State> {
 
+	_isMounted: boolean = false;
 	state = {
 		editing: false,
 	};
@@ -177,6 +178,14 @@ class CellText extends React.Component<Props, State> {
 		return content;
 	};
 
+	componentDidMount () {
+		this._isMounted = true;
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	componentDidUpdate () {
 		const { editing } = this.state;
 		const { id, relation, index, getRecord } = this.props;
@@ -217,6 +226,10 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	setEditing (v: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { canEdit } = this.props;
 		const { editing } = this.state;
 
