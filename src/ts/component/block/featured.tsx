@@ -37,26 +37,8 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readOnly } = this.props;
-		const object = detailStore.get(rootId, rootId);
-		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
-			const relation = dbStore.getRelation(rootId, rootId, it);
-			if (!relation) {
-				return false;
-			};
-			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
-				return false;
-			};
-			if (relation.format == I.RelationType.Checkbox) {
-				return true;
-			};
-			if (!object[it]) {
-				return false;
-			};
-			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
-				return false;
-			};
-			return true;
-		});
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type) || {};
 		const bullet = <div className="bullet" />;
 
@@ -72,7 +54,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					<div className="name">{type.name || Constant.default.name}</div>
 				</div>
 
-				{featured.map((relationKey: any, i: any) => {
+				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
 					return (
 						<React.Fragment key={i}>
@@ -87,7 +69,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return object; }}
+									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
@@ -118,6 +100,33 @@ class BlockFeatured extends React.Component<Props, {}> {
 	onFocus () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	getItems () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+
+		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
+			const relation = dbStore.getRelation(rootId, rootId, it);
+			const object = detailStore.get(rootId, rootId, [ it ]);
+
+			if (!relation) {
+				return false;
+			};
+			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
+				return false;
+			};
+			if (relation.format == I.RelationType.Checkbox) {
+				return true;
+			};
+			if (!object[it]) {
+				return false;
+			};
+			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
+				return false;
+			};
+			return true;
+		});
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {

@@ -81,16 +81,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { history } = this.props;
-		const redirectTo = Storage.get('redirectTo');
 		const win = $(window);
-
-		Storage.delete('redirect');
-
-		if (redirectTo) {
-			history.push(redirectTo);
-			Storage.delete('redirectTo');
-		};
 
 		crumbs.delete(I.CrumbsType.Page);
 

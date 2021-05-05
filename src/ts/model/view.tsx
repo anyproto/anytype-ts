@@ -76,6 +76,9 @@ class Relation implements I.Relation {
 			maxCount: observable,
 			objectTypes: observable,
 			selectDict: observable,
+			scope: observable,
+			isHidden: observable,
+			isReadOnly: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });

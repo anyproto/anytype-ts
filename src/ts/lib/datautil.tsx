@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -305,9 +305,14 @@ class DataUtil {
 	};
 
 	onAuth () {
+		const redirectTo = Storage.get('redirectTo');
+
+		Storage.delete('redirect');
+		Storage.delete('redirectTo');
+
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push('/main/index');
+			this.history.push(redirectTo ? redirectTo : '/main/index');
 		});
 	};
 
