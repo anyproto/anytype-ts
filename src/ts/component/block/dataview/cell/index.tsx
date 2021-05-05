@@ -160,7 +160,6 @@ class Cell extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 1,
 			noAnimation: true,
-			noFlipY: true,
 			passThrough: true,
 			className: menuClassName,
 			onOpen: setOn,
