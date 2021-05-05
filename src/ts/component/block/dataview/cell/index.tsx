@@ -236,6 +236,7 @@ class Cell extends React.Component<Props, {}> {
 
 			case I.RelationType.LongText:
 				param = Object.assign(param, {
+					noFlipY: true,
 					element: cell,
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,

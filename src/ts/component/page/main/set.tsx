@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, Loader, Block, Pager } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -92,6 +92,8 @@ class PageMainSet extends React.Component<Props, {}> {
 					
 					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
 				</div>
+
+				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};

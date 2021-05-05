@@ -81,11 +81,13 @@ class MenuText extends React.Component<Props, {}> {
 				return;
 			};
 
-			const { position } = this.props;
+			const { position, getId } = this.props;
+			const obj = $(`#${getId()}`);
 			const node = $(ReactDOM.findDOMNode(this));
 			const win = $(window);
 			const wh = win.height();
 
+			obj.css({ height: 'auto' });
 			node.css({ height: 'auto' });
 			const sh = node.get(0).scrollHeight;
 

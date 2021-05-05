@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
 import { I, M, C, crumbs, Action } from 'ts/lib';
 import { detailStore } from 'ts/store';
 
@@ -49,6 +49,8 @@ class PageMainRelation extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
+
+				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};

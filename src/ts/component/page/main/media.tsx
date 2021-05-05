@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, Loader, Block, Button, IconObject } from 'ts/component';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject } from 'ts/component';
 import { I, M, C, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
@@ -96,6 +96,8 @@ class PageMainMedia extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
+
+				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};
