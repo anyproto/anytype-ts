@@ -179,6 +179,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			width: width,
 			className: 'add fixed',
+			subIds: [ 'searchObject' ],
 			data: {
 				value: '',
 				options: options,
@@ -250,6 +251,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
+			subIds: Constant.menuIds.more,
 			data: {
 				rootId: root,
 				blockId: item.id,
