@@ -246,7 +246,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		menuStore.open('blockMore', { 
-			element: '#button-' + item.id + '-more',
+			element: `#button-${item.id}-more`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
