@@ -63,6 +63,7 @@
 		}
 
 		.cell.isEditing.c-longText {
+			.cellContent { box-shadow: 0px 0px; visibility: hidden; }
 			.cellContent span:empty { height: 22px; }
 		}
 
