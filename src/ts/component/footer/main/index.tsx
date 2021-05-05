@@ -17,7 +17,7 @@ class FooterMainIndex extends React.Component<Props, {}> {
 	render () {
 		return (
 			<div className="footer">
-				<Icon id="button-help" className="help" onMouseDown={this.onHelp} />
+				<Icon id="button-help" className="help" tooltip="Help" onClick={this.onHelp} />
 			</div>
 		);
 	};

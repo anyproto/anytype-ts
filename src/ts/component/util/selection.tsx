@@ -552,6 +552,10 @@ class SelectionProvider extends React.Component<Props, {}> {
 	};
 	
 	get (withChildren?: boolean): string[] {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 
 		let ids = [] as string[];
