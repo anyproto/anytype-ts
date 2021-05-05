@@ -14,7 +14,6 @@ class BlockStore {
 
 	public treeMap: Map<string, any[]> = new Map();
 	public blockMap: Map<string, I.Block[]> = new Map();
-	public detailMap: Map<string, Map<string, any>> = new Map();
 	public restrictionMap: Map<string, Map<string, any>> = new Map();
 
 	@computed
@@ -88,26 +87,26 @@ class BlockStore {
 	};
 
 	@action
-	blocksSet (rootId: string, blocks: I.Block[]) {
+	set (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
 		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
 	@action
-	blocksClear (rootId: string) {
+	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
 	};
 
 	@action
-	blocksClearAll () {
+	clearAll () {
 		this.blockMap = new Map();
 		this.treeMap = new Map();
 		this.restrictionMap = new Map();
 	};
 
 	@action
-	blockAdd (rootId: string, block: I.Block) {
+	add (rootId: string, block: I.Block) {
 		block = new M.Block(block);
 
 		let blocks = this.getBlocks(rootId);
@@ -129,7 +128,7 @@ class BlockStore {
 	};
 
 	@action
-	blockUpdate (rootId: string, param: any) {
+	update (rootId: string, param: any) {
 		let block = this.getLeaf(rootId, param.id);
 		if (!block) {
 			return;
@@ -138,7 +137,7 @@ class BlockStore {
 	};
 
 	@action
-	blockUpdateStructure (rootId: string, id: string, childrenIds: string[]) {
+	updateStructure (rootId: string, id: string, childrenIds: string[]) {
 		let map = this.getMap(rootId);
 
 		set(map[id], 'childrenIds', childrenIds);
@@ -154,7 +153,7 @@ class BlockStore {
 	};
 
 	@action
-	blockDelete (rootId: string, id: string) {
+	delete (rootId: string, id: string) {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 

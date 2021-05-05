@@ -229,14 +229,14 @@ class Dispatcher {
 					for (let block of blocks) {
 						block = Mapper.From.Block(block);
 						block.parentId = String(globalParentIds[block.id] || '');
-						blockStore.blockAdd(rootId, block);
+						blockStore.add(rootId, block);
 					};
 					break;
 
 				case 'blockDelete':
 					let blockIds = data.getBlockidsList() || [];
 					for (let blockId of blockIds) {
-						blockStore.blockDelete(rootId, blockId);
+						blockStore.delete(rootId, blockId);
 					};
 					break;
 
@@ -249,7 +249,7 @@ class Dispatcher {
 
 					childrenIds = data.getChildrenidsList() || [];
 
-					blockStore.blockUpdateStructure(rootId, id, childrenIds);
+					blockStore.updateStructure(rootId, id, childrenIds);
 					break;
 
 				case 'blockSetFields':
@@ -260,7 +260,7 @@ class Dispatcher {
 					};
 
 					block.fields = data.hasFields() ? Decode.decodeStruct(data.getFields()) : {};
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetLink':
@@ -274,7 +274,7 @@ class Dispatcher {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetText':
@@ -304,7 +304,7 @@ class Dispatcher {
 						block.content.color = data.getColor().getValue();
 					};
 
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetDiv':
@@ -318,7 +318,7 @@ class Dispatcher {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetFile':
@@ -352,7 +352,7 @@ class Dispatcher {
 						block.content.state = data.getState().getValue();
 					};
 
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetBookmark':
@@ -395,7 +395,7 @@ class Dispatcher {
 					};
 
 					block.bgColor = data.getBackgroundcolor();
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetAlign':
@@ -406,7 +406,7 @@ class Dispatcher {
 					};
 
 					block.align = data.getAlign();
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockSetRelation':
@@ -420,7 +420,7 @@ class Dispatcher {
 						block.content.key = data.getKey().getValue();
 					};
 
-					blockStore.blockUpdate(rootId, block);
+					blockStore.update(rootId, block);
 					break;
 
 				case 'blockDataviewViewSet':
@@ -537,7 +537,7 @@ class Dispatcher {
 					detailStore.update(rootId, { id: id, details: details }, true);
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
-						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -552,7 +552,7 @@ class Dispatcher {
 					detailStore.update(rootId, { id: id, details: details }, false);
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-						blockStore.blockUpdate(rootId, { id: rootId, layout: details.layout });
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -655,7 +655,7 @@ class Dispatcher {
 			return new M.Block(it);
 		});
 
-		blockStore.blocksSet(rootId, blocks);
+		blockStore.set(rootId, blocks);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

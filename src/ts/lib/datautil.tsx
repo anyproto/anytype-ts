@@ -490,7 +490,7 @@ class DataUtil {
 	};
 	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
+		blockStore.update(rootId, { id: rootId, layout: layout });
 
 		const details = [
 			{ key: 'layout', value: layout },
@@ -520,7 +520,7 @@ class DataUtil {
 		if (update) {
 			block.content.text = String(text || '');
 			block.content.marks = marks || [];
-			blockStore.blockUpdate(rootId, block);
+			blockStore.update(rootId, block);
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {

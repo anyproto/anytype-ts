@@ -16,7 +16,7 @@ class Action {
 				dbStore.recordsClear(rootId, block.id);
 			};
 
-			blockStore.blocksClear(rootId);
+			blockStore.clear(rootId);
 			detailStore.clear(rootId);
 			dbStore.relationsClear(rootId, rootId);
 			authStore.threadRemove(rootId);
