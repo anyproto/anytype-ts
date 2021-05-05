@@ -150,7 +150,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
-		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { console.trace(); this.onScroll(e); });
 
 		Storage.set('askSurvey', 1);
 

@@ -65,7 +65,7 @@ interface State {
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
-const BORDER = 12;
+const BORDER = 16;
 
 const Components: any = {
 	help:					 MenuHelp,
@@ -219,7 +219,7 @@ class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { param } = this.props;
-		const { tabs, onOpen } = param;
+		const { onOpen } = param;
 
 		this._isMounted = true;
 		this.position();
@@ -228,10 +228,15 @@ class Menu extends React.Component<Props, State> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
 		if (el && el.length) {
 			el.addClass('hover');
+		};
+
+		if (param.height) {
+			obj.css({ height: param.height });
 		};
 
 		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
@@ -422,10 +427,6 @@ class Menu extends React.Component<Props, State> {
 			if (param.width) {
 				css.width = param.width;
 			};
-			if (param.height) {
-				css.height = param.height;
-			};
-
 			menu.css(css);
 			
 			if (isSub && (type == I.MenuType.Vertical)) {
