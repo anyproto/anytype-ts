@@ -5,18 +5,22 @@
 	.menu.menuDataviewFilterList {
 		.content { max-height: 350px; }
 
-		.item { padding: 4px 10px; line-height: 28px; position: relative; white-space: nowrap; }
+		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
 		.item {
-			.icon.delete { opacity: 1; }
 			.input { user-select: text; height: 22px; border: 0px; padding: 0px; }
-
-			.icon.delete { top: 10px; margin: 0px; opacity: 0; }
 
 			.icon.checkbox { 
 				width: 32px; height: 28px; margin: 0px; background-image: url('~img/icon/dataview/checkbox0.svg'); 
 				border-radius: 4px; border: solid 1px #d2d0c2;
 			}
 			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+
+			.grey { color: $colorDarkGrey; }
+			.iconObject { margin-right: 10px; }
+			.buttons { line-height: 44px; }
+			.buttons {
+				.icon { vertical-align: middle; }
+			}
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
 			.select.operator { width: auto; }
@@ -26,9 +30,6 @@
 			.select.isList { margin: 0px; }
 			.select.isList.withValues { padding-right: 0px; }
 
-			.iconObject { margin-right: 10px; }
-			
-			.select.grey { color: $colorDarkGrey; }
 			.select {
 				.element { display: inline-block; margin-right: 6px; line-height: 20px; }
 				.element {
@@ -41,7 +42,7 @@
 
 			.value { padding: 10px 0px; margin: 0px 6px 0px 22px; border-bottom: 1px solid #eae9e0; }
 
-			.txt { width: calc(100% - 72px); }
+			.txt { width: calc(100% - 72px); line-height: 22px; }
 		}
 
 		.item:hover {
@@ -52,5 +53,10 @@
 		.item.add {
 			.icon.dnd { margin-top: 0px; }
 		}
+	}
+
+	.menu.menuDataviewFilterValues { width: 360px; }
+	.menu.menuDataviewFilterValues {
+
 	}
 }

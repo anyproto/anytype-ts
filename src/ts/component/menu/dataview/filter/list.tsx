@@ -13,18 +13,9 @@ interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
-const TIMEOUT = 500;
 
 @observer
 class MenuFilterList extends React.Component<Props, {}> {
-	
-	refObj: any = {};
-	timeoutChange: number = 0;
-	range: I.TextRange = {
-		from: 0,
-		to: 0,
-	};
-	id: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -32,10 +23,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
-		this.onFocusDate = this.onFocusDate.bind(this);
-		this.onSelect = this.onSelect.bind(this);
-		this.onObject = this.onObject.bind(this);
 	};
 	
 	render () {
@@ -60,16 +47,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 			const { relationKey, condition, value } = filter;
 		};
 
-		const operatorOptions: I.Option[] = [
-			{ id: String(I.FilterOperator.And), name: 'And' },
-			{ id: String(I.FilterOperator.Or), name: 'Or' },
-		];
-
-		const checkboxOptions: I.Option[] = [
-			{ id: '1', name: 'Checked' },
-			{ id: '0', name: 'Unchecked' },
-		];
-		
 		const relationOptions = this.getRelationOptions();
 
 		const Handle = SortableHandle(() => (
@@ -79,171 +56,11 @@ class MenuFilterList extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation = item.relation;
 			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
-			const refGet = (ref: any) => { this.refObj[item.id] = ref; }; 
-			const id = [ 'item', item.id, 'value' ].join('-');
-
-			let value = null;
-			let onSubmit = (e: any) => { this.onSubmit(e, item); };
-			let Item = null;
-			let cn = [];
-			let cv = [ 'value' ];
-			let list = [];
-
-			if (item.id == filters.length - 1) {
-				cv.push('last');
-			};
-
-			switch (relation.format) {
-
-				case I.RelationType.Tag:
-				case I.RelationType.Status:
-					cn = [ 'select', 'isList' ];
-
-					Item = (item: any) => {
-						return (
-							<div className="element">
-								<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
-							</div>
-						);
-					};
-
-					list = (item.value || []).map((id: string, i: number) => { 
-						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-					});
-					list = list.filter((it: any) => { return it && it.id; });
-
-					if (list.length) {
-						cn.push('withValues');
-					};
-
-					value = (
-						<div id={id} className={cn.join(' ')} onClick={(e: any) => { this.onTag(e, item); }}>
-							{list.length ? (
-								<React.Fragment>
-									{list.map((item: any, i: number) => {
-										return <Item key={item.id} {...item} />;
-									})}
-								</React.Fragment>
-							) : (
-								<React.Fragment>
-									<div className="name">Add options</div>
-									<Icon className="arrow light" />
-								</React.Fragment>
-							)}
-						</div>
-					);
-					break;
-				
-				case I.RelationType.Object:
-					Item = (item: any) => {
-						return (
-							<div className="element">
-								<div className="flex">
-									<IconObject object={item} />
-									<div className="name">{item.name}</div>
-								</div>
-							</div>
-						);
-					};
-					cn = [ 'select', 'isList' ];
-
-					list = (item.value || []).map((it: string) => { 
-						const object = detailStore.get(rootId, it, []);
-						const { iconImage, iconEmoji, name } = object;
-						return object;
-					});
-					list = list.filter((it: any) => { return !it._objectEmpty_; });
-
-					if (list.length) {
-						cn.push('withValues');
-					};
-
-					value = (
-						<div id={id} className={cn.join(' ')} onClick={(e: any) => { this.onObject(e, item); }}>
-							{list.length ? (
-								<React.Fragment>
-									{list.map((item: any, i: number) => {
-										return <Item key={i} {...item} />;
-									})}
-								</React.Fragment>
-							) : (
-								<React.Fragment>
-									<div className="name">Add objects</div>
-									<Icon className="arrow light" />
-								</React.Fragment>
-							)}
-						</div>
-					);
-					break;
-
-				case I.RelationType.Checkbox:
-					value = (
-						<Select 
-							id={[ 'filter', 'checkbox', item.id ].join('-')} 
-							className="operator" 
-							arrowClassName="light"
-							options={checkboxOptions} 
-							value={item.value ? '1' : '0'} 
-							onChange={(v: string) => { this.onChange(item.id, 'value', Boolean(Number(v)), true); }} 
-						/>
-					);
-					break;
-
-				case I.RelationType.Date:
-					value = (
-						<Input 
-							id={id}
-							key={id}
-							ref={refGet} 
-							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
-							placeHolder="dd.mm.yyyy hh:mm:ss"
-							maskOptions={{ mask: '99.99.9999 99:99:99' }}
-							onFocus={(e: any) => { this.onFocusDate(e, item); }}
-							onBlur={() => { this.id = ''; }}
-							onSelect={(e: any) => { this.onSelect(e, item); }}
-						/>
-					);
-					onSubmit = (e: any) => { this.onSubmitDate(e, item); };
-					break;
-
-				default:
-					value = (
-						<Input 
-							id={id}
-							key={id}
-							ref={refGet} 
-							value={item.value} 
-							placeHolder={translate('commonValue')} 
-							onBlur={() => { this.id = ''; }}
-							onKeyUp={(e: any, v: string) => { this.onChange(item.id, 'value', v, true); }} 
-							onSelect={(e: any) => { this.onSelect(e, item); }}
-						/>
-					);
-					break;
-			};
-
-			if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
-				value = null;
-			};
+			const condition = conditionOptions.find((it: any) => { return it.id == item.condition; });
 
 			return (
-				<form id={'item-' + item.id} className="item" onSubmit={onSubmit}>
+				<form id={'item-' + item.id} className="item">
 					<Handle />
-					{/*item.id > 0 ? (
-						
-						<Select 
-							id={[ 'filter', 'operator', item.id ].join('-')} 
-							className="operator" 
-							arrowClassName="light"
-							options={operatorOptions} 
-							value={item.operator} 
-							onChange={(v: string) => { this.onChange(item.id, 'operator', v); }} 
-						/>
-						<div className="txt">And</div>
-					) : (
-						<div className="txt">Where</div>
-					)*/}
-
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
 					<div className="txt">
@@ -255,21 +72,10 @@ class MenuFilterList extends React.Component<Props, {}> {
 							value={item.relationKey} 
 							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
 						/>
-						<Select 
-							id={[ 'filter', 'condition', item.id ].join('-')} 
-							className="condition grey" 
-							arrowClassName="light"
-							options={conditionOptions} 
-							value={item.condition} 
-							onChange={(v: string) => { this.onChange(item.id, 'condition', v); }} 
-						/>
-					</div>
-
-					{item.condition != I.FilterCondition.None ? (
-						<div className={cv.join(' ')}>
-							{value}
+						<div className="condition grey" onClick={(e: any) => { this.onMore(e, item.id); }}>
+							{condition.name}
 						</div>
-					) : ''}
+					</div>
 
 					<div className="buttons">
 						<Icon className="more" onClick={(e: any) => { this.onMore(e, item.id); }} />
@@ -319,10 +125,8 @@ class MenuFilterList extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		const { getId } = this.props;
-
-		this.resize();
-
 		const obj = $(`#${getId()} .content`);
+
 		obj.unbind('click').on('click', () => {
 			menuStore.closeAll(Constant.menuIds.cell);
 		});
@@ -330,47 +134,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		menuStore.closeAll(Constant.menuIds.cell);
-	};
-
-	componentDidUpdate () {
-		this.resize();
-
-		if (this.id) {
-			const ref = this.refObj[this.id];
-			if (ref && ref.setRange) {
-				ref.setRange(this.range);
-			};
-		};
-	};
-
-	valueByType (type: I.RelationType): any {
-		let ret: any = null;
-
-		switch (type) {
-			case I.RelationType.ShortText: 
-			case I.RelationType.LongText: 
-			case I.RelationType.Url: 
-			case I.RelationType.Email: 
-			case I.RelationType.Phone: 
-				ret = '';
-				break;
-
-			case I.RelationType.Object: 
-			case I.RelationType.Status: 
-			case I.RelationType.Tag: 
-				ret = [];
-				break;
-			
-			case I.RelationType.Number:
-			case I.RelationType.Date:
-				ret = 0;
-				break;
-			
-			case I.RelationType.Checkbox:
-				ret = false;
-				break;
-		};
-		return ret;
 	};
 
 	getRelationOptions () {
@@ -393,7 +156,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 			return { 
 				id: relation.relationKey, 
 				name: relation.name, 
-				//icon: 'relation ' + DataUtil.relationClass(relation.format),
 				isHidden: relation.isHidden,
 				format: relation.format,
 			};
@@ -413,8 +175,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 			return;
 		};
 
-		const obj = $(`#${getId()}`);
-		const content = obj.find('.content');
+		const obj = $(`#${getId()} .content`);
 		const first = relationOptions[0];
 		const conditions = DataUtil.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
@@ -423,10 +184,10 @@ class MenuFilterList extends React.Component<Props, {}> {
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
-			value: this.valueByType(first.format),
+			value: DataUtil.formatRelationValue(first, null),
 		});
 
-		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
 		this.save();
 	};
 
@@ -443,7 +204,17 @@ class MenuFilterList extends React.Component<Props, {}> {
 	};
 
 	onMore (e: any, id: number) {
-		
+		const { param, getId } = this.props;
+		const { data } = param;
+
+		menuStore.open('dataviewFilterValues', {
+			element: `#${getId()} #item-${id}`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				...data,
+				itemId: id,
+			}
+		});
 	};
 	
 	onSortEnd (result: any) {
@@ -453,163 +224,43 @@ class MenuFilterList extends React.Component<Props, {}> {
 		const view = getView();
 		const { oldIndex, newIndex } = result;
 
-		this.id = '';
 		view.filters = arrayMove(view.filters, oldIndex, newIndex);
 		this.save();
 	};
 
-	onSubmit (e: any, item: any) {
-		e.preventDefault();
-
-		const { param } = this.props;
-		const { data } = param;
-		const { getView } = data;
-		const view = getView();
-
-		view.filters[item.id].value = this.refObj[item.id].getValue();
-	};
-
-	onChange (id: number, k: string, v: any, timeout?: boolean) {
+	onChange (id: number, k: string, v: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 
-		window.clearTimeout(this.timeoutChange);
-		this.timeoutChange = window.setTimeout(() => {
-			let item = view.filters.find((it: any, i: number) => { return i == id; });
-			let idx = view.filters.findIndex((it: any, i: number) => { return i == id; });
-			if (!item) {
-				return;
-			};
-
-			item = Util.objectCopy(item);
-			item[k] = v;
-	
-			// Remove value when we change relation, filter non unique entries
-			if (k == 'relationKey') {
-				const relation = dbStore.getRelation(rootId, blockId, v);
-				const conditions = DataUtil.filterConditionsByType(relation.format);
-
-				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-				item.value = this.valueByType(relation.format);
-
-				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-					return (i == id) || 
-					(it.relationKey != v) || 
-					((it.relationKey == v) && (it.condition != item.condition)); 
-				});
-			};
-
-			if (k == 'condition') {
-				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-					return (i == id) || 
-					(it.relationKey != item.relationKey) || 
-					((it.relationKey == item.relationKey) && (it.condition != v)); 
-				});
-			};
-
-			view.filters[idx] = item;
-
-			this.save();
-			this.forceUpdate();
-		}, timeout ? TIMEOUT : 0);
-	};
-
-	onSubmitDate (e: any, item: any) {
-		e.preventDefault();
-
-		const value = Util.parseDate(this.refObj[item.id].getValue());
-		
-		this.onChange(item.id, 'value', value);
-		this.onCalendar(item.id, value);
-	};
-
-	onFocusDate (e: any, item: any) {
-		const value = item.value || Util.time();
-		
-		if (menuStore.isOpen('dataviewCalendar')) {
-			menuStore.updateData('dataviewCalendar', { value: value });
-		} else {
-			this.onCalendar(item.id, value);
+		let item = view.getFilter(id);
+		if (!item) {
+			return;
 		};
-	};
 
-	onSelect (e: any, item: any) {
-		this.id = item.id.toString();
-		this.range = {
-			from: e.currentTarget.selectionStart,
-			to: e.currentTarget.selectionEnd,
+		item = Util.objectCopy(item);
+		item[k] = v;
+
+		// Remove value when we change relation, filter non unique entries
+		if (k == 'relationKey') {
+			const relation = dbStore.getRelation(rootId, blockId, v);
+			const conditions = DataUtil.filterConditionsByType(relation.format);
+
+			item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+			item.value = DataUtil.formatRelationValue(relation, null);
+
+			view.filters = view.filters.filter((it: I.Filter, i: number) => { 
+				return (i == id) || 
+				(it.relationKey != v) || 
+				((it.relationKey == v) && (it.condition != item.condition)); 
+			});
 		};
-	};
 
-	onCalendar (id: number, value: number) {
-		menuStore.open('dataviewCalendar', {
-			element: `#menuDataviewFilter #item-${id}-value`,
-			offsetY: 4,
-			horizontal: I.MenuDirection.Center,
-			onOpen: () => {
-				window.setTimeout(() => { this.refObj[id].focus(); }, 200);
-			},
-			data: { 
-				value: value, 
-				onChange: (value: number) => {
-					this.onChange(id, 'value', value);
-				},
-			},
-		});
-	};
+		view.setFilter(id, item);
 
-	onTag (e: any, item: any) {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
-		const id = [ 'item', item.id, 'value' ].join('-');
-
-		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
-			menuStore.open('dataviewOptionValues', { 
-				element: '#' + getId() + ' #' + id,
-				offsetY: 4,
-				className: 'fromFilter',
-				data: { 
-					rootId: rootId,
-					blockId: blockId,
-					value: item.value || [], 
-					types: relation.objectTypes,
-					relation: observable.box(relation),
-					onChange: (value: any) => {
-						this.onChange(item.id, 'value', value);
-					},
-				},
-			});
-		});
-	};
-
-	onObject (e: any, item: any) {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
-		const id = [ 'item', item.id, 'value' ].join('-');
-
-		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList' ], () => {
-			menuStore.open('dataviewObjectValues', { 
-				element: '#' + getId() + ' #' + id,
-				offsetY: 4,
-				className: 'fromFilter',
-				data: { 
-					rootId: rootId,
-					blockId: blockId,
-					value: item.value || [], 
-					types: relation.objectTypes,
-					relation: observable.box(relation),
-					onChange: (value: any) => {
-						this.onChange(item.id, 'value', value);
-					},
-				},
-			});
-		});
+		this.save();
+		this.forceUpdate();
 	};
 
 	save () {
@@ -619,9 +270,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 		const view = getView();
 
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
-	};
-
-	resize () {
 	};
 
 };
