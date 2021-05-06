@@ -97,7 +97,7 @@ class MenuOptionValues extends React.Component<Props> {
 
 	componentDidUpdate () {
 		this.setActive(null, true);
-		this.props.position();
+		window.setTimeout(() => { this.props.position(); });
 	};
 
 	componentWillUnmount () {
