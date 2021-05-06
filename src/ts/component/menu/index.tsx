@@ -42,7 +42,8 @@ import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewObjectValues from './dataview/object/values';
-import MenuDataviewFilter from './dataview/filter';
+import MenuDataviewFilterList from './dataview/filter/list';
+import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
@@ -109,7 +110,8 @@ const Components: any = {
 	dataviewOptionList:		 MenuDataviewOptionList,
 	dataviewOptionEdit:		 MenuDataviewOptionEdit,
 	dataviewOptionValues:	 MenuDataviewOptionValues,
-	dataviewFilter:			 MenuDataviewFilter,
+	dataviewFilterList:		 MenuDataviewFilterList,
+	dataviewFilterValues:	 MenuDataviewFilterValues,
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,
 	dataviewViewEdit:		 MenuDataviewViewEdit,

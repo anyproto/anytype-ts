@@ -131,7 +131,7 @@ class Controls extends React.Component<Props, State> {
 		if (id == 'manager') {
 			tabs = [
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-				{ id: 'filter', name: 'Filters', component: 'dataviewFilter' },
+				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
 			];
 		};

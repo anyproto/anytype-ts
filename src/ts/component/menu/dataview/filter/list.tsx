@@ -13,11 +13,10 @@ interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
-const raf = require('raf');
 const TIMEOUT = 500;
 
 @observer
-class MenuFilter extends React.Component<Props, {}> {
+class MenuFilterList extends React.Component<Props, {}> {
 	
 	refObj: any = {};
 	timeoutChange: number = 0;
@@ -272,7 +271,10 @@ class MenuFilter extends React.Component<Props, {}> {
 						</div>
 					) : ''}
 
-					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+					<div className="buttons">
+						<Icon className="more" onClick={(e: any) => { this.onMore(e, item.id); }} />
+						<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+					</div>
 				</form>
 			);
 		});
@@ -438,6 +440,10 @@ class MenuFilter extends React.Component<Props, {}> {
 		this.save();
 
 		menuStore.close('select');
+	};
+
+	onMore (e: any, id: number) {
+		
 	};
 	
 	onSortEnd (result: any) {
@@ -620,4 +626,4 @@ class MenuFilter extends React.Component<Props, {}> {
 
 };
 
-export default MenuFilter;
+export default MenuFilterList;
