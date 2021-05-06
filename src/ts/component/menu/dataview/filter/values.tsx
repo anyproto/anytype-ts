@@ -160,7 +160,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				break;
 		};
 
-		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
+		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
 			value = null;
 		};
 
@@ -178,11 +178,14 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 						/>
 					</div>
 				</div>
-				<div className="section">
-					<form id="value" className="item" onSubmit={onSubmit}>
-						{value}
-					</form>
-				</div>
+
+				{value ? (
+					<div className="section">
+						<form id="value" className="item" onSubmit={onSubmit}>
+							{value}
+						</form>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -205,7 +208,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	onChange (k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, itemId } = data;
+		const { rootId, blockId, getView, itemId } = data;
 		const view = getView();
 		
 		let item = view.getFilter(itemId);
@@ -219,6 +222,11 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			item[k] = v;
 	
 			if (k == 'condition') {
+				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
+					const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+					item.value = DataUtil.formatRelationValue(relation, null);
+				};
+
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 					return (i == itemId) || 
 					(it.relationKey != item.relationKey) || 

@@ -7,40 +7,19 @@
 
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
 		.item {
-			.input { user-select: text; height: 22px; border: 0px; padding: 0px; }
-
-			.icon.checkbox { 
-				width: 32px; height: 28px; margin: 0px; background-image: url('~img/icon/dataview/checkbox0.svg'); 
-				border-radius: 4px; border: solid 1px #d2d0c2;
-			}
-			.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-
 			.grey { color: $colorDarkGrey; }
 			.iconObject { margin-right: 10px; }
+
 			.buttons { line-height: 44px; }
 			.buttons {
 				.icon { vertical-align: middle; }
 			}
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
-			.select.operator { width: auto; }
-			.select.operator .name { overflow: visible; }
 			.select:hover, .select.active { background: none; }
-
-			.select.isList { margin: 0px; }
-			.select.isList.withValues { padding-right: 0px; }
-
 			.select {
-				.element { display: inline-block; margin-right: 6px; line-height: 20px; }
-				.element {
-					.iconObject { flex-shrink: 0; }
-					.name { width: 100%; @include text-overflow-nw; }
-					.tagItem { vertical-align: top; margin-top: 1px; }
-				}
 				.icon.arrow { display: none; }
 			}
-
-			.value { padding: 10px 0px; margin: 0px 6px 0px 22px; border-bottom: 1px solid #eae9e0; }
 
 			.txt { width: calc(100% - 72px); line-height: 22px; }
 		}
@@ -57,6 +36,12 @@
 
 	.menu.menuDataviewFilterValues { width: 360px; }
 	.menu.menuDataviewFilterValues {
+		.select { border: 0px; padding: 0px; display: block; }
+		.select:hover, .select.active { background: none; }
+		.select {
+			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
+		}
 
+		.input { border: 0px; padding: 0px; height: 20px; }
 	}
 }
