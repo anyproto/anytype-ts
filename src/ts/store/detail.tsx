@@ -106,6 +106,11 @@ class DetailStore {
 	get (rootId: string, id: string, keys?: string[]): any {
 		let map = this.map.get(rootId) || new Map();
 		let list = map.get(id) || [];
+
+		if (!list.length) {
+			return { _objectEmpty_: true };
+		};
+		
 		let object: any = {};
 
 		if (keys) {
