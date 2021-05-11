@@ -322,7 +322,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				menuParam.offsetY = -64;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					type: I.NavigationType.Link, 
+					type: I.NavigationType.Link,
+					position: I.BlockPosition.Replace,
 				});
 				break;
 		};
