@@ -238,7 +238,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 		});
 
 		options.sort(DataUtil.sortByName);
-
 		return options;
 	};
 	

@@ -191,7 +191,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 	getScrollContainer () {
 		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage .selection') : $(window);
+		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getWrapper () {

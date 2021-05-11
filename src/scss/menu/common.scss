@@ -89,11 +89,6 @@
 		}
 		.item.isReadOnly.hover::before { opacity: 0; }
 
-		.item.active::before { background: rgba(172, 169, 150, 0.1); z-index: 0; }
-		.item.active {
-			.name { z-index: 1; }
-		}
-
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
 		
 		.item {

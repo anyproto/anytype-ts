@@ -14,6 +14,7 @@ class Keyboard {
 	timeoutPin: number = 0;
 	pressed: string[] = [];
 	match: any = {};
+	matchPopup: any = {};
 	
 	isDragging: boolean = false;
 	isResizing: boolean = false;
@@ -38,7 +39,6 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const { account } = authStore;
-		const { root } = blockStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
