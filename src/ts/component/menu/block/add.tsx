@@ -319,7 +319,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 			case 'existing':
 				menuId = 'searchObject';
-				menuParam.offsetY = -64;
+				menuParam.className = 'single';
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,

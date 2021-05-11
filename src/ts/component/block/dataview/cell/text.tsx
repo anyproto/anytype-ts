@@ -278,14 +278,19 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
-		let { relation, onChange } = this.props;
+		let { relation, onChange, index, getRecord } = this.props;
 		let value = this.ref.getValue();
+		let record = getRecord(index);
 
 		if (value && (relation.format == I.RelationType.Date)) {
 			value = Util.parseDate(value);
 		};
 
 		keyboard.setFocus(false);
+
+		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
+			this.setState({ editing: false });
+		};
 
 		if (onChange) {
 			onChange(value, () => {
