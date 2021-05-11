@@ -22,8 +22,8 @@
 			}
 
 			.condition { margin-right: 4px; }
-			.value { white-space: nowrap; overflow: hidden; }
-			.tagItem { margin-right: 4px; }
+			.value { white-space: nowrap; overflow: hidden; line-height: 20px; }
+			.tagItem { margin: 1px 4px 0px 0px; vertical-align: top; }
 			.element { display: inline-block; vertical-align: top; margin-right: 4px; line-height: 20px; }
 			.element {
 				.iconObject { margin-right: 2px; }
