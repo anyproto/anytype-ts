@@ -257,16 +257,21 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			return;
 		};
 
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+
 		this.checkClear(v);
 
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
 			item = Util.objectCopy(item);
 			item[k] = v;
+
+			if (k == 'value') {
+				item[k] = DataUtil.formatRelationValue(relation, item[k]);
+			};
 	
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
-					const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 					item.value = DataUtil.formatRelationValue(relation, null);
 				};
 
