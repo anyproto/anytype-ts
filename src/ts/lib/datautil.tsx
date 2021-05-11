@@ -577,7 +577,7 @@ class DataUtil {
 
 		let i = 0;
 		if (config.allowDataview) {
-			let objectTypes = Util.objectCopy(dbStore.objectTypes);
+			let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
 			};
