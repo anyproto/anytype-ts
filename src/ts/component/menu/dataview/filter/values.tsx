@@ -48,14 +48,26 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		let list = [];
 		let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
+		const ItemAdd = (item: any) => (
+			<div className="item add" onClick={item.onClick}>
+				<Icon className="plus" />
+				<div className="name">Add</div>
+			</div>
+		);
+
 		switch (relation.format) {
 
 			case I.RelationType.Tag:
 			case I.RelationType.Status:
-				Item = (item: any) => {
+				Item = (element: any) => {
 					return (
-						<div className="element">
-							<Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />
+						<div className="item" >
+							<div className="clickable" onClick={(e: any) => { this.onTag(e, element); }}>
+								<Tag {...element} key={item.id} className={DataUtil.tagClass(relation.format)} />
+							</div>
+							<div className="buttons">
+								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
+							</div>
 						</div>
 					);
 				};
@@ -66,30 +78,22 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				list = list.filter((it: any) => { return it && it.id; });
 
 				value = (
-					<div onClick={(e: any) => { this.onTag(e, item); }}>
-						{list.length ? (
-							<React.Fragment>
-								{list.map((item: any, i: number) => {
-									return <Item key={item.id} {...item} />;
-								})}
-							</React.Fragment>
-						) : (
-							<React.Fragment>
-								<div className="name">Add options</div>
-								<Icon className="arrow light" />
-							</React.Fragment>
-						)}
-					</div>
+					<React.Fragment>
+						<ItemAdd onClick={(e: any) => { this.onTag(e, item); }} />
+						{list.map((element: any) => (
+							<Item key={element.id} {...element} />
+						))}
+					</React.Fragment>
 				);
 				break;
 			
 			case I.RelationType.Object:
-				Item = (item: any) => {
+				Item = (element: any) => {
 					return (
-						<div className="element">
+						<div className="item" onClick={(e: any) => { this.onObject(e, item); }}>
 							<div className="flex">
-								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<IconObject object={element} />
+								<div className="name">{element.name}</div>
 							</div>
 						</div>
 					);
@@ -103,20 +107,12 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				list = list.filter((it: any) => { return !it._objectEmpty_; });
 
 				value = (
-					<div onClick={(e: any) => { this.onObject(e, item); }}>
-						{list.length ? (
-							<React.Fragment>
-								{list.map((item: any, i: number) => {
-									return <Item key={i} {...item} />;
-								})}
-							</React.Fragment>
-						) : (
-							<React.Fragment>
-								<div className="name">Add objects</div>
-								<Icon className="arrow light" />
-							</React.Fragment>
-						)}
-					</div>
+					<React.Fragment>
+						<ItemAdd onClick={(e: any) => { this.onObject(e, item); }} />
+						{list.map((item: any, i: number) => {
+							return <Item key={i} {...item} />;
+						})}
+					</React.Fragment>
 				);
 				break;
 
@@ -181,7 +177,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 				{value ? (
 					<div className="section">
-						<form id="value" className="item" onSubmit={onSubmit}>
+						<form id="value" onSubmit={onSubmit}>
 							{value}
 						</form>
 					</div>
@@ -241,6 +237,24 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		}, timeout ? TIMEOUT : 0);
 	};
 
+	onRemove (e: any, element: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView, itemId } = data;
+		const view = getView();
+		
+		let item = view.getFilter(itemId);
+		if (!item) {
+			return;
+		};
+
+		let value = Util.objectCopy(item.value);
+		value = value.filter((it: any) => { return it != element.id; });
+		value = Util.arrayUnique(value);
+
+		this.onChange('value', value);
+	};
+
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
@@ -296,22 +310,26 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		});
 	};
 
-	onTag (e: any, item: any) {
-		const { param, getId } = this.props;
+	onTag (e: any, element: any) {
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, getView, itemId } = data;
+		const item = getView().getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
-			menuStore.open('dataviewOptionValues', { 
+		console.log(item);
+
+		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList' ], () => {
+			menuStore.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
 				offsetY: 4,
 				className: 'fromFilter',
+				width: getSize().width,
+				horizontal: I.MenuDirection.Center,
 				data: { 
 					rootId: rootId,
 					blockId: blockId,
 					value: item.value || [], 
-					types: relation.objectTypes,
 					relation: observable.box(relation),
 					onChange: (value: any) => {
 						this.onChange('value', value);

@@ -302,6 +302,8 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { canAdd } = data;
 		const relation = data.relation.get();
 
+		console.trace();
+
 		let items = relation.selectDict || [];
 		let sections: any = {};
 		let ret = [];

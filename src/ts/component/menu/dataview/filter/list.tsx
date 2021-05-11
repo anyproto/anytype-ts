@@ -58,6 +58,78 @@ class MenuFilterList extends React.Component<Props, {}> {
 			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 			const condition = conditionOptions.find((it: any) => { return it.id == item.condition; });
 
+			let value = null;
+			let list = [];
+			let Item = null;
+
+			switch (relation.format) {
+
+				default:
+					value = `“${item.value}”`
+					break;
+
+				case I.RelationType.Date:
+					value = Util.date('d.m.Y', item.value);
+					break;
+
+				case I.RelationType.Checkbox:
+					value = item.value ? 'checked' : 'unchecked';
+					break;
+
+				case I.RelationType.Tag:
+				case I.RelationType.Status:
+					list = (item.value || []).map((id: string, i: number) => { 
+						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+					});
+					list = list.filter((it: any) => { return it && it.id; });
+
+					if (list.length) {
+						value = (
+							<React.Fragment>
+								{list.map((item: any, i: number) => {
+									return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
+								})}
+							</React.Fragment>
+						);
+					} else {
+						value = 'empty';
+					};
+					break;
+
+				case I.RelationType.Object:
+					Item = (item: any) => {
+						return (
+							<div className="element">
+								<div className="flex">
+									<IconObject object={item} />
+									<div className="name">{item.name}</div>
+								</div>
+							</div>
+						);
+					};
+
+					list = (item.value || []).map((it: string) => { 
+						const object = detailStore.get(rootId, it, []);
+						const { iconImage, iconEmoji, name } = object;
+						return object;
+					});
+					list = list.filter((it: any) => { return !it._objectEmpty_; });
+
+					value = (
+						<React.Fragment>
+							{list.map((item: any, i: number) => {
+								return <Item key={i} {...item} />;
+							})}
+						</React.Fragment>
+					);
+					break;
+
+			};
+
+			if (item.condition == I.FilterCondition.None) {
+				value = '';
+			};
+
 			return (
 				<form id={'item-' + item.id} className="item">
 					<Handle />
@@ -72,8 +144,15 @@ class MenuFilterList extends React.Component<Props, {}> {
 							value={item.relationKey} 
 							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
 						/>
-						<div className="condition grey" onClick={(e: any) => { this.onMore(e, item.id); }}>
-							{condition.name}
+						<div className="flex" onClick={(e: any) => { this.onMore(e, item.id); }}>
+							<div className="condition grey">
+								{condition.name}
+							</div>
+							{value ? (
+								<div className="value grey">
+									{value}
+								</div>
+							) : ''}
 						</div>
 					</div>
 
