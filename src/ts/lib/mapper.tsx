@@ -2,9 +2,7 @@ import { I, M, Decode, DataUtil, Util, Encode } from 'ts/lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const Relation = require('lib/pkg/lib/pb/relation/protos/relation_pb.js');
 const Rpc = Commands.Rpc;
-const ContentCase = Model.Block.ContentCase;
 
 const Mapper = {
 
@@ -504,7 +502,7 @@ const Mapper = {
 		},
 
 		ObjectType: (obj: any) => {
-			const item = new Relation.ObjectType();
+			const item = new Model.ObjectType();
 			
 			item.setUrl(obj.id);
 			item.setName(obj.name);
@@ -512,13 +510,12 @@ const Mapper = {
 			item.setIconemoji(obj.iconEmoji);
 			item.setHidden(obj.isHidden);
 			item.setRelationsList((obj.relations || []).map(Mapper.To.Relation));
-			item.setTypesList([]);
 
 			return item;
 		},
 
 		Relation: (obj: any) => {
-			const item = new Relation.Relation();
+			const item = new Model.Relation();
 			
 			item.setKey(obj.relationKey);
 			item.setFormat(obj.format);
@@ -535,7 +532,7 @@ const Mapper = {
 		},
 
 		SelectOption: (obj: any) => {
-			const item = new Relation.Relation.Option();
+			const item = new Model.Relation.Option();
 
 			item.setId(obj.id);
 			item.setText(obj.text);
