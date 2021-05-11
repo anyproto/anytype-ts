@@ -24,7 +24,10 @@
 			.condition { margin-right: 4px; }
 			.value { white-space: nowrap; overflow: hidden; }
 			.tagItem { margin-right: 4px; }
-			.element { display: inline-block; vertical-align: middle; }
+			.element { display: inline-block; vertical-align: top; margin-right: 4px; line-height: 20px; }
+			.element {
+				.iconObject { margin-right: 2px; }
+			}
 
 			.txt { width: calc(100% - 72px); line-height: 22px; }
 		}
@@ -52,7 +55,7 @@
 		.item.add:hover::before, .item.add.hover:hover::before { opacity: 1 !important; }
 
 		.item {
-			.clickable { width: 100%; height: 20px; }
+			.clickable { width: 100%; height: 20px; display: flex; }
 			.buttons { position: absolute; right: 14px; top: 4px; }
 		}
 		.item:hover, .item.hover {

@@ -220,12 +220,12 @@ class DataUtil {
 			case I.RelationType.Number:
 			case I.RelationType.Date:
 				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreater') }, 
+					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLess') }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqual') }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqual') },
 				]);
 				break;
 			

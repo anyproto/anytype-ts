@@ -90,10 +90,13 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			case I.RelationType.Object:
 				Item = (element: any) => {
 					return (
-						<div className="item" onClick={(e: any) => { this.onObject(e, item); }}>
-							<div className="flex">
+						<div className="item">
+							<div className="clickable" onClick={(e: any) => { this.onObject(e, item); }}>
 								<IconObject object={element} />
 								<div className="name">{element.name}</div>
+							</div>
+							<div className="buttons">
+								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
 							</div>
 						</div>
 					);
@@ -118,40 +121,46 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 			case I.RelationType.Checkbox:
 				value = (
-					<Select 
-						id={[ 'filter', 'checkbox', item.id ].join('-')} 
-						className="operator" 
-						arrowClassName="light"
-						options={checkboxOptions} 
-						value={item.value ? '1' : '0'} 
-						onChange={(v: string) => { this.onChange('value', Boolean(Number(v)), true); }} 
-					/>
+					<div className="item">
+						<Select 
+							id={[ 'filter', 'checkbox', item.id ].join('-')} 
+							className="operator" 
+							arrowClassName="light"
+							options={checkboxOptions} 
+							value={item.value ? '1' : '0'} 
+							onChange={(v: string) => { this.onChange('value', Boolean(Number(v)), true); }} 
+						/>
+					</div>
 				);
 				break;
 
 			case I.RelationType.Date:
 				value = (
-					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
-						value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
-						placeHolder="dd.mm.yyyy hh:mm:ss"
-						maskOptions={{ mask: '99.99.9999 99:99:99' }}
-						onFocus={(e: any) => { this.onFocusDate(e, item); }}
-						onSelect={(e: any) => { this.onSelect(e, item); }}
-					/>
+					<div className="item">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
+							placeHolder="dd.mm.yyyy hh:mm:ss"
+							maskOptions={{ mask: '99.99.9999 99:99:99' }}
+							onFocus={(e: any) => { this.onFocusDate(e, item); }}
+							onSelect={(e: any) => { this.onSelect(e, item); }}
+						/>
+					</div>
 				);
 				onSubmit = (e: any) => { this.onSubmitDate(e, item); };
 				break;
 
 			default:
 				value = (
-					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
-						value={item.value} 
-						placeHolder={translate('commonValue')} 
-						onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
-						onSelect={(e: any) => { this.onSelect(e, item); }}
-					/>
+					<div className="item">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							value={item.value} 
+							placeHolder={translate('commonValue')} 
+							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
+							onSelect={(e: any) => { this.onSelect(e, item); }}
+						/>
+					</div>
 				);
 				break;
 		};
@@ -317,15 +326,13 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const item = getView().getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		console.log(item);
-
 		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList' ], () => {
 			menuStore.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
-				offsetY: 4,
 				className: 'fromFilter',
 				width: getSize().width,
 				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
 				data: { 
 					rootId: rootId,
 					blockId: blockId,
@@ -340,16 +347,18 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	};
 
 	onObject (e: any, item: any) {
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
 		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList' ], () => {
-			menuStore.open('dataviewObjectValues', { 
+			menuStore.open('dataviewObjectList', { 
 				element: `#${getId()} #value`,
-				offsetY: 4,
 				className: 'fromFilter',
+				width: getSize().width,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
 				data: { 
 					rootId: rootId,
 					blockId: blockId,
