@@ -512,6 +512,7 @@ const Mapper = {
 			item.setIconemoji(obj.iconEmoji);
 			item.setHidden(obj.isHidden);
 			item.setRelationsList((obj.relations || []).map(Mapper.To.Relation));
+			item.setTypesList([]);
 
 			return item;
 		},
