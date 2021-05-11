@@ -123,8 +123,8 @@ class MenuFilterList extends React.Component<Props, {}> {
 					break;
 			};
 
-			if (item.condition == I.FilterCondition.None) {
-				value = '';
+			if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
+				value = null;
 			};
 
 			return (
@@ -208,10 +208,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 		});
 	};
 
-	componentDidUpdate () {
-		console.log('UPDATE');
-	};
-
 	componentWillUnmount () {
 		menuStore.closeAll(Constant.menuIds.cell);
 	};
@@ -231,7 +227,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 			return true;
 		});
 
-		const options: any[] = relations.map((it: I.ViewRelation) => {
+		let options: any[] = relations.map((it: I.ViewRelation) => {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return { 
 				id: relation.relationKey, 
@@ -240,6 +236,8 @@ class MenuFilterList extends React.Component<Props, {}> {
 				format: relation.format,
 			};
 		});
+
+		options.sort(DataUtil.sortByName);
 
 		return options;
 	};

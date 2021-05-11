@@ -45,7 +45,7 @@
 		}
 	}
 
-	.menu.menuDataviewFilterValues { width: 360px; }
+	.menu.menuDataviewFilterValues { width: 288px; }
 	.menu.menuDataviewFilterValues {
 		.item { display: flex; }
 
@@ -58,10 +58,22 @@
 
 		.item {
 			.clickable { width: 100%; height: 20px; display: flex; }
-			.buttons { position: absolute; right: 14px; top: 4px; }
+			.buttons { position: absolute; right: 8px; top: 4px; }
+
+			.icon.clear { 
+				width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 10px; top: 4px;
+				cursor: pointer; opacity: 0; margin: 0px; transition: opacity 0.2s ease-in-out;
+			}
+			.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
+			.icon.clear.active { opacity: 1; }
 		}
+		.item.withCaption {
+			.clickable { width: calc(100% - 46px); }
+		}
+
 		.item:hover, .item.hover {
 			.clickable { margin-right: 6px; width: calc(100% - 30px); }
+			.caption { display: none; }
 		}
 
 		.tagItem { vertical-align: top; margin-top: 1px; }

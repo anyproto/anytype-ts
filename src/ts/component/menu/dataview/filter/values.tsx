@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, translate } from 'ts/lib';
+import * as ReactDOM from 'react-dom';
+import { I, DataUtil, Util, translate } from 'ts/lib';
 import { Select, Tag, Icon, IconObject, Input } from 'ts/component';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
@@ -7,6 +8,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 const TIMEOUT = 500;
 
@@ -29,6 +31,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		this.onSelect = this.onSelect.bind(this);
 		this.onObject = this.onObject.bind(this);
 		this.onTag = this.onTag.bind(this);
+		this.onClear = this.onClear.bind(this);
 	};
 
 	render () {
@@ -36,13 +39,13 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
 			{ id: '1', name: 'Checked' },
 			{ id: '0', name: 'Unchecked' },
 		];
-		
+
 		let value = null;
 		let Item = null;
 		let list = [];
@@ -88,12 +91,16 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				break;
 			
 			case I.RelationType.Object:
-				Item = (element: any) => {
+				Item = (element: any) => {	
+					const type = dbStore.getObjectType(element.type);
 					return (
-						<div className="item">
+						<div className="item withCaption">
 							<div className="clickable" onClick={(e: any) => { this.onObject(e, item); }}>
 								<IconObject object={element} />
 								<div className="name">{element.name}</div>
+							</div>
+							<div className="caption">
+								{type?.name}
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
@@ -103,9 +110,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				};
 
 				list = (item.value || []).map((it: string) => { 
-					const object = detailStore.get(rootId, it, []);
-					const { iconImage, iconEmoji, name } = object;
-					return object;
+					return detailStore.get(rootId, it, []);
 				});
 				list = list.filter((it: any) => { return !it._objectEmpty_; });
 
@@ -145,6 +150,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 							onFocus={(e: any) => { this.onFocusDate(e, item); }}
 							onSelect={(e: any) => { this.onSelect(e, item); }}
 						/>
+						<Icon className="clear" onClick={this.onClear} />
 					</div>
 				);
 				onSubmit = (e: any) => { this.onSubmitDate(e, item); };
@@ -160,6 +166,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
 							onSelect={(e: any) => { this.onSelect(e, item); }}
 						/>
+						<Icon className="clear" onClick={this.onClear} />
 					</div>
 				);
 				break;
@@ -197,6 +204,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.init();
 	};
 
 	componentWillUnmount () {
@@ -212,7 +220,9 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const item = view.getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		if (this.ref) {
+		this.init();
+
+		if (relation && this.ref) {
 			if (this.ref.setValue) {
 				if (relation.format == I.RelationType.Date) {
 					this.ref.setValue(Util.date('d.m.Y H:i:s', item.value));
@@ -227,6 +237,15 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		};
 	};
 
+	init () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView, itemId } = data;
+		const item = getView().getFilter(itemId);
+
+		this.checkClear(item.value);
+	};
+
 	onChange (k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
@@ -237,6 +256,8 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		if (!item) {
 			return;
 		};
+
+		this.checkClear(v);
 
 		window.clearTimeout(this.timeoutChange);
 		this.timeoutChange = window.setTimeout(() => {
@@ -388,6 +409,21 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				},
 			});
 		});
+	};
+
+	checkClear (v: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const clear = node.find('.icon.clear');
+
+		v ? clear.addClass('active') : clear.removeClass('active');
+	};
+
+	onClear (e: any) {
+		this.onChange('value', '');
 	};
 
 };
