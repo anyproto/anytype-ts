@@ -79,6 +79,7 @@ export interface ObjectType {
 	iconEmoji: string;
 	isHidden: boolean;
 	relations: Relation[];
+	types: SmartBlockType[];
 };
 
 export interface Relation {

@@ -135,7 +135,6 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Date:
-				console.log(item.value);
 				value = (
 					<div className="item">
 						<Input 

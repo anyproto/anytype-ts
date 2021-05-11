@@ -407,6 +407,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -430,7 +431,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
 				const filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
 				];
 
 				if (!config.allowDataview) {
@@ -489,7 +490,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					placeHolder: 'Find a type of object...',
 					label: 'Your object type library',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 					],
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);

@@ -192,6 +192,7 @@ const Mapper = {
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),
 				isHidden: obj.getHidden(),
+				types: obj.getTypesList(),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 			};
 		},
