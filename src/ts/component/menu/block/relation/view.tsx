@@ -260,7 +260,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 	};

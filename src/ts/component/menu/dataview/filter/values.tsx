@@ -267,7 +267,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			item[k] = v;
 
 			if (k == 'value') {
-				item[k] = DataUtil.formatRelationValue(relation, item[k]);
+				item[k] = DataUtil.formatRelationValue(relation, item[k], false);
 			};
 	
 			if (k == 'condition') {

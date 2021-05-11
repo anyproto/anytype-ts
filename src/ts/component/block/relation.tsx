@@ -129,7 +129,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 	};

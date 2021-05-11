@@ -149,7 +149,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details);
 	};
@@ -218,7 +218,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
-				{ key: relationKey, value: DataUtil.formatRelationValue(relation, !object[relationKey]) },
+				{ key: relationKey, value: DataUtil.formatRelationValue(relation, !object[relationKey], true) },
 			];
 			C.BlockSetDetails(rootId, details);
 			return;

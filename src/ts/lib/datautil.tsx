@@ -996,7 +996,7 @@ class DataUtil {
 		return 0;
 	};
 
-	formatRelationValue (relation: I.Relation, value: any) {
+	formatRelationValue (relation: I.Relation, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
 				value = String(value || '');
@@ -1020,7 +1020,7 @@ class DataUtil {
 				value = Util.arrayUnique(value);
 				value = value.map((it: any) => { return String(it || ''); });
 
-				if (relation.maxCount) {
+				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
 				};
 				break;
