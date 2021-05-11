@@ -222,10 +222,10 @@ class DataUtil {
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
 					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') }, 
-					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreater') }, 
-					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLess') }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqual') }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqual') },
+					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
+					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
 				]);
 				break;
 			
