@@ -290,6 +290,7 @@ class CellText extends React.Component<Props, State> {
 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
 			this.setState({ editing: false });
+			return;
 		};
 
 		if (onChange) {
