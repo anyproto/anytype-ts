@@ -230,7 +230,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	onChange (k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, itemId } = data;
+		const { rootId, blockId, getView, itemId, save } = data;
 		const view = getView();
 		
 		let item = view.getFilter(itemId);
@@ -258,7 +258,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 			view.setFilter(itemId, item);
 
-			this.save();
+			save();
 			this.forceUpdate();
 		}, timeout ? TIMEOUT : 0);
 	};
@@ -390,15 +390,6 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		});
 	};
 
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, rootId, blockId, onSave } = data;
-		const view = getView();
-
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
-	};
-    
 };
 
 export default MenuDataviewFilterValues;

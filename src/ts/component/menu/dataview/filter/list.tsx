@@ -7,7 +7,6 @@ import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
 
@@ -20,6 +19,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.save = this.save.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onDelete = this.onDelete.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
@@ -109,9 +109,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 					};
 
 					list = (item.value || []).map((it: string) => { 
-						const object = detailStore.get(rootId, it, []);
-						const { iconImage, iconEmoji, name } = object;
-						return object;
+						return detailStore.get(rootId, it, []);
 					});
 					list = list.filter((it: any) => { return !it._objectEmpty_; });
 
@@ -123,7 +121,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 						</React.Fragment>
 					);
 					break;
-
 			};
 
 			if (item.condition == I.FilterCondition.None) {
@@ -211,6 +208,10 @@ class MenuFilterList extends React.Component<Props, {}> {
 		});
 	};
 
+	componentDidUpdate () {
+		console.log('UPDATE');
+	};
+
 	componentWillUnmount () {
 		menuStore.closeAll(Constant.menuIds.cell);
 	};
@@ -291,6 +292,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
+				save: this.save,
 				itemId: id,
 			}
 		});
@@ -348,7 +350,12 @@ class MenuFilterList extends React.Component<Props, {}> {
 		const { getView, rootId, blockId, onSave } = data;
 		const view = getView();
 
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
+			if (onSave) {
+				onSave(message);
+			};
+			window.setTimeout(() => { this.forceUpdate(); }, 50);
+		});
 	};
 
 };
