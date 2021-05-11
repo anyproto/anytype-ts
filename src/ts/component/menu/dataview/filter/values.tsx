@@ -272,7 +272,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	
 			if (k == 'condition') {
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
-					item.value = DataUtil.formatRelationValue(relation, null);
+					item.value = DataUtil.formatRelationValue(relation, null, false);
 				};
 
 				view.filters = view.filters.filter((it: I.Filter, i: number) => { 

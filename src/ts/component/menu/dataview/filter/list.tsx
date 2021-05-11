@@ -261,7 +261,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
-			value: DataUtil.formatRelationValue(first, null),
+			value: DataUtil.formatRelationValue(first, null, false),
 		});
 
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
@@ -326,7 +326,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 			const conditions = DataUtil.filterConditionsByType(relation.format);
 
 			item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-			item.value = DataUtil.formatRelationValue(relation, null);
+			item.value = DataUtil.formatRelationValue(relation, null, false);
 
 			view.filters = view.filters.filter((it: I.Filter, i: number) => { 
 				return (i == id) || 
