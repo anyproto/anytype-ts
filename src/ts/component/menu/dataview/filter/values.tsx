@@ -135,6 +135,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.Date:
+				console.log(item.value);
 				value = (
 					<div className="item">
 						<Input 
@@ -205,8 +206,25 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
     };
 
 	componentDidUpdate () {
-		if (this.ref && this.ref.setRange) {
-			this.ref.setRange(this.range);
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView, itemId } = data;
+		const view = getView();
+		const item = view.getFilter(itemId);
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+
+		if (this.ref) {
+			if (this.ref.setValue) {
+				if (relation.format == I.RelationType.Date) {
+					this.ref.setValue(Util.date('d.m.Y H:i:s', item.value));
+				} else {
+					this.ref.setValue(item.value);
+				};
+			};
+
+			if (this.ref.setRange) {
+				this.ref.setRange(this.range);
+			};
 		};
 	};
 
