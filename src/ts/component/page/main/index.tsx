@@ -17,6 +17,7 @@ const Constant: any = require('json/constant.json');
 class PageMainIndex extends React.Component<Props, {}> {
 	
 	listRef: any = null;
+	id: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -27,6 +28,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onStore = this.onStore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -70,6 +72,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
 							onMore={this.onMore}
+							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							getList={this.getList}
 							helperContainer={() => { return $('#documents').get(0); }} 
@@ -91,6 +94,14 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.resize();
+
+		if (this.id) {
+			const node = $(ReactDOM.findDOMNode(this));
+			const item = node.find(`#item-${this.id}`);
+
+			this.id = '';
+			item.addClass('hover');
+		};
 	};
 
 	componentWillUnmount () {
@@ -267,6 +278,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 				node.find('#item-' + item.id).removeClass('active');
 			}
 		});
+	};
+
+	onSortStart (param: any) {
+		const { node } = param;
+
+		this.id = $(node).data('id');
 	};
 	
 	onSortEnd (result: any) {
