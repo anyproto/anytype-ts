@@ -66,11 +66,11 @@ jobs:
         run: |
           mv dist/*.exe artifacts
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{matrix.os}}
-          path: artifacts
+      #- name: Upload artifacts
+      #  uses: actions/upload-artifact@v1
+      #  with:
+      #    name: ${{matrix.os}}
+      #    path: artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v1
