@@ -2,9 +2,7 @@ import { I, M, Decode, DataUtil, Util, Encode } from 'ts/lib';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const Relation = require('lib/pkg/lib/pb/relation/protos/relation_pb.js');
 const Rpc = Commands.Rpc;
-const ContentCase = Model.Block.ContentCase;
 
 const Mapper = {
 
@@ -165,9 +163,16 @@ const Mapper = {
 		},
 
 		Restrictions: (obj: any): any => {
+			if (!obj) {
+				return {
+					object: [],
+					dataview: [],
+				};
+			};
+
 			return {
-				object: obj.getObjectList() || [],
-				dataview: (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview),
+				object: obj.getObjectList ? (obj.getObjectList() || []) : [],
+				dataview: obj.getDataviewList ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
 			};
 		},
 
@@ -185,6 +190,7 @@ const Mapper = {
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),
 				isHidden: obj.getHidden(),
+				types: obj.getTypesList(),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 			};
 		},
@@ -496,7 +502,7 @@ const Mapper = {
 		},
 
 		ObjectType: (obj: any) => {
-			const item = new Relation.ObjectType();
+			const item = new Model.ObjectType();
 			
 			item.setUrl(obj.id);
 			item.setName(obj.name);
@@ -509,7 +515,7 @@ const Mapper = {
 		},
 
 		Relation: (obj: any) => {
-			const item = new Relation.Relation();
+			const item = new Model.Relation();
 			
 			item.setKey(obj.relationKey);
 			item.setFormat(obj.format);
@@ -526,7 +532,7 @@ const Mapper = {
 		},
 
 		SelectOption: (obj: any) => {
-			const item = new Relation.Relation.Option();
+			const item = new Model.Relation.Option();
 
 			item.setId(obj.id);
 			item.setText(obj.text);

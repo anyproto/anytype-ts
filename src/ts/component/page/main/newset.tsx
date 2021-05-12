@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, IconObject, HeaderMainSet as Header } from 'ts/component';
+import { Icon, Title, Label, IconObject, HeaderMainSet as Header, FooterMainEdit as Footer } from 'ts/component';
 import { I, C, Util, DataUtil, translate } from 'ts/lib';
 import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
 
@@ -36,6 +36,7 @@ class PageMainNewSet extends React.Component<Props, {}> {
 		return (
 			<div>
 				<Header {...this.props} rootId="" />
+
 				<div className="wrapper">
 					<IconObject size={96} object={{ iconClass: 'newSet' }} />
 					<Title text={translate('setTitle')} />
@@ -50,6 +51,8 @@ class PageMainNewSet extends React.Component<Props, {}> {
 						))}
 					</div>
 				</div>
+
+				<Footer {...this.props} rootId="" />
 			</div>
 		);
 	};

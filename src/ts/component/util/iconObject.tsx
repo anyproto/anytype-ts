@@ -21,6 +21,7 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection;
 	color?: string;
+	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -123,7 +124,8 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { object, className, size, canEdit, onClick, color } = this.props;
+		const { className, size, canEdit } = this.props;
+		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const cn = [ 'iconObject', 'c' + size ];
 		
@@ -150,8 +152,8 @@ class IconObject extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Human:
 				cn.push('isUser');
-				icn = icn.concat([ 'iconImage', 'c' + size ]);
-				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, size * 2) : this.userSvg())} className={icn.join(' ')} />;
+				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.Task:
@@ -210,8 +212,14 @@ class IconObject extends React.Component<Props, {}> {
 		);
 	};
 
+	getObject () {
+		const { getObject } = this.props;
+		return getObject ? getObject() : this.props.object;
+	};
+
 	onClick (e: any) {
-		const { canEdit, object, onClick, onCheckbox } = this.props;
+		const { canEdit, onClick, onCheckbox } = this.props;
+		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const layoutsEmoji = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.ObjectType ];
 
@@ -233,7 +241,8 @@ class IconObject extends React.Component<Props, {}> {
 	onEmoji (e: any) {
 		e.stopPropagation();
 
-		const { id, offsetX, offsetY, object, onSelect, onUpload } = this.props;
+		const { id, offsetX, offsetY, onSelect, onUpload } = this.props;
+		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const noUpload = layout == I.ObjectLayout.ObjectType;
 
@@ -268,7 +277,8 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	userSvg (): string {
-		const { object, size, color } = this.props;
+		const { size, color } = this.props;
+		const object = this.getObject();
 
 		let name = String(object.name || '');
 		name = SmileUtil.strip(name);

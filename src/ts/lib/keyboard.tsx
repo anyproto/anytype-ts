@@ -14,6 +14,7 @@ class Keyboard {
 	timeoutPin: number = 0;
 	pressed: string[] = [];
 	match: any = {};
+	matchPopup: any = {};
 	
 	isDragging: boolean = false;
 	isResizing: boolean = false;
@@ -38,10 +39,7 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const { account } = authStore;
-		const { root } = blockStore;
-		const { focused } = focus;
-		const rootId = this.isMainEditor() ? this.match.params.id : root;
-		const isMainIndex = this.isMainIndex();
+		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
 
@@ -116,41 +114,54 @@ class Keyboard {
 			if (!check) {
 				return;
 			};
-			if (!this.isMainIndex() && !this.isMainEditor()) {
-				return;
-			};
 
 			e.preventDefault();
-			
-			let targetId = '';
-			let position = I.BlockPosition.Bottom;
-			
-			if (this.isMainEditor()) {
-				const fb = blockStore.getLeaf(rootId, focused);
-				if (fb) {
-					if (fb.isTextTitle()) {
-						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
-						if (first) {
-							targetId = first.id;
-							position = I.BlockPosition.Top;
-						};
-					} else 
-					if (fb.isFocusable()) {
-						targetId = fb.id;
-					};
-				};
-			};
-			
-			DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
-				if (isMainIndex) {
-					DataUtil.objectOpen({ id: message.targetId });
-				} else {
-					DataUtil.objectOpenPopup({ id: message.targetId });
-				};
-			});
+			this.pageCreate();
 		});
 		
 		this.initPinCheck();
+	};
+
+	pageCreate () {
+		const { focused } = focus;
+		const rootId = this.getRootId();
+		const isMainIndex = this.isMainIndex();
+		const isMainEditor = this.isMainEditor();
+
+		if (!isMainIndex && !isMainEditor) {
+			return;
+		};
+
+		let targetId = '';
+		let position = I.BlockPosition.Bottom;
+		
+		if (this.isMainEditor()) {
+			const fb = blockStore.getLeaf(rootId, focused);
+			if (fb) {
+				if (fb.isTextTitle()) {
+					const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
+					if (first) {
+						targetId = first.id;
+						position = I.BlockPosition.Top;
+					};
+				} else 
+				if (fb.isFocusable()) {
+					targetId = fb.id;
+				};
+			};
+		};
+		
+		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
+			if (isMainIndex) {
+				DataUtil.objectOpen({ id: message.targetId });
+			} else {
+				DataUtil.objectOpenPopup({ id: message.targetId });
+			};
+		});
+	};
+
+	getRootId (): string {
+		return this.isMainEditor() ? this.match.params.id : blockStore.root;
 	};
 
 	onKeyUp (e: any) {

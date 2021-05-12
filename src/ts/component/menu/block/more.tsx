@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -27,7 +26,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		const sections = this.getSections();
 		
@@ -54,7 +53,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const readOnly = block.isObjectReadOnly(); 
+			const readOnly = false;//block.isObjectReadOnly(); 
 
 			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: !readOnly };
 			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: !readOnly };
@@ -170,7 +169,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return [];
 		};
 		
-		const object = blockStore.getDetails(rootId, blockId);
+		const object = detailStore.get(rootId, blockId);
 		const cmd = Util.ctrlSymbol();
 
 		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
@@ -239,7 +238,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			sections.push({ children: [
 				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
-				{ id: 'remove', icon: 'remove', name: 'Remove from dashboard' },
+				{ id: 'remove', icon: 'unfav', name: 'Remove from dashboard' },
 			]});
 		} else {
 			sections.push({ children: [
@@ -406,9 +405,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
+		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -430,8 +431,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
-				const filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
 				];
 
 				if (!config.allowDataview) {
@@ -453,7 +454,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
+					filters: filters,
 					type: I.NavigationType.Move, 
 					skipId: rootId,
 					position: I.BlockPosition.Bottom,
@@ -490,7 +500,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					placeHolder: 'Find a type of object...',
 					label: 'Your object type library',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 					],
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);

@@ -17,6 +17,8 @@ class PopupStore {
 	
 	@action
 	open (id: string, param: I.PopupParam) {
+		param.data = param.data || {};
+
 		this.close(id, () => {
 			this.popupList.push({ id: id, param: param });
 		});

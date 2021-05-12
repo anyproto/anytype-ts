@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Title, IconObject, Loader } from 'ts/component';
 import { I, C, Util, translate } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
@@ -36,18 +36,16 @@ class PopupArchive extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(archive, archive);
 		const length = childrenIds.length;
 		const children = blockStore.getChildren(archive, archive);
-		const map = blockStore.getDetailsMap(archive);
-		const size = map.size;
 		
 		const Item = (item: any) => {
 			const content = item.content || {};
-			const details = blockStore.getDetails(archive, content.targetBlockId);
+			const object = detailStore.get(archive, content.targetBlockId);
 			
 			return (
 				<div id={'item-' + content.targetBlockId} className="item" onClick={(e: any) => { this.onSelect(item); }}>
 					<Icon className="checkbox" />
-					<IconObject object={details} size={24} />
-					<div className="name">{details.name}</div>
+					<IconObject object={object} size={24} />
+					<div className="name">{object.name}</div>
 				</div>
 			);
 		};

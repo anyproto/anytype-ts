@@ -142,15 +142,13 @@ class Page extends React.Component<Props, {}> {
 		this.unbind();
 
 		Util.linkPreviewHide(true);
-		keyboard.setMatch(match);
-
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
 		if (isPopup) {
 			return;
 		};
 
-
+		keyboard.setMatch(match);
 		popupStore.closeAll();
 		menuStore.closeAll();
 

@@ -1,5 +1,5 @@
 import { I, C, focus } from 'ts/lib';
-import { commonStore, authStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
@@ -16,7 +16,8 @@ class Action {
 				dbStore.recordsClear(rootId, block.id);
 			};
 
-			blockStore.blocksClear(rootId);
+			blockStore.clear(rootId);
+			detailStore.clear(rootId);
 			dbStore.relationsClear(rootId, rootId);
 			authStore.threadRemove(rootId);
 		});

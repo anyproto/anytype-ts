@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate } from 'ts/lib';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -423,6 +423,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { content } = block;
 		const { color, bgColor } = content;
 		const items = this.getItems();
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
@@ -437,6 +438,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const offsetX = node.outerWidth();
 		const offsetY = -el.outerHeight() - 8;
 		
+		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			menuKey: item.itemId,
@@ -481,8 +483,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				const filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 				];
 
 				if (!config.allowDataview) {
@@ -504,10 +506,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					skipId: rootId,
 					position: I.BlockPosition.Bottom,
+					filters: filters,
 					onSelect: () => { close(); }
 				});
 				break;

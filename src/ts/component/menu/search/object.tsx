@@ -358,9 +358,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds, position, onSelect } = data;
+		const { rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 
-		close();
+		if (!noClose) {
+			close();
+		};
 
 		if (onSelect) {
 			onSelect(item);
@@ -423,7 +425,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
 		const h = this.getHeight();
-		const height = Math.max(300, Math.min(isBig ? 320 : h * LIMIT, items.length * h + 16));
+		const height = Math.max(300, Math.min(h * LIMIT, items.length * h + 16));
 
 		obj.css({ height: height });
 		position();

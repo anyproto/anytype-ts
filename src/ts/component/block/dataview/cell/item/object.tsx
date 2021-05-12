@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
 
@@ -15,7 +15,7 @@ class ItemObject extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, id, iconSize, onClick } = this.props;
-		const object = blockStore.getDetails(rootId, id);
+		const object = detailStore.get(rootId, id, []);
 
 		if (object._objectEmpty_) {
 			return null;

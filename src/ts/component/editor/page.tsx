@@ -27,6 +27,7 @@ const path = window.require('path');
 const userPath = app.getPath('userData');
 
 const THROTTLE = 20;
+const BUTTON_OFFSET = 10;
 
 @observer
 class EditorPage extends React.Component<Props, {}> {
@@ -158,10 +159,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
-		const check = DataUtil.checkDetails(rootId);
 		
 		this.open();
 		
@@ -186,14 +185,13 @@ class EditorPage extends React.Component<Props, {}> {
 		this.close();
 
 		focus.clear(false);
-		Storage.delete('editorId');
 		window.clearInterval(this.timeoutScreen);
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 
 	getScrollContainer () {
 		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage .selection') : $(window);
+		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getWrapper () {
@@ -225,7 +223,6 @@ class EditorPage extends React.Component<Props, {}> {
 		crumbs.addRecent(rootId);
 
 		this.id = rootId;
-		Storage.set('editorId', rootId);
 
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
@@ -371,24 +368,17 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const check = DataUtil.checkDetails(rootId);
+		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const buttonOffset = 10;
 
 		let offset = 140;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 
-		if (check.withIcon && check.withCover) {
-			offset = 366;
-		} else
-		if (check.withIcon) {
-			offset = 256;
-		} else
-		if (check.withCover) {
-			offset = 394;
+		if (featured.length) {
+			offset = featured.offset().top + featured.outerHeight() - BUTTON_OFFSET;
 		};
 
 		// Find hovered block by mouse coords
@@ -428,11 +418,11 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + buttonOffset) && (pageY <= st + rectContainer.height + offset + buttonOffset)) {
+		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + BUTTON_OFFSET) && (pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let ay = pageY - rectContainer.y - buttonOffset - st;
+			let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
 			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');

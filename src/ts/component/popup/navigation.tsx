@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
+import { Icon, Button, Cover, Loader, IconObject } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -61,9 +61,8 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type, rootId, blockId } = data;
-		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, pageId);
+		const { type } = data;
+		const { root } = blockStore;
 		const isRoot = pageId == root;
 
 		let confirm = '';

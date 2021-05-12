@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { blockStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil } from 'ts/lib';
 
@@ -11,6 +11,7 @@ interface Props {
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
 	onMore?(e: any, item: any): void;
+	onSortStart?(param: any): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
 };
@@ -22,14 +23,8 @@ class ListIndex extends React.Component<Props, {}> {
 	
 	timeout: number = 0;
 
-	constructor (props: any) {
-		super(props);
-		
-		this.onSortEnd = this.onSortEnd.bind(this);
-	};
-	
 	render () {
-		const { onSelect, onAdd, onMore, helperContainer, getList } = this.props;
+		const { onSelect, onAdd, onMore, helperContainer, getList, onSortStart, onSortEnd } = this.props;
 		const { root } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		
@@ -40,12 +35,10 @@ class ListIndex extends React.Component<Props, {}> {
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const length = childrenIds.length;
 		const children = getList();
-		const map = blockStore.getDetailsMap(root);
-		const size = map.size;
 		
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
-			const object = blockStore.getDetails(root, content.targetBlockId);
+			const object = detailStore.get(root, content.targetBlockId, []);
 			const { _objectEmpty_, name, layout, iconEmoji, iconImage } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
@@ -85,6 +78,7 @@ class ListIndex extends React.Component<Props, {}> {
 					className={cn.join(' ')} 
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+					data-id={item.id}
 					data-target-block-id={content.targetBlockId}
 				>
 					{icon}
@@ -120,7 +114,8 @@ class ListIndex extends React.Component<Props, {}> {
 					helperClass="isDragging"
 					getContainer={helperContainer}
 					helperContainer={helperContainer} 
-					onSortEnd={this.onSortEnd} 
+					onSortStart={onSortStart}
+					onSortEnd={onSortEnd} 
 				/>
 			</div>
 		);
@@ -133,11 +128,6 @@ class ListIndex extends React.Component<Props, {}> {
 		DataUtil.pageSetDone(item.id, !item.done);
 	};
 	
-	onSortEnd (result: any) {
-		const { onSortEnd } = this.props;
-		onSortEnd(result);
-	};
-
 	onMouseEnter (e: any, item: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);

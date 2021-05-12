@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, dbStore, popupStore, menuStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage } from 'ts/lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -220,12 +220,14 @@ class DataUtil {
 			case I.RelationType.Number:
 			case I.RelationType.Date:
 				ret = ret.concat([ 
-					{ id: I.FilterCondition.Equal,			 name: '=' }, 
-					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
-					{ id: I.FilterCondition.Greater,		 name: '>' }, 
-					{ id: I.FilterCondition.Less,			 name: '<' }, 
-					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
-					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
+					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
 			
@@ -305,9 +307,14 @@ class DataUtil {
 	};
 
 	onAuth () {
+		const redirectTo = Storage.get('redirectTo');
+
+		Storage.delete('redirect');
+		Storage.delete('redirectTo');
+
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push('/main/index');
+			this.history.push(redirectTo ? redirectTo : '/main/index');
 		});
 	};
 
@@ -485,7 +492,7 @@ class DataUtil {
 	};
 	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
+		blockStore.update(rootId, { id: rootId, layout: layout });
 
 		const details = [
 			{ key: 'layout', value: layout },
@@ -515,7 +522,7 @@ class DataUtil {
 		if (update) {
 			block.content.text = String(text || '');
 			block.content.marks = marks || [];
-			blockStore.blockUpdate(rootId, block);
+			blockStore.update(rootId, block);
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
@@ -572,7 +579,7 @@ class DataUtil {
 
 		let i = 0;
 		if (config.allowDataview) {
-			let objectTypes = Util.objectCopy(dbStore.objectTypes);
+			let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
 			};
@@ -757,9 +764,11 @@ class DataUtil {
 				} else 
 				if (c.name && c.name.match(reg)) {
 					ret = true;
+					c._sortWeight_ = 100;
 				} else 
 				if (c.description && c.description.match(reg)) {
 					ret = true;
+					c._sortWeight_ = 10;
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
@@ -769,8 +778,12 @@ class DataUtil {
 						};
 					};
 				};
-				
 				return ret; 
+			});
+			s.children.sort((c1: any, c2: any) => {
+				if (c1._sortWeight_ > c2._sortWeight_) return -1;
+				if (c1._sortWeight_ < c2._sortWeight_) return 1;
+				return 0;
 			});
 			return s.children.length > 0;
 		});
@@ -902,10 +915,10 @@ class DataUtil {
 
 	checkDetails (rootId: string) {
 		const block = blockStore.getLeaf(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ]);
+		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
-			object: details,
+			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [],
@@ -953,7 +966,7 @@ class DataUtil {
 				break;
 		};
 
-		if ((details[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
+		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
 			ret.className.push('withDescription');
 		};
 
@@ -985,15 +998,22 @@ class DataUtil {
 		return 0;
 	};
 
-	formatRelationValue (relation: I.Relation, value: any) {
+	formatRelationValue (relation: I.Relation, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
 				value = String(value || '');
 				break;
 
 			case I.RelationType.Number:
-			case I.RelationType.Date:
 				value = parseFloat(String(value || '0'));
+				break;
+			case I.RelationType.Date:
+				if (value === undefined) {
+					value = null;
+				};
+				if (value !== null) {
+					value = parseFloat(String(value || '0'));
+				};
 				break;
 
 			case I.RelationType.Checkbox:
@@ -1009,7 +1029,7 @@ class DataUtil {
 				value = Util.arrayUnique(value);
 				value = value.map((it: any) => { return String(it || ''); });
 
-				if (relation.maxCount) {
+				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
 				};
 				break;

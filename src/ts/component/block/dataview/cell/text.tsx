@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
-import { commonStore, menuStore } from 'ts/store';
+import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
@@ -17,6 +17,7 @@ const MENU_ID = 'dataviewCalendar';
 @observer
 class CellText extends React.Component<Props, State> {
 
+	_isMounted: boolean = false;
 	state = {
 		editing: false,
 	};
@@ -54,7 +55,7 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value: string = String(record[relation.relationKey] || '');
+		let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 
 		if (relation.format == I.RelationType.LongText) {
 			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
@@ -124,7 +125,7 @@ class CellText extends React.Component<Props, State> {
 					format.push(DataUtil.timeFormat(viewRelation.timeFormat));
 				};
 
-				value = value ? Util.date(format.join(' '), Number(value)) : '';
+				value = value !== null ? Util.date(format.join(' '), Number(value)) : '';
 			};
 		};
 
@@ -177,6 +178,14 @@ class CellText extends React.Component<Props, State> {
 		return content;
 	};
 
+	componentDidMount () {
+		this._isMounted = true;
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	componentDidUpdate () {
 		const { editing } = this.state;
 		const { id, relation, index, getRecord } = this.props;
@@ -184,15 +193,11 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		if (editing) {
-			let value: string = String(record[relation.relationKey] || '');
-
-			if (relation.format == I.RelationType.Number) {
-				value = String(parseFloat(value) || '');
-			};
+			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
-				value = value ? Util.date(format.join(' ').trim(), Number(value)) : '';
+				value = value !== null ? Util.date(format.join(' ').trim(), value) : '';
 			};
 
 			if (this.ref) {
@@ -217,6 +222,10 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	setEditing (v: boolean) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { canEdit } = this.props;
 		const { editing } = this.state;
 
@@ -235,11 +244,11 @@ class CellText extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
-			menuStore.closeAll(Constant.menuIds.cell);
-			this.setState({ editing: false });
-
 			if (onChange) {
-				onChange(value);
+				onChange(value, () => {
+					menuStore.closeAll(Constant.menuIds.cell);
+					this.setState({ editing: false });
+				});
 			};
 		});
 	};
@@ -252,10 +261,10 @@ class CellText extends React.Component<Props, State> {
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
-			menuStore.close(MENU_ID);
-
 			if (onChange) {
-				onChange(value);
+				onChange(value, () => {
+					menuStore.close(MENU_ID);
+				});
 			};
 		});
 	};
@@ -265,20 +274,27 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
-		let { relation, onChange } = this.props;
+		let { relation, onChange, index, getRecord } = this.props;
 		let value = this.ref.getValue();
+		let record = getRecord(index);
 
 		if (value && (relation.format == I.RelationType.Date)) {
 			value = Util.parseDate(value);
 		};
 
 		keyboard.setFocus(false);
-		if (!menuStore.isOpen(MENU_ID)) {
+
+		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
 			this.setState({ editing: false });
+			return;
 		};
 
 		if (onChange) {
-			onChange(value);
+			onChange(value, () => {
+				if (!menuStore.isOpen(MENU_ID)) {
+					this.setState({ editing: false });
+				};
+			});
 		};
 	};
 

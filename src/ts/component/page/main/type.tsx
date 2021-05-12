@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block, Pager } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
@@ -41,7 +41,7 @@ class PageMainType extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
@@ -120,7 +120,7 @@ class PageMainType extends React.Component<Props, {}> {
 		);
 
 		const Row = (item: any) => {
-			const author = blockStore.getDetails(rootId, item.creator);
+			const author = detailStore.get(rootId, item.creator, []);
 			return (
 				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
@@ -161,7 +161,7 @@ class PageMainType extends React.Component<Props, {}> {
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 					</div>
 					
@@ -216,6 +216,8 @@ class PageMainType extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
+
+				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};

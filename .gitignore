@@ -12,7 +12,7 @@ commands.md
 .idea
 tools
 dist/*.node
-*.txt
+docs/*
 electron/env.json
 src/json/schema
 dist/bundle-back.js

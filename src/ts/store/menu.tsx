@@ -26,6 +26,7 @@ class MenuStore {
 		param.offsetX = Number(param.offsetX) || 0;
 		param.offsetY = Number(param.offsetY) || 0;
 		param.tabs = param.tabs || [];
+		param.data = param.data || {};
 
 		if (param.isSub) {
 			param.noAnimation = true;
@@ -94,30 +95,34 @@ class MenuStore {
 			};
 			return;
 		};
-		
+
+		const { param } = item;
+		const { noAnimation, subIds, onClose } = param;
+		const t = noAnimation ? 0 : Constant.delay.menu;
 		const el = $('#' + Util.toCamelCase('menu-' + id));
-		const t = item.param.noAnimation ? 0 : Constant.delay.menu;
+
+		if (subIds && subIds.length) {
+			this.closeAll(subIds);
+		};
 
 		if (el.length) {
-			if (item.param.noAnimation) {
+			if (noAnimation) {
 				el.addClass('noAnimation');
 			};
 			el.css({ transform: '' }).removeClass('show');
 		};
 
-		const cb = () => {
-			this.menuList = this.menuList.filter((item: I.Menu) => { return item.id != id; });
+		window.setTimeout(() => {
+			this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
 			
-			if (item.param.onClose) {
-				item.param.onClose();
+			if (onClose) {
+				onClose();
 			};
 			
 			if (callBack) {
 				callBack();
 			};
-		};
-
-		window.setTimeout(cb, t);
+		}, t);
 	};
 	
 	@action

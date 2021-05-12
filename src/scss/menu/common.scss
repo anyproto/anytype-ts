@@ -89,16 +89,7 @@
 		}
 		.item.isReadOnly.hover::before { opacity: 0; }
 
-		.item.active::before { background: rgba(172, 169, 150, 0.1); z-index: 0; }
-		.item.active {
-			.name { z-index: 1; }
-		}
-
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
-		.item.add:hover { color: $colorBlack; }
-		.item.add:hover {
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-		}
 		
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; }
@@ -128,10 +119,11 @@
 		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {
 			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
-			.descr { @include text-small; height: 18px; color: #6c6a5f; }
+			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: #6c6a5f; }
 			.descr:empty { display: none; }
 			.info { padding-left: 52px; line-height: 40px; }
-			.name { line-height: 22px; }
+			.txt { width: 100%; }
+			.name { line-height: 20px; }
 		}
 
 		.item.withCaption { display: flex; }
@@ -145,7 +137,7 @@
 			}
 
 			.caption { 
-				width: 80px; @include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
+				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
 				flex-shrink: 0;
 			}
 		}
@@ -186,6 +178,10 @@
 
 	.menu.orange {
 		.item.active { color: #e89d00; }
-		.item.active::before { opacity: 1; background: #fef3c5; color: #e89d00; }
+		.item.active::before { opacity: 0; }
+		.item.active { background: #fef3c5; color: #e89d00; }
+		.item.active {
+			.icon.chk { display: none; }
+		}
 	}
 }

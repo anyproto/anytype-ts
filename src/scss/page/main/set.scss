@@ -5,9 +5,10 @@
 	.wrapper {
 
 		.block {
-			.wrapMenu { display: none; }
+			.wrapMenu { display: none; }	
+			.wrapContent { width: 100%; }
 		}
-		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 20px; }
+		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 28px; }
 		.block.blockFeatured {
 			.bullet { margin-top: -2px; }
 		}

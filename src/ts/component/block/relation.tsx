@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Cell } from 'ts/component';
+import { Input, Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, dbStore } from 'ts/store';
+import { menuStore, detailStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
@@ -57,7 +57,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				(
 					<div className="sides">
 						<div className="info">
-							<div className="name">{relation.name}</div>
+							{relation.name}
 						</div>
 						<div 
 							id={id} 
@@ -70,7 +70,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
-								getRecord={() => { return blockStore.getDetails(rootId, rootId); }}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ]); }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}
@@ -125,13 +125,13 @@ class BlockRelation extends React.Component<Props, {}> {
 		});
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
-		C.BlockSetDetails(rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	onCellClick (e: any) {

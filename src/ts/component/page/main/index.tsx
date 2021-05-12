@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
-import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, SmileUtil, translate, Storage, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, Storage, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -17,6 +17,7 @@ const Constant: any = require('json/constant.json');
 class PageMainIndex extends React.Component<Props, {}> {
 	
 	listRef: any = null;
+	id: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -27,6 +28,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onStore = this.onStore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -40,13 +42,9 @@ class PageMainIndex extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const details = blockStore.getDetails(profile, profile);
-		const { iconImage, name } = details;
-		const childrenIds = blockStore.getChildrenIds(root, root);
-		const length = childrenIds.length;
+		const object = detailStore.get(profile, profile, []);
+		const { name } = object;
 		const list = this.getList();
-		const map = blockStore.getDetailsMap(root);
-		const size = map.size;
 
 		return (
 			<div>
@@ -56,15 +54,15 @@ class PageMainIndex extends React.Component<Props, {}> {
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
-						{details.name ? Util.sprintf(translate('indexHi'), Util.shorten(details.name, 24)) : ''}
+						{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
 						
 						<div className="rightMenu">
-							<Icon id="button-account" menuId="account" className="account" tooltip="Accounts" onClick={this.onAccount} />
+							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							{config.allowDataview ? (
 								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
 							) : ''}
-							<IconObject object={{ ...details, layout: I.ObjectLayout.Human }} size={64} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={64} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
@@ -74,6 +72,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
 							onMore={this.onMore}
+							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							getList={this.getList}
 							helperContainer={() => { return $('#documents').get(0); }} 
@@ -85,16 +84,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { history } = this.props;
-		const redirectTo = Storage.get('redirectTo');
 		const win = $(window);
-
-		Storage.delete('redirect');
-
-		if (redirectTo) {
-			history.push(redirectTo);
-			Storage.delete('redirectTo');
-		};
 
 		crumbs.delete(I.CrumbsType.Page);
 
@@ -104,6 +94,13 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		this.resize();
+
+		if (this.id) {
+			const node = $(ReactDOM.findDOMNode(this));
+			const item = node.find(`#item-${this.id}`);
+
+			item.addClass('hover');
+		};
 	};
 
 	componentWillUnmount () {
@@ -144,7 +141,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = blockStore.getDetails(profile, profile);
+		const object = detailStore.get(profile, profile);
 
 		DataUtil.objectOpen(object);
 	};
@@ -153,7 +150,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		e.persist();
 
 		const { root } = blockStore;
-		const object = blockStore.getDetails(root, block.content.targetBlockId);
+		const object = detailStore.get(root, block.content.targetBlockId);
 
 		if (block.content.style == I.LinkStyle.Archive) {
 			popupStore.open('archive', {});
@@ -192,6 +189,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			width: width,
 			className: 'add fixed',
+			subIds: [ 'searchObject' ],
 			data: {
 				value: '',
 				options: options,
@@ -259,10 +257,11 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 
 		menuStore.open('blockMore', { 
-			element: '#button-' + item.id + '-more',
+			element: `#button-${item.id}-more`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
+			subIds: Constant.menuIds.more,
 			data: {
 				rootId: root,
 				blockId: item.id,
@@ -278,6 +277,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 				node.find('#item-' + item.id).removeClass('active');
 			}
 		});
+	};
+
+	onSortStart (param: any) {
+		const { node } = param;
+
+		this.id = $(node).data('id');
 	};
 	
 	onSortEnd (result: any) {
@@ -302,7 +307,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const oidx = element.childrenIds.indexOf(current.id);
 		const nidx = element.childrenIds.indexOf(target.id);
 
-		blockStore.blockUpdateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
+		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
 		C.BlockListMove(root, root, [ current.id ], target.id, position);
 	};
 	
@@ -365,7 +370,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { config } = commonStore;
 
 		return blockStore.getChildren(root, root, (it: any) => {
-			const object = blockStore.getDetails(root, it.content.targetBlockId);
+			const object = detailStore.get(root, it.content.targetBlockId);
 			if (it.content.style == I.LinkStyle.Archive) {
 				return true;
 			};

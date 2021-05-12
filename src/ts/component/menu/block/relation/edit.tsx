@@ -44,6 +44,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
+		const opts = null;
+		/*
 		const opts = (
 			<React.Fragment>
 				{isObject ? (
@@ -80,6 +82,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				) : ''}
 			</React.Fragment>
 		);
+		*/
 
 		return (
 			<form onSubmit={this.onSubmit}>

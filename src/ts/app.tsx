@@ -4,7 +4,7 @@ import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListMenu, Progress, Tooltip, LinkPreview, Icon } from './component';
-import { commonStore, authStore, blockStore, dbStore, menuStore, popupStore } from './store';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
@@ -140,6 +140,7 @@ const rootStore = {
 	commonStore,
 	authStore,
 	blockStore,
+	detailStore,
 	dbStore,
 	menuStore,
 	popupStore,
@@ -365,11 +366,13 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
+		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
+			param = param || {};
+			param.data = param.data || {};
+			param.data.rootId = keyboard.getRootId();
+
 			popupStore.closeAll();
-			window.setTimeout(() => {
-				popupStore.open(id, { data: data });
-			}, Constant.delay.popup);
+			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
@@ -504,18 +507,19 @@ class App extends React.Component<Props, State> {
 	};
 
 	onCommand (e: any, key: string) {
-		const id = String(Storage.get('editorId') || '');
-		if (!id || keyboard.isFocused) {
-			return;
-		};
+		const rootId = keyboard.getRootId();
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(id);
+				C.BlockUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(id);
+				C.BlockRedo(rootId);
+				break;
+
+			case 'create':
+				keyboard.pageCreate();
 				break;
 		};
 	};

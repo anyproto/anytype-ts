@@ -42,7 +42,8 @@ import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewObjectValues from './dataview/object/values';
-import MenuDataviewFilter from './dataview/filter';
+import MenuDataviewFilterList from './dataview/filter/list';
+import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
@@ -65,7 +66,7 @@ interface State {
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
-const BORDER = 12;
+const BORDER = 16;
 
 const Components: any = {
 	help:					 MenuHelp,
@@ -109,7 +110,8 @@ const Components: any = {
 	dataviewOptionList:		 MenuDataviewOptionList,
 	dataviewOptionEdit:		 MenuDataviewOptionEdit,
 	dataviewOptionValues:	 MenuDataviewOptionValues,
-	dataviewFilter:			 MenuDataviewFilter,
+	dataviewFilterList:		 MenuDataviewFilterList,
+	dataviewFilterValues:	 MenuDataviewFilterValues,
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,
 	dataviewViewEdit:		 MenuDataviewViewEdit,
@@ -219,7 +221,7 @@ class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { param } = this.props;
-		const { tabs, onOpen } = param;
+		const { onOpen } = param;
 
 		this._isMounted = true;
 		this.position();
@@ -228,10 +230,15 @@ class Menu extends React.Component<Props, State> {
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
+		const obj = $(`#${this.getId()}`);
 		const el = this.getElement();
 
 		if (el && el.length) {
 			el.addClass('hover');
+		};
+
+		if (param.height) {
+			obj.css({ height: param.height });
 		};
 
 		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
@@ -422,10 +429,6 @@ class Menu extends React.Component<Props, State> {
 			if (param.width) {
 				css.width = param.width;
 			};
-			if (param.height) {
-				css.height = param.height;
-			};
-
 			menu.css(css);
 			
 			if (isSub && (type == I.MenuType.Vertical)) {

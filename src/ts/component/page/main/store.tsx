@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
 import { I, C, DataUtil, Util, Storage } from 'ts/lib';
-import { dbStore, blockStore } from 'ts/store';
+import { dbStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -107,7 +107,7 @@ class PageMainStore extends React.Component<Props, State> {
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = blockStore.getDetails(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
@@ -138,7 +138,7 @@ class PageMainStore extends React.Component<Props, State> {
 			case Tab.Template:
 				Item = (item: any) => {
 					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = blockStore.getDetails(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
@@ -165,7 +165,7 @@ class PageMainStore extends React.Component<Props, State> {
 
 			case Tab.Relation:
 				Item = (item: any) => {
-					const author = blockStore.getDetails(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />

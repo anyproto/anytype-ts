@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
 import { I, Util, DataUtil, crumbs, focus, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -49,7 +49,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
-		const object = blockStore.getDetails(breadcrumbs, rootId);
+		const object = detailStore.get(breadcrumbs, rootId, []);
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (popupStore.isOpenList([ 'navigation', 'search' ]) || menuStore.isOpen('blockRelationView')) {
@@ -89,7 +89,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 							<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
 						) : ''}
 						{config.allowDataview && canAdd ? (
-							<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+							<Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} />
 						) : ''}
 					</div>
 				</div>
@@ -150,7 +150,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 
 		DataUtil.objectOpen(object);
 	};
@@ -165,6 +165,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const param: any = {
 			element: `${this.getContainer()} #button-header-more`,
 			horizontal: I.MenuDirection.Right,
+			subIds: Constant.menuIds.more,
 			data: {
 				rootId: rootId,
 				blockId: rootId,
@@ -280,6 +281,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			element: `${this.getContainer()} #button-header-relation`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
+			subIds: Constant.menuIds.cell,
 			onClose: () => {
 				menuStore.closeAll();
 			},

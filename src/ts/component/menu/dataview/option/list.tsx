@@ -173,13 +173,23 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	rebind () {
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
 		this.unbind();
 
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		obj.on('click', () => { menuStore.close('dataviewOptionEdit'); });
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
+		win.unbind('keydown.menu');
+		obj.unbind('click');
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
@@ -243,10 +253,10 @@ class MenuOptionList extends React.Component<Props, State> {
 				return;
 			};
 
-			window.setTimeout(() => { 
-				this.ref.setValue('');
-				this.onValueAdd(message.option.id); 
-			}, 50);
+			this.ref.setValue('');
+			this.onValueAdd(message.option.id);
+
+			window.setTimeout(() => { this.resize(); }, 50);
 		});
 	};
 	
@@ -256,16 +266,19 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param, getId } = this.props;
 		const { data } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
-			element: '#' + getId() + ' #item-' + item.id,
-			offsetX: 288,
-			vertical: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
-			data: {
-				...data,
-				option: item,
-			}
+		menuStore.close('dataviewOptionEdit', () => {
+			menuStore.open('dataviewOptionEdit', { 
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: 288,
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
+				noFlipY: true,
+				noAnimation: true,
+				data: {
+					...data,
+					option: item,
+				}
+			});
 		});
 	};
 	

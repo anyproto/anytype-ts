@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
-import { Cell, Button } from 'ts/component';
+import { Cell } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
@@ -37,27 +36,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
-		const featured = (object[Constant.relationKey.featured] || []).filter((it: any) => {
-			const relation = dbStore.getRelation(rootId, rootId, it);
-			if (!relation) {
-				return false;
-			};
-			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
-				return false;
-			};
-			if (relation.format == I.RelationType.Checkbox) {
-				return true;
-			};
-			if (!object[it]) {
-				return false;
-			};
-			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
-				return false;
-			};
-			return true;
-		});
+		const { rootId, block, iconSize, isPopup, readOnly } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type) || {};
 		const bullet = <div className="bullet" />;
 
@@ -73,7 +54,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					<div className="name">{type.name || Constant.default.name}</div>
 				</div>
 
-				{featured.map((relationKey: any, i: any) => {
+				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
 					return (
 						<React.Fragment key={i}>
@@ -88,13 +69,13 @@ class BlockFeatured extends React.Component<Props, {}> {
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return object; }}
+									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readOnly={false}
+									readOnly={readOnly}
 									isInline={true}
 									idPrefix={PREFIX}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
@@ -121,6 +102,33 @@ class BlockFeatured extends React.Component<Props, {}> {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
+	getItems () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+
+		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
+			const relation = dbStore.getRelation(rootId, rootId, it);
+			const object = detailStore.get(rootId, rootId, [ it ]);
+
+			if (!relation) {
+				return false;
+			};
+			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
+				return false;
+			};
+			if (relation.format == I.RelationType.Checkbox) {
+				return true;
+			};
+			if (!object[it]) {
+				return false;
+			};
+			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
+				return false;
+			};
+			return true;
+		});
+	};
+
 	onCellClick (e: any, relationKey: string, index: number) {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
@@ -141,7 +149,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details);
 	};
@@ -151,7 +159,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const cell = $('#' + DataUtil.cellId(PREFIX, relationKey, 0));
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+		if (relation) {
+			Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+		};
 	};
 
 	onMouseLeave (e: any) {
@@ -159,14 +169,22 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (readOnly || root.isObjectSet()) {
+			const object = detailStore.get(rootId, rootId, [ 'type' ]);
+			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
+			return;
+		};
+
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
 		];
 
 		menuStore.closeAll(null, () => { 
 			menuStore.open('searchObject', {
-				element: '#' + DataUtil.cellId(PREFIX, Constant.relationKey.type, 0),
+				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				offsetY: 4,
@@ -195,12 +213,12 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (relation.format == I.RelationType.Checkbox) {
+			const object = detailStore.get(rootId, rootId, [ relationKey ]);
 			const details = [ 
-				{ key: relationKey, value: DataUtil.formatRelationValue(relation, !object[relationKey]) },
+				{ key: relationKey, value: DataUtil.formatRelationValue(relation, !object[relationKey], true) },
 			];
 			C.BlockSetDetails(rootId, details);
 			return;
@@ -211,8 +229,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Right,
 			noFlipY: true,
 			noAnimation: true,
+			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
 				component?.ref?.onCellClick(e, relationKey, 0);
+				component?.ref?.scrollTo(relationKey, 0);
 			},
 			onClose: () => {
 				menuStore.closeAll();

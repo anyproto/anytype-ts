@@ -99,7 +99,7 @@ html.platformWindows {
 .rel { position: relative; }
 .disabled { opacity: 0.5 !important; cursor: default !important; }
 .dis { cursor: default !important; }
-.readOnly { -webkit-user-modify: unset !important; }
+.readOnly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over { overflow: hidden !important; }

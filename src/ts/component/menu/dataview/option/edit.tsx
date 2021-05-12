@@ -28,7 +28,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const { option } = data;
 		const relation = data.relation.get();
 		const colors = DataUtil.menuGetBgColors();
-		
+
 		let prefix = '';
 		switch (relation.format) {
 			default:
@@ -66,6 +66,12 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		this.color = option.color;
 		this.rebind();
+	};
+
+	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+		const { option } = data;
 	};
 
 	componentWillUnmount () {

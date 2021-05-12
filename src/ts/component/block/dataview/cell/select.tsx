@@ -107,10 +107,10 @@ class CellSelect extends React.Component<Props, State> {
 
 		const { onChange } = this.props;
 		
-		this.setEditing(false);
-
 		if (onChange) {
-			onChange([]);
+			onChange([], () => {
+				this.setEditing(false);
+			});
 		};
 	};
 

@@ -23,6 +23,7 @@ export interface MenuParam {
 	tabs?: MenuTab[];
 	data?: any;
 	isSub?: boolean;
+	subIds?: string[];
 	passThrough?: boolean;
 	className?: string;
 	noAnimation?: boolean;
@@ -56,7 +57,6 @@ export interface MenuItem {
 	checkbox?: boolean;
 	className?: string;
 	isActive?: boolean;
-	menuId?: string;
 	withDescription?: boolean;
 	withCaption?: boolean;
 	style?: any;

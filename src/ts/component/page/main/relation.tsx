@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, Loader, Block } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
 import { I, M, C, crumbs, Action } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
@@ -29,7 +29,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		return (
@@ -44,10 +44,13 @@ class PageMainRelation extends React.Component<Props, {}> {
 						<div className="side right">
 							<div className="title">{object.name}</div>
 							<div className="descr">{object.description}</div>
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 					</div>
 				</div>
+
+				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, M, C, DataUtil } from 'ts/lib';
 import { Block, Drag } from 'ts/component';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -43,10 +43,11 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const check = DataUtil.checkDetails(rootId);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;

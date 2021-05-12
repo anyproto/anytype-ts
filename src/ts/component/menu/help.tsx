@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I } from 'ts/lib';
-import { authStore, popupStore, blockStore } from 'ts/store';
+import { authStore, popupStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -42,7 +42,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { account } = authStore;
 		const { profile } = blockStore;
-		const object = blockStore.getDetails(profile, profile);
+		const object = detailStore.get(profile, profile);
 
 		this.props.close();
 

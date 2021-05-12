@@ -82,7 +82,7 @@ export interface ViewComponent {
 	getView?(): View;
 	onRowAdd?: (e: any) => void;
 	onCellClick?(e: any, key: string, index: number): void;
-	onCellChange?: (id: string, key: string, value: any) => void;
+	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -112,11 +112,11 @@ export interface Cell {
 	iconSize?: number;
 	getView?(): View;
 	getRecord(index: number): any;
-	onChange?(data: any): void;
+	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-	onCellChange?: (id: string, key: string, value: any) => void;
+	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 };
 
 export interface ContentDataview {

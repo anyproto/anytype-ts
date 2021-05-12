@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, DataUtil, translate } from 'ts/lib';
 import { Cover } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -26,8 +26,8 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		const sections = this.getSections();
-		const details = blockStore.getDetails(rootId, rootId);
-		const { coverType } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverType' ]);
+		const { coverType } = object;
 		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 
 		const Section = (item: any) => (
@@ -120,9 +120,9 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
-		const details = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ 'coverId' ]);
 
-		if (!details.coverId) {
+		if (!object.coverId) {
 			this.props.close();
 		};
 

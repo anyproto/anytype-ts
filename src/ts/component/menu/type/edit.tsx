@@ -42,7 +42,6 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 					id="object-layout" 
 					icon={item ? item.icon : ''} 
 					name={item ? item.name : 'Select layout'}
-					menuId="select"
 					onClick={this.onLayout} 
 					arrow={true}
 				/>

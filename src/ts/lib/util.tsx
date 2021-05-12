@@ -149,7 +149,7 @@ class Util {
 	};
 
 	stringCut (haystack: string, start: number, end: number): string {
-		return haystack.substr(0, start) + haystack.substr(end);
+		return String(haystack || '').substr(0, start) + haystack.substr(end);
 	};
 
 	stringInsert (haystack: string, needle: string, start: number, end: number): string {

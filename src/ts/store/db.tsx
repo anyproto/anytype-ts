@@ -245,6 +245,13 @@ class DbStore {
 		return this.objectTypeMap.get(id);
 	};
 
+	getObjectTypesForSBType (SBType: I.SmartBlockType): I.ObjectType[] {
+		let types = this.objectTypes.filter((it: I.ObjectType) => {
+			return it.types.indexOf(SBType) >= 0;
+		});
+		return types;
+	};
+
 	getRelations (rootId: string, blockId: string): I.Relation[] {
 		return this.relationMap.get(this.getId(rootId, blockId)) || [];
 	};

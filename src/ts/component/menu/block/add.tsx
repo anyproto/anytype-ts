@@ -26,9 +26,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
 		const { filter } = commonStore;
 		const options = this.getItems();
 		const sections = this.getSections();
+		const block = blockStore.getLeaf(rootId, blockId);
+		const length = block.getLength();
 		
 		const Section = (item: any) => (
 			<div className="section">
@@ -287,6 +292,21 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
+		const { config, filter } = commonStore;
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+		];
+
+		if (!config.allowDataview) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+		};
+
+		const text = Util.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
+		const length = text.length;
+		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -302,8 +322,17 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				skipId: rootId,
 				blockId: blockId,
 				blockIds: [ blockId ],
-				position: I.BlockPosition.Bottom,
-				onSelect: close,
+				position: position,
+				onSelect: () => {
+					$(`#block-${blockId} .value`).text(text);
+
+					DataUtil.blockSetText(rootId, block, text, block.content.marks, true, () => {
+						focus.set(blockId, { from: length, to: length });
+						focus.apply();
+					});
+
+					close();
+				},
 			},
 		};
 
@@ -314,15 +343,15 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
+					filters: filters,
 				});
 				break;
 
 			case 'existing':
 				menuId = 'searchObject';
-				menuParam.offsetY = -64;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					type: I.NavigationType.Link, 
+					type: I.NavigationType.Link,
 				});
 				break;
 		};
@@ -336,6 +365,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	
 	onClick (e: any, item: any) {
 		e.stopPropagation();
+
+		console.log(e);
 
 		if (item.arrow) {
 			return;

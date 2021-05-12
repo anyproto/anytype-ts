@@ -36,7 +36,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				className="item" 
 				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
 			>
-				<IconObject object={{ ...item, type: '/profile' }} />
+				<IconObject object={{ ...item, layout: I.ObjectLayout.Human }} />
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">

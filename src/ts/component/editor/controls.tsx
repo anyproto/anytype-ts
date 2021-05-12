@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -37,15 +37,16 @@ class Controls extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
 
 		if (readOnly) {
 			return null;
 		};
 
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+
 		return (
 			<div 
-				className={[ 'editorControls', 'align' + check.object.layoutAlign ].join(' ')}
+				className={[ 'editorControls', 'align' + object.layoutAlign ].join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}

@@ -84,11 +84,14 @@ class Cell extends React.Component<Props, {}> {
 				break;
 		};
 		
+		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+
 		return (
 			<div className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
-					id={DataUtil.cellId(idPrefix, relation.relationKey, index)} 
+					id={id} 
+					key={id}
 					{...this.props} 
 					canEdit={canEdit}
 					relation={relation}
@@ -116,7 +119,7 @@ class Cell extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $('#' + cellId).addClass('isEditing');
+		const cell = $(`#${cellId}`).addClass('isEditing');
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
@@ -157,7 +160,6 @@ class Cell extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 1,
 			noAnimation: true,
-			noFlipY: true,
 			passThrough: true,
 			className: menuClassName,
 			onOpen: setOn,
@@ -234,6 +236,7 @@ class Cell extends React.Component<Props, {}> {
 
 			case I.RelationType.LongText:
 				param = Object.assign(param, {
+					noFlipY: true,
 					element: cell,
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
@@ -320,7 +323,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 	};
 
-	onChange (value: any) {
+	onChange (value: any, callBack?: (message: any) => void) {
 		const { onCellChange, index, getRecord } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
@@ -328,8 +331,8 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const record = getRecord(index);
-		if (onCellChange) {
-			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value));
+		if (record && onCellChange) {
+			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
 		};
 	};
 

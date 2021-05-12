@@ -13,7 +13,7 @@ interface Props {
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
-	onCellChange?(id: string, key: string, value: any): void;
+	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
 };
 
 @observer
