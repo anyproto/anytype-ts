@@ -99,7 +99,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 			const node = $(ReactDOM.findDOMNode(this));
 			const item = node.find(`#item-${this.id}`);
 
-			this.id = '';
 			item.addClass('hover');
 		};
 	};
