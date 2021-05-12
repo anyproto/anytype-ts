@@ -18,10 +18,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	_isMounted: boolean = false;
 	timeoutChange: number = 0;
 	ref: any = null;
-	range: I.TextRange = {
-		from: 0,
-		to: 0,
-	};
+	range: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -144,16 +141,16 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 					<div className="item">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
-							value={item.value !== '' ? Util.date('d.m.Y H:i:s', item.value) : ''} 
+							value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 							placeHolder="dd.mm.yyyy hh:mm:ss"
 							maskOptions={{ mask: '99.99.9999 99:99:99' }}
-							onFocus={(e: any) => { this.onFocusDate(e, item); }}
-							onSelect={(e: any) => { this.onSelect(e, item); }}
+							onFocus={(e: any) => { this.onFocusDate(e); }}
+							onSelect={(e: any) => { this.onSelect(e); }}
 						/>
 						<Icon className="clear" onClick={this.onClear} />
 					</div>
 				);
-				onSubmit = (e: any) => { this.onSubmitDate(e, item); };
+				onSubmit = (e: any) => { this.onSubmitDate(e); };
 				break;
 
 			default:
@@ -164,7 +161,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 							value={item.value} 
 							placeHolder={translate('commonValue')} 
 							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
-							onSelect={(e: any) => { this.onSelect(e, item); }}
+							onSelect={(e: any) => { this.onSelect(e); }}
 						/>
 						<Icon className="clear" onClick={this.onClear} />
 					</div>
@@ -225,13 +222,13 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		if (relation && this.ref) {
 			if (this.ref.setValue) {
 				if (relation.format == I.RelationType.Date) {
-					this.ref.setValue(Util.date('d.m.Y H:i:s', item.value));
+					this.ref.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
 				} else {
 					this.ref.setValue(item.value);
 				};
 			};
 
-			if (this.ref.setRange) {
+			if (this.range && this.ref.setRange) {
 				this.ref.setRange(this.range);
 			};
 		};
@@ -292,7 +289,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	onRemove (e: any, element: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, itemId } = data;
+		const { getView, itemId } = data;
 		const view = getView();
 		
 		let item = view.getFilter(itemId);
@@ -312,38 +309,42 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { getView, itemId } = data;
 
-		getView().setFilter(item.id, { value: this.ref.getValue() });
+		getView().setFilter(itemId, { value: this.ref.getValue() });
 	};
 
-	onSubmitDate (e: any, item: any) {
+	onSubmitDate (e: any) {
 		e.preventDefault();
 
 		const value = Util.parseDate(this.ref.getValue());
 		
 		this.onChange('value', value);
-		this.onCalendar(item.id, value);
+		this.onCalendar(value);
 	};
 
-	onFocusDate (e: any, item: any) {
+	onFocusDate (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView, itemId } = data;
+		const item = getView().getFilter(itemId);
 		const value = item.value || Util.time();
 		
 		if (menuStore.isOpen('dataviewCalendar')) {
 			menuStore.updateData('dataviewCalendar', { value: value });
 		} else {
-			this.onCalendar(item.id, value);
+			this.onCalendar(value);
 		};
 	};
 
-	onSelect (e: any, item: any) {
+	onSelect (e: any) {
 		this.range = {
 			from: e.currentTarget.selectionStart,
 			to: e.currentTarget.selectionEnd,
 		};
 	};
 
-	onCalendar (id: number, value: number) {
+	onCalendar (value: number) {
 		const { getId } = this.props;
 
 		menuStore.open('dataviewCalendar', {
@@ -428,7 +429,10 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	};
 
 	onClear (e: any) {
-		this.onChange('value', '');
+		e.stopPropagation();
+
+		this.range = null;
+		this.onChange('value', null);
 	};
 
 };

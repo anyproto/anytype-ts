@@ -63,6 +63,8 @@
 			.icon.delete { transition: none; }
 			.name { @include text-overflow-nw; }
 
+			.input { width: calc(100% - 20px); }
+
 			.icon.clear { 
 				width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 10px; top: 4px;
 				cursor: pointer; opacity: 0; margin: 0px; transition: opacity 0.2s ease-in-out;

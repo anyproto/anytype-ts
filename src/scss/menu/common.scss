@@ -178,6 +178,7 @@
 
 	.menu.orange {
 		.item.active { color: #e89d00; }
-		.item.active::before { opacity: 1; background: #fef3c5; color: #e89d00; }
+		.item.active::before { opacity: 0; }
+		.item.active { background: #fef3c5; color: #e89d00; }
 	}
 }

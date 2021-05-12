@@ -1005,8 +1005,12 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-			case I.RelationType.Date:
 				value = parseFloat(String(value || '0'));
+				break;
+			case I.RelationType.Date:
+				if (value !== null) {
+					value = parseFloat(String(value || '0'));
+				};
 				break;
 
 			case I.RelationType.Checkbox:

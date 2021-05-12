@@ -69,7 +69,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 					break;
 
 				case I.RelationType.Date:
-					value = Util.date('d.m.Y', item.value);
+					value = item.value !== null ? Util.date('d.m.Y', item.value) : 'empty';
 					break;
 
 				case I.RelationType.Checkbox:

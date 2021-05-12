@@ -92,7 +92,15 @@ class MenuCalendar extends React.Component<Props, State> {
 						if ((d == item.d) && (m == item.m) && (y == item.y)) {
 							cn.push('active');
 						};
-						return <div key={i} className={cn.join(' ')} onClick={() => { this.setValue(Util.timestamp(y, item.m, item.d), true, true); }}>{item.d}</div>;
+						return (
+							<div 
+								key={i} 
+								className={cn.join(' ')} 
+								onClick={() => { this.setValue(Util.timestamp(y, item.m, item.d), true, false); }}
+							>
+								{item.d}
+							</div>
+						);
 					})}
 				</div>
 				<div className="line" />
