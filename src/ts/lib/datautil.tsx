@@ -226,6 +226,8 @@ class DataUtil {
 					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
 					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
 					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
 			
