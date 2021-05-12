@@ -238,7 +238,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			sections.push({ children: [
 				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
-				{ id: 'remove', icon: 'remove', name: 'Remove from dashboard' },
+				{ id: 'remove', icon: 'unfav', name: 'Remove from dashboard' },
 			]});
 		} else {
 			sections.push({ children: [
