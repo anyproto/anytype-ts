@@ -366,8 +366,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 
-		console.log(e);
-
 		if (item.arrow) {
 			return;
 		};
