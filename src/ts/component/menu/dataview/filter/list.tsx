@@ -68,6 +68,10 @@ class MenuFilterList extends React.Component<Props, {}> {
 					value = `“${item.value}”`
 					break;
 
+				case I.RelationType.Number:
+					value = Number(item.value) || 0;
+					break;
+
 				case I.RelationType.Date:
 					value = item.value !== null ? Util.date('d.m.Y', item.value) : 'empty';
 					break;
@@ -145,7 +149,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 							<div className="condition grey">
 								{condition.name}
 							</div>
-							{value ? (
+							{value !== null ? (
 								<div className="value grey">
 									{value}
 								</div>

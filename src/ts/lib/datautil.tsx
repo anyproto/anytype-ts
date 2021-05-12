@@ -218,6 +218,16 @@ class DataUtil {
 				break;
 			
 			case I.RelationType.Number:
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
+					{ id: I.FilterCondition.Greater,		 name: '>' }, 
+					{ id: I.FilterCondition.Less,			 name: '<' }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
+				]);
+				break;
+
 			case I.RelationType.Date:
 				ret = ret.concat([ 
 					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
@@ -226,8 +236,8 @@ class DataUtil {
 					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
 					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
 					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
-					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
-					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
 			
