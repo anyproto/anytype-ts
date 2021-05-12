@@ -42,7 +42,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div id={'item-' + id} className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} style={style}>
+			<div id={'item-' + id} className={cn.join(' ')} onMouseDown={onClick} onMouseEnter={onMouseEnter} style={style}>
 				{withDescription ? (
 					<React.Fragment>
 						{element}

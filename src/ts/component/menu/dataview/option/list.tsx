@@ -253,10 +253,10 @@ class MenuOptionList extends React.Component<Props, State> {
 				return;
 			};
 
-			window.setTimeout(() => { 
-				this.ref.setValue('');
-				this.onValueAdd(message.option.id); 
-			}, 50);
+			this.ref.setValue('');
+			this.onValueAdd(message.option.id);
+
+			window.setTimeout(() => { this.resize(); }, 50);
 		});
 	};
 	
@@ -301,8 +301,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { canAdd } = data;
 		const relation = data.relation.get();
-
-		console.trace();
 
 		let items = relation.selectDict || [];
 		let sections: any = {};
