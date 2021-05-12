@@ -1008,6 +1008,9 @@ class DataUtil {
 				value = parseFloat(String(value || '0'));
 				break;
 			case I.RelationType.Date:
+				if (value === undefined) {
+					value = null;
+				};
 				if (value !== null) {
 					value = parseFloat(String(value || '0'));
 				};

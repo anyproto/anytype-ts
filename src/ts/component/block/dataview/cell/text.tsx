@@ -55,7 +55,7 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value: string = String(record[relation.relationKey] || '');
+		let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 
 		if (relation.format == I.RelationType.LongText) {
 			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
@@ -125,7 +125,7 @@ class CellText extends React.Component<Props, State> {
 					format.push(DataUtil.timeFormat(viewRelation.timeFormat));
 				};
 
-				value = value ? Util.date(format.join(' '), Number(value)) : '';
+				value = value !== null ? Util.date(format.join(' '), Number(value)) : '';
 			};
 		};
 
@@ -193,15 +193,11 @@ class CellText extends React.Component<Props, State> {
 		const record = getRecord(index);
 
 		if (editing) {
-			let value: string = String(record[relation.relationKey] || '');
-
-			if (relation.format == I.RelationType.Number) {
-				value = String(parseFloat(value) || '');
-			};
+			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
-				value = value ? Util.date(format.join(' ').trim(), Number(value)) : '';
+				value = value !== null ? Util.date(format.join(' ').trim(), value) : '';
 			};
 
 			if (this.ref) {
