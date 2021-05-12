@@ -409,6 +409,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
+		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -430,7 +431,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
-				const filters = [
+				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
 				];
 
@@ -453,7 +454,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
+					filters: filters,
 					type: I.NavigationType.Move, 
 					skipId: rootId,
 					position: I.BlockPosition.Bottom,
