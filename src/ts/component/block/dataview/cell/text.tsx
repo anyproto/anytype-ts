@@ -281,11 +281,7 @@ class CellText extends React.Component<Props, State> {
 		keyboard.setFocus(false);
 
 		if (relation.format == I.RelationType.Date) {
-			if (value) {
-				value = Util.parseDate(value);
-			} else {
-				return;
-			};
+			value = Util.parseDate(value);
 		};
 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
