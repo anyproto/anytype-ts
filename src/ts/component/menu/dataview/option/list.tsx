@@ -248,6 +248,10 @@ class MenuOptionList extends React.Component<Props, State> {
 		const colors = DataUtil.menuGetBgColors();
 		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
 
+		if (!option.text) {
+			return;
+		};
+
 		optionCommand('add', rootId, blockId, relation.relationKey, record.id, option, (message: any) => {
 			if (message.error.code) {
 				return;
