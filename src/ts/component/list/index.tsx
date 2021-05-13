@@ -38,7 +38,7 @@ class ListIndex extends React.Component<Props, {}> {
 		
 		const Item = SortableElement((item: any) => {
 			const content = item.content || {};
-			const object = detailStore.get(root, content.targetBlockId, []);
+			const object = detailStore.get(root, content.targetBlockId, [ 'relationFormat' ]);
 			const { _objectEmpty_, name, layout, iconEmoji, iconImage } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
@@ -52,6 +52,8 @@ class ListIndex extends React.Component<Props, {}> {
 					</div>
 				);
 			};
+
+			console.log(object.name, object.layout);
 
 			let icon = null;
 			let showMenu = true;
