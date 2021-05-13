@@ -7,6 +7,11 @@ const { ipcRenderer } = window.require('electron');
 class Action {
 
 	pageClose (rootId: string) {
+		const { profile } = blockStore;
+		if (rootId == profile) {
+			return;
+		};
+
 		C.BlockClose(rootId, (message: any) => {
 			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
 			for (let block of blocks) {

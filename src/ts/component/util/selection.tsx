@@ -553,7 +553,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 	
 	get (withChildren?: boolean): string[] {
 		if (!this._isMounted) {
-			return;
+			return [];
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
