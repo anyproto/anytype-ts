@@ -225,6 +225,8 @@ class DataUtil {
 					{ id: I.FilterCondition.Less,			 name: '<' }, 
 					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
 					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
 				]);
 				break;
 
