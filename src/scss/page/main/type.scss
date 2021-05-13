@@ -34,7 +34,7 @@
 		}
 
 		.section.template {
-			.item { position: relative; width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; }
+			.item { position: relative; width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
 			.item:last-child { margin-right: 0px; }
 			.item {
 				.cover { position: absolute; }

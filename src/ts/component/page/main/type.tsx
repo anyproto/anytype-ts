@@ -115,7 +115,7 @@ class PageMainType extends React.Component<Props, State> {
 		const Template = (item: any) => {
 			let { coverType, coverId, coverX, coverY, coverScale } = item;
 			return (
-				<div className="item">
+				<div className="item" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
 					<Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
 				</div>
 			);
