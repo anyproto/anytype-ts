@@ -23,6 +23,7 @@ class Keyboard {
 	isMouseDisabled: boolean = false;
 	isPinChecked: boolean = false;
 	isContextDisabled: boolean = false;
+	isBlurDisabled: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -271,6 +272,11 @@ class Keyboard {
 	
 	disableMouse (v: boolean) {
 		this.isMouseDisabled = v;
+	};
+
+	// Flag to prevent blur events
+	disableBlur (v: boolean) {
+		this.isBlurDisabled = v;
 	};
 
 	// Flag to prevent menuBlockContext from closing

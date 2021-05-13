@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { I, Util, translate } from 'ts/lib';
+import { I, Util, translate, keyboard } from 'ts/lib';
 import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
-
-
 
 const Constant = require('json/constant.json');
 
@@ -96,6 +94,7 @@ class MenuCalendar extends React.Component<Props, State> {
 							<div 
 								key={i} 
 								className={cn.join(' ')} 
+								onMouseDown={() => { keyboard.disableBlur(true); }}
 								onClick={(e: any) => { 
 									e.stopPropagation();
 									this.setValue(Util.timestamp(y, item.m, item.d), true, false); 
@@ -142,6 +141,8 @@ class MenuCalendar extends React.Component<Props, State> {
 		if (close) {
 			this.props.close();
 		};
+
+		keyboard.disableBlur(false);
 	};
 	
 	getData () {

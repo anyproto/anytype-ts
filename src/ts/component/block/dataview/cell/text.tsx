@@ -278,11 +278,17 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	onBlur (e: any) {
+		if (keyboard.isBlurDisabled) {
+			return;
+		};
+
 		let { relation, onChange, index, getRecord } = this.props;
 		let value = this.ref.getValue();
 		let record = getRecord(index);
 
 		keyboard.setFocus(false);
+
+		console.log('BLUR', value);
 
 		if (relation.format == I.RelationType.Date) {
 			value = Util.parseDate(value);
