@@ -330,6 +330,9 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
+		console.log('onChange', relation.relationKey, value);
+		console.trace();
+	
 		const record = getRecord(index);
 		if (record && onCellChange) {
 			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);

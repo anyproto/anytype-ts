@@ -96,7 +96,10 @@ class MenuCalendar extends React.Component<Props, State> {
 							<div 
 								key={i} 
 								className={cn.join(' ')} 
-								onClick={() => { this.setValue(Util.timestamp(y, item.m, item.d), true, false); }}
+								onClick={(e: any) => { 
+									e.stopPropagation();
+									this.setValue(Util.timestamp(y, item.m, item.d), true, false); 
+								}}
 							>
 								{item.d}
 							</div>
