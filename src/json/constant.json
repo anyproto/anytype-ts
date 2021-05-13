@@ -86,6 +86,10 @@
 		"type": "type"
 	},
 
+	"relationSkipKeys": [
+		"creator", "createdDate", "lastModifiedBy", "lastModifiedDate", "lastOpenedDate", "name", "type"
+	],
+
 	"typeId": {
 		"page": "_otpage",
 		"template": "_ottemplate"
