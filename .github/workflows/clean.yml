@@ -1,13 +1,19 @@
-name: 'Delete old artifacts'
+name: 'Remove old artifacts'
+
 on:
   schedule:
-    - cron: '0 * * * *' # every hour
+    - cron: '0 * * * *'
 
 jobs:
-  delete-artifacts:
+  remove-old-artifacts:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
-      - uses: kolpav/purge-artifacts-action@v1
-        with:
-          token: ${{ secrets.TOKEN }}
-          expire-in: 0
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        age: '1 week'
+        # Optional inputs
+        # skip-tags: true
+        # skip-recent: 5
