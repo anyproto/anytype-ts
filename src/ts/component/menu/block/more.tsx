@@ -287,6 +287,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 		
+		const object = detailStore.get(rootId, rootId);
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
 		
@@ -372,6 +373,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'createTemplate':
 				C.MakeTemplate(rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.id, layout: object.layout });
 				});
 				break;
 

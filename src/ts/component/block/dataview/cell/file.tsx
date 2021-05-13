@@ -32,23 +32,21 @@ class CellFile extends React.Component<Props, State> {
 		};
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
 		if (!value.length) {
 			return <div className="empty">Add a file</div>;
 		};
 
-		const Item = (item: any) => {
-			return(
-				<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
-					<div className="flex">
-						<IconObject object={item} size={iconSize} />
-						<div className="name">{item.name}</div>
-					</div>
+		const Item = (item: any) => (
+			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
+				<div className="flex">
+					<IconObject object={item} size={iconSize} />
+					<div className="name">{item.name + (item.fileExt ? `.${item.fileExt}` : '')}</div>
 				</div>
-			);
-		};
+			</div>
+		);
 
 		return (
 			<div className="wrap">

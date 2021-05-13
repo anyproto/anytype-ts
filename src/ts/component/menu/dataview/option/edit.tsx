@@ -43,7 +43,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		return (
 			<div>
 				<form className="inputWrap" onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} value={option.text} placeHolder={translate('menuDataviewOptionEditPlaceholder')}  />
+					<Input ref={(ref: any) => { this.ref = ref; }} onBlur={this.onSubmit} value={option.text} placeHolder={translate('menuDataviewOptionEditPlaceholder')}  />
 				</form>
 				<div className="item" onClick={this.onRemove}>
 					<Icon className="remove" />
@@ -97,6 +97,11 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
+		const value = this.ref.getValue();
+		if (!value) {
+			return;
+		};
+
 		this.save();
 		this.props.close();
 	};
@@ -141,6 +146,10 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		option.text = this.ref.getValue();
 		option.color = this.color;
+
+		if (!option.text) {
+			return;
+		};
 
 		relation.selectDict[idx] = option;
 		optionCommand('update', rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);

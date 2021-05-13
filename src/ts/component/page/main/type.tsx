@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, Cover } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -12,19 +12,28 @@ interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
 };
 
+interface State {
+	templates: any[];
+};
+
 const $ = require('jquery');
 const BLOCK_ID = 'dataview';
 const EDITOR_IDS = [ 'name', 'description' ];
 const Constant = require('json/constant.json');
 
 @observer
-class PageMainType extends React.Component<Props, {}> {
+class PageMainType extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
 	timeout: number = 0;
+	page: number = 0;
+
+	state = {
+		templates: [],
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -40,6 +49,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		const { config } = commonStore;
 		const { isPopup } = this.props;
+		const { templates } = this.state;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
@@ -50,6 +60,9 @@ class PageMainType extends React.Component<Props, {}> {
 			description: 'Add a description',
 		};
 		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
+
+		const isFirst = this.page == 0;
+		const isLast = this.page == this.getMaxPage();
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -95,6 +108,15 @@ class PageMainType extends React.Component<Props, {}> {
 						{object[item.id]}
 					</div>
 					<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
+				</div>
+			);
+		};
+
+		const Template = (item: any) => {
+			let { coverType, coverId, coverX, coverY, coverScale } = item;
+			return (
+				<div className="item" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
+					<Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
 				</div>
 			);
 		};
@@ -162,6 +184,22 @@ class PageMainType extends React.Component<Props, {}> {
 							<Editor className="descr" id="description" />
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+						</div>
+					</div>
+
+					<div className="section template">
+						<div className="title">Templates</div>
+						<div className="content">
+							<div id="scrollWrap" className="wrap">
+								<div id="scroll" className="scroll">
+									{templates.map((item: any, i: number) => (
+										<Template key={i} {...item} />
+									))}
+								</div>
+							</div>
+
+							<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
+							<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
 						</div>
 					</div>
 					
@@ -272,6 +310,22 @@ class PageMainType extends React.Component<Props, {}> {
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
 			};
+
+			this.loadTemplates();
+		});
+	};
+
+	loadTemplates () {
+		const rootId = this.getRootId();
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+		];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+
+		C.ObjectSearch(filters, sorts, '', 0, 0, (message: any) => {
+			this.setState({ templates: message.records });
 		});
 	};
 
@@ -438,6 +492,40 @@ class PageMainType extends React.Component<Props, {}> {
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getMaxPage () {
+		return Math.ceil(this.state.templates.length / 2) - 1;
+	};
+
+	onArrow (dir: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#scrollWrap');
+		const scroll = node.find('#scroll');
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+		const w = wrap.width();
+		const max = this.getMaxPage();
+
+		this.page += dir;
+		this.page = Math.min(max, Math.max(0, this.page));
+
+		arrowLeft.removeClass('disabled');
+		arrowRight.removeClass('disabled');
+
+		if (this.page == 0) {
+			arrowLeft.addClass('disabled');
+		};
+		if (this.page == max) {
+			arrowRight.addClass('disabled');
+		};
+
+		let x = -this.page * w;
+		if (this.page > 0) {
+			x -= 16;
+		};
+
+		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
 	};
 
 };

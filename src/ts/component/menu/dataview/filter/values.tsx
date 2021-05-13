@@ -307,11 +307,12 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	onSubmit (e: any, item: any) {
 		e.preventDefault();
 
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
 
 		getView().setFilter(itemId, { value: this.ref.getValue() });
+		close();
 	};
 
 	onSubmitDate (e: any) {
