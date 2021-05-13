@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, Cover } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, Cover, Page } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -203,7 +203,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
 						</div>
 					</div>
-					
+
 					<div className="section note dn">
 						<div className="title">Notes</div>
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
