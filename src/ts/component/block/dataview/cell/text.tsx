@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
-import { menuStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
@@ -211,6 +211,10 @@ class CellText extends React.Component<Props, State> {
 			cell.addClass('isEditing');
 		} else {
 			cell.removeClass('isEditing');
+		};
+
+		if (commonStore.cellId) {
+			$(`#${commonStore.cellId}`).addClass('isEditing');
 		};
 	};
 
