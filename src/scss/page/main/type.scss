@@ -33,6 +33,27 @@
 			.title { @include text-header3; margin-bottom: 14px; }
 		}
 
+		.section.template {
+			.item { position: relative; width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; }
+			.item:last-child { margin-right: 0px; }
+			.item {
+				.cover { position: absolute; }
+			}
+
+			.icon.arrow { 
+				position: absolute; top: 50%; margin-top: -17px; width: 32px; height: 32px; background-image: url('~img/arrow/template0.svg'); 
+				cursor: pointer; background-size: 8px 32px;
+			}
+			.icon.arrow:hover { background-image: url('~img/arrow/template1.svg'); }
+			.icon.arrow.disabled:hover { background-image: url('~img/arrow/template0.svg'); }
+			.icon.arrow.left { left: -32px; transform: rotateY(-180deg); }
+			.icon.arrow.right { right: -32px; }
+
+			.content { white-space: nowrap; position: relative; }
+			.wrap { overflow: hidden; }
+			.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
+		}
+
 		.section.relation {
 			.item { display: flex; }
 			.item {
