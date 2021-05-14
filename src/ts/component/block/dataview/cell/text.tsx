@@ -260,8 +260,11 @@ class CellText extends React.Component<Props, State> {
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
 
-		value = Util.parseDate(String(value || '').replace(/_/g, ''));
-		menuStore.updateData(MENU_ID, { value: value });
+		value = String(value || '').replace(/_/g, '');
+		value = value ? Util.parseDate(value) : null;
+		if (value) {
+			menuStore.updateData(MENU_ID, { value: value });
+		};
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
