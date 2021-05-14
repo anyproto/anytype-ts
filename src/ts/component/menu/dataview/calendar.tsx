@@ -97,7 +97,7 @@ class MenuCalendar extends React.Component<Props, State> {
 								onMouseDown={() => { keyboard.disableBlur(true); }}
 								onClick={(e: any) => { 
 									e.stopPropagation();
-									this.setValue(Util.timestamp(y, item.m, item.d), true, false); 
+									this.setValue(Util.timestamp(y, item.m, item.d), true, true); 
 								}}
 							>
 								{item.d}
