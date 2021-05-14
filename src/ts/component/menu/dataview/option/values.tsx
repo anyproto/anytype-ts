@@ -88,11 +88,7 @@ class MenuOptionValues extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-
-		const items = this.getItems();
-		if (!items.length) {
-			this.onAdd();
-		};
+		this.onAdd();
 	};
 
 	componentDidUpdate () {
@@ -169,11 +165,7 @@ class MenuOptionValues extends React.Component<Props> {
 		const { param, getId, close } = this.props;
 		const { data } = param;
 
-		if (menuStore.isOpen('dataviewOptionList')) {
-			return;
-		};
-
-		window.setTimeout(() => {
+		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionList', {
 				element: '#' + getId() + ' #item-add',
 				width: 0,
@@ -181,13 +173,14 @@ class MenuOptionValues extends React.Component<Props> {
 				offsetY: -64,
 				passThrough: true,
 				noFlipY: true,
+				noAnimation: true,
 				onClose: () => { close(); },
 				data: {
 					...data,
 					rebind: this.rebind,
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onEdit (e: any, item: any) {
