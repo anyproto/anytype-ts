@@ -97,7 +97,6 @@ class LinkPreview extends React.Component<Props, State> {
 			this.setState({ 
 				loading: true,
 				url: linkPreview.url,
-				type: 0,
 				title: '',
 				description: '',
 				faviconUrl: '',

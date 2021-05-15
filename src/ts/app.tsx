@@ -35,6 +35,7 @@ import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
 import 'scss/component/linkPreview.scss';
+import 'scss/component/objectPreviewBlock.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';

@@ -1,0 +1,19 @@
+@import "~scss/_vars";
+
+.objectPreviewBlock { padding: 32px 32px 0px 32px; width: 344px; height: 216px; overflow: hidden; border: 1px solid $colorLightGrey; border-radius: 8px; }
+.objectPreviewBlock {
+	.heading { display: block; }
+	.heading {
+		.iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; }
+		.name { display: block; @include text-header3; }
+		.description {  }
+		.author { color: $colorDarkGrey; }
+	}
+} 
+
+.objectPreviewBlock.align1 {
+	.heading { text-align: center; }
+}
+.objectPreviewBlock.align2 {
+	.heading { text-align: right; }
+}

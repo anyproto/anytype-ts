@@ -56,6 +56,7 @@ import Icon from './util/icon';
 import IconObject from './util/iconObject';
 
 import LinkPreview from './util/linkPreview';
+import ObjectPreviewBlock from './util/objectPreviewBlock';
 
 import Cell from './block/dataview/cell';
 
@@ -109,5 +110,6 @@ export {
 	Icon,
 	IconObject,
 	LinkPreview,
+	ObjectPreviewBlock,
 	Cell,
 };
