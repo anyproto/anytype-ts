@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Loader, IconObject } from 'ts/component';
+import { Loader, IconObject, Cover } from 'ts/component';
 import { detailStore, blockStore } from 'ts/store';
 import { I, C } from 'ts/lib';
 import { observer } from 'mobx-react';
@@ -26,7 +26,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const { loading } = this.state;
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
-		const { name, description } = object;
+		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
@@ -40,6 +40,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		} else {
 			content = (
 				<React.Fragment>
+					{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="heading">
 						<IconObject size={40} object={object} />
 						<div className="name">{name}</div>

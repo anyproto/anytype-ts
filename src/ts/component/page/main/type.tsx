@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, Cover, ObjectPreviewBlock } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -114,10 +114,8 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		const Template = (item: any) => {
-			let { coverType, coverId, coverX, coverY, coverScale } = item;
 			return (
 				<div className="item" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
-					{/*<Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />*/}
 					<ObjectPreviewBlock rootId={item.id} />
 				</div>
 			);
