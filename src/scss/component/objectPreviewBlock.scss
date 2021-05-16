@@ -32,9 +32,14 @@
 			.children { width: 100%; }
 		}
 
-		.element.blockText.header1 { @include text-small; font-weight: bold; }
-		.element.blockText.header2 { @include text-small; font-weight: bold; }
-		.element.blockText.header3 { @include text-small; font-weight: bold; }
+		.element.blockText.header1, 
+		.element.blockText.header2, 
+		.element.blockText.header3 
+		{ @include text-small; font-weight: bold; }
+
+		.element.blockRelation {
+			.line:first-child { width: 30%; margin-right: 16px; }
+		}
 
 		.element.blockLayout.c0 > .children { display: flex; padding: 0px; }
 		.element.blockLayout.c0 > .children > .element { margin-right: 16px; }

@@ -81,6 +81,15 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					};
 					break;
 
+				case I.BlockType.Relation:
+					inner = (
+						<React.Fragment>
+							<div className="line" />
+							<div className="line" />
+						</React.Fragment>
+					);
+					break;
+
 				case I.BlockType.File:
 				case I.BlockType.Link:
 					inner = (
