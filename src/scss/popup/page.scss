@@ -20,7 +20,7 @@
 			.selection { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 			.editor { margin-top: 38px; }
 
-			.editorWrapper { padding-top: 58px; }
+			.editorWrapper { padding-top: 96px; }
 
 			.editorWrapper.isSet { width: calc(100% - 96px); }
 			.editorWrapper.isSet {
@@ -36,10 +36,11 @@
 				.editorControls { height: 188px; }
 			}
 
-			.editorWrapper.withIcon { padding-top: 84px; }
+			.editorWrapper.withIcon { padding-top: 122px; }
 
-			.editorWrapper.withCover { padding-top: 318px; }
-			.editorWrapper.withIconAndCover { padding-top: 194px; }
+			.editorWrapper.withCover { padding-top: 356px; }
+
+			.editorWrapper.withIconAndCover { padding-top: 232px; }
 			.editorWrapper.withIconAndCover {
 				.block.blockCover {
 					.elements {
@@ -55,8 +56,6 @@
 					}
 				}
 			}
-
-			.block.blockCover { top: 0px; }
 		}
 
 	}	
