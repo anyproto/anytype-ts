@@ -1,11 +1,10 @@
 @import "~scss/_vars";
 
-.objectPreviewBlock { 
-	padding: 32px 40px 16px 30px; width: 344px; height: 216px; overflow-x: hidden; overflow-y: auto; border: 1px solid $colorLightGrey; border-radius: 8px; 
-	position: relative;
-}
+.objectPreviewBlock { width: 344px; height: 216px; border-radius: 8px; overflow: hidden; position: relative; }
 .objectPreviewBlock {
-	.cover { position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: 86px; }
+	.scroller { padding: 32px 40px 16px 30px; position: relative; z-index: 1; overflow-x: hidden; overflow-y: auto; height: 100%; }
+	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid #dfddd0; border-radius: 8px; }
+	.cover { position: absolute; height: 86px; border-radius: 8px 8px 0px 0px; }
 
 	.heading { display: block; margin-bottom: 14px; }
 	.heading {
@@ -15,6 +14,7 @@
 		.author { @include text-very-small; color: $colorDarkGrey; }
 	}
 
+	.blocks { z-index: 1; }
 	.blocks {
 		.element { border: 1px solid red; display: block; }
 		.element {
@@ -53,7 +53,7 @@
 	}
 }
 
-.objectPreviewBlock.withCover { padding-top: 46px; }
+.objectPreviewBlock.withCover .scroller { padding-top: 46px; }
 
 .objectPreviewBlock.align1 {
 	.heading { text-align: center; }

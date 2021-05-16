@@ -135,21 +135,24 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		} else {
 			content = (
 				<React.Fragment>
-					{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-					<div className="heading">
-						<IconObject size={48} iconSize={32} object={object} />
-						<div className="name">{name}</div>
-						<div className="description">{description}</div>
-						<div className="author">{author.name}</div>
+					<div className="scroller">
+						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+						<div className="heading">
+							<IconObject size={48} iconSize={32} object={object} />
+							<div className="name">{name}</div>
+							<div className="description">{description}</div>
+							<div className="author">{author.name}</div>
+						</div>
+						<div className="blocks">
+							{children.map((child: any, i: number) => {
+								const cn = n % 2 == 0 ? 'even' : 'odd';
+								n++;
+								n = this.checkNumber(child, n);
+								return <Block key={child.id} className={cn} {...child} />;
+							})}
+						</div>
 					</div>
-					<div className="blocks">
-						{children.map((child: any, i: number) => {
-							const cn = n % 2 == 0 ? 'even' : 'odd';
-							n++;
-							n = this.checkNumber(child, n);
-							return <Block key={child.id} className={cn} {...child} />;
-						})}
-					</div>
+					<div className="border" />
 				</React.Fragment>
 			);
 		};
