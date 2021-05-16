@@ -15,6 +15,7 @@ interface Props {
 	native?: boolean;
 	asImage?: boolean;
 	size?: number;
+	iconSize?: number;
 	offsetX?: number;
 	offsetY?: number;
 	menuId?: string;
@@ -268,10 +269,15 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	iconSize (layout: I.ObjectLayout, size: number) {
+		const { iconSize } = this.props;
+
 		let s = Size[size];
 
 		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
 			s = 40;
+		};
+		if (iconSize) {
+			s = iconSize;
 		};
 		return s;
 	};

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Loader, IconObject, Cover } from 'ts/component';
+import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { detailStore, blockStore } from 'ts/store';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -31,8 +31,77 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
 		});
+		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign ];
+
+		if (coverId && coverType) {
+			cn.push('withCover');
+		};
 
 		console.log(children);
+
+		const Block = (item: any) => {
+			const { content, fields } = item;
+			const { style } = content;
+			const length = item.childBlocks.length;
+
+			let inner = null;
+			let isRow = false;
+
+			switch (item.type) {
+				case I.BlockType.Text:
+					switch (style) {
+						default:
+							inner = <div className="line" />
+							break;
+
+						case I.TextStyle.Header1:
+						case I.TextStyle.Header2:
+						case I.TextStyle.Header3:
+							inner = content.text;
+							break;
+
+						case I.TextStyle.Checkbox:
+							inner = (
+								<React.Fragment>
+									<Icon className="check" />
+									<div className="line" />
+								</React.Fragment>
+							);
+							break;
+					};
+					break;
+
+				case I.BlockType.Layout:
+					if (style == I.LayoutStyle.Row) {
+						isRow = true;
+					};
+					break;
+			};
+
+			return (
+				<div id={'block-' + item.id} className={[ 'element', DataUtil.blockClass(item) ].join(' ')} style={item.css}>
+					{inner ? (
+						<div className="inner">
+							{inner}
+						</div>
+					) : ''}
+
+					{length ? (
+						<div className="children">
+							{item.childBlocks.map((child: any, i: number) => {
+								let css: any = {};
+
+								if (isRow) {
+									css.width = (child.fields.width || 1 / length ) * 100 + '%';
+								};
+
+								return <Block key={child.id} {...child} css={css} />
+							})}
+						</div>
+					) : ''}
+				</div>
+			);
+		};
 
 		let content = null;
 		if (loading) {
@@ -42,17 +111,22 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 				<React.Fragment>
 					{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 					<div className="heading">
-						<IconObject size={40} object={object} />
+						<IconObject size={48} iconSize={32} object={object} />
 						<div className="name">{name}</div>
 						<div className="description">{description}</div>
 						<div className="author">{author.name}</div>
+					</div>
+					<div className="blocks">
+						{children.map((child: any) => (
+							<Block key={child.id} {...child} />
+						))}
 					</div>
 				</React.Fragment>
 			);
 		};
 		
 		return (
-			<div className={[ 'objectPreviewBlock' , 'align' + object.layoutAlign ].join(' ')}>
+			<div className={cn.join(' ')}>
 				{content}
 			</div>
 		);

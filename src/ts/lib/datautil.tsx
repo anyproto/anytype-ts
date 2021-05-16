@@ -70,8 +70,82 @@ class DataUtil {
 		};
 		return icon;
 	};
+
+	blockClass (block: any) {
+		const { content } = block;
+		const { style, type, state } = content;
+
+		let c = [];
+		switch (block.type) {
+			case I.BlockType.Text:		 
+				c.push('blockText ' + this.textClass(style)); 
+				break;
+
+			case I.BlockType.Layout:	 
+				c.push('blockLayout c' + style); 
+				break;
+
+			case I.BlockType.IconPage:	 
+				c.push('blockIconPage'); 
+				break;
+
+			case I.BlockType.IconUser:	 
+				c.push('blockIconUser'); 
+				break;
+				
+			case I.BlockType.File:
+				if (state == I.FileState.Done) {
+					c.push('withFile');
+				};
+				switch (type) {
+					default: 
+					case I.FileType.File: 
+						c.push('blockFile');
+						break;
+						
+					case I.FileType.Image: 
+						c.push('blockMedia');
+						break;
+						
+					case I.FileType.Video: 
+						c.push('blockMedia');
+						break;
+				};
+				break;
+				
+			case I.BlockType.Bookmark:
+				c.push('blockBookmark');
+				break;
+			
+			case I.BlockType.Dataview:
+				c.push('blockDataview');
+				break;
+				
+			case I.BlockType.Div:
+				c.push('blockDiv c' + style);
+				break;
+				
+			case I.BlockType.Link:
+				c.push('blockLink');
+				break;
+				
+			case I.BlockType.Cover:
+				c.push('blockCover');
+				break;
+
+			case I.BlockType.Relation:
+				c.push('blockRelation');
+				break;
+
+			case I.BlockType.Featured:
+				c.push('blockFeatured');
+				break;
+		};
+
+		return c.join(' ');
+	};
 	
-	styleClassText (v: I.TextStyle): string {
+	textClass (v: I.TextStyle): string {
 		let c = '';
 		switch (v) {
 			default:
