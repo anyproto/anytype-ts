@@ -24,10 +24,8 @@ class ListChildren extends React.Component<Props, {}> {
 	
 	render () {
 		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index } = this.props;
-		const { id } = block;
-
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const children = blockStore.getChildren(rootId, id);
+		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
+		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
 
 		if (!length) {
@@ -50,7 +48,7 @@ class ListChildren extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={'block-children-' + id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
+			<div id={'block-children-' + block.id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
 					let css: any = {};
 					let cn = [];

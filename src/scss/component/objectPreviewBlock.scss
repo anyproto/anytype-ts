@@ -23,6 +23,10 @@
 				.icon { width: 16px; height: 16px; margin-right: 4px; flex-shrink: 0; vertical-align: top; }
 				.icon.check { background-image: url('~img/icon/object/preview/check0.svg'); }
 
+				.icon.color {
+					.bullet { width: 10px; height: 10px; position: absolute; left: 50%; top: 50%; margin: -5px 0px 0px -5px; background: #FFE9BD; }
+				}
+
 				.line { margin: 5px 0px; height: 6px; background: #eae9e0; display: inline-block; vertical-align: top; width: 100%; }
 			}
 			.children { width: 100%; }
@@ -33,6 +37,10 @@
 		.element.blockText.header3 { @include text-small; font-weight: bold; }
 
 		.element.blockLayout.c0 > .children { display: flex; padding: 0px; }
+		.element.blockLayout.c0 > .children > .element { margin-right: 16px; }
+		.element.blockLayout.c0 > .children > .element:last-child { margin: 0px; }
+
+		.element.even > .inner > .line { width: 50%; }
 	}
 }
 

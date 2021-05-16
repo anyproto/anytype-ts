@@ -28,6 +28,8 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const object = detailStore.get(rootId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
 		});
@@ -37,11 +39,13 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			cn.push('withCover');
 		};
 
-		console.log(children);
+		const bullet = <div className="bullet" />;
+
+		let n = 0;
 
 		const Block = (item: any) => {
 			const { content, fields } = item;
-			const { style } = content;
+			const { text, style } = content;
 			const length = item.childBlocks.length;
 
 			let inner = null;
@@ -51,7 +55,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 				case I.BlockType.Text:
 					switch (style) {
 						default:
-							inner = <div className="line" />
+							inner = text ? <div className="line" /> : null;
 							break;
 
 						case I.TextStyle.Header1:
@@ -76,10 +80,20 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 						isRow = true;
 					};
 					break;
+
+				case I.BlockType.File:
+				case I.BlockType.Link:
+					inner = (
+						<React.Fragment>
+							<Icon className="color" inner={bullet} />
+							<div className="line" />
+						</React.Fragment>
+					);
+					break;
 			};
 
 			return (
-				<div id={'block-' + item.id} className={[ 'element', DataUtil.blockClass(item) ].join(' ')} style={item.css}>
+				<div id={'block-' + item.id} className={[ 'element', DataUtil.blockClass(item), item.className ].join(' ')} style={item.css}>
 					{inner ? (
 						<div className="inner">
 							{inner}
@@ -90,12 +104,19 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 						<div className="children">
 							{item.childBlocks.map((child: any, i: number) => {
 								let css: any = {};
+								let cn = '';
 
 								if (isRow) {
 									css.width = (child.fields.width || 1 / length ) * 100 + '%';
 								};
 
-								return <Block key={child.id} {...child} css={css} />
+								if (child.type == I.BlockType.Text) {
+									n++;
+									if (n > 1) n = 0;
+									cn = n % 2 ? 'even' : 'odd';
+								};
+
+								return <Block key={child.id} {...child} className={cn} css={css} />
 							})}
 						</div>
 					) : ''}
@@ -117,9 +138,17 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 						<div className="author">{author.name}</div>
 					</div>
 					<div className="blocks">
-						{children.map((child: any) => (
-							<Block key={child.id} {...child} />
-						))}
+						{children.map((child: any, i: number) => {
+							let cn = '';
+
+							if (child.type == I.BlockType.Text) {
+								n++;
+								if (n == 2) n = 0;
+								cn = n % 2 ? 'even' : 'odd';
+							};
+
+							return <Block key={child.id} className={cn} {...child} />;
+						})}
 					</div>
 				</React.Fragment>
 			);
