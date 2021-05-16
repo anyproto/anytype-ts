@@ -42,19 +42,12 @@
 
 			.editorWrapper.withIconAndCover { padding-top: 232px; }
 			.editorWrapper.withIconAndCover {
-				.block.blockCover {
-					.elements {
-						.buttons { padding-left: 118px; }
-					}
-				}
+				.block.blockCover .elements .buttons { padding-left: 118px; }
+				.block.blockCover.align1 .elements .buttons { padding-left: 68px; }
 			}
 
 			.editorWrapper.isHuman.withIconAndCover {
-				.block.blockCover {
-					.elements {
-						.buttons { padding-left: 150px; }
-					}
-				}
+				.block.blockCover .elements .buttons { padding-left: 150px; }
 			}
 		}
 
