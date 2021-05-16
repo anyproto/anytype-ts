@@ -1002,7 +1002,7 @@ class DataUtil {
 
 	checkDetails (rootId: string) {
 		const block = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator' ]);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
 			object: object,

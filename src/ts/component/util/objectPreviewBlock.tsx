@@ -25,18 +25,15 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	render () {
 		const { loading } = this.state;
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const check = DataUtil.checkDetails(rootId);
+		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
 		}).slice(0, 10);
-		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign ];
 
-		if (coverId && coverType) {
-			cn.push('withCover');
-		};
-
+		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, ];
 		const bullet = <div className="bullet" />;
 
 		let n = 0;
