@@ -198,8 +198,8 @@ class PageMainType extends React.Component<Props, State> {
 								</div>
 							</div>
 
-							<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
-							<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
+							<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
+							<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
 						</div>
 					</div>
 
@@ -510,22 +510,17 @@ class PageMainType extends React.Component<Props, State> {
 		this.page += dir;
 		this.page = Math.min(max, Math.max(0, this.page));
 
-		arrowLeft.removeClass('disabled');
-		arrowRight.removeClass('disabled');
+		arrowLeft.removeClass('dn');
+		arrowRight.removeClass('dn');
 
 		if (this.page == 0) {
-			arrowLeft.addClass('disabled');
+			arrowLeft.addClass('dn');
 		};
 		if (this.page == max) {
-			arrowRight.addClass('disabled');
+			arrowRight.addClass('dn');
 		};
 
-		let x = -this.page * w;
-		if (this.page > 0) {
-			x -= 16;
-		};
-
-		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
+		scroll.css({ transform: `translate3d(${-this.page * (w + 16)}px,0px,0px` });
 	};
 
 };
