@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .objectPreviewBlock { 
-	padding: 32px 40px; width: 344px; height: 216px; overflow-x: hidden; overflow-y: auto; border: 1px solid $colorLightGrey; border-radius: 8px; 
+	padding: 32px 40px 16px 30px; width: 344px; height: 216px; overflow-x: hidden; overflow-y: auto; border: 1px solid $colorLightGrey; border-radius: 8px; 
 	position: relative;
 }
 .objectPreviewBlock {
@@ -37,18 +37,19 @@
 		.element.blockText.header3 
 		{ @include text-small; font-weight: bold; }
 
-		.element.blockRelation {
-			.line:first-child { width: 30%; margin-right: 16px; }
-		}
+		.element.blockRelation > .inner > .line:first-child { width: 32%; margin-right: 16px; }
 
 		.element.blockLayout.c0 > .children { display: flex; padding: 0px; }
 		.element.blockLayout.c0 > .children > .element { margin-right: 16px; }
 		.element.blockLayout.c0 > .children > .element:last-child { margin: 0px; }
 
-		.element.even > .inner > .line { width: 50%; }
+		.element.odd > .inner > .line { width: 50%; }
+
+		.element.odd.blockRelation > .inner > .line:first-child { width: 22%; margin-right: 36px; }
+		.element.odd.blockRelation > .inner > .line:last-child { width: 48%; }
 
 		.element.withBullet > .inner > .line { width: calc(100% - 20px); }
-		.element.withBullet.even > .inner > .line { width: calc(50% - 20px); }
+		.element.withBullet.odd > .inner > .line { width: calc(50% - 20px); }
 	}
 }
 

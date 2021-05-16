@@ -30,7 +30,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const author = detailStore.get(rootId, object.creator, []);
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
-		}).slice(0, 5);
+		}).slice(0, 10);
 		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign ];
 
 		if (coverId && coverType) {
@@ -49,7 +49,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			let inner = null;
 			let isRow = false;
 			let cn = '';
-
+			
 			switch (item.type) {
 				case I.BlockType.Text:
 					switch (style) {
@@ -112,19 +112,15 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					{length ? (
 						<div className="children">
 							{item.childBlocks.map((child: any, i: number) => {
-								let css: any = {};
-								let cn = '';
+								const css: any = {};
+								const cn = n % 2 == 0 ? 'even' : 'odd';
 
 								if (isRow) {
 									css.width = (child.fields.width || 1 / length ) * 100 + '%';
 								};
 
-								if (child.type == I.BlockType.Text) {
-									n++;
-									if (n > 1) n = 0;
-									cn = n % 2 ? 'even' : 'odd';
-								};
-
+								n++;
+								n = this.checkNumber(child, n);
 								return <Block key={child.id} {...child} className={cn} css={css} />
 							})}
 						</div>
@@ -148,14 +144,9 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					</div>
 					<div className="blocks">
 						{children.map((child: any, i: number) => {
-							let cn = '';
-
-							if (child.type == I.BlockType.Text) {
-								n++;
-								if (n == 2) n = 0;
-								cn = n % 2 ? 'even' : 'odd';
-							};
-
+							const cn = n % 2 == 0 ? 'even' : 'odd';
+							n++;
+							n = this.checkNumber(child, n);
 							return <Block key={child.id} className={cn} {...child} />;
 						})}
 					</div>
@@ -186,7 +177,18 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 			this.setState({ loading: false });
 		});
-	};	
+	};
+
+	checkNumber (block: I.Block, n: number) {
+		const isText = block.type == I.BlockType.Text;
+		if ([ I.BlockType.Layout ].indexOf(block.type) >= 0) {
+			n = 0;
+		};
+		if (isText && ([ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].indexOf(block.content.style) >= 0)) {
+			n = 0;
+		};
+		return n;
+	};
 
 };
 
