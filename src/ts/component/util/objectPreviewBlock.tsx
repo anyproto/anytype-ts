@@ -28,11 +28,9 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const object = detailStore.get(rootId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const length = childrenIds.length;
 		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
-		});
+		}).slice(0, 10);
 		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign ];
 
 		if (coverId && coverType) {
@@ -50,12 +48,13 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 			let inner = null;
 			let isRow = false;
+			let cn = '';
 
 			switch (item.type) {
 				case I.BlockType.Text:
 					switch (style) {
 						default:
-							inner = text ? <div className="line" /> : null;
+							inner = <div className="line" />;
 							break;
 
 						case I.TextStyle.Header1:
@@ -65,6 +64,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 							break;
 
 						case I.TextStyle.Checkbox:
+							cn = 'withBullet';
 							inner = (
 								<React.Fragment>
 									<Icon className="check" />
@@ -93,7 +93,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			};
 
 			return (
-				<div id={'block-' + item.id} className={[ 'element', DataUtil.blockClass(item), item.className ].join(' ')} style={item.css}>
+				<div id={'block-' + item.id} className={[ 'element', DataUtil.blockClass(item), item.className, cn ].join(' ')} style={item.css}>
 					{inner ? (
 						<div className="inner">
 							{inner}

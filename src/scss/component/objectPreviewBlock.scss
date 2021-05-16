@@ -41,6 +41,9 @@
 		.element.blockLayout.c0 > .children > .element:last-child { margin: 0px; }
 
 		.element.even > .inner > .line { width: 50%; }
+
+		.element.withBullet > .inner > .line { width: calc(100% - 20px); }
+		.element.withBullet.even > .inner > .line { width: calc(50% - 20px); }
 	}
 }
 
