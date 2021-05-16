@@ -99,6 +99,6 @@
 .iconObject.c48.isRelation, 
 .iconObject.c40.isRelation { border-radius: 8px; background-color: #f3f2ec; }
 
-.iconObject.isUser { border-radius: 100%; }
+.iconObject.isUser { border-radius: 100% !important; }
 
 .iconObject.canEdit { cursor: pointer; }
