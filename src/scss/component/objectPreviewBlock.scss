@@ -7,7 +7,7 @@
 .objectPreviewBlock {
 	.cover { position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: 86px; }
 
-	.heading { display: block; margin-bottom: 18px; }
+	.heading { display: block; margin-bottom: 14px; }
 	.heading {
 		.iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; }
 		.name { display: block; @include text-paragraph; font-weight: bold; }

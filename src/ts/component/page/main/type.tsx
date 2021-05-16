@@ -321,7 +321,7 @@ class PageMainType extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 		];
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		C.ObjectSearch(filters, sorts, '', 0, 0, (message: any) => {
