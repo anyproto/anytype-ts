@@ -22,6 +22,14 @@
 			.inner {
 				.icon { width: 16px; height: 16px; margin-right: 4px; flex-shrink: 0; vertical-align: top; }
 				.icon.check { background-image: url('~img/icon/object/preview/check0.svg'); }
+				.icon.check.active { background-image: url('~img/icon/object/preview/check1.svg'); }
+				.icon.hl { background-image: url('~img/icon/object/preview/hl.svg'); }
+				.icon.bullet { background-image: url('~img/icon/object/preview/bullet.svg'); }
+
+				.number { 
+					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: #929082; margin-right: 4px; flex-shrink: 0; 
+					vertical-align: top; 
+				}
 
 				.icon.color {
 					.bullet { width: 10px; height: 10px; position: absolute; left: 50%; top: 50%; margin: -5px 0px 0px -5px; background: #FFE9BD; }
@@ -49,7 +57,7 @@
 		.element.odd.blockRelation > .inner > .line:last-child { width: 48%; }
 
 		.element.withBullet > .inner > .line { width: calc(100% - 20px); }
-		.element.withBullet.odd > .inner > .line { width: calc(50% - 20px); }
+		.element.withBullet.odd > .inner > .line { width: calc(50% - 10px); }
 	}
 }
 

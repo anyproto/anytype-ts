@@ -29,7 +29,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
-		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
+		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
 		}).slice(0, 10);
 
@@ -40,15 +40,19 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 		const Block = (item: any) => {
 			const { content, fields } = item;
-			const { text, style } = content;
+			const { text, style, checked } = content;
 			const length = item.childBlocks.length;
 
 			let inner = null;
 			let isRow = false;
-			let cn = '';
-			
+			let cn = [ 'element', DataUtil.blockClass(item), item.className ];
+
 			switch (item.type) {
 				case I.BlockType.Text:
+					if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Quote ].indexOf(style) >= 0) {
+						cn.push('withBullet');
+					};
+
 					switch (style) {
 						default:
 							inner = <div className="line" />;
@@ -61,10 +65,36 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 							break;
 
 						case I.TextStyle.Checkbox:
-							cn = 'withBullet';
 							inner = (
 								<React.Fragment>
-									<Icon className="check" />
+									<Icon className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
+									<div className="line" />
+								</React.Fragment>
+							);
+							break;
+
+						case I.TextStyle.Quote:
+							inner = (
+								<React.Fragment>
+									<Icon className="hl" />
+									<div className="line" />
+								</React.Fragment>
+							);
+							break;
+
+						case I.TextStyle.Bulleted:
+							inner = (
+								<React.Fragment>
+									<Icon className="bullet" />
+									<div className="line" />
+								</React.Fragment>
+							);
+							break;
+
+						case I.TextStyle.Numbered:
+							inner = (
+								<React.Fragment>
+									<div id={'marker-' + item.id} className="number" />
 									<div className="line" />
 								</React.Fragment>
 							);
@@ -99,7 +129,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			};
 
 			return (
-				<div id={'block-' + item.id} className={[ 'element', DataUtil.blockClass(item), item.className, cn ].join(' ')} style={item.css}>
+				<div id={'block-' + item.id} className={cn.join(' ')} style={item.css}>
 					{inner ? (
 						<div className="inner">
 							{inner}
@@ -110,7 +140,15 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 						<div className="children">
 							{item.childBlocks.map((child: any, i: number) => {
 								const css: any = {};
-								const cn = n % 2 == 0 ? 'even' : 'odd';
+								const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+								if (i == 0) {
+									cn.push('first');
+								};
+
+								if (i == item.childBlocks.length - 1) {
+									cn.push('last');
+								};
 
 								if (isRow) {
 									css.width = (child.fields.width || 1 / length ) * 100 + '%';
@@ -118,7 +156,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 								n++;
 								n = this.checkNumber(child, n);
-								return <Block key={child.id} {...child} className={cn} css={css} />
+								return <Block key={child.id} {...child} className={cn.join(' ')} css={css} />
 							})}
 						</div>
 					) : ''}
@@ -141,8 +179,17 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 							<div className="author">{author.name}</div>
 						</div>
 						<div className="blocks">
-							{children.map((child: any, i: number) => {
-								const cn = n % 2 == 0 ? 'even' : 'odd';
+							{childBlocks.map((child: any, i: number) => {
+								const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+								if (i == 0) {
+									cn.push('first');
+								};
+
+								if (i == childBlocks.length - 1) {
+									cn.push('last');
+								};
+
 								n++;
 								n = this.checkNumber(child, n);
 								return <Block key={child.id} className={cn} {...child} />;
