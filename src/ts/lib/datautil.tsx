@@ -144,7 +144,7 @@ class DataUtil {
 
 		return c.join(' ');
 	};
-	
+
 	textClass (v: I.TextStyle): string {
 		let c = '';
 		switch (v) {
@@ -161,6 +161,22 @@ class DataUtil {
 			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
 			case I.TextStyle.Title:			 c = 'title'; break;
 			case I.TextStyle.Description:	 c = 'description'; break;
+		};
+		return c;
+	};
+
+	layoutClass (id: string, layout: I.ObjectLayout) {
+		let c = '';
+		switch (layout) {
+			default:
+			case I.ObjectLayout.Page:		 c = 'isPage'; break;
+			case I.ObjectLayout.Human:		 c = 'isUser'; break;
+			case I.ObjectLayout.Task:		 c = 'isTask'; break;
+			case I.ObjectLayout.ObjectType:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
+			case I.ObjectLayout.Set:		 c = 'isSet'; break;
+			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
+			case I.ObjectLayout.File:		 c = 'isFile'; break;
 		};
 		return c;
 	};
@@ -1000,55 +1016,46 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const block = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator' ]);
 		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
 			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
-			className: [],
+			className: [ this.layoutClass(object.id, object.layout) ],
 		};
 
-		switch (block?.layout) {
+		switch (object.layout) {
 			default:
 			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
-				ret.className.push('isPage');
 				break;
 
 			case I.ObjectLayout.Human:
 				ret.withIcon = true;
-				ret.className.push('isHuman');
 				break;
 
 			case I.ObjectLayout.Task:
-				ret.className.push('isTask');
 				break;
 
 			case I.ObjectLayout.Set:
 				ret.withIcon = iconEmoji || iconImage;
-				ret.className.push('isSet');
 				break;
 
 			case I.ObjectLayout.Image:
 				ret.withIcon = true;
-				ret.className.push('isImage');
 				break;
 
 			case I.ObjectLayout.File:
 				ret.withIcon = true;
-				ret.className.push('isFile');
 				break;
 
 			case I.ObjectLayout.ObjectType:
 				ret.withIcon = true;
-				ret.className.push('isObjectType');
 				break;
 
 			case I.ObjectLayout.Relation:
 				ret.withIcon = true;
-				ret.className.push('isRelation');
 				break;
 		};
 

@@ -41,10 +41,41 @@
 				}
 
 				.icon.color {
-					.bullet { width: 10px; height: 10px; position: absolute; left: 50%; top: 50%; margin: -5px 0px 0px -5px; background: #FFE9BD; }
+					.bullet { 
+						width: 10px; height: 10px; position: absolute; left: 50%; top: 50%; margin: -5px 0px 0px -5px; border-radius: 3px;
+					}
+				}
+
+				.media { width: 100%; margin: 5px 0px; }
+				.bookmark { margin: 5px 0px; display: flex; height: 70px; width: 100%; }
+				.bookmark {
+					.side.left { width: 66.66%; border: 1px solid #dfddd0; border-right: 0px; border-radius: 8px 0px 0px 8px; padding: 10px 16px; }
+					.side.left {
+						.name { margin-bottom: 10px; }
+						.name {
+							.line { display: block; margin: 0px; }
+						}
+
+						.descr { margin-bottom: 8px; }
+						.descr {
+							.line { display: block; }
+							.line:first-child { margin: 0px 0px 6px 0px; }
+							.line:last-child { margin: 0px; }
+						}
+						.url { line-height: 16px; }
+						.url {
+							.icon.color { width: 8px; height: 8px; }
+							.bullet {  width: 8px; height: 8px; margin: 0px; left: 0px; top: 0px; }
+							.line { width: calc(100% - 20px); margin: 1px 0px 0px 0px; }
+						}
+					}
+					.side.right { 
+						width: 33.33%; background-repeat: no-repeat; background-size: cover; background-position: center center; border-radius: 0px 8px 8px 0px;
+					}
 				}
 
 				.line { margin: 5px 0px; height: 6px; background: #eae9e0; display: inline-block; vertical-align: top; width: 100%; }
+				.line.odd { width: 50%; }
 			}
 			.children { width: 100%; }
 		}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
-import { I, Util, SmileUtil } from 'ts/lib';
+import { I, Util, SmileUtil, DataUtil } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -128,7 +128,8 @@ class IconObject extends React.Component<Props, {}> {
 		const { className, size, canEdit } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const cn = [ 'iconObject', 'c' + size ];
+		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
+		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
 		
 		if (className) {
 			cn.push(className);
@@ -137,7 +138,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
+		
 		let iconSize = this.iconSize(layout, size);
 		let icon = null;
 		let icn = [];
@@ -145,27 +146,22 @@ class IconObject extends React.Component<Props, {}> {
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:
-				cn.push('isPage');
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				};
 				break;
 
 			case I.ObjectLayout.Human:
-				cn.push('isUser');
 				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.Task:
-				cn.push('isTask');
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
 				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.ObjectType:
-				cn.push('isObjectType');
-
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
@@ -175,8 +171,6 @@ class IconObject extends React.Component<Props, {}> {
 				break;
 
 			case I.ObjectLayout.Relation:
-				cn.push('isRelation');
-
 				if (Relation[relationFormat]) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={Relation[relationFormat]} className={icn.join(' ')} />;
@@ -185,18 +179,15 @@ class IconObject extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Image:
 				if (id) {
-					cn.push('isImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
-					cn.push('isFile');
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 					icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.File:
-				cn.push('isFile');
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				break;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
-import { detailStore, blockStore } from 'ts/store';
+import { commonStore, detailStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 
 interface Props {
@@ -9,6 +9,9 @@ interface Props {
 interface State {
 	loading: boolean;
 };
+
+const Constant = require('json/constant.json');
+const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
 class ObjectPreviewBlock extends React.Component<Props, State> {
 	
@@ -29,19 +32,20 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const author = detailStore.get(rootId, object.creator, []);
 		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
-		}).slice(0, 10);
+		}).slice(0, 100);
 		const isTask = object.layout == I.ObjectLayout.Task;
 
 		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, ];
-		const bullet = <div className="bullet" />;
 
 		let n = 0;
+		let c = 0;
 
 		const Block = (item: any) => {
 			const { content, fields } = item;
 			const { text, style, checked } = content;
 			const length = item.childBlocks.length;
 
+			let bullet = null;
 			let inner = null;
 			let isRow = false;
 			let cn = [ 'element', DataUtil.blockClass(item), item.className ];
@@ -117,12 +121,81 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					break;
 
 				case I.BlockType.File:
+					if (content.state == I.FileState.Empty) {
+						break;
+					};
+
+					switch (content.type) {
+						default: 
+						case I.FileType.File: 
+							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
+							inner = (
+								<React.Fragment>
+									<Icon className="color" inner={bullet} />
+									<div className="line" />
+								</React.Fragment>
+							);
+
+							c++;
+							if (c > Colors.length - 1) {
+								c = 0;
+							};
+							break;
+							
+						case I.FileType.Image:
+							let css: any = {};
+		
+							if (fields.width) {
+								css.width = (fields.width * 100) + '%';
+							};
+							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />
+							break;
+							
+						case I.FileType.Video: 
+							break;
+					};
+					break;
+
 				case I.BlockType.Link:
+					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
 					inner = (
 						<React.Fragment>
 							<Icon className="color" inner={bullet} />
 							<div className="line" />
 						</React.Fragment>
+					);
+
+					c++;
+					if (c > Colors.length - 1) {
+						c = 0;
+					};
+					break;
+
+				case I.BlockType.Bookmark:
+					if (!content.url) {
+						break;
+					};
+
+					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-grey' ].join(' ')} />
+					inner = (
+						<div className="bookmark">
+							<div className="side left">
+								<div className="name">
+									<div className="line odd" />
+								</div>
+
+								<div className="descr">
+									<div className="line even" />
+									<div className="line odd" />
+								</div>
+
+								<div className="url">
+									<Icon className="color" inner={bullet} />
+									<div className="line even" />
+								</div>
+							</div>
+							<div className="side right" style={{ backgroundImage: `url("${commonStore.imageUrl(content.imageHash, 170)}")` }} />
+						</div>
 					);
 					break;
 			};
