@@ -32,6 +32,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
 		}).slice(0, 10);
+		const isTask = object.layout == I.ObjectLayout.Task;
 
 		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, ];
 		const bullet = <div className="bullet" />;
@@ -173,8 +174,11 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					<div className="scroller">
 						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 						<div className="heading">
-							<IconObject size={48} iconSize={32} object={object} />
-							<div className="name">{name}</div>
+							{!isTask ? <IconObject size={48} iconSize={32} object={object} /> : ''}
+							<div className="name">
+								{isTask ? <Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} /> : ''}
+								{name}
+							</div>
 							<div className="description">{description}</div>
 							<div className="author">{author.name}</div>
 						</div>
@@ -210,6 +214,12 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.open();
+	};
+
+	componentDidUpdate () {
+		const { rootId } = this.props;
+
+		blockStore.setNumbers(rootId);
 	};
 	
 	open () {
