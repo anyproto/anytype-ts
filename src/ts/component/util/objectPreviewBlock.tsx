@@ -194,7 +194,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 								n++;
 								n = this.checkNumber(child, n);
-								return <Block key={child.id} className={cn} {...child} />;
+								return <Block key={child.id} className={cn.join(' ')} {...child} />;
 							})}
 						</div>
 					</div>
@@ -214,14 +214,6 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		this.open();
 	};
 
-	/*
-	componentDidUpdate () {
-		const { rootId } = this.props;
-
-		blockStore.setNumbers(rootId);
-	};
-	*/
-	
 	open () {
 		const { rootId } = this.props;
 

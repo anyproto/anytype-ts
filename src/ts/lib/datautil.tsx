@@ -912,7 +912,6 @@ class DataUtil {
 		if (!config.debug.ho) {
 			relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
 		};
-		relations = relations.filter((it: I.Relation) => { return Constant.relationSkipKeys.indexOf(it.relationKey) < 0; });
 
 		for (let i = 0; i < view.relations.length; ++i) {
 			order[view.relations[i].relationKey] = o++;

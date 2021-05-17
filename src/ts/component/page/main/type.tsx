@@ -187,21 +187,23 @@ class PageMainType extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					<div className="section template">
-						<div className="title">Templates</div>
-						<div className="content">
-							<div id="scrollWrap" className="wrap">
-								<div id="scroll" className="scroll">
-									{templates.map((item: any, i: number) => (
-										<Template key={i} {...item} />
-									))}
+					{templates.length ? (
+						<div className="section template">
+							<div className="title">{templates.length} templates</div>
+							<div className="content">
+								<div id="scrollWrap" className="wrap">
+									<div id="scroll" className="scroll">
+										{templates.map((item: any, i: number) => (
+											<Template key={i} {...item} />
+										))}
+									</div>
 								</div>
-							</div>
 
-							<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
-							<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
-						</div>
-					</div>
+								<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
+								<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
+							</div>
+						</div>	
+					) : ''}
 
 					<div className="section note dn">
 						<div className="title">Notes</div>
@@ -209,7 +211,7 @@ class PageMainType extends React.Component<Props, State> {
 					</div>
 
 					<div className="section relation">
-						<div className="title">Recommended relations</div>
+						<div className="title">{relations.length} relations</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
@@ -219,7 +221,7 @@ class PageMainType extends React.Component<Props, State> {
 					</div>
 
 					<div className="section set">
-						<div className="title">Set of objects</div>
+						<div className="title">{total} objects</div>
 						<div className="content">
 							<table>
 								<thead>
