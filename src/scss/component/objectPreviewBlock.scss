@@ -4,7 +4,7 @@
 .objectPreviewBlock {
 	.loaderWrapper { width: 100%; height: 100%; border: 1px solid #dfddd0; border-radius: 8px; }
 
-	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow-x: hidden; overflow-y: auto; height: calc(100% - 1px); }
+	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow: hidden; height: calc(100% - 1px); }
 	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid #dfddd0; border-radius: 8px; }
 	.cover { position: absolute; height: 86px; border-radius: 8px 8px 0px 0px; }
 

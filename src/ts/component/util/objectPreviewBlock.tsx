@@ -38,7 +38,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const author = detailStore.get(rootId, object.creator, []);
 		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
 			return !it.isLayoutHeader();
-		}).slice(0, 100);
+		}).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 
 		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, className, ];
