@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { detailStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
-import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
@@ -11,7 +10,6 @@ interface State {
 	loading: boolean;
 };
 
-@observer
 class ObjectPreviewBlock extends React.Component<Props, State> {
 	
 	state = {
@@ -216,11 +214,13 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		this.open();
 	};
 
+	/*
 	componentDidUpdate () {
 		const { rootId } = this.props;
 
 		blockStore.setNumbers(rootId);
 	};
+	*/
 	
 	open () {
 		const { rootId } = this.props;
