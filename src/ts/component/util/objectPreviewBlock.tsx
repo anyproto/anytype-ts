@@ -5,6 +5,8 @@ import { I, C, DataUtil } from 'ts/lib';
 
 interface Props {
 	rootId: string;
+	className?: string;
+	onClick? (e: any): void;
 };
 interface State {
 	loading: boolean;
@@ -18,6 +20,10 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
+
+	public  static defaultProps = {
+		className: '',
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -25,7 +31,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId } = this.props;
+		const { rootId, className, onClick } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
@@ -35,7 +41,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		}).slice(0, 100);
 		const isTask = object.layout == I.ObjectLayout.Task;
 
-		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, ];
+		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, className, ];
 
 		let n = 0;
 		let c = 0;
@@ -89,6 +95,15 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 							inner = (
 								<React.Fragment>
 									<Icon className="bullet" />
+									<div className="line" />
+								</React.Fragment>
+							);
+							break;
+
+						case I.TextStyle.Toggle:
+							inner = (
+								<React.Fragment>
+									<Icon className="toggle" />
 									<div className="line" />
 								</React.Fragment>
 							);
@@ -201,7 +216,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			};
 
 			return (
-				<div id={'block-' + item.id} className={cn.join(' ')} style={item.css}>
+				<div className={cn.join(' ')} style={item.css}>
 					{inner ? (
 						<div className="inner">
 							{inner}
@@ -277,7 +292,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div className={cn.join(' ')} onClick={onClick}>
 				{content}
 			</div>
 		);
@@ -293,10 +308,6 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		C.BlockOpen(rootId, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
 			this.setState({ loading: false });
 		});
 	};

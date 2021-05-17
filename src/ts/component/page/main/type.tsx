@@ -114,14 +114,6 @@ class PageMainType extends React.Component<Props, State> {
 			);
 		};
 
-		const Template = (item: any) => {
-			return (
-				<div className="item" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
-					<ObjectPreviewBlock rootId={item.id} />
-				</div>
-			);
-		};
-
 		const Relation = (item: any) => (
 			<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
@@ -198,7 +190,11 @@ class PageMainType extends React.Component<Props, State> {
 								<div id="scrollWrap" className="wrap">
 									<div id="scroll" className="scroll">
 										{templates.map((item: any, i: number) => (
-											<Template key={i} {...item} />
+											<ObjectPreviewBlock 
+												key={item.id} 
+												rootId={item.id} 
+												onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} 
+											/>
 										))}
 									</div>
 								</div>

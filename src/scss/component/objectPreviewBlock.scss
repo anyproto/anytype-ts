@@ -4,7 +4,7 @@
 .objectPreviewBlock {
 	.loaderWrapper { width: 100%; height: 100%; border: 1px solid #dfddd0; border-radius: 8px; }
 
-	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow-x: hidden; overflow-y: auto; height: 100%; }
+	.scroller { padding: 32px 40px 16px 40px; position: relative; z-index: 1; overflow-x: hidden; overflow-y: auto; height: calc(100% - 1px); }
 	.border { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; border: 1px solid #dfddd0; border-radius: 8px; }
 	.cover { position: absolute; height: 86px; border-radius: 8px 8px 0px 0px; }
 
@@ -34,6 +34,7 @@
 				.icon.check.active { background-image: url('~img/icon/object/preview/check1.svg'); }
 				.icon.hl { background-image: url('~img/icon/object/preview/hl.svg'); }
 				.icon.bullet { background-image: url('~img/icon/object/preview/bullet.svg'); }
+				.icon.toggle { background-image: url('~img/icon/object/preview/toggle.svg'); }
 
 				.number { 
 					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: #929082; margin-right: 4px; flex-shrink: 0; 
@@ -49,7 +50,9 @@
 				.media { width: 100%; margin: 5px 0px; }
 				.bookmark { margin: 5px 0px; display: flex; height: 70px; width: 100%; }
 				.bookmark {
-					.side.left { width: 66.66%; border: 1px solid #dfddd0; border-right: 0px; border-radius: 8px 0px 0px 8px; padding: 10px 16px; }
+					.line { height: 4px; }
+
+					.side.left { width: 66.66%; border: 1px solid #dfddd0; border-right: 0px; border-radius: 8px 0px 0px 8px; padding: 15px 16px 12px 16px; }
 					.side.left {
 						.name { margin-bottom: 10px; }
 						.name {
@@ -62,11 +65,11 @@
 							.line:first-child { margin: 0px 0px 6px 0px; }
 							.line:last-child { margin: 0px; }
 						}
-						.url { line-height: 16px; }
+						.url { line-height: 8px; }
 						.url {
 							.icon.color { width: 8px; height: 8px; }
 							.bullet {  width: 8px; height: 8px; margin: 0px; left: 0px; top: 0px; }
-							.line { width: calc(100% - 20px); margin: 1px 0px 0px 0px; }
+							.line { width: calc(100% - 20px); margin: 2px 0px 0px 0px; }
 						}
 					}
 					.side.right { 
@@ -85,10 +88,18 @@
 		.element.blockText.header3 
 		{ @include text-small; font-weight: bold; }
 
+		.element.blockText.toggle > .children,
+		.element.blockText.numbered > .children,
+		.element.blockText.bulleted > .children,
+		.element.blockText.checkbox > .children,
+		.element.blockText.paragraph > .children
+		{ padding-left: 8px; }
+
+
 		.element.blockRelation > .inner > .line:first-child { width: 32%; margin-right: 16px; }
 
 		.element.blockLayout.c0 > .children { display: flex; padding: 0px; }
-		.element.blockLayout.c0 > .children > .element { margin-right: 16px; }
+		.element.blockLayout.c0 > .children > .element { margin-right: 8px; }
 		.element.blockLayout.c0 > .children > .element:last-child { margin: 0px; }
 
 		.element.odd > .inner > .line { width: 50%; }

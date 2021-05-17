@@ -38,8 +38,8 @@
 		}
 
 		.section.template {
-			.item { position: relative; width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
-			.item:last-child { margin-right: 0px; }
+			.objectPreviewBlock { width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
+			.objectPreviewBlock:last-child { margin-right: 0px; }
 
 			.icon.arrow { 
 				position: absolute; top: 0px; width: 32px; height: 100%; background-image: url('~img/arrow/template0.svg'); 
@@ -51,7 +51,7 @@
 			.icon.arrow.right { right: -32px; }
 
 			.content { white-space: nowrap; position: relative; }
-			.wrap { overflow: hidden; }
+			.wrap { overflow: hidden; border-radius: 8px; }
 			.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
 		}
 

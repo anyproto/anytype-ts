@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
+import { Title, Label, Button, IconObject, Loader, Cover, ObjectPreviewBlock } from 'ts/component';
 import { I, C, DataUtil, Util, Storage } from 'ts/lib';
 import { dbStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -32,6 +32,7 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		]
 	},
+	/*
 	{ 
 		id: Tab.Template, 'name': 'Templates', active: 'library', 
 		children: [
@@ -39,6 +40,7 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		], 
 	},
+	*/
 	{ 
 		id: Tab.Relation, 'name': 'Relations', active: 'library', 
 		children: [
