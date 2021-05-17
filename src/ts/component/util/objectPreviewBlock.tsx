@@ -260,9 +260,13 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					<div className="scroller">
 						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 						<div className="heading">
-							{!isTask ? <IconObject size={48} iconSize={32} object={object} /> : ''}
+							{isTask ? (
+								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
+							) : 
+							(
+								<IconObject size={48} iconSize={32} object={object} />
+							)}
 							<div className="name">
-								{isTask ? <Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} /> : ''}
 								{name}
 							</div>
 							<div className="description">{description}</div>
