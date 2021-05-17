@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -40,6 +40,7 @@ class PageMainType extends React.Component<Props, State> {
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onObjectAdd = this.onObjectAdd.bind(this);
 	};
 
 	render () {
@@ -123,7 +124,7 @@ class PageMainType extends React.Component<Props, State> {
 
 		const Relation = (item: any) => (
 			<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-				<div className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
+				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -132,7 +133,7 @@ class PageMainType extends React.Component<Props, State> {
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={(e: any) => { this.onRelationAdd(e); }}>
 				<div className="clickable">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -179,11 +180,14 @@ class PageMainType extends React.Component<Props, State> {
 						<div className="side left">
 							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
-						<div className="side right">
+						<div className="side center">
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+						</div>
+						<div className="side right">
+							<Button text="Create" className="orange" onClick={this.onObjectAdd} />
 						</div>
 					</div>
 
@@ -355,7 +359,20 @@ class PageMainType extends React.Component<Props, State> {
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
-	onAdd (e: any) {
+	onObjectAdd () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+		const details: any = {
+			type: rootId,
+			layout: object.recommendedLayout,
+		};
+
+		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', (message: any) => {
+			DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+		});
+	};
+
+	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
 		const relations = dbStore.getRelations(rootId, rootId);
 
@@ -378,7 +395,7 @@ class PageMainType extends React.Component<Props, State> {
 		});
 	};
 
-	onEdit (e: any, relationKey: string) {
+	onRelationEdit (e: any, relationKey: string) {
 		const rootId = this.getRootId();
 		
 		menuStore.open('blockRelationEdit', { 
