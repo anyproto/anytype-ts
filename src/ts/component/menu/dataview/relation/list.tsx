@@ -73,7 +73,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 					{relations.map((item: any, i: number) => {
 						return <Item key={item.relationKey} {...item} index={i} />;
 					})}
-					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
+					{!readOnly ? <ItemAdd index={relations.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});

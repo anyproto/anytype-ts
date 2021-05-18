@@ -262,13 +262,10 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 						<div className="heading">
 							{isTask ? (
 								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
-							) : 
-							(
+							) : (
 								<IconObject size={48} iconSize={32} object={object} />
 							)}
-							<div className="name">
-								{name}
-							</div>
+							<div className="name">{name}</div>
 							<div className="description">{description}</div>
 							<div className="author">{author.name}</div>
 						</div>

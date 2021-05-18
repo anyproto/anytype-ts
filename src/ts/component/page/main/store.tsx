@@ -167,13 +167,15 @@ class PageMainStore extends React.Component<Props, State> {
 
 			case Tab.Relation:
 				Item = (item: any) => {
+					const { name, description } = item;
 					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
+							<IconObject size={48} object={item} />
 							<div className="info">
 								<div className="txt">
-									<div className="name">{item.name}</div>
+									<div className="name">{name}</div>
+									<div className="descr">{description}</div>
 									<Author {...author} />
 								</div>
 								<div className="line" />
