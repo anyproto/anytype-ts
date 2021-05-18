@@ -527,7 +527,14 @@ class App extends React.Component<Props, State> {
 
 			case 'save':
 				dialog.showSaveDialog({}).then((result: any) => {
-					console.log('PATH', result.filePath);
+					const { filePath } = result;
+					if (!filePath) {
+						return;
+					};
+
+					C.Export(filePath, [ rootId ], I.ExportFormat.Markdown, true, () => {
+						ipcRenderer.send('pathOpen', filePath);
+					});
 				});
 				break;
 		};
