@@ -40,6 +40,7 @@ import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
+import 'scss/component/filter.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -72,6 +73,7 @@ import 'scss/block/iconUser.scss';
 import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
 import 'scss/block/featured.scss';
+import 'scss/block/type.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -148,7 +150,7 @@ const rootStore = {
 };
 
 const path = require('path');
-const { app } = window.require('electron').remote;
+const { app, dialog } = window.require('electron').remote;
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 
@@ -521,6 +523,12 @@ class App extends React.Component<Props, State> {
 
 			case 'create':
 				keyboard.pageCreate();
+				break;
+
+			case 'save':
+				dialog.showSaveDialog({}).then((result: any) => {
+					console.log('PATH', result.filePath);
+				});
 				break;
 		};
 	};

@@ -140,6 +140,10 @@ class DataUtil {
 			case I.BlockType.Featured:
 				c.push('blockFeatured');
 				break;
+
+			case I.BlockType.Type:
+				c.push('blockType');
+				break;
 		};
 
 		return c.join(' ');

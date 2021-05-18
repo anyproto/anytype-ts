@@ -92,23 +92,23 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured();
+		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured() && !this.isType();
 	};
 
 	isIndentable (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode() && !this.isType();
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem();
+		return !this.isSystem() && !this.isType();
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
 	};
 
 	isPage (): boolean { 
@@ -163,10 +163,14 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Relation;
 	};
 
+	isType (): boolean {
+		return this.type == I.BlockType.Type;
+	};
+
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};
-	
+
 	isLayoutRow (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Row);
 	};

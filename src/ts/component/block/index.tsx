@@ -19,6 +19,7 @@ import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
 import BlockFeatured from './featured';
+import BlockType from './type';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -167,6 +168,11 @@ class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Featured:
 				blockComponent = <BlockFeatured {...this.props} />;
+				break;
+
+			case I.BlockType.Type:
+				canSelect = false;
+				blockComponent = <BlockType {...this.props} />;
 				break;
 		};
 		

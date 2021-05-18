@@ -187,6 +187,7 @@ const Mapper = {
 			return {
 				id: obj.getUrl(),
 				name: obj.getName(),
+				description: obj.getDescription(),
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),
 				isHidden: obj.getHidden(),

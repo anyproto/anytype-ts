@@ -1,0 +1,27 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockType {  }
+	.block.blockType { 
+		.wrapMenu { visibility: hidden; }
+
+		.filter { padding: 0px; margin-bottom: 8px; }
+		.filter {
+			.input { @include text-paragraph; height: 24px; }
+		}
+
+		.item { position: relative; padding: 8px 8px 8px 72px; height: 64px; transition: $transitionFast; cursor: pointer; }
+		.item:hover { background: rgba(134,125,66, 0.08); }
+
+		.item {
+			.iconObject { position: absolute; left: 8px; top: 8px; background: #f3f2ec; border-radius: 10px; }
+
+			.info { height: 100%; position: relative; line-height: 48px; }
+			.info {
+				.txt { width: 100%; }
+				.name { @include text-paragraph; @include text-overflow-nw; }
+				.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
+			}
+		}
+	}
+}

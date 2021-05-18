@@ -23,6 +23,7 @@ export enum BlockType {
 	Cover		 = 'cover',
 	Relation	 = 'relation',
 	Featured	 = 'featured',
+	Type		 = 'type',
 };
 
 export enum BlockPosition {
@@ -108,6 +109,7 @@ export interface Block {
 	isFeatured?(): boolean;
 	isDataview?(): boolean;
 	isRelation?(): boolean;
+	isType?(): boolean;
 
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;

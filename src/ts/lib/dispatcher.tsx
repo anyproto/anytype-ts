@@ -636,18 +636,25 @@ class Dispatcher {
 
 	onObjectShow (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
-		
+		let root = blocks.find((it: any) => { return it.id == rootId; });
+
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
 
-		blocks = blocks.map((it: any) => {
-			if (it.id == rootId) {
-				const object = detailStore.get(rootId, rootId, [ 'layout' ]);
+		if (root) {
+			const object = detailStore.get(rootId, rootId, [ 'layout' ]);
 
-				it.type = I.BlockType.Page;
-				it.layout = object.layout;
+			root.type = I.BlockType.Page;
+			root.layout = object.layout;
+
+			if (root.childrenIds.length == 1) {
+				root.childrenIds.push('type');
+
+				blocks.push({ id: 'type', type: I.BlockType.Type });
 			};
+		};
 
+		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
 				dbStore.viewsSet(rootId, it.id, it.content.views);
