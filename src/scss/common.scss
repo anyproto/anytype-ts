@@ -13,6 +13,9 @@ body {
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; }
+body.fullScreen {
+	#drag { display: none; }
+}
 
 :focus { outline: 0px; }
 
