@@ -536,7 +536,7 @@ class App extends React.Component<Props, State> {
 						return;
 					};
 
-					C.Export(files[0], [ rootId ], I.ExportFormat.Markdown, true, (message: any) => {
+					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
