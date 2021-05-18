@@ -99,7 +99,8 @@
 		"title": "title",
 		"description": "description",
 		"featured": "featuredRelations",
-		"dataview": "dataview"
+		"dataview": "dataview",
+		"type": "type"
 	},
 
 	"size": {

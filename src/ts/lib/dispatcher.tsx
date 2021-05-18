@@ -8,6 +8,7 @@ const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
 
+const Constant = require('json/constant.json');
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
@@ -250,6 +251,10 @@ class Dispatcher {
 					childrenIds = data.getChildrenidsList() || [];
 
 					blockStore.updateStructure(rootId, id, childrenIds);
+
+					if ((rootId == id) && (childrenIds.length > 1)) {
+						blockStore.delete(rootId, Constant.blockId.type);
+					};
 					break;
 
 				case 'blockSetFields':
@@ -648,9 +653,9 @@ class Dispatcher {
 			root.layout = object.layout;
 
 			if (root.childrenIds.length == 1) {
-				root.childrenIds.push('type');
+				root.childrenIds.push(Constant.blockId.type);
 
-				blocks.push({ id: 'type', type: I.BlockType.Type });
+				blocks.push({ id: Constant.blockId.type, type: I.BlockType.Type });
 			};
 		};
 
