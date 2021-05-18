@@ -526,14 +526,22 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				dialog.showSaveDialog({}).then((result: any) => {
-					const { filePath } = result;
-					if (!filePath) {
+				const options: any = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
 						return;
 					};
 
-					C.Export(filePath, [ rootId ], I.ExportFormat.Markdown, true, () => {
-						ipcRenderer.send('pathOpen', filePath);
+					C.Export(files[0], [ rootId ], I.ExportFormat.Markdown, true, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
 					});
 				});
 				break;
