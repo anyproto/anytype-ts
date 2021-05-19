@@ -68,6 +68,11 @@ class BlockType extends React.Component<Props, State> {
 		);
 	};
 
+	bind () {
+		this.unbind();
+		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e); });
+	};
+
 	unbind () {
 		$(window).unbind('keydown.blockType');
 	};
@@ -146,8 +151,11 @@ class BlockType extends React.Component<Props, State> {
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			const items = this.getItems();
+			
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 			this.setHover(item, false);
+
+			this.bind();
 		};
 	};
 
@@ -155,11 +163,17 @@ class BlockType extends React.Component<Props, State> {
 		if (!keyboard.isMouseDisabled) {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.find('.item.hover').removeClass('hover');
+
 			this.n = -1;
+			this.unbind();
 		};
 	};
 
 	setHover (item: any, scroll: boolean) {
+		if (!item) {
+			return;
+		};
+
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
@@ -196,8 +210,7 @@ class BlockType extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.item.hover').removeClass('hover');
 
-		this.unbind();
-		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e) });
+		this.bind();
 	};
 
 	onFilterChange (e: any) {
