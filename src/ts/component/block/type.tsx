@@ -141,6 +141,14 @@ class BlockType extends React.Component<Props, State> {
 			};
 			this.setHover(items[this.n], true);
 		});
+
+		keyboard.shortcut('enter, space', e, (pressed: string) => {
+			e.preventDefault();
+
+			if (items[this.n]) {
+				this.onClick(e, items[this.n]);
+			};
+		});
 	};
 	
 	onFocus () {
