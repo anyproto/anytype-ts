@@ -10,8 +10,8 @@
 			.input { @include text-paragraph; height: 24px; }
 		}
 
-		.item { position: relative; padding: 8px 8px 8px 72px; height: 64px; transition: $transitionFast; cursor: pointer; }
-		.item:hover { background: rgba(134,125,66, 0.08); }
+		.item { position: relative; padding: 8px 8px 8px 72px; height: 64px; cursor: pointer; }
+		.item.hover { background: rgba(134,125,66, 0.08); }
 
 		.item {
 			.iconObject { position: absolute; left: 8px; top: 8px; background: #f3f2ec; border-radius: 10px; }

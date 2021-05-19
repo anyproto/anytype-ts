@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, Util } from 'ts/lib';
+import { I, C, Util, focus, keyboard } from 'ts/lib';
 import { dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -9,10 +10,14 @@ interface State {
 	filter: string;
 };
 
+const $ = require('jquery');
+const Constant = require('json/constant.json');
+
 @observer
 class BlockType extends React.Component<Props, State> {
 
 	ref: any = null;
+	n: number = -1;
 	state = {
 		filter: '',
 	};
@@ -20,39 +25,20 @@ class BlockType extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onOut = this.onOut.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onFilterFocus = this.onFilterFocus.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render (): any {
-		const { filter } = this.state;
-
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
-		if (filter) {
-			const reg = new RegExp(Util.filterFix(filter), 'gi');
-
-			types = types.filter((it: any) => {
-				let ret = false;
-				if (it.name && it.name.match(reg)) {
-					ret = true;
-					it._sortWeight_ = 100;
-				} else 
-				if (it.description && it.description.match(reg)) {
-					ret = true;
-					it._sortWeight_ = 10;
-				};
-				return ret; 
-			});
-
-			types.sort((c1: any, c2: any) => {
-				if (c1._sortWeight_ > c2._sortWeight_) return -1;
-				if (c1._sortWeight_ < c2._sortWeight_) return 1;
-				return 0;
-			});
-		};
+		const { block } = this.props;
+		const items = this.getItems();
 
 		const Item = (item: any) => {
 			return (
-				<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} onMouseLeave={this.onOut}>
 					<IconObject size={48} iconSize={32} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
 					<div className="info">
 						<div className="txt">
@@ -66,20 +52,152 @@ class BlockType extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div>
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter types..." onChange={this.onFilterChange} />
+			<div tabIndex={0} onFocus={this.onFocus}>
+				<Filter 
+					ref={(ref: any) => { this.ref = ref; }} 
+					inputClassName={'focusable c' + block.id}
+					placeHolderFocus="Filter types..." 
+					onFocus={this.onFilterFocus}
+					onChange={this.onFilterChange}
+				/>
 
-				{types.map((item: any) => (
+				{items.map((item: any) => (
 					<Item key={item.id} {...item} />
 				))}
 			</div>
 		);
 	};
 
+	unbind () {
+		$(window).unbind('keydown.blockType');
+	};
+
+	getItems () {
+		const { filter } = this.state;
+
+		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
+
+		if (filter) {
+			const reg = new RegExp(Util.filterFix(filter), 'gi');
+
+			items = items.filter((it: any) => {
+				let ret = false;
+				if (it.name && it.name.match(reg)) {
+					ret = true;
+					it._sortWeight_ = 100;
+				} else 
+				if (it.description && it.description.match(reg)) {
+					ret = true;
+					it._sortWeight_ = 10;
+				};
+				return ret; 
+			});
+
+			items.sort((c1: any, c2: any) => {
+				if (c1._sortWeight_ > c2._sortWeight_) return -1;
+				if (c1._sortWeight_ < c2._sortWeight_) return 1;
+				return 0;
+			});
+		};
+
+		return items;
+	};
+
+	onKeyDown (e: any) {
+		const { onKeyDown, isPopup } = this.props;
+		const items = this.getItems();
+
+		keyboard.disableMouse(true);
+
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			this.n--;
+
+			if (this.n < -1) {
+				this.unbind();
+
+				if (onKeyDown) {
+					onKeyDown(e, '', [], { from: 0, to: 0 });
+				};
+			} else
+			if (this.n == -1) {
+				this.ref.focus();
+			} else {
+				this.setHover(items[this.n], true);
+			};
+		});
+
+		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+
+			this.n++;
+			if (this.n > items.length - 1) {
+				this.n = 0;
+				focus.scroll(isPopup);
+			};
+			this.setHover(items[this.n], true);
+		});
+	};
+	
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			const items = this.getItems();
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+			this.setHover(item, false);
+		};
+	};
+
+	onOut () {
+		if (!keyboard.isMouseDisabled) {
+			const node = $(ReactDOM.findDOMNode(this));
+			node.find('.item.hover').removeClass('hover');
+			this.n = -1;
+		};
+	};
+
+	setHover (item: any, scroll: boolean) {
+		const { isPopup } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#item-' + item.id);
+
+		node.find('.item.hover').removeClass('hover');
+		el.addClass('hover');
+
+		this.ref.blur();
+
+		if (scroll) {
+			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
+			const st = container.scrollTop();
+			const h = container.height();
+			const o = Constant.size.lastBlock + Constant.size.header;
+
+			let y = 0;
+			if (isPopup) {
+				y = el.offset().top - container.offset().top + st;
+			} else {
+				y = el.offset().top;
+			};
+
+			container.scrollTop(y - h + o);
+		};
+	};
+
 	onClick (e: any, item: any) {
 		const { rootId } = this.props;
 
 		C.BlockObjectTypeSet(rootId, item.id);
+	};
+
+	onFilterFocus (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.item.hover').removeClass('hover');
+
+		this.unbind();
+		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e) });
 	};
 
 	onFilterChange (e: any) {
