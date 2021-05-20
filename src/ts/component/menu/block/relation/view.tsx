@@ -62,7 +62,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							/>
 						);
 					})}
-					{!readOnly && (section.index == sections.length - 1) ? <ItemAdd /> : ''}
 				</div>
 			</div>
 		);
@@ -73,7 +72,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 					<Icon className="plus" />
 					<div className="name">New</div>
 				</div>
-				<div className="cell" />
 			</div>
 		);
 
@@ -82,6 +80,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				{sections.map((item: any, i: number) => {
 					return <Section key={i} {...item} index={i} />;
 				})}
+				{!readOnly ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
