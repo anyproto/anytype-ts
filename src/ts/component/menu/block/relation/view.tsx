@@ -183,15 +183,14 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
+			element: `#${getId()} #item-add .info`,
 			offsetX: 32,
-			offsetY: 4,
 			data: {
 				...data,
 				filter: '',
