@@ -58,6 +58,10 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 			switch (item.type) {
 				case I.BlockType.Text:
+					if (!text) {
+						break;
+					};
+
 					if ([ I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Quote ].indexOf(style) >= 0) {
 						cn.push('withBullet');
 					};
@@ -70,7 +74,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 						case I.TextStyle.Header1:
 						case I.TextStyle.Header2:
 						case I.TextStyle.Header3:
-							inner = content.text;
+							inner = text;
 							break;
 
 						case I.TextStyle.Checkbox:
