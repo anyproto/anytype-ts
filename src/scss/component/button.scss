@@ -14,7 +14,7 @@
 .button.grey.filled { background: $colorLightGrey; color: #fff; box-shadow: 0px 0px; }
 .button.grey.filled:hover { box-shadow: 0px 0px; }
 
-.button.blank { line-height: 36px; background: none; border: solid 1px #dfddd0; }
+.button.blank { line-height: 36px; background: none; border: solid 1px $colorLightGrey; }
 .button.blank:hover { border-color: $colorBlack; }
 
 .button.c28 { height: 28px; line-height: 26px; border-radius: 6px; }

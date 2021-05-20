@@ -113,7 +113,7 @@ class PageMainStore extends React.Component<Props, State> {
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={64} object={item} />
+							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
 									<div className="name">{item.name}</div>

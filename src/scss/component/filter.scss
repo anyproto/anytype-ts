@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
-.filter { padding: 3px 14px 0px 14px; }
+.filter { padding: 0px 14px; }
 .filter {
-	.inner { position: relative; width: 100%; height: 28px; }
-	.input { padding: 0px !important; height: 22px; line-height: 22px; vertical-align: top; border: 0px !important; width: calc(100% - 24px); }
+	.inner { position: relative; width: 100%; height: 36px; }
+	.input { padding: 0px !important; height: 28px; line-height: 28px; vertical-align: top; border: 0px !important; width: calc(100% - 24px); }
 	.icon.clear { 
-		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 0px; top: 0px;
+		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 0px; top: 4px;
 		cursor: pointer; opacity: 0;
 	}
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }

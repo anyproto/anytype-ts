@@ -13,13 +13,13 @@
 			.bullet { margin-top: -2px; }
 		}
 
-		.head { width: 696px; margin: 0px auto 35px auto; display: flex; }
+		.head { width: 696px; margin: 0px auto 24px auto; display: flex; }
 		.head {
 			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
 			.side.right { width: calc(100% - 128px); }
 
 			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
+			.descr { @include text-paragraph; margin: 8px 0px 9px 0px; }
 
 			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
 

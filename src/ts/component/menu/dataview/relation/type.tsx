@@ -22,7 +22,7 @@ class MenuRelationType extends React.Component<Props, {}> {
 		const { value } = data;
 		const relations: any[] = [
 			{ format: I.RelationType.LongText },
-			{ format: I.RelationType.ShortText },
+			//{ format: I.RelationType.ShortText },
 			{ format: I.RelationType.Number },
 			{ format: I.RelationType.Status },
 			{ format: I.RelationType.Tag },

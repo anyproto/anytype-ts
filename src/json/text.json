@@ -37,7 +37,7 @@
 	"day6": { "en": "Friday" },
 	"day7": { "en": "Saturday" },
 
-	"relationName0": { "en": "Long text" },
+	"relationName0": { "en": "Text" },
 	"relationName1": { "en": "Short text" },
 	"relationName2": { "en": "Number" },
 	"relationName3": { "en": "Status" },

@@ -123,7 +123,7 @@
 
 			.caption { 
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
-				flex-shrink: 0;
+				flex-shrink: 0; line-height: 20px;
 			}
 		}
 

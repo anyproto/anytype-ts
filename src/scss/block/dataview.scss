@@ -28,23 +28,18 @@
 			.item:hover, .item.active { color: $colorBlack; }
 			
 			.item.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
-
-			.icon.plus { margin-top: -4px; }
+			.item.btn { line-height: 20px; }
 		}
 		
 		.buttons { display: flex; margin-bottom: 8px; font-weight: 500; color: $colorDarkGrey; }
 		.buttons {
-			.side { width: 50%; white-space: nowrap; }
+			.side { padding: 24px 0px; height: 74px; width: 50%; white-space: nowrap; }
 			.side.left { padding-left: 14px; }
-			.side.right { text-align: right; }
+			.side.right { line-height: 26px; text-align: right; }
 
-			.icon { vertical-align: top; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
+			.icon { vertical-align: middle; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
 			.icon:last-child { margin: 0px; }
 
-			.icon {
-				.dot { width: 6px; height: 6px; border-radius: 100%; position: absolute; right: -4px; top: -4px; background: $colorOrange; display: none; }
-			}
-			
 			.icon.search { background-image: url('~img/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
 			.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }

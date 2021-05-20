@@ -7,7 +7,7 @@
 		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
 
 		.placeHolder { 
-			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
+			color: #cbc9bd; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
 			width: 100%; height: 100%; cursor: text; pointer-events: none;
 		}
 
@@ -82,7 +82,7 @@
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 
-	.block.blockText.title { padding: 10px 0px 22px 0px; @include text-title; }
+	.block.blockText.title { padding: 22px 0px 6px 0px; @include text-title; }
 	.block.blockText.title {
 		.placeHolder { 
 			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
@@ -92,7 +92,7 @@
 	}
 	.block.blockText.title > .wrapContent > .selectable > .dropTarget { padding: 4px 0px 2px 0px; }
 
-	.block.blockText.description { @include text-description; }
+	.block.blockText.description { padding: 0px 0px 6px 0px; @include text-description; }
 	.block.blockText.description > .wrapContent > .selectable > .selectionOver { display: none; }
 
 	.block.blockText.header1 { padding: 22px 0px 0px 0px; }

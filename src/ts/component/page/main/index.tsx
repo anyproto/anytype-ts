@@ -62,7 +62,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 							{config.allowDataview ? (
 								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
 							) : ''}
-							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={64} tooltip="Your profile" onClick={this.onProfile} />
+							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={56} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					

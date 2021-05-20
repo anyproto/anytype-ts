@@ -49,31 +49,33 @@ class ViewGrid extends React.Component<Props, {}> {
 		return (
 			<div className="wrap">
 				<div className="scroll">
-					<table className="viewItem viewGrid">
-						<thead>
-							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
-						</thead>
-						<tbody>
-							{data.map((item: any, i: number) => (
-								<BodyRow 
-									key={'grid-row-' + view.id + i} 
-									{...this.props} 
-									index={i} 
-									onRowOver={this.onRowOver} 
-								/>
-							))}
-							{!readOnly ? (
-								<tr>
-									<td className="cell add" colSpan={relations.length + 1}>
-										<div className="btn" onClick={onRowAdd}>
-											<Icon className="plus" />
-											<div className="name">{translate('blockDataviewNew')}</div>
-										</div>
-									</td>
-								</tr>
-							) : null}
-						</tbody>
-					</table>
+					<div className="scrollWrap">
+						<table className="viewItem viewGrid">
+							<thead>
+								<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
+							</thead>
+							<tbody>
+								{data.map((item: any, i: number) => (
+									<BodyRow 
+										key={'grid-row-' + view.id + i} 
+										{...this.props} 
+										index={i} 
+										onRowOver={this.onRowOver} 
+									/>
+								))}
+								{!readOnly ? (
+									<tr>
+										<td className="cell add" colSpan={relations.length + 1}>
+											<div className="btn" onClick={onRowAdd}>
+												<Icon className="plus" />
+												<div className="name">{translate('blockDataviewNew')}</div>
+											</div>
+										</td>
+									</tr>
+								) : null}
+							</tbody>
+						</table>
+					</div>
 				</div>
 
 				{pager}
@@ -124,17 +126,17 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getView, scrollContainer, isPopup } = this.props;
+		const { getView, scrollContainer } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
-		const viewItem = node.find('.viewItem');
+		const wrap = node.find('.scrollWrap');
 		const ww = $(scrollContainer).width();
 		const mw = ww - 64;
 
 		let vw = 0;
 		let margin = 0;
-		let width = 48;
+		let width = 80;
 
 		for (let relation of view.relations) {
 			if (relation.isVisible) {
@@ -146,7 +148,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		margin = (ww - mw) / 2;
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
-		viewItem.css({ width: vw });
+		wrap.css({ width: vw });
 		
 		this.resizeLast();
 	};

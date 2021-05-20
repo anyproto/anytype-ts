@@ -81,6 +81,7 @@
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c40 { width: 40px; height: 40px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 0px; overflow: hidden; }
+.iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
@@ -100,5 +101,8 @@
 .iconObject.c40.isRelation { border-radius: 8px; background-color: #f3f2ec; }
 
 .iconObject.isUser { border-radius: 100% !important; }
+.iconObject.isUser {
+	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
+} 
 
 .iconObject.canEdit { cursor: pointer; }
