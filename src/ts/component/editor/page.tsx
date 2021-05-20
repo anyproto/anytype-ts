@@ -998,7 +998,7 @@ class EditorPage extends React.Component<Props, {}> {
 		commonStore.filterSet(0, '');
 		focus.clear(true);
 		
-		this.blockCreate(block, this.hoverPosition, {
+		this.blockCreate(block.id, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
@@ -1343,11 +1343,22 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
+	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
-		
-		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
-			this.focus(message.blockId, 0, 0, false);
+
+		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
+			let id = message.blockId;
+
+			if (param.type == I.BlockType.Div) {
+				const next = blockStore.getNextBlock(rootId, message.blockId, 1, (it: I.Block) => {
+					return it.isFocusable();
+				});
+				if (next) {
+					id = next.id;
+				};
+			};
+
+			this.focus(id, 0, 0, false);
 			this.phraseCheck();
 
 			if (callBack) {
@@ -1522,7 +1533,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		if (create) {
-			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+			this.blockCreate(last.id, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
 			this.focus(last.id, length, length, false);
 		};

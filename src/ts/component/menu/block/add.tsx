@@ -370,7 +370,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { param, close, getId } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSelect, blockCreate } = data;
 		const { filter } = commonStore;
@@ -458,7 +458,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
-					blockCreate(block, position, param);
+					blockCreate(blockId, position, param);
 				};
 			};
 
