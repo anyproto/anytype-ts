@@ -53,6 +53,10 @@ class BlockType extends React.Component<Props, State> {
 		
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
+				<div className="placeHolder">
+					Choose object type (↓↑ to select) ot press ENTER to continue with Draft type
+				</div>
+
 				<Filter 
 					ref={(ref: any) => { this.ref = ref; }} 
 					inputClassName={'focusable c' + block.id}
@@ -204,7 +208,9 @@ class BlockType extends React.Component<Props, State> {
 				y = el.offset().top;
 			};
 
-			container.scrollTop(y - h + o);
+			if (y >= h - o) {
+				container.scrollTop(y - h + o);
+			};
 		};
 	};
 

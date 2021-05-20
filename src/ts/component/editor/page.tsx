@@ -646,7 +646,7 @@ class EditorPage extends React.Component<Props, {}> {
 					this.onPrint();
 				};
 				if (pressed == 'ctrl+p') {
-					this.onArrow(Key.up, length);
+					this.onArrow(e, Key.up, length);
 				};
 			} else {
 				e.preventDefault();
@@ -657,7 +657,7 @@ class EditorPage extends React.Component<Props, {}> {
 		// Next string
 		if (platform == I.Platform.Mac) {
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
-				this.onArrow(Key.down, length);
+				this.onArrow(e, Key.down, length);
 			});
 		};
 
@@ -805,7 +805,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed, length);
+			this.onArrow(e, pressed, length);
 		});
 
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
@@ -937,7 +937,7 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 	};
 
-	onArrow (pressed: string, length: number) {
+	onArrow (e: any, pressed: string, length: number) {
 		if (menuStore.isOpen()) {
 			return;
 		};
@@ -958,6 +958,8 @@ class EditorPage extends React.Component<Props, {}> {
 		if (!next) {
 			return;
 		};
+
+		e.preventDefault();
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const parent = blockStore.getLeaf(rootId, next.parentId);

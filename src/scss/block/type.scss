@@ -1,9 +1,10 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockType {  }
 	.block.blockType { 
 		.wrapMenu { visibility: hidden; }
+
+		.placeHolder { @include text-common; color: #cbc9bd; margin-bottom: 20px; }
 
 		.filter { padding: 0px; margin-bottom: 8px; }
 		.filter {
