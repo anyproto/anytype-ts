@@ -103,6 +103,7 @@ class PageMainType extends React.Component<Props, State> {
 						suppressContentEditableWarning={true}
 						onFocus={(e: any) => { this.onFocus(e, item); }}
 						onBlur={(e: any) => { this.onBlur(e, item); }}
+						onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
 						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
 						onInput={(e: any) => { this.onInput(e, item); }}
 						onSelect={(e: any) => { this.onSelectText(e, item); }}
@@ -423,6 +424,16 @@ class PageMainType extends React.Component<Props, State> {
 
 	onInput (e: any, item: any) {
 		this.placeHolderCheck(item.id);
+	};
+
+	onKeyDown (e: any, item: any) {
+		this.placeHolderCheck(item.id);
+
+		if (item.id == 'name') {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				e.preventDefault();
+			});
+		};
 	};
 
 	onKeyUp (e: any, item: any) {
