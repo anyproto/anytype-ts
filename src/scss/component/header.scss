@@ -85,7 +85,7 @@
 	}
 	.path * { pointer-events: all; }
 
-	.side.left { opacity: 0; transition: $transitionFast; }
+	.side.left { transition: $transitionFast; }
 	.side.left {
 		.icon { margin: 0px; }
 	}
@@ -162,7 +162,6 @@ body.fullScreen {
 }
 
 .header.headerMainEdit:hover, .header.headerMainEdit.active, .header.headerMainEdit.show {
-	.side.left { opacity: 1; }
 	.side.center {
 		.icon { opacity: 1; }
 		.icon.dis { opacity: 0.5; }
