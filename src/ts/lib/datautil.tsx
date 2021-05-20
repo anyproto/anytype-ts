@@ -174,7 +174,7 @@ class DataUtil {
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:		 c = 'isPage'; break;
-			case I.ObjectLayout.Human:		 c = 'isUser'; break;
+			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
 			case I.ObjectLayout.Task:		 c = 'isTask'; break;
 			case I.ObjectLayout.ObjectType:	 c = 'isObjectType'; break;
 			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;

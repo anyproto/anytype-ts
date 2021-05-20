@@ -47,7 +47,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div className="iconObject isUser c64 fileWrap" onClick={this.onFileClick}>
+						<div className="iconObject isHuman c64 fileWrap" onClick={this.onFileClick}>
 							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
 					
