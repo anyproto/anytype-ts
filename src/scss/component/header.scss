@@ -52,16 +52,16 @@
 
 	.side.center { width: 512px; height: 28px; left: 50%; margin-left: -256px; white-space: nowrap; }
 
-	.side.right { right: 6px; z-index: 1; }
+	.side.right { right: 10px; z-index: 1; }
 	.side.right {
-		.sync { margin: 5px 8px 0px 0px; cursor: pointer; vertical-align: top; }
+		.sync { margin: 5px 16px 0px 0px; cursor: pointer; vertical-align: top; }
 		.icon { margin: 0px; }
 	}
 }
 
 .header.headerMainIndex { height: 38px; background: rgba(0,0,0,0.3); }
 .header.headerMainIndex {
-	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon { width: 32px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.side.center { 
@@ -73,7 +73,7 @@
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 
-	.icon.big { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon.big { width: 32px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big:hover, .icon.big.active { background-color: #f3f2ec; }
 
 	.path { 
@@ -88,7 +88,6 @@
 	.side.left { opacity: 0; transition: $transitionFast; }
 	.side.left {
 		.icon { margin: 0px; }
-		.icon.back, .icon.forward { width: 32px; }
 	}
 
 	.side.center {
@@ -148,7 +147,7 @@
 
 html.platformMac {
 	.header {
-		.side.left { left: 90px; }
+		.side.left { left: 88px; }
 	}
 
 	.header.headerMainHistory {

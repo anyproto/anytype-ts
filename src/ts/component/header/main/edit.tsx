@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
-	isPopup: boolean;
+	isPopup?: boolean;
 	dataset?: any;
 };
 
@@ -28,7 +28,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onForward = this.onForward.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
@@ -85,9 +84,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 						</div>
 					</div>
 					<div className="icons">
-						{!isPopup && canAdd ? (
-							<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
-						) : ''}
 						{config.allowDataview && canAdd ? (
 							<Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} />
 						) : ''}
@@ -180,37 +176,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
-	};
-
-	onAdd (e: any) {
-		const { rootId } = this.props;
-		const { focused } = focus;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const fb = blockStore.getLeaf(rootId, focused);
-
-		if (!root || root.isObjectReadOnly()) {
-			return;
-		};
-		
-		let targetId = '';
-		let position = I.BlockPosition.Bottom;
-		
-		if (fb) {
-			if (fb.isTextTitle()) {
-				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
-				if (first) {
-					targetId = first.id;
-					position = I.BlockPosition.Top;
-				};
-			} else 
-			if (fb.isFocusable()) {
-				targetId = fb.id;
-			};
-		};
-		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
-			DataUtil.objectOpen({ id: message.targetId });
-		});
 	};
 
 	onSync (e: any) {
