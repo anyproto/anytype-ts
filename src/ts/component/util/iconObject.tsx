@@ -75,18 +75,18 @@ const File = {
 };
 
 const Relation: any = {};
-Relation[I.RelationType.LongText] = require('img/icon/dataview/relation/longText.svg');
-Relation[I.RelationType.ShortText] = require('img/icon/dataview/relation/shortText.svg');
-Relation[I.RelationType.Number] = require('img/icon/dataview/relation/number.svg');
-Relation[I.RelationType.Status] = require('img/icon/dataview/relation/status.svg');
-Relation[I.RelationType.Date] = require('img/icon/dataview/relation/date.svg');
-Relation[I.RelationType.File] = require('img/icon/dataview/relation/file.svg');
-Relation[I.RelationType.Checkbox] = require('img/icon/dataview/relation/checkbox.svg');
-Relation[I.RelationType.Url] = require('img/icon/dataview/relation/url.svg');
-Relation[I.RelationType.Email] = require('img/icon/dataview/relation/email.svg');
-Relation[I.RelationType.Phone] = require('img/icon/dataview/relation/phone.svg');
-Relation[I.RelationType.Tag] = require('img/icon/dataview/relation/tag.svg');
-Relation[I.RelationType.Object] = require('img/icon/dataview/relation/object.svg');
+Relation[I.RelationType.LongText] = require('img/icon/relation/longText.svg');
+Relation[I.RelationType.ShortText] = require('img/icon/relation/shortText.svg');
+Relation[I.RelationType.Number] = require('img/icon/relation/number.svg');
+Relation[I.RelationType.Status] = require('img/icon/relation/status.svg');
+Relation[I.RelationType.Date] = require('img/icon/relation/date.svg');
+Relation[I.RelationType.File] = require('img/icon/relation/file.svg');
+Relation[I.RelationType.Checkbox] = require('img/icon/relation/checkbox.svg');
+Relation[I.RelationType.Url] = require('img/icon/relation/url.svg');
+Relation[I.RelationType.Email] = require('img/icon/relation/email.svg');
+Relation[I.RelationType.Phone] = require('img/icon/relation/phone.svg');
+Relation[I.RelationType.Tag] = require('img/icon/relation/tag.svg');
+Relation[I.RelationType.Object] = require('img/icon/relation/object.svg');
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
