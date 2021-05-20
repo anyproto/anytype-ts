@@ -59,6 +59,7 @@
 		
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scrollWrap { padding-right: 32px; }
 			.view { border-top: 1px solid #e0ded2; }
 			
 			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
