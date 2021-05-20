@@ -131,13 +131,18 @@ interface State {
 	loading: boolean;
 };
 
-const THROTTLE = 20;
-const Constant =  require('json/constant.json');
 const $ = require('jquery');
+const path = require('path');
+const { app, dialog, process } = window.require('electron').remote;
+const version = app.getVersion();
+const userPath = app.getPath('userData');
 const { ipcRenderer } = window.require('electron');
 const fs = window.require('fs');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
+const Constant =  require('json/constant.json');
+
+const THROTTLE = 20;
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore,
@@ -149,10 +154,7 @@ const rootStore = {
 	popupStore,
 };
 
-const path = require('path');
-const { app, dialog } = window.require('electron').remote;
-const version = app.getVersion();
-const userPath = app.getPath('userData');
+console.log('OS Version', process.getSystemVersion());
 
 /*
 enableLogging({

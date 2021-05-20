@@ -69,7 +69,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		let iconHome = (
 			<div className="iconObject isRelation c48">
 				<div className="iconEmoji c48">
-					<Icon className="home big" />
+					<Icon className="home-big" />
 				</div>
 			</div>
 		);

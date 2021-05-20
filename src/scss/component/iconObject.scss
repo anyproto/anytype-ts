@@ -27,7 +27,7 @@
 			span { height: 100%; display: inline-block; vertical-align: middle; }
 		}
 		
-		.icon.home.big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+		.icon.home-big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	}
 
 	.iconEmoji.c18 { width: 18px; height: 18px; line-height: 18px; }
