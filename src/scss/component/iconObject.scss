@@ -86,7 +86,7 @@
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 
-.iconObject.c96, .iconObject.c128 {
+.iconObject.c56, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
 } 
 
@@ -101,8 +101,5 @@
 .iconObject.c40.isRelation { border-radius: 8px; background-color: #f3f2ec; }
 
 .iconObject.isUser { border-radius: 100% !important; }
-.iconObject.isUser {
-	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
-} 
 
 .iconObject.canEdit { cursor: pointer; }
