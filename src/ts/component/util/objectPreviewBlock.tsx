@@ -140,7 +140,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 					break;
 
 				case I.BlockType.File:
-					if (content.state == I.FileState.Empty) {
+					if ([ I.FileState.Empty, I.FileState.Error ].indexOf(content.state) >= 0) {
 						break;
 					};
 
