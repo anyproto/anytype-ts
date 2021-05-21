@@ -84,7 +84,7 @@ class Page extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				{!isPopup ? <ListPopup {...this.props} /> : ''}
+				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
 				<div className={'page ' + this.getClass('page')}>
 					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 				</div>

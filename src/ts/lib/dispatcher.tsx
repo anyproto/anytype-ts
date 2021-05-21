@@ -251,10 +251,6 @@ class Dispatcher {
 					childrenIds = data.getChildrenidsList() || [];
 
 					blockStore.updateStructure(rootId, id, childrenIds);
-
-					if ((rootId == id) && (childrenIds.length > 1)) {
-						blockStore.delete(rootId, Constant.blockId.type);
-					};
 					break;
 
 				case 'blockSetFields':

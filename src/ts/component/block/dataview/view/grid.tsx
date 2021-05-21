@@ -136,7 +136,8 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		let vw = 0;
 		let margin = 0;
-		let width = 80;
+		let width = 48;
+		let pr = 0;
 
 		for (let relation of view.relations) {
 			if (relation.isVisible) {
@@ -144,11 +145,16 @@ class ViewGrid extends React.Component<Props, {}> {
 			};
 		};
 
-		vw = width < mw ? mw : width;
+		vw = width <= mw ? mw : width;
 		margin = (ww - mw) / 2;
 
+		if (width > mw) {
+			pr = 32;
+			vw += 32;
+		};
+
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
-		wrap.css({ width: vw });
+		wrap.css({ width: vw, paddingRight: pr });
 		
 		this.resizeLast();
 	};

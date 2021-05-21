@@ -43,11 +43,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type) || {};
 		const bullet = <div className="bullet" />;
-		const blockType = blockStore.getLeaf(rootId, Constant.blockId.type);
-
-		if (blockType) {
-			return null;
-		};
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
