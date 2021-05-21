@@ -379,6 +379,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			return;
 		};
 
+		keyboard.setFocus(false);
+
 		let text = String(data.text || '');
 
 		const length = text.length;

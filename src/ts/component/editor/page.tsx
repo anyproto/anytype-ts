@@ -1052,7 +1052,7 @@ class EditorPage extends React.Component<Props, {}> {
 				rootId: rootId,
 				text: text,
 				blockCreate: this.blockCreate,
-			}
+			},
 		});
 	};
 	
