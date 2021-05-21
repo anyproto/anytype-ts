@@ -72,6 +72,8 @@
 		}
 	}
 
+	.block.blockText > .wrapContent > .selectable > .dropTarget .value.isFocused { background: none; }
+
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeHolder { display: none; }
