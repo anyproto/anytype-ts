@@ -18,6 +18,7 @@ body.fullScreen {
 }
 
 :focus { outline: 0px; }
+::selection { background-color: Highlight; }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
