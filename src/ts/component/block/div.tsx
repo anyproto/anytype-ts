@@ -22,17 +22,23 @@ class BlockDiv extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const { style } = content;
 		
-		let cn = [ 'div', 'focusable', 'c' + id ];
+		let cn = [ 'wrap', 'focusable', 'c' + id ];
 		let inner: any = null;
 			
 		switch (content.style) {
+			case I.DivStyle.Line:
+				inner = (
+					<div className="line" />
+				);
+				break;
+
 			case I.DivStyle.Dot:
 				inner = (
-					<React.Fragment>
+					<div className="dots">
 						<div className="dot" />
 						<div className="dot" />
 						<div className="dot" />
-					</React.Fragment>
+					</div>
 				);
 				break;
 		};

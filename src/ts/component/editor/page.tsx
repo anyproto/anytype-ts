@@ -934,6 +934,12 @@ class EditorPage extends React.Component<Props, {}> {
 			let replace = !range.to && block.isTextList() && !length;
 			if (replace) {
 				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			} else 
+			if (!block.isText()) {  
+				this.blockCreate(block.id, I.BlockPosition.Bottom, {
+					type: I.BlockType.Text,
+					style: I.TextStyle.Paragraph,
+				});
 			} else {
 				this.blockSplit(block, range);
 			};
@@ -1356,18 +1362,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 
 		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
-			let id = message.blockId;
-
-			if (param.type == I.BlockType.Div) {
-				const next = blockStore.getNextBlock(rootId, message.blockId, 1, (it: I.Block) => {
-					return it.isFocusable();
-				});
-				if (next) {
-					id = next.id;
-				};
-			};
-
-			this.focus(id, 0, 0, false);
+			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
 			if (callBack) {
