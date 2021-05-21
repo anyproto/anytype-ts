@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, IconObject, Loader, Cover, ObjectPreviewBlock } from 'ts/component';
-import { I, C, DataUtil, Util, Storage } from 'ts/lib';
-import { dbStore, blockStore, detailStore } from 'ts/store';
+import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
+import { I, C, DataUtil, Util, Storage, keyboard } from 'ts/lib';
+import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -339,7 +339,15 @@ class PageMainStore extends React.Component<Props, State> {
 
 	onClick (e: any, item: any) {
 		const { isPopup } = this.props;
-		isPopup ? DataUtil.objectOpenPopup(item) : DataUtil.objectOpenEvent(e, item);
+
+		if (isPopup) {
+			const popup = popupStore.get('page');
+
+			DataUtil.objectOpen(item);
+			keyboard.setSource({ type: I.Source.Popup, data: popup });
+		} else {
+			DataUtil.objectOpenEvent(e, item);
+		};
 	};
 
 	onCreateType (e: any) {

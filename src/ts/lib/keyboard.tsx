@@ -1,8 +1,9 @@
-import { I, Util, DataUtil, SmileUtil, Storage, focus, history as historyPopup } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
+const Constant = require('json/constant.json');
 
 class Keyboard {
 	
@@ -15,6 +16,7 @@ class Keyboard {
 	pressed: string[] = [];
 	match: any = {};
 	matchPopup: any = {};
+	source: any = null;
 	
 	isDragging: boolean = false;
 	isResizing: boolean = false;
@@ -174,6 +176,8 @@ class Keyboard {
 	back () {
 		const { account } = authStore;
 		const isPopup = popupStore.isOpen('page');
+
+		crumbs.restore(I.CrumbsType.Page);
 		
 		if (isPopup) {
 			historyPopup.goBack((match: any) => { 
@@ -193,10 +197,14 @@ class Keyboard {
 
 			this.history.goBack();
 		};
+
+		this.restoreSource();
 	};
 
 	forward () {
 		const isPopup = popupStore.isOpen('page');
+
+		crumbs.restore(I.CrumbsType.Page);
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
@@ -243,7 +251,7 @@ class Keyboard {
 	setPinChecked (v: boolean) {
 		this.isPinChecked = v;
 	};
-	
+
 	initPinCheck () {
 		const { account } = authStore;
 		const pin = Storage.get('pin');
@@ -268,6 +276,28 @@ class Keyboard {
 
 	setMatch (match: any) {
 		this.match = match;
+	};
+
+	setSource (source: any) {
+		this.source = Util.objectCopy(source);
+	};
+
+	restoreSource () {
+		if (!this.source) {
+			return;
+		};
+
+		const { type, data } = this.source;
+
+		switch (type) {
+			case I.Source.Popup:
+				window.setTimeout(() => {
+					popupStore.open(data.id, data.param);
+				}, Constant.delay.popup);
+				break;
+		};
+
+		this.setSource(null);
 	};
 	
 	disableMouse (v: boolean) {

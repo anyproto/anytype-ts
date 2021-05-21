@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, focus, history as historyPopup } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -119,29 +119,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
-		const { isPopup, history } = this.props;
-
-		crumbs.restore(I.CrumbsType.Page);
-		if (isPopup) {
-			historyPopup.goBack((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
-		} else {
-			history.goBack();
-		};
+		keyboard.back();
 	};
 	
 	onForward (e: any) {
-		const { isPopup, history } = this.props;
-
-		crumbs.restore(I.CrumbsType.Page);
-		if (isPopup) {
-			historyPopup.goForward((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
-		} else {
-			history.goForward();
-		};
+		keyboard.forward();
 	};
 
 	onOpen () {

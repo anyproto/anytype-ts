@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject } from 'ts/component';
-import { I, Util, crumbs } from 'ts/lib';
+import { I, Util, keyboard } from 'ts/lib';
 import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -64,13 +64,11 @@ class HeaderMainSet extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
-		crumbs.restore(I.CrumbsType.Page);
-		this.props.history.goBack();
+		keyboard.back();
 	};
 	
 	onForward (e: any) {
-		crumbs.restore(I.CrumbsType.Page);
-		this.props.history.goForward();
+		keyboard.forward();
 	};
 	
 	onNavigation (e: any) {

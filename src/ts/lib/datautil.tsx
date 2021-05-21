@@ -438,6 +438,8 @@ class DataUtil {
 	objectOpen (object: any) {
 		const { root } = blockStore;
 
+		keyboard.setSource(null);
+
 		switch (object.layout) {
 			default:
 				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
@@ -510,6 +512,7 @@ class DataUtil {
 			},
 		};
 
+		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		menuStore.closeAll();
 

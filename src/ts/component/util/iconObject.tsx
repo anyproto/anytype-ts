@@ -74,19 +74,32 @@ const File = {
 	table: require('img/icon/file/table.svg'),
 };
 
-const Relation: any = {};
-Relation[I.RelationType.LongText] = require('img/icon/relation/longText.svg');
-Relation[I.RelationType.ShortText] = require('img/icon/relation/shortText.svg');
-Relation[I.RelationType.Number] = require('img/icon/relation/number.svg');
-Relation[I.RelationType.Status] = require('img/icon/relation/status.svg');
-Relation[I.RelationType.Date] = require('img/icon/relation/date.svg');
-Relation[I.RelationType.File] = require('img/icon/relation/file.svg');
-Relation[I.RelationType.Checkbox] = require('img/icon/relation/checkbox.svg');
-Relation[I.RelationType.Url] = require('img/icon/relation/url.svg');
-Relation[I.RelationType.Email] = require('img/icon/relation/email.svg');
-Relation[I.RelationType.Phone] = require('img/icon/relation/phone.svg');
-Relation[I.RelationType.Tag] = require('img/icon/relation/tag.svg');
-Relation[I.RelationType.Object] = require('img/icon/relation/object.svg');
+const Relation: any = { small: {}, big: {} };
+Relation.small[I.RelationType.LongText] = require('img/icon/relation/small/longText.svg');
+Relation.small[I.RelationType.ShortText] = require('img/icon/relation/small/shortText.svg');
+Relation.small[I.RelationType.Number] = require('img/icon/relation/small/number.svg');
+Relation.small[I.RelationType.Status] = require('img/icon/relation/small/status.svg');
+Relation.small[I.RelationType.Date] = require('img/icon/relation/small/date.svg');
+Relation.small[I.RelationType.File] = require('img/icon/relation/small/file.svg');
+Relation.small[I.RelationType.Checkbox] = require('img/icon/relation/small/checkbox.svg');
+Relation.small[I.RelationType.Url] = require('img/icon/relation/small/url.svg');
+Relation.small[I.RelationType.Email] = require('img/icon/relation/small/email.svg');
+Relation.small[I.RelationType.Phone] = require('img/icon/relation/small/phone.svg');
+Relation.small[I.RelationType.Tag] = require('img/icon/relation/small/tag.svg');
+Relation.small[I.RelationType.Object] = require('img/icon/relation/small/object.svg');
+
+Relation.big[I.RelationType.LongText] = require('img/icon/relation/big/longText.svg');
+Relation.big[I.RelationType.ShortText] = require('img/icon/relation/big/shortText.svg');
+Relation.big[I.RelationType.Number] = require('img/icon/relation/big/number.svg');
+Relation.big[I.RelationType.Status] = require('img/icon/relation/big/status.svg');
+Relation.big[I.RelationType.Date] = require('img/icon/relation/big/date.svg');
+Relation.big[I.RelationType.File] = require('img/icon/relation/big/file.svg');
+Relation.big[I.RelationType.Checkbox] = require('img/icon/relation/big/checkbox.svg');
+Relation.big[I.RelationType.Url] = require('img/icon/relation/big/url.svg');
+Relation.big[I.RelationType.Email] = require('img/icon/relation/big/email.svg');
+Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg');
+Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg');
+Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg');
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
@@ -172,9 +185,10 @@ class IconObject extends React.Component<Props, {}> {
 				break;
 
 			case I.ObjectLayout.Relation:
-				if (Relation[relationFormat]) {
+				const key = iconSize < 28 ? 'small' : 'big';
+				if (Relation[key][relationFormat]) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={Relation[relationFormat]} className={icn.join(' ')} />;
+					icon = <img src={Relation[key][relationFormat]} className={icn.join(' ')} />;
 				};
 				break;
 

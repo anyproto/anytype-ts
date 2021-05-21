@@ -60,4 +60,8 @@ export interface LinkPreview {
 export enum ExportFormat {
 	Markdown = 0,
 	Protobuf = 1,
-}
+};
+
+export enum Source {
+	Popup = 0,
+};
