@@ -13,6 +13,7 @@ interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const PADDING = 32;
 
 @observer
 class ViewGrid extends React.Component<Props, {}> {
@@ -132,7 +133,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const scroll = node.find('.scroll');
 		const wrap = node.find('.scrollWrap');
 		const ww = $(scrollContainer).width();
-		const mw = ww - 64;
+		const mw = ww - PADDING * 2;
 
 		let vw = 0;
 		let margin = 0;
@@ -149,8 +150,8 @@ class ViewGrid extends React.Component<Props, {}> {
 		margin = (ww - mw) / 2;
 
 		if (width > mw) {
-			pr = 32;
-			vw += 32;
+			pr = PADDING;
+			vw += PADDING;
 		};
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
@@ -241,7 +242,6 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		menuStore.open('relationSuggest', { 
 			element: `#cell-add`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				readOnly: readOnly,
