@@ -61,6 +61,8 @@ class PageMainType extends React.Component<Props, State> {
 			description: 'Add a description',
 		};
 		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
+		const type: any = dbStore.getObjectType(object.id) || {};
+		const canCreate = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 
 		const isFirst = this.page == 0;
 		const isLast = this.page == this.getMaxPage();
@@ -180,7 +182,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 						<div className="side right">
-							<Button text="Create" className="orange" onClick={this.onObjectAdd} />
+							{canCreate ? <Button text="Create" className="orange" onClick={this.onObjectAdd} /> : ''}
 						</div>
 					</div>
 
