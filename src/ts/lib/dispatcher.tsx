@@ -652,7 +652,7 @@ class Dispatcher {
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 
-			if (root.childrenIds.length == 1) {
+			if ((object.type == Constant.typeId.page) && (root.childrenIds.length == 1)) {
 				root.childrenIds.push(Constant.blockId.type);
 
 				blocks.push({ id: Constant.blockId.type, type: I.BlockType.Type });
