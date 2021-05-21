@@ -554,6 +554,10 @@ function menuInit () {
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
 					click: () => { win.webContents.openDevTools(); }
+				},
+				{
+					label: 'Export templates',
+					click: () => { send('command', 'exportTemplates'); }
 				}
 			]
 		});

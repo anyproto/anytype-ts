@@ -514,6 +514,8 @@ class App extends React.Component<Props, State> {
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
 
+		let options: any = {};
+
 		switch (key) {
 			case 'undo':
 				C.BlockUndo(rootId);
@@ -528,7 +530,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				const options: any = { 
+				options = { 
 					properties: [ 'openDirectory' ],
 				};
 
@@ -539,6 +541,27 @@ class App extends React.Component<Props, State> {
 					};
 
 					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
+				break;
+
+			case 'exportTemplates':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.ExportTemplates(files[0], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
