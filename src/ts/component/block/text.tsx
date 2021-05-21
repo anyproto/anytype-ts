@@ -551,6 +551,7 @@ class BlockText extends React.Component<Props, {}> {
 		let value = this.getValue();
 		let cmdParsed = false;
 		let cb = (message: any) => {
+			keyboard.setFocus(false);
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		};
