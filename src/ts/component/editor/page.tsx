@@ -943,7 +943,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		const { focused, range } = focus;
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -973,6 +973,7 @@ class EditorPage extends React.Component<Props, {}> {
 		window.setTimeout(() => {
 			focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
 			focus.apply();
+			focus.scroll(isPopup);
 		});
 	};
 	

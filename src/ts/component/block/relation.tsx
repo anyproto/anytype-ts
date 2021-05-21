@@ -19,10 +19,13 @@ class BlockRelation extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onMenu = this.onMenu.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onFocusInput = this.onFocusInput.bind(this);
+		this.onBlurInput = this.onBlurInput.bind(this);
+		this.onMenu = this.onMenu.bind(this);
+		this.onKeyUpInput = this.onKeyUpInput.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
@@ -37,7 +40,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(idPrefix, key, '0');
 
 		return (
-			<div className="wrap">
+			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{!relation ? 
 				(
 					<div className="sides">
@@ -46,10 +49,10 @@ class BlockRelation extends React.Component<Props, {}> {
 								id="input"
 								ref={(ref: any) => { this.refInput = ref; }} 
 								placeHolder="Create a new relation"
-								onFocus={this.onFocus}
-								onBlur={this.onBlur}
+								onFocus={this.onFocusInput}
+								onBlur={this.onBlurInput}
 								onClick={this.onMenu} 
-								onKeyUp={this.onKeyUp} 
+								onKeyUp={this.onKeyUpInput} 
 							/>
 						</div>
 					</div>
@@ -88,18 +91,31 @@ class BlockRelation extends React.Component<Props, {}> {
 		);
 	};
 
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+	};
+	
 	onKeyUp (e: any) {
-		menuStore.updateData('blockRelationList', { filter: this.refInput.getValue() });
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	onKeyUpInput (e: any) {
+		menuStore.updateData('blockRelationList', { filter: this.refInput.getValue() });
+	};
+
+	onFocusInput () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 
 		input.attr({ placeHolder: 'Relation search' });
 	};
 
-	onBlur () {
+	onBlurInput () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 
