@@ -5,7 +5,11 @@
 	.block.blockMedia.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockMedia {
-		.focusable.isFocused { box-shadow: 0px 0px 0px 2px rgba(134, 125, 66, 0.1); }
+		.focusable.isFocused { background: none; }
+		.focusable.isFocused::before { 
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(134, 125, 66, 0.1); z-index: 1; 
+		}
+
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; }
 		
@@ -29,7 +33,7 @@
 		video { height: 100%; }
 		
 		.icon.resize {
-			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px;
+			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
 			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
 		}
 				
