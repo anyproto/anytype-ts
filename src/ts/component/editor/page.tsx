@@ -857,7 +857,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
 			const sRect = Util.selectionRect();
-			const vRect = value.get(0).getBoundingClientRect();
+			const vRect = value.length ? value.get(0).getBoundingClientRect() : element.get(0).getBoundingClientRect();
 			const lh = parseInt(value.css('line-height'));
 			const sy = sRect.y + st;
 			const vy = vRect.y + st;
