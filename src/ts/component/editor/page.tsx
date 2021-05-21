@@ -628,11 +628,17 @@ class EditorPage extends React.Component<Props, {}> {
 		const win = $(window);
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
-		const length = String(text || '').length;
 		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
 		const element = $('#block-' + block.id);
 		const value = element.find('#value');
+
+		let length = String(text || '').length;
+
+		// Last line break in code block
+		if (block.isTextCode()) {
+			length--;
+		};
 
 		range = range || {};
 

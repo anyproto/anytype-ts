@@ -91,8 +91,6 @@ class Focus {
 			y = node.offset().top;
 		};
 
-		console.log(y, st, h, o);
-
 		if ((y >= st) && (y <= st + h - o)) {
 			return;
 		};
