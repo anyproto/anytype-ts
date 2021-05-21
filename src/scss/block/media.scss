@@ -5,6 +5,7 @@
 	.block.blockMedia.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockMedia {
+		.focusable.isFocused { box-shadow: 0px 0px 0px 2px rgba(134, 125, 66, 0.1); }
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; }
 		
