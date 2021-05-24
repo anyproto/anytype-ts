@@ -5,6 +5,7 @@ import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
+const { process } = window.require('electron').remote;
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
@@ -784,6 +785,23 @@ class Util {
 	ctrlSymbol () {
 		const platform = this.getPlatform();
 		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	};
+
+	sizeHeader (): number {
+		const platform = this.getPlatform();
+		const version = process.getSystemVersion();
+		
+		let a = version.split('.');
+		let v = a.length ? a[0] : '';
+
+		let s = 38;
+		if (platform == I.Platform.Windows) {
+			s = 68;
+		};
+		if ((platform == I.Platform.Mac) && (v == '11')) {
+			s = 52;
+		};
+		return s;
 	};
 
 };

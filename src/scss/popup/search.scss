@@ -61,3 +61,12 @@ html.platformWindows {
 		.popup.popupSearch .innerWrap { top: 68px; }
 	}
 }
+
+html.platformMac.version11 {
+	.popups {
+		.popup.popupSearch {
+			.innerWrap { top: 52px; }
+			.head { top: -40px; }
+		}
+	}
+}

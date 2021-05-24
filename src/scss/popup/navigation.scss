@@ -3,7 +3,7 @@
 .popups {
 	.popup.popupNavigation {
 		.content { overflow: visible; transition: none; }
-		.innerWrap { top: 38px; transform: scale3d(1,1,1); transition: none; }
+		.innerWrap { transform: scale3d(1,1,1); transition: none; }
 		.dimmer { transition: none; }
 
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }

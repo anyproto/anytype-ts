@@ -149,9 +149,13 @@ html.platformMac {
 	.header {
 		.side.left { left: 88px; }
 	}
+}
 
-	.header.headerMainHistory {
-		.side.left { left: 80px; }
+html.platformMac.version11 {
+	.header { height: 52px !important; line-height: 28px; }
+	.header {
+		.side { top: 12px; }
+		.side .item { vertical-align: middle; display: inline-block; }
 	}
 }
 

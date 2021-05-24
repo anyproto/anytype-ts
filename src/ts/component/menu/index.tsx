@@ -333,7 +333,7 @@ class Menu extends React.Component<Props, State> {
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
-			let minY = Constant.size.header + 2;
+			let minY = Util.sizeHeader() + 2;
 			if (platform == I.Platform.Windows) {
 				minY += 30;
 			};

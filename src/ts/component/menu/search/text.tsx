@@ -136,7 +136,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 		const win = $(window);
 		const items = container.find('.editor search');
 		const wh = win.height();
-		const offset = Constant.size.lastBlock + Constant.size.header;
+		const offset = Constant.size.lastBlock + Util.sizeHeader();
 
 		if (this.n > items.length - 1) {
 			this.n = 0;

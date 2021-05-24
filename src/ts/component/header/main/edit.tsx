@@ -51,7 +51,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const object = detailStore.get(breadcrumbs, rootId, []);
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (popupStore.isOpenList([ 'navigation', 'search' ]) || menuStore.isOpen('blockRelationView')) {
+		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
 			cn.push('active');
 		};
 
@@ -190,7 +190,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 
 		popupStore.open('navigation', {
-			preventResize: true, 
 			data: {
 				rootId: rootId,
 				type: I.NavigationType.Go, 

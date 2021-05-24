@@ -39,3 +39,7 @@
 
 	.blockLast { height: 100px; }
 }
+
+html.platformMac.version11 {
+	.pageMainHistory .wrapper { padding-top: 52px; }
+}

@@ -199,7 +199,7 @@ class BlockType extends React.Component<Props, State> {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
 			const st = container.scrollTop();
 			const h = container.height();
-			const o = Constant.size.lastBlock + Constant.size.header;
+			const o = Constant.size.lastBlock + Util.sizeHeader();
 
 			let y = 0;
 			if (isPopup) {

@@ -320,6 +320,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const platform = Util.getPlatform();
+		const { position } = this.props;
 
 		raf(() => {
 			const win = $(window);
@@ -342,7 +343,9 @@ class PopupNavigation extends React.Component<Props, State> {
 			sides.css({ height: sh });
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
-			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0, height: oh });
+			obj.css({ width: width, marginLeft: -width / 2, height: oh });
+
+			position();
 		});
 	};
 	

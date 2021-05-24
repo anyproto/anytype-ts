@@ -78,7 +78,6 @@ class HeaderMainSet extends React.Component<Props, {}> {
 		const { root } = blockStore;
 
 		popupStore.open('navigation', {
-			preventResize: true, 
 			data: {
 				rootId: root,
 				type: I.NavigationType.Go, 

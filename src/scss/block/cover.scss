@@ -80,6 +80,11 @@
 	}
 }
 
+html.platformMac.version11 {
+	.block.blockCover { top: 52px; }
+	.loaderWrapper { top: 52px; height: calc(100% - 52px); }
+}
+
 /* Page */
 
 .editorWrapper.withIcon {

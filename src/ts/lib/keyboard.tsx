@@ -93,7 +93,6 @@ class Keyboard {
 				return;
 			};
 			popupStore.open('navigation', { 
-				preventResize: true,
 				data: { 
 					type: I.NavigationType.Go, 
 					rootId: rootId,

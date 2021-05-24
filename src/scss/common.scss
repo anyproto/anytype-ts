@@ -44,6 +44,10 @@ input, textarea, select { font-family: 'Inter'; }
 	}
 }
 
+html.platformMac.version11 {
+	#drag { height: 52px; }
+}
+
 html.platformWindows {
 	#drag { height: 30px; background: $colorBlack; z-index: 1000; }
 	#drag {

@@ -1,4 +1,4 @@
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, Util } from 'ts/lib';
 import { setRange } from 'selection-ranges';
 
 const $ = require('jquery');
@@ -81,7 +81,7 @@ class Focus {
 
 		const container = isPopup ? $('#popupPage #innerWrap') : $(window);
 		const h = container.height();
-		const o = Constant.size.lastBlock + Constant.size.header;
+		const o = Constant.size.lastBlock + Util.sizeHeader();
 		const st = container.scrollTop();
 
 		let y = 0;
