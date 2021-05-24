@@ -357,6 +357,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 			case 'relation':
 				menuId = 'blockRelationList';
+				menuParam.className = 'withFilter';
 
 				menuParam.data = Object.assign(menuParam.data, {
 					relationKey: '',
