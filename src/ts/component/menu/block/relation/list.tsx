@@ -210,8 +210,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 			items = items.filter((it: any) => { return !it.isHidden; });
 		};
 
-		items = items.filter((it: any) => { return Constant.relationSkipKeys.indexOf(it.relationKey) < 0; });
-
 		sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In this object', children: [] };
 		sections[I.RelationScope.Type]					 = { id: I.RelationScope.Type, name: 'Type', children: [] };
 		sections[I.RelationScope.SetOfTheSameType]		 = { id: I.RelationScope.SetOfTheSameType, name: 'Set of the same type', children: [] };

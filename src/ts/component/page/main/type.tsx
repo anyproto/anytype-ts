@@ -75,7 +75,6 @@ class PageMainType extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
-		relations = relations.filter((it: any) => { return Constant.relationSkipKeys.indexOf(it.relationKey) < 0; });
 		relations.sort(DataUtil.sortByHidden);
 
 		let data = dbStore.getData(rootId, block.id).map((it: any) => {
