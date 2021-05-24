@@ -253,6 +253,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		if (item.id == 'add') {
 			menuStore.open('blockRelationEdit', { 
 				element: `#${getId()} #item-${item.id}`,
+				subIds: Constant.menuIds.relationEdit,
 				data: {
 					...data,
 					addCommand: (rootId: string, blockId: string, relation: any) => {

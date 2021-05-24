@@ -57,7 +57,7 @@
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
+			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest", "relationType"
 		],
 		"context": [
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
@@ -75,7 +75,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"dataviewRelationType", "searchObject", "select", "dataviewDate"
+			"relationType", "searchObject", "select", "dataviewDate"
 		]
 	},
 

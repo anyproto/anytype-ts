@@ -5,8 +5,6 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-const Constant = require('json/constant.json');
-
 @observer
 class MenuRelationType extends React.Component<Props, {}> {
 	

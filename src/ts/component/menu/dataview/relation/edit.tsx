@@ -174,7 +174,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.menuOpen('dataviewRelationType', { 
+		this.menuOpen('relationType', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				value: this.format,
