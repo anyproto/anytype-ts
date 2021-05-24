@@ -291,7 +291,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, blockCreate } = data;
 		const { config, filter } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -352,6 +352,25 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
+				});
+				break;
+
+			case 'relation':
+				menuId = 'blockRelationList';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					relationKey: '',
+					withFilter: true,
+					filter: '',
+					onAdd: () => { close(); },
+					onSelect: (item: any) => {
+						close();
+
+						blockCreate(blockId, position, {
+							type: I.BlockType.Relation,
+							content: { key: item.relationKey },
+						});
+					},
 				});
 				break;
 		};

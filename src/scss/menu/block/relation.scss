@@ -20,8 +20,10 @@
 		}
 	}
 
-	.menu.menuBlockRelationList { width: 640px; }
+	.menu.menuBlockRelationList { width: 640px; padding-top: 8px; }
 	.menu.menuBlockRelationList {
+		.wrap { display: flex; flex-direction: column; height: 100%; }
+
 		.content { transition: none ;padding: 0px; }
 		.items { height: 100%; }
 		.input { border: 0px; padding: 0px; }
