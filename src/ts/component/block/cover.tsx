@@ -55,9 +55,6 @@ class BlockCover extends React.Component<Props, State> {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragMove = this.onDragMove.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
-
-		this.onOver = this.onOver.bind(this);
-		this.onOut = this.onOut.bind(this);
 	};
 	
 	render () {
@@ -115,8 +112,6 @@ class BlockCover extends React.Component<Props, State> {
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
-				onMouseOver={this.onOver}
-				onMouseOut={this.onOut}
 			>
 				{loading ? <Loader /> : ''}
 				{canEdit ? (
@@ -473,14 +468,6 @@ class BlockCover extends React.Component<Props, State> {
 		return Math.min(1, Math.max(0, p));
 	};
 
-	onOver (e: any) {
-		$('.headerMainEditSearch').addClass('active');
-	};
-
-	onOut (e: any) {
-		$('.headerMainEditSearch').removeClass('active');
-	};
-	
 };
 
 export default BlockCover;

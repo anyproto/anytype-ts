@@ -1024,7 +1024,7 @@ class DataUtil {
 
 	checkDetails (rootId: string) {
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator' ]);
-		const { iconEmoji, iconImage, coverType, coverId } = object;
+		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
 			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
@@ -1064,6 +1064,10 @@ class DataUtil {
 			case I.ObjectLayout.Relation:
 				ret.withIcon = true;
 				break;
+		};
+
+		if (type == Constant.typeId.page) {
+			ret.className.push('isDraft');
 		};
 
 		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
