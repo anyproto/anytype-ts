@@ -55,7 +55,7 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+		let value = String(record[relation.relationKey] || '');
 
 		if (relation.format == I.RelationType.LongText) {
 			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
@@ -68,6 +68,8 @@ class CellText extends React.Component<Props, State> {
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {
+				value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+
 				let mask = [ '99.99.9999' ];
 				let placeHolder = [ 'dd.mm.yyyy' ];
 				
