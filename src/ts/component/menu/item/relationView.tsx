@@ -7,6 +7,7 @@ interface Props extends I.Relation {
 	rootId: string;
 	block: I.Block;
 	isFeatured: boolean;
+	classNameWrap?: string;
 	onEdit(e: any, relationKey: string): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
@@ -20,7 +21,7 @@ const PREFIX = 'menuBlockRelationView';
 class MenuItemRelationView extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, format, name, isHidden, isFeatured, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, relationKey, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav', (isFeatured ? 'active' : '') ];
@@ -47,6 +48,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						index={0}
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
+						menuClassNameWrap={classNameWrap}
 						scrollContainer={Util.getEditorScrollContainer('menuBlockRelationView')}
 						pageContainer={Util.getEditorPageContainer('menuBlockRelationView')}
 						readOnly={false}

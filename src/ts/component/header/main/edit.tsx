@@ -140,6 +140,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, match, rootId } = this.props;
+		const st = $(window).scrollTop();
 		const elementId = `${this.getContainer()} #button-header-more`;
 		const param: any = {
 			element: elementId,
@@ -156,7 +157,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		if (!isPopup) {
 			const element = $(elementId);
 
-			param.fixedY = element.offset().top + element.height() + 4;
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
 			param.classNameWrap = 'fromHeader';
 		} else {
@@ -173,8 +174,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const st = $(window).scrollTop();
 		const elementId = `${this.getContainer()} #button-header-sync`;
-		
 		const param: any = {
 			element: elementId,
 			horizontal: I.MenuDirection.Right,
@@ -185,7 +186,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		if (!isPopup) {
 			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() + 4;
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
 			param.classNameWrap = 'fromHeader';
 		} else {
@@ -235,6 +236,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const st = $(window).scrollTop();
 		const elementId = `${this.getContainer()} #button-header-relation`;
 		const param: any = {
 			element: elementId,
@@ -253,7 +255,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 		if (!isPopup) {
 			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() + 4;
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
 			param.classNameWrap = 'fromHeader';
 		} else {
