@@ -10,7 +10,6 @@
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
-		.item.add { color: $colorDarkGrey; }
 	}
 	
 	.menu.menuDataviewRelationEdit { width: 224px; }
