@@ -55,8 +55,11 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = String(record[relation.relationKey] || '');
+		let value = record[relation.relationKey];
 
+		if (relation.format != I.RelationType.Date) {
+			value = String(value || '');
+		};
 		if (relation.format == I.RelationType.LongText) {
 			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
 		};
