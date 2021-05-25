@@ -100,7 +100,7 @@ class Block implements I.Block {
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem();
+		return !this.isSystem() && !this.isFeatured() && !this.isTextDescription();
 	};
 	
 	isSelectable (): boolean {

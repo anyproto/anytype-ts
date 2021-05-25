@@ -18,6 +18,7 @@ const openAboutWindow = require('about-window').default;
 const keytar = require('keytar');
 const bindings = require('bindings');
 const envPath = path.join(__dirname, 'electron', 'env.json');
+const systemVersion = process.getSystemVersion();
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -203,6 +204,11 @@ function createWindow () {
 	if (process.platform == 'darwin') {
 		app.dock.setIcon(image);
 		param.icon = path.join(__dirname, '/electron/icon.icns');
+
+		const a = systemVersion.split('.');
+		if (a.length && (a[0] == 11)) {
+			param.trafficLightPosition = { x: 20, y: 36 };
+		};
 	};
 
 	if (process.platform == 'win32') {
@@ -211,7 +217,7 @@ function createWindow () {
 
 	if (process.platform != 'linux') {
 		param.frame = false;
-		param.titleBarStyle = 'hiddenInset';
+		param.titleBarStyle = 'hidden';
 	};
 
 	win = new BrowserWindow(param);

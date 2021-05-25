@@ -671,10 +671,11 @@ class Dispatcher {
 
 	blockTypeCheck (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
-		const root = blockStore.getLeaf(rootId, rootId);
+		
+		let childrenIds = blockStore.getChildrenIds(rootId, rootId);
 
-		if ((object.type == Constant.typeId.page) && (root.childrenIds.length == 1)) {
-			root.childrenIds.push(Constant.blockId.type);
+		if ((object.type == Constant.typeId.page) && (childrenIds.length == 1)) {
+			childrenIds.push(Constant.blockId.type);
 
 			blockStore.add(rootId, { 
 				id: Constant.blockId.type, 
@@ -685,13 +686,13 @@ class Dispatcher {
 				childrenIds: [],
 			});
 
-			blockStore.updateStructure(rootId, rootId, root.childrenIds);
+			blockStore.updateStructure(rootId, rootId, childrenIds);
 		} else 
 		if (object.type && (object.type != Constant.typeId.page)) {
-			root.childrenIds = root.childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
+			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
 
 			blockStore.delete(rootId, Constant.blockId.type);
-			blockStore.updateStructure(rootId, rootId, root.childrenIds);
+			blockStore.updateStructure(rootId, rootId, childrenIds);
 		};
 	};
 

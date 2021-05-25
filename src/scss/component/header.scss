@@ -61,7 +61,7 @@
 
 .header.headerMainIndex { height: 38px; background: rgba(0,0,0,0.3); }
 .header.headerMainIndex {
-	.icon { width: 32px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.side.center { 
@@ -73,7 +73,8 @@
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 
-	.icon.big { width: 32px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon.big.home { width: 32px; }
 	.icon.big:hover, .icon.big.active { background-color: #f3f2ec; }
 
 	.path { 
@@ -87,7 +88,7 @@
 
 	.side.left { transition: $transitionFast; }
 	.side.left {
-		.icon { margin: 0px; }
+		.icon.back { margin: 0px; }
 	}
 
 	.side.center {

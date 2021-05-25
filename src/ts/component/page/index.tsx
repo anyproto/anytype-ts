@@ -225,8 +225,8 @@ class Page extends React.Component<Props, {}> {
 			Util.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
-
 		const a = version.split('.');
+
 		if (a.length) {
 			cn.push('version' + a[0]);
 		};
