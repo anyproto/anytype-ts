@@ -80,7 +80,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<IconObject object={object} />
-							<div className="name">{Util.shorten(object.name, 32)}</div>
+							<div className="name">{object.name}</div>
 						</div>
 					</div>
 					<div className="icons">

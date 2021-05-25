@@ -82,7 +82,11 @@
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
-		.item { line-height: 20px; vertical-align: middle; }
+		.item { line-height: 20px; vertical-align: middle; max-width: 100%; text-align: left; }
+		.item {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-overflow-nw; width: 100%; }
+		}
 	}
 	.path * { pointer-events: all; }
 
