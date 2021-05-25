@@ -259,7 +259,6 @@ class Cell extends React.Component<Props, {}> {
 
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
-					className: 'button',
 					width: width,
 				});
 
