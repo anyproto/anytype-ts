@@ -205,7 +205,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
-				offsetY: 4,
 				data: {
 					isBig: true,
 					rootId: rootId,
@@ -242,8 +241,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 			return;
 		};
 
+		const elementId = '#header';
+
 		const param: any = {
-			element: `#header`,
+			element: elementId,
 			horizontal: I.MenuDirection.Right,
 			noFlipY: true,
 			noAnimation: true,
@@ -263,8 +264,9 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			param.fixedY = Util.sizeHeader();
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });

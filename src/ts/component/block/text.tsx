@@ -703,7 +703,6 @@ class BlockText extends React.Component<Props, {}> {
 			element: el,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
-			offsetY: 4,
 			onClose: () => {
 				this.preventSaveOnBlur = false;
 			},
@@ -746,7 +745,6 @@ class BlockText extends React.Component<Props, {}> {
 			element: '#block-' + block.id,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
-			offsetY: 4,
 			data: {
 				noHead: true,
 				rootId: rootId,

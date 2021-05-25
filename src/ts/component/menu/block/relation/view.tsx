@@ -210,7 +210,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,

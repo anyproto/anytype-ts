@@ -35,7 +35,6 @@ class BlockIconUser extends React.Component<Props, {}> {
 		
 		menuStore.open('select', { 
 			element: `#block-${rootId}-icon .iconObject`,
-			offsetY: 4,
 			data: {
 				value: '',
 				options: [

@@ -134,7 +134,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 	onAccount () {
 		menuStore.open('account', {
 			element: '#button-account',
-			offsetY: 4,
 			horizontal: I.MenuDirection.Right
 		});
 	};
@@ -185,7 +184,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 
 		menuStore.open('select', { 
 			element: '#button-add',
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			width: width,
 			className: 'add fixed',

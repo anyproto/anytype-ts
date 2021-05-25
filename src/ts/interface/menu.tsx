@@ -26,6 +26,7 @@ export interface MenuParam {
 	subIds?: string[];
 	passThrough?: boolean;
 	className?: string;
+	classNameWrap?: string;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
 	noFlipX?: boolean;

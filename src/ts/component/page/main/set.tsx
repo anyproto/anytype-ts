@@ -183,7 +183,6 @@ class PageMainSet extends React.Component<Props, {}> {
 		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),
 			offsetX: 32,
-			offsetY: 4,
 			data: {
 				filter: '',
 				rootId: rootId,
@@ -204,7 +203,6 @@ class PageMainSet extends React.Component<Props, {}> {
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,

@@ -43,7 +43,7 @@ class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 
 		const buttons: any[] = [
-			{ id: 'search', name: 'Search', menu: '' },
+			//{ id: 'search', name: 'Search', menu: '' },
 			{ id: 'manager', name: 'Customize views', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
@@ -135,7 +135,6 @@ class Controls extends React.Component<Props, State> {
 
 		menuStore.open(menu, { 
 			element: `#button-${id}`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			tabs: tabs,
 			data: {
