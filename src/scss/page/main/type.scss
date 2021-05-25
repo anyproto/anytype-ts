@@ -10,13 +10,17 @@
 		}
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
 
-		.head { display: flex; margin-bottom: 35px; }
+		.head { display: flex; margin-bottom: 35px; positon: relative; }
 		.head {
 			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
-			.side.right { width: calc(100% - 128px); }
+			.side.center { width: calc(100% - 214px); }
+			.side.right { width: 86px; text-align: right; position: relative; }
+			.side.right {
+				.button { position: absolute; top: 50%; right: 0px; margin-top: -18px; height: 36px; line-height: 34px; }
+			}
 
 			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
+			.descr { @include text-paragraph; margin: 8px 0px 9px 0px; }
 
 			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
 
@@ -34,14 +38,11 @@
 		}
 
 		.section.template {
-			.item { position: relative; width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
-			.item:last-child { margin-right: 0px; }
-			.item {
-				.cover { position: absolute; }
-			}
+			.objectPreviewBlock { width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
+			.objectPreviewBlock:last-child { margin-right: 0px; }
 
 			.icon.arrow { 
-				position: absolute; top: 50%; margin-top: -17px; width: 32px; height: 32px; background-image: url('~img/arrow/template0.svg'); 
+				position: absolute; top: 0px; width: 32px; height: 100%; background-image: url('~img/arrow/template0.svg'); 
 				cursor: pointer; background-size: 8px 32px;
 			}
 			.icon.arrow:hover { background-image: url('~img/arrow/template1.svg'); }
@@ -50,7 +51,7 @@
 			.icon.arrow.right { right: -32px; }
 
 			.content { white-space: nowrap; position: relative; }
-			.wrap { overflow: hidden; }
+			.wrap { overflow: hidden; border-radius: 8px; }
 			.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
 		}
 
@@ -106,3 +107,7 @@
 }
 
 .pageMainType > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
+
+html.platformMac.version11 {
+	.pageMainType .wrapper { padding-top: 144px; }
+}

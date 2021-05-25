@@ -57,13 +57,13 @@
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
+			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest", "relationType"
 		],
 		"context": [
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
 		"add": [
-			"searchObject"
+			"searchObject", "blockRelationList", "blockRelationEdit"
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
@@ -75,7 +75,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"dataviewRelationType", "searchObject", "select", "dataviewDate"
+			"relationType", "searchObject", "select", "dataviewDate"
 		]
 	},
 
@@ -95,7 +95,8 @@
 		"title": "title",
 		"description": "description",
 		"featured": "featuredRelations",
-		"dataview": "dataview"
+		"dataview": "dataview",
+		"type": "type"
 	},
 
 	"size": {

@@ -23,28 +23,23 @@ class Block extends React.Component<Props, {}> {
 	render () {
 		const { type, style } = this.props;
 		
-		let cn = [ 'block' ];
+		let cn = [ 'block', DataUtil.blockClass({ type: type, content: { style: style } }) ];
 		let content = null;
 		
 		switch (type) {
 			case I.BlockType.IconPage:
-				cn.push('blockIconPage');
 				content = <ContentIcon {...this.props} />;
 				break;
 				
 			case I.BlockType.Text:
-				cn.push('blockText ' + DataUtil.styleClassText(style));
 				content = <ContentText {...this.props} />;
 				break;
 								
 			case I.BlockType.Link:
-				cn.push('blockLink');
 				content = <ContentLink {...this.props} />;
 				break;
 
 			case I.BlockType.Div:
-				cn.push('blockDiv c' + style);
-				
 				let inner: any = null;
 				switch (style) {
 					case I.DivStyle.Dot:

@@ -13,8 +13,12 @@ body {
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; }
+body.fullScreen {
+	#drag { display: none; }
+}
 
 :focus { outline: 0px; }
+::selection { background-color: Highlight; }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
@@ -38,6 +42,10 @@ input, textarea, select { font-family: 'Inter'; }
 		width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100% 100%; 
 		position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -60px; transition: opacity 0.5s ease-in-out;
 	}
+}
+
+html.platformMac.version11 {
+	#drag { height: 52px; }
 }
 
 html.platformWindows {

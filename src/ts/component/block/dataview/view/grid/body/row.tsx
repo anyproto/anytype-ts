@@ -30,7 +30,12 @@ class BodyRow extends React.Component<Props, {}> {
 		return (
 			<tr id={'row-' + index} onMouseOver={(e: any) => { onRowOver(index); }} className={cn.join(' ')}>
 				{relations.map((relation: any, i: number) => (
-					<Cell key={'grid-cell-' + view.id + relation.relationKey} {...this.props} index={index} relationKey={relation.relationKey} />
+					<Cell 
+						key={'grid-cell-' + relation.relationKey} 
+						{...this.props} 
+						index={index} 
+						relationKey={relation.relationKey} 
+					/>
 				))}
 				<td className="cell last">&nbsp;</td>
 			</tr>

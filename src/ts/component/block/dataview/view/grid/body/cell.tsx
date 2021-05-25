@@ -27,7 +27,7 @@ class BodyCell extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 
 		return (
-			<td id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}>
+			<td key={id} id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}>
 				<Cell 
 					ref={(ref: any) => { onRef(ref, id); }} 
 					{...this.props}

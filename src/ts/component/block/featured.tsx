@@ -26,6 +26,8 @@ class BlockFeatured extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onType = this.onType.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -43,7 +45,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const bullet = <div className="bullet" />;
 
 		return (
-			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0}>
+			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				<div 
 					id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
 					className="cellContent type"
@@ -127,6 +129,22 @@ class BlockFeatured extends React.Component<Props, {}> {
 			};
 			return true;
 		});
+	};
+
+	onKeyDown (e: any) {
+		const { onKeyDown } = this.props;
+		
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
+	};
+	
+	onKeyUp (e: any) {
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {

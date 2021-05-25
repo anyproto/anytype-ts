@@ -24,7 +24,7 @@
 		}
 		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 
-        .viewItem.viewGrid { border-collapse: collapse; table-layout: fixed; }
+        .viewItem.viewGrid { border-collapse: collapse; table-layout: fixed; width: 100%; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
 

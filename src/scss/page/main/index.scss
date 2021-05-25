@@ -54,7 +54,7 @@
 			
 			.icon.more { 
 				background-image: url('~img/icon/index/more0.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;
-				right: 16px; top: 16px; opacity: 0; z-index: 2; transition: none;
+				right: 14px; bottom: 10px; opacity: 0; z-index: 2; transition: none;
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
 		}
@@ -67,7 +67,7 @@
 		.item.isLoading {
 			.iconObject { background: #f3f2ec; border-radius: 10px; margin-bottom: 15px; }
 			.line { border-radius: 2px; }
-			.line.lineName { width: 88px; height: 10px; background-color: #dfddd0; margin-bottom: 10px; }
+			.line.lineName { width: 88px; height: 10px; background-color: $colorLightGrey; margin-bottom: 10px; }
 			.line.lineType { width: 56px; height: 8px; background-color: #eae9e0; }
 		}
 
@@ -85,4 +85,8 @@
 		}
 	}
 	
+}
+
+html.platformMac.version11 {
+	.pageMainIndex .blocks { padding-top: 104px; }
 }

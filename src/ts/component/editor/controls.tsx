@@ -30,8 +30,6 @@ class Controls extends React.Component<Props, {}> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onOut = this.onOut.bind(this);
 	};
 
 	render (): any {
@@ -50,8 +48,6 @@ class Controls extends React.Component<Props, {}> {
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
-				onMouseOver={this.onOver}
-				onMouseOut={this.onOut}
 			>
 				<div className="buttons">
 					{!root.isObjectTask() ? (
@@ -179,14 +175,6 @@ class Controls extends React.Component<Props, {}> {
 		});
 	};
 
-	onOver (e: any) {
-		$('.headerMainEditSearch').addClass('active');
-	};
-
-	onOut (e: any) {
-		$('.headerMainEditSearch').removeClass('active');
-	};
-	
 };
 
 export default Controls;

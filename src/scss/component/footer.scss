@@ -3,6 +3,18 @@
 .footer { transition: $transitionFast; }
 .footer {
 	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: #fff; }
+
+	.icon { cursor: pointer; z-index: 10; }
+	.icon.big { 
+		width: 44px; height: 44px; background-color: #fff; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 100%; 
+		background-size: 20px 20px;
+	}
 	
-	#button-help { position: fixed; right: 14px; bottom: 14px; cursor: pointer; z-index: 10; }
+	#button-add { position: fixed; left: 14px; bottom: 14px; }
+	#button-help { position: fixed; right: 14px; bottom: 14px; }
+}
+
+.footer.footerMainEdit {
+	#button-add { background-image: url('~img/icon/footer/add.svg'); }
+	#button-help { background-image: url('~img/icon/footer/help.svg'); }
 }

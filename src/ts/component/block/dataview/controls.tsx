@@ -47,15 +47,12 @@ class Controls extends React.Component<Props, State> {
 			{ id: 'manager', name: 'Customize views', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
-		const inner = <div className="dot" />;
-
 		const ButtonItem = (item: any) => {
 			let cn = [ item.id, (item.on ? 'on' : '') ];
 			return (
 				<Icon 
 					id={'button-' + item.id} 
 					className={cn.join(' ')}
-					inner={inner}
 					tooltip={item.name}
 					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
 				/>
@@ -74,14 +71,14 @@ class Controls extends React.Component<Props, State> {
 					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
 				))}
 
-				<div id="button-more" className="item" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
+				<div id="button-more" className="item btn" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
 					<Icon className="more" tooltip="Views" />
 				</div>
 
-				<div className="item dn">
+				{/*<div className="item dn">
 					<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
 					<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
-				</div>
+				</div>*/}
 			</div>
 		));
 		

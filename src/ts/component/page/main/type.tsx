@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, Cover } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -40,6 +40,7 @@ class PageMainType extends React.Component<Props, State> {
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onObjectAdd = this.onObjectAdd.bind(this);
 	};
 
 	render () {
@@ -60,6 +61,8 @@ class PageMainType extends React.Component<Props, State> {
 			description: 'Add a description',
 		};
 		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
+		const type: any = dbStore.getObjectType(object.id) || {};
+		const canCreate = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 
 		const isFirst = this.page == 0;
 		const isLast = this.page == this.getMaxPage();
@@ -101,6 +104,7 @@ class PageMainType extends React.Component<Props, State> {
 						suppressContentEditableWarning={true}
 						onFocus={(e: any) => { this.onFocus(e, item); }}
 						onBlur={(e: any) => { this.onBlur(e, item); }}
+						onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
 						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
 						onInput={(e: any) => { this.onInput(e, item); }}
 						onSelect={(e: any) => { this.onSelectText(e, item); }}
@@ -112,18 +116,9 @@ class PageMainType extends React.Component<Props, State> {
 			);
 		};
 
-		const Template = (item: any) => {
-			let { coverType, coverId, coverX, coverY, coverScale } = item;
-			return (
-				<div className="item" onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
-					<Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
-				</div>
-			);
-		};
-
 		const Relation = (item: any) => (
 			<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-				<div className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
+				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -132,7 +127,7 @@ class PageMainType extends React.Component<Props, State> {
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={(e: any) => { this.onRelationAdd(e); }}>
 				<div className="clickable">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -179,37 +174,46 @@ class PageMainType extends React.Component<Props, State> {
 						<div className="side left">
 							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
-						<div className="side right">
+						<div className="side center">
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
-					</div>
-
-					<div className="section template">
-						<div className="title">Templates</div>
-						<div className="content">
-							<div id="scrollWrap" className="wrap">
-								<div id="scroll" className="scroll">
-									{templates.map((item: any, i: number) => (
-										<Template key={i} {...item} />
-									))}
-								</div>
-							</div>
-
-							<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
-							<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'disabled' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
+						<div className="side right">
+							{canCreate ? <Button text="Create" className="orange" onClick={this.onObjectAdd} /> : ''}
 						</div>
 					</div>
-					
+
+					{templates.length ? (
+						<div className="section template">
+							<div className="title">{templates.length} templates</div>
+							<div className="content">
+								<div id="scrollWrap" className="wrap">
+									<div id="scroll" className="scroll">
+										{templates.map((item: any, i: number) => (
+											<ObjectPreviewBlock 
+												key={item.id} 
+												rootId={item.id} 
+												onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} 
+											/>
+										))}
+									</div>
+								</div>
+
+								<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
+								<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
+							</div>
+						</div>	
+					) : ''}
+
 					<div className="section note dn">
 						<div className="title">Notes</div>
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
 					<div className="section relation">
-						<div className="title">Recommended relations</div>
+						<div className="title">{relations.length} relations</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
@@ -219,7 +223,7 @@ class PageMainType extends React.Component<Props, State> {
 					</div>
 
 					<div className="section set">
-						<div className="title">Set of objects</div>
+						<div className="title">{total} objects</div>
 						<div className="content">
 							<table>
 								<thead>
@@ -321,7 +325,7 @@ class PageMainType extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 		];
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 		];
 
 		C.ObjectSearch(filters, sorts, '', 0, 0, (message: any) => {
@@ -353,7 +357,20 @@ class PageMainType extends React.Component<Props, State> {
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
-	onAdd (e: any) {
+	onObjectAdd () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+		const details: any = {
+			type: rootId,
+			layout: object.recommendedLayout,
+		};
+
+		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', (message: any) => {
+			DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+		});
+	};
+
+	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
 		const relations = dbStore.getRelations(rootId, rootId);
 
@@ -376,7 +393,7 @@ class PageMainType extends React.Component<Props, State> {
 		});
 	};
 
-	onEdit (e: any, relationKey: string) {
+	onRelationEdit (e: any, relationKey: string) {
 		const rootId = this.getRootId();
 		
 		menuStore.open('blockRelationEdit', { 
@@ -408,6 +425,16 @@ class PageMainType extends React.Component<Props, State> {
 
 	onInput (e: any, item: any) {
 		this.placeHolderCheck(item.id);
+	};
+
+	onKeyDown (e: any, item: any) {
+		this.placeHolderCheck(item.id);
+
+		if (item.id == 'name') {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				e.preventDefault();
+			});
+		};
 	};
 
 	onKeyUp (e: any, item: any) {
@@ -510,22 +537,17 @@ class PageMainType extends React.Component<Props, State> {
 		this.page += dir;
 		this.page = Math.min(max, Math.max(0, this.page));
 
-		arrowLeft.removeClass('disabled');
-		arrowRight.removeClass('disabled');
+		arrowLeft.removeClass('dn');
+		arrowRight.removeClass('dn');
 
 		if (this.page == 0) {
-			arrowLeft.addClass('disabled');
+			arrowLeft.addClass('dn');
 		};
 		if (this.page == max) {
-			arrowRight.addClass('disabled');
+			arrowRight.addClass('dn');
 		};
 
-		let x = -this.page * w;
-		if (this.page > 0) {
-			x -= 16;
-		};
-
-		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
+		scroll.css({ transform: `translate3d(${-this.page * (w + 16)}px,0px,0px` });
 	};
 
 };

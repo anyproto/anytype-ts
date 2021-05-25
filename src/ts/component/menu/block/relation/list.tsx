@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { Icon, Cell } from 'ts/component';
+import { Icon, Cell, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -14,6 +14,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 40;
 
@@ -23,6 +24,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	cellRefs: Map<string, any> = new Map();
 	items: any[] = [];
 	cache: any = {};
+	ref: any = null;
 
 	state = {
 		loading: false,
@@ -32,12 +34,13 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, filter } = data;
+		const { rootId, filter, withFilter } = data;
 		const { n } = this.state;
 		const block = blockStore.getLeaf(rootId, rootId);
 		const idPrefix = 'menuBlockRelationListCell';
@@ -108,32 +111,41 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		};
 
 		return (
-			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => { return true; }}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									scrollToIndex={n}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+			<div className="wrap">
+				{withFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.ref = ref; }} 
+						placeHolderFocus="Filter relations or create a new one..." 
+						onChange={this.onFilterChange} /> 
+				) : ''}
+
+				<div className="items">
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => { return true; }}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={registerChild}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+										scrollToIndex={n}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				</div>
 			</div>
 		);
 	};
@@ -141,6 +153,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	componentDidMount () {
 		this.load();
 		this.resize();
+		this.focus();
 
 		$('body').addClass('over');
 	};
@@ -155,10 +168,19 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		});
 
 		this.resize();
+		this.focus();
 	};
 
 	componentWillUnmount () {
 		$('body').removeClass('over');
+	};
+
+	focus () {
+		window.setTimeout(() => { 
+			if (this.ref) {
+				this.ref.focus(); 
+			};
+		}, 15);
 	};
 
 	load () {
@@ -224,15 +246,24 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	onClick (e: any, item: any) {
 		const { param, close, getId } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelect, onAdd } = data;
 
 		if (item.id == 'add') {
 			menuStore.open('blockRelationEdit', { 
 				element: `#${getId()} #item-${item.id}`,
+				subIds: Constant.menuIds.relationEdit,
 				data: {
 					...data,
 					addCommand: (rootId: string, blockId: string, relation: any) => {
-						C.BlockRelationAdd(rootId, blockId, relation, () => { close(); });
+						close();
+
+						C.BlockCreate({ type: I.BlockType.Relation }, rootId, blockId, I.BlockPosition.Replace, (message: any) => {
+							if (!message.error.code) {
+								C.BlockRelationAdd(rootId, message.blockId, relation, () => { 
+									onAdd();
+								});
+							};
+						});
 					},
 				}
 			});
@@ -244,13 +275,20 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { withFilter } = data;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT, Math.min(320, items.length * HEIGHT + 16));
+		const offset = withFilter ? 60: 16;
+		const height = Math.max(HEIGHT, Math.min(320, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
+	};
+
+	onFilterChange () {
+		this.props.param.data.filter = this.ref.getValue();
 	};
 
 };

@@ -291,7 +291,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, blockCreate } = data;
 		const { config, filter } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -354,6 +354,26 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					type: I.NavigationType.Link,
 				});
 				break;
+
+			case 'relation':
+				menuId = 'blockRelationList';
+				menuParam.className = 'withFilter';
+
+				menuParam.data = Object.assign(menuParam.data, {
+					relationKey: '',
+					withFilter: true,
+					filter: '',
+					onAdd: () => { close(); },
+					onSelect: (item: any) => {
+						close();
+
+						blockCreate(blockId, position, {
+							type: I.BlockType.Relation,
+							content: { key: item.relationKey },
+						});
+					},
+				});
+				break;
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
@@ -370,7 +390,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { param, close, getId } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSelect, blockCreate } = data;
 		const { filter } = commonStore;
@@ -378,6 +398,8 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (!block) {
 			return;
 		};
+
+		keyboard.setFocus(false);
 
 		let text = String(data.text || '');
 
@@ -458,7 +480,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
-					blockCreate(block, position, param);
+					blockCreate(blockId, position, param);
 				};
 			};
 

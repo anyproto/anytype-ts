@@ -126,65 +126,30 @@ function initTray () {
 	tray = new Tray (trayIcon());
 	tray.setToolTip('Anytype');
 	tray.setContextMenu(Menu.buildFromTemplate([
-		{
-            label: 'Open Anytype',
-			click: () => { win.show(); }
-		},
+		{ label: 'Open Anytype', click: () => { win.show(); } },
+
 		{ type: 'separator' },
-		{
-			label: 'Settings',
-			click: () => { 
-				win.show(); 
-				send('popup', 'settings'); 
-			}
-		},
-		{
-			label: 'Check for updates',
-			click: () => { 
-				win.show(); 
-				checkUpdate(false); 
-			}
-		},
+
+		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings'); } },
+		{ label: 'Check for updates', click: () => { win.show(); checkUpdate(false); } },
+
 		{ type: 'separator' },
-		{
-			label: 'Import',
-			click: () => { 
-				win.show(); 
-				send('popup', 'settings', { data: { page: 'importIndex' } }); 
-			}
-		},
-		{
-			label: 'Export',
-			click: () => { 
-				win.show(); 
-				send('popup', 'settings', { data: { page: 'exportMarkdown' } }); 
-			}
-		},
+
+		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }); } },
+		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }); } },
+		
 		{ type: 'separator' },
-		{
-			label: 'New object',
-			click: () => { 
-				win.show(); 
-				send('command', 'create');
-			}
-		},
-		{
-			label: 'Search object',
-			click: () => { 
-				win.show(); 
-				send('popup', 'search', { preventResize: true }); 
-			}
-		},
+
+		{ label: 'New object', click: () => { win.show(); send('command', 'create'); } },
+		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }); } },
+		
 		{ type: 'separator' },
-		{
-			label: 'Object diagnostics',
-			click: () => { 
-				win.show(); 
-				send('debugSync');
-			}
-		},
+
+		{ label: 'Object diagnostics', click: () => { win.show(); send('debugSync'); } },
+
 		{ type: 'separator' },
-		{
+
+		{ 
 			label: 'Quit',
 			click: () => { 
 				if (win) {
@@ -457,6 +422,10 @@ function menuInit () {
 					click: () => { send('popup', 'settings', { data: { page: 'exportMarkdown' } }); }
 				},
 				{
+					label: 'Save as file',
+					click: () => { send('command', 'save'); }
+				},
+				{
 					label: 'Object diagnostics',
 					click: () => { send('debugSync'); }
 				},
@@ -585,6 +554,10 @@ function menuInit () {
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
 					click: () => { win.webContents.openDevTools(); }
+				},
+				{
+					label: 'Export templates',
+					click: () => { send('command', 'exportTemplates'); }
 				}
 			]
 		});

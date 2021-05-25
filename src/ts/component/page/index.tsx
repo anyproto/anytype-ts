@@ -27,6 +27,7 @@ import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
 
 const { ipcRenderer } = window.require('electron');
+const { process } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -84,7 +85,7 @@ class Page extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				{!isPopup ? <ListPopup {...this.props} /> : ''}
+				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
 				<div className={'page ' + this.getClass('page')}>
 					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 				</div>
@@ -206,21 +207,30 @@ class Page extends React.Component<Props, {}> {
 		const match = this.getMatch();
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
-		const platform = Util.getPlatform();
+		
 
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
 			Util.toCamelCase([ prefix, page, action ].join('-')),
-			Util.toCamelCase([ 'platform', platform ].join('-')),
 		].join(' ');
 	};
 	
 	setBodyClass () {
 		const { isPopup } = this.props;
 		const { config } = commonStore;
-		const cn = [ this.getClass('body') ];
+		const platform = Util.getPlatform();
+		const version = process.getSystemVersion();
+		const cn = [ 
+			this.getClass('body'), 
+			Util.toCamelCase([ 'platform', platform ].join('-')),
+		];
 		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
-		
+
+		const a = version.split('.');
+		if (a.length) {
+			cn.push('version' + a[0]);
+		};
+
 		if (config.debug.ui) {
 			cn.push('debug');
 		};

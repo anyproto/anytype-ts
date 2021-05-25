@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, Util, DataUtil, keyboard } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
-import { menuStore } from 'ts/store';
+import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
@@ -212,6 +212,10 @@ class CellText extends React.Component<Props, State> {
 		} else {
 			cell.removeClass('isEditing');
 		};
+
+		if (commonStore.cellId) {
+			$(`#${commonStore.cellId}`).addClass('isEditing');
+		};
 	};
 
 	onSelect (e: any) {
@@ -256,8 +260,11 @@ class CellText extends React.Component<Props, State> {
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
 
-		value = Util.parseDate(String(value || '').replace(/_/g, ''));
-		menuStore.updateData(MENU_ID, { value: value });
+		value = String(value || '').replace(/_/g, '');
+		value = value ? Util.parseDate(value) : null;
+		if (value) {
+			menuStore.updateData(MENU_ID, { value: value });
+		};
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -280,12 +287,12 @@ class CellText extends React.Component<Props, State> {
 
 		keyboard.setFocus(false);
 
+		if (keyboard.isBlurDisabled) {
+			return;
+		};
+
 		if (relation.format == I.RelationType.Date) {
-			if (value) {
-				value = Util.parseDate(value);
-			} else {
-				return;
-			};
+			value = value ? Util.parseDate(value) : null;
 		};
 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {

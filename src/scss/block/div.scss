@@ -8,13 +8,17 @@
 		.icon.dnd { height: 12px; top: 50%; margin-top: -6px; background-image: none !important; }
 		.icon.dnd:hover { background-image: none !important; }
 
-		.div { width: 100%; position: absolute; top: 50%; left: 0px; text-align: center; }
+		.wrap { text-align: center; position: relative; height: 100%; }
+
+		.line, .dots { width: 100%; position: absolute; top: 50%; left: 0px; }
 	}
+
 	.block.blockDiv.c0 {
-		.div { height: 1px; border-bottom: 1px solid #d2d0c2; }
+		.line {  height: 1px; border-bottom: 1px solid #d2d0c2; }
 	}
+
 	.block.blockDiv.c1 {
-		.div { height: 2px; margin-top: -1px; white-space: nowrap; }
+		.dots { height: 2px; margin-top: -1px; white-space: nowrap; }
 		.dot { width: 2px; height: 2px; border: 1px solid $colorBlack; margin-right: 18px; display: inline-block; vertical-align: top; }
 		.dot:last-child { margin: 0px; }
 	}

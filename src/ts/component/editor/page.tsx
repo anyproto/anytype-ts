@@ -628,11 +628,17 @@ class EditorPage extends React.Component<Props, {}> {
 		const win = $(window);
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
-		const length = String(text || '').length;
 		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
 		const element = $('#block-' + block.id);
 		const value = element.find('#value');
+
+		let length = String(text || '').length;
+
+		// Last line break in code block
+		if (block.isTextCode()) {
+			length--;
+		};
 
 		range = range || {};
 
@@ -646,7 +652,7 @@ class EditorPage extends React.Component<Props, {}> {
 					this.onPrint();
 				};
 				if (pressed == 'ctrl+p') {
-					this.onArrow(Key.up, length);
+					this.onArrow(e, Key.up, length);
 				};
 			} else {
 				e.preventDefault();
@@ -657,7 +663,7 @@ class EditorPage extends React.Component<Props, {}> {
 		// Next string
 		if (platform == I.Platform.Mac) {
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
-				this.onArrow(Key.down, length);
+				this.onArrow(e, Key.down, length);
 			});
 		};
 
@@ -805,7 +811,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed, length);
+			this.onArrow(e, pressed, length);
 		});
 
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
@@ -851,7 +857,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
 			const sRect = Util.selectionRect();
-			const vRect = value.get(0).getBoundingClientRect();
+			const vRect = value.length ? value.get(0).getBoundingClientRect() : element.get(0).getBoundingClientRect();
 			const lh = parseInt(value.css('line-height'));
 			const sy = sRect.y + st;
 			const vy = vRect.y + st;
@@ -928,6 +934,12 @@ class EditorPage extends React.Component<Props, {}> {
 			let replace = !range.to && block.isTextList() && !length;
 			if (replace) {
 				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			} else 
+			if (!block.isText()) {  
+				this.blockCreate(block.id, I.BlockPosition.Bottom, {
+					type: I.BlockType.Text,
+					style: I.TextStyle.Paragraph,
+				});
 			} else {
 				this.blockSplit(block, range);
 			};
@@ -937,13 +949,13 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 	};
 
-	onArrow (pressed: string, length: number) {
+	onArrow (e: any, pressed: string, length: number) {
 		if (menuStore.isOpen()) {
 			return;
 		};
 
 		const { focused, range } = focus;
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -959,6 +971,8 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
+		e.preventDefault();
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const parent = blockStore.getLeaf(rootId, next.parentId);
 		const l = next.getLength();
@@ -971,6 +985,7 @@ class EditorPage extends React.Component<Props, {}> {
 		window.setTimeout(() => {
 			focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
 			focus.apply();
+			focus.scroll(isPopup);
 		});
 	};
 	
@@ -998,7 +1013,7 @@ class EditorPage extends React.Component<Props, {}> {
 		commonStore.filterSet(0, '');
 		focus.clear(true);
 		
-		this.blockCreate(block, this.hoverPosition, {
+		this.blockCreate(block.id, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
@@ -1037,7 +1052,7 @@ class EditorPage extends React.Component<Props, {}> {
 				rootId: rootId,
 				text: text,
 				blockCreate: this.blockCreate,
-			}
+			},
 		});
 	};
 	
@@ -1343,10 +1358,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
+	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
-		
-		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
+
+		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
@@ -1522,7 +1537,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		if (create) {
-			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+			this.blockCreate(last.id, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
 			this.focus(last.id, length, length, false);
 		};

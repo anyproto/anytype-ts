@@ -8,7 +8,6 @@ import { I, C, Mark, Util, translate } from 'ts/lib';
 interface Props {};
 interface State {
 	loading: boolean;
-	type: I.BookmarkType;
 	title: string;
 	description: string;
 	url: string;
@@ -24,11 +23,10 @@ const OFFSET_Y = 8;
 const BORDER = 12;
 
 @observer
-class LinkPreview extends React.Component<Props, {}> {
+class LinkPreview extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
-		type: I.BookmarkType.Unknown,
 		title: '',
 		description: '',
 		url: '',
@@ -99,7 +97,6 @@ class LinkPreview extends React.Component<Props, {}> {
 			this.setState({ 
 				loading: true,
 				url: linkPreview.url,
-				type: 0,
 				title: '',
 				description: '',
 				faviconUrl: '',

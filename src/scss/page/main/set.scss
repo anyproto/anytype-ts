@@ -8,18 +8,19 @@
 			.wrapMenu { display: none; }	
 			.wrapContent { width: 100%; }
 		}
-		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 28px; }
+		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }
 		.block.blockFeatured {
+			.cellContent { padding: 2.5px 6px; }
 			.bullet { margin-top: -2px; }
 		}
 
-		.head { width: 696px; margin: 0px auto 35px auto; display: flex; }
+		.head { width: 696px; margin: 0px auto 40px auto; display: flex; }
 		.head {
 			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
 			.side.right { width: calc(100% - 128px); }
 
 			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin: 5px 0px 9px 0px; }
+			.descr { @include text-paragraph; margin: 8px 0px 9px 0px; }
 
 			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
 
@@ -29,6 +30,10 @@
 			}
 		}
 	}
+}
+
+html.platformMac.version11 {
+	.pageMainSet .wrapper { padding-top: 144px; }
 }
 
 .pageMainSet > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }

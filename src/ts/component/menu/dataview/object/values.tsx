@@ -89,11 +89,7 @@ class MenuObjectValues extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-
-		const items = this.getItems();
-		if (!items.length) {
-			this.onAdd();
-		};
+		this.onAdd();
 	};
 
 	componentDidUpdate () {
@@ -161,25 +157,20 @@ class MenuObjectValues extends React.Component<Props> {
 		const { param, getId, close } = this.props;
 		const { data } = param;
 
-		if (menuStore.isOpen('dataviewObjectList')) {
-			return;
-		};
-
-		window.setTimeout(() => {
-			menuStore.open('dataviewObjectList', {
-				element: `#${getId()} #item-add`,
-				width: 0,
-				offsetX: param.width,
-				offsetY: -36,
-				passThrough: true,
-				noFlipY: true,
-				onClose: () => { close(); },
-				data: {
-					...data,
-					rebind: this.rebind,
-				},
-			});
-		}, Constant.delay.menu);
+		menuStore.open('dataviewObjectList', {
+			element: `#${getId()} #item-add`,
+			width: 0,
+			offsetX: param.width,
+			offsetY: -36,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
+			onClose: () => { close(); },
+			data: {
+				...data,
+				rebind: this.rebind,
+			},
+		});
 	};
 
 	onRemove (e: any, item: any) {

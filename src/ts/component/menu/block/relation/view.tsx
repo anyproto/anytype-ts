@@ -62,7 +62,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 							/>
 						);
 					})}
-					{!readOnly && (section.index == sections.length - 1) ? <ItemAdd /> : ''}
 				</div>
 			</div>
 		);
@@ -73,7 +72,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 					<Icon className="plus" />
 					<div className="name">New</div>
 				</div>
-				<div className="cell" />
 			</div>
 		);
 
@@ -82,6 +80,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				{sections.map((item: any, i: number) => {
 					return <Section key={i} {...item} index={i} />;
 				})}
+				{!readOnly ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
@@ -116,7 +115,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		if (!config.debug.ho) {
 			items = items.filter((it: any) => { return !it.isHidden; });
 		};
-
 		items.sort(DataUtil.sortByHidden);
 
 		let sections = [ 
@@ -183,15 +181,14 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
+			element: `#${getId()} #item-add .info`,
 			offsetX: 32,
-			offsetY: 4,
 			data: {
 				...data,
 				filter: '',

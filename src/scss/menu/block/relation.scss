@@ -22,7 +22,9 @@
 
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
-		.content { transition: none ;padding: 0px; }
+		.wrap { display: flex; flex-direction: column; height: 100%; }
+
+		.content { transition: none; padding: 0px; }
 		.items { height: 100%; }
 		.input { border: 0px; padding: 0px; }
 
@@ -35,6 +37,9 @@
 		.cellContent.c-longText {
 			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
 		}
+	}
+	.menu.menuBlockRelationList.withFilter {
+		.content { padding-top: 8px; }
 	}
 	
 	.menu.menuBlockRelationEdit {
@@ -68,7 +73,7 @@
 			.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 		.section:last-child::after { display: none; }
-		.section::after { margin: 12px 32px 3px 32px; display: none; }
+		.section::after { margin: 12px 30px 3px 30px; display: none; }
 
 		#section-featured::after { display: block; }
 

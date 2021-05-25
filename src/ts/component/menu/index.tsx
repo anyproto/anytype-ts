@@ -36,10 +36,10 @@ import MenuBlockRelationView from './block/relation/view';
 import MenuObjectTypeEdit from './type/edit';
 
 import MenuRelationSuggest from './relation/suggest';
+import MenuRelationType from './relation/type';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
-import MenuDataviewRelationType from './dataview/relation/type';
 import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewObjectValues from './dataview/object/values';
 import MenuDataviewFilterList from './dataview/filter/list';
@@ -101,10 +101,10 @@ const Components: any = {
 	objectTypeEdit:			 MenuObjectTypeEdit,
 
 	relationSuggest:		 MenuRelationSuggest,
+	relationType:			 MenuRelationType,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
-	dataviewRelationType:	 MenuDataviewRelationType,
 	dataviewObjectList:		 MenuDataviewObjectList,
 	dataviewObjectValues:	 MenuDataviewObjectValues,
 	dataviewOptionList:		 MenuDataviewOptionList,
@@ -333,7 +333,7 @@ class Menu extends React.Component<Props, State> {
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
-			let minY = Constant.size.header + 2;
+			let minY = Util.sizeHeader() + 2;
 			if (platform == I.Platform.Windows) {
 				minY += 30;
 			};

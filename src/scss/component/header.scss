@@ -13,7 +13,7 @@
 	.path { white-space: nowrap; }
 	.path {
 		.item { 
-			display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 6px; cursor: pointer; 
+			display: inline-block; vertical-align: top; color: #929082; margin-right: 6px; cursor: pointer; 
 			transition: color 0.2s ease-in-out; 
 		}
 		.item {
@@ -50,18 +50,18 @@
 
 	.side.left { left: 6px; z-index: 1; }
 
-	.side.center { width: 512px; height: 28px; left: 50%; margin-left: -256px; white-space: nowrap; }
+	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; }
 
-	.side.right { right: 6px; z-index: 1; }
+	.side.right { right: 10px; z-index: 1; }
 	.side.right {
-		.sync { margin: 5px 8px 0px 0px; cursor: pointer; vertical-align: top; }
+		.sync { margin: 5px 16px 0px 0px; cursor: pointer; vertical-align: top; }
 		.icon { margin: 0px; }
 	}
 }
 
-.header.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
+.header.headerMainIndex { height: 38px; background: rgba(0,0,0,0.3); }
 .header.headerMainIndex {
-	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon { width: 32px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.side.center { 
@@ -73,11 +73,11 @@
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 
-	.icon.big { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon.big { width: 32px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big:hover, .icon.big.active { background-color: #f3f2ec; }
 
 	.path { 
-		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
+		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
@@ -85,14 +85,13 @@
 	}
 	.path * { pointer-events: all; }
 
-	.side.left { opacity: 0; transition: $transitionFast; }
+	.side.left { transition: $transitionFast; }
 	.side.left {
 		.icon { margin: 0px; }
-		.icon.back, .icon.forward { width: 32px; }
 	}
 
 	.side.center {
-		.icons { margin-left: 6px; display: inline-block; vertical-align: middle; }
+		.icons { margin-left: 6px; display: inline-block; vertical-align: top; }
 
 		.icon { margin: 0px; opacity: 0; }
 		.icon.plus {
@@ -148,11 +147,15 @@
 
 html.platformMac {
 	.header {
-		.side.left { left: 90px; }
+		.side.left { left: 88px; }
 	}
+}
 
-	.header.headerMainHistory {
-		.side.left { left: 80px; }
+html.platformMac.version11 {
+	.header { height: 52px !important; line-height: 28px; }
+	.header {
+		.side { top: 12px; }
+		.side .item { vertical-align: middle; display: inline-block; }
 	}
 }
 
@@ -163,7 +166,6 @@ body.fullScreen {
 }
 
 .header.headerMainEdit:hover, .header.headerMainEdit.active, .header.headerMainEdit.show {
-	.side.left { opacity: 1; }
 	.side.center {
 		.icon { opacity: 1; }
 		.icon.dis { opacity: 0.5; }

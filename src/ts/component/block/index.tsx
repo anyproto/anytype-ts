@@ -19,6 +19,7 @@ import BlockCover from './cover';
 import BlockDiv from './div';
 import BlockRelation from './relation';
 import BlockFeatured from './featured';
+import BlockType from './type';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -69,7 +70,7 @@ class Block extends React.Component<Props, {}> {
 
 		let canSelect = true;
 		let canDrop = !readOnly;
-		let cn: string[] = [ 'block', 'align' + align ];
+		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block) ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -86,15 +87,13 @@ class Block extends React.Component<Props, {}> {
 		if (readOnly) {
 			cn.push('isReadOnly');
 		};
-		
+
 		if (bgColor) {
 			cd.push('bgColor bgColor-' + bgColor);
 		};
 		
 		switch (type) {
 			case I.BlockType.Text:
-				cn.push('blockText ' + DataUtil.styleClassText(style));
-
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
@@ -110,82 +109,70 @@ class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Layout:
 				canSelect = false;
-				cn.push('blockLayout c' + content.style);
 				break;
 				
 			case I.BlockType.IconPage:
 				canSelect = false;
 				canDrop = false;
-				cn.push('blockIconPage');
 				blockComponent = <BlockIconPage {...this.props} />;
 				break;
 				
 			case I.BlockType.IconUser:
 				canSelect = false;
 				canDrop = false;
-				cn.push('blockIconUser');
 				blockComponent = <BlockIconUser {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
-				if (content.state == I.FileState.Done) {
-					cn.push('withFile');
-				};
-
 				switch (content.type) {
 					default: 
 					case I.FileType.File: 
-						cn.push('blockFile');
 						blockComponent = <BlockFile {...this.props} />;
 						break;
 						
 					case I.FileType.Image: 
-						cn.push('blockMedia');
 						blockComponent = <BlockImage {...this.props} />;
 						break;
 						
 					case I.FileType.Video: 
-						cn.push('blockMedia');
 						blockComponent = <BlockVideo {...this.props} />;
 						break;
 				};
 				break;
 				
 			case I.BlockType.Bookmark:
-				cn.push('blockBookmark');
 				blockComponent = <BlockBookmark {...this.props} />;
 				break;
 			
 			case I.BlockType.Dataview:
 				canSelect = false;
-				cn.push('blockDataview');
 				blockComponent = <BlockDataview {...this.props} />;
 				break;
 				
 			case I.BlockType.Div:
-				cn.push('blockDiv c' + content.style);
 				blockComponent = <BlockDiv {...this.props} />;
 				break;
 				
 			case I.BlockType.Link:
-				cn.push('blockLink');
 				blockComponent = <BlockLink {...this.props} />;
 				break;
 				
 			case I.BlockType.Cover:
 				canSelect = false;
-				cn.push('blockCover');
 				blockComponent = <BlockCover {...this.props} />;
 				break;
 
 			case I.BlockType.Relation:
-				cn.push('blockRelation');
 				blockComponent = <BlockRelation {...this.props} />;
 				break;
 
 			case I.BlockType.Featured:
-				cn.push('blockFeatured');
 				blockComponent = <BlockFeatured {...this.props} />;
+				break;
+
+			case I.BlockType.Type:
+				canSelect = false;
+				blockComponent = <BlockType {...this.props} />;
 				break;
 		};
 		

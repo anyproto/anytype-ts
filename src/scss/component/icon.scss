@@ -8,7 +8,7 @@
 .arrow { background-position: center center; transition: $transitionFast; background-repeat: no-repeat; background-size: 100% 100%; }
 
 .icon.home { background-image: url('~img/icon/home.svg'); }
-.icon.home.big { background-image: url('~img/icon/home-big.svg'); }
+.icon.home-big { background-image: url('~img/icon/home-big.svg'); }
 
 .icon.back, .icon.forward { background-image: url('~img/icon/back0.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
@@ -20,18 +20,18 @@
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
 
 .icon.relation.default { background-image: url('~img/icon/menu/action/block/relation0.svg'); }
-.icon.relation.c-longText { background-image: url('~img/icon/dataview/relation/longText.svg'); }
-.icon.relation.c-shortText { background-image: url('~img/icon/dataview/relation/shortText.svg'); }
-.icon.relation.c-number { background-image: url('~img/icon/dataview/relation/number.svg'); }
-.icon.relation.c-date { background-image: url('~img/icon/dataview/relation/date.svg'); }
-.icon.relation.c-select.isTag { background-image: url('~img/icon/dataview/relation/tag.svg'); }
-.icon.relation.c-select.isStatus { background-image: url('~img/icon/dataview/relation/status.svg'); }
-.icon.relation.c-object { background-image: url('~img/icon/dataview/relation/object.svg'); }
-.icon.relation.c-file { background-image: url('~img/icon/dataview/relation/file.svg'); }
-.icon.relation.c-checkbox { background-image: url('~img/icon/dataview/relation/checkbox.svg'); }
-.icon.relation.c-url { background-image: url('~img/icon/dataview/relation/url.svg'); }
-.icon.relation.c-email { background-image: url('~img/icon/dataview/relation/email.svg'); }
-.icon.relation.c-phone { background-image: url('~img/icon/dataview/relation/phone.svg'); }
+.icon.relation.c-longText { background-image: url('~img/icon/relation/small/longText.svg'); }
+.icon.relation.c-shortText { background-image: url('~img/icon/relation/small/shortText.svg'); }
+.icon.relation.c-number { background-image: url('~img/icon/relation/small/number.svg'); }
+.icon.relation.c-date { background-image: url('~img/icon/relation/small/date.svg'); }
+.icon.relation.c-select.isTag { background-image: url('~img/icon/relation/small/tag.svg'); }
+.icon.relation.c-select.isStatus { background-image: url('~img/icon/relation/small/status.svg'); }
+.icon.relation.c-object { background-image: url('~img/icon/relation/small/object.svg'); }
+.icon.relation.c-file { background-image: url('~img/icon/relation/small/file.svg'); }
+.icon.relation.c-checkbox { background-image: url('~img/icon/relation/small/checkbox.svg'); }
+.icon.relation.c-url { background-image: url('~img/icon/relation/small/url.svg'); }
+.icon.relation.c-email { background-image: url('~img/icon/relation/small/email.svg'); }
+.icon.relation.c-phone { background-image: url('~img/icon/relation/small/phone.svg'); }
 
 .icon.layout-page { background-image: url('~img/icon/object/page.svg'); }
 .icon.layout-human { background-image: url('~img/icon/object/human.svg'); }

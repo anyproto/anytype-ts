@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconEmoji } from 'ts/component';
-import { I, Util, SmileUtil } from 'ts/lib';
+import { I, Util, SmileUtil, DataUtil } from 'ts/lib';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -15,6 +15,7 @@ interface Props {
 	native?: boolean;
 	asImage?: boolean;
 	size?: number;
+	iconSize?: number;
 	offsetX?: number;
 	offsetY?: number;
 	menuId?: string;
@@ -42,6 +43,7 @@ const Size = {
 	32: 28,
 	40: 24,
 	48: 24,
+	56: 32,
 	64: 32,
 	96: 64,
 	128: 64,
@@ -72,19 +74,32 @@ const File = {
 	table: require('img/icon/file/table.svg'),
 };
 
-const Relation: any = {};
-Relation[I.RelationType.LongText] = require('img/icon/dataview/relation/longText.svg');
-Relation[I.RelationType.ShortText] = require('img/icon/dataview/relation/shortText.svg');
-Relation[I.RelationType.Number] = require('img/icon/dataview/relation/number.svg');
-Relation[I.RelationType.Status] = require('img/icon/dataview/relation/status.svg');
-Relation[I.RelationType.Date] = require('img/icon/dataview/relation/date.svg');
-Relation[I.RelationType.File] = require('img/icon/dataview/relation/file.svg');
-Relation[I.RelationType.Checkbox] = require('img/icon/dataview/relation/checkbox.svg');
-Relation[I.RelationType.Url] = require('img/icon/dataview/relation/url.svg');
-Relation[I.RelationType.Email] = require('img/icon/dataview/relation/email.svg');
-Relation[I.RelationType.Phone] = require('img/icon/dataview/relation/phone.svg');
-Relation[I.RelationType.Tag] = require('img/icon/dataview/relation/tag.svg');
-Relation[I.RelationType.Object] = require('img/icon/dataview/relation/object.svg');
+const Relation: any = { small: {}, big: {} };
+Relation.small[I.RelationType.LongText] = require('img/icon/relation/small/longText.svg');
+Relation.small[I.RelationType.ShortText] = require('img/icon/relation/small/shortText.svg');
+Relation.small[I.RelationType.Number] = require('img/icon/relation/small/number.svg');
+Relation.small[I.RelationType.Status] = require('img/icon/relation/small/status.svg');
+Relation.small[I.RelationType.Date] = require('img/icon/relation/small/date.svg');
+Relation.small[I.RelationType.File] = require('img/icon/relation/small/file.svg');
+Relation.small[I.RelationType.Checkbox] = require('img/icon/relation/small/checkbox.svg');
+Relation.small[I.RelationType.Url] = require('img/icon/relation/small/url.svg');
+Relation.small[I.RelationType.Email] = require('img/icon/relation/small/email.svg');
+Relation.small[I.RelationType.Phone] = require('img/icon/relation/small/phone.svg');
+Relation.small[I.RelationType.Tag] = require('img/icon/relation/small/tag.svg');
+Relation.small[I.RelationType.Object] = require('img/icon/relation/small/object.svg');
+
+Relation.big[I.RelationType.LongText] = require('img/icon/relation/big/longText.svg');
+Relation.big[I.RelationType.ShortText] = require('img/icon/relation/big/shortText.svg');
+Relation.big[I.RelationType.Number] = require('img/icon/relation/big/number.svg');
+Relation.big[I.RelationType.Status] = require('img/icon/relation/big/status.svg');
+Relation.big[I.RelationType.Date] = require('img/icon/relation/big/date.svg');
+Relation.big[I.RelationType.File] = require('img/icon/relation/big/file.svg');
+Relation.big[I.RelationType.Checkbox] = require('img/icon/relation/big/checkbox.svg');
+Relation.big[I.RelationType.Url] = require('img/icon/relation/big/url.svg');
+Relation.big[I.RelationType.Email] = require('img/icon/relation/big/email.svg');
+Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg');
+Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg');
+Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg');
 
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
@@ -127,7 +142,8 @@ class IconObject extends React.Component<Props, {}> {
 		const { className, size, canEdit } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const cn = [ 'iconObject', 'c' + size ];
+		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
+		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
 		
 		if (className) {
 			cn.push(className);
@@ -136,7 +152,7 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		let { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
+		
 		let iconSize = this.iconSize(layout, size);
 		let icon = null;
 		let icn = [];
@@ -144,27 +160,22 @@ class IconObject extends React.Component<Props, {}> {
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:
-				cn.push('isPage');
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				};
 				break;
 
 			case I.ObjectLayout.Human:
-				cn.push('isUser');
 				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.Task:
-				cn.push('isTask');
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
 				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 
 			case I.ObjectLayout.ObjectType:
-				cn.push('isObjectType');
-
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
@@ -174,28 +185,24 @@ class IconObject extends React.Component<Props, {}> {
 				break;
 
 			case I.ObjectLayout.Relation:
-				cn.push('isRelation');
-
-				if (Relation[relationFormat]) {
+				const key = iconSize < 28 ? 'small' : 'big';
+				if (Relation[key][relationFormat]) {
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={Relation[relationFormat]} className={icn.join(' ')} />;
+					icon = <img src={Relation[key][relationFormat]} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.Image:
 				if (id) {
-					cn.push('isImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
-					cn.push('isFile');
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 					icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.File:
-				cn.push('isFile');
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				break;
@@ -268,10 +275,15 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	iconSize (layout: I.ObjectLayout, size: number) {
+		const { iconSize } = this.props;
+
 		let s = Size[size];
 
 		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
 			s = 40;
+		};
+		if (iconSize) {
+			s = iconSize;
 		};
 		return s;
 	};

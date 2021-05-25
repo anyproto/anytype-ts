@@ -8,6 +8,7 @@ const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
 
+const Constant = require('json/constant.json');
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
@@ -636,18 +637,25 @@ class Dispatcher {
 
 	onObjectShow (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
-		
+		let root = blocks.find((it: any) => { return it.id == rootId; });
+
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
 
-		blocks = blocks.map((it: any) => {
-			if (it.id == rootId) {
-				const object = detailStore.get(rootId, rootId, [ 'layout' ]);
+		if (root) {
+			const object = detailStore.get(rootId, rootId, [ 'layout' ]);
 
-				it.type = I.BlockType.Page;
-				it.layout = object.layout;
+			root.type = I.BlockType.Page;
+			root.layout = object.layout;
+
+			if ((object.type == Constant.typeId.page) && (root.childrenIds.length == 1)) {
+				root.childrenIds.push(Constant.blockId.type);
+
+				blocks.push({ id: Constant.blockId.type, type: I.BlockType.Type });
 			};
+		};
 
+		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
 				dbStore.viewsSet(rootId, it.id, it.content.views);

@@ -30,32 +30,32 @@ class BlockLink extends React.Component<Props, {}> {
 		const { _objectEmpty_, name, isArchived } = object;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
 
-		if (_objectEmpty_) {
-			return (
-				<div className="loading" data-target-block-id={content.targetBlockId}>
-					<Loader />
-					<div className="name">{translate('blockLinkSyncing')}</div>
-				</div>
-			);
-		};
-
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<IconObject 
-					object={object} 
-					id={'block-page-' + id} 
-					offsetX={28} 
-					offsetY={-24} 
-					size={24} 
-					canEdit={!readOnly} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload}
-					onCheckbox={this.onCheckbox}
-				/>
-				<div className="name" onClick={this.onClick}>
-					<div className="txt">{name}</div>
-				</div>
-				<div className="archive">{translate('blockLinkArchived')}</div>
+				{_objectEmpty_ ? (
+					<div className="loading" data-target-block-id={content.targetBlockId}>
+						<Loader />
+						<div className="name">{translate('blockLinkSyncing')}</div>
+					</div>
+				) : (
+					<React.Fragment>
+						<IconObject 
+							object={object} 
+							id={'block-page-' + id} 
+							offsetX={28} 
+							offsetY={-24} 
+							size={24} 
+							canEdit={!readOnly} 
+							onSelect={this.onSelect} 
+							onUpload={this.onUpload}
+							onCheckbox={this.onCheckbox}
+						/>
+						<div className="name" onClick={this.onClick}>
+							<div className="txt">{name}</div>
+						</div>
+						<div className="archive">{translate('blockLinkArchived')}</div>
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};

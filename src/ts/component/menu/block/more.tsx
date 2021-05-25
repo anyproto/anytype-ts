@@ -172,11 +172,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, blockId);
 		const cmd = Util.ctrlSymbol();
 
-		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd} + Z` };
-		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd} + Shift + Z` };
-		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd} + P` };
+		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
+		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
+		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
 		const linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
-		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd} + F` };
+		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
 		const move = { id: 'move', name: 'Move to', arrow: true };
 		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
@@ -225,7 +225,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			sections[0].children.push(align);
 
 			if (block.canHaveHistory()) {
-				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd} + Y` });
+				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` });
 			};
 
 			sections = sections.map((it: any, i: number) => {
@@ -236,9 +236,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		} else 
 		if (block.isLink()) {
 			sections.push({ children: [
-				move,
 				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
-				{ id: 'remove', icon: 'unfav', name: 'Remove from dashboard' },
+				{ id: 'remove', icon: 'unfav', name: 'Remove from Favorites' },
+				move,
 			]});
 		} else {
 			sections.push({ children: [

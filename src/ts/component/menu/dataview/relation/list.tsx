@@ -73,7 +73,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 					{relations.map((item: any, i: number) => {
 						return <Item key={item.relationKey} {...item} index={i} />;
 					})}
-					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
+					{!readOnly ? <ItemAdd index={relations.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -111,7 +111,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: 256,
-			offsetY: 4,
 			vertical: I.MenuDirection.Center,
 			data: {
 				...data,
@@ -142,7 +141,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		
 		menuStore.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${id}`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,

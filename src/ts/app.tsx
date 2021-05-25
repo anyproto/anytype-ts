@@ -35,10 +35,12 @@ import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
 import 'scss/component/linkPreview.scss';
+import 'scss/component/objectPreviewBlock.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
+import 'scss/component/filter.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -71,6 +73,7 @@ import 'scss/block/iconUser.scss';
 import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
 import 'scss/block/featured.scss';
+import 'scss/block/type.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -128,13 +131,18 @@ interface State {
 	loading: boolean;
 };
 
-const THROTTLE = 20;
-const Constant =  require('json/constant.json');
 const $ = require('jquery');
+const path = require('path');
+const { app, dialog, process } = window.require('electron').remote;
+const version = app.getVersion();
+const userPath = app.getPath('userData');
 const { ipcRenderer } = window.require('electron');
 const fs = window.require('fs');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
+const Constant =  require('json/constant.json');
+
+const THROTTLE = 20;
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore,
@@ -146,10 +154,7 @@ const rootStore = {
 	popupStore,
 };
 
-const path = require('path');
-const { app } = window.require('electron').remote;
-const version = app.getVersion();
-const userPath = app.getPath('userData');
+console.log('OS Version', process.getSystemVersion());
 
 /*
 enableLogging({
@@ -509,6 +514,8 @@ class App extends React.Component<Props, State> {
 	onCommand (e: any, key: string) {
 		const rootId = keyboard.getRootId();
 
+		let options: any = {};
+
 		switch (key) {
 			case 'undo':
 				C.BlockUndo(rootId);
@@ -520,6 +527,48 @@ class App extends React.Component<Props, State> {
 
 			case 'create':
 				keyboard.pageCreate();
+				break;
+
+			case 'save':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
+				break;
+
+			case 'exportTemplates':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.ExportTemplates(files[0], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
 				break;
 		};
 	};
