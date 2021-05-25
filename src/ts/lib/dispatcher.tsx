@@ -249,7 +249,6 @@ class Dispatcher {
 					};
 
 					childrenIds = data.getChildrenidsList() || [];
-
 					blockStore.updateStructure(rootId, id, childrenIds);
 					break;
 
@@ -537,8 +536,12 @@ class Dispatcher {
 					details = Decode.decodeStruct(data.getDetails());
 					detailStore.update(rootId, { id: id, details: details }, true);
 
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout !== details.layout)) {
-						blockStore.update(rootId, { id: rootId, layout: details.layout });
+					if ((id == rootId) && block) {
+						if ((undefined !== details.layout) && (block.layout != details.layout)) {
+							blockStore.update(rootId, { id: rootId, layout: details.layout });
+						};
+						
+						this.blockTypeCheck(rootId);
 					};
 					break;
 
@@ -552,8 +555,12 @@ class Dispatcher {
 					};
 					detailStore.update(rootId, { id: id, details: details }, false);
 
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-						blockStore.update(rootId, { id: rootId, layout: details.layout });
+					if ((id == rootId) && block) {
+						if ((undefined !== details.layout) && (block.layout != details.layout)) {
+							blockStore.update(rootId, { id: rootId, layout: details.layout });
+						};
+						
+						this.blockTypeCheck(rootId);
 					};
 					break;
 
@@ -643,16 +650,10 @@ class Dispatcher {
 		blockStore.restrictionsSet(rootId, restrictions);
 
 		if (root) {
-			const object = detailStore.get(rootId, rootId, [ 'layout' ]);
+			const object = detailStore.get(rootId, rootId, []);
 
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
-
-			if ((object.type == Constant.typeId.page) && (root.childrenIds.length == 1)) {
-				root.childrenIds.push(Constant.blockId.type);
-
-				blocks.push({ id: Constant.blockId.type, type: I.BlockType.Type });
-			};
 		};
 
 		blocks = blocks.map((it: any) => {
@@ -664,6 +665,34 @@ class Dispatcher {
 		});
 
 		blockStore.set(rootId, blocks);
+
+		this.blockTypeCheck(rootId);
+	};
+
+	blockTypeCheck (rootId: string) {
+		const object = detailStore.get(rootId, rootId, []);
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		if ((object.type == Constant.typeId.page) && (root.childrenIds.length == 1)) {
+			root.childrenIds.push(Constant.blockId.type);
+
+			blockStore.add(rootId, { 
+				id: Constant.blockId.type, 
+				parentId: rootId,
+				type: I.BlockType.Type,
+				fields: {},
+				content: {},
+				childrenIds: [],
+			});
+
+			blockStore.updateStructure(rootId, rootId, root.childrenIds);
+		} else 
+		if (object.type && (object.type != Constant.typeId.page)) {
+			root.childrenIds = root.childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
+
+			blockStore.delete(rootId, Constant.blockId.type);
+			blockStore.updateStructure(rootId, rootId, root.childrenIds);
+		};
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

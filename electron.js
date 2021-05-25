@@ -81,8 +81,6 @@ if (process.env.DATA_PATH) {
 try { fs.mkdirSync(tmpPath); } catch (e) {};
 
 if (useGRPC) {
-	console.log('Connect via gRPC');
-
 	server = require('./electron/server.js');
 	let binPath = path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`);
 	binPath = fixPathForAsarUnpack(binPath);

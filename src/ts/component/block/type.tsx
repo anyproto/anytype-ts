@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
 import { I, C, Util, focus, keyboard } from 'ts/lib';
-import { dbStore } from 'ts/store';
+import { dbStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -33,8 +33,9 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	render (): any {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const items = this.getItems();
+		const object = detailStore.get(rootId, rootId);
 
 		const Item = (item: any) => {
 			return (

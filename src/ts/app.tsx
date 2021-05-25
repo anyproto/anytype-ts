@@ -154,7 +154,7 @@ const rootStore = {
 	popupStore,
 };
 
-console.log('OS Version', process.getSystemVersion());
+console.log('[OS Version]', process.getSystemVersion());
 
 /*
 enableLogging({
