@@ -54,7 +54,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('tab', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
 			e.preventDefault();
 		});
 	};
