@@ -100,7 +100,7 @@
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 		}
 
-		.item.empty { color: $colorDarkGrey; }
+		.item.empty { color: $colorDarkGrey; cursor: default; }
 		
 		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {

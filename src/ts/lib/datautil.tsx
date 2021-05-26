@@ -908,6 +908,7 @@ class DataUtil {
 			s.children = s.children.map((it: any, i: number) => {
 				it.itemId = it.id || i;
 				it.id = s.id + '-' + it.id;
+				it.color = it.color || s.color || '';
 				return it;
 			});
 			s.children = Util.arrayUniqueObjects(s.children, 'itemId');

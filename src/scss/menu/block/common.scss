@@ -22,7 +22,13 @@
 	
 	.menu.menuBlockAdd { width: 360px !important; }
 	.menu.menuBlockAdd {
-		.content { max-height: 362px; padding: 12px 0px; }
+		.content { padding: 0px; }
+		.wrap { height: 100%; }
+		.items { height: 100%; }
+		.item.empty { padding: 14px; }
+
+		.sectionName::before { content: ""; display: block; width: 100%; height: 1px; margin: 6px 0px 13px 0px; background: $colorLightGrey; }
+		.sectionName.first::before { display: none; }
 	}
 	.menu.menuBlockAdd {
 		.item.withColor.gray {

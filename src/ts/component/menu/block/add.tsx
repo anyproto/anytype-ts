@@ -1,13 +1,18 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, SmileUtil, Util, DataUtil, Storage, translate } from 'ts/lib';
+import { MenuItemVertical, Icon } from 'ts/component';
+import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const HEIGHT = 28;
+const HEIGHT_SECTION = 40;
+const HEIGHT_DESCRIPTION = 56;
+const LIMIT = 40;
 
 @observer
 class MenuBlockAdd extends React.Component<Props, {}> {
@@ -16,6 +21,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	n: number = 0;
 	emptyLength: number = 0;
 	timeout: number = 0;
+	cache: any = {};
 	
 	constructor (props: any) {
 		super(props);
@@ -30,66 +36,111 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
-		const options = this.getItems();
-		const sections = this.getSections();
+		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const length = block.getLength();
-		
-		const Section = (item: any) => (
-			<div className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						let icn: string[] = [ 'inner' ];
-						
-						if (action.isBlock) {
-							action.color = item.color;
-						};
-						
-						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
-						};
-						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
-						};
-						
-						if (action.isTextColor || action.isBgColor) {
-							action.icon = 'color';
-							action.inner = (
-								<div className={icn.join(' ')} />
-							);
-						};
 
-						if (action.isObject) {
-							action.object = { 
-								iconEmoji: action.iconEmoji, 
-								decription: action.description,
-								layout: I.ObjectLayout.ObjectType,
-							};
-							action.iconSize = 40;
-						};
-						
-						return (
-							<MenuItemVertical 
-								key={action.id + '-' + i} 
-								{...action} 
-								className={action.isHidden ? 'isHidden' : ''}
-								withDescription={action.isBlock} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-								onClick={(e: any) => { this.onClick(e, action); }} 
-							/>
-						);
-					})}
-				</div>
-			</div>
-		);
-		
+		const rowRenderer = (param: any) => {
+			const { index } = param;
+			const item: any = items[index];
+			
+			let content = null;
+			if (item.id == 'add') {
+				content =  (
+					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+						<Icon className="plus" />
+						<div className="name">{item.name}</div>
+					</div>
+				);
+			} else 
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else {
+				let icn: string[] = [ 'inner' ];
+					
+				if (item.isTextColor) {
+					icn.push('textColor textColor-' + item.value);
+				};
+				if (item.isBgColor) {
+					icn.push('bgColor bgColor-' + item.value);
+				};
+				
+				if (item.isTextColor || item.isBgColor) {
+					item.icon = 'color';
+					item.inner = (
+						<div className={icn.join(' ')} />
+					);
+				};
+
+				if (item.isObject) {
+					item.object = { 
+						iconEmoji: item.iconEmoji, 
+						decription: item.description,
+						layout: I.ObjectLayout.ObjectType,
+					};
+					item.iconSize = 40;
+				};
+				
+				content = (
+					<MenuItemVertical 
+						key={item.id + '-' + index} 
+						{...item} 
+						className={item.isHidden ? 'isHidden' : ''}
+						withDescription={item.isBlock} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						style={param.style}
+					/>
+				);
+			};
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={index}
+					hasFixedWidth={() => {}}
+				>
+					{content}
+				</CellMeasurer>
+			);
+		};
+
 		return (
-			<div>
-				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
+			<div className="wrap">
+				{!items.length ? (
+					<div className="item empty">{translate('commonFilterEmpty')}</div>
+				) : (
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={registerChild}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => { return this.rowHeight(items[index], index); }}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToIndex={this.n}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -102,6 +153,13 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		this.rebind();
 		this.checkFilter();
 		this.setActive(items[this.n]);
+		this.resize();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 		
 		const menu = $('#' + getId());
 		menu.unbind('mouseleave').on('mouseleave', () => {
@@ -124,7 +182,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 
 		this.checkFilter();
 		this.setActive(items[this.n]);
-		this.props.position();
+		this.resize();
 	};
 	
 	checkFilter () {
@@ -269,6 +327,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		let items: any[] = [];
 		for (let section of sections) {
+			items.push({ id: section.id, name: section.name, isSection: true });
 			items = items.concat(section.children);
 		};
 		
@@ -499,6 +558,28 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		} else {
 			cb();
 		};
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems();
+		const obj = $(`#${getId()} .content`);
+		
+		let height = 16;
+		for (let i = 0; i < items.length; ++i) {
+			height += this.rowHeight(items[i], i);
+		};
+		height = Math.max(HEIGHT + 18, Math.min(360, height));
+
+		obj.css({ height: height });
+		position();
+	};
+
+	rowHeight (item: any, index: number) {
+		if (item.isSection) {
+			return index > 0 ? HEIGHT_SECTION : HEIGHT;
+		};
+		return item.isBlock ? HEIGHT_DESCRIPTION : HEIGHT;
 	};
 
 };
