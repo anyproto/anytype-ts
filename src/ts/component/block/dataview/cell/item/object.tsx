@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { detailStore } from 'ts/store';
+import { Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
 
@@ -28,7 +29,7 @@ class ItemObject extends React.Component<Props, {}> {
 			>
 				<div className="flex">
 					<IconObject object={object} size={iconSize} />
-					<div className="name">{object.name}</div>
+					<div className="name">{Util.shorten(object.name, 32)}</div>
 				</div>
 			</div>
 		);

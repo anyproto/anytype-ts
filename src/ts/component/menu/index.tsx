@@ -66,7 +66,7 @@ interface State {
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
-const BORDER = 16;
+const BORDER = 10;
 
 const Components: any = {
 	help:					 MenuHelp,
@@ -221,7 +221,7 @@ class Menu extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { param } = this.props;
-		const { onOpen } = param;
+		const { onOpen, classNameWrap } = param;
 
 		this._isMounted = true;
 		this.position();
@@ -249,6 +249,10 @@ class Menu extends React.Component<Props, State> {
 
 		if (popupStore.isOpen()) {
 			node.addClass('fromPopup');
+		};
+
+		if (classNameWrap) {
+			node.addClass(classNameWrap);
 		};
 	};
 
@@ -333,7 +337,7 @@ class Menu extends React.Component<Props, State> {
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
-			let minY = Util.sizeHeader() + 2;
+			let minY = Util.sizeHeader();
 			if (platform == I.Platform.Windows) {
 				minY += 30;
 			};
@@ -416,14 +420,14 @@ class Menu extends React.Component<Props, State> {
 				y -= scrollTop;
 			};
 
-			if (undefined !== fixedX) x = fixedX;
-			if (undefined !== fixedY) y = fixedY;
-
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - width - BORDER, x);
 
 			y = Math.max(minY, y);
 			y = Math.min(wh - height - BORDER, y);
+
+			if (undefined !== fixedX) x = fixedX;
+			if (undefined !== fixedY) y = fixedY;
 
 			let css: any = { left: x, top: y };
 			if (param.width) {

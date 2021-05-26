@@ -63,7 +63,6 @@ class PageMainNewSet extends React.Component<Props, {}> {
 		menuStore.open('objectTypeEdit', { 
 			element: '#button-add',
 			offsetX: 28,
-			offsetY: 4,
 			data: {
 				onCreate: (type: I.ObjectType) => {
 					objectTypes.push(type);

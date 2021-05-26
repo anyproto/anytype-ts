@@ -73,6 +73,10 @@ class BlockType extends React.Component<Props, State> {
 		);
 	};
 
+	componentWillUnmount() {
+		this.unbind();
+	};
+
 	bind () {
 		this.unbind();
 		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e); });

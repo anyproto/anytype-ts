@@ -3,7 +3,6 @@ import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { trace } from 'mobx';
 import 'react-virtualized/styles.css';
 
 import Item from 'ts/component/menu/item/relationView';
@@ -32,10 +31,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId, readOnly } = data;
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
+
+		console.log(param);
 
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
@@ -56,6 +57,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
+								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
 								optionCommand={this.optionCommand}
@@ -210,7 +212,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,

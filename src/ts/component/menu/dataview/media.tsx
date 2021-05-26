@@ -202,7 +202,6 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		menuStore.open('select', { 
 			element: element.find('.icon.more'),
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			onClose: () => {
 				element.removeClass('active');

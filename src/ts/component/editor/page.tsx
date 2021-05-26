@@ -1041,7 +1041,6 @@ class EditorPage extends React.Component<Props, {}> {
 			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
-			offsetY: 4,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
@@ -1214,7 +1213,6 @@ class EditorPage extends React.Component<Props, {}> {
 			menuStore.open('select', { 
 				element: '#block-' + focused,
 				offsetX: Constant.size.blockMenu,
-				offsetY: 4,
 				onOpen: () => {
 					if (block) {
 						focus.set(block.id, { from: currentFrom, to: currentTo });

@@ -75,14 +75,18 @@
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big.home { width: 32px; }
-	.icon.big:hover, .icon.big.active { background-color: #f3f2ec; }
+	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
-		.item { line-height: 20px; vertical-align: middle; }
+		.item { line-height: 20px; vertical-align: middle; max-width: 100%; text-align: left; }
+		.item {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-overflow-nw; width: 100%; }
+		}
 	}
 	.path * { pointer-events: all; }
 

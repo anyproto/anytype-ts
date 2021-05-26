@@ -350,7 +350,6 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 		menuStore.open('dataviewCalendar', {
 			element: `#${getId()} #value`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				window.setTimeout(() => { this.ref.focus(); }, 200);

@@ -68,10 +68,9 @@
 				.value { color: $colorDarkGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
 			}
 
-			.item.add { color: $colorDarkGrey; line-height: 20px; }
-			.item.add:hover { color: $colorBlack; }
-			.item.add:hover {
-				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+			.item.add { line-height: 20px; }
+			.item.add {
+				.name { color: #929082; }
 			}
 		}
 

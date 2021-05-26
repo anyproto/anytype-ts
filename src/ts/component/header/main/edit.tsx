@@ -80,7 +80,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<IconObject object={object} />
-							<div className="name">{Util.shorten(object.name, 32)}</div>
+							<div className="name">{object.name}</div>
 						</div>
 					</div>
 					<div className="icons">
@@ -140,8 +140,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, match, rootId } = this.props;
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-more`;
 		const param: any = {
-			element: `${this.getContainer()} #button-header-more`,
+			element: elementId,
 			horizontal: I.MenuDirection.Right,
 			subIds: Constant.menuIds.more,
 			data: {
@@ -153,8 +155,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			const element = $(elementId);
+
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
+		} else {
+			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
@@ -167,8 +174,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-sync`;
 		const param: any = {
-			element: `${this.getContainer()} #button-header-sync`,
+			element: elementId,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: rootId,
@@ -176,8 +185,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			const element = $(elementId);
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
+		} else {
+			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
@@ -223,8 +236,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-relation`;
 		const param: any = {
-			element: `${this.getContainer()} #button-header-relation`,
+			element: elementId,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
@@ -239,8 +254,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			const element = $(elementId);
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
+		} else {
+			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });

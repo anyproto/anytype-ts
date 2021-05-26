@@ -128,7 +128,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		menuStore.open('blockRelationList', {
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
-			offsetY: 4,
 			data: {
 				relationKey: '',
 				rootId: rootId,

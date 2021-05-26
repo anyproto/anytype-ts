@@ -115,7 +115,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 		};
 
 		const { param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const node = $(ReactDOM.findDOMNode(this));
 		const item = node.find('#item-' + id);
 
@@ -134,6 +134,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 					offsetX: 272,
 					fixedY: top,
 					className: 'fixed',
+					classNameWrap: classNameWrap,
 					noDimmer: true,
 					data: {
 						...data,

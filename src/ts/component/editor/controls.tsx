@@ -87,7 +87,6 @@ class Controls extends React.Component<Props, {}> {
 		
 		menuStore.open('smile', { 
 			element: '#button-add-icon',
-			offsetY: 4,
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');

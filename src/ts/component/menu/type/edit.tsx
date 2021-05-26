@@ -66,12 +66,12 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 	};
 
 	onLayout (e: any) {
+		const { getId, getSize } = this.props;
 		const { layout } = this.state;
 
 		menuStore.open('select', { 
-			element: '#item-object-layout',
-			offsetX: 224,
-			offsetY: 4,
+			element: `#${getId()} #item-object-layout`,
+			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			data: {
 				options: DataUtil.menuTurnLayouts(),

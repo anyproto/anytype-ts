@@ -688,7 +688,7 @@ class Dispatcher {
 
 			blockStore.updateStructure(rootId, rootId, childrenIds);
 		} else 
-		if (object.type && (object.type != Constant.typeId.page)) {
+		if (object.type && (object.type != Constant.typeId.page) && (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
 
 			blockStore.delete(rootId, Constant.blockId.type);

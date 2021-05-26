@@ -55,7 +55,13 @@ class CellText extends React.Component<Props, State> {
 
 		let Name = null;
 		let EditorComponent = null;
-		let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+		let value = record[relation.relationKey];
+
+		if (relation.format != I.RelationType.Date) {
+			value = String(value || '');
+		} else {
+			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+		};
 
 		if (relation.format == I.RelationType.LongText) {
 			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
@@ -119,7 +125,7 @@ class CellText extends React.Component<Props, State> {
 			);
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
+				const format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
 
 				if (viewRelation.includeTime) {
 					format.push(DataUtil.timeFormat(viewRelation.timeFormat));

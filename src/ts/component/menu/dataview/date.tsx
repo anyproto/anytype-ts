@@ -19,8 +19,8 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
-			<div className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
+			<div>
+				{item.name ? <div className="sectionName">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => (
 						<MenuItemVertical 

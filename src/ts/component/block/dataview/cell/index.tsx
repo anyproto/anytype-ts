@@ -13,6 +13,7 @@ interface Props extends I.Cell {
 	relationKey?: string;
 	storeId?: string;
 	menuClassName?: string;
+	menuClassNameWrap?: string;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -104,7 +105,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -162,6 +163,7 @@ class Cell extends React.Component<Props, {}> {
 			noAnimation: true,
 			passThrough: true,
 			className: menuClassName,
+			classNameWrap: menuClassNameWrap,
 			onOpen: setOn,
 			onClose: setOff,
 			data: { 
@@ -257,7 +259,6 @@ class Cell extends React.Component<Props, {}> {
 
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
-					className: 'button',
 					width: width,
 				});
 

@@ -794,7 +794,7 @@ class Util {
 		let a = version.split('.');
 		let v = a.length ? a[0] : '';
 
-		let s = 52;
+		let s = 38;
 		if (platform == I.Platform.Windows) {
 			s = 68;
 		};

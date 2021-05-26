@@ -342,7 +342,6 @@ class MenuSmile extends React.Component<Props, State> {
 				menuStore.open('smileSkin', {
 					type: I.MenuType.Horizontal,
 					element: '.menuSmile #item-' + n,
-					offsetY: 4,
 					vertical: I.MenuDirection.Top,
 					horizontal: I.MenuDirection.Center,
 					data: {
