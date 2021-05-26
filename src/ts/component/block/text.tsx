@@ -246,7 +246,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.renderEmoji();
 		};
 
-		if (block.isTextDescription()) {
+		if (block.isTextTitle() || block.isTextDescription()) {
 			this.placeHolderCheck();
 		};
 	};
