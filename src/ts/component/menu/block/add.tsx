@@ -10,7 +10,7 @@ interface Props extends I.Menu {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
-const HEIGHT_SECTION = 40;
+const HEIGHT_SECTION = 44;
 const HEIGHT_DESCRIPTION = 56;
 const LIMIT = 40;
 

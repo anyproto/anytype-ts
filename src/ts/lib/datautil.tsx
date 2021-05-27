@@ -1024,7 +1024,8 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign' ]);
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
 			object: object,
@@ -1067,8 +1068,8 @@ class DataUtil {
 				break;
 		};
 
-		if (type == Constant.typeId.page) {
-			ret.className.push('isDraft');
+		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
+			ret.className.push('noFeatured');
 		};
 
 		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {

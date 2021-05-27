@@ -67,7 +67,7 @@
 
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
-		.section > .name { @include text-common; padding: 5px 28px; position: relative; }
+		.section > .name { @include text-common; padding: 5px 28px; position: relative; color: $colorBlack; }
 		.section > .name {
 			.icon.plus { position: absolute; right: 28px; top: 50%; margin-top: -10px; cursor: pointer; }
 			.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }

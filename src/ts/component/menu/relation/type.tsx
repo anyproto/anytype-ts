@@ -43,13 +43,10 @@ class MenuRelationType extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className="section">
-				<div className="name">Type of relation</div>
-				<div className="items">
-					{relations.map((item: any, i: number) => (
-						<Item key={i} {...item} />
-					))}
-				</div>
+			<div className="items">
+				{relations.map((item: any, i: number) => (
+					<Item key={i} {...item} />
+				))}
 			</div>
 		);
 	};
