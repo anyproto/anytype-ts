@@ -1,27 +1,36 @@
 import * as React from 'react';
-import { MenuItemVertical, Icon } from 'ts/component';
+import { MenuItemVertical, Icon, Cell } from 'ts/component';
 import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
 
+interface State {
+	loading: boolean;
+};
+
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
-const HEIGHT_SECTION = 44;
+const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
+const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
 @observer
-class MenuBlockAdd extends React.Component<Props, {}> {
+class MenuBlockAdd extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	n: number = 0;
 	emptyLength: number = 0;
 	timeout: number = 0;
 	cache: any = {};
+	relations: any[] = [];
+	state = {
+		loading: false,
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -39,6 +48,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const length = block.getLength();
+		const idPrefix = 'menuBlockAdd';
 
 		const rowRenderer = (param: any) => {
 			const { index } = param;
@@ -55,7 +65,39 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			} else 
 			if (item.isSection) {
 				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isRelation) {
+				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+
+				content = (
+					<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+						<div className="info">
+							{item.name}
+						</div>
+						<div
+							id={id} 
+							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
+							onClick={(e: any) => { this.onClick(e, item); }}
+						>
+							<Cell 
+								rootId={rootId}
+								storeId={rootId}
+								block={block}
+								relationKey={item.relationKey}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ]); }}
+								viewType={I.ViewType.Grid}
+								index={0}
+								idPrefix={idPrefix}
+								menuClassName="fromBlock"
+								scrollContainer={Util.getEditorScrollContainer('menuBlockRelationList')}
+								pageContainer={Util.getEditorPageContainer('menuBlockRelationList')}
+								readOnly={true}
+							/>
+						</div>
+					</div>
+				);
 			} else {
+				let cn = [];
 				let icn: string[] = [ 'inner' ];
 					
 				if (item.isTextColor) {
@@ -72,6 +114,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					);
 				};
 
+				if (item.isBig) {
+					cn.push('isBig');
+				};
+
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+
 				if (item.isObject) {
 					item.object = { 
 						iconEmoji: item.iconEmoji, 
@@ -85,7 +135,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 					<MenuItemVertical 
 						key={item.id + '-' + index} 
 						{...item} 
-						className={item.isHidden ? 'isHidden' : ''}
+						className={cn.join(' ')}
 						withDescription={item.isBlock} 
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
@@ -154,6 +204,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		this.checkFilter();
 		this.setActive(items[this.n]);
 		this.resize();
+		this.load();
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -183,6 +234,19 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		this.checkFilter();
 		this.setActive(items[this.n]);
 		this.resize();
+	};
+
+	load () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
+		this.setState({ loading: true });
+
+		C.ObjectRelationListAvailable(rootId, (message: any) => {
+			this.relations = message.relations.sort(DataUtil.sortByName);
+			this.setState({ loading: false });
+		});
 	};
 	
 	checkFilter () {
@@ -287,11 +351,12 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 		
 		let sections: any[] = [
-			{ id: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
-			{ id: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
-			{ id: 'object', name: 'Object', color: 'gray', children: DataUtil.menuGetBlockObject() },
-			{ id: 'relation', name: 'Relation', color: 'violet', children: DataUtil.menuGetBlockRelation() },
-			{ id: 'other', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
+			{ id: 'text', name: 'Text', children: DataUtil.menuGetBlockText() },
+			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
+			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
+			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
+			{ id: 'object', name: 'Object', children: DataUtil.menuGetBlockObject() },
+			{ id: 'relation', name: 'Relation', children: DataUtil.menuGetBlockRelation() },
 		];
 
 		if (!config.allowDataview) {
@@ -316,6 +381,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+		} else {
+			sections = sections.map((s: any) => {
+				s.children = s.children.map((c: any) => {
+					c.isBig = true;
+					return c;
+				});
+				return s;
+			});
 		};
 		
 		sections = DataUtil.menuSectionsMap(sections);

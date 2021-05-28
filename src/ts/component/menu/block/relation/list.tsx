@@ -21,7 +21,6 @@ const LIMIT = 40;
 @observer
 class MenuBlockRelationList extends React.Component<Props, State> {
 
-	cellRefs: Map<string, any> = new Map();
 	items: any[] = [];
 	cache: any = {};
 	ref: any = null;
@@ -77,7 +76,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 							onClick={(e: any) => { this.onClick(e, item); }}
 						>
 							<Cell 
-								ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
 								rootId={rootId}
 								storeId={rootId}
 								block={block}
