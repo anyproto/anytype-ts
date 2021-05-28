@@ -127,6 +127,7 @@ class BlockType extends React.Component<Props, State> {
 			this.n--;
 
 			if (this.n < -1) {
+				this.n = -1;
 				this.unbind();
 
 				if (onKeyDown) {
