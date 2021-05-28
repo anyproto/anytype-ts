@@ -326,6 +326,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: obj.outerWidth(),
 				offsetY: -76,
+				subIds: [ 'relationType' ],
 				data: {
 					...data,
 					onChange: () => { close(); },

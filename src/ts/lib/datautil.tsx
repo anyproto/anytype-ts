@@ -714,7 +714,7 @@ class DataUtil {
 
 	menuGetBlockRelation () {
 		return [
-			{ type: I.BlockType.Relation, id: 'newRelation', icon: 'relation default', lang: 'New relation' },
+			{ type: I.BlockType.Relation, id: 'newRelation', icon: 'relation default', lang: 'NewRelation' },
 			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation default', lang: 'Relation', arrow: true },
 		].map(this.menuMapperBlock);
 	};
