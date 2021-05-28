@@ -178,6 +178,9 @@
 	"blockNameRelation": { "en": "Relation" },
 	"blockTextRelation": { "en": "Meaningful connection between objects" },
 
+	"blockNameNewRelation": { "en": "New relation" },
+	"blockTextNewRelation": { "en": "Meaningful connection between objects" },
+
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },
