@@ -84,9 +84,6 @@
 	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; }
 
 	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
-	.block > .wrapContent > .selectable.isSelected { 
-		.placeHolder { display: none !important; } 
-	}
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }

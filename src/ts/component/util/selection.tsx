@@ -544,10 +544,8 @@ class SelectionProvider extends React.Component<Props, {}> {
 
 		node.find('.block.isSelected .children .selectable.isSelected').removeClass('isSelected');
 		
-		// Hide placeholder and remove focus
 		if (ids.length) {
 			focus.clear(true);
-			node.find('.placeHolder').hide();
 		};
 	};
 	
