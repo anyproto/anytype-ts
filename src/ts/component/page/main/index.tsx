@@ -2,15 +2,17 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	tab: Tab;
+	filter: string;
+	pages: any[];
 };
 
 const $ = require('jquery');
@@ -22,14 +24,14 @@ enum Tab {
 	Favorite = 'favorite',
 	Recent = 'recent',
 	Draft = 'draft',
-	Bin = 'bin',
+	Archive = 'bin',
 }
 
 const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Drafts' },
-	{ id: Tab.Bin, name: 'Bin' },
+	{ id: Tab.Archive, name: 'Bin' },
 ];
 
 @observer
@@ -38,14 +40,18 @@ class PageMainIndex extends React.Component<Props, State> {
 	listRef: any = null;
 	filterRef: any = null;
 	id: string = '';
+	timeoutFilter: number = 0;
 
 	state = {
 		tab: Tab.Favorite,
+		filter: '',
+		pages: [],
 	};
 
 	constructor (props: any) {
 		super(props);
 		
+		this.getList = this.getList.bind(this);
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
@@ -73,8 +79,8 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { name } = object;
 		const list = this.getList();
 
-		const Tab = (item: any) => (
-			<div className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item); }}>
+		const TabItem = (item: any) => (
+			<div className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
 				{item.name}
 			</div>
 		);
@@ -103,7 +109,7 @@ class PageMainIndex extends React.Component<Props, State> {
 						<div className="tabWrap">
 							<div className="tabs">
 								{Tabs.map((item: any, i: number) => (
-									<Tab key={i} {...item} />
+									<TabItem key={i} {...item} />
 								))}
 							</div>
 							<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
@@ -125,6 +131,7 @@ class PageMainIndex extends React.Component<Props, State> {
 							onSortEnd={this.onSortEnd}
 							getList={this.getList}
 							helperContainer={() => { return $('#documents').get(0); }} 
+							canDrag={[ Tab.Favorite, Tab.Archive ].indexOf(tab) >= 0}
 						/>
 					</div>
 				</div>
@@ -138,6 +145,8 @@ class PageMainIndex extends React.Component<Props, State> {
 		crumbs.delete(I.CrumbsType.Page);
 
 		this.onScroll();
+		this.onTab(Storage.get('indexTab') || Tab.Favorite);
+
 		win.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
 	
@@ -180,8 +189,43 @@ class PageMainIndex extends React.Component<Props, State> {
 		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
 	};
 
-	onTab (item: any) {
-		this.setState({ tab: item.id });
+	onTab (id: Tab) {
+		this.state.tab = id;
+		this.setState({ tab: id });
+
+		Storage.set('indexTab', id);
+
+		if ([ Tab.Recent, Tab.Draft ].indexOf(id) >= 0) {
+			this.load();
+		};
+	};
+
+	load () {
+		const { tab, filter } = this.state;
+		const recent = crumbs.get(I.CrumbsType.Recent).ids;
+
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+		];
+		const sorts = [
+			{ relationKey: 'name', type: I.SortType.Asc },
+		];
+
+		if (tab == Tab.Recent) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: recent });
+		};
+
+		if (tab == Tab.Draft) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
+		};
+
+		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			this.setState({ pages: message.records });
+		});
 	};
 
 	onSearch (e: any) {
@@ -206,7 +250,12 @@ class PageMainIndex extends React.Component<Props, State> {
 		}, 210);
 	};
 
-	onFilterChange () {
+	onFilterChange (v: string) {
+		window.clearTimeout(this.timeoutFilter);
+		this.timeoutFilter = window.setTimeout(() => {
+			this.setState({ filter: v });
+			this.load();
+		}, 500);
 	};
 
 	onAccount () {
@@ -223,19 +272,21 @@ class PageMainIndex extends React.Component<Props, State> {
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
-	onSelect (e: any, block: I.Block) {
+	onSelect (e: any, item: any) {
 		e.persist();
 
 		const { root } = blockStore;
-		const object = detailStore.get(root, block.content.targetBlockId);
 
-		if (block.content.style == I.LinkStyle.Archive) {
-			popupStore.open('archive', {});
+		let object: any = null;
+		if (item.isBlock) {
+			object = detailStore.get(root, item.content.targetBlockId);
 		} else {
-			crumbs.cut(I.CrumbsType.Page, 0, () => {
-				DataUtil.objectOpenEvent(e, object);
-			});
+			object = item;
 		};
+
+		crumbs.cut(I.CrumbsType.Page, 0, () => {
+			DataUtil.objectOpenEvent(e, object);
+		});
 	};
 
 	onStore (e: any) {
@@ -444,20 +495,50 @@ class PageMainIndex extends React.Component<Props, State> {
 	getList () {
 		const { root } = blockStore;
 		const { config } = commonStore;
+		const { tab, filter, pages } = this.state;
+		const recent = crumbs.get(I.CrumbsType.Recent).ids;
+		
+		let reg = null;
+		let list: any[] = [];
 
-		return blockStore.getChildren(root, root, (it: any) => {
-			const object = detailStore.get(root, it.content.targetBlockId);
-			if (it.content.style == I.LinkStyle.Archive) {
-				return true;
-			};
-			if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(object.layout) < 0) && !object._objectEmpty_) {
-				return false;
-			};
-			if (object.isArchived) {
-				return false;
-			};
-			return true;
-		});
+		if (filter) {
+			reg = new RegExp(Util.filterFix(filter), 'gi');
+		};
+
+		switch (tab) {
+			default:
+			case Tab.Favorite:
+			case Tab.Archive:
+				list = blockStore.getChildren(root, root, (it: any) => {
+					const object = detailStore.get(root, it.content.targetBlockId);
+					if (it.content.style == I.LinkStyle.Archive) {
+						return false;
+					};
+					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(object.layout) < 0) && !object._objectEmpty_) {
+						return false;
+					};
+					if (reg && !object.name.match(reg)) {
+						return false;
+					};
+
+					if (tab == Tab.Archive) {
+						return object.isArchived;
+					} else {
+						return !object.isArchived;
+					};
+				}).map((it: any) => {
+					it.isBlock = true;
+					return it;
+				});
+				break;
+
+			case Tab.Recent:
+			case Tab.Draft:
+				list = pages;
+				break;
+		};
+
+		return list;
 	};
 
 };
