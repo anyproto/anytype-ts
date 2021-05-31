@@ -20,7 +20,7 @@
 	}
 	.menu.menuBlockMore.fromIndex { width: 230px; }
 	
-	.menu.menuBlockAdd { width: 360px !important; }
+	.menu.menuBlockAdd { width: 480px !important; }
 	.menu.menuBlockAdd {
 		.content { padding: 0px; }
 		.wrap { height: 100%; }
@@ -32,7 +32,9 @@
 		.sectionName.first { padding-top: 4px; }
 		.sectionName.first::before { display: none; }
 
-		.sides, .item.add { display: flex; padding: 6px 14px; }
+		.item { padding: 4px 16px; }
+		.item.add { padding: 6px 16px; }
+		.item.sides { display: flex; padding: 6px 16px; }
 
 		.info { 
 			width: 154px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
