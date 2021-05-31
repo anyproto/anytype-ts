@@ -1,23 +1,47 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer } from 'ts/component';
+import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, Storage, crumbs } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
+
+interface State {
+	tab: Tab;
+};
 
 const $ = require('jquery');
 const raf = require('raf');
 const Constant: any = require('json/constant.json');
 
+enum Tab {
+	None = '',
+	Favorite = 'favorite',
+	Recent = 'recent',
+	Draft = 'draft',
+	Bin = 'bin',
+}
+
+const Tabs = [
+	{ id: Tab.Favorite, name: 'Favorites' },
+	{ id: Tab.Recent, name: 'Recent' },
+	{ id: Tab.Draft, name: 'Drafts' },
+	{ id: Tab.Bin, name: 'Bin' },
+];
+
 @observer
-class PageMainIndex extends React.Component<Props, {}> {
+class PageMainIndex extends React.Component<Props, State> {
 	
 	listRef: any = null;
+	filterRef: any = null;
 	id: string = '';
+
+	state = {
+		tab: Tab.Favorite,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -30,6 +54,8 @@ class PageMainIndex extends React.Component<Props, {}> {
 		this.onMore = this.onMore.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onSearch = this.onSearch.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
 	render () {
@@ -37,6 +63,7 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { root, profile } = blockStore;
 		const element = blockStore.getLeaf(root, root);
+		const { tab } = this.state;
 
 		if (!element) {
 			return null;
@@ -45,6 +72,12 @@ class PageMainIndex extends React.Component<Props, {}> {
 		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
+
+		const Tab = (item: any) => (
+			<div className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item); }}>
+				{item.name}
+			</div>
+		);
 
 		return (
 			<div>
@@ -67,6 +100,22 @@ class PageMainIndex extends React.Component<Props, {}> {
 					</div>
 					
 					<div id="documents"> 
+						<div className="tabWrap">
+							<div className="tabs">
+								{Tabs.map((item: any, i: number) => (
+									<Tab key={i} {...item} />
+								))}
+							</div>
+							<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
+								<Icon className="search" />
+								<Filter 
+									ref={(ref: any) => { this.filterRef = ref; }} 
+									placeHolder="" 
+									placeHolderFocus="" 
+									onChange={this.onFilterChange}
+								/>
+							</div>
+						</div>
 						<ListIndex 
 							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
@@ -130,7 +179,36 @@ class PageMainIndex extends React.Component<Props, {}> {
 		title.css({ transform: `translate3d(0px,${y}px,0px)` });
 		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
 	};
-	
+
+	onTab (item: any) {
+		this.setState({ tab: item.id });
+	};
+
+	onSearch (e: any) {
+		e.stopPropagation();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const searchWrap = node.find('#searchWrap');
+		const body = node.find('#body');
+
+		if (searchWrap.hasClass('active')) {
+			return;
+		};
+
+		searchWrap.addClass('active');
+		this.filterRef.focus();
+
+		window.setTimeout(() => {
+			body.unbind('click').on('click', (e: any) => {
+				searchWrap.removeClass('active');
+				body.unbind('click')
+			});
+		}, 210);
+	};
+
+	onFilterChange () {
+	};
+
 	onAccount () {
 		menuStore.open('account', {
 			element: '#button-account',
