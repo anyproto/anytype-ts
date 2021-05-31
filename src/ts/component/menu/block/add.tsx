@@ -9,6 +9,7 @@ interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
+	n: number;
 };
 
 const $ = require('jquery');
@@ -23,13 +24,13 @@ const LIMIT = 40;
 class MenuBlockAdd extends React.Component<Props, State> {
 	
 	_isMounted = false;
-	n: number = 0;
 	emptyLength: number = 0;
 	timeout: number = 0;
 	cache: any = {};
 	relations: any[] = [];
 	state = {
 		loading: false,
+		n: 0,
 	};
 	
 	constructor (props: any) {
@@ -45,6 +46,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
+		const { n } = this.state;
 		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const length = block.getLength();
@@ -55,9 +57,15 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			const item: any = items[index];
 			
 			let content = null;
-			if (item.id == 'add') {
+			if (item.isRelationAdd) {
 				content =  (
-					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div 
+						id="item-relation-add" 
+						className="item add" 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						style={param.style}
+					>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -70,7 +78,13 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
 
 				content = (
-					<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div 
+						id={'item-' + item.id}
+						className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						style={param.style}
+					>
 						<div className="info">
 							{item.name}
 						</div>
@@ -92,6 +106,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								scrollContainer={Util.getEditorScrollContainer('menuBlockRelationList')}
 								pageContainer={Util.getEditorPageContainer('menuBlockRelationList')}
 								readOnly={true}
+								canOpen={false}
 							/>
 						</div>
 					</div>
@@ -183,7 +198,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
-											scrollToIndex={this.n}
+											scrollToIndex={n}
 										/>
 									)}
 								</AutoSizer>
@@ -197,12 +212,13 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { getId } = this.props;
+		const { n } = this.state;
 		const items = this.getItems();
 		
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
-		this.setActive(items[this.n]);
+		this.setActive(items[n]);
 		this.resize();
 		this.load();
 
@@ -221,6 +237,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { filter } = commonStore;
 		const items = this.getItems();
+		const { n } = this.state;
 
 		if (!items.length && !this.emptyLength) {
 			this.emptyLength = filter.text.length;
@@ -232,7 +249,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		};
 
 		this.checkFilter();
-		this.setActive(items[this.n]);
+		this.setActive(items[n]);
 		this.resize();
 	};
 
@@ -244,7 +261,22 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		this.setState({ loading: true });
 
 		C.ObjectRelationListAvailable(rootId, (message: any) => {
-			this.relations = message.relations.sort(DataUtil.sortByName);
+			this.relations = message.relations.sort(DataUtil.sortByName).map((it: any) => {
+				it.id = it.relationKey;
+				it.type = I.BlockType.Relation;
+				it.isRelation = true;
+				it.isBlock = true;
+				return it;
+			});
+
+			this.relations.unshift({
+				id: 'add',
+				name: 'New relation',
+				type: I.BlockType.Relation,
+				isRelationAdd: true,
+				isBlock: true,
+			});
+
 			this.setState({ loading: false });
 		});
 	};
@@ -286,9 +318,9 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
+			this.state.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setHover(items[this.n], scroll);
+		this.props.setHover((item ? item : items[this.state.n]), scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -299,27 +331,31 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 		
+		let { n } = this.state;
+
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[this.n];
+		const item = items[n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
+				n--;
+				if (n < 0) {
+					n = l - 1;
 				};
+				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
+				n++;
+				if (n > l - 1) {
+					n = 0;
 				};
+				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
@@ -349,14 +385,14 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		if (!block) {
 			return [];
 		};
-		
+
 		let sections: any[] = [
 			{ id: 'text', name: 'Text', children: DataUtil.menuGetBlockText() },
 			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
 			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
 			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
-			{ id: 'object', name: 'Object', children: DataUtil.menuGetBlockObject() },
-			{ id: 'relation', name: 'Relation', children: DataUtil.menuGetBlockRelation() },
+			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
+			{ id: 'relation', name: 'Relations', children: this.relations },
 		];
 
 		if (!config.allowDataview) {
@@ -487,25 +523,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				});
 				break;
 
-			case 'relation':
-				menuId = 'blockRelationList';
-				menuParam.className = 'withFilter';
-
-				menuParam.data = Object.assign(menuParam.data, {
-					relationKey: '',
-					withFilter: true,
-					filter: '',
-					onAdd: () => { close(); },
-					onSelect: (item: any) => {
-						close();
-
-						blockCreate(blockId, position, {
-							type: I.BlockType.Relation,
-							content: { key: item.relationKey },
-						});
-					},
-				});
-				break;
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
@@ -596,6 +613,10 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				if (item.type == I.BlockType.Div) {
 					param.content.style = item.itemId;
 				};
+
+				if (item.type == I.BlockType.Relation) {
+					param.content.key = item.relationKey;
+				};
 				
 				if (item.type == I.BlockType.Page) {
 					const details: any = {};
@@ -649,6 +670,9 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	};
 
 	rowHeight (item: any, index: number) {
+		if (item.isRelation || item.isRelationAdd) {
+			return HEIGHT_RELATION;
+		};
 		if (item.isSection) {
 			return index > 0 ? HEIGHT_SECTION : HEIGHT;
 		};

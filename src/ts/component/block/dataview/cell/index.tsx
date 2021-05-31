@@ -25,6 +25,7 @@ class Cell extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		index: 0,
+		canOpen: true,
 	};
 
 	ref: any = null;

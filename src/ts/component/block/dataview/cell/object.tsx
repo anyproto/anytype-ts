@@ -71,9 +71,9 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		const { canEdit } = this.props;
+		const { canEdit, canOpen } = this.props;
 
-		if (!canEdit) {
+		if (canOpen && !canEdit) {
 			e.stopPropagation();
 			DataUtil.objectOpenPopup(item);
 		};
