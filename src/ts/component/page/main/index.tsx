@@ -392,6 +392,7 @@ class PageMainIndex extends React.Component<Props, State> {
 			data: {
 				rootId: root,
 				blockId: item.id,
+				objectId: item.isBlock ? item.content.targetBlockId : item.id,
 				blockIds: [ item.id ],
 				match: match,
 			},

@@ -161,7 +161,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, rootId, objectId } = data;
 		const { config } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -235,6 +235,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		} else 
 		if (block.isLink()) {
+			const object = detailStore.get(rootId, objectId);
+
 			let archive = null;
 			if (object.isArchived) {
 				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
