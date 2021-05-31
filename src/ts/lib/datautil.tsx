@@ -719,13 +719,6 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 
-	menuGetBlockRelation () {
-		return [
-			{ type: I.BlockType.Relation, id: 'newRelation', icon: 'relation default', lang: 'NewRelation' },
-			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation default', lang: 'Relation', arrow: true },
-		].map(this.menuMapperBlock);
-	};
-	
 	menuGetBlockOther () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
