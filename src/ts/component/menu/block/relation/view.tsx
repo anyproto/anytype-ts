@@ -36,8 +36,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
 
-		console.log(param);
-
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
 				<div className="name">

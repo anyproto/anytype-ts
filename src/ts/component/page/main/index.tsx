@@ -24,7 +24,7 @@ enum Tab {
 	Favorite = 'favorite',
 	Recent = 'recent',
 	Draft = 'draft',
-	Archive = 'bin',
+	Archive = 'archive',
 }
 
 const Tabs = [
