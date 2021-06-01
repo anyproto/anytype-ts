@@ -133,6 +133,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 
 	getSections () {
 		const param: any = {
+			/*
 			'the-crystal-pallace':	 { coverY: -0.4044042597182052 },
 			'the-little-pond':		 { coverY: -0.454407830247917 },
 			'walk-at-pourville':	 { coverY: -0.25770020533880905 },
@@ -152,11 +153,13 @@ class MenuBlockCover extends React.Component<Props, {}> {
 			'third-sleep':			 { coverY: -0.5534286421213346 },
 			'banquet':				 { coverY: -0.3338497329693846 },
 			'chemist':				 { coverY: -0.4084223252065283 },
+			*/
 		};
 
 		let sections: any[] = [
 			{ name: 'Solid colors', children: DataUtil.coverColors() },
 
+			/*
 			{ name: 'Art Institute of Chicago – Impressionism', children: [
 				{ type: I.CoverType.Image, id: 'the-crystal-pallace', name: 'Camille Pissarro - The Crystal Palace' },
 				{ type: I.CoverType.Image, id: 'the-little-pond', name: 'Childe Hassam - The Little Pond' },
@@ -184,6 +187,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 				{ type: I.CoverType.Image, id: 'banquet', name: 'René Magritte The Banquet' },
 				{ type: I.CoverType.Image, id: 'chemist', name: 'Salvador Dalí A Chemist Lifting with Extreme Precaution the Cuticle of a Grand Piano' },
 			] as any[] },
+			*/
 
 			{ name: 'Gradients', children: [
 				{ type: I.CoverType.Gradient, id: 'yellow' },
