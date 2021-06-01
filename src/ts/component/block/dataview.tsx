@@ -173,7 +173,17 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
-		if (!relation || relation.isReadOnly) {
+		if (!relation) {
+			return;
+		};
+
+		const record = this.getRecord(index);
+		if (relation.relationKey == Constant.relationKey.name) {
+			DataUtil.objectOpenPopup(record);
+			return;
+		};
+
+		if (relation.isReadOnly) {
 			return;
 		};
 

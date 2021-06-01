@@ -16,6 +16,8 @@ interface Props {
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
 };
 
+const Constant = require('json/constant.json');
+
 @observer
 class BodyCell extends React.Component<Props, {}> {
 
@@ -25,6 +27,10 @@ class BodyCell extends React.Component<Props, {}> {
 		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 		const idPrefix = 'dataviewCell';
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+
+		if (relation.relationKey == Constant.relationKey.name) {
+			cn.push('isName');
+		};
 
 		return (
 			<td key={id} id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}>
