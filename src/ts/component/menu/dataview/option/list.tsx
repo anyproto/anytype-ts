@@ -268,7 +268,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const { param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 
 		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionEdit', { 
@@ -278,6 +278,7 @@ class MenuOptionList extends React.Component<Props, State> {
 				passThrough: true,
 				noFlipY: true,
 				noAnimation: true,
+				classNameWrap: classNameWrap,
 				data: {
 					...data,
 					option: item,

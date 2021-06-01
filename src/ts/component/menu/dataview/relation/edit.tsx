@@ -227,17 +227,19 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		});
 	};
 
-	menuOpen (id: string, param: I.MenuParam) {
-		const { getSize } = this.props;
+	menuOpen (id: string, options: I.MenuParam) {
+		const { getSize, param } = this.props;
+		const { classNameWrap } = param;
 
-		param.isSub = true;
-		param.passThrough = true;
-		param.offsetX = getSize().width;
-		param.vertical = I.MenuDirection.Center;
+		options.isSub = true;
+		options.passThrough = true;
+		options.offsetX = getSize().width;
+		options.vertical = I.MenuDirection.Center;
+		options.classNameWrap = classNameWrap;
 
 		if (!menuStore.isOpen(id)) {
 			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-				menuStore.open(id, param);
+				menuStore.open(id, options);
 			});
 		};
 	};

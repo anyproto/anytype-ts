@@ -214,7 +214,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 
 		let relation = null;
@@ -239,6 +239,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			offsetY: -38,
 			isSub: true,
 			passThrough: true,
+			classNameWrap: classNameWrap,
 			data: {
 				value: value.id,
 				options: options,
