@@ -386,7 +386,7 @@ class PageMainType extends React.Component<Props, State> {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { menuStore.close('relationSuggest'); });
 				},
 			}
 		});
