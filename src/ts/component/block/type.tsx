@@ -127,6 +127,7 @@ class BlockType extends React.Component<Props, State> {
 			this.n--;
 
 			if (this.n < -1) {
+				this.n = -1;
 				this.unbind();
 
 				if (onKeyDown) {
@@ -220,9 +221,18 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		const { rootId } = this.props;
+		const { rootId, onKeyDown } = this.props;
+		const param = {
+			type: I.BlockType.Text,
+			style: I.TextStyle.Paragraph,
+		};
 
-		C.BlockObjectTypeSet(rootId, item.id);
+		C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
+			C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
+				focus.set(message.blockId, { from: 0, to: 0 });
+				focus.apply();
+			});
+		});
 	};
 
 	onFilterFocus (e: any) {

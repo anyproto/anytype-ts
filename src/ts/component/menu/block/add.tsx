@@ -1,21 +1,37 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, SmileUtil, Util, DataUtil, Storage, translate } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore } from 'ts/store';
+import { MenuItemVertical, Icon, Cell } from 'ts/component';
+import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate } from 'ts/lib';
+import { blockStore, commonStore, dbStore, menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
 interface Props extends I.Menu {};
 
+interface State {
+	loading: boolean;
+	n: number;
+};
+
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const HEIGHT = 28;
+const HEIGHT_SECTION = 42;
+const HEIGHT_DESCRIPTION = 56;
+const HEIGHT_RELATION = 32;
+const LIMIT = 40;
 
 @observer
-class MenuBlockAdd extends React.Component<Props, {}> {
+class MenuBlockAdd extends React.Component<Props, State> {
 	
 	_isMounted = false;
-	n: number = 0;
 	emptyLength: number = 0;
 	timeout: number = 0;
+	cache: any = {};
+	relations: any[] = [];
+	state = {
+		loading: false,
+		n: 0,
+	};
 	
 	constructor (props: any) {
 		super(props);
@@ -30,78 +46,187 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
-		const options = this.getItems();
-		const sections = this.getSections();
+		const { n } = this.state;
+		const items = this.getItems();
 		const block = blockStore.getLeaf(rootId, blockId);
 		const length = block.getLength();
-		
-		const Section = (item: any) => (
-			<div className="section">
-				{item.name ? <div className="name">{item.name}</div> : ''}
-				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						let icn: string[] = [ 'inner' ];
-						
-						if (action.isBlock) {
-							action.color = item.color;
-						};
-						
-						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
-						};
-						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
-						};
-						
-						if (action.isTextColor || action.isBgColor) {
-							action.icon = 'color';
-							action.inner = (
-								<div className={icn.join(' ')} />
-							);
-						};
+		const idPrefix = 'menuBlockAdd';
 
-						if (action.isObject) {
-							action.object = { 
-								iconEmoji: action.iconEmoji, 
-								decription: action.description,
-								layout: I.ObjectLayout.ObjectType,
-							};
-							action.iconSize = 40;
-						};
-						
-						return (
-							<MenuItemVertical 
-								key={action.id + '-' + i} 
-								{...action} 
-								className={action.isHidden ? 'isHidden' : ''}
-								withDescription={action.isBlock} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-								onClick={(e: any) => { this.onClick(e, action); }} 
+		const rowRenderer = (param: any) => {
+			const { index } = param;
+			const item: any = items[index];
+			
+			let content = null;
+			if (item.isRelationAdd) {
+				content =  (
+					<div 
+						id="item-relation-add" 
+						className="item add" 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						style={param.style}
+					>
+						<Icon className="plus" />
+						<div className="name">{item.name}</div>
+					</div>
+				);
+			} else 
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isRelation) {
+				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+
+				content = (
+					<div 
+						id={'item-' + item.id}
+						className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						style={param.style}
+					>
+						<div className="info">
+							{item.name}
+						</div>
+						<div
+							id={id} 
+							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
+							onClick={(e: any) => { this.onClick(e, item); }}
+						>
+							<Cell 
+								rootId={rootId}
+								storeId={rootId}
+								block={block}
+								relationKey={item.relationKey}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ]); }}
+								viewType={I.ViewType.Grid}
+								index={0}
+								idPrefix={idPrefix}
+								menuClassName="fromBlock"
+								scrollContainer={Util.getEditorScrollContainer('menuBlockRelationList')}
+								pageContainer={Util.getEditorPageContainer('menuBlockRelationList')}
+								readOnly={true}
+								canOpen={false}
 							/>
-						);
-					})}
-				</div>
-			</div>
-		);
-		
+						</div>
+					</div>
+				);
+			} else {
+				let cn = [];
+				let icn: string[] = [ 'inner' ];
+					
+				if (item.isTextColor) {
+					icn.push('textColor textColor-' + item.value);
+				};
+				if (item.isBgColor) {
+					icn.push('bgColor bgColor-' + item.value);
+				};
+				
+				if (item.isTextColor || item.isBgColor) {
+					item.icon = 'color';
+					item.inner = (
+						<div className={icn.join(' ')} />
+					);
+				};
+
+				if (item.isBig) {
+					cn.push('isBig');
+				};
+
+				if (item.isHidden) {
+					cn.push('isHidden');
+				};
+
+				if (item.isObject) {
+					item.object = { 
+						iconEmoji: item.iconEmoji, 
+						decription: item.description,
+						layout: I.ObjectLayout.ObjectType,
+					};
+					item.iconSize = 40;
+				};
+				
+				content = (
+					<MenuItemVertical 
+						key={item.id + '-' + index} 
+						{...item} 
+						className={cn.join(' ')}
+						withDescription={item.isBlock} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+						style={param.style}
+					/>
+				);
+			};
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={index}
+					hasFixedWidth={() => {}}
+				>
+					{content}
+				</CellMeasurer>
+			);
+		};
+
 		return (
-			<div>
-				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
-				{sections.map((item: any, i: number) => (
-					<Section key={i} {...item} />
-				))}
+			<div className="wrap">
+				{!items.length ? (
+					<div className="item empty">{translate('commonFilterEmpty')}</div>
+				) : (
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={registerChild}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => { return this.rowHeight(items[index], index); }}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToIndex={n}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				)}
 			</div>
 		);
 	};
 	
 	componentDidMount () {
 		const { getId } = this.props;
+		const { n } = this.state;
 		const items = this.getItems();
 		
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
-		this.setActive(items[this.n]);
+		this.setActive(items[n]);
+		this.resize();
+		this.load();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 		
 		const menu = $('#' + getId());
 		menu.unbind('mouseleave').on('mouseleave', () => {
@@ -112,6 +237,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		const { filter } = commonStore;
 		const items = this.getItems();
+		const { n } = this.state;
 
 		if (!items.length && !this.emptyLength) {
 			this.emptyLength = filter.text.length;
@@ -123,8 +249,44 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		};
 
 		this.checkFilter();
-		this.setActive(items[this.n]);
-		this.props.position();
+		this.setActive(items[n]);
+		this.resize();
+	};
+
+	load () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const { config } = commonStore;
+
+		this.setState({ loading: true });
+
+		C.ObjectRelationListAvailable(rootId, (message: any) => {
+			this.relations = message.relations.sort(DataUtil.sortByName).map((it: any) => {
+				it.id = it.relationKey;
+				it.type = I.BlockType.Relation;
+				it.isRelation = true;
+				it.isBlock = true;
+				return it;
+			});
+
+			this.relations = this.relations.filter((it: any) => {
+				if (!config.debug.ho && it.isHidden) {
+					return false;
+				};
+				return it.scope == I.RelationScope.Object;
+			});
+
+			this.relations.unshift({
+				id: 'add',
+				name: 'New relation',
+				type: I.BlockType.Relation,
+				isRelationAdd: true,
+				isBlock: true,
+			});
+
+			this.setState({ loading: false });
+		});
 	};
 	
 	checkFilter () {
@@ -164,9 +326,9 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
 		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
+			this.state.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setHover(items[this.n], scroll);
+		this.props.setHover((item ? item : items[this.state.n]), scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -177,27 +339,31 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 		
+		let { n } = this.state;
+
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[this.n];
+		const item = items[n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
+				n--;
+				if (n < 0) {
+					n = l - 1;
 				};
+				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
+				n++;
+				if (n > l - 1) {
+					n = 0;
 				};
+				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
@@ -227,13 +393,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		if (!block) {
 			return [];
 		};
-		
+
 		let sections: any[] = [
-			{ id: 'text', name: 'Text', color: 'yellow', children: DataUtil.menuGetBlockText() },
-			{ id: 'list', name: 'List', color: 'green', children: DataUtil.menuGetBlockList() },
-			{ id: 'object', name: 'Object', color: 'gray', children: DataUtil.menuGetBlockObject() },
-			{ id: 'relation', name: 'Relation', color: 'violet', children: DataUtil.menuGetBlockRelation() },
-			{ id: 'other', name: 'Other', color: 'purple', children: DataUtil.menuGetBlockOther() },
+			{ id: 'text', name: 'Text', children: DataUtil.menuGetBlockText() },
+			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
+			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
+			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
+			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
+			{ id: 'relation', name: 'Relations', children: this.relations },
 		];
 
 		if (!config.allowDataview) {
@@ -258,6 +425,14 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+		} else {
+			sections = sections.map((s: any) => {
+				s.children = s.children.map((c: any) => {
+					c.isBig = true;
+					return c;
+				});
+				return s;
+			});
 		};
 		
 		sections = DataUtil.menuSectionsMap(sections);
@@ -269,6 +444,7 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		
 		let items: any[] = [];
 		for (let section of sections) {
+			items.push({ id: section.id, name: section.name, isSection: true });
 			items = items.concat(section.children);
 		};
 		
@@ -355,25 +531,6 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'relation':
-				menuId = 'blockRelationList';
-				menuParam.className = 'withFilter';
-
-				menuParam.data = Object.assign(menuParam.data, {
-					relationKey: '',
-					withFilter: true,
-					filter: '',
-					onAdd: () => { close(); },
-					onSelect: (item: any) => {
-						close();
-
-						blockCreate(blockId, position, {
-							type: I.BlockType.Relation,
-							content: { key: item.relationKey },
-						});
-					},
-				});
-				break;
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
@@ -464,6 +621,10 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 				if (item.type == I.BlockType.Div) {
 					param.content.style = item.itemId;
 				};
+
+				if (item.type == I.BlockType.Relation) {
+					param.content.key = item.relationKey;
+				};
 				
 				if (item.type == I.BlockType.Page) {
 					const details: any = {};
@@ -480,7 +641,13 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
-					blockCreate(blockId, position, param);
+					blockCreate(blockId, position, param, (blockId: string) => {
+						if ((param.type == I.BlockType.Relation) && !param.content.key) {
+							window.setTimeout(() => {  
+								$(`#block-${blockId} .info`).trigger('click');
+							}, Constant.delay.menu);
+						};
+					});
 				};
 			};
 
@@ -499,6 +666,31 @@ class MenuBlockAdd extends React.Component<Props, {}> {
 		} else {
 			cb();
 		};
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems();
+		const obj = $(`#${getId()} .content`);
+		
+		let height = 16;
+		for (let i = 0; i < items.length; ++i) {
+			height += this.rowHeight(items[i], i);
+		};
+		height = Math.max(HEIGHT + 18, Math.min(360, height));
+
+		obj.css({ height: height });
+		position();
+	};
+
+	rowHeight (item: any, index: number) {
+		if (item.isRelation || item.isRelationAdd) {
+			return HEIGHT_RELATION;
+		};
+		if (item.isSection) {
+			return index > 0 ? HEIGHT_SECTION : HEIGHT;
+		};
+		return item.isBlock ? HEIGHT_DESCRIPTION : HEIGHT;
 	};
 
 };

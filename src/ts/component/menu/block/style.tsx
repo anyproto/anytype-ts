@@ -23,12 +23,18 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	render () {
 		const sections = this.getSections();
 		const active = this.getActive();
-		
+
 		const Section = (item: any) => (
 			<div className="section">
-				{item.children.map((action: any, i: number) => {
-					return <MenuItemVertical key={i} {...action} isActive={action.id == active} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }}  />
-				})}
+				{item.children.map((action: any, i: number) => (
+					<MenuItemVertical 
+						key={i} 
+						{...action} 
+						checkbox={action.itemId == active} 
+						onClick={(e: any) => { this.onClick(e, action); }} 
+						onMouseEnter={(e: any) => { this.onOver(e, action); }}  
+					/>
+				))}
 			</div>
 		);
 		

@@ -2,7 +2,7 @@
 
 .header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; user-select: none; }
 .header {
-	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; margin-right: 12px; -webkit-app-region: no-drag; }
+	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; -webkit-app-region: no-drag; }
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
@@ -74,7 +74,8 @@
 .header.headerMainEdit {
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon.big.home { width: 32px; }
+	.icon.big.home { width: 32px; margin-right: 10px; }
+	.icon.big.nav { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
 
 	.path { 

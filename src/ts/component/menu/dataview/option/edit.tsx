@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util, translate } from 'ts/lib';
-import { Icon, Input, MenuItemVertical } from 'ts/component';
+import { Icon, Input, Filter, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { menuStore } from 'ts/store';
@@ -42,19 +42,27 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="inputWrap" onSubmit={this.onSubmit}>
-					<Input ref={(ref: any) => { this.ref = ref; }} onBlur={this.onSubmit} value={option.text} placeHolder={translate('menuDataviewOptionEditPlaceholder')}  />
-				</form>
-				<div className="item" onClick={this.onRemove}>
-					<Icon className="remove" />
-					<div className="name">{translate('menuDataviewOptionEditDelete')}</div>
+				<div className="filter">
+					<div className="inner">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							placeHolder={translate('menuDataviewOptionEditPlaceholder')} 
+							onBlur={this.onSubmit} 
+						/>
+					</div>
+					<div className="line" />
 				</div>
 
-				<div className="line" />
 				{colors.map((action: any, i: number) => {
 					let inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
 					return <MenuItemVertical id={i} key={i} {...action} icon="color" inner={inner} isActive={action.value == option.color} onClick={(e: any) => { this.onColor(e, action); }} />;
 				})}
+
+				<div className="line" />
+				<div className="item" onClick={this.onRemove}>
+					<Icon className="remove" />
+					<div className="name">{translate('menuDataviewOptionEditDelete')}</div>
+				</div>
 			</div>
 		);
 	};

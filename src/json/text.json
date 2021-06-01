@@ -124,13 +124,13 @@
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
 
-	"blockNameHeader1": { "en": "Header 1" },
+	"blockNameHeader1": { "en": "Title" },
 	"blockTextHeader1": { "en": "Big headline of a chapter, paragraph or section" },
 
-	"blockNameHeader2": { "en": "Header 2" },
+	"blockNameHeader2": { "en": "Heading" },
 	"blockTextHeader2": { "en": "Medium headline" },
 
-	"blockNameHeader3": { "en": "Header 3" },
+	"blockNameHeader3": { "en": "Subheading" },
 	"blockTextHeader3": { "en": "Small headline" },
 
 	"blockNameQuote": { "en": "Highlighted" },
@@ -177,6 +177,9 @@
 
 	"blockNameRelation": { "en": "Relation" },
 	"blockTextRelation": { "en": "Meaningful connection between objects" },
+
+	"blockNameNewRelation": { "en": "New relation" },
+	"blockTextNewRelation": { "en": "Meaningful connection between objects" },
 
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 

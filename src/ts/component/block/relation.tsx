@@ -13,7 +13,6 @@ const $ = require('jquery');
 @observer
 class BlockRelation extends React.Component<Props, {}> {
 
-	refInput: any = null;
 	refCell: any = null;
 
 	constructor (props: any) {
@@ -22,10 +21,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
-		this.onFocusInput = this.onFocusInput.bind(this);
-		this.onBlurInput = this.onBlurInput.bind(this);
 		this.onMenu = this.onMenu.bind(this);
-		this.onKeyUpInput = this.onKeyUpInput.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
@@ -44,17 +40,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				{!relation ? 
 				(
 					<div className="sides">
-						<div className="info noValue">
-							<Input 
-								id="input"
-								ref={(ref: any) => { this.refInput = ref; }} 
-								placeHolder="Create a new relation"
-								onFocus={this.onFocusInput}
-								onBlur={this.onBlurInput}
-								onClick={this.onMenu} 
-								onKeyUp={this.onKeyUpInput} 
-							/>
-						</div>
+						<div className="info noValue" onClick={this.onMenu}>New relation</div>
 					</div>
 				) : 
 				(
@@ -104,38 +90,32 @@ class BlockRelation extends React.Component<Props, {}> {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	onKeyUpInput (e: any) {
-		menuStore.updateData('blockRelationList', { filter: this.refInput.getValue() });
-	};
-
-	onFocusInput () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-
-		input.attr({ placeHolder: 'Relation search' });
-	};
-
-	onBlurInput () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-
-		input.attr({ placeHolder: 'Create a new relation' });
-	};
-
 	onMenu (e: any) {
 		const { rootId, block } = this.props;
 
-		menuStore.open('blockRelationList', {
+		menuStore.open('relationSuggest', { 
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
 			data: {
-				relationKey: '',
 				rootId: rootId,
 				blockId: block.id,
-				filter: this.refInput.getValue(),
-				onSelect: (item: any) => {
-					C.BlockRelationSetKey(rootId, block.id, item.relationKey);
-				}
+				filter: '',
+				menuIdEdit: 'blockRelationEdit',
+				skipIds: [],
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.ObjectRelationListAvailable(rootId, callBack);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationAdd(rootId, relation, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						C.BlockRelationSetKey(rootId, block.id, message.relation.relationKey, () => { 
+							menuStore.close('relationSuggest'); 
+						});
+					});
+				},
 			}
 		});
 	};

@@ -675,18 +675,25 @@ class DataUtil {
 		});
 	};
 
-	menuGetBlockObject () {
-		const { config } = commonStore;
-		
+	menuGetBlockMedia () {
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+		];
+		return ret.map(this.menuMapperBlock);
+	};
+
+	menuGetBlockObject () {
+		const { config } = commonStore;
+		
+		let ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
-
 		let i = 0;
+
 		if (config.allowDataview) {
 			let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
 			if (!config.debug.ho) {
@@ -712,17 +719,10 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 
-	menuGetBlockRelation () {
-		return [
-			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation default', lang: 'Relation', arrow: true },
-		].map(this.menuMapperBlock);
-	};
-	
 	menuGetBlockOther () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		].map(this.menuMapperBlock);
 	};
 
@@ -908,6 +908,7 @@ class DataUtil {
 			s.children = s.children.map((it: any, i: number) => {
 				it.itemId = it.id || i;
 				it.id = s.id + '-' + it.id;
+				it.color = it.color || s.color || '';
 				return it;
 			});
 			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
@@ -1023,7 +1024,8 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign' ]);
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
 			object: object,
@@ -1066,8 +1068,8 @@ class DataUtil {
 				break;
 		};
 
-		if (type == Constant.typeId.page) {
-			ret.className.push('isDraft');
+		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
+			ret.className.push('noFeatured');
 		};
 
 		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {

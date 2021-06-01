@@ -323,6 +323,7 @@ class PageMainType extends React.Component<Props, State> {
 		const rootId = this.getRootId();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
