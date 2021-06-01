@@ -257,6 +257,8 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const { config } = commonStore;
+		const filterIds = dbStore.getRelations(rootId, rootId).map((it: any) => { return it.relationKey; });
 
 		this.setState({ loading: true });
 
@@ -267,6 +269,13 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				it.isRelation = true;
 				it.isBlock = true;
 				return it;
+			});
+
+			this.relations = this.relations.filter((it: any) => {
+				if (!config.debug.ho && it.isHidden) {
+					return false;
+				};
+				return filterIds.indexOf(it.relationKey) >= 0;
 			});
 
 			this.relations.unshift({
