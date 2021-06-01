@@ -208,7 +208,7 @@ class PageMainIndex extends React.Component<Props, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
 		];
 
 		if (tab == Tab.Recent) {
@@ -459,7 +459,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		items.css({ width: width }).removeClass('last');
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - size.titleY - height });
+		documents.css({ marginTop: wh - size.titleY - height - 8 });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
