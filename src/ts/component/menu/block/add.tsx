@@ -633,7 +633,13 @@ class MenuBlockAdd extends React.Component<Props, State> {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
-					blockCreate(blockId, position, param);
+					blockCreate(blockId, position, param, (blockId: string) => {
+						if ((param.type == I.BlockType.Relation) && !param.content.key) {
+							window.setTimeout(() => {  
+								$(`#block-${blockId} .info`).trigger('click');
+							}, Constant.delay.menu);
+						};
+					});
 				};
 			};
 
