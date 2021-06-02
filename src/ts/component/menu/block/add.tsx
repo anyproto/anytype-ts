@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
 import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore, detailStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -560,6 +560,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 
 		let text = String(data.text || '');
 
+		const details: any = {};
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const onCommand = (message: any) => {
@@ -625,18 +626,26 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				if (item.type == I.BlockType.Relation) {
 					param.content.key = item.relationKey;
 				};
-				
-				if (item.type == I.BlockType.Page) {
-					const details: any = {};
-					
-					if (item.isObject) {
-						const type = dbStore.getObjectType(item.objectTypeId);
-						if (type) {
-							details.type = type.id;
-							details.layout = type.layout;
-						};
+
+				if (item.isObject) {
+					const type = dbStore.getObjectType(item.objectTypeId);
+					if (type) {
+						details.type = type.id;
+						details.layout = type.layout;
 					};
 
+					popupStore.open('template', {
+						data: {
+							typeId: item.objectTypeId,
+							onSelect: (templateId: string) => {
+								DataUtil.pageCreate(rootId, blockId, details, position, templateId, (message: any) => {
+									DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+								});
+							},
+						},
+					});
+				} else 
+				if (item.type == I.BlockType.Page) {
 					DataUtil.pageCreate(rootId, blockId, details, position, '', (message: any) => {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});

@@ -1,0 +1,39 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupTemplate {
+		.innerWrap { width: 832px; height: 448px; margin: -224px 0px 0px -416px; padding: 43px 0px 56px 0px; }
+		.content { position: static; }
+
+		.item { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
+		.item {
+			.objectPreviewBlock { width: 344px; height: 216px; margin-bottom: 10px; }
+			.objectPreviewBlock {
+				.border { transition: $transitionFast; }
+			}
+		}
+
+		.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
+		.item:last-child { margin-right: 0px; }
+		.item.hover .border { border-color: $colorBlack; }
+
+		.icon.arrow { 
+			position: absolute; top: 0px; width: 32px; height: 216px; background-image: url('~img/arrow/template0.svg'); 
+			cursor: pointer; background-size: 8px 32px; z-index: 1;
+		}
+		.icon.arrow:hover { background-image: url('~img/arrow/template1.svg'); }
+		.icon.arrow.disabled:hover { background-image: url('~img/arrow/template0.svg'); }
+		.icon.arrow.left { left: 0px; transform: rotateY(-180deg); }
+		.icon.arrow.right { right: 0px; }
+
+		.head { padding: 0px 64px; text-align: center; margin-bottom: 38px; }
+		.head {
+			.title { @include text-header2; }
+			.label { color: $colorDarkGrey; }
+		}
+
+		.wrapper { white-space: nowrap; position: relative; }
+		.scrollWrap { overflow: hidden; border-radius: 8px; position: relative; }
+		.scroll { transition: transform 0.2s ease-in-out; display: inline-block; padding: 0px 64px; }
+	}
+}
