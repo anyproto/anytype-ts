@@ -7,7 +7,7 @@
 
 		.head { padding: 8px 16px 0px 16px; }
 		.head {
-			.date { color: $colorDarkGrey; margin-bottom: 6px; }
+			.date { color: $colorMediumGrey; margin-bottom: 6px; }
 			.sides { display: flex; margin-bottom: 10px; }
 			.side { width: 50%; }
 			.side.right { text-align: right; }
@@ -28,11 +28,11 @@
 		.day:nth-child(7n + 7) { margin: 0px; }
 		.day:hover { background: #fef3c5; color: #e89d00 !important; }
 
-		.day.th { color: $colorDarkGrey; cursor: default; }
-		.day.th:hover { background: none; font-weight: 400; color: $colorDarkGrey !important; }
+		.day.th { color: $colorMediumGrey; cursor: default; }
+		.day.th:hover { background: none; font-weight: 400; color: $colorMediumGrey !important; }
 		
 		.day.active { color: #e89d00; }
-		.day.other { color: $colorDarkGrey; }
+		.day.other { color: $colorMediumGrey; }
 		
 		.month { height: 28px; line-height: 28px; font-size: 12px; letter-spacing: 0.1px; position: relative; margin-bottom: 4px; }
 		.month { 

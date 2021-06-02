@@ -447,6 +447,12 @@ const MakeTemplate = (response: any) => {
 	};
 };
 
+const MakeTemplateByObjectType = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -557,5 +563,6 @@ export {
 	ObjectRelationOptionAdd,
 
 	MakeTemplate,
+	MakeTemplateByObjectType,
 
 };

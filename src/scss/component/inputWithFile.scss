@@ -1,16 +1,16 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorDarkGrey; @include text-common; 
+	padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; color: $colorMediumGrey; @include text-common; 
 	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
 }
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }
-	.fileWrap .border { border-bottom: 1px solid $colorDarkGrey; display: inline-block; line-height: 1; transition: $transitionFast; cursor: pointer; }
+	.fileWrap .border { border-bottom: 1px solid $colorMediumGrey; display: inline-block; line-height: 1; transition: $transitionFast; cursor: pointer; }
 	.fileWrap:hover .border { color: $colorBlack; }
 
-	.input::placeholder { color: $colorDarkGrey; }
+	.input::placeholder { color: $colorMediumGrey; }
 	.urlToggle { cursor: text; display: inline-block; }
 
 	#form { display: inline-block; vertical-align: top; }
@@ -27,7 +27,7 @@
 .inputWithFile.isReadOnly {
 	.urlToggle { cursor: default; }
 	.border { border: 0px; cursor: default; }
-	.fileWrap:hover .border { color: $colorDarkGrey; }
+	.fileWrap:hover .border { color: $colorMediumGrey; }
 }
 
 .inputWithFile.isSmall {

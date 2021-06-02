@@ -13,7 +13,7 @@
 	.path { white-space: nowrap; }
 	.path {
 		.item { 
-			display: inline-block; vertical-align: top; color: #929082; margin-right: 6px; cursor: pointer; 
+			display: inline-block; vertical-align: top; color: $colorDarkGrey; margin-right: 6px; cursor: pointer; 
 			transition: color 0.2s ease-in-out; 
 		}
 		.item {

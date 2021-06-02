@@ -8,7 +8,7 @@
 
 		.head { position: absolute; top: 0px; left: 0px; width: 100%; padding: 0px 48px; }
 		.head {
-			.tabs { @include text-header2; color: $colorDarkGrey; }
+			.tabs { @include text-header2; color: $colorMediumGrey; }
 			.tabs {
 				.item { margin-right: 24px; display: inline-block; cursor: pointer; transition: $transitionFast; }
 				.item:last-child { margin: 0px; }
@@ -26,7 +26,7 @@
 				.items {
 					.item { display: flex; padding: 12px 0px; border-bottom: 1px solid #eae9e0; }
 					.item {
-						.key { width: 180px; font-weight: 500; color: $colorDarkGrey; }
+						.key { width: 180px; font-weight: 500; color: $colorMediumGrey; }
 						.descr { width: calc(100% - 180px); }
 					}
 				}

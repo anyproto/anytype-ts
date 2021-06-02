@@ -40,6 +40,7 @@ class PageMainType extends React.Component<Props, State> {
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 	};
 
@@ -185,9 +186,16 @@ class PageMainType extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					{templates.length ? (
-						<div className="section template">
-							<div className="title">{templates.length} templates</div>
+					<div className="section template">
+						<div className="title">
+							{templates.length} templates
+
+							<div className="btn" onClick={this.onTemplateAdd}>
+								<Icon className="plus" />
+								New
+							</div>
+						</div>
+						{templates.length ? (
 							<div className="content">
 								<div id="scrollWrap" className="wrap">
 									<div id="scroll" className="scroll">
@@ -204,8 +212,12 @@ class PageMainType extends React.Component<Props, State> {
 								<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
 								<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
 							</div>
-						</div>	
-					) : ''}
+						) : (
+							<div className="empty">
+								This object type doesn't have templates yet
+							</div>
+						)}
+					</div>	
 
 					<div className="section note dn">
 						<div className="title">Notes</div>
@@ -355,6 +367,17 @@ class PageMainType extends React.Component<Props, State> {
 	onUpload (hash: string) {
 		const rootId = this.getRootId();
 		DataUtil.pageSetIcon(rootId, '', hash);
+	};
+
+	onTemplateAdd () {
+		const rootId = this.getRootId();
+
+		C.MakeTemplateByObjectType(rootId, (message) => {
+			console.log(message);
+
+			this.loadTemplates();
+			DataUtil.objectOpenPopup({ id: message.id });
+		});
 	};
 
 	onObjectAdd () {

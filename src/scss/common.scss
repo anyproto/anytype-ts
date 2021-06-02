@@ -111,6 +111,7 @@ html.platformWindows {
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over { overflow: hidden !important; }
+.empty { color: $colorMediumGrey; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 
@@ -133,7 +134,7 @@ search.active { background: orange !important; }
 
 .textColor-default { color: $colorBlack !important; }
 .textColor-black { color: $colorBlack !important; }
-.textColor-grey { color: $colorDarkGrey !important; }
+.textColor-grey { color: $colorMediumGrey !important; }
 .textColor-yellow { color: $colorYellow !important; }
 .textColor-orange { color: $colorOrange !important; }
 .textColor-red { color: $colorRed !important; }

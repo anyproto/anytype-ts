@@ -50,10 +50,10 @@
 				
 				.side { width: 50%; }
 				
-				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorDarkGrey; }
+				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
 			
-			.logout { color: $colorDarkGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
+			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
 			.logout:hover { color: $colorBlack; }
 		}
 		
@@ -67,7 +67,7 @@
 			.row.last { margin: 0px; }
 			
 			.label { margin-bottom: 8px; } 
-			.label.name { margin-bottom: 11px; @include text-very-small; color: $colorDarkGrey; text-transform: uppercase; }
+			.label.name { margin-bottom: 11px; @include text-very-small; color: $colorMediumGrey; text-transform: uppercase; }
 			
 			.item { 
 				width: 108px; height: 70px; display: inline-block; vertical-align: top; margin: 0px 10px 16px 0px; cursor: pointer;
@@ -148,7 +148,7 @@
 				.icon { margin-bottom: 6px; height: 32px; }
 				.name { @include text-small; }
 				.soon { 
-					font-weight: 500; font-size: 9px; line-height: 18px; letter-spacing: 0.4px; text-transform: uppercase; color: $colorDarkGrey; 
+					font-weight: 500; font-size: 9px; line-height: 18px; letter-spacing: 0.4px; text-transform: uppercase; color: $colorMediumGrey; 
 					position: absolute; top: 3px; right: 9px;
 				}
 			}

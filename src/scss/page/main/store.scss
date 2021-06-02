@@ -36,7 +36,7 @@
 		.tabs {
 			.item { 
 				display: inline-block; margin-right: 20px; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
-				color: $colorDarkGrey; transition: $transitionFast;
+				color: $colorMediumGrey; transition: $transitionFast;
 			}
 			.item:hover, .item.active { color: $colorBlack; }
 			.item:last-child { margin: 0px; }
@@ -60,7 +60,7 @@
 				.info {
 					.txt { width: 100%; }
 					.name { @include text-overflow-nw; line-height: 22px; }
-					.descr { width: 100%; @include text-small; color: #929082; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
+					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
 					.author { @include text-small; color: #6c6a5f; line-height: 18px; }
 					.line { width: 100%; height: 1px; background: #eae9e0; position: absolute; left: 0px; }
 				}

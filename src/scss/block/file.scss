@@ -12,7 +12,7 @@
 			vertical-align: top; cursor: pointer; @include text-overflow-nw;  
 		}
 		.size {
-			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorDarkGrey; margin: 0px 8px;
+			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
 			display: inline-block; vertical-align: top;
 		}
 		.download {

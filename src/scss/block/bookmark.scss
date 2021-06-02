@@ -7,7 +7,7 @@
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
 			cursor: pointer; position: relative; border-radius: 6px;
 		}
-		.inner:hover { border-color: $colorDarkGrey; }
+		.inner:hover { border-color: $colorMediumGrey; }
 		
 		.inner {
 			.side.left { width: 100%; padding: 11px 16px 10px 16px; }

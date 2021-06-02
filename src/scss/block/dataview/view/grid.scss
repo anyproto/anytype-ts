@@ -68,7 +68,7 @@
 				.cellContent { min-width: unset; }
 			}
 
-			.cell.add { color: $colorDarkGrey; line-height: 20px; padding: 14px; }
+			.cell.add { color: $colorMediumGrey; line-height: 20px; padding: 14px; }
 			.cell.add {
 				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
 				.btn:hover { color: $colorBlack; }

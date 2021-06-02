@@ -963,6 +963,14 @@ const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('makeTemplate', request, callBack);
 };
 
+const MakeTemplateByObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MakeTemplateByObjectType.Request();
+	
+	request.setObjecttype(objectTypeUrl);
+
+	dispatcher.request('makeTemplateByObjectType', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1082,5 +1090,6 @@ export {
 	ObjectRelationListAvailable,
 
 	MakeTemplate,
+	MakeTemplateByObjectType,
 
 };

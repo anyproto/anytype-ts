@@ -5,7 +5,7 @@
 		.innerWrap { width: 672px; }
 		.wrapper { padding: 48px; }
 
-		.tabs { @include text-header3; color: $colorDarkGrey; margin-bottom: 19px; }
+		.tabs { @include text-header3; color: $colorMediumGrey; margin-bottom: 19px; }
 		.tabs {
 			.tab { display: inline-block; margin-right: 20px; cursor: pointer; }
 			.tab:last-child { margin: 0px; }

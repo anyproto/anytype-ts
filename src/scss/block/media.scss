@@ -18,7 +18,7 @@
 
 		.wrap.broken { 
 			@include text-common; position: static; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
-			color: $colorDarkGrey; height: 44px;
+			color: $colorMediumGrey; height: 44px;
 		}
 		.wrap.broken {
 			img:before { 

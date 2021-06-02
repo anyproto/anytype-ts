@@ -13,7 +13,7 @@
 				display: inline; position: relative;
 			}
 			.txt::before {
-				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorDarkGrey; transition: $transitionFast;
+				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorMediumGrey; transition: $transitionFast;
 				position: absolute; bottom: 0px; left: 0px; z-index: 1;
 			}
 		}
@@ -21,11 +21,11 @@
 		
 		.archive {
 			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
-			@include text-small; color: $colorDarkGrey; padding: 0px 6px; display: none;
+			@include text-small; color: $colorMediumGrey; padding: 0px 6px; display: none;
 		}
 
 		.loading {
-			color: $colorDarkGrey;
+			color: $colorMediumGrey;
 		}
 		.loading {
 			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; }
@@ -38,7 +38,7 @@
 	
 	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 	.block.blockLink > .wrapContent > .selectable > .dropTarget > .isArchived {
-		.name { color: $colorDarkGrey; border-color: $colorLightGrey; }
+		.name { color: $colorMediumGrey; border-color: $colorLightGrey; }
 		.archive { display: inline-block; }
 	}
 }
