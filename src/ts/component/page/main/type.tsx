@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
@@ -366,8 +366,15 @@ class PageMainType extends React.Component<Props, State> {
 			layout: object.recommendedLayout,
 		};
 
-		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', (message: any) => {
-			DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+		popupStore.open('template', {
+			data: {
+				typeId: rootId,
+				onSelect: (templateId: string) => {
+					DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, templateId, (message: any) => {
+						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+					});
+				},
+			},
 		});
 	};
 
