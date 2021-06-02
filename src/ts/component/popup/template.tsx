@@ -37,11 +37,14 @@ class PopupTemplate extends React.Component<Props, State> {
 		};
 
 		const Item = (item: any) => (
-			<div id={'item-' + item.id} className="item">
-				<ObjectPreviewBlock 
-					rootId={item.id} 
-					onClick={(e: any) => { this.onClick(e, item); }} 
-				/>
+			<div 
+				id={'item-' + item.id} 
+				className="item" 
+				onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+				onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+				onClick={(e: any) => { this.onClick(e, item); }} 
+			>
+				<ObjectPreviewBlock rootId={item.id} />
 				<div className="name">{item.templateName || `Template ${item.index + 1}`}</div>
 			</div>
 		);
@@ -117,6 +120,9 @@ class PopupTemplate extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { items } = this.state;
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
@@ -138,6 +144,17 @@ class PopupTemplate extends React.Component<Props, State> {
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
 			this.onClick(e, items[this.n]);
 		});
+	};
+
+	onMouseEnter (e: any, item: any) {
+		this.n = this.state.items.findIndex((it: any) => { return it.id == item.id; });
+		this.setActive();
+	};
+
+	onMouseLeave (e: any, item: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.find('.item.hover').removeClass('hover');
 	};
 
 	setActive () {
