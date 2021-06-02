@@ -177,7 +177,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
 			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
-			const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
@@ -201,7 +200,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
-				if (!block.canTurnObject())		 hasTurnObject = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
@@ -217,7 +215,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasTurnText)	 sections.push(turnText);
 			if (hasTurnPage)	 sections.push(turnPage);
 			if (hasTurnList)	 sections.push(turnList);
-			if (hasTurnObject)	 sections.push(turnObject);
 			if (hasTurnDiv)		 sections.push(turnDiv);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
