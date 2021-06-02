@@ -13,9 +13,10 @@
 			}
 		}
 
-		.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
+		.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; transition: $transitionFast; }
 		.item:last-child { margin-right: 0px; }
 		.item.hover .border { border-color: $colorBlack; }
+		.item.hover > .name { color: $colorBlack; }
 
 		.icon.arrow { 
 			position: absolute; top: 0px; width: 32px; height: 216px; background-image: url('~img/arrow/template0.svg'); 
