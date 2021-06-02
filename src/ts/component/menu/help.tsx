@@ -61,7 +61,7 @@ class MenuHelp extends React.Component<Props, {}> {
 
 			case 'feedback':
 				//popupStore.open('feedback', {});
-				ipcRenderer.send('urlOpen', Util.sprintf(Url.feedbackForm, account.id, systemVersion, version));
+				ipcRenderer.send('urlOpen', Util.sprintf(Url.feedbackForm, account.id, systemVersion, version, Util.getPlatform()));
 				break;
 
 			case 'community':
