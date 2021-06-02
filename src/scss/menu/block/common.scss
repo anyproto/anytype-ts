@@ -41,6 +41,11 @@
 			flex-shrink: 0; margin-right: 6px;
 		}
 
+		.cell { width: calc(100% - 160px); white-space: nowrap; }
+		.cell.c-select {
+			.tagItem { margin-bottom: 0px; vertical-align: middle; }
+		}
+
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 		}
