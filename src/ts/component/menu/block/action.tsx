@@ -508,7 +508,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				];
 
 				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
