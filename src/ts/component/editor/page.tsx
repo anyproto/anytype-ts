@@ -636,7 +636,7 @@ class EditorPage extends React.Component<Props, {}> {
 		let length = String(text || '').length;
 
 		// Last line break in code block
-		if (block.isTextCode()) {
+		if (block.isTextCode() && length) {
 			length--;
 		};
 
@@ -1524,7 +1524,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText()) {
+			if (!last.isText() || last.isTextCode()) {
 				create = true;
 			} else {
 				length = last.getLength();

@@ -99,7 +99,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 
 		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
-		const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
 		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
 
 		let hasTurnText = true;
@@ -113,13 +112,11 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 			const block = blockStore.getLeaf(rootId, id);
 			if (!block.canTurnText())		 hasTurnText = false;
 			if (!block.canTurnList())		 hasTurnList = false;
-			if (!block.canTurnObject())		 hasTurnObject = false;
 			if (!block.isDiv())				 hasTurnDiv = false;
 		};
 
 		if (hasTurnText)	 sections.push(turnText);
 		if (hasTurnList)	 sections.push(turnList);
-		if (hasTurnObject)	 sections.push(turnObject);
 		if (hasTurnDiv)		 sections.push(turnDiv);
 		
 		return DataUtil.menuSectionsMap(sections);
@@ -142,7 +139,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		keyboard.disableMouse(true);
 		
 		const k = e.key.toLowerCase();
-		const node = $(ReactDOM.findDOMNode(this));
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];

@@ -175,6 +175,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
+		if (!config.allowDataview) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Page });
+		};
 
 		this.setState({ loading: true });
 

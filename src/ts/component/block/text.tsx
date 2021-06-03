@@ -873,16 +873,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup } = this.props;
-		const { focused } = focus;
 		const { from, to } = focus.range;
 		const ids = DataUtil.selectionGet('', false, this.props);
-
-		/*
-		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
-			e.preventDefault();
-			return;
-		};
-		*/
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
