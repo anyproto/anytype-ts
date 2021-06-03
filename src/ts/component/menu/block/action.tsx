@@ -446,7 +446,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			offsetX: offsetX,
 			offsetY: offsetY,
 			isSub: true,
-			passThrough: true,
 			data: {
 				rootId: rootId,
 				blockId: blockId,

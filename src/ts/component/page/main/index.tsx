@@ -212,7 +212,6 @@ class PageMainIndex extends React.Component<Props, {}> {
 								offsetX: width,
 								offsetY: -$('#menuSelect').height(),
 								isSub: true,
-								passThrough: true,
 								data: {
 									filters: filters,
 									type: I.NavigationType.Link, 

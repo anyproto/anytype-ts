@@ -491,7 +491,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			passThrough: true,
 			className: param.className,
 			data: {
 				rootId: rootId,

@@ -413,7 +413,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			passThrough: true,
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {

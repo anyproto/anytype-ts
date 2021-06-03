@@ -238,7 +238,6 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 			offsetX: getSize().width,
 			offsetY: -38,
 			isSub: true,
-			passThrough: true,
 			data: {
 				value: value.id,
 				options: options,
