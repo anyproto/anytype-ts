@@ -521,7 +521,7 @@ class PopupNavigation extends React.Component<Props, State> {
 			return false;
 		};
 		if (!config.allowDataview) {
-			if (it.type == Constant.typeId.template) {
+			if (object.type == Constant.typeId.template) {
 				return false;
 			};
 			if ([ I.ObjectLayout.Page, I.ObjectLayout.Dashboard ].indexOf(object.layout) < 0) {
