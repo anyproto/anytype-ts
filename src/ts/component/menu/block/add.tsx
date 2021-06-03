@@ -399,14 +399,13 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
 			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
 			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
-			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
-			{ id: 'relation', name: 'Relations', children: this.relations },
 		];
 
-		if (!config.allowDataview) {
-			sections = sections.filter((it: any) => {
-				return [ 'relation' ].indexOf(it.id) < 0;
-			});
+		if (config.allowDataview) {
+			sections = sections.concat([
+				{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
+				{ id: 'relation', name: 'Relations', children: this.relations },
+			]);
 		};
 		
 		if (filter && filter.text) {
@@ -653,6 +652,8 @@ class MenuBlockAdd extends React.Component<Props, State> {
 					});
 				} else {
 					blockCreate(blockId, position, param, (blockId: string) => {
+
+						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
 							window.setTimeout(() => {  
 								$(`#block-${blockId} .info`).trigger('click');

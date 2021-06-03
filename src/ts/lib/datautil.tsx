@@ -755,12 +755,6 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 	
-	menuGetTurnObject() {
-		return [
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-		].map(this.menuMapperBlock);
-	};
-
 	menuGetTurnDiv () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
