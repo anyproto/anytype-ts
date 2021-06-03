@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, dbStore } from 'ts/store';
+import { menuStore, dbStore, detailStore } from 'ts/store';
 
 import Controls from './dataview/controls';
 
@@ -160,12 +160,63 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	onRowAdd (e: any) {
 		const { rootId, block } = this.props;
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const typeId = object.setOf.length ? object.setOf[0] : '';
 
-		C.BlockDataviewRecordCreate(rootId, block.id, {}, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-			dbStore.recordAdd(rootId, block.id, message.record);
+		if (!typeId) {
+			C.BlockDataviewRecordCreate(rootId, block.id, {}, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+				dbStore.recordAdd(rootId, block.id, message.record);
+			});
+			return;
+		};
+
+		menuStore.open('searchObject', {
+			element: $(e.currentTarget),
+			vertical: I.MenuDirection.Top,
+			className: 'single',
+			subIds: [ 'previewObject' ],
+			data: {
+				label: 'Choose a template',
+				noFilter: true,
+				noIcon: true,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: typeId },
+					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				dataMapper: (it: any, i: number) => {
+					it.name = it.templateName || `Template ${i + 1}`;
+					return it;
+				},
+				onOver: (e: any, context: any, item: any) => {
+					menuStore.close('previewObject', () => {
+						menuStore.open('previewObject', {
+							element: `#${context.props.getId()} #item-${item.id}`,
+							offsetX: context.props.getSize().width,
+							isSub: true,
+							passThrough: true,
+							vertical: I.MenuDirection.Center,
+							data: {
+								rootId: item.id,
+							}
+						});
+					});
+				},
+				onSelect: (item: any) => {
+					C.BlockDataviewRecordCreate(rootId, block.id, {}, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+						dbStore.recordAdd(rootId, block.id, message.record);
+					});
+				},
+			}
 		});
 	};
 

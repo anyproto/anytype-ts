@@ -103,6 +103,8 @@ import 'scss/menu/relation.scss';
 import 'scss/menu/search/text.scss';
 import 'scss/menu/search/object.scss';
 
+import 'scss/menu/preview/object.scss';
+
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
 import 'scss/menu/block/link.scss';

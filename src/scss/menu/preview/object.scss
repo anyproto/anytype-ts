@@ -1,0 +1,13 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuPreviewObject { width: 344px; height: 228px; }
+	.menu.menuPreviewObject {
+		.content { padding: 0px; }
+
+		.objectPreviewBlock { width: 100%; height: 100%; }
+		.objectPreviewBlock {
+			.border { display: none; }
+		}
+	}	
+}

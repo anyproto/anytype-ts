@@ -14,6 +14,8 @@ import MenuSmileSkin from './smile/skin';
 import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
 
+import MenuPreviewObject from './preview/object';
+
 import MenuThreadList from './thread/list';
 import MenuThreadStatus from './thread/status';
 
@@ -78,6 +80,8 @@ const Components: any = {
 
 	searchText:				 MenuSearchText,
 	searchObject:			 MenuSearchObject,
+
+	previewObject:			 MenuPreviewObject,
 
 	threadList:				 MenuThreadList,
 	threadStatus:			 MenuThreadStatus,
