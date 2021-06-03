@@ -1524,7 +1524,7 @@ class EditorPage extends React.Component<Props, {}> {
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText()) {
+			if (!last.isText() || last.isTextCode()) {
 				create = true;
 			} else {
 				length = last.getLength();
