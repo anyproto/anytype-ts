@@ -92,7 +92,7 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured() && !this.isType();
+		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayout() && !this.isFeatured() && !this.isType();
 	};
 
 	isIndentable (): boolean {
