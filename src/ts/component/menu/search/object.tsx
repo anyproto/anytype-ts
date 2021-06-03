@@ -284,13 +284,20 @@ class MenuSearchObject extends React.Component<Props, State> {
 		if (it.id == skipId) {
 			return false;
 		};
-		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page) && (it.id != Constant.typeId.page)) {
-			return false;
+
+		if (!config.allowDataview) {
+			if (it.type == Constant.typeId.template) {
+				return false;
+			};
+			if ((it.layout != I.ObjectLayout.Page) && (it.id != Constant.typeId.page)) {
+				return false;
+			};
+			if ((type == I.NavigationType.Link) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.layout) < 0)) {
+				return false;
+			};
 		};
+
 		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
-			return false;
-		};
-		if ((type == I.NavigationType.Link) && !config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.layout) < 0)) {
 			return false;
 		};
 		return true;

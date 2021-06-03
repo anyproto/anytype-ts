@@ -641,6 +641,8 @@ class MenuBlockAdd extends React.Component<Props, State> {
 					});
 				} else {
 					blockCreate(blockId, position, param, (blockId: string) => {
+
+						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
 							window.setTimeout(() => {  
 								$(`#block-${blockId} .info`).trigger('click');
