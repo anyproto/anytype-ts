@@ -163,7 +163,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 
 		if (!object.setOf.length) {
-			C.BlockDataviewRecordCreate(rootId, block.id, {}, (message: any) => {
+			C.BlockDataviewRecordCreate(rootId, block.id, {}, '', (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -207,7 +207,7 @@ class BlockDataview extends React.Component<Props, {}> {
 					});
 				},
 				onSelect: (item: any) => {
-					C.BlockDataviewRecordCreate(rootId, block.id, {}, (message: any) => {
+					C.BlockDataviewRecordCreate(rootId, block.id, {}, item.id, (message: any) => {
 						if (message.error.code) {
 							return;
 						};

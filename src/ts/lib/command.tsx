@@ -629,12 +629,13 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 	dispatcher.request('blockDataviewViewSetActive', request, callBack);
 };
 
-const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, callBack?: (message: any) => void) => {
+const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RecordCreate.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRecord(Encode.encodeStruct(record));
+	request.setTemplateid(templateId);
 
 	dispatcher.request('blockDataviewRecordCreate', request, callBack);
 };
@@ -963,6 +964,15 @@ const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('makeTemplate', request, callBack);
 };
 
+const ApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ApplyTemplate.Request();
+	
+	request.setContextid(contextId);
+	request.setTemplateid(templateId);
+
+	dispatcher.request('applyTemplate', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1082,5 +1092,6 @@ export {
 	ObjectRelationListAvailable,
 
 	MakeTemplate,
+	ApplyTemplate,
 
 };

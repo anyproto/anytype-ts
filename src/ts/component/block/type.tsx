@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
 import { I, C, Util, focus, keyboard } from 'ts/lib';
-import { dbStore, detailStore } from 'ts/store';
+import { dbStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -33,9 +33,8 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	render (): any {
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const items = this.getItems();
-		const object = detailStore.get(rootId, rootId);
 
 		const Item = (item: any) => {
 			return (
@@ -221,17 +220,26 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		const { rootId, onKeyDown } = this.props;
+		const { rootId } = this.props;
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
 
-		C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
-			C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
-				focus.set(message.blockId, { from: 0, to: 0 });
-				focus.apply();
-			});
+		popupStore.open('template', {
+			data: {
+				typeId: item.id,
+				onSelect: (templateId: string) => {
+					C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
+						C.ApplyTemplate(rootId, templateId, () => {
+							C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
+								focus.set(message.blockId, { from: 0, to: 0 });
+								focus.apply();
+							});
+						});
+					});
+				},
+			},
 		});
 	};
 
