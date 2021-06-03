@@ -626,6 +626,9 @@ class MenuBlockAdd extends React.Component<Props, State> {
 					param.content.key = item.relationKey;
 				};
 
+				if ((item.type == I.BlockType.Text) && !length) {
+					C.BlockListSetTextStyle(rootId, [ blockId ], item.itemId, onCommand);
+				} else 
 				if (item.isObject) {
 					const type = dbStore.getObjectType(item.objectTypeId);
 					if (type) {
