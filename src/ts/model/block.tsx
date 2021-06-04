@@ -43,10 +43,6 @@ class Block implements I.Block {
 		});
 	};
 
-	isSystem () {
-		return this.isPage() || this.isLayout();
-	};
-
 	canHaveChildren (): boolean {
 		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
@@ -92,7 +88,11 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayout() && !this.isFeatured() && !this.isType();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+	};
+
+	isSystem () {
+		return this.isPage() || this.isLayout();
 	};
 
 	isIndentable (): boolean {

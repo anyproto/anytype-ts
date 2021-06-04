@@ -36,8 +36,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
 
-		console.log(param);
-
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
 				<div className="name">
@@ -184,13 +182,14 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	onAdd (e: any) {
 		const { param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
 			offsetX: 32,
+			classNameWrap: classNameWrap,
 			data: {
 				...data,
 				filter: '',
