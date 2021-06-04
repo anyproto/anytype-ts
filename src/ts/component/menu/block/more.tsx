@@ -475,14 +475,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'move':
 				menuId = 'searchObject';
-				menuParam.className = [ param.className, 'single' ].join(' ');
+				menuParam.className = [ param.className ].join(' ');
 
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
 				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
