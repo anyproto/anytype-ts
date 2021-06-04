@@ -65,8 +65,6 @@ class BlockCover extends React.Component<Props, State> {
 		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		console.log(object);
-		
 		let elements = null;
 		if (editing) {
 			elements = (
