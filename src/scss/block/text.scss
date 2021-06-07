@@ -79,6 +79,7 @@
 	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeHolder { display: none; }
 
 	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
+	.block.blockText.isReadOnly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 44px; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
 

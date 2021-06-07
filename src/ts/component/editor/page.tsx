@@ -1515,9 +1515,8 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTextTitle(); });
-		const last = children[children.length - 1];
-		
+		const last = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.canCreateBlock(); });
+
 		let create = false;
 		let length = 0;
 		
@@ -1535,7 +1534,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		if (create) {
-			this.blockCreate(last.id, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+			this.blockCreate(last ? last.id : '', I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
 			this.focus(last.id, length, length, false);
 		};

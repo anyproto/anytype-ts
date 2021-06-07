@@ -308,7 +308,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 	
 	onClick (e: any, item: any) {
 		const { close, param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId, blockId, menuIdEdit, addCommand } = data;
 
 		e.preventDefault();
@@ -327,6 +327,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 				offsetX: obj.outerWidth(),
 				offsetY: -76,
 				subIds: [ 'relationType' ],
+				classNameWrap: classNameWrap,
 				data: {
 					...data,
 					onChange: () => { close(); },

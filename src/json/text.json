@@ -193,7 +193,8 @@
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
 	"blockCoverUpdate": { "en": "Update cover" },
-	"blockCover": { "en": "" },
+
+	"blockFileError": { "en": "There was an error uploading the file" },
 
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },

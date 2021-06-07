@@ -520,6 +520,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		if (object.isArchived) {
 			return false;
 		};
+
 		if (!config.allowDataview) {
 			if (object.type == Constant.typeId.template) {
 				return false;

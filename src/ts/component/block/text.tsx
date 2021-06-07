@@ -299,37 +299,41 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.each((i: number, item: any) => {
 			item = $(item);
+			
 			const data = item.data();
 			if (!data.param) {
 				return;
 			};
 
-			const object = detailStore.get(rootId, data.param, []);
 			const smile = item.find('smile');
-			const { _objectEmpty_ } = object;
-			const cn = [];
-
-			if (smile && smile.length) {
-				let icon = null;
-				if (_objectEmpty_) {
-					item.addClass('dis');
-					icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
-				} else {
-					icon = <IconObject size={size} object={object} />;
-				};
-
-				if (icon) {
-					ReactDOM.render(icon, smile.get(0));
-					smile.after('<img src="./img/space.svg" class="space" />');
-					cn.push('withImage');
-				};
+			if (!smile.length) {
+				return;
 			};
 
-			item.addClass(cn.join(' '));
+			const object = detailStore.get(rootId, data.param, []);
+			const { _objectEmpty_ } = object;
+
+			let icon = null;
+			if (_objectEmpty_) {
+				item.addClass('dis');
+				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
+			} else {
+				icon = <IconObject size={size} object={object} />;
+			};
+
+			if (icon) {
+				ReactDOM.render(icon, smile.get(0), () => {
+					if (smile.html()) {
+						smile.after('<img src="./img/space.svg" class="space" />');
+						item.addClass('withImage');
+					};
+				});
+			};
 		});
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
+
 			const el = $(this);
 			if (!el.hasClass('dis')) {
 				const object = detailStore.get(rootId, el.data('param'));
@@ -665,7 +669,13 @@ class BlockText extends React.Component<Props, {}> {
 		
 		// Make code
 		if ((value == '/code' || value == '```') && !block.isTextCode()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
+			C.BlockCreate({ 
+				type: I.BlockType.Text, 
+				fields: { 
+					lang: (Storage.get('codeLang') || Constant.default.codeLang),
+				},
+				content: { style: I.TextStyle.Code } 
+			}, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 

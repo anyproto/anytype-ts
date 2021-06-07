@@ -64,7 +64,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { coverType, coverId } = object;
 		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
 		const root = blockStore.getLeaf(rootId, rootId);
-		
+
 		let elements = null;
 		if (editing) {
 			elements = (
@@ -114,11 +114,7 @@ class BlockCover extends React.Component<Props, State> {
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-				{canEdit ? (
-					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
-				) : (
-					<Cover id="cover" type={coverType} className={coverId} />
-				)}
+				<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				{!readOnly ? (
 					<div id="elements" className="elements">
 						{elements}
