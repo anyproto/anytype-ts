@@ -40,6 +40,7 @@ class PageMainType extends React.Component<Props, State> {
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 	};
 
@@ -136,6 +137,23 @@ class PageMainType extends React.Component<Props, State> {
 			</div>
 		);
 
+		const Item = (item: any) => (
+			<div 
+				id={'item-' + item.id} 
+				className="item" 
+				onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} 
+			>
+				<ObjectPreviewBlock rootId={item.id} />
+				<div className="name">{item.templateName || `Template ${item.index + 1}`}</div>
+			</div>
+		);
+
+		const ItemTemplateAdd = () => (
+			<div className="item add" onClick={this.onTemplateAdd}>
+				<Icon className="plus" />
+			</div>
+		);
+
 		const Row = (item: any) => {
 			const author = detailStore.get(rootId, item.creator, []);
 			return (
@@ -185,27 +203,35 @@ class PageMainType extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					{templates.length ? (
-						<div className="section template">
-							<div className="title">{templates.length} templates</div>
+					<div className="section template">
+						<div className="title">
+							{templates.length} templates
+
+							<div className="btn" onClick={this.onTemplateAdd}>
+								<Icon className="plus" />
+								New
+							</div>
+						</div>
+						{templates.length ? (
 							<div className="content">
 								<div id="scrollWrap" className="wrap">
 									<div id="scroll" className="scroll">
 										{templates.map((item: any, i: number) => (
-											<ObjectPreviewBlock 
-												key={item.id} 
-												rootId={item.id} 
-												onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} 
-											/>
+											<Item key={item.id} {...item} index={i} />
 										))}
+										<ItemTemplateAdd />
 									</div>
 								</div>
 
 								<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
 								<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
 							</div>
-						</div>	
-					) : ''}
+						) : (
+							<div className="empty">
+								This object type doesn't have templates yet
+							</div>
+						)}
+					</div>	
 
 					<div className="section note dn">
 						<div className="title">Notes</div>
@@ -359,6 +385,17 @@ class PageMainType extends React.Component<Props, State> {
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
+	onTemplateAdd () {
+		const rootId = this.getRootId();
+
+		C.MakeTemplateByObjectType(rootId, (message) => {
+			console.log(message);
+
+			this.loadTemplates();
+			DataUtil.objectOpenPopup({ id: message.id });
+		});
+	};
+
 	onObjectAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
@@ -395,7 +432,7 @@ class PageMainType extends React.Component<Props, State> {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { menuStore.close('relationSuggest'); });
 				},
 			}
 		});

@@ -53,7 +53,7 @@ class Block extends React.Component<Props, {}> {
 						break;
 				};
 				
-				content = <div className="div">{inner}</div>;
+				content = <div className="wrap">{inner}</div>;
 				break;
 		};
 		

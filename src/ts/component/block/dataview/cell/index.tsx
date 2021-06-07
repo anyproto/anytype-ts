@@ -98,6 +98,7 @@ class Cell extends React.Component<Props, {}> {
 					canEdit={canEdit}
 					relation={relation}
 					onChange={this.onChange} 
+					onParentClick={this.onClick}
 				/>
 			</div>
 		);
@@ -108,6 +109,7 @@ class Cell extends React.Component<Props, {}> {
 
 		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
 
 		if (!relation || readOnly || relation.isReadOnly) {
 			return;
@@ -125,7 +127,6 @@ class Cell extends React.Component<Props, {}> {
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
-		const record = getRecord(index);
 		const value = record[relation.relationKey] || '';
 
 		let menuId = '';

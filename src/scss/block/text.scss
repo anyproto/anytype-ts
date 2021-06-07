@@ -11,7 +11,7 @@
 			width: 100%; height: 100%; cursor: text; pointer-events: none;
 		}
 
-		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorDarkGrey; text-decoration: none; }
+		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
 		
 		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: rgba(172,169,150,0.1); }
 
@@ -33,7 +33,7 @@
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; }
 
-			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorDarkGrey; }
+			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorMediumGrey; }
 		}
 
 		mention.withImage {
@@ -80,14 +80,14 @@
 
 	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
 
-	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorDarkGrey !important; }
+	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 
 	.block.blockText.title { padding: 22px 0px 6px 0px; @include text-title; }
 	.block.blockText.title {
 		.placeHolder { 
-			color: $colorDarkGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
+			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
 			width: 100%; height: 100%; cursor: text; 
 		}
 		.value { -webkit-user-modify: read-write-plaintext-only; }
@@ -129,7 +129,7 @@
 		.value { font-family: 'Plex'; @include text-common; tab-size: 4; }
 		.additional { position: absolute; top: 9px; left: 16px; z-index: 1; display: block; }
 		.additional {
-			.select { border: 0px; color: $colorDarkGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
+			.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
 			.select {
 				.name { overflow: visible; }
 			}

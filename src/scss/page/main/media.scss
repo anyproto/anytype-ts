@@ -49,7 +49,7 @@
 
 		.block.blockRelation {
 			.icon.relation { display: none; }
-			.info .name { color: #929082; }
+			.info .name { color: $colorDarkGrey; }
 		}
 
 		.button.download { @include text-paragraph; height: 36px; line-height: 30px; margin: 17px 0px 40px 0px; }

@@ -37,6 +37,42 @@
 
 	#documents { display: flex; flex-wrap: wrap; overflow: auto; }
 	#documents {
+		.tabWrap { width: 100%; height: 44px; margin-bottom: 24px; position: relative; }
+		.tabWrap {
+			.tabs { 
+				line-height: 44px; height: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; display: inline-block; @include text-paragraph; 
+				color: rgba(255,255,255,0.6); font-weight: 700;
+			}
+			.tabs {
+				.tab { 
+					line-height: 44px; display: inline-block; vertical-align: middle; padding: 0px 16px; border-radius: 12px; transition: $transitionFast; 
+					cursor: pointer; 
+				}
+				.tab.active { background: rgba(0,0,0,0.3); color: #fff; }
+			}
+
+			.searchWrap { 
+				height: 44px; width: 44px; position: absolute; right: 0px; top: 0px; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
+				transition: width 0.2s ease-in-out, background 0.2s ease-in-out; z-index: 1;
+			}
+			.searchWrap {
+				.icon.search { width: 20px; height: 20px; background-image: url('~img/icon/index/search.svg'); position: absolute; top: 12px; left: 12px; }
+				.filter { height: 20px; padding: 0px; display: none; vertical-align: top; width: 100%; }
+				.filter {
+					.inner { height: 20px; }
+					.input { height: 20px; color: #fff; }
+					.line { display: none; }
+					.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); }
+					.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); }
+				}
+			}
+
+			.searchWrap.active { width: 320px; background: rgba(0,0,0,0.5); padding: 12px 12px 12px 36px; }
+			.searchWrap.active {
+				.filter { display: inline-block; }
+			}
+		}
+
 		.item { 
 			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
@@ -50,7 +86,7 @@
 				@include text-common; line-height: 20px; max-height: 60px; width: 100%; word-break: break-word;
 				-webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; display: -webkit-box;
 			}
-			.type { @include text-small; color: $colorDarkGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
+			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
 			
 			.icon.more { 
 				background-image: url('~img/icon/index/more0.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;

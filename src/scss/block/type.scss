@@ -21,7 +21,7 @@
 			.info {
 				.txt { width: 100%; }
 				.name { @include text-paragraph; @include text-overflow-nw; }
-				.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
+				.descr { width: 100%; @include text-small; color: $colorMediumGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
 			}
 		}
 	}

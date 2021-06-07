@@ -26,7 +26,7 @@
 
 			.wrap { position: relative; }
 			.wrap {
-				.placeHolder { position: absolute; left: 0px; top: 0px; color: $colorDarkGrey; }
+				.placeHolder { position: absolute; left: 0px; top: 0px; color: $colorMediumGrey; }
 			}
 		}
 
@@ -34,15 +34,40 @@
 		.section:last-child { margin: 0px; }
 
 		.section {
-			.title { @include text-header3; margin-bottom: 14px; }
+			.title { @include text-header3; margin-bottom: 14px; position: relative; }
 		}
 
 		.section.template {
-			.objectPreviewBlock { width: 344px; height: 216px; display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; }
-			.objectPreviewBlock:last-child { margin-right: 0px; }
+			.btn { 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
+				cursor: pointer; transition: $transitionFast;
+			}
+			.btn {
+				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
+			}
+			.btn:hover { color: $colorBlack; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
+			}
+
+			.item { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; position: relative; }
+			.item {
+				.objectPreviewBlock { width: 344px; height: 216px; margin-bottom: 10px; }
+				.icon.plus { width: 28px; height: 28px; position: absolute; left: 50%; top: 50%; margin: -14px 0px 0px -14px; background-image: url('~img/icon/plus/templateBig.svg'); }
+			}
+			.item:before {
+				content: ""; background: rgba(134, 125, 66, 0.08); position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
+				z-index: 2; height: 216px; border-radius: 8px; display: none;
+			}
+
+			.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
+			.item:last-child { margin-right: 0px; }
+			.item:hover:before { display: block; }
+
+			.item.add { border: 1px solid $colorLightGrey; border-radius: 8px; width: 344px; height: 216px; }
 
 			.icon.arrow { 
-				position: absolute; top: 0px; width: 32px; height: 100%; background-image: url('~img/arrow/template0.svg'); 
+				position: absolute; top: 0px; width: 32px; height: 216px; background-image: url('~img/arrow/template0.svg'); 
 				cursor: pointer; background-size: 8px 32px;
 			}
 			.icon.arrow:hover { background-image: url('~img/arrow/template1.svg'); }
@@ -65,12 +90,12 @@
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: #6c6a5f; }
-				.value { color: $colorDarkGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
+				.value { color: $colorMediumGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
 			}
 
 			.item.add { line-height: 20px; }
 			.item.add {
-				.name { color: #929082; }
+				.name { color: $colorDarkGrey; }
 			}
 		}
 
@@ -100,7 +125,6 @@
 
 			.cell { padding: 14px; border-bottom: 1px solid #eae9e0; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.c-select { padding-bottom: 8px; }
-			.cell.empty { color: $colorDarkGrey; }
 		}
 	}
 }

@@ -4,7 +4,7 @@
 	.menu.menuDataviewMedia {
 		.content { padding-bottom: 0px; }
 
-		.item { display: flex; color: #929082; }
+		.item { display: flex; color: $colorDarkGrey; }
 		.item {
 			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }

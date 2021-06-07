@@ -161,7 +161,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, rootId, objectId } = data;
 		const { config } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -235,9 +235,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		} else 
 		if (block.isLink()) {
+			const object = detailStore.get(rootId, objectId);
+
+			let archive = null;
+			let remove = null;
+			if (object.isArchived) {
+				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
+			} else {
+				archive = { id: 'archiveIndex', icon: 'remove', name: 'Archive' };
+				remove = { id: 'remove', icon: 'unfav', name: 'Remove from Favorites' };
+			};
+
 			sections.push({ children: [
-				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
-				{ id: 'remove', icon: 'unfav', name: 'Remove from Favorites' },
+				archive,
+				remove,
 				move,
 			]});
 		} else {
@@ -351,6 +362,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'archiveIndex':
 				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], true);
+				break;
+
+			case 'unarchiveIndex':
+				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], false);
 				break;
 
 			case 'linkRoot':

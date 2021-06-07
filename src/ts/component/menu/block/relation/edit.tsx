@@ -109,7 +109,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				{relation ? (
 					<React.Fragment>
 						<div className="line" />
-						<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />
+						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} />
 						{!this.isReadOnly() ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</React.Fragment>
@@ -263,17 +263,19 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		relation.includeTime = v;
 	};
 
-	menuOpen (id: string, param: I.MenuParam) {
-		const { getSize } = this.props;
+	menuOpen (id: string, options: I.MenuParam) {
+		const { getSize, param } = this.props;
+		const { classNameWrap } = param;
 
-		param.isSub = true;
-		param.passThrough = true;
-		param.offsetX = getSize().width;
-		param.vertical = I.MenuDirection.Center;
+		options.isSub = true;
+		options.passThrough = true;
+		options.offsetX = getSize().width;
+		options.vertical = I.MenuDirection.Center;
+		options.classNameWrap = classNameWrap;
 
 		if (!menuStore.isOpen(id)) {
 			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-				menuStore.open(id, param);
+				menuStore.open(id, options);
 			});
 		};
 	};

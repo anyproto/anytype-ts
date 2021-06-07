@@ -5,7 +5,7 @@
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
-		.icon.expand { display: none; }
+		.icon.edit { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 

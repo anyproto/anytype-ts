@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.pager { text-align: center; margin: 13px 0px 0px 0px; color: $colorDarkGrey; white-space: nowrap; @include text-common; }
+.pager { text-align: center; margin: 13px 0px 0px 0px; color: $colorMediumGrey; white-space: nowrap; @include text-common; }
 
 .pager {
     .page { 

@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 import { I, DataUtil } from 'ts/lib';
 
 interface Props {
+	canDrag: boolean;
 	getList?(): void;
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
@@ -17,6 +18,7 @@ interface Props {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class ListIndex extends React.Component<Props, {}> {
@@ -24,7 +26,7 @@ class ListIndex extends React.Component<Props, {}> {
 	timeout: number = 0;
 
 	render () {
-		const { onSelect, onAdd, onMore, helperContainer, getList, onSortStart, onSortEnd } = this.props;
+		const { onSelect, onAdd, onMore, helperContainer, getList, onSortStart, onSortEnd, canDrag } = this.props;
 		const { root } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		
@@ -37,15 +39,29 @@ class ListIndex extends React.Component<Props, {}> {
 		const children = getList();
 		
 		const Item = SortableElement((item: any) => {
-			const content = item.content || {};
-			const object = detailStore.get(root, content.targetBlockId, []);
-			const { _objectEmpty_, name, layout, iconEmoji, iconImage } = object;
+			let object: any = null;
+			let targetId = '';
+			let icon = null;
+			let showMenu = true;
+			let btn = null;
+
+			if (item.isBlock) {
+				object = detailStore.get(root, item.content.targetBlockId, []);
+				targetId = item.content.targetBlockId;
+			} else {
+				object = item;
+				targetId = item.id;
+				showMenu = false;
+			};
+
+			const { _objectEmpty_, layout, iconEmoji, iconImage } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
+			const name = object.name || Constant.default.name;
 
 			if (_objectEmpty_) {
 				return (
-					<div className="item isLoading" data-target-block-id={content.targetBlockId}>
+					<div className="item isLoading" data-target-id={targetId}>
 						<div className="iconObject c48 animatedBackground" />
 						<div className="line lineName animatedBackground" />
 						<div className="line lineType animatedBackground" />
@@ -53,14 +69,12 @@ class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			let icon = null;
-			let showMenu = true;
-			let btn = null;
-
+			/*
 			if (content.style == I.LinkStyle.Archive) {
 				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />;
 				showMenu = false;
 			} else 
+			*/
 			if (layout == I.ObjectLayout.Task) {
 				cn.push('isTask');
 				icon = <IconObject size={20} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
@@ -79,7 +93,7 @@ class ListIndex extends React.Component<Props, {}> {
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
 					data-id={item.id}
-					data-target-block-id={content.targetBlockId}
+					data-target-block-id={targetId}
 				>
 					{icon}
 					<div className="name">{name}</div>
@@ -94,16 +108,16 @@ class ListIndex extends React.Component<Props, {}> {
 			);
 		});
 		
-		const List = SortableContainer((item: any) => {
+		let List = SortableContainer((item: any) => {
 			return (
 				<React.Fragment>
 					{item.list.map((item: any, i: number) => (
-						<Item key={item.id} {...item} index={i} />
+						<Item key={item.id} {...item} index={i} disabled={!canDrag} />
 					))}
 				</React.Fragment>
 			);
 		});
-		
+
 		return (
 			<div>
 				<List 

@@ -163,7 +163,7 @@ class MenuOptionValues extends React.Component<Props> {
 
 	onAdd () {
 		const { param, getId, close } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 
 		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionList', {
@@ -174,6 +174,7 @@ class MenuOptionValues extends React.Component<Props> {
 				passThrough: true,
 				noFlipY: true,
 				noAnimation: true,
+				classNameWrap: classNameWrap,
 				onClose: () => { close(); },
 				data: {
 					...data,

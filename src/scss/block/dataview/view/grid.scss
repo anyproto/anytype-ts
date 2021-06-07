@@ -35,6 +35,8 @@
 				.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
 			}
 
+			.cell.isName, .cellContent.isName { cursor: pointer; }
+
 			.cell.c-object, .cell.c-file { padding-right: 0px; }
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
@@ -42,7 +44,7 @@
 
 			tr.active {
 				.cellContent.isName {
-					.icon.expand { display: block; }
+					.icon.edit { display: block; }
 				}
 			}
 
@@ -66,7 +68,7 @@
 				.cellContent { min-width: unset; }
 			}
 
-			.cell.add { color: $colorDarkGrey; line-height: 20px; padding: 14px; }
+			.cell.add { color: $colorMediumGrey; line-height: 20px; padding: 14px; }
 			.cell.add {
 				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
 				.btn:hover { color: $colorBlack; }

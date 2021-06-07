@@ -24,7 +24,7 @@
 				position: absolute; left: 22px; top: -15px; width: 8px; height: calc(100% + 30px); cursor: col-resize; z-index: 1; 
 			}
 			.line { 
-				height: 100%; width: 2px; background: $colorDarkGrey; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
+				height: 100%; width: 2px; background: $colorMediumGrey; position: absolute; left: 50%; top: 0px; margin-left: -1px; 
 				border-radius: 2px;
 			}
 		}
@@ -37,7 +37,7 @@
 		.focusable { border-radius: inherit; }
 		
 		.emptyToggle { 
-			display: none; margin-left: 28px; color: $colorDarkGrey; position: relative; z-index: 2; cursor: pointer;
+			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2; cursor: pointer;
 			transition: $transitionFast; @include text-overflow-nw;
 		}
 		.emptyToggle:hover { color: $colorBlack; }
@@ -84,9 +84,6 @@
 	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; }
 
 	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
-	.block > .wrapContent > .selectable.isSelected { 
-		.placeHolder { display: none !important; } 
-	}
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
