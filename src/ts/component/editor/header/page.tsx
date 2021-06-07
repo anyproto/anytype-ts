@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, M, C, DataUtil } from 'ts/lib';
-import { Block, Drag } from 'ts/component';
+import { Block, Drag, Button } from 'ts/component';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -35,7 +35,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 	}
 
 	render (): any {
-		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste } = this.props;
+		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const { config } = commonStore;
 
@@ -44,9 +44,10 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		};
 
 		const check = DataUtil.checkDetails(rootId);
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign', 'templateIsBundled' ]);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
@@ -66,12 +67,29 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					<div id="dragValue" className="number">100%</div>
 				</div>
 
+				{object.templateIsBundled ? (
+					<div className="note">
+						<div className="inner">
+							<div className="sides">
+								<div className="side left">
+									This template cannot be changed, because it is Basic for this object type.<br />
+									If you want to edit, create a Duplicate of this template.
+								</div>
+								<div className="side right">
+									<Button className="dark" text="Duplicate" />
+								</div>
+							</div>
+						</div>
+					</div>
+				) : ''}
+
 				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
 				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
 
 				<Block 
 					key={header.id} 
 					{...this.props}
+					readOnly={readOnly || object.templateIsBundled}
 					index={0}
 					block={header}
 					onKeyDown={onKeyDown}
