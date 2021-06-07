@@ -21,6 +21,7 @@ class PopupTemplate extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	page: number = 0;
 	n: number = 0;
+	ref: any = null;
 
 	state = {
 		items: [],
@@ -37,25 +38,10 @@ class PopupTemplate extends React.Component<Props, State> {
 
 	render () {
 		const { items, loading } = this.state;
-		const isFirst = this.page == 0;
-		const isLast = this.page == this.getMaxPage();
 
 		if (loading) {
 			return <Loader />;
 		};
-
-		const Item = (item: any) => (
-			<div 
-				id={'item-' + item.id} 
-				className="item" 
-				onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-				onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
-				onClick={(e: any) => { this.onClick(e, item); }} 
-			>
-				<ObjectPreviewBlock rootId={item.id} />
-				<div className="name">{item.templateName || `Template ${item.index + 1}`}</div>
-			</div>
-		);
 
 		return (
 			<div className="wrapper">
@@ -65,6 +51,7 @@ class PopupTemplate extends React.Component<Props, State> {
 				</div>
 
 				<ListTemplate 
+					ref={(ref: any) => { this.ref = ref; }}
 					items={items}
 					offsetX={-128}
 					onMouseEnter={this.onMouseEnter}
@@ -121,10 +108,6 @@ class PopupTemplate extends React.Component<Props, State> {
 		});
 	};
 
-	getMaxPage () {
-		return Math.ceil(this.state.items.length / 2) - 1;
-	};
-
 	onKeyUp (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -133,17 +116,17 @@ class PopupTemplate extends React.Component<Props, State> {
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;
-			this.n += dir;
+			this.ref.n += dir;
 
-			if (this.n < 0) {
-				this.n = items.length - 1;
+			if (this.ref.n < 0) {
+				this.ref.n = items.length - 1;
 			};
-			if (this.n > items.length - 1) {
-				this.n = 0;
+			if (this.ref.n > items.length - 1) {
+				this.ref.n = 0;
 			};
 
-			this.page = Math.floor(this.n / 2);
-			this.onArrow(0);
+			this.ref.page = Math.floor(this.ref.n / 2);
+			this.ref.onArrow(0);
 			this.setActive();
 		});
 
@@ -187,33 +170,6 @@ class PopupTemplate extends React.Component<Props, State> {
 				onSelect(item.id);
 			};
 		}, Constant.delay.popup);
-	};
-
-	onArrow (dir: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#scrollWrap');
-		const scroll = node.find('#scroll');
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
-		const w = wrap.width();
-		const max = this.getMaxPage();
-
-		this.page += dir;
-		this.page = Math.min(max, Math.max(0, this.page));
-
-		arrowLeft.removeClass('dn');
-		arrowRight.removeClass('dn');
-
-		if (this.page == 0) {
-			arrowLeft.addClass('dn');
-		};
-		if (this.page == max) {
-			arrowRight.addClass('dn');
-		};
-
-		let x = -this.page * (w + 16 - 128);
-
-		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
 	};
 
 };

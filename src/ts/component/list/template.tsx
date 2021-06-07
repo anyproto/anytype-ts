@@ -22,6 +22,7 @@ class ListTemplate extends React.Component<Props, {}> {
 		canAdd: false,
 	};
 	
+	n: number = 0;
 	page: number = 0;
 
 	render () {
