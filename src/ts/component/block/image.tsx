@@ -48,7 +48,18 @@ class BlockImage extends React.Component<Props, {}> {
 			default:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="image" textFile="Upload a picture" accept={Constant.extension.image} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
+					<React.Fragment>
+						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+						<InputWithFile 
+							block={block} 
+							icon="image" 
+							textFile="Upload a picture" 
+							accept={Constant.extension.image} 
+							onChangeUrl={this.onChangeUrl} 
+							onChangeFile={this.onChangeFile} 
+							readOnly={readOnly} 
+						/>
+					</React.Fragment>
 				);
 				break;
 				
@@ -64,12 +75,6 @@ class BlockImage extends React.Component<Props, {}> {
 						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
-				);
-				break;
-				
-			case I.FileState.Error:
-				element = (
-					<Error text={translate('commonError')} />
 				);
 				break;
 		};

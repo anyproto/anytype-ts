@@ -28,6 +28,7 @@ class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
+		const { state } = content;
 		
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._objectEmpty_) {
@@ -39,18 +40,22 @@ class BlockFile extends React.Component<Props, {}> {
 		let element = null;
 		let cn = [ 'focusable', 'c' + id ];
 
-		switch (content.state) {
+		switch (state) {
 			default:
+			case I.FileState.Error:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile 
-						block={block} 
-						icon="file" 
-						textFile="Upload a file" 
-						onChangeUrl={this.onChangeUrl} 
-						onChangeFile={this.onChangeFile} 
-						readOnly={readOnly} 
-					/>
+					<React.Fragment>
+						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+						<InputWithFile 
+							block={block} 
+							icon="file" 
+							textFile="Upload a file" 
+							onChangeUrl={this.onChangeUrl} 
+							onChangeFile={this.onChangeFile} 
+							readOnly={readOnly} 
+						/>
+					</React.Fragment>
 				);
 				break;
 				
@@ -70,12 +75,6 @@ class BlockFile extends React.Component<Props, {}> {
 						</span>
 						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Error:
-				element = (
-					<Error text={translate('commonError')} />
 				);
 				break;
 		};
