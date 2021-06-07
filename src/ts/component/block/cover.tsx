@@ -114,7 +114,11 @@ class BlockCover extends React.Component<Props, State> {
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-				<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
+				{canEdit ? (
+					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
+				) : (
+					<Cover id="cover" type={coverType} className={coverId} />
+				)}
 				{!readOnly ? (
 					<div id="elements" className="elements">
 						{elements}

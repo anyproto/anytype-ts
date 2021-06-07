@@ -44,7 +44,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		};
 
 		const check = DataUtil.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign', 'templateIsBundled' ]);
+		const object = check.object;
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });

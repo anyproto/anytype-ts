@@ -1018,7 +1018,7 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {

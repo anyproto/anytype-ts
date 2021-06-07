@@ -41,6 +41,7 @@ import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
+import 'scss/component/list/template.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';

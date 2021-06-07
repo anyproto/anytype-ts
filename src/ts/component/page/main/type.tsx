@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button, ListTemplate } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -61,12 +61,8 @@ class PageMainType extends React.Component<Props, State> {
 			name: Constant.default.nameType,
 			description: 'Add a description',
 		};
-		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
-		const type: any = dbStore.getObjectType(object.id) || {};
+		const type: any = dbStore.getObjectType(rootId) || {};
 		const canCreate = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
-
-		const isFirst = this.page == 0;
-		const isLast = this.page == this.getMaxPage();
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -137,23 +133,6 @@ class PageMainType extends React.Component<Props, State> {
 			</div>
 		);
 
-		const Item = (item: any) => (
-			<div 
-				id={'item-' + item.id} 
-				className="item" 
-				onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} 
-			>
-				<ObjectPreviewBlock rootId={item.id} />
-				<div className="name">{item.templateName || `Template ${item.index + 1}`}</div>
-			</div>
-		);
-
-		const ItemTemplateAdd = () => (
-			<div className="item add" onClick={this.onTemplateAdd}>
-				<Icon className="plus" />
-			</div>
-		);
-
 		const Row = (item: any) => {
 			const author = detailStore.get(rootId, item.creator, []);
 			return (
@@ -214,17 +193,12 @@ class PageMainType extends React.Component<Props, State> {
 						</div>
 						{templates.length ? (
 							<div className="content">
-								<div id="scrollWrap" className="wrap">
-									<div id="scroll" className="scroll">
-										{templates.map((item: any, i: number) => (
-											<Item key={item.id} {...item} index={i} />
-										))}
-										<ItemTemplateAdd />
-									</div>
-								</div>
-
-								<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
-								<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
+								<ListTemplate 
+									items={templates}
+									canAdd={true}
+									onAdd={this.onTemplateAdd}
+									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+								/>
 							</div>
 						) : (
 							<div className="empty">
@@ -563,35 +537,6 @@ class PageMainType extends React.Component<Props, State> {
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
-	};
-
-	getMaxPage () {
-		return Math.ceil(this.state.templates.length / 2) - 1;
-	};
-
-	onArrow (dir: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#scrollWrap');
-		const scroll = node.find('#scroll');
-		const arrowLeft = node.find('#arrowLeft');
-		const arrowRight = node.find('#arrowRight');
-		const w = wrap.width();
-		const max = this.getMaxPage();
-
-		this.page += dir;
-		this.page = Math.min(max, Math.max(0, this.page));
-
-		arrowLeft.removeClass('dn');
-		arrowRight.removeClass('dn');
-
-		if (this.page == 0) {
-			arrowLeft.addClass('dn');
-		};
-		if (this.page == max) {
-			arrowRight.addClass('dn');
-		};
-
-		scroll.css({ transform: `translate3d(${-this.page * (w + 16)}px,0px,0px` });
 	};
 
 };

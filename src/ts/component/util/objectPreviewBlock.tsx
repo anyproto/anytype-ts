@@ -20,8 +20,9 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	state = {
 		loading: false,
 	};
+	isOpen: boolean = false;
 
-	public  static defaultProps = {
+	public static defaultProps = {
 		className: '',
 	};
 	
@@ -309,7 +310,12 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	};
 
 	open () {
+		const { loading } = this.state;
 		const { rootId } = this.props;
+
+		if (loading) {
+			return;
+		};
 
 		this.setState({ loading: true });
 

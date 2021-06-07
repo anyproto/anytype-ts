@@ -11,6 +11,7 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListIndex from './list/index';
 import ListChildren from './list/children';
+import ListTemplate from './list/template';
 
 import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
@@ -71,6 +72,7 @@ export {
 	ListMenu,
 	ListIndex,
 	ListChildren,
+	ListTemplate,
 	HeaderAuth,
 	HeaderMainIndex,
 	HeaderMainEdit,

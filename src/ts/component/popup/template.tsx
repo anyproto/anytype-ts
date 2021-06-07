@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, ObjectPreviewBlock, Loader, Title, Label } from 'ts/component';
+import { Icon, ObjectPreviewBlock, Loader, Title, Label, ListTemplate } from 'ts/component';
 import { I, C, keyboard } from 'ts/lib';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -25,6 +25,14 @@ class PopupTemplate extends React.Component<Props, State> {
 	state = {
 		items: [],
 		loading: false,
+	};
+
+	constructor (props: any) {
+		super(props);
+
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -56,16 +64,13 @@ class PopupTemplate extends React.Component<Props, State> {
 					<Label text="Type “Friend” has 3 templates, use ←→ to switch and ENTER to choose" />
 				</div>
 
-				<div id="scrollWrap" className="scrollWrap">
-					<div id="scroll" className="scroll">
-						{items.map((item: any, i: number) => (
-							<Item key={i} {...item} index={i} />
-						))}
-					</div>
-
-					<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
-					<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
-				</div>
+				<ListTemplate 
+					items={items}
+					offsetX={-128}
+					onMouseEnter={this.onMouseEnter}
+					onMouseLeave={this.onMouseLeave}
+					onClick={this.onClick} 
+				/>
 			</div>
 		);
 	};
