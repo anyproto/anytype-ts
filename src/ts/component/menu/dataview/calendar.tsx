@@ -22,7 +22,7 @@ class MenuCalendar extends React.Component<Props, State> {
 	
 	render() {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { value } = data;
 		const items = this.getData();
 
@@ -57,6 +57,7 @@ class MenuCalendar extends React.Component<Props, State> {
 								value={String(m || '')} 
 								options={months} 
 								menuClassName="orange" 
+								menuClassNameWrap={classNameWrap}
 								menuWidth={192} 
 								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
 							/>
@@ -67,7 +68,8 @@ class MenuCalendar extends React.Component<Props, State> {
 								id="year" 
 								value={String(y || '')} 
 								options={years} 
-								menuClassName="orange center" 
+								menuClassName="orange center"
+								menuClassNameWrap={classNameWrap}
 								menuWidth={144} 
 								horizontal={I.MenuDirection.Right}
 								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 

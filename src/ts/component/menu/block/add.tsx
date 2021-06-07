@@ -399,11 +399,11 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
 			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
 			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
+			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
 
 		if (config.allowDataview) {
 			sections = sections.concat([
-				{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 				{ id: 'relation', name: 'Relations', children: this.relations },
 			]);
 		};

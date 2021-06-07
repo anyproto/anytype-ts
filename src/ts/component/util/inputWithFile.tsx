@@ -266,6 +266,11 @@ class InputWithFile extends React.Component<Props, State> {
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
+
+			if (!file) {
+				return;
+			};
+
 			if (onChangeFile) {
 				onChangeFile(e, file);	
 			};

@@ -298,6 +298,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>
+				{object.templateIsBundled ? <Icon className="logo" tooltip="Template is bundled" /> : ''}
 				{content}
 			</div>
 		);
