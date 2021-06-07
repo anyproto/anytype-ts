@@ -66,7 +66,9 @@ class ListTemplate extends React.Component<Props, {}> {
 	};
 
 	getMaxPage () {
-		return Math.ceil(this.props.items.length / 2) - 1;
+		const { items, canAdd } = this.props;
+		const length = items.length + (canAdd ? 1 : 0);
+		return Math.ceil(length / 2) - 1;
 	};
 
 	onMouseEnter (e: any, item: any) {

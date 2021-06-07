@@ -363,8 +363,6 @@ class PageMainType extends React.Component<Props, State> {
 		const rootId = this.getRootId();
 
 		C.MakeTemplateByObjectType(rootId, (message) => {
-			console.log(message);
-
 			this.loadTemplates();
 			DataUtil.objectOpenPopup({ id: message.id });
 		});

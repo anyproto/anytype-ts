@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, dispatcher } from 'ts/lib';
 
 interface Props {
 	rootId: string;
@@ -37,11 +37,8 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
-		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
-			return !it.isLayoutHeader();
-		}).slice(0, 10);
+		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
-
 		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, className, ];
 
 		let n = 0;
@@ -50,7 +47,8 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const Block = (item: any) => {
 			const { content, fields } = item;
 			const { text, style, checked } = content;
-			const length = item.childBlocks.length;
+			const childBlocks = blockStore.getChildren(rootId, item.id);
+			const length = childBlocks.length;
 
 			let bullet = null;
 			let inner = null;
@@ -230,7 +228,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 					{length ? (
 						<div className="children">
-							{item.childBlocks.map((child: any, i: number) => {
+							{childBlocks.map((child: any, i: number) => {
 								const css: any = {};
 								const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
 
@@ -238,7 +236,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 									cn.push('first');
 								};
 
-								if (i == item.childBlocks.length - 1) {
+								if (i == childBlocks.length - 1) {
 									cn.push('last');
 								};
 
@@ -319,7 +317,9 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.BlockOpen(rootId, (message: any) => {
+		C.HistoryShow(rootId, '', (message: any) => {
+			dispatcher.onObjectShow(rootId, message.objectShow);
+
 			this.setState({ loading: false });
 		});
 	};
