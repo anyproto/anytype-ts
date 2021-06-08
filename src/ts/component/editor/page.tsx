@@ -76,10 +76,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 		const width = root?.fields?.width;
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} readOnly={root.isObjectFile()} />
+				<Controls key="editorControls" {...this.props} />
 				
 				<div className="editor">
 					<div className="blocks">
@@ -92,7 +93,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readOnly={root.isObjectFile()}
+							readOnly={!allowed}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -111,7 +112,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={root.isObjectReadOnly()}
+									readOnly={!allowed}
 									getWrapper={this.getWrapper}
 									getWrapperWidth={this.getWrapperWidth}
 								/>
@@ -354,7 +355,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, I.RestrictionObject.Block);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 
 		if (!root || !allowed) {
 			return;

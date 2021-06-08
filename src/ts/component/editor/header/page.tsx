@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, M, C, DataUtil } from 'ts/lib';
 import { Block, Drag, Button } from 'ts/component';
-import { commonStore, blockStore, detailStore } from 'ts/store';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -90,7 +90,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 				<Block 
 					key={header.id} 
 					{...this.props}
-					readOnly={readOnly || object.templateIsBundled}
+					readOnly={readOnly}
 					index={0}
 					block={header}
 					onKeyDown={onKeyDown}

@@ -365,14 +365,19 @@ class BlockStore {
 		return ret;
 	};
 
-	isAllowed (rootId: string, blockId: string, flag: any) {
+	isAllowed (rootId: string, blockId: string, flags: any[]) {
 		const map = this.restrictionMap.get(rootId);
 		if (!map) {
 			return false;
 		};
 
 		const restrictions = map.get(blockId) || [];
-		return restrictions.indexOf(flag) < 0;
+		for (let flag of flags) {
+			if (restrictions.indexOf(flag) >= 0) {
+				return false;
+			};
+		};
+		return true;
 	};
 
 };
