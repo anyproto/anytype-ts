@@ -454,6 +454,12 @@ const MakeTemplateByObjectType = (response: any) => {
 	};
 };
 
+const CloneTemplate = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -565,5 +571,6 @@ export {
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
+	CloneTemplate,
 
 };

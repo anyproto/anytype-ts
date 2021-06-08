@@ -981,6 +981,14 @@ const ApplyTemplate = (contextId: string, templateId: string, callBack?: (messag
 	dispatcher.request('applyTemplate', request, callBack);
 };
 
+const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ApplyTemplate.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('cloneTemplate', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -1102,4 +1110,5 @@ export {
 	MakeTemplate,
 	MakeTemplateByObjectType,
 	ApplyTemplate,
+	CloneTemplate,
 };

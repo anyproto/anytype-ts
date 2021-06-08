@@ -32,6 +32,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
+		this.onClone = this.onClone.bind(this);
 	}
 
 	render (): any {
@@ -77,7 +78,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 									If you want to edit, create a Duplicate of this template.
 								</div>
 								<div className="side right">
-									<Button className="dark" text="Duplicate" />
+									<Button className="dark" text="Duplicate" onClick={this.onClone} />
 								</div>
 							</div>
 						</div>
@@ -150,7 +151,17 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			{ blockId: rootId, fields: { width: v } },
 		]);
 	};
-	
+
+	onClone (e: any) {
+		const { rootId } = this.props;
+
+		C.CloneTemplate(rootId, (message: any) => {
+			if (message.id) {
+				DataUtil.objectOpen({ id: message.id });
+			};
+		});
+	};
+
 };
 
 export default EditorHeaderPage;
