@@ -3,6 +3,7 @@
 .menus {
 	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 19; }
 	.menuWrap.fromPopup { z-index: 103; }
+	.menuWrap.fromHeader { z-index: 103; }
 
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
 	#menu-polygon { z-index: 1000; position: absolute; }
@@ -47,21 +48,14 @@
 			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;
 			background: rgba(255,255,255, 0.7);
 		}
-		
-		.filter { padding: 3px 14px 0px 14px; }
-		.filter {
-			.inner { position: relative; width: 100%; height: 28px; }
-			.input { padding: 0px; height: 22px; line-height: 22px; vertical-align: top; border: 0px; width: calc(100% - 24px); }
-			.icon.clear { 
-				width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 0px; top: 0px;
-				cursor: pointer; opacity: 0;
-			}
-			.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 
-			.line { height: 1px; margin: 0px; background: $colorLightGrey; display: block; }
+		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorDarkGrey; }
+		.tabs {
+			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
+			.tab:hover, .tab.active { color: $colorBlack; }
+			.tab:last-child { margin: 0px; }
 		}
-		.filter.active { .icon.clear { opacity: 1; } }
-
+		
 		.inputWrap { padding: 0px 14px 8px 14px; }
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 	
@@ -75,22 +69,13 @@
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
 			transition: background 0.2s ease-in-out; pointer-events: none;
 		}
-		.item.hover::before { background: rgba(172, 169, 150, 0.15); }
+		.item.hover::before { background: rgba(172, 169, 150, 0.1); }
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
 		.item.isReadOnly.hover::before { opacity: 0; }
 
-		.item.active::before { background: rgba(172, 169, 150, 0.15); z-index: 0; }
-		.item.active {
-			.name { z-index: 1; }
-		}
-
-		.item.add { color: $colorDarkGrey; line-height: 20px; }
-		.item.add:hover { color: $colorBlack; }
-		.item.add:hover {
-			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-		}
+		.item.add { color: #929082; line-height: 20px; }
 		
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; }
@@ -103,8 +88,9 @@
 				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
-			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.15); }
+			.icon.delete:hover, .icon.more:hover { background-color: rgba(172, 169, 150, 0.1); }
 			.icon.arrow { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
+			.icon.chk { position: absolute; right: 10px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 
 			.buttons { flex-shrink: 0; margin-top: -2px; }
 			.buttons {
@@ -114,15 +100,16 @@
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 		}
 
-		.item.empty { color: $colorDarkGrey; }
+		.item.empty { color: $colorDarkGrey; cursor: default; }
 		
 		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {
 			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
-			.descr { @include text-small; height: 18px; color: #6c6a5f; }
+			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: #6c6a5f; }
 			.descr:empty { display: none; }
-			.info { padding-left: 52px; line-height: 40px; }
-			.name { line-height: 22px; }
+			.info { padding-left: 52px; line-height: 40px; width: 100%; }
+			.txt { width: 100%; }
+			.name { line-height: 20px; }
 		}
 
 		.item.withCaption { display: flex; }
@@ -130,21 +117,21 @@
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { width: calc(100% - 108px); margin-right: 6px; display: flex; }
+			.clickable { width: calc(100% - 68px); margin-right: 6px; display: flex; }
 			.clickable {
 				.name { margin: 0px; width: 100%; }
 			}
 
 			.caption { 
-				width: 80px; @include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
-				flex-shrink: 0;
+				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
+				flex-shrink: 0; line-height: 20px;
 			}
 		}
 
 		.line { height: 1px; margin: 8px 14px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
-		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; }
+		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }
 		.section::after {
@@ -153,7 +140,7 @@
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; }
+		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; font-weight: 500; }
 	}
 
 	.menu.horizontal {
@@ -177,6 +164,10 @@
 
 	.menu.orange {
 		.item.active { color: #e89d00; }
-		.item.active::before { opacity: 1; background: #fef3c5; color: #e89d00; }
+		.item.active::before { opacity: 0; }
+		.item.active { background: #fef3c5; color: #e89d00; }
+		.item.active {
+			.icon.chk { display: none; }
+		}
 	}
 }

@@ -18,7 +18,7 @@ class ListMenu extends React.Component<Props, {}> {
 		return (
 			<div className="menus">
 				{list.map((item: I.Menu, i: number) => (
-					<Menu history={history} key={i} {...item} />
+					<Menu history={history} key={item.id} {...item} />
 				))}
 				<div id="menu-polygon" />
 			</div>

@@ -2,14 +2,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, Loader, Block, Pager } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
+};
+
+interface State {
+	templates: any[];
 };
 
 const $ = require('jquery');
@@ -18,19 +22,25 @@ const EDITOR_IDS = [ 'name', 'description' ];
 const Constant = require('json/constant.json');
 
 @observer
-class PageMainType extends React.Component<Props, {}> {
+class PageMainType extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
 	timeout: number = 0;
+	page: number = 0;
+
+	state = {
+		templates: [],
+	};
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.onObjectAdd = this.onObjectAdd.bind(this);
 	};
 
 	render () {
@@ -40,8 +50,9 @@ class PageMainType extends React.Component<Props, {}> {
 
 		const { config } = commonStore;
 		const { isPopup } = this.props;
+		const { templates } = this.state;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(blockStore.getDetails(rootId, rootId));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
@@ -49,7 +60,12 @@ class PageMainType extends React.Component<Props, {}> {
 			name: Constant.default.nameType,
 			description: 'Add a description',
 		};
-		const title = blockStore.getLeaf(rootId, 'title');
+		const title = blockStore.getLeaf(rootId, Constant.blockId.title);
+		const type: any = dbStore.getObjectType(object.id) || {};
+		const canCreate = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
+
+		const isFirst = this.page == 0;
+		const isLast = this.page == this.getMaxPage();
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -88,6 +104,7 @@ class PageMainType extends React.Component<Props, {}> {
 						suppressContentEditableWarning={true}
 						onFocus={(e: any) => { this.onFocus(e, item); }}
 						onBlur={(e: any) => { this.onBlur(e, item); }}
+						onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
 						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
 						onInput={(e: any) => { this.onInput(e, item); }}
 						onSelect={(e: any) => { this.onSelectText(e, item); }}
@@ -101,7 +118,7 @@ class PageMainType extends React.Component<Props, {}> {
 
 		const Relation = (item: any) => (
 			<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-				<div className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
+				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
@@ -110,7 +127,7 @@ class PageMainType extends React.Component<Props, {}> {
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={(e: any) => { this.onRelationAdd(e); }}>
 				<div className="clickable">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -120,7 +137,7 @@ class PageMainType extends React.Component<Props, {}> {
 		);
 
 		const Row = (item: any) => {
-			const author = blockStore.getDetails(rootId, item.creator);
+			const author = detailStore.get(rootId, item.creator, []);
 			return (
 				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
@@ -157,21 +174,46 @@ class PageMainType extends React.Component<Props, {}> {
 						<div className="side left">
 							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
-						<div className="side right">
+						<div className="side center">
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+						</div>
+						<div className="side right">
+							{canCreate ? <Button text="Create" className="orange" onClick={this.onObjectAdd} /> : ''}
 						</div>
 					</div>
-					
+
+					{templates.length ? (
+						<div className="section template">
+							<div className="title">{templates.length} templates</div>
+							<div className="content">
+								<div id="scrollWrap" className="wrap">
+									<div id="scroll" className="scroll">
+										{templates.map((item: any, i: number) => (
+											<ObjectPreviewBlock 
+												key={item.id} 
+												rootId={item.id} 
+												onClick={(e: any) => { DataUtil.objectOpenPopup(item); }} 
+											/>
+										))}
+									</div>
+								</div>
+
+								<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
+								<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />
+							</div>
+						</div>	
+					) : ''}
+
 					<div className="section note dn">
 						<div className="title">Notes</div>
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
 					<div className="section relation">
-						<div className="title">Recommended relations</div>
+						<div className="title">{relations.length} relations</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
@@ -181,7 +223,7 @@ class PageMainType extends React.Component<Props, {}> {
 					</div>
 
 					<div className="section set">
-						<div className="title">Set of objects</div>
+						<div className="title">{total} objects</div>
 						<div className="content">
 							<table>
 								<thead>
@@ -216,6 +258,8 @@ class PageMainType extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
+
+				<Footer {...this.props} rootId={rootId} />
 			</div>
 		);
 	};
@@ -236,21 +280,11 @@ class PageMainType extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { isPopup, match } = this.props;
-		const rootId = this.getRootId();
-
 		this._isMounted = false;
-		this.save();
+		this.close();
+
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (close) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
-		};
 	};
 
 	open () {
@@ -280,7 +314,38 @@ class PageMainType extends React.Component<Props, {}> {
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
 			};
+
+			this.loadTemplates();
 		});
+	};
+
+	loadTemplates () {
+		const rootId = this.getRootId();
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+		];
+		const sorts = [
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+		];
+
+		C.ObjectSearch(filters, sorts, '', 0, 0, (message: any) => {
+			this.setState({ templates: message.records });
+		});
+	};
+
+	close () {
+		const { isPopup, match } = this.props;
+		const rootId = this.getRootId();
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId);
+		};
 	};
 
 	onSelect (icon: string) {
@@ -293,14 +358,26 @@ class PageMainType extends React.Component<Props, {}> {
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 
-	onAdd (e: any) {
+	onObjectAdd () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+		const details: any = {
+			type: rootId,
+			layout: object.recommendedLayout,
+		};
+
+		DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', (message: any) => {
+			DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+		});
+	};
+
+	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: $(e.currentTarget),
 			offsetX: 32,
-			offsetY: 4,
 			data: {
 				filter: '',
 				rootId: rootId,
@@ -316,12 +393,11 @@ class PageMainType extends React.Component<Props, {}> {
 		});
 	};
 
-	onEdit (e: any, relationKey: string) {
+	onRelationEdit (e: any, relationKey: string) {
 		const rootId = this.getRootId();
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
@@ -348,6 +424,16 @@ class PageMainType extends React.Component<Props, {}> {
 
 	onInput (e: any, item: any) {
 		this.placeHolderCheck(item.id);
+	};
+
+	onKeyDown (e: any, item: any) {
+		this.placeHolderCheck(item.id);
+
+		if (item.id == 'name') {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				e.preventDefault();
+			});
+		};
 	};
 
 	onKeyUp (e: any, item: any) {
@@ -432,6 +518,35 @@ class PageMainType extends React.Component<Props, {}> {
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getMaxPage () {
+		return Math.ceil(this.state.templates.length / 2) - 1;
+	};
+
+	onArrow (dir: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('#scrollWrap');
+		const scroll = node.find('#scroll');
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+		const w = wrap.width();
+		const max = this.getMaxPage();
+
+		this.page += dir;
+		this.page = Math.min(max, Math.max(0, this.page));
+
+		arrowLeft.removeClass('dn');
+		arrowRight.removeClass('dn');
+
+		if (this.page == 0) {
+			arrowLeft.addClass('dn');
+		};
+		if (this.page == max) {
+			arrowRight.addClass('dn');
+		};
+
+		scroll.css({ transform: `translate3d(${-this.page * (w + 16)}px,0px,0px` });
 	};
 
 };

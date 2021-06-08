@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject } from 'ts/component';
 import { I, DataUtil } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -18,19 +18,17 @@ class BlockIconPage extends React.Component<Props, {}> {
 
 	render (): any {
 		const { rootId, readOnly } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
 		
 		return (
 			<React.Fragment>
 				<IconObject 
 					id={'block-icon-' + rootId} 
 					canEdit={!readOnly} 
-					object={details} 
+					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
 					offsetX={0} 
 					offsetY={16} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
-					menuId="smile"
 					size={96} 
 				/>
 			</React.Fragment>

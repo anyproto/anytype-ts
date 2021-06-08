@@ -14,6 +14,7 @@
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
 	"commonValue": { "en": "Value" },
+	"commonProgress": { "en": "Processing..." },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -36,7 +37,7 @@
 	"day6": { "en": "Friday" },
 	"day7": { "en": "Saturday" },
 
-	"relationName0": { "en": "Long text" },
+	"relationName0": { "en": "Text" },
 	"relationName1": { "en": "Short text" },
 	"relationName2": { "en": "Number" },
 	"relationName3": { "en": "Status" },
@@ -123,13 +124,13 @@
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
 
-	"blockNameHeader1": { "en": "Header 1" },
+	"blockNameHeader1": { "en": "Title" },
 	"blockTextHeader1": { "en": "Big headline of a chapter, paragraph or section" },
 
-	"blockNameHeader2": { "en": "Header 2" },
+	"blockNameHeader2": { "en": "Heading" },
 	"blockTextHeader2": { "en": "Medium headline" },
 
-	"blockNameHeader3": { "en": "Header 3" },
+	"blockNameHeader3": { "en": "Subheading" },
 	"blockTextHeader3": { "en": "Small headline" },
 
 	"blockNameQuote": { "en": "Highlighted" },
@@ -177,6 +178,9 @@
 	"blockNameRelation": { "en": "Relation" },
 	"blockTextRelation": { "en": "Meaningful connection between objects" },
 
+	"blockNameNewRelation": { "en": "New relation" },
+	"blockTextNewRelation": { "en": "Meaningful connection between objects" },
+
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },
@@ -189,7 +193,8 @@
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
 	"blockCoverUpdate": { "en": "Update cover" },
-	"blockCover": { "en": "" },
+
+	"blockFileError": { "en": "There was an error uploading the file" },
 
 	"popupSettingsTitle": { "en": "Settings" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
@@ -254,13 +259,14 @@
 	"popupNavigationOpen": { "en": "Open" },
 	"popupNavigationMove": { "en": "Move to" },
 	"popupNavigationLink": { "en": "Link" },
-	"popupNavigationPlaceholder": { "en": "Search for a page..." },
 	"popupNavigationCancel": { "en": "Cancel" },
 	"popupNavigationLinkFrom": { "en": "Link from page" },
 	"popupNavigationLinkTo": { "en": "Link to page" },
 	"popupNavigationEmptyTo": { "en": "No links to this page" },
 	"popupNavigationEmptyFrom": { "en": "No links to other pages" },
-	"popupNavigationEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else." },
+
+	"popupSearchPlaceholder": { "en": "Search for an object..." },
+	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else." },
 
 	"popupConfirmUpdateTitle": { "en": "Oops!" },
 	"popupConfirmUpdateText": { "en": "Can’t check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
@@ -300,19 +306,24 @@
 	"linkPreviewEdit": { "en": "Edit link" },
 	"linkPreviewUnlink": { "en": "Unlink" },
 
-	"filterConditionEqual": { "en": "is exactly" },
-	"filterConditionNotEqual": { "en": "is not" },
-	"filterConditionGreater": { "en": "is greater" },
-	"filterConditionLess": { "en": "is less" },
-	"filterConditionGreaterOrEqual": { "en": "is greater or equal" },
-	"filterConditionLessOrEqual": { "en": "is less or equal" },
-	"filterConditionLike": { "en": "contains" },
-	"filterConditionNotLike": { "en": "doesn't contain" },
-	"filterConditionEmpty": { "en": "is empty" },
-	"filterConditionNotEmpty": { "en": "is not empty" },
-	"filterConditionAllIn": { "en": "has all of" },
-	"filterConditionInArray": { "en": "has any of" },
-	"filterConditionNotInArray": { "en": "has none of" },
+	"filterConditionNone": { "en": "All" },
+	"filterConditionEqual": { "en": "Is" },
+	"filterConditionNotEqual": { "en": "Is not" },
+	"filterConditionGreater": { "en": "Is greater" },
+	"filterConditionGreaterDate": { "en": "Is after" },
+	"filterConditionLess": { "en": "Is less" },
+	"filterConditionLessDate": { "en": "Is before" },
+	"filterConditionGreaterOrEqual": { "en": "Is greater or equal" },
+	"filterConditionGreaterOrEqualDate": { "en": "Is on or after" },
+	"filterConditionLessOrEqual": { "en": "Is less or equal" },
+	"filterConditionLessOrEqualDate": { "en": "Is on or before" },
+	"filterConditionLike": { "en": "Contains" },
+	"filterConditionNotLike": { "en": "Doesn't contain" },
+	"filterConditionEmpty": { "en": "Is empty" },
+	"filterConditionNotEmpty": { "en": "Is not empty" },
+	"filterConditionAllIn": { "en": "Has all of" },
+	"filterConditionInArray": { "en": "Has any of" },
+	"filterConditionNotInArray": { "en": "Has none of" },
 
 	"inputWithFileTextUrl": { "en": "Paste a link" },
 

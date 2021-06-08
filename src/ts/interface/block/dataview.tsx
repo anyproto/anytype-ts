@@ -31,19 +31,21 @@ export enum FilterOperator {
 };
 
 export enum FilterCondition { 
-	Equal			 = 0,
-	NotEqual		 = 1,
-	Greater			 = 2,
-	Less			 = 3,
-	GreaterOrEqual	 = 4,
-	LessOrEqual		 = 5,
-	Like			 = 6,
-	NotLike			 = 7,
-	In				 = 8,
-	NotIn			 = 9,
-	Empty			 = 10,
-	NotEmpty		 = 11,
-	AllIn			 = 12,
+	None			 = 0,
+	Equal			 = 1,
+	NotEqual		 = 2,
+	Greater			 = 3,
+	Less			 = 4,
+	GreaterOrEqual	 = 5,
+	LessOrEqual		 = 6,
+	Like			 = 7,
+	NotLike			 = 8,
+	In				 = 9,
+	NotIn			 = 10,
+	Empty			 = 11,
+	NotEmpty		 = 12,
+	AllIn			 = 13,
+	NotAllIn		 = 14,
 };
 
 export interface Sort {
@@ -80,7 +82,7 @@ export interface ViewComponent {
 	getView?(): View;
 	onRowAdd?: (e: any) => void;
 	onCellClick?(e: any, key: string, index: number): void;
-	onCellChange?: (id: string, key: string, value: any) => void;
+	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -103,6 +105,7 @@ export interface Cell {
 	index?: number;
 	viewType: I.ViewType;
 	readOnly?: boolean;
+	canOpen?: boolean;
 	canEdit?: boolean;
 	scrollContainer?: string;
 	pageContainer?: string;
@@ -110,9 +113,11 @@ export interface Cell {
 	iconSize?: number;
 	getView?(): View;
 	getRecord(index: number): any;
-	onChange?(data: any): void;
+	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
-	onCellChange?: (id: string, key: string, value: any) => void;
+	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
+	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 };
 
 export interface ContentDataview {

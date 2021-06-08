@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.BlockComponent {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
 @observer
@@ -30,7 +29,7 @@ class BlockBookmark extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const { url, title, description, imageHash, faviconHash } = content;
-		
+
 		let element = null;
 		if (url) {
 			let style: any = {};

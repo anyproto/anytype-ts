@@ -1,13 +1,22 @@
 import * as React from 'react';
-import { InputWithFile, IconObject } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { IconObject } from 'ts/component';
+import { I, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 
 interface Props extends I.Cell {};
+interface State { 
+	editing: boolean; 
+};
+
+const $ = require('jquery');
 
 @observer
-class CellFile extends React.Component<Props, {}> {
+class CellFile extends React.Component<Props, State> {
+
+	state = {
+		editing: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -23,23 +32,21 @@ class CellFile extends React.Component<Props, {}> {
 		};
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
 		if (!value.length) {
 			return <div className="empty">Add a file</div>;
 		};
 
-		const Item = (item: any) => {
-			return(
-				<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
-					<div className="flex">
-						<IconObject object={item} size={iconSize} />
-						<div className="name">{item.name}</div>
-					</div>
+		const Item = (item: any) => (
+			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
+				<div className="flex">
+					<IconObject object={item} size={iconSize} />
+					<div className="name">{item.name + (item.fileExt ? `.${item.fileExt}` : '')}</div>
 				</div>
-			);
-		};
+			</div>
+		);
 
 		return (
 			<div className="wrap">
@@ -48,6 +55,27 @@ class CellFile extends React.Component<Props, {}> {
 				))}
 			</div>
 		);
+	};
+
+	componentDidUpdate () {
+		const { editing } = this.state;
+		const { id } = this.props;
+		const cell = $('#' + id);
+
+		if (editing) {
+			cell.addClass('isEditing');
+		} else {
+			cell.removeClass('isEditing');
+		};
+	};
+
+	setEditing (v: boolean) {
+		const { canEdit } = this.props;
+		const { editing } = this.state;
+
+		if (canEdit && (v != editing)) {
+			this.setState({ editing: v });
+		};
 	};
 
 	getValue () {
@@ -62,9 +90,9 @@ class CellFile extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any, item: any) {
-		const { canEdit } = this.props;
+		const { canOpen, canEdit } = this.props;
 
-		if (!canEdit) {
+		if (canOpen && !canEdit) {
 			e.stopPropagation();
 			DataUtil.objectOpenPopup(item);
 		};

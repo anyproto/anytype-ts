@@ -3,17 +3,19 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { HeaderMainHistory as Header, Block, Loader, Icon } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, M, C, Util, dispatcher, Storage } from 'ts/lib';
+import { I, M, C, Util, DataUtil, dispatcher, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { DataUtil } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> { };
 
 interface State {
 	versions: I.HistoryVersion[];
+	loading: boolean;
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
+
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
 
@@ -22,17 +24,19 @@ class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
 		versions: [] as I.HistoryVersion[],
+		loading: false,
 	};
 	
 	version: I.HistoryVersion = null;
 	refHeader: any = null;
 	scrollLeft: number = 0;
 	scrollRight: number = 0;
-	loading: boolean = false;
 	lastId: string = '';
 
 	constructor (props: any) {
 		super(props);
+
+		this.getWrapperWidth = this.getWrapperWidth.bind(this);
 	};
 
 	render () {
@@ -40,8 +44,8 @@ class PageMainHistory extends React.Component<Props, State> {
 		const { versions } = this.state;
 		const rootId = match.params.id;
 		const groups = this.groupData(versions);
-
 		const root = blockStore.getLeaf(rootId, rootId);
+
 		if (!this.version || !root) {
 			return <Loader />;
 		};
@@ -49,7 +53,6 @@ class PageMainHistory extends React.Component<Props, State> {
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
-		const length = childrenIds.length;
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper', check.className ];
@@ -79,7 +82,7 @@ class PageMainHistory extends React.Component<Props, State> {
 				<React.Fragment>
 					<div id={'item-' + item.id} className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} onClick={(e: any) => { this.loadVersion(item.id); }}>
 						{withChildren ? <Icon className="arrow" onClick={(e: any) => { this.toggleChildren(e, item.id); }} /> : ''}
-						<div className="date">{Util.date('d F, H:i', item.time)}</div>
+						<div className="date">{Util.date('d F, H:i', item.time, true)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
 
@@ -126,6 +129,7 @@ class PageMainHistory extends React.Component<Props, State> {
 												onKeyUp={() => {}} 
 												onMenuAdd={() => {}}
 												onPaste={() => {}}
+												getWrapperWidth={this.getWrapperWidth}
 												readOnly={true}
 											/>
 										)
@@ -274,18 +278,18 @@ class PageMainHistory extends React.Component<Props, State> {
 	
 	loadList (lastId: string) { 
 		const { match } = this.props;
-		const { versions } = this.state;
+		const { versions, loading } = this.state;
 		const rootId = match.params.id;
 		
-		if (this.loading || (this.lastId && (lastId == this.lastId))) {
+		if (loading || (this.lastId && (lastId == this.lastId))) {
 			return;
 		};
 
-		this.loading = true;
+		this.setState({ loading: true });
 		this.lastId = lastId;
 
 		C.HistoryVersions(rootId, lastId, LIMIT, (message: any) => {
-			this.loading = false;
+			this.setState({ loading: false });
 
 			if (message.error.code || !message.versions.length) {
 				return;
@@ -381,6 +385,10 @@ class PageMainHistory extends React.Component<Props, State> {
 
 		sideLeft.css({ height: height });
 		sideRight.css({ height: height });
+	};
+
+	getWrapperWidth (): number {
+		return Constant.size.editor;
 	};
 
 };

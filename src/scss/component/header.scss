@@ -2,7 +2,7 @@
 
 .header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; user-select: none; }
 .header {
-	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; margin-right: 12px; -webkit-app-region: no-drag; }
+	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; -webkit-app-region: no-drag; }
 	.icon.back { margin-right: 8px; }
 	
 	.icon.logo {
@@ -13,7 +13,7 @@
 	.path { white-space: nowrap; }
 	.path {
 		.item { 
-			display: inline-block; vertical-align: top; color: #6c6a5f; margin-right: 6px; cursor: pointer; 
+			display: inline-block; vertical-align: top; color: #929082; margin-right: 6px; cursor: pointer; 
 			transition: color 0.2s ease-in-out; 
 		}
 		.item {
@@ -43,25 +43,25 @@
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
-	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
+	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 
 	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
 
 	.side.left { left: 6px; z-index: 1; }
 
-	.side.center { width: 512px; height: 28px; left: 50%; margin-left: -256px; white-space: nowrap; }
+	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; }
 
-	.side.right { right: 6px; z-index: 1; }
+	.side.right { right: 10px; z-index: 1; }
 	.side.right {
-		.sync { margin: 5px 8px 0px 0px; cursor: pointer; vertical-align: top; }
+		.sync { margin: 5px 16px 0px 0px; cursor: pointer; vertical-align: top; }
 		.icon { margin: 0px; }
 	}
 }
 
-.header.headerMainIndex { height: 38px; background: rgba(44,43,39,0.1); }
+.header.headerMainIndex { height: 38px; background: rgba(0,0,0,0.3); }
 .header.headerMainIndex {
-	.icon { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.side.center { 
@@ -73,26 +73,31 @@
 .header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 
-	.icon.big { width: 40px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon.big:hover, .icon.big.active { background-color: #f3f2ec; }
+	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
+	.icon.big.home { width: 32px; margin-right: 10px; }
+	.icon.big.nav { width: 32px; margin-left: 10px; }
+	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
 
 	.path { 
-		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px;
+		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
-		.item { line-height: 20px; vertical-align: middle; }
+		.item { line-height: 20px; vertical-align: middle; max-width: 100%; text-align: left; }
+		.item {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-overflow-nw; width: 100%; }
+		}
 	}
 	.path * { pointer-events: all; }
 
-	.side.left { opacity: 0; transition: $transitionFast; }
+	.side.left { transition: $transitionFast; }
 	.side.left {
-		.icon { margin: 0px; }
-		.icon.back, .icon.forward { width: 32px; }
+		.icon.back { margin: 0px; }
 	}
 
 	.side.center {
-		.icons { margin-left: 6px; display: inline-block; vertical-align: middle; }
+		.icons { margin-left: 6px; display: inline-block; vertical-align: top; }
 
 		.icon { margin: 0px; opacity: 0; }
 		.icon.plus {
@@ -148,11 +153,15 @@
 
 html.platformMac {
 	.header {
-		.side.left { left: 90px; }
+		.side.left { left: 88px; }
 	}
+}
 
-	.header.headerMainHistory {
-		.side.left { left: 80px; }
+html.platformMac.version11 {
+	.header { height: 52px !important; line-height: 28px; }
+	.header {
+		.side { top: 12px; }
+		.side .item { vertical-align: middle; display: inline-block; }
 	}
 }
 
@@ -163,7 +172,6 @@ body.fullScreen {
 }
 
 .header.headerMainEdit:hover, .header.headerMainEdit.active, .header.headerMainEdit.show {
-	.side.left { opacity: 1; }
 	.side.center {
 		.icon { opacity: 1; }
 		.icon.dis { opacity: 0.5; }

@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I } from 'ts/lib';
-import { authStore, popupStore, blockStore } from 'ts/store';
+import { I, Util } from 'ts/lib';
+import { authStore, popupStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
 };
 
-const { ipcRenderer } = window.require('electron');
+const { ipcRenderer, remote } = window.require('electron');
 const Url = require('json/url.json');
-const Constant = require('json/constant.json');
+const { app, process } = remote;
+const version = app.getVersion();
+const systemVersion = process.getSystemVersion();
 
 class MenuHelp extends React.Component<Props, {}> {
 
@@ -42,7 +44,7 @@ class MenuHelp extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { account } = authStore;
 		const { profile } = blockStore;
-		const object = blockStore.getDetails(profile, profile);
+		const object = detailStore.get(profile, profile);
 
 		this.props.close();
 
@@ -58,7 +60,8 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 
 			case 'feedback':
-				popupStore.open('feedback', {});
+				//popupStore.open('feedback', {});
+				ipcRenderer.send('urlOpen', Util.sprintf(Url.feedbackForm, account.id, systemVersion, version, Util.getPlatform()));
 				break;
 
 			case 'community':

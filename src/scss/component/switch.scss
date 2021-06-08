@@ -1,17 +1,18 @@
 @import "~scss/_vars";
 
 .switch { 
-	width: 28px; height: 16px; background: #e0ded2; border-radius: 16px; position: relative; cursor: pointer; 
+	width: 26px; height: 16px; background: #e0ded2; border-radius: 16px; position: relative; cursor: pointer; 
 	display: inline-block; vertical-align: middle;
 }
 .switch {
 	.inner { 
 		width: 12px; height: 12px; border-radius: 100%; background: #fff; position: absolute; left: 2px; top: 2px;
-		transition: $transitionFast;
+		transition: $transitionFast; box-shadow: 0px 0px 0px 0.5px rgba(0, 0, 0, 0.1);
 	}	
 }
 .switch.active { background: #6c6a5f; }
 .switch.green.active { background: $colorLime; }
+.switch.orange.active { background: #ffd15b; }
 
 .switch.active {
 	.inner { left: auto; right: 2px; }

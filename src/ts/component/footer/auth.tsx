@@ -19,7 +19,7 @@ class FooterAuth extends React.Component<Props, {}> {
 		return (
 			<div className="footer">
 				<div className="copy">{Util.date('Y', date)}, Anytype</div>
-				<Icon id="button-help" menuId="help" className="help light" onMouseDown={this.onHelp} />
+				<Icon id="button-help" className="help light"  tooltip="Help" onClick={this.onHelp} />
 			</div>
 		);
 	};
@@ -27,7 +27,6 @@ class FooterAuth extends React.Component<Props, {}> {
 	onHelp () {
 		menuStore.open('help', {
 			element: '#button-help',
-			offsetY: 4,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right
 		});

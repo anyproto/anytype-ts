@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, IconObject } from 'ts/component';
 import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -89,11 +89,7 @@ class MenuObjectValues extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-
-		const items = this.getItems();
-		if (!items.length) {
-			this.onAdd();
-		};
+		this.onAdd();
 	};
 
 	componentDidUpdate () {
@@ -122,7 +118,7 @@ class MenuObjectValues extends React.Component<Props> {
 		const { rootId } = data;
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 		
 		if (!config.debug.ho) {
@@ -139,7 +135,7 @@ class MenuObjectValues extends React.Component<Props> {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		return Util.objectCopy(value);
+		return Util.objectCopy(Util.arrayUnique(value));
 	};
 
 	onClick (e: any, item: any) {
@@ -161,23 +157,20 @@ class MenuObjectValues extends React.Component<Props> {
 		const { param, getId, close } = this.props;
 		const { data } = param;
 
-		if (menuStore.isOpen('dataviewObjectList')) {
-			return;
-		};
-
-		window.setTimeout(() => {
-			menuStore.open('dataviewObjectList', {
-				element: `#${getId()} #item-add`,
-				width: 0,
-				offsetX: param.width,
-				offsetY: -36,
-				onClose: () => { close(); },
-				data: {
-					...data,
-					rebind: this.rebind,
-				},
-			});
-		}, Constant.delay.menu);
+		menuStore.open('dataviewObjectList', {
+			element: `#${getId()} #item-add`,
+			width: 0,
+			offsetX: param.width,
+			offsetY: -36,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
+			onClose: () => { close(); },
+			data: {
+				...data,
+				rebind: this.rebind,
+			},
+		});
 	};
 
 	onRemove (e: any, item: any) {

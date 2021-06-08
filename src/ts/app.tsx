@@ -4,7 +4,7 @@ import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListMenu, Progress, Tooltip, LinkPreview, Icon } from './component';
-import { commonStore, authStore, blockStore, dbStore, menuStore, popupStore } from './store';
+import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
@@ -35,19 +35,23 @@ import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
 import 'scss/component/linkPreview.scss';
+import 'scss/component/objectPreviewBlock.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
+import 'scss/component/filter.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 import 'scss/page/main/history.scss';
 import 'scss/page/main/set.scss';
+import 'scss/page/main/newset.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/store.scss';
+import 'scss/page/main/media.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -69,6 +73,7 @@ import 'scss/block/iconUser.scss';
 import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
 import 'scss/block/featured.scss';
+import 'scss/block/type.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -114,6 +119,7 @@ import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/option.scss';
 import 'scss/menu/dataview/media.scss';
 import 'scss/menu/dataview/text.scss';
+import 'scss/menu/dataview/view.scss';
 
 import 'scss/media/print.scss';
 import 'scss/media/dark.scss';
@@ -125,27 +131,30 @@ interface State {
 	loading: boolean;
 };
 
-const THROTTLE = 20;
-const Constant =  require('json/constant.json');
 const $ = require('jquery');
+const path = require('path');
+const { app, dialog, process } = window.require('electron').remote;
+const version = app.getVersion();
+const userPath = app.getPath('userData');
 const { ipcRenderer } = window.require('electron');
 const fs = window.require('fs');
 const memoryHistory = require('history').createMemoryHistory;
 const history = memoryHistory();
+const Constant =  require('json/constant.json');
+
+const THROTTLE = 20;
 const Routes: RouteElement[] = require('json/route.json');
 const rootStore = {
 	commonStore,
 	authStore,
 	blockStore,
+	detailStore,
 	dbStore,
 	menuStore,
 	popupStore,
 };
 
-const path = require('path');
-const { app } = window.require('electron').remote;
-const version = app.getVersion();
-const userPath = app.getPath('userData');
+console.log('[OS Version]', process.getSystemVersion());
 
 /*
 enableLogging({
@@ -362,11 +371,13 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, data: any) => {
+		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
+			param = param || {};
+			param.data = param.data || {};
+			param.data.rootId = keyboard.getRootId();
+
 			popupStore.closeAll();
-			window.setTimeout(() => {
-				popupStore.open(id, { data: data });
-			}, Constant.delay.popup);
+			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
@@ -501,18 +512,63 @@ class App extends React.Component<Props, State> {
 	};
 
 	onCommand (e: any, key: string) {
-		const id = String(Storage.get('editorId') || '');
-		if (!id || keyboard.isFocused) {
-			return;
-		};
+		const rootId = keyboard.getRootId();
+
+		let options: any = {};
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(id);
+				C.BlockUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(id);
+				C.BlockRedo(rootId);
+				break;
+
+			case 'create':
+				keyboard.pageCreate();
+				break;
+
+			case 'save':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
+				break;
+
+			case 'exportTemplates':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.ExportTemplates(files[0], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
 				break;
 		};
 	};

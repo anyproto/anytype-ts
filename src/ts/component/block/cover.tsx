@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Drag, Cover, Loader } from 'ts/component';
 import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -55,20 +55,16 @@ class BlockCover extends React.Component<Props, State> {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragMove = this.onDragMove.bind(this);
 		this.onDragEnd = this.onDragEnd.bind(this);
-
-		this.onOver = this.onOver.bind(this);
-		this.onOut = this.onOut.bind(this);
 	};
 	
 	render () {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-		const { coverType, coverId } = details;
-		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ]);
+		const { coverType, coverId } = object;
+		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
-		
+
 		let elements = null;
 		if (editing) {
 			elements = (
@@ -108,7 +104,7 @@ class BlockCover extends React.Component<Props, State> {
 				</React.Fragment>
 			);
 		};
-		
+
 		return (
 			<div 
 				className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} 
@@ -116,14 +112,12 @@ class BlockCover extends React.Component<Props, State> {
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
-				onMouseOver={this.onOver}
-				onMouseOut={this.onOut}
 			>
 				{loading ? <Loader /> : ''}
-				{canEdit ? (
+				{isImage ? (
 					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				) : (
-					<Cover id="cover" type={coverType} className={coverId} />
+					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
 				{!readOnly ? (
 					<div id="elements" className="elements">
@@ -253,51 +247,49 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-		const { coverId, coverType } = details;
-		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
+		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ]);
+		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
+		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		
-		if (!node.hasClass('wrap')) {
+		if (!isImage || !node.hasClass('wrap')) {
 			return;
 		};
 		
-		this.cover = node.find('#cover');
+		this.cover = node.find('.cover');
 		
-		if (canEdit) {
-			const el = this.cover.get(0);
-			if (!el) {
-				return;
-			};
+		const el = this.cover.get(0);
+		if (!el) {
+			return;
+		};
 
-			const cb = () => {
-				const details = blockStore.getDetails(rootId, rootId);
-				const { coverScale } = details;
+		const cb = () => {
+			const object = detailStore.get(rootId, rootId, [ 'coverScale' ]);
+			const { coverScale } = object;
 
-				if (this.refDrag) {
-					this.refDrag.setValue(coverScale);
-				};
-				
-				this.rect = (node.get(0) as Element).getBoundingClientRect();
-				this.onScaleMove(coverScale);
-				this.cover.css({ opacity: 1 });
-				this.loaded = true;
+			if (this.refDrag) {
+				this.refDrag.setValue(coverScale);
 			};
 			
-			if (this.loaded) {
-				cb();
-			} else {
-				this.cover.css({ opacity: 0 });
-				el.onload = cb;
-			};
-			
-			if (coverType == I.CoverType.Upload) {
-				el.src = commonStore.imageUrl(coverId, Constant.size.cover);
-			};
+			this.rect = (node.get(0) as Element).getBoundingClientRect();
+			this.onScaleMove(coverScale);
+			this.cover.css({ opacity: 1 });
+			this.loaded = true;
+		};
+		
+		if (this.loaded) {
+			cb();
+		} else {
+			this.cover.css({ opacity: 0 });
+			el.onload = cb;
+		};
+		
+		if (coverType == I.CoverType.Upload) {
+			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
+		};
 
-			if (coverType == I.CoverType.Image) {
-				el.src = Util.coverSrc(coverId);
-			};
+		if (coverType == I.CoverType.Image) {
+			el.src = Util.coverSrc(coverId);
 		};
 	};
 	
@@ -332,11 +324,7 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-		const { coverScale } = details;
 		const { x, y} = this.setTransform(e.pageX - this.rect.x - this.x, e.pageY - this.rect.y - this.y);
-		
 		this.cx = x;
 		this.cy = y;
 	};
@@ -379,8 +367,8 @@ class BlockCover extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
-		const details = blockStore.getDetails(rootId, rootId);
-		const { coverX, coverY } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ]);
+		const { coverX, coverY } = object;
 		const value = node.find('#dragValue');
 
 		v = (v + 1) * 100;
@@ -478,14 +466,6 @@ class BlockCover extends React.Component<Props, State> {
 		return Math.min(1, Math.max(0, p));
 	};
 
-	onOver (e: any) {
-		$('.headerMainEditSearch').addClass('active');
-	};
-
-	onOut (e: any) {
-		$('.headerMainEditSearch').removeClass('active');
-	};
-	
 };
 
 export default BlockCover;

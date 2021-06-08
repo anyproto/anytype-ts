@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, dbStore, popupStore, menuStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage } from 'ts/lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -70,8 +70,86 @@ class DataUtil {
 		};
 		return icon;
 	};
-	
-	styleClassText (v: I.TextStyle): string {
+
+	blockClass (block: any) {
+		const { content } = block;
+		const { style, type, state } = content;
+
+		let c = [];
+		switch (block.type) {
+			case I.BlockType.Text:		 
+				c.push('blockText ' + this.textClass(style)); 
+				break;
+
+			case I.BlockType.Layout:	 
+				c.push('blockLayout c' + style); 
+				break;
+
+			case I.BlockType.IconPage:	 
+				c.push('blockIconPage'); 
+				break;
+
+			case I.BlockType.IconUser:	 
+				c.push('blockIconUser'); 
+				break;
+				
+			case I.BlockType.File:
+				if (state == I.FileState.Done) {
+					c.push('withFile');
+				};
+				switch (type) {
+					default: 
+					case I.FileType.File: 
+						c.push('blockFile');
+						break;
+						
+					case I.FileType.Image: 
+						c.push('blockMedia');
+						break;
+						
+					case I.FileType.Video: 
+						c.push('blockMedia');
+						break;
+				};
+				break;
+				
+			case I.BlockType.Bookmark:
+				c.push('blockBookmark');
+				break;
+			
+			case I.BlockType.Dataview:
+				c.push('blockDataview');
+				break;
+				
+			case I.BlockType.Div:
+				c.push('blockDiv c' + style);
+				break;
+				
+			case I.BlockType.Link:
+				c.push('blockLink');
+				break;
+				
+			case I.BlockType.Cover:
+				c.push('blockCover');
+				break;
+
+			case I.BlockType.Relation:
+				c.push('blockRelation');
+				break;
+
+			case I.BlockType.Featured:
+				c.push('blockFeatured');
+				break;
+
+			case I.BlockType.Type:
+				c.push('blockType');
+				break;
+		};
+
+		return c.join(' ');
+	};
+
+	textClass (v: I.TextStyle): string {
 		let c = '';
 		switch (v) {
 			default:
@@ -87,6 +165,22 @@ class DataUtil {
 			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
 			case I.TextStyle.Title:			 c = 'title'; break;
 			case I.TextStyle.Description:	 c = 'description'; break;
+		};
+		return c;
+	};
+
+	layoutClass (id: string, layout: I.ObjectLayout) {
+		let c = '';
+		switch (layout) {
+			default:
+			case I.ObjectLayout.Page:		 c = 'isPage'; break;
+			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
+			case I.ObjectLayout.Task:		 c = 'isTask'; break;
+			case I.ObjectLayout.ObjectType:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
+			case I.ObjectLayout.Set:		 c = 'isSet'; break;
+			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
+			case I.ObjectLayout.File:		 c = 'isFile'; break;
 		};
 		return c;
 	};
@@ -182,6 +276,77 @@ class DataUtil {
 		};
 		return icon;
 	};
+
+	filterConditionsByType (type: I.RelationType): any[] {
+		let ret = [
+			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
+		];
+
+		switch (type) {
+			case I.RelationType.ShortText: 
+			case I.RelationType.LongText: 
+			case I.RelationType.Url: 
+			case I.RelationType.Email: 
+			case I.RelationType.Phone: 
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,	 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Like,		 name: translate('filterConditionLike') }, 
+					{ id: I.FilterCondition.NotLike,	 name: translate('filterConditionNotLike') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				]);
+				break;
+
+			case I.RelationType.Object: 
+			case I.RelationType.Status: 
+			case I.RelationType.Tag: 
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.In,			 name: translate('filterConditionInArray') }, 
+					{ id: I.FilterCondition.AllIn,		 name: translate('filterConditionAllIn') }, 
+					{ id: I.FilterCondition.Equal,		 name: translate('filterConditionEqual') },
+					{ id: I.FilterCondition.NotIn,		 name: translate('filterConditionNotInArray') },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				]);
+				break;
+			
+			case I.RelationType.Number:
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,			 name: '=' }, 
+					{ id: I.FilterCondition.NotEqual,		 name: '≠' }, 
+					{ id: I.FilterCondition.Greater,		 name: '>' }, 
+					{ id: I.FilterCondition.Less,			 name: '<' }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: '≥' }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: '≤' },
+					{ id: I.FilterCondition.Empty,		 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,	 name: translate('filterConditionNotEmpty') },
+				]);
+				break;
+
+			case I.RelationType.Date:
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') }, 
+					{ id: I.FilterCondition.Greater,		 name: translate('filterConditionGreaterDate') }, 
+					{ id: I.FilterCondition.Less,			 name: translate('filterConditionLessDate') }, 
+					{ id: I.FilterCondition.GreaterOrEqual,	 name: translate('filterConditionGreaterOrEqualDate') }, 
+					{ id: I.FilterCondition.LessOrEqual,	 name: translate('filterConditionLessOrEqualDate') },
+					{ id: I.FilterCondition.Empty,			 name: translate('filterConditionEmpty') }, 
+					{ id: I.FilterCondition.NotEmpty,		 name: translate('filterConditionNotEmpty') },
+				]);
+				break;
+			
+			case I.RelationType.Checkbox:
+			default:
+				ret = ret.concat([ 
+					{ id: I.FilterCondition.Equal,			 name: translate('filterConditionEqual') }, 
+					{ id: I.FilterCondition.NotEqual,		 name: translate('filterConditionNotEqual') },
+				]);
+				break;
+		};
+		return ret;
+	};
 	
 	selectionGet (id: string, withChildren: boolean, props: any): string[] {
 		const { dataset } = props;
@@ -248,9 +413,14 @@ class DataUtil {
 	};
 
 	onAuth () {
+		const redirectTo = Storage.get('redirectTo');
+
+		Storage.delete('redirect');
+		Storage.delete('redirectTo');
+
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push('/main/index');
+			this.history.push(redirectTo ? redirectTo : '/main/index');
 		});
 	};
 
@@ -268,9 +438,15 @@ class DataUtil {
 	objectOpen (object: any) {
 		const { root } = blockStore;
 
+		keyboard.setSource(null);
+
 		switch (object.layout) {
 			default:
 				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
+				break;
+
+			case I.ObjectLayout.Set:
+				this.history.push('/main/set/' + object.id);
 				break;
 
 			case I.ObjectLayout.ObjectType:
@@ -280,40 +456,63 @@ class DataUtil {
 			case I.ObjectLayout.Relation:
 				this.history.push('/main/relation/' + object.id);
 				break;
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:
+				this.history.push('/main/media/' + object.id);
+				break;
+
+			case I.ObjectLayout.Store:
+				this.history.push('/main/store');
+				break;
 		};
 	};
 
 	objectOpenPopup (object: any) {
 		const popupId = 'page';
+
+		let action = '';
+
+		switch (object.layout) {
+			default:
+				action = 'edit';
+				break;
+
+			case I.ObjectLayout.Set:
+				action = 'set';
+				break;
+
+			case I.ObjectLayout.ObjectType:
+				action = 'type';
+				break;
+
+			case I.ObjectLayout.Relation:
+				action = 'relation';
+				break;
+
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:
+				action = 'media';
+				break;
+
+			case I.ObjectLayout.Store:
+				action = 'store';
+				break;
+		};
+
 		const param: any = { 
 			data: { 
 				matchPopup: { 
 					params: {
-						page: 'main', 
+						page: 'main',
+						action: action,
 						id: object.id,
 					},
 				},
 			},
 		};
 
-		switch (object.layout) {
-			default:
-				param.data.matchPopup.params.action = 'edit';
-				break;
-
-			case I.ObjectLayout.ObjectType:
-				param.data.matchPopup.params.action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				param.data.matchPopup.params.action = 'relation';
-				break;
-
-			case I.ObjectLayout.Store:
-				param.data.matchPopup.params.action = 'store';
-				break;
-		};
-
+		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		menuStore.closeAll();
 
@@ -402,7 +601,7 @@ class DataUtil {
 	};
 	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.blockUpdate(rootId, { id: rootId, layout: layout });
+		blockStore.update(rootId, { id: rootId, layout: layout });
 
 		const details = [
 			{ key: 'layout', value: layout },
@@ -415,7 +614,12 @@ class DataUtil {
 			{ key: 'layoutAlign', value: align },
 		];
 
-		C.BlockListSetAlign(rootId, [ 'title', 'description', 'featuredRelations' ], align);
+		C.BlockListSetAlign(rootId, [ 
+			Constant.blockId.title, 
+			Constant.blockId.description, 
+			Constant.blockId.featured,
+		], align);
+
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
@@ -427,7 +631,7 @@ class DataUtil {
 		if (update) {
 			block.content.text = String(text || '');
 			block.content.marks = marks || [];
-			blockStore.blockUpdate(rootId, block);
+			blockStore.update(rootId, block);
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
@@ -471,20 +675,27 @@ class DataUtil {
 		});
 	};
 
-	menuGetBlockObject () {
-		const { config } = commonStore;
-		
+	menuGetBlockMedia () {
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+		];
+		return ret.map(this.menuMapperBlock);
+	};
+
+	menuGetBlockObject () {
+		const { config } = commonStore;
+		
+		let ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
-
 		let i = 0;
+
 		if (config.allowDataview) {
-			let objectTypes = Util.objectCopy(dbStore.objectTypes);
+			let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
 			};
@@ -508,17 +719,10 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 
-	menuGetBlockRelation () {
-		return [
-			{ type: I.BlockType.Relation, id: 'relation', icon: 'relation default', lang: 'Relation' },
-		].map(this.menuMapperBlock);
-	};
-	
 	menuGetBlockOther () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		].map(this.menuMapperBlock);
 	};
 
@@ -551,12 +755,6 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 	
-	menuGetTurnObject() {
-		return [
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-		].map(this.menuMapperBlock);
-	};
-
 	menuGetTurnDiv () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
@@ -645,6 +843,15 @@ class DataUtil {
 			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
 		});
 	};
+
+	menuGetViews () {
+		return [
+			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Gallery, name: 'Gallery' },
+			{ id: I.ViewType.List, name: 'List' },
+			{ id: I.ViewType.Board, name: 'Kanban' },
+		];
+	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
 		const reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -660,9 +867,11 @@ class DataUtil {
 				} else 
 				if (c.name && c.name.match(reg)) {
 					ret = true;
+					c._sortWeight_ = 100;
 				} else 
 				if (c.description && c.description.match(reg)) {
 					ret = true;
+					c._sortWeight_ = 10;
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
@@ -672,8 +881,12 @@ class DataUtil {
 						};
 					};
 				};
-				
 				return ret; 
+			});
+			s.children.sort((c1: any, c2: any) => {
+				if (c1._sortWeight_ > c2._sortWeight_) return -1;
+				if (c1._sortWeight_ < c2._sortWeight_) return 1;
+				return 0;
 			});
 			return s.children.length > 0;
 		});
@@ -689,6 +902,7 @@ class DataUtil {
 			s.children = s.children.map((it: any, i: number) => {
 				it.itemId = it.id || i;
 				it.id = s.id + '-' + it.id;
+				it.color = it.color || s.color || '';
 				return it;
 			});
 			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
@@ -804,59 +1018,55 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const block = blockStore.getLeaf(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
-		const { iconEmoji, iconImage, coverType, coverId } = details;
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign' ]);
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
-			object: details,
+			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
-			className: [],
+			className: [ this.layoutClass(object.id, object.layout) ],
 		};
 
-		switch (block?.layout) {
+		switch (object.layout) {
 			default:
 			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
-				ret.className.push('isPage');
 				break;
 
 			case I.ObjectLayout.Human:
 				ret.withIcon = true;
-				ret.className.push('isHuman');
 				break;
 
 			case I.ObjectLayout.Task:
-				ret.className.push('isTask');
 				break;
 
 			case I.ObjectLayout.Set:
 				ret.withIcon = iconEmoji || iconImage;
-				ret.className.push('isSet');
 				break;
 
 			case I.ObjectLayout.Image:
 				ret.withIcon = true;
-				ret.className.push('isImage');
 				break;
 
 			case I.ObjectLayout.File:
 				ret.withIcon = true;
-				ret.className.push('isFile');
 				break;
 
 			case I.ObjectLayout.ObjectType:
 				ret.withIcon = true;
-				ret.className.push('isObjectType');
 				break;
 
 			case I.ObjectLayout.Relation:
 				ret.withIcon = true;
-				ret.className.push('isRelation');
 				break;
 		};
 
-		if ((details[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
+		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
+			ret.className.push('noFeatured');
+		};
+
+		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
 			ret.className.push('withDescription');
 		};
 
@@ -888,15 +1098,22 @@ class DataUtil {
 		return 0;
 	};
 
-	formatRelationValue (relation: I.Relation, value: any) {
+	formatRelationValue (relation: I.Relation, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
 				value = String(value || '');
 				break;
 
 			case I.RelationType.Number:
-			case I.RelationType.Date:
 				value = parseFloat(String(value || '0'));
+				break;
+			case I.RelationType.Date:
+				if ((value === '') || (value === undefined)) {
+					value = null;
+				};
+				if (value !== null) {
+					value = parseFloat(String(value || '0'));
+				};
 				break;
 
 			case I.RelationType.Checkbox:
@@ -912,7 +1129,7 @@ class DataUtil {
 				value = Util.arrayUnique(value);
 				value = value.map((it: any) => { return String(it || ''); });
 
-				if (relation.maxCount) {
+				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
 				};
 				break;

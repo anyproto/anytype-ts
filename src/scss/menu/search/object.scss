@@ -31,4 +31,12 @@
 			.caption { display: none; }
 		}
 	}
+
+	.menu.menuSearchObject.big { width: 360px; }
+	.menu.menuSearchObject.big {
+		.content { height: 360px !important; }
+		.item {
+			.iconObject { background: #f3f2ec; }
+		}
+	}
 }

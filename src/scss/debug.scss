@@ -21,10 +21,11 @@ html.debug {
 		.block.blockText.code {
 			.icon.codeWrap { background-color: rgba(0, 0, 255, 0.1); }
 		}
+
+		.block.blockFeatured .cellContent { background-color: rgba(0, 0, 255, 0.1) !important; }
 	}
 
 	.blockLast { background: rgba(0,0,255,0.1); }
 	
-	.focusable.isFocused { border: 1px dotted green; }
-
+	.isHidden { background: rgba(255,192,203,0.3) !important; }
 } 

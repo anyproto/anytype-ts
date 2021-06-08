@@ -20,11 +20,14 @@ import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
+import PageMainNewSet from './main/newset';
 import PageMainType from './main/type';
+import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
 
 const { ipcRenderer } = window.require('electron');
+const { process } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -45,7 +48,9 @@ const Components: any = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
+	'main/newset':			 PageMainNewSet,
 	'main/type':			 PageMainType,
+	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
 	'main/store':			 PageMainStore,
 };
@@ -80,7 +85,7 @@ class Page extends React.Component<Props, {}> {
 		
 		return (
 			<React.Fragment>
-				{!isPopup ? <ListPopup {...this.props} /> : ''}
+				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
 				<div className={'page ' + this.getClass('page')}>
 					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
 				</div>
@@ -100,6 +105,9 @@ class Page extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		popupStore.closeAll();
+		menuStore.closeAll();
 	};
 
 	getMatch () {
@@ -135,46 +143,50 @@ class Page extends React.Component<Props, {}> {
 		this.unbind();
 
 		Util.linkPreviewHide(true);
-		keyboard.setMatch(match);
+		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
-		if (!isPopup) {
-			popupStore.closeAll();
-			menuStore.closeAll();
+		if (isPopup) {
+			return;
+		};
 
-			window.setTimeout(() => {
-				if (isMain && account && !popupNewBlock) {
+		keyboard.setMatch(match);
+		popupStore.closeAll();
+		menuStore.closeAll();
+
+		window.setTimeout(() => {
+			if (isMain && account) {
+				if (!popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 				};
 
-				if (isMainIndex) {
-					if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
-						popupStore.open('confirm', {
-							data: {
-								title: 'We need your opinion',
-								text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
-								textConfirm: 'Let\'s go!',
-								textCancel: 'Skip',
-								canCancel: true,
-								onConfirm: () => {
-									ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
-									Storage.set('lastSurveyTime', Util.time());
-								},
-								onCancel: () => {
-									Storage.set('lastSurveyCanceled', 1);
-									Storage.set('lastSurveyTime', Util.time());
-								},
+				Storage.set('redirect', history.location.pathname);
+			};
+
+			if (isMainIndex) {
+				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					popupStore.open('confirm', {
+						data: {
+							title: 'We need your opinion',
+							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
+							textConfirm: 'Let\'s go!',
+							textCancel: 'Skip',
+							canCancel: true,
+							onConfirm: () => {
+								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+								Storage.set('lastSurveyTime', Util.time());
 							},
-						});
-					};
-
-					Storage.delete('redirect');
-				} else {
-					Storage.set('redirect', history.location.pathname);
+							onCancel: () => {
+								Storage.set('lastSurveyCanceled', 1);
+								Storage.set('lastSurveyTime', Util.time());
+							},
+						},
+					});
 				};
-			}, Constant.delay.popup);
-		};
 
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+				Storage.delete('redirect');
+			};
+		}, Constant.delay.popup);
+		
 	};
 	
 	unbind () {
@@ -195,21 +207,30 @@ class Page extends React.Component<Props, {}> {
 		const match = this.getMatch();
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
-		const platform = Util.getPlatform();
+		
 
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
 			Util.toCamelCase([ prefix, page, action ].join('-')),
-			Util.toCamelCase([ 'platform', platform ].join('-')),
 		].join(' ');
 	};
 	
 	setBodyClass () {
 		const { isPopup } = this.props;
 		const { config } = commonStore;
-		const cn = [ this.getClass('body') ];
+		const platform = Util.getPlatform();
+		const version = process.getSystemVersion();
+		const cn = [ 
+			this.getClass('body'), 
+			Util.toCamelCase([ 'platform', platform ].join('-')),
+		];
 		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
-		
+		const a = version.split('.');
+
+		if (a.length) {
+			cn.push('version' + a[0]);
+		};
+
 		if (config.debug.ui) {
 			cn.push('debug');
 		};

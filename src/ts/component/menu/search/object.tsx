@@ -16,7 +16,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 28;
 const LIMIT = 10;
 
 @observer
@@ -46,10 +45,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { n, loading, filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeHolder, label } = data;
+		const { value, placeHolder, label, isBig } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
 		const placeHolderFocus = data.placeHolderFocus || 'Filter objects...';
+		const rowHeight = this.getHeight();
 
 		if (!this.cache) {
 			return null;
@@ -70,6 +70,19 @@ class MenuSearchObject extends React.Component<Props, State> {
 				cn.push('active');
 			};
 
+			const props = {
+				...item,
+				object: (item.id == 'add' ? undefined : item),
+			};
+
+			if (isBig) {
+				props.withDescription = true;
+				props.iconSize = 40;
+			} else {
+				props.withCaption = true;
+				props.caption = (type ? type.name : undefined);
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -80,14 +93,9 @@ class MenuSearchObject extends React.Component<Props, State> {
 					hasFixedWidth={() => {}}
 				>
 					<MenuItemVertical 
-						id={item.id}
-						object={item.id == 'add' ? undefined : item}
-						icon={item.icon}
-						name={item.name}
+						{...props}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withCaption={true}
-						caption={type ? type.name : undefined}
 						style={param.style}
 						className={cn.join(' ')}
 					/>
@@ -108,7 +116,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
-						<Label text={Util.sprintf(translate('popupNavigationEmptyFilter'), filter)} />
+						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
 					</div>
 				) : ''}
 
@@ -132,7 +140,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 												height={height}
 												deferredMeasurmentCache={this.cache}
 												rowCount={items.length}
-												rowHeight={HEIGHT}
+												rowHeight={rowHeight}
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
@@ -160,6 +168,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { n, filter } = this.state;
 		const items = this.getItems();
+		const rowHeight = this.getHeight();
 
 		if (this.filter != filter) {
 			this.load(true);
@@ -170,7 +179,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: rowHeight,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -222,13 +231,19 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
-		const filters: any[] = data.filters || [];
+		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false }
+		].concat(data.filters || []);
+
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		].concat(data.sorts || []);
 
 		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
+		};
+		if (!config.allowDataview) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
 		};
 
 		this.setState({ loading: true });
@@ -269,9 +284,19 @@ class MenuSearchObject extends React.Component<Props, State> {
 		if (it.id == skipId) {
 			return false;
 		};
-		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
-			return false;
+
+		if (!config.allowDataview) {
+			if (it.type == Constant.typeId.template) {
+				return false;
+			};
+			if ((it.layout != I.ObjectLayout.Page) && (it.id != Constant.typeId.page)) {
+				return false;
+			};
+			if ((type == I.NavigationType.Link) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.layout) < 0)) {
+				return false;
+			};
 		};
+
 		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
 			return false;
 		};
@@ -340,9 +365,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, type, blockId, blockIds, position, onSelect } = data;
+		const { rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 
-		close();
+		if (!noClose) {
+			close();
+		};
 
 		if (onSelect) {
 			onSelect(item);
@@ -399,13 +426,20 @@ class MenuSearchObject extends React.Component<Props, State> {
 			return;
 		};
 
-		const { getId, position } = this.props;
+		const { param, getId, position } = this.props;
+		const { data } = param;
+		const { isBig } = data;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(300, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const h = this.getHeight();
+		const height = Math.max(300, Math.min(h * LIMIT, items.length * h + 16));
 
 		obj.css({ height: height });
 		position();
+	};
+
+	getHeight () {
+		return this.props.param.data.isBig ? 56 : 28;
 	};
 	
 };

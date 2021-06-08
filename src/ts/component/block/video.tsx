@@ -47,9 +47,21 @@ class BlockVideo extends React.Component<Props, {}> {
 		
 		switch (state) {
 			default:
+			case I.FileState.Error:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="video" textFile="Upload a video" accept={Constant.extension.video} onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
+					<React.Fragment>
+						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+						<InputWithFile 
+							block={block} 
+							icon="video" 
+							textFile="Upload a video" 
+							accept={Constant.extension.video} 
+							onChangeUrl={this.onChangeUrl} 
+							onChangeFile={this.onChangeFile} 
+							readOnly={readOnly} 
+						/>
+					</React.Fragment>
 				);
 				break;
 				
@@ -66,12 +78,6 @@ class BlockVideo extends React.Component<Props, {}> {
 						<Icon className="play" onClick={this.onPlay} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
-				);
-				break;
-				
-			case I.FileState.Error:
-				element = (
-					<Error text={translate('commonError')} />
 				);
 				break;
 		};
@@ -137,11 +143,19 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+		const { onKeyDown } = this.props;
+		
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
 	};
 
 	onFocus () {

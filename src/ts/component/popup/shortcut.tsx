@@ -203,7 +203,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
 						{ com: '1. + Space',		 name: 'Create a numbered list' },
 						{ com: '>  + Space',		 name: 'Create a toggle list' },
-						{ com: '```  + Space',		 name: 'Create a code block' },
+						{ com: '```',		 name: 'Create a code block' },
 					]
 				},
 			],

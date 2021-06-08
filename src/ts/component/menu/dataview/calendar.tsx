@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { I, Util, translate } from 'ts/lib';
+import { I, Util, translate, keyboard } from 'ts/lib';
 import { Select } from 'ts/component';
 import { observer } from 'mobx-react';
-
-
 
 const Constant = require('json/constant.json');
 
@@ -24,7 +22,7 @@ class MenuCalendar extends React.Component<Props, State> {
 	
 	render() {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { value } = data;
 		const items = this.getData();
 
@@ -59,6 +57,7 @@ class MenuCalendar extends React.Component<Props, State> {
 								value={String(m || '')} 
 								options={months} 
 								menuClassName="orange" 
+								menuClassNameWrap={classNameWrap}
 								menuWidth={192} 
 								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
 							/>
@@ -69,7 +68,8 @@ class MenuCalendar extends React.Component<Props, State> {
 								id="year" 
 								value={String(y || '')} 
 								options={years} 
-								menuClassName="orange center" 
+								menuClassName="orange center"
+								menuClassNameWrap={classNameWrap}
 								menuWidth={144} 
 								horizontal={I.MenuDirection.Right}
 								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
@@ -92,7 +92,19 @@ class MenuCalendar extends React.Component<Props, State> {
 						if ((d == item.d) && (m == item.m) && (y == item.y)) {
 							cn.push('active');
 						};
-						return <div key={i} className={cn.join(' ')} onClick={() => { this.setValue(Util.timestamp(y, item.m, item.d), true, true); }}>{item.d}</div>;
+						return (
+							<div 
+								key={i} 
+								className={cn.join(' ')} 
+								onMouseDown={() => { keyboard.disableBlur(true); }}
+								onClick={(e: any) => { 
+									e.stopPropagation();
+									this.setValue(Util.timestamp(y, item.m, item.d), true, true); 
+								}}
+							>
+								{item.d}
+							</div>
+						);
 					})}
 				</div>
 				<div className="line" />
@@ -131,6 +143,8 @@ class MenuCalendar extends React.Component<Props, State> {
 		if (close) {
 			this.props.close();
 		};
+
+		keyboard.disableBlur(false);
 	};
 	
 	getData () {

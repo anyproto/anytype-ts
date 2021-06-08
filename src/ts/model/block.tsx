@@ -43,10 +43,6 @@ class Block implements I.Block {
 		});
 	};
 
-	isSystem () {
-		return this.isPage() || this.isLayout();
-	};
-
 	canHaveChildren (): boolean {
 		return !this.isSystem() && (this.isTextParagraph() || this.isTextList());
 	};
@@ -92,23 +88,27 @@ class Block implements I.Block {
 	};
 
 	canCreateBlock (): boolean {
-		return !this.isTextTitle() && !this.isTextDescription() && !this.isLayoutColumn() && !this.isLayoutDiv() && !this.isLayoutHeader() && !this.isFeatured();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
+	};
+
+	isSystem () {
+		return this.isPage() || this.isLayout();
 	};
 
 	isIndentable (): boolean {
-		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode();
+		return !this.isSystem() && !this.isTextTitle() && !this.isTextDescription() && !this.isDiv() && !this.isTextHeader() && !this.isTextCode() && !this.isType();
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem();
+		return !this.isSystem() && !this.isFeatured() && !this.isTextDescription();
 	};
 	
 	isSelectable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
 	};
 	
 	isDraggable (): boolean {
-		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured();
+		return !this.isSystem() && !this.isIcon() && !this.isTextTitle() && !this.isTextDescription() && !this.isFeatured() && !this.isType();
 	};
 
 	isPage (): boolean { 
@@ -135,6 +135,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.File);
 	};
 
+	isObjectImage (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Image);
+	};
+
 	isObjectType (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.ObjectType);
 	};
@@ -144,17 +148,29 @@ class Block implements I.Block {
 	};
 
 	isObjectReadOnly (): boolean { 
-		return this.isObjectSet() || this.isObjectFile();
+		return this.isObjectSet() || this.isObjectFile() || this.isObjectImage() || this.isObjectType() || this.isObjectRelation();
 	};
 
 	isFeatured (): boolean {
 		return this.type == I.BlockType.Featured;
 	};
 
+	isDataview (): boolean {
+		return this.type == I.BlockType.Dataview;
+	};
+
+	isRelation (): boolean {
+		return this.type == I.BlockType.Relation;
+	};
+
+	isType (): boolean {
+		return this.type == I.BlockType.Type;
+	};
+
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};
-	
+
 	isLayoutRow (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Row);
 	};

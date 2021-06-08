@@ -62,6 +62,9 @@
 	.editorControls.align1 {
 		.buttons { left: 50%; padding-left: 68px; }
 	}
+	.editorControls.align2 {
+		.buttons { padding-left: 0px; }
+	}
 }
 
 .editorWrapper.withCover { padding-top: 356px; }
@@ -88,26 +91,6 @@
 }
 .editorWrapper.isHuman.withIconAndCover { padding-top: 208px; }
 
-/* Set */
-
-.editorWrapper.isSet { width: calc(100% - 192px); padding-top: 58px; }
-.editorWrapper.isSet {
-	.blocks { margin-left: 0px; }
-	.blocks {
-		.block {
-			.wrapMenu { display: none; }
-			.wrapContent { width: 100%; }
-		}
-	}
-
-	.editorControls { height: 86px; }
-}
-.editorWrapper.isSet.withIcon { padding-top: 68px; }
-.editorWrapper.isSet.withIcon {
-	.editorControls { height: 170px; }
-}
-.editorWrapper.isSet.withIconAndCover { padding-top: 232px; }
-
 .editor.help {
 	.blocks {
 		.block {
@@ -117,8 +100,7 @@
 				.note { text-align: right; color: #aca996; display: block; }
 		
 				.icon { width: 20px; height: 20px; margin-top: -4px; }
-				.icon.help { background-image: url('~img/icon/help/dark0.svg'); }
-				.icon.help:hover { background-image: url('~img/icon/help/dark0.svg'); }
+				.icon.help { background-image: url('~img/icon/help.svg'); }
 
 				.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
 		
@@ -129,4 +111,18 @@
 
 		.block.blockDiv { margin: 30px 0px; }
 	}
+}
+
+html.platformWindows {
+	.editorWrapper #editorSize { top: 78px; }
+}
+
+html.platformMac.version11 {
+	.editorWrapper.withIcon { padding-top: 136px; }
+	.editorWrapper.withCover { padding-top: 370px; }
+	.editorWrapper.withIconAndCover { padding-top: 246px; }
+
+	/* Human */
+	.editorWrapper.isHuman.withIcon { padding-top: 136px; }
+	.editorWrapper.isHuman.withIconAndCover { padding-top: 222px; }
 }

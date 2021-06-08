@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Button, Input, Cover, Loader, IconObject, Label } from 'ts/component';
+import { Icon, Input, Loader, IconObject, Label } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -21,7 +21,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant = require('json/constant.json');
 const HEIGHT = 32;
 
@@ -61,7 +60,7 @@ class PopupSearch extends React.Component<Props, State> {
 	render () {
 		const { pageId, filter, loading, showIcon, n } = this.state;
 		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, pageId);
+		const object = detailStore.get(breadcrumbs, pageId);
 		const isRoot = pageId == root;
 		const items = this.getItems();
 
@@ -84,7 +83,7 @@ class PopupSearch extends React.Component<Props, State> {
 			if (isRoot) {
 				iconSearch = <Icon key="icon-home" className="home big" />;
 			} else {
-				iconSearch = <IconObject object={details} />;
+				iconSearch = <IconObject object={object} />;
 			};
 		} else {
 			iconSearch = <Icon key="icon-search" className="search" />;
@@ -107,7 +106,7 @@ class PopupSearch extends React.Component<Props, State> {
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name}</div>
+							<div className="type descr">{type.name || Constant.default.name}</div>
 						</React.Fragment>
 					) : ''}
 
@@ -153,8 +152,8 @@ class PopupSearch extends React.Component<Props, State> {
 					{iconSearch}
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
-						value={details.name} 
-						placeHolder={translate('popupNavigationPlaceholder')} 
+						value={object.name} 
+						placeHolder={translate('popupSearchPlaceholder')} 
 						onKeyDown={this.onKeyDownSearch} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 						onFocus={this.onFocus}
@@ -164,7 +163,7 @@ class PopupSearch extends React.Component<Props, State> {
 
 				{!items.length && !loading ? (
 					<div id="empty" key="empty" className="empty">
-						<Label text={Util.sprintf(translate('popupNavigationEmptyFilter'), filter)} />
+						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
 					</div>
 				) : ''}
 				
@@ -275,11 +274,11 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, id);
+		const object = detailStore.get(breadcrumbs, id, [ 'name' ]);
 		const isRoot = id == root;
 
 		if (this.ref) {
-			this.ref.setValue(isRoot ? 'Home' : details.name);
+			this.ref.setValue(isRoot ? 'Home' : object.name);
 			this.ref.select();
 		};
 	};
@@ -435,6 +434,7 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
 		];
 		const sorts = [
@@ -442,7 +442,10 @@ class PopupSearch extends React.Component<Props, State> {
 		];
 
 		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
+		};
+		if (!config.allowDataview) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
 		};
 
 		this.setState({ loading: true, n: -1 });
@@ -518,7 +521,9 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		e.persist();
+		if (e.persist) {
+			e.persist();
+		};
 		e.stopPropagation();
 
 		const { param, close } = this.props;

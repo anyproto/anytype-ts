@@ -46,18 +46,18 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		const opts = (
 			<React.Fragment>
-				{isObject ? (
+				{/*isObject ? (
 					<React.Fragment>
 						<div className="sectionName">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
-							name={objectType ? objectType.name : 'Select object type'} 
+							name={objectType ? (objectType.name || Constant.default.name) : 'Select object type'} 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							onMouseEnter={this.onObjectType} 
-							arrow={relation && !relation.isReadOnly}
+							arrow={!this.isReadOnly()}
 						/>
 					</React.Fragment>
-				) : ''}
+				) : ''*/}
 
 				{isDate && relation ? (
 					<React.Fragment>
@@ -174,7 +174,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.menuOpen('dataviewRelationType', { 
+		this.menuOpen('relationType', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				value: this.format,
@@ -188,13 +188,12 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onObjectType (e: any) {
-		const { getId } = this.props;
-		const relation = this.getRelation();
-
-		if (relation.isReadOnly) {
+		if (this.isReadOnly()) {
 			return;
 		};
 
+		const { getId } = this.props;
+		const relation = this.getRelation();
 		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 
 		this.menuOpen('searchObject', { 
@@ -216,7 +215,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	onDateSettings (e: any) {
-		const { param, getId, getSize } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 
 		this.menuOpen('dataviewDate', { 
@@ -236,9 +235,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		param.offsetX = getSize().width;
 		param.vertical = I.MenuDirection.Center;
 
-		menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-			menuStore.open(id, param);
-		});
+		if (!menuStore.isOpen(id)) {
+			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
+				menuStore.open(id, param);
+			});
+		};
 	};
 
 	menuClose () {
@@ -344,6 +345,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
+
+		this.menuClose();
 		close();
 	};
 
@@ -379,7 +382,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { relationKey, getView } = data;
 
-		return getView().getRelation(relationKey);
+		return getView()?.getRelation(relationKey);
 	};
 
 };

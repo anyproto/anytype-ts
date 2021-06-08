@@ -1,5 +1,5 @@
 import { I, C, focus } from 'ts/lib';
-import { commonStore, authStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
@@ -7,10 +7,23 @@ const { ipcRenderer } = window.require('electron');
 class Action {
 
 	pageClose (rootId: string) {
+		const { profile } = blockStore;
+		if (rootId == profile) {
+			return;
+		};
+
 		C.BlockClose(rootId, (message: any) => {
-			blockStore.blocksClear(rootId);
-			dbStore.relationsRemove(rootId, rootId);
-			dbStore.relationsRemove(rootId, 'dataview');
+			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
+			for (let block of blocks) {
+				dbStore.relationsClear(rootId, block.id);
+				dbStore.viewsClear(rootId, block.id);
+				dbStore.metaClear(rootId, block.id);
+				dbStore.recordsClear(rootId, block.id);
+			};
+
+			blockStore.clear(rootId);
+			detailStore.clear(rootId);
+			dbStore.relationsClear(rootId, rootId);
 			authStore.threadRemove(rootId);
 		});
 	};

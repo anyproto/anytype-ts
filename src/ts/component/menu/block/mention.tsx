@@ -175,6 +175,9 @@ class MenuBlockMention extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
+		if (!config.allowDataview) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Page });
+		};
 
 		this.setState({ loading: true });
 
@@ -295,12 +298,13 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 
 		if (item.id == 'add') {
-			C.PageCreate({ name: filter.text }, (message: any) => {
+			const name = filter.text.replace(/\\/g, '');
+			C.PageCreate({ name: name }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				cb(message.pageId, (filter.text || Constant.default.name));
+				cb(message.pageId, (name || Constant.default.name));
 			});
 		} else {
 			cb(item.id, item.name);

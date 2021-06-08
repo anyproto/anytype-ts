@@ -5,10 +5,13 @@ import { translate } from 'ts/lib';
 
 interface Props {
 	className?: string;
+	inputClassName?: string;
 	placeHolder?: string;
 	placeHolderFocus?: string;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
+	onKeyDown?(e: any, v: string): void;
+	onKeyUp?(e: any, v: string): void;
 	onChange?(value: string): void;
 };
 
@@ -18,6 +21,7 @@ class Filter extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		className: '',
+		inputClassName: '',
 		placeHolder: translate('commonFilterClick'),
 	};
 	
@@ -33,7 +37,7 @@ class Filter extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { placeHolder, className } = this.props;
+		const { placeHolder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
 		const cn = [ 'filter', className ];
 
 		return (
@@ -41,10 +45,13 @@ class Filter extends React.Component<Props, {}> {
 				<div className="inner">
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
+						className={inputClassName}
 						placeHolder={placeHolder} 
 						onFocus={this.onFocus} 
 						onBlur={this.onBlur} 
 						onChange={this.onChange} 
+						onKeyDown={onKeyDown}
+						onKeyUp={onKeyUp}
 					/>
 					<Icon className="clear" onClick={this.onClear} />
 				</div>

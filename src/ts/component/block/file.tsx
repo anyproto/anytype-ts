@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
 import { I, C, Util, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, popupStore } from 'ts/store';
+import { commonStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -28,22 +28,34 @@ class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
+		const { state } = content;
 		
-		let details = blockStore.getDetails(rootId, content.hash);
-		if (details._objectEmpty_) {
-			details = Util.objectCopy(content);
-			details.type = '/file';
-			details.sizeInBytes = details.size;
+		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
+		if (object._objectEmpty_) {
+			object = Util.objectCopy(content);
+			object.sizeInBytes = object.size;
 		};
 
+		let { name, sizeInBytes } = object;
 		let element = null;
 		let cn = [ 'focusable', 'c' + id ];
 
-		switch (content.state) {
+		switch (state) {
 			default:
+			case I.FileState.Error:
 			case I.FileState.Empty:
 				element = (
-					<InputWithFile block={block} icon="file" textFile="Upload a file" onChangeUrl={this.onChangeUrl} onChangeFile={this.onChangeFile} readOnly={readOnly} />
+					<React.Fragment>
+						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
+						<InputWithFile 
+							block={block} 
+							icon="file" 
+							textFile="Upload a file" 
+							onChangeUrl={this.onChangeUrl} 
+							onChangeFile={this.onChangeFile} 
+							readOnly={readOnly} 
+						/>
+					</React.Fragment>
 				);
 				break;
 				
@@ -57,18 +69,12 @@ class BlockFile extends React.Component<Props, {}> {
 				element = (
 					<React.Fragment>
 						<span className="cp" onMouseDown={this.onOpen}>
-							<IconObject object={{ ...details }} size={24} />
-							<span className="name">{details.name}</span>
-							<span className="size">{Util.fileSize(details.sizeInBytes)}</span>
+							<IconObject object={{ ...object, layout: I.ObjectLayout.File }} size={24} />
+							<span className="name">{name}</span>
+							<span className="size">{Util.fileSize(sizeInBytes)}</span>
 						</span>
-						<span className="download" onMouseDown={this.onDownload}>{translate('blockFileDownload')}</span>
+						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>
-				);
-				break;
-				
-			case I.FileState.Error:
-				element = (
-					<Error text={translate('commonError')} />
 				);
 				break;
 		};
@@ -89,11 +95,19 @@ class BlockFile extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+		const { onKeyDown } = this.props;
+		
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
 	};
 
 	onFocus () {

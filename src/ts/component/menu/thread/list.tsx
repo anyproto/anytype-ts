@@ -36,7 +36,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 				className="item" 
 				onMouseEnter={(e: any) => { this.onMouseEnter(item.id, false); }}
 			>
-				<IconObject object={{ ...item, type: '/profile' }} />
+				<IconObject object={{ ...item, layout: I.ObjectLayout.Human }} />
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
@@ -115,7 +115,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 		};
 
 		const { param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const node = $(ReactDOM.findDOMNode(this));
 		const item = node.find('#item-' + id);
 
@@ -134,6 +134,7 @@ class MenuThreadList extends React.Component<Props, {}> {
 					offsetX: 272,
 					fixedY: top,
 					className: 'fixed',
+					classNameWrap: classNameWrap,
 					noDimmer: true,
 					data: {
 						...data,

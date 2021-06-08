@@ -13,8 +13,6 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const Constant = require('json/constant.json');
-
 @observer
 class HeadCell extends React.Component<Props, {}> {
 
@@ -55,7 +53,6 @@ class HeadCell extends React.Component<Props, {}> {
 
 		menuStore.open('dataviewRelationEdit', { 
 			element: '#' + DataUtil.cellId('head', relationKey, ''),
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				getData: getData,

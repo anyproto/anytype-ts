@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuSearchText { width: 400px; height: 44px; padding: 11px 16px; position: fixed; top: 42px !important; }
+	.menu.menuSearchText { width: 400px; height: 44px; padding: 11px 16px; position: fixed; top: 42px; }
 	.menu.menuSearchText {
 		.flex { width: 100%; }
 		.input { width: 100%; height: 22px; padding: 0px; flex: auto; width: calc(100% - 100px); }
@@ -14,5 +14,11 @@
 			.btn:last-child { margin: 0px; }
 			.btn:hover { color: $colorBlack; }
 		}
+	}
+}
+
+html.platformWindows {
+	.menus {
+		.menuSearchText { top: 72px; }
 	}
 }

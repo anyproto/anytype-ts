@@ -36,8 +36,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, isPopup } = this.props;
-		const { content } = block;
-		const { views } = content;
+		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
 			return null;
@@ -149,7 +148,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	getView () {
 		const { rootId, block } = this.props;
-		const { views } = block.content;
+		const views = dbStore.getViews(rootId, block.id);
 
 		if (!views.length) {
 			return null;
@@ -186,20 +185,16 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(rootId, block.id);
 		const record = data.find((it: any) => { return it.id == id; });
-
-		if (!record || (JSON.stringify(record[relationKey]) === JSON.stringify(value))) {
-			return;
-		};
 
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
 		dbStore.recordUpdate(rootId, block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj);
+		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

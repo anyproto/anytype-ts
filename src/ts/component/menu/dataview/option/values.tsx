@@ -88,16 +88,12 @@ class MenuOptionValues extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-
-		const items = this.getItems();
-		if (!items.length) {
-			this.onAdd();
-		};
+		this.onAdd();
 	};
 
 	componentDidUpdate () {
 		this.setActive(null, true);
-		this.props.position();
+		window.setTimeout(() => { this.props.position(); });
 	};
 
 	componentWillUnmount () {
@@ -106,12 +102,23 @@ class MenuOptionValues extends React.Component<Props> {
 	};
 
 	rebind () {
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		obj.on('click', () => { menuStore.close('dataviewOptionEdit'); });
 	};
 	
 	unbind () {
-		$(window).unbind('keydown.menu');
+		const { getId } = this.props;
+		const win = $(window);
+		const obj = $(`#${getId()}`);
+
+		win.unbind('keydown.menu');
+		obj.unbind('click');
 	};
 
 	getItems () {
@@ -137,12 +144,15 @@ class MenuOptionValues extends React.Component<Props> {
 			value = value ? [ value ] : [];
 		};
 		value = value.filter((it: string) => { return it; });
-		return value;
+		return Util.arrayUnique(value);
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		this.props.setHover((item ? item : items[this.n]), scroll);
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+		this.props.setHover(items[this.n], scroll);
 	};
 
 	onOver (e: any, item: any) {
@@ -155,42 +165,43 @@ class MenuOptionValues extends React.Component<Props> {
 		const { param, getId, close } = this.props;
 		const { data } = param;
 
-		if (menuStore.isOpen('dataviewOptionList')) {
-			return;
-		};
-
-		window.setTimeout(() => {
+		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionList', {
 				element: '#' + getId() + ' #item-add',
 				width: 0,
 				offsetX: param.width,
 				offsetY: -64,
 				passThrough: true,
+				noFlipY: true,
+				noAnimation: true,
 				onClose: () => { close(); },
 				data: {
 					...data,
 					rebind: this.rebind,
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
-			element: '#' + getId() + ' #item-' + item.id,
-			offsetX: 288,
-			vertical: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
-			data: {
-				...data,
-				option: item,
-			}
+		menuStore.close('dataviewOptionEdit', () => {
+			menuStore.open('dataviewOptionEdit', { 
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
+				noFlipY: true,
+				noAnimation: true,
+				data: {
+					...data,
+					option: item,
+				}
+			});
 		});
 	};
 

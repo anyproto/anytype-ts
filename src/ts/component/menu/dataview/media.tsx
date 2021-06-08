@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, InputWithFile, IconObject, MenuItemVertical } from 'ts/component';
+import { Icon, IconObject, MenuItemVertical } from 'ts/component';
 import { I, C, Util, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
 interface Props extends I.Menu {};
@@ -32,7 +32,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		let value = Util.objectCopy(data.value || []);
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
 
         const Handle = SortableHandle(() => (
@@ -42,7 +42,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{item.name}</div>
+				<div className="name">{item.name + (item.fileExt ? `.${item.fileExt}` : '')}</div>
 			</React.Fragment>
 		);
 
@@ -53,11 +53,12 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
         const Item = SortableElement((item: any) => {
 			let content = null;
 			let cn = [ 'item' ];
+			let name = item.name + (item.fileExt ? `.${item.fileExt}` : '');
 
 			switch (item.layout) {
 				case I.ObjectLayout.File:
 					cn.push('isFile');
-					content = <File {...item} />;
+					content = <File {...item} name={name} />;
 					break;
 
 				case I.ObjectLayout.Image:
@@ -133,20 +134,21 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
     };
 
 	onAdd (e: any) {
-		const { getId, close } = this.props;
+		const { getId, close, param } = this.props;
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #item-add`,
 			className: 'single',
-			horizontal: I.MenuDirection.Center,
+			offsetX: param.width,
+			offsetY: -36,
 			data: {
+				noClose: true,
 				placeHolderFocus: 'Find a file...',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
 				onSelect: (item: any) => {
 					this.add(item.id);
-					close();
 				}
 			}
 		});
@@ -200,7 +202,6 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 		menuStore.open('select', { 
 			element: element.find('.icon.more'),
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			onClose: () => {
 				element.removeClass('active');

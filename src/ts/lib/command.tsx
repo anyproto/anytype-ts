@@ -58,6 +58,14 @@ const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolea
 	dispatcher.request('export', request, callBack);
 };
 
+const ExportTemplates = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ExportTemplates.Request();
+
+	request.setPath(path);
+
+	dispatcher.request('exportTemplates', request, callBack);
+};
+
 const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
@@ -966,6 +974,7 @@ export {
 	UploadFile,
 	ProcessCancel,
 	Export,
+	ExportTemplates,
 
 	WalletCreate,
 	WalletRecover,

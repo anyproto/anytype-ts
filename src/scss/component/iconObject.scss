@@ -27,7 +27,7 @@
 			span { height: 100%; display: inline-block; vertical-align: middle; }
 		}
 		
-		.icon.home.big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+		.icon.home-big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	}
 
 	.iconEmoji.c18 { width: 18px; height: 18px; line-height: 18px; }
@@ -81,23 +81,25 @@
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c40 { width: 40px; height: 40px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 0px; overflow: hidden; }
+.iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
 
-.iconObject.c96, .iconObject.c128 {
+.iconObject.c56, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
 } 
 
-.iconObject.c48, .iconObject.c64 {
+.iconObject.c40, .iconObject.c48, .iconObject.c64 {
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
-.iconObject.c48.isPage, .iconObject.c48.isImage {
+.iconObject.c48.isPage, .iconObject.c48.isImage, .iconObject.c48.isSet {
 	.iconImage { border-radius: 8px; }
 }
 
-.iconObject.c48.isRelation { border-radius: 8px; background-color: #f3f2ec; }
+.iconObject.c48.isRelation, 
+.iconObject.c40.isRelation { border-radius: 8px; background-color: #f3f2ec; }
 
-.iconObject.isUser { border-radius: 100%; }
+.iconObject.isHuman { border-radius: 100% !important; }
 
 .iconObject.canEdit { cursor: pointer; }

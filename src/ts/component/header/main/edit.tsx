@@ -2,13 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, Sync } from 'ts/component';
-import { I, Util, DataUtil, crumbs, focus, history as historyPopup } from 'ts/lib';
-import { commonStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
-	isPopup: boolean;
+	isPopup?: boolean;
 	dataset?: any;
 };
 
@@ -28,10 +28,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onForward = this.onForward.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
-		this.onAdd = this.onAdd.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -47,11 +47,11 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const canAdd = !root.isObjectRelation() && !root.isObjectType();
-		const object = blockStore.getDetails(breadcrumbs, rootId);
+		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
+		const object = detailStore.get(breadcrumbs, rootId, []);
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (popupStore.isOpenList([ 'navigation', 'search' ]) || menuStore.isOpen('blockRelationView')) {
+		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
 			cn.push('active');
 		};
 
@@ -64,7 +64,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 						<div className="btn" onClick={this.onOpen}>
 							<Icon className="expand" />
-							<div className="txt">Open as page</div>
+							<div className="txt">Open as object</div>
 						</div>
 					</div>
 				) : (
@@ -80,15 +80,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
 							<IconObject object={object} />
-							<div className="name">{Util.shorten(object.name, 32)}</div>
+							<div className="name">{object.name}</div>
 						</div>
 					</div>
 					<div className="icons">
-						{!isPopup && canAdd ? (
-							<Icon id="button-header-add" className={[ 'plus', 'big', (root.isObjectReadOnly() ? 'dis' : '') ].join(' ')} arrow={false} tooltip="Create new page" onClick={this.onAdd} />
-						) : ''}
 						{config.allowDataview && canAdd ? (
-							<Icon id="button-header-relation" tooltip="Relations" menuId="blockRelationList" className="relation big" onClick={this.onRelation} />
+							<Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} />
 						) : ''}
 					</div>
 				</div>
@@ -122,34 +119,16 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 	};
 	
 	onBack (e: any) {
-		const { isPopup, history } = this.props;
-
-		crumbs.restore(I.CrumbsType.Page);
-		if (isPopup) {
-			historyPopup.goBack((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
-		} else {
-			history.goBack();
-		};
+		keyboard.back();
 	};
 	
 	onForward (e: any) {
-		const { isPopup, history } = this.props;
-
-		crumbs.restore(I.CrumbsType.Page);
-		if (isPopup) {
-			historyPopup.goForward((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
-		} else {
-			history.goForward();
-		};
+		keyboard.forward();
 	};
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 
 		DataUtil.objectOpen(object);
 	};
@@ -161,9 +140,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, match, rootId } = this.props;
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-more`;
 		const param: any = {
-			element: `${this.getContainer()} #button-header-more`,
+			element: elementId,
 			horizontal: I.MenuDirection.Right,
+			subIds: Constant.menuIds.more,
 			data: {
 				rootId: rootId,
 				blockId: rootId,
@@ -173,42 +155,16 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			const element = $(elementId);
+
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
+		} else {
+			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
-	};
-
-	onAdd (e: any) {
-		const { rootId } = this.props;
-		const { focused } = focus;
-		const root = blockStore.getLeaf(rootId, rootId);
-		const fb = blockStore.getLeaf(rootId, focused);
-
-		if (!root || root.isObjectReadOnly()) {
-			return;
-		};
-		
-		let targetId = '';
-		let position = I.BlockPosition.Bottom;
-		
-		if (fb) {
-			if (fb.isTextTitle()) {
-				const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
-				if (first) {
-					targetId = first.id;
-					position = I.BlockPosition.Top;
-				};
-			} else 
-			if (fb.isFocusable()) {
-				targetId = fb.id;
-			};
-		};
-		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
-			DataUtil.objectOpen({ id: message.targetId });
-		});
 	};
 
 	onSync (e: any) {
@@ -218,8 +174,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-sync`;
 		const param: any = {
-			element: `${this.getContainer()} #button-header-sync`,
+			element: elementId,
 			horizontal: I.MenuDirection.Right,
 			data: {
 				rootId: rootId,
@@ -227,8 +185,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			const element = $(elementId);
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
+		} else {
+			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
@@ -241,7 +203,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 
 		popupStore.open('navigation', {
-			preventResize: true, 
 			data: {
 				rootId: rootId,
 				type: I.NavigationType.Go, 
@@ -275,10 +236,13 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		const { isPopup, rootId } = this.props;
+		const st = $(window).scrollTop();
+		const elementId = `${this.getContainer()} #button-header-relation`;
 		const param: any = {
-			element: `${this.getContainer()} #button-header-relation`,
+			element: elementId,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
+			subIds: Constant.menuIds.cell,
 			onClose: () => {
 				menuStore.closeAll();
 			},
@@ -290,8 +254,12 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 
 		if (!isPopup) {
-			param.fixedY = 40;
+			const element = $(elementId);
+			param.fixedY = element.offset().top + element.height() + 4 - st;
 			param.className = 'fixed';
+			param.classNameWrap = 'fromHeader';
+		} else {
+			param.offsetY = 4;
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });

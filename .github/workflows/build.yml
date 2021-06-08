@@ -66,11 +66,11 @@ jobs:
         run: |
           mv dist/*.exe artifacts
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{matrix.os}}
-          path: artifacts
+      #- name: Upload artifacts
+      #  uses: actions/upload-artifact@v1
+      #  with:
+      #    name: ${{matrix.os}}
+      #    path: artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -79,3 +79,11 @@ jobs:
           files: "artifacts/**"
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
+
+      - name: Delete old releases
+        uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          keep_latest: 3
+          delete_tag_pattern: alpha
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}

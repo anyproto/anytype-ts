@@ -15,7 +15,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 
 	ref: any = null;
 	state = {
-		layout: null,
+		layout: I.ObjectLayout.Page,
 	};
 	
 	constructor(props: any) {
@@ -28,11 +28,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 	render () {
 		const options = DataUtil.menuGetLayouts();
 		const { layout } = this.state;
-
-		let item = null;
-		if (layout !== null) {
-			item = options.find((it: any) => { return it.id == layout; });
-		};
+		const item = options.find((it: any) => { return it.id == layout; });
 
 		return (
 			<div>
@@ -46,7 +42,6 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 					id="object-layout" 
 					icon={item ? item.icon : ''} 
 					name={item ? item.name : 'Select layout'}
-					menuId="select"
 					onClick={this.onLayout} 
 					arrow={true}
 				/>
@@ -71,12 +66,12 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 	};
 
 	onLayout (e: any) {
+		const { getId, getSize } = this.props;
 		const { layout } = this.state;
 
 		menuStore.open('select', { 
-			element: '#item-object-layout',
-			offsetX: 224,
-			offsetY: 4,
+			element: `#${getId()} #item-object-layout`,
+			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			data: {
 				options: DataUtil.menuTurnLayouts(),

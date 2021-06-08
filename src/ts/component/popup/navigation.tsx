@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Button, Input, Cover, Loader, IconObject } from 'ts/component';
+import { Icon, Button, Cover, Loader, IconObject } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -61,16 +61,15 @@ class PopupNavigation extends React.Component<Props, State> {
 		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { type, rootId, blockId } = data;
-		const { root, breadcrumbs } = blockStore;
-		const details = blockStore.getDetails(breadcrumbs, pageId);
+		const { type } = data;
+		const { root } = blockStore;
 		const isRoot = pageId == root;
 
 		let confirm = '';
 		let iconHome = (
 			<div className="iconObject isRelation c48">
 				<div className="iconEmoji c48">
-					<Icon className="home big" />
+					<Icon className="home-big" />
 				</div>
 			</div>
 		);
@@ -321,6 +320,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 
 		const platform = Util.getPlatform();
+		const { position } = this.props;
 
 		raf(() => {
 			const win = $(window);
@@ -343,7 +343,9 @@ class PopupNavigation extends React.Component<Props, State> {
 			sides.css({ height: sh });
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
-			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0, height: oh });
+			obj.css({ width: width, marginLeft: -width / 2, height: oh });
+
+			position();
 		});
 	};
 	
@@ -518,8 +520,14 @@ class PopupNavigation extends React.Component<Props, State> {
 		if (object.isArchived) {
 			return false;
 		};
-		if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Dashboard ].indexOf(object.layout) < 0)) {
-			return false;
+
+		if (!config.allowDataview) {
+			if (object.type == Constant.typeId.template) {
+				return false;
+			};
+			if ([ I.ObjectLayout.Page, I.ObjectLayout.Dashboard ].indexOf(object.layout) < 0) {
+				return false;
+			};
 		};
 		return true;
 	};
@@ -536,9 +544,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
-		e.persist();
-
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, type, blockId, blockIds, position } = data;
 
@@ -580,7 +586,7 @@ class PopupNavigation extends React.Component<Props, State> {
 				break;
 		};
 
-		this.props.close();
+		close();
 	};
 
 	withButtons (item: I.PageInfo) {

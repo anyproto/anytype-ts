@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate } from 'ts/lib';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -177,7 +177,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
 			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
-			const turnObject = { id: 'turnObject', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnObject() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
@@ -201,7 +200,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
-				if (!block.canTurnObject())		 hasTurnObject = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
@@ -217,7 +215,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasTurnText)	 sections.push(turnText);
 			if (hasTurnPage)	 sections.push(turnPage);
 			if (hasTurnList)	 sections.push(turnList);
-			if (hasTurnObject)	 sections.push(turnObject);
 			if (hasTurnDiv)		 sections.push(turnDiv);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
@@ -277,7 +274,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (block.isFeatured())			 hasTitle = true;
 			};
 
-			if (hasTurnObject && config.allowDataview) {
+			if (hasTurnObject) {
 				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
@@ -414,6 +411,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const { config } = commonStore;
 		
 		if (!block) {
 			return;
@@ -422,6 +420,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { content } = block;
 		const { color, bgColor } = content;
 		const items = this.getItems();
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);
@@ -436,6 +435,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const offsetX = node.outerWidth();
 		const offsetY = -el.outerHeight() - 8;
 		
+		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			menuKey: item.itemId,
@@ -480,12 +480,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					placeHolder: 'Find a type of object...',
 					label: 'Your object type library',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
-					],
+					filters: filters,
 					onSelect: (item: any) => {
 						this.moveToPage(item.id);
 						close();
@@ -497,10 +503,19 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					skipId: rootId,
 					position: I.BlockPosition.Bottom,
+					filters: filters,
 					onSelect: () => { close(); }
 				});
 				break;

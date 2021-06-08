@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
@@ -26,36 +26,36 @@ class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
-		const details = blockStore.getDetails(rootId, content.targetBlockId);
-		const { _objectEmpty_, name, isArchived } = details;
+		const object = detailStore.get(rootId, content.targetBlockId, [ 'isArchived' ]);
+		const { _objectEmpty_, name, isArchived } = object;
 		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
-
-		if (_objectEmpty_) {
-			return (
-				<div className="loading" data-target-block-id={content.targetBlockId}>
-					<Loader />
-					<div className="name">{translate('blockLinkSyncing')}</div>
-				</div>
-			);
-		};
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				<IconObject 
-					object={details} 
-					id={'block-page-' + id} 
-					offsetX={28} 
-					offsetY={-24} 
-					size={24} 
-					canEdit={!readOnly} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload}
-					onCheckbox={this.onCheckbox}
-				/>
-				<div className="name" onClick={this.onClick}>
-					<div className="txt">{name}</div>
-				</div>
-				<div className="archive">{translate('blockLinkArchived')}</div>
+				{_objectEmpty_ ? (
+					<div className="loading" data-target-block-id={content.targetBlockId}>
+						<Loader />
+						<div className="name">{translate('blockLinkSyncing')}</div>
+					</div>
+				) : (
+					<React.Fragment>
+						<IconObject 
+							object={object} 
+							id={'block-page-' + id} 
+							offsetX={28} 
+							offsetY={-24} 
+							size={24} 
+							canEdit={!readOnly} 
+							onSelect={this.onSelect} 
+							onUpload={this.onUpload}
+							onCheckbox={this.onCheckbox}
+						/>
+						<div className="name" onClick={this.onClick}>
+							<div className="txt">{name}</div>
+						</div>
+						<div className="archive">{translate('blockLinkArchived')}</div>
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -77,7 +77,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const object = blockStore.getDetails(rootId, targetBlockId);
+		const object = detailStore.get(rootId, targetBlockId);
 		const { _objectEmpty_ } = object;
 		
 		if (!_objectEmpty_ && (targetBlockId != rootId)) {
@@ -105,9 +105,9 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const details = blockStore.getDetails(rootId, targetBlockId);
+		const object = detailStore.get(rootId, targetBlockId, [ 'done' ]);
 
-		DataUtil.pageSetDone(targetBlockId, !details.done);
+		DataUtil.pageSetDone(targetBlockId, !object.done);
 	};
 	
 };

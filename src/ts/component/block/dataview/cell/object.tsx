@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, Util, DataUtil } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { IconObject } from 'ts/component';
+
+import ItemObject from './item/object';
 
 interface Props extends I.Cell {};
 interface State { 
@@ -15,7 +14,6 @@ const $ = require('jquery');
 @observer
 class CellObject extends React.Component<Props, State> {
 
-	_isMounted: boolean = false;
 	state = {
 		editing: false,
 	};
@@ -27,38 +25,21 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { config } = commonStore;
-		const { rootId, block, readOnly, getRecord, index, canEdit, relation, iconSize } = this.props;
+		const { rootId, getRecord, index, relation, iconSize } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		let value = this.getValue();
-		value = value.map((it: string) => { return blockStore.getDetails(rootId, it); });
-		value = value.filter((it: any) => { return !it._objectEmpty_; });
-
-		const Item = (item: any) => {
-			return (
-				<div 
-					className={[ 'element', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onClick={(e: any) => { this.onClick(e, item); }}
-				>
-					<div className="flex">
-						<IconObject object={item} size={iconSize} />
-						<div className="name">{item.name}</div>
-					</div>
-				</div>
-			);
-		};
+		const value = this.getValue();
 
 		return (
 			<div className="wrap">
 				{value.length ? (
 					<React.Fragment>
-						{value.map((item: any, i: number) => {
-							return <Item key={i} {...item} />;
+						{value.map((id: string) => {
+							return <ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} />;
 						})}
 					</React.Fragment>
 				) : (
@@ -66,14 +47,6 @@ class CellObject extends React.Component<Props, State> {
 				)}
 			</div>
 		);
-	};
-
-	componentDidMount () {
-		this._isMounted = true;
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
 	};
 
 	componentDidUpdate () {
@@ -97,17 +70,10 @@ class CellObject extends React.Component<Props, State> {
 		};
 	};
 
-	onChange (value: string[]) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const filter = node.find('#filter');
-
-		filter.text('');
-	};
-
 	onClick (e: any, item: any) {
-		const { canEdit } = this.props;
+		const { canEdit, canOpen } = this.props;
 
-		if (!canEdit) {
+		if (canOpen && !canEdit) {
 			e.stopPropagation();
 			DataUtil.objectOpenPopup(item);
 		};
@@ -126,7 +92,7 @@ class CellObject extends React.Component<Props, State> {
 		if ('object' != typeof(value)) {
 			value = value ? [ value ] : [];
 		};
-		return Util.objectCopy(value);
+		return Util.objectCopy(Util.arrayUnique(value));
 	};
 
 };

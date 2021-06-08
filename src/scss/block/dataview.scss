@@ -3,6 +3,8 @@
 .blocks {
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
+		.wrapContent { width: 100%; }
+
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		
@@ -16,7 +18,7 @@
 
 		.isDone { color: $colorDarkGrey; }
 
-		.views { @include text-header3; color: $colorDarkGrey; margin-bottom: 20px; }
+		.views { @include text-header3; color: $colorDarkGrey; }
 		.views {
 			.item { 
 				margin-right: 20px; display: inline-block; vertical-align: middle; transition: color 0.2s ease-in-out; cursor: pointer; 
@@ -26,56 +28,32 @@
 			.item:hover, .item.active { color: $colorBlack; }
 			
 			.item.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
-
-			.icon.plus { margin-top: -4px; }
+			.item.btn { line-height: 20px; }
 		}
 		
 		.buttons { display: flex; margin-bottom: 8px; font-weight: 500; color: $colorDarkGrey; }
 		.buttons {
-			.side { width: 50%; white-space: nowrap; }
-			.side.right { text-align: right; }
-			.item { 
-				display: inline-block; vertical-align: top; cursor: pointer; transition: $transitionFast; margin-right: 14px; 
-				position: relative; text-align: left; line-height: 20px;
-			}
-			.item:last-child { margin: 0px; }
-			.item:hover, .item.active { color: $colorBlack; }
-			
-			.item {
-				.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
-				.icon.relation { background-image: url('~img/icon/dataview/button/relation0.svg'); }
-				.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-				.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
-				.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }
+			.side { padding: 24px 0px; height: 74px; width: 50%; white-space: nowrap; }
+			.side.left { padding-left: 14px; }
+			.side.right { line-height: 26px; text-align: right; }
 
-				.icon.arrow { 
-					margin: -6px 0px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/arrow0.svg');
-					position: absolute; right: 0px; top: 50%;
-				}
-				
-				.icon.view { margin: 0px; }
-				.name { display: inline-block; vertical-align: top; }
-			}
-			.item.view { width: 32px; }
-			
-			.item:hover, .item.active {
-				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-				.icon.arrow { background-image: url('~img/icon/dataview/button/arrow1.svg'); }
-				.icon.relation { background-image: url('~img/icon/dataview/button/relation1.svg'); }
-				.icon.filter { background-image: url('~img/icon/dataview/button/filter1.svg'); }
-				.icon.sort { background-image: url('~img/icon/dataview/button/sort1.svg'); }
-				.icon.more { background-image: url('~img/icon/dataview/button/more1.svg'); }
-				
-				.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid1.svg'); }
-				.icon.view.c1 { background-image: url('~img/icon/dataview/view/list1.svg'); }
-				.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
-				.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
-			}
+			.icon { vertical-align: middle; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
+			.icon:last-child { margin: 0px; }
 
-			.item.on { color: #e89d00; }
-			.item.on {
-				.icon.filter { background-image: url('~img/icon/dataview/button/filter2.svg'); }
-				.icon.sort { background-image: url('~img/icon/dataview/button/sort2.svg'); }
+			.icon.search { background-image: url('~img/icon/dataview/button/search0.svg'); }
+			.icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
+			.icon.more { background-image: url('~img/icon/dataview/button/more0.svg'); }
+
+			.icon.relation { background-image: url('~img/icon/dataview/button/relation0.svg'); }
+			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+			.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+
+			.icon.search:hover, .icon.search.active { background-image: url('~img/icon/dataview/button/search1.svg'); }
+			.icon.manager:hover, .icon.manager.active { background-image: url('~img/icon/dataview/button/manager1.svg'); }
+			.icon.more:hover, .icon.more.active { background-image: url('~img/icon/dataview/button/more1.svg'); }
+
+			.icon.on {
+				.dot { display: block; }
 			}
 		}
 		

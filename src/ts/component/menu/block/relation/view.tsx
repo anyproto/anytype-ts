@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { Icon, Cell } from 'ts/component';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { Icon } from 'ts/component';
+import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import 'react-virtualized/styles.css';
+
+import Item from 'ts/component/menu/item/relationView';
 
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const PREFIX = 'menuBlockRelationViewCell';
+const PREFIX = 'menuBlockRelationView';
 
 @observer
 class MenuBlockRelationView extends React.Component<Props, {}> {
@@ -19,6 +21,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 
+		this.scrollTo = this.scrollTo.bind(this);
+		this.onFav = this.onFav.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
@@ -26,11 +31,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId, readOnly } = data;
-		const block = blockStore.getLeaf(rootId, rootId);
-		const details = blockStore.getDetails(rootId, rootId);
 		const sections = this.getSections();
+		const block = blockStore.getLeaf(rootId, rootId);
 
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
@@ -39,12 +43,25 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
-						if (section.id == 'featured') {
-							item.isFeatured = true;
-						};
-						return <Item key={i} {...item} />;
+						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
+						item.isFeatured = section.id == 'featured';
+
+						return (
+							<Item 
+								key={id} 
+								{...item}
+								rootId={rootId}
+								block={block}
+								onEdit={this.onEdit}
+								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
+								onFav={this.onFav}
+								classNameWrap={classNameWrap}
+								onCellClick={this.onCellClick}
+								onCellChange={this.onCellChange}
+								optionCommand={this.optionCommand}
+							/>
+						);
 					})}
-					{!readOnly && (section.index == sections.length - 1) ? <ItemAdd /> : ''}
 				</div>
 			</div>
 		);
@@ -55,69 +72,30 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 					<Icon className="plus" />
 					<div className="name">New</div>
 				</div>
-				<div className="cell" />
 			</div>
 		);
-
-		const Item = (item: any) => {
-			const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
-			const fcn = [ 'fav', (item.isFeatured ? 'active' : '') ];
-
-			if (Constant.featuredRelations.indexOf(item.relationKey) >= 0) {
-				fcn.push('disabled');
-			};
-
-			return (
-				<div className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-					<div id={`item-${item.relationKey}`} className="info" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
-						<Icon className={'relation ' + DataUtil.relationClass(item.format)} />
-						<div className="name">{item.name}</div>
-					</div>
-					<div
-						id={id} 
-						className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-						onClick={(e: any) => { this.onCellClick(e, item.relationKey, 0); }}
-					>
-						<Cell 
-							ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
-							rootId={rootId}
-							storeId={rootId}
-							block={block}
-							relationKey={item.relationKey}
-							getRecord={() => { return details; }}
-							viewType={I.ViewType.Grid}
-							index={0}
-							idPrefix={PREFIX}
-							menuClassName="fromBlock"
-							scrollContainer={Util.getEditorScrollContainer('menuBlockRelationView')}
-							pageContainer={Util.getEditorPageContainer('menuBlockRelationView')}
-							readOnly={false}
-							onCellChange={this.onCellChange}
-							optionCommand={this.optionCommand}
-						/>
-					</div>
-					<Icon className={fcn.join(' ')} onClick={(e: any) => { this.onFav(e, item); }} />
-				</div>
-			);
-		};
 
 		return (
 			<div className="sections">
 				{sections.map((item: any, i: number) => {
 					return <Section key={i} {...item} index={i} />;
 				})}
+				{!readOnly ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		this.resize();
-
 		$('body').addClass('over');
 	};
 
 	componentDidUpdate () {
 		this.resize();
+		
+		if (commonStore.cellId) {
+			$(`#${commonStore.cellId}`).addClass('isEditing');
+		};
 	};
 
 	componentWillUnmount () {
@@ -129,15 +107,14 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		
 		let items = Util.objectCopy(dbStore.getRelations(rootId, rootId));
-		let featured = Constant.featuredRelations.concat(object[Constant.relationKey.featured]);
+		let featured = object[Constant.relationKey.featured] || [];
 
 		if (!config.debug.ho) {
 			items = items.filter((it: any) => { return !it.isHidden; });
 		};
-
 		items.sort(DataUtil.sortByHidden);
 
 		let sections = [ 
@@ -182,23 +159,19 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		return items;
 	};
 
-	onFav (e: any, item: any) {
-		if (Constant.featuredRelations.indexOf(item.relationKey) >= 0) {
-			return;
-		};
-
+	onFav (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = blockStore.getDetails(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 
 		let featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
-		let idx = featured.findIndex((it: string) => { return it == item.relationKey; });
+		let idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx >= 0) {
-			featured = featured.filter((it: any) => { return it != item.relationKey; });
+			featured = featured.filter((it: any) => { return it != relationKey; });
 		} else {
-			featured.push(item.relationKey);
+			featured.push(relationKey);
 		};
 
 		const details = [ 
@@ -208,15 +181,15 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { param } = this.props;
-		const { data } = param;
+		const { param, getId } = this.props;
+		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const relations = dbStore.getRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
+			element: `#${getId()} #item-add .info`,
 			offsetX: 32,
-			offsetY: 4,
+			classNameWrap: classNameWrap,
 			data: {
 				...data,
 				filter: '',
@@ -238,7 +211,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
@@ -268,15 +240,26 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		};
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
+	scrollTo (relationKey: string, index: number) {
+		const { getId } = this.props;
+		const id = DataUtil.cellId(PREFIX, relationKey, index);
+		const obj = $(`#${getId()}`);
+		const container = obj.find('.content');
+		const cell = obj.find(`#${id}`);
+		const y = Math.max(0, cell.offset().top - container.offset().top);
+
+		container.scrollTop(y);
+	};
+
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
-		C.BlockSetDetails(rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

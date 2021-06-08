@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
-import { I, C, DataUtil, Util, Storage } from 'ts/lib';
-import { dbStore, blockStore } from 'ts/store';
+import { I, C, DataUtil, Util, Storage, keyboard } from 'ts/lib';
+import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -32,6 +32,7 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		]
 	},
+	/*
 	{ 
 		id: Tab.Template, 'name': 'Templates', active: 'library', 
 		children: [
@@ -39,6 +40,7 @@ const Tabs = [
 			{ id: 'library', name: 'Library' },
 		], 
 	},
+	*/
 	{ 
 		id: Tab.Relation, 'name': 'Relations', active: 'library', 
 		children: [
@@ -107,11 +109,11 @@ class PageMainStore extends React.Component<Props, State> {
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = blockStore.getDetails(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={64} object={item} />
+							<IconObject size={64} iconSize={40} object={item} />
 							<div className="info">
 								<div className="txt">
 									<div className="name">{item.name}</div>
@@ -138,7 +140,7 @@ class PageMainStore extends React.Component<Props, State> {
 			case Tab.Template:
 				Item = (item: any) => {
 					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = blockStore.getDetails(rootId, item.creator);
+					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
@@ -165,13 +167,15 @@ class PageMainStore extends React.Component<Props, State> {
 
 			case Tab.Relation:
 				Item = (item: any) => {
-					const author = blockStore.getDetails(rootId, item.creator);
+					const { name, description } = item;
+					const author = detailStore.get(rootId, item.creator, []);
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={48} object={{ ...item, layout: I.ObjectLayout.Relation }} />
+							<IconObject size={48} iconSize={28} object={item} />
 							<div className="info">
 								<div className="txt">
-									<div className="name">{item.name}</div>
+									<div className="name">{name}</div>
+									<div className="descr">{description}</div>
 									<Author {...author} />
 								</div>
 								<div className="line" />
@@ -335,7 +339,15 @@ class PageMainStore extends React.Component<Props, State> {
 
 	onClick (e: any, item: any) {
 		const { isPopup } = this.props;
-		isPopup ? DataUtil.objectOpenPopup(item) : DataUtil.objectOpenEvent(e, item);
+
+		if (isPopup) {
+			const popup = popupStore.get('page');
+
+			DataUtil.objectOpen(item);
+			keyboard.setSource({ type: I.Source.Popup, data: popup });
+		} else {
+			DataUtil.objectOpenEvent(e, item);
+		};
 	};
 
 	onCreateType (e: any) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util, DataUtil, translate } from 'ts/lib';
-import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
-import { commonStore, dbStore, menuStore } from 'ts/store';
+import { I, C, DataUtil, translate } from 'ts/lib';
+import { Input, MenuItemVertical, Button } from 'ts/component';
+import { dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -44,6 +44,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
+		const opts = null;
+		/*
 		const opts = (
 			<React.Fragment>
 				{isObject ? (
@@ -80,6 +82,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				) : ''}
 			</React.Fragment>
 		);
+		*/
 
 		return (
 			<form onSubmit={this.onSubmit}>
@@ -198,7 +201,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.menuOpen('dataviewRelationType', { 
+		this.menuOpen('relationType', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
@@ -260,17 +263,21 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		relation.includeTime = v;
 	};
 
-	menuOpen (id: string, param: I.MenuParam) {
-		const { getSize } = this.props;
+	menuOpen (id: string, options: I.MenuParam) {
+		const { getSize, param } = this.props;
+		const { classNameWrap } = param;
 
-		param.isSub = true;
-		param.passThrough = true;
-		param.offsetX = getSize().width;
-		param.vertical = I.MenuDirection.Center;
+		options.isSub = true;
+		options.passThrough = true;
+		options.offsetX = getSize().width;
+		options.vertical = I.MenuDirection.Center;
+		options.classNameWrap = classNameWrap;
 
-		menuStore.closeAll(Constant.menuIds.relationEdit, () => {
-			menuStore.open(id, param);
-		});
+		if (!menuStore.isOpen(id)) {
+			menuStore.closeAll(Constant.menuIds.relationEdit, () => {
+				menuStore.open(id, options);
+			});
+		};
 	};
 
 	menuClose () {

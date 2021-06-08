@@ -27,12 +27,12 @@
 	.menu.menuThreadList {
 		.content { padding: 0px; }
 		.item { padding: 11px 16px; border-bottom: 1px solid #eae9e0;}
-		.item:hover::before { background: rgba(172, 169, 150, 0.15); }
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 		.item:last-child { border: 0px; }
 
 		.item {
-			.icon { position: absolute; left: 16px; top: 12px; }
-			.icon.user { top: 13px; }
+			.icon, .iconObject { position: absolute; left: 16px; top: 12px; }
+			.iconObject { top: 13px; }
 			.icon.cafe { left: 15px; width: 20px; height: 20px; background-size: 18px 16px; background-image: url('~img/icon/cafe.svg'); }
 			.info { padding-left: 28px; }
 		}

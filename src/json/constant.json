@@ -57,13 +57,13 @@
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest"
+			"dataviewOptionList", "dataviewOptionEdit", "dataviewMedia", "dataviewCalendar", "relationSuggest", "relationType"
 		],
 		"context": [
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
 		"add": [
-			"searchObject"
+			"searchObject", "blockRelationList", "blockRelationEdit"
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
@@ -75,22 +75,30 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"dataviewRelationType", "searchObject", "select", "dataviewDate"
+			"relationType", "searchObject", "select", "dataviewDate"
 		]
 	},
 
 	"relationKey": {
 		"name": "name",
 		"description": "description",
-		"featured": "featuredRelations"
+		"featured": "featuredRelations",
+		"type": "type"
 	},
 
 	"typeId": {
+		"page": "_otpage",
 		"template": "_ottemplate"
 	},
 
-	"featuredRelations": [ "type", "creator" ],
-	
+	"blockId": {
+		"title": "title",
+		"description": "description",
+		"featured": "featuredRelations",
+		"dataview": "dataview",
+		"type": "type"
+	},
+
 	"size": {
 		"editor": 704,
 
@@ -121,7 +129,6 @@
 		"iconPage": 256,
 
 		"menuBlockAdd": 360,
-		"menuDataviewFilter": 400,
 		"menuBlockLink": 400,
 		"menuDataviewOptionList": 256,
 		

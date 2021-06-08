@@ -1,6 +1,6 @@
 import { observable, action, computed, set } from 'mobx';
 import { I, Storage, analytics, crumbs } from 'ts/lib';
-import { blockStore, commonStore, dbStore } from 'ts/store';
+import { blockStore, detailStore, commonStore, dbStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'ts/lib';
 
@@ -108,7 +108,8 @@ class AuthStore {
 		commonStore.coverSetDefault();
 
 		blockStore.breadcrumbsSet('');
-		blockStore.blocksClearAll();
+		blockStore.clearAll();
+		detailStore.clearAll();
 
 		dbStore.objectTypesClear();
 

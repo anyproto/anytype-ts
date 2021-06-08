@@ -13,6 +13,7 @@ interface Props extends I.Cell {
 	relationKey?: string;
 	storeId?: string;
 	menuClassName?: string;
+	menuClassNameWrap?: string;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -24,6 +25,7 @@ class Cell extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		index: 0,
+		canOpen: true,
 	};
 
 	ref: any = null;
@@ -36,7 +38,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relationKey, index, onClick, idPrefix } = this.props;
+		const { relationKey, index, onClick, onMouseEnter, onMouseLeave, idPrefix } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
 			return null;
@@ -84,11 +86,14 @@ class Cell extends React.Component<Props, {}> {
 				break;
 		};
 		
+		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+
 		return (
-			<div className={cn.join(' ')} onClick={onClick}>
+			<div className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
-					id={DataUtil.cellId(idPrefix, relation.relationKey, index)} 
+					id={id} 
+					key={id}
 					{...this.props} 
 					canEdit={canEdit}
 					relation={relation}
@@ -101,7 +106,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
 
 		if (!relation || readOnly || relation.isReadOnly) {
@@ -116,7 +121,7 @@ class Cell extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $('#' + cellId).addClass('isEditing');
+		const cell = $(`#${cellId}`).addClass('isEditing');
 		const element = cell.find('.cellContent');
 		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
@@ -157,9 +162,9 @@ class Cell extends React.Component<Props, {}> {
 			horizontal: I.MenuDirection.Center,
 			offsetY: 1,
 			noAnimation: true,
-			noFlipY: true,
 			passThrough: true,
 			className: menuClassName,
+			classNameWrap: menuClassNameWrap,
 			onOpen: setOn,
 			onClose: setOff,
 			data: { 
@@ -234,6 +239,8 @@ class Cell extends React.Component<Props, {}> {
 
 			case I.RelationType.LongText:
 				param = Object.assign(param, {
+					noFlipX: true,
+					noFlipY: true,
 					element: cell,
 					horizontal: I.MenuDirection.Left,
 					offsetY: -height,
@@ -253,7 +260,6 @@ class Cell extends React.Component<Props, {}> {
 
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
-					className: 'button',
 					width: width,
 				});
 
@@ -312,7 +318,7 @@ class Cell extends React.Component<Props, {}> {
 					menuStore.open(menuId, param);
 
 					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					//win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				}, Constant.delay.menu);
 			};
 		} else {
@@ -320,7 +326,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 	};
 
-	onChange (value: any) {
+	onChange (value: any, callBack?: (message: any) => void) {
 		const { onCellChange, index, getRecord } = this.props;
 		const relation = this.getRelation();
 		if (!relation) {
@@ -328,8 +334,8 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const record = getRecord(index);
-		if (onCellChange) {
-			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value));
+		if (record && onCellChange) {
+			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
 		};
 	};
 

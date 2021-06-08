@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Cell } from 'ts/component';
+import { Input, Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, blockStore, dbStore } from 'ts/store';
+import { menuStore, detailStore, dbStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
@@ -13,16 +13,15 @@ const $ = require('jquery');
 @observer
 class BlockRelation extends React.Component<Props, {}> {
 
-	refInput: any = null;
 	refCell: any = null;
 
 	constructor (props: any) {
 		super(props);
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-		this.onMenu = this.onMenu.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onMenu = this.onMenu.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.optionCommand = this.optionCommand.bind(this);
@@ -37,29 +36,17 @@ class BlockRelation extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(idPrefix, key, '0');
 
 		return (
-			<div className="wrap">
+			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{!relation ? 
 				(
 					<div className="sides">
-						<div className="info noValue">
-							<Icon key="icon-default" className="relation default" />
-							<Input 
-								id="input"
-								ref={(ref: any) => { this.refInput = ref; }} 
-								placeHolder="Create a new relation"
-								onFocus={this.onFocus}
-								onBlur={this.onBlur}
-								onClick={this.onMenu} 
-								onKeyUp={this.onKeyUp} 
-							/>
-						</div>
+						<div className="info noValue" onClick={this.onMenu}>New relation</div>
 					</div>
 				) : 
 				(
 					<div className="sides">
 						<div className="info">
-							<Icon key="icon-relation" className={'relation ' + DataUtil.relationClass(relation.format)} />
-							<div className="name">{relation.name}</div>
+							{relation.name}
 						</div>
 						<div 
 							id={id} 
@@ -72,7 +59,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
-								getRecord={() => { return blockStore.getDetails(rootId, rootId); }}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ]); }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}
@@ -90,50 +77,56 @@ class BlockRelation extends React.Component<Props, {}> {
 		);
 	};
 
+	onKeyDown (e: any) {
+		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+	};
+	
 	onKeyUp (e: any) {
-		menuStore.updateData('blockRelationList', { filter: this.refInput.getValue() });
+		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
 	};
 
 	onFocus () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-
-		input.attr({ placeHolder: 'Relation search' });
-	};
-
-	onBlur () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-
-		input.attr({ placeHolder: 'Create a new relation' });
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 	onMenu (e: any) {
 		const { rootId, block } = this.props;
 
-		menuStore.open('blockRelationList', {
+		menuStore.open('relationSuggest', { 
 			element: '#block-' + block.id,
 			offsetX: Constant.size.blockMenu,
-			offsetY: 4,
 			data: {
-				relationKey: '',
 				rootId: rootId,
 				blockId: block.id,
-				filter: this.refInput.getValue(),
-				onSelect: (item: any) => {
-					C.BlockRelationSetKey(rootId, block.id, item.relationKey);
-				}
+				filter: '',
+				menuIdEdit: 'blockRelationEdit',
+				skipIds: [],
+				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
+					C.ObjectRelationListAvailable(rootId, callBack);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationAdd(rootId, relation, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						C.BlockRelationSetKey(rootId, block.id, message.relation.relationKey, () => { 
+							menuStore.close('relationSuggest'); 
+						});
+					});
+				},
 			}
 		});
 	};
 
-	onCellChange (id: string, relationKey: string, value: any) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value) },
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
-		C.BlockSetDetails(rootId, details);
+		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	onCellClick (e: any) {

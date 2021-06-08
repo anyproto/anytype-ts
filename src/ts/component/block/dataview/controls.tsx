@@ -26,15 +26,13 @@ class Controls extends React.Component<Props, State> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
-		this.onViewAdd = this.onViewAdd.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 
 	render () {
 		const { getData, rootId, block, getView, readOnly, onRowAdd } = this.props;
+		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
-		const { content } = block;
-		const { views } = content;
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
 		const limit = Constant.limit.dataview.views;
@@ -45,24 +43,17 @@ class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 
 		const buttons: any[] = [
-			{ id: 'relation', name: 'Relations', menu: 'dataviewRelationList' },
-			{ id: 'filter', name: (filterCnt > 0 ? `${filterCnt} ${Util.cntWord(filterCnt, 'filter')}` : 'Filter'), menu: 'dataviewFilter', on: filterCnt > 0 },
-			{ id: 'sort', name: (sortCnt > 0 ? `${sortCnt} ${Util.cntWord(sortCnt, 'sort')}` : 'Sort'), menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'view', className: 'c' + view.type, arrow: true, menu: 'dataviewViewList' },
-			{ id: 'more', menu: 'dataviewViewEdit' },
+			//{ id: 'search', name: 'Search', menu: '' },
+			{ id: 'manager', name: 'Customize views', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
 		const ButtonItem = (item: any) => {
-			let icn = [ item.id, String(item.className || '') ];
-			let cn = [ 'item', (item.on ? 'on' : '') ].concat(icn);
+			let cn = [ item.id, (item.on ? 'on' : '') ];
 			return (
-				<MenuItemVertical 
+				<Icon 
 					id={'button-' + item.id} 
-					menuId={item.menu}
-					name={item.name}
-					className={cn.join(' ')} 
-					icon={icn.join(' ')}
-					arrow={item.arrow}
+					className={cn.join(' ')}
+					tooltip={item.name}
 					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
 				/>
 			);
@@ -80,43 +71,40 @@ class Controls extends React.Component<Props, State> {
 					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
 				))}
 
-				<div className="item">
-					<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
+				<div id="button-more" className="item btn" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
+					<Icon className="more" tooltip="Views" />
 				</div>
-				<div className="item dn">
+
+				{/*<div className="item dn">
 					<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
 					<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
-				</div>
+				</div>*/}
 			</div>
 		));
 		
 		return (
 			<div className="dataviewControls">
-				<Views 
-					axis="x" 
-					lockAxis="x"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					onSortEnd={this.onSortEnd}
-					helperClass="isDragging"
-					helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
-				/>
-				
 				<div className="buttons">
 					<div className="side left">
-						{!readOnly ? (
-							<div className="item" onClick={onRowAdd}>
-								<Icon className="plus" />
-								<div className="name">{translate('blockDataviewNew')}</div>
-							</div>
-						) : ''}
+						<Views 
+							axis="x" 
+							lockAxis="x"
+							lockToContainerEdges={true}
+							transitionDuration={150}
+							distance={10}
+							onSortEnd={this.onSortEnd}
+							helperClass="isDragging"
+							helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
+						/>
 					</div>
 
 					<div className="side right">
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
-						))}
+						))}	
+						{!readOnly ? (
+							<Icon className="plus" tooltip="New object" onClick={onRowAdd} />
+						) : ''}
 					</div>
 				</div>
 			</div>
@@ -124,12 +112,31 @@ class Controls extends React.Component<Props, State> {
 	};
 	
 	onButton (e: any, id: string, menu: string) {
+		if (!menu) {
+			return;
+		};
+
 		const { rootId, block, readOnly, getData, getView } = this.props;
+		const view = getView();
+		const sortCnt = view.sorts.length;
+		const filters = view.filters.filter((it: any) => {
+			return dbStore.getRelation(rootId, block.id, it.relationKey);
+		});
+		const filterCnt = filters.length;
+
+		let tabs = [];
+		if (id == 'manager') {
+			tabs = [
+				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
+				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
+				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+			];
+		};
 
 		menuStore.open(menu, { 
-			element: '#item-button-' + id,
-			offsetY: 4,
-			horizontal: I.MenuDirection.Right,
+			element: `#button-${id}`,
+			horizontal: I.MenuDirection.Center,
+			tabs: tabs,
 			data: {
 				readOnly: readOnly,
 				rootId: rootId,
@@ -137,39 +144,6 @@ class Controls extends React.Component<Props, State> {
 				getData: getData,
 				getView: getView,
 			},
-		});
-	};
-
-	onViewAdd (e: any) {
-		const { rootId, block, getData, getView } = this.props;
-		const { content } = block;
-		const { views } = content;
-		const view = getView();
-		const newView: any = { 
-			name: Constant.default.viewName,
-			relations: Util.objectCopy(view.relations),
-		};
-
-		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
-			getData(message.viewId, 0);
-
-			const view = views.find((item: any) => { return item.id == message.viewId; });
-			if (!view) {
-				return;
-			};
-
-			menuStore.open('dataviewViewEdit', {
-				element: '#button-view-add',
-				offsetY: 4,
-				horizontal: I.MenuDirection.Center,
-				data: {
-					rootId: rootId,
-					blockId: block.id,
-					view: view,
-					getData: getData,
-					getView: getView,
-				},
-			});
 		});
 	};
 
@@ -188,9 +162,8 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	getMaxPage () {
-		const { block } = this.props;
-		const { content } = block;
-		const { views } = content;
+		const { rootId, block } = this.props;
+		const views = dbStore.getViews(rootId, block.id);
 		const limit = Constant.limit.dataview.views;
 
 		return Math.ceil(views.length / limit) - 1;

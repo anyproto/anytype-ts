@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
+import { blockStore } from 'ts/store';
 import { I, keyboard, Key, DataUtil } from 'ts/lib';
 
 interface Props extends I.Menu {};
@@ -17,9 +18,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
+		const active = this.getActive();
 		const items = this.getItems();
 		
 		let id = 0;
@@ -27,7 +26,18 @@ class MenuBlockColor extends React.Component<Props, {}> {
 			<div>
 				{items.map((action: any, i: number) => {
 					let inner = <div className={'inner textColor textColor-' + action.className} />;
-					return <MenuItemVertical id={id++} key={i} {...action} icon="color" inner={inner} className={action.value == value ? 'active' : ''} onClick={(e: any) => { this.onClick(e, action); }} onMouseEnter={(e: any) => { this.onOver(e, action); }} />;
+					return (
+						<MenuItemVertical 
+							id={id++} 
+							key={i} 
+							{...action} 
+							icon="color" 
+							inner={inner} 
+							checkbox={action.value == active} 
+							onClick={(e: any) => { this.onClick(e, action); }} 
+							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+						/>
+					);
 				})}
 			</div>
 		);
@@ -55,6 +65,15 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	getActive () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId } = data;
+		const block = blockStore.getLeaf(rootId, blockId);
+		
+		return block ? block.content.color : 0;
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {

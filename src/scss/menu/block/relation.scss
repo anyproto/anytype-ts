@@ -3,12 +3,11 @@
 .menus {
 	.menu.menuBlockRelationList, 
 	.menu.menuBlockRelationEdit {
-		.item:hover::before { background: rgba(172, 169, 150, 0.15); }
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 	}
 
 	.menu.menuBlockRelationList,
 	.menu.menuBlockRelationView {
-		.icon.relation { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; }
 		.icon.expand { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
@@ -17,20 +16,15 @@
 
 		.info { 
 			width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-			flex-shrink: 0; 
+			flex-shrink: 0; margin-right: 6px;
 		}
-		.info {
-			.name { 
-				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-				width: calc(100% - 24px); color: #6c6a5f;
-			}
-		}
-
 	}
 
 	.menu.menuBlockRelationList { width: 640px; }
 	.menu.menuBlockRelationList {
-		.content { transition: none ;padding: 0px; }
+		.wrap { display: flex; flex-direction: column; height: 100%; }
+
+		.content { transition: none; padding: 0px; }
 		.items { height: 100%; }
 		.input { border: 0px; padding: 0px; }
 
@@ -43,6 +37,9 @@
 		.cellContent.c-longText {
 			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
 		}
+	}
+	.menu.menuBlockRelationList.withFilter {
+		.content { padding-top: 8px; }
 	}
 	
 	.menu.menuBlockRelationEdit {
@@ -70,25 +67,31 @@
 
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
-		.section > .name { @include text-common; padding: 5px 28px; position: relative; }
+		.section > .name { @include text-common; padding: 5px 28px; position: relative; color: $colorBlack; }
 		.section > .name {
 			.icon.plus { position: absolute; right: 28px; top: 50%; margin-top: -10px; cursor: pointer; }
 			.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 		.section:last-child::after { display: none; }
-		.section::after { margin: 12px 32px 3px 32px; display: none; }
+		.section::after { margin: 12px 30px 3px 30px; display: none; }
 
 		#section-featured::after { display: block; }
 
-		.item { padding: 0px 28px; margin-bottom: 1px; }
+		.item { padding: 0px 22px; margin-bottom: 1px; }
 		.item {
 			.icon.plus { margin-right: 4px; }
 
-			.info { padding: 6px 2px; }
-			.info:hover { background: rgba(172,169,150,0.15); }
+			.icon.fav {
+				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
+			}
+			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
+			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
 
-			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 218px); line-height: 22px; transition: background 0.2s ease-in-out; }
-			.cell:hover { background: rgba(172,169,150,0.15); }
+			.info { padding: 5px 8px; }
+			.info:hover { background: rgba(172,169,150,0.1); }
+
+			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 242px); line-height: 22px; transition: background 0.2s ease-in-out; }
+			.cell:hover { background: rgba(172,169,150,0.1); }
 
 			.cell.c-select { padding: 4px 8px; }
 			.cell.c-select {
@@ -128,19 +131,21 @@
 				.cellContent { padding: 5px 8px 3px 8px !important; }
 			}
 
+			.cell.c-shortText {
+				.name { width: 100%; }
+			}
+
 			.cell.c-longText {
 				.name, span { -webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; }
 			}
 			.cell.isEditing.c-longText {
+				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
 				.cellContent span:empty { height: 22px; }
 			}
 
 			.cell.isEditing.c-longText, .cell.isEditing.c-file { 
-				.cellContent { box-shadow: 0px 0px; border: 0px; padding: 5px 8px; }
+				.cellContent { padding: 5px 8px; }
 			}
-
-			.icon.fav { margin: 5px 0px 0px 0px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; }
-			.icon.fav:hover, .icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 		}
 		.item * { cursor: pointer; }
 	}

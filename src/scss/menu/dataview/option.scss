@@ -11,7 +11,7 @@
 
 		.item { display: flex; height: 28px; }
 		.item {
-			.buttons { display: none; }
+			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
 		}
 		.item:hover {
 			.clickable { margin-right: 6px; }
@@ -25,7 +25,7 @@
 			.clickable { width: calc(100% - 22px); }
 		}
 		.item:hover {
-			.clickable { width: calc(100% - 74px); }
+			.clickable { width: calc(100% - 66px); }
 		}
 	}
 
@@ -48,9 +48,9 @@
 	}
 	
 	.menu.menuDataviewOptionEdit {
-		.wrap { padding: 8px 16px; }
-		.input { border: 1px solid $colorLightGrey; font-size: 12px; padding: 0px 8px; }
-		.item:hover::before { background: rgba(172, 169, 150, 0.15); }
+		.filter { margin-bottom: 8px; }
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item.active::before { z-index: 1; }
 	}
 
 	.menu.menuDataviewOptionValues.fromFilter {

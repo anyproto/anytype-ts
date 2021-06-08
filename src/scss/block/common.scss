@@ -14,6 +14,8 @@
 		.icon.dnd:hover { 
 			background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
 		}
+
+		.inputWithFile { position: relative; z-index: 2; }
 		
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
 		.colResize.active { opacity: 1; }
@@ -36,10 +38,12 @@
 		
 		.emptyToggle { 
 			display: none; margin-left: 28px; color: $colorDarkGrey; position: relative; z-index: 2; cursor: pointer;
-			transition: $transitionFast; 
+			transition: $transitionFast; @include text-overflow-nw;
 		}
 		.emptyToggle:hover { color: $colorBlack; }
 	}
+
+	.focusable.isFocused { background: rgba(134, 125, 66, 0.1); }
 
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
 

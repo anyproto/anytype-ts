@@ -5,6 +5,7 @@ import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
+const { process } = window.require('electron').remote;
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
@@ -127,24 +128,15 @@ class Util {
 			(JSON.stringify(v1) === JSON.stringify(v2));
 	};
 
-	arrayUnique (array: any[]) {
-		let v = {};
-		for (let i = 0; i < array.length; ++i) {
-			if (v[array[i]]) {
-				array.splice(i, 1);
-				i--;
-			} else {
-				v[array[i]] = true;
-			};
-		};
-		return array;
+	arrayUnique (a: any[]) {
+		return [ ...new Set(a) ];
 	};
 	
-	arrayUniqueObjects (array: any[], k: string) {
+	arrayUniqueObjects (a: any[], k: string) {
 		const res: any[] = [];
 		const map = new Map();
 		
-		for (const item of array) {
+		for (const item of a) {
 			if (!map.has(item[k])){
 				map.set(item[k], true);
 				res.push(item);
@@ -158,7 +150,7 @@ class Util {
 	};
 
 	stringCut (haystack: string, start: number, end: number): string {
-		return haystack.substr(0, start) + haystack.substr(end);
+		return String(haystack || '').substr(0, start) + haystack.substr(end);
 	};
 
 	stringInsert (haystack: string, needle: string, start: number, end: number): string {
@@ -325,9 +317,11 @@ class Util {
 		return this.timestamp(y, m, d, h, i, s);
 	};
 
-	date (format: string, timestamp: number) {
+	date (format: string, timestamp: number, local?: boolean) {
 		timestamp = Number(timestamp) || 0;
-		const jsdate = new Date(timestamp ? timestamp * 1000 : null);
+		const d = new Date(timestamp ? timestamp * 1000 : null);
+		const fn = local ? '' : 'UTC';
+
 		const pad = (n: number, c: number) => {
 			let s = String(n);
 			if ((s = s + '').length < c ) {
@@ -338,7 +332,7 @@ class Util {
 				return s;
 			};
 		};
-		
+
 		const f: any = {
 			// Day
 			d: () => {
@@ -349,7 +343,7 @@ class Util {
 				return t.substr(0,3);
 			},
 			j: () => {
-				return jsdate.getUTCDate();
+				return d[`get${fn}Date`]();
 			},
 			// Month
 			F: () => {
@@ -362,39 +356,39 @@ class Util {
 				return f.F().substr(0, 3);
 			},
 			n: () => {
-				return jsdate.getUTCMonth() + 1;
+				return d[`get${fn}Month`]() + 1;
 			},
 			// Year
 			Y: () => {
-				return jsdate.getUTCFullYear();
+				return d[`get${fn}FullYear`]();
 			},
 			y: () => {
-				return (jsdate.getUTCFullYear() + '').slice(2);
+				return (d[`get${fn}FullYear`]() + '').slice(2);
 			},
 			// Time
 			a: () => {
-				return jsdate.getUTCHours() > 11 ? 'pm' : 'am';
+				return d[`get${fn}Hours`]() > 11 ? 'pm' : 'am';
 			},
 			A: () => {
-				return jsdate.getUTCHours() > 11 ? 'PM' : 'AM';
+				return d[`get${fn}Hours`]() > 11 ? 'PM' : 'AM';
 			},
 			g: () => {
-				return jsdate.getUTCHours() % 12 || 12;
+				return d[`get${fn}Hours`]() % 12 || 12;
 			},
 			h: () => {
 				return pad(f.g(), 2);
 			},
 			H: () => {
-				return pad(jsdate.getUTCHours(), 2);
+				return pad(d[`get${fn}Hours`](), 2);
 			},
 			i: () => {
-				return pad(jsdate.getUTCMinutes(), 2);
+				return pad(d[`get${fn}Minutes`](), 2);
 			},
 			s: () => {
-				return pad(jsdate.getUTCSeconds(), 2);
+				return pad(d[`get${fn}Seconds`](), 2);
 			},
 			w: () => {
-				return jsdate.getUTCDay();
+				return d[`get${fn}Day`]();
 			},
 		};
 		return format.replace(/[\\]?([a-zA-Z])/g, (t: string, s: string) => {
@@ -465,8 +459,9 @@ class Util {
 	};
 
 	fileIcon (obj: any): string {
+		const n = obj.name.split('.');
 		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
-		const e = String(obj.fileExt || '');
+		const e = String(obj.fileExt || n[n.length - 1] || '');
 
 		let t: string[] = [];
 		let icon = '';
@@ -548,11 +543,11 @@ class Util {
 			let y = 0;
 			
 			if (typeY == I.MenuDirection.Top) {
-				y = offset.top - obj.outerHeight() - 12 - st;
+				y = offset.top - obj.outerHeight() - 6 - st;
 			};
 			
 			if (typeY == I.MenuDirection.Bottom) {
-				y = offset.top + node.outerHeight() + 12 - st;
+				y = offset.top + node.outerHeight() + 6 - st;
 			};
 
 			x = Math.max(12, x);
@@ -760,7 +755,7 @@ class Util {
 				return 'body';
 
 			case 'popup':
-				return '#popupPage .selection';
+				return '#popupPage #innerWrap';
 			
 			case 'menuBlockRelationList':
 			case 'menuBlockRelationView':
@@ -772,7 +767,7 @@ class Util {
 		switch (type) {
 			default:
 			case 'page':
-				return '.pageMainEdit';
+				return '.pageMain';
 
 			case 'popup':
 				return '#popupPage';
@@ -790,6 +785,23 @@ class Util {
 	ctrlSymbol () {
 		const platform = this.getPlatform();
 		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	};
+
+	sizeHeader (): number {
+		const platform = this.getPlatform();
+		const version = process.getSystemVersion();
+		
+		let a = version.split('.');
+		let v = a.length ? a[0] : '';
+
+		let s = 38;
+		if (platform == I.Platform.Windows) {
+			s = 68;
+		};
+		if ((platform == I.Platform.Mac) && (v == '11')) {
+			s = 52;
+		};
+		return s;
 	};
 
 };

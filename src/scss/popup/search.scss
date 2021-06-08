@@ -6,7 +6,7 @@
 
 		.content { height: 432px; overflow: visible; transition: none; }
 		.wrap { height: 100%; }
-		.innerWrap { top: 38px; width: 512px; margin-left: -256px; transform: scale3d(1,1,1); transition: none; overflow: visible; }
+		.innerWrap { top: 38px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; }
 		.dimmer { transition: none; }
 
 		.head { 
@@ -15,8 +15,8 @@
 		}
 		.head {
 			.iconObject { margin-right: 6px; }
-			.icon {  width: 20px; height: 20px; vertical-align: top; margin-right: 6px; }
-			.icon.search { background-size: 18px 18px; background-image: url('~img/icon/search.svg'); }
+			.icon { width: 20px; height: 20px; vertical-align: top; margin-right: 6px; }
+			.icon.search { background-image: url('~img/icon/search.svg'); }
 			.input { 
 				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
 				vertical-align: top;
@@ -41,7 +41,7 @@
 			}
 			.item {
 				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; flex-shrink: 0; }
-				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; }
+				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 50%; }
 				.type { flex-shrink: 0; max-width: 33%; }
 				.descr { @include text-small; @include text-overflow-nw; line-height: 22px; color: #6c6a5f; display: inline-block; vertical-align: top; }
 
@@ -51,7 +51,22 @@
 				}
 			}
 
-			.item.active { background-color: rgba(172, 169, 150, 0.15); }
+			.item.active { background-color: rgba(172, 169, 150, 0.1); }
+		}
+	}
+}
+
+html.platformWindows {
+	.popups {
+		.popup.popupSearch .innerWrap { top: 68px; }
+	}
+}
+
+html.platformMac.version11 {
+	.popups {
+		.popup.popupSearch {
+			.innerWrap { top: 52px; }
+			.head { top: -40px; }
 		}
 	}
 }

@@ -1,9 +1,9 @@
-import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat } from './common';
+import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat, Source } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
-import { MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
+import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
+import { SmartBlockType, ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
@@ -30,7 +30,7 @@ import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { FileType, FileState, File, BlockFile } from './block/file';
-import { BookmarkType, ContentBookmark, BlockBookmark } from './block/bookmark';
+import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
 
@@ -45,6 +45,7 @@ export {
 	HistoryVersion,
 	LinkPreview,
 	ExportFormat,
+	Source,
 	
 	ThreadStatus,
 	ThreadSummary,
@@ -60,12 +61,14 @@ export {
 	PopupParam,
 	Popup,
 
+	MenuTab,
 	MenuType,
 	MenuDirection,
 	MenuParam,
 	Menu,
 	MenuItem,
 
+	SmartBlockType,
 	ObjectLayout,
 	ObjectType,
 	RelationType, 
@@ -130,7 +133,6 @@ export {
 	File,
 	BlockFile,
 
-	BookmarkType,
 	ContentBookmark,
 	BlockBookmark,
 

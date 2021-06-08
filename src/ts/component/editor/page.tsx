@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore, authStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -18,13 +18,16 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
+const { app } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
 const fs = window.require('fs');
 const path = window.require('path');
+const userPath = app.getPath('userData');
 
 const THROTTLE = 20;
+const BUTTON_OFFSET = 10;
 
 @observer
 class EditorPage extends React.Component<Props, {}> {
@@ -123,7 +126,7 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { rootId, isPopup } = this.props;
+		const { isPopup } = this.props;
 
 		this._isMounted = true;
 		const win = $(window);
@@ -156,10 +159,8 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
-		const check = DataUtil.checkDetails(rootId);
 		
 		this.open();
 		
@@ -178,29 +179,19 @@ class EditorPage extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		const { isPopup, rootId, match } = this.props;
-
 		this._isMounted = false;
 		this.uiHidden = false;
 		this.unbind();
-	
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (close) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
-		};
+		this.close();
 
 		focus.clear(false);
-		Storage.delete('editorId');
 		window.clearInterval(this.timeoutScreen);
 		ipcRenderer.removeAllListeners('commandEditor');
 	};
 
 	getScrollContainer () {
 		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage .selection') : $(window);
+		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getWrapper () {
@@ -232,7 +223,6 @@ class EditorPage extends React.Component<Props, {}> {
 		crumbs.addRecent(rootId);
 
 		this.id = rootId;
-		Storage.set('editorId', rootId);
 
 		C.BlockOpen(this.id, (message: any) => {
 			if (message.error.code) {
@@ -249,12 +239,6 @@ class EditorPage extends React.Component<Props, {}> {
 			this.forceUpdate();
 			this.resize();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
-
-			const object = blockStore.getDetails(rootId, rootId);
-			if (!isPopup && (object.type == Constant.typeId.template)) {
-				window.clearInterval(this.timeoutScreen);
-				this.timeoutScreen = window.setInterval(() => { ipcRenderer.send('screenshot'); }, 3000);
-			};
 
 			blockStore.setNumbers(rootId);
 
@@ -293,24 +277,12 @@ class EditorPage extends React.Component<Props, {}> {
 			case 'search':
 				this.onSearch();
 				break;
-
-			case 'screenshot':
-				if (!arg) {
-					break;
-				};
-
-				C.UploadFile('', arg, I.FileType.Image, true, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-				});
-				break;
 		};
 	};
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, 'title');
+		const block = blockStore.getLeaf(rootId, Constant.blockId.title);
 		if (!block) {
 			return;
 		};
@@ -322,10 +294,16 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	close (id: string) {
-		const { isPopup, rootId } = this.props;
-		if (!isPopup) {
-			window.setTimeout(() => { Action.pageClose(rootId); }, 200);
+	close () {
+		const { isPopup, rootId, match } = this.props;
+		
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId);
 		};
 	};
 	
@@ -375,8 +353,9 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, I.RestrictionObject.Block);
 
-		if (!root || root.isObjectReadOnly()) {
+		if (!root || !allowed) {
 			return;
 		};
 		
@@ -389,24 +368,17 @@ class EditorPage extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const items = node.find('.block');
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const check = DataUtil.checkDetails(rootId);
+		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
 		const add = node.find('#button-add');
 		const { pageX, pageY } = e;
-		const buttonOffset = 10;
 
 		let offset = 140;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 
-		if (check.withIcon && check.withCover) {
-			offset = 366;
-		} else
-		if (check.withIcon) {
-			offset = 256;
-		} else
-		if (check.withCover) {
-			offset = 394;
+		if (featured.length) {
+			offset = featured.offset().top + featured.outerHeight() - BUTTON_OFFSET;
 		};
 
 		// Find hovered block by mouse coords
@@ -446,11 +418,11 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 		
-		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + buttonOffset) && (pageY <= st + rectContainer.height + offset + buttonOffset)) {
+		if (hovered && (pageX >= x) && (pageX <= x + Constant.size.blockMenu) && (pageY >= offset + BUTTON_OFFSET) && (pageY <= st + rectContainer.height + offset + BUTTON_OFFSET)) {
 			this.hoverPosition = pageY < (y + height / 2) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			
 			let ax = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let ay = pageY - rectContainer.y - buttonOffset - st;
+			let ay = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
 			add.addClass('show').css({ transform: `translate3d(${ax}px,${ay}px,0px)` });
 			items.addClass('showMenu').removeClass('isAdding top bottom');
@@ -656,11 +628,17 @@ class EditorPage extends React.Component<Props, {}> {
 		const win = $(window);
 		const platform = Util.getPlatform();
 		const map = blockStore.getMap(rootId);
-		const length = String(text || '').length;
 		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
 		const element = $('#block-' + block.id);
 		const value = element.find('#value');
+
+		let length = String(text || '').length;
+
+		// Last line break in code block
+		if (block.isTextCode() && length) {
+			length--;
+		};
 
 		range = range || {};
 
@@ -674,7 +652,7 @@ class EditorPage extends React.Component<Props, {}> {
 					this.onPrint();
 				};
 				if (pressed == 'ctrl+p') {
-					this.onArrow(Key.up, length);
+					this.onArrow(e, Key.up, length);
 				};
 			} else {
 				e.preventDefault();
@@ -685,7 +663,7 @@ class EditorPage extends React.Component<Props, {}> {
 		// Next string
 		if (platform == I.Platform.Mac) {
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
-				this.onArrow(Key.down, length);
+				this.onArrow(e, Key.down, length);
 			});
 		};
 
@@ -833,7 +811,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			this.onArrow(pressed, length);
+			this.onArrow(e, pressed, length);
 		});
 
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
@@ -879,7 +857,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
 			const sRect = Util.selectionRect();
-			const vRect = value.get(0).getBoundingClientRect();
+			const vRect = value.length ? value.get(0).getBoundingClientRect() : element.get(0).getBoundingClientRect();
 			const lh = parseInt(value.css('line-height'));
 			const sy = sRect.y + st;
 			const vy = vRect.y + st;
@@ -956,6 +934,12 @@ class EditorPage extends React.Component<Props, {}> {
 			let replace = !range.to && block.isTextList() && !length;
 			if (replace) {
 				C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+			} else 
+			if (!block.isText()) {  
+				this.blockCreate(block.id, I.BlockPosition.Bottom, {
+					type: I.BlockType.Text,
+					style: I.TextStyle.Paragraph,
+				});
 			} else {
 				this.blockSplit(block, range);
 			};
@@ -965,13 +949,13 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyUpBlock (e: any, text: string, marks: I.Mark[], range: I.TextRange) {
 	};
 
-	onArrow (pressed: string, length: number) {
+	onArrow (e: any, pressed: string, length: number) {
 		if (menuStore.isOpen()) {
 			return;
 		};
 
 		const { focused, range } = focus;
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -987,6 +971,8 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
+		e.preventDefault();
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const parent = blockStore.getLeaf(rootId, next.parentId);
 		const l = next.getLength();
@@ -999,6 +985,7 @@ class EditorPage extends React.Component<Props, {}> {
 		window.setTimeout(() => {
 			focus.set(next.id, (dir > 0 ? { from: 0, to: 0 } : { from: l, to: l }));
 			focus.apply();
+			focus.scroll(isPopup);
 		});
 	};
 	
@@ -1026,7 +1013,7 @@ class EditorPage extends React.Component<Props, {}> {
 		commonStore.filterSet(0, '');
 		focus.clear(true);
 		
-		this.blockCreate(block, this.hoverPosition, {
+		this.blockCreate(block.id, this.hoverPosition, {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
@@ -1054,7 +1041,6 @@ class EditorPage extends React.Component<Props, {}> {
 			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
-			offsetY: 4,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
@@ -1065,7 +1051,7 @@ class EditorPage extends React.Component<Props, {}> {
 				rootId: rootId,
 				text: text,
 				blockCreate: this.blockCreate,
-			}
+			},
 		});
 	};
 	
@@ -1153,7 +1139,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus;
-		const filePath = authStore.path;
+		const filePath = path.join(userPath, 'tmp');
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
@@ -1184,11 +1170,10 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 
 				if (files.length) {
-					commonStore.progressSet({ status: 'Processing...', current: 0, total: files.length });
+					commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: files.length });
 
 					for (let file of files) {
-						const dir = path.join(filePath, 'tmp');
-						const fn = path.join(dir, file.name);
+						const fn = path.join(filePath, file.name);
 						const reader = new FileReader();
 
 						reader.readAsBinaryString(file); 
@@ -1196,12 +1181,13 @@ class EditorPage extends React.Component<Props, {}> {
 							fs.writeFile(fn, reader.result, 'binary', (err: any) => {
 								if (err) {
 									console.error(err);
+									commonStore.progressSet({ status: translate('commonProgress'), current: 0, total: 0 });
 									return;
 								};
 
 								data.files.push({ name: file.name, path: fn });
 
-								commonStore.progressSet({ status: 'Processing...', current: data.files.length, total: files.length });
+								commonStore.progressSet({ status: translate('commonProgress'), current: data.files.length, total: files.length });
 
 								if (data.files.length == files.length) {
 									this.onPaste(e, true, data);
@@ -1227,7 +1213,6 @@ class EditorPage extends React.Component<Props, {}> {
 			menuStore.open('select', { 
 				element: '#block-' + focused,
 				offsetX: Constant.size.blockMenu,
-				offsetY: 4,
 				onOpen: () => {
 					if (block) {
 						focus.set(block.id, { from: currentFrom, to: currentTo });
@@ -1323,8 +1308,6 @@ class EditorPage extends React.Component<Props, {}> {
 				element: '#button-header-more',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
-				fixedY: 40,
-				className: 'fixed',
 				data: {
 					container: node,
 				},
@@ -1373,10 +1356,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 	};
 	
-	blockCreate (focused: I.Block, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
+	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
-		
-		C.BlockCreate(param, rootId, (focused ? focused.id : ''), position, (message: any) => {
+
+		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
 
@@ -1461,7 +1444,7 @@ class EditorPage extends React.Component<Props, {}> {
 			style = content.style;
 		};
 
-		if ((childrenIds.length > 0) || (isToggle && isOpen)) {
+		if ((!isToggle && !isOpen && childrenIds.length > 0) || (isToggle && isOpen)) {
 			mode = I.BlockSplitMode.Inner;
 		};
 
@@ -1532,16 +1515,15 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const children = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isTextTitle(); });
-		const last = children[children.length - 1];
-		
+		const last = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.canCreateBlock(); });
+
 		let create = false;
 		let length = 0;
 		
 		if (!last) {
 			create = true;
 		} else {
-			if (!last.isText()) {
+			if (!last.isText() || last.isTextCode()) {
 				create = true;
 			} else {
 				length = last.getLength();
@@ -1552,7 +1534,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		if (create) {
-			this.blockCreate(last, I.BlockPosition.Bottom, { type: I.BlockType.Text });
+			this.blockCreate(last ? last.id : '', I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
 			this.focus(last.id, length, length, false);
 		};

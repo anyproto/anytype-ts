@@ -10,6 +10,7 @@ import arrayMove from 'array-move';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuRelationList extends React.Component<Props, {}> {
@@ -40,6 +41,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		));
 
 		const Item = SortableElement((item: any) => {
+			const canHide = item.relationKey != Constant.relationKey.name;
 			return (
 				<div id={'item-' + item.relationKey} className={[ 'item', (item.relation.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<Handle />
@@ -47,7 +49,13 @@ class MenuRelationList extends React.Component<Props, {}> {
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
-					<Switch value={item.isVisible} className="green" onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} />
+					{canHide ? (
+						<Switch 
+							value={item.isVisible} 
+							className="orange" 
+							onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} 
+						/>
+					 ) : ''}
 				</div>
 			);
 		});
@@ -65,7 +73,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 					{relations.map((item: any, i: number) => {
 						return <Item key={item.relationKey} {...item} index={i} />;
 					})}
-					{!readOnly ? <ItemAdd index={view.relations.length + 1} disabled={true} /> : ''}
+					{!readOnly ? <ItemAdd index={relations.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -89,6 +97,10 @@ class MenuRelationList extends React.Component<Props, {}> {
 		this.props.position();
 	};
 
+	componentWillUnmount () {
+		menuStore.closeAll(Constant.menuIds.cell);
+	};
+
 	onAdd (e: any) {
 		const { param, getId, close } = this.props;
 		const { data } = param;
@@ -99,7 +111,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: 256,
-			offsetY: 4,
 			vertical: I.MenuDirection.Center,
 			data: {
 				...data,
@@ -130,7 +141,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		
 		menuStore.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${id}`,
-			offsetY: 4,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,

@@ -62,6 +62,7 @@ class MenuSelect extends React.Component<Props, {}> {
 						{...item} 
 						className={cn.join(' ')} 
 						isActive={item.id == value} 
+						checkbox={item.id == value} 
 						onClick={(e: any) => { this.onSelect(e, item); }} 
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						style={param.style}

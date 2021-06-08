@@ -5,7 +5,7 @@ import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { commonStore, blockStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
@@ -78,7 +78,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				const details = blockStore.getDetails(rootId, mark.param);
+				const object = detailStore.get(rootId, mark.param);
 			};
 		};
 		
@@ -131,28 +131,35 @@ class BlockText extends React.Component<Props, {}> {
 				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
 		};
-		
-		const editor = (
-			<div
-				id="value"
-				className={cv.join(' ')}
-				contentEditable={!readOnly}
-				suppressContentEditableWarning={true}
-				onKeyDown={this.onKeyDown}
-				onKeyUp={this.onKeyUp}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onSelect={this.onSelect}
-				onPaste={this.onPaste}
-				onMouseDown={this.onMouseDown}
-				onMouseUp={this.onMouseUp}
-				onInput={this.onInput}
-				onCompositionStart={this.onCompositionStart}
-				onCompositionUpdate={this.onCompositionUpdate}
-				onCompositionEnd={this.onCompositionEnd}
-				onDragStart={(e: any) => { e.preventDefault(); }}
-			/>
-		);
+
+		let editor = null;
+		if (readOnly) {
+			editor = (
+				<div id="value" className={cv.join(' ')} />
+			);
+		} else {
+			editor = (
+				<div
+					id="value"
+					className={cv.join(' ')}
+					contentEditable={!readOnly}
+					suppressContentEditableWarning={true}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onSelect={this.onSelect}
+					onPaste={this.onPaste}
+					onMouseDown={this.onMouseDown}
+					onMouseUp={this.onMouseUp}
+					onInput={this.onInput}
+					onCompositionStart={this.onCompositionStart}
+					onCompositionUpdate={this.onCompositionUpdate}
+					onCompositionEnd={this.onCompositionEnd}
+					onDragStart={(e: any) => { e.preventDefault(); }}
+				/>
+			);
+		}
 		
 		return (
 			<div className="flex">
@@ -239,7 +246,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.renderEmoji();
 		};
 
-		if (block.isTextDescription()) {
+		if (block.isTextTitle() || block.isTextDescription()) {
 			this.placeHolderCheck();
 		};
 	};
@@ -292,40 +299,44 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.each((i: number, item: any) => {
 			item = $(item);
+			
 			const data = item.data();
 			if (!data.param) {
 				return;
 			};
 
-			const object = blockStore.getDetails(rootId, data.param);
 			const smile = item.find('smile');
-			const { _objectEmpty_, iconEmoji, iconImage } = object;
-			const cn = [];
-
-			if (smile && smile.length) {
-				let icon = null;
-				if (_objectEmpty_) {
-					item.addClass('dis');
-					icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
-				} else {
-					icon = <IconObject size={size} object={object} />;
-				};
-
-				if (icon) {
-					ReactDOM.render(icon, smile.get(0));
-					smile.after('<img src="./img/space.svg" class="space" />');
-					cn.push('withImage');
-				};
+			if (!smile.length) {
+				return;
 			};
 
-			item.addClass(cn.join(' '));
+			const object = detailStore.get(rootId, data.param, []);
+			const { _objectEmpty_ } = object;
+
+			let icon = null;
+			if (_objectEmpty_) {
+				item.addClass('dis');
+				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
+			} else {
+				icon = <IconObject size={size} object={object} />;
+			};
+
+			if (icon) {
+				ReactDOM.render(icon, smile.get(0), () => {
+					if (smile.html()) {
+						smile.after('<img src="./img/space.svg" class="space" />');
+						item.addClass('withImage');
+					};
+				});
+			};
 		});
 		
 		items.unbind('click.mention').on('click.mention', function (e: any) {
 			e.preventDefault();
+
 			const el = $(this);
 			if (!el.hasClass('dis')) {
-				const object = blockStore.getDetails(rootId, el.data('param'));
+				const object = detailStore.get(rootId, el.data('param'));
 				DataUtil.objectOpenEvent(e, object);
 			};
 		});
@@ -544,6 +555,7 @@ class BlockText extends React.Component<Props, {}> {
 		let value = this.getValue();
 		let cmdParsed = false;
 		let cb = (message: any) => {
+			keyboard.setFocus(false);
 			focus.set(message.blockId, { from: 0, to: 0 });
 			focus.apply();
 		};
@@ -657,7 +669,13 @@ class BlockText extends React.Component<Props, {}> {
 		
 		// Make code
 		if ((value == '/code' || value == '```') && !block.isTextCode()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Code } }, rootId, id, I.BlockPosition.Replace, cb);
+			C.BlockCreate({ 
+				type: I.BlockType.Text, 
+				fields: { 
+					lang: (Storage.get('codeLang') || Constant.default.codeLang),
+				},
+				content: { style: I.TextStyle.Code } 
+			}, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
 
@@ -695,7 +713,6 @@ class BlockText extends React.Component<Props, {}> {
 			element: el,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
-			offsetY: 4,
 			onClose: () => {
 				this.preventSaveOnBlur = false;
 			},
@@ -738,7 +755,6 @@ class BlockText extends React.Component<Props, {}> {
 			element: '#block-' + block.id,
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
-			offsetY: 4,
 			data: {
 				noHead: true,
 				rootId: rootId,
@@ -867,16 +883,8 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup } = this.props;
-		const { focused } = focus;
 		const { from, to } = focus.range;
 		const ids = DataUtil.selectionGet('', false, this.props);
-
-		/*
-		if ((focused != block.id) && (keyboard.pressed.indexOf(Key.shift) >= 0)) {
-			e.preventDefault();
-			return;
-		};
-		*/
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);

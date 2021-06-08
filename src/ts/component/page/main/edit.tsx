@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Storage } from 'ts/lib';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {
@@ -11,6 +10,7 @@ interface Props extends RouteComponentProps<any> {
 class PageMainEdit extends React.Component<Props, {}> {
 	
 	refHeader: any = null;
+	refFooter: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -19,12 +19,12 @@ class PageMainEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { history, location, match, isPopup } = this.props;
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		
+
 		return (
 			<div>
-				<SelectionProvider rootId={match.params.id} isPopup={isPopup}>
+				<SelectionProvider rootId={rootId} isPopup={isPopup}>
 					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
 						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 	
@@ -34,7 +34,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 					</DragProvider>
 				</SelectionProvider>
 				
-				<Footer {...this.props} rootId={rootId} />
+				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 			</div>
 		);
 	};
@@ -42,6 +42,9 @@ class PageMainEdit extends React.Component<Props, {}> {
 	onOpen () {
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();
+		};
+		if (this.refFooter) {
+			this.refFooter.forceUpdate();
 		};
 	};
 

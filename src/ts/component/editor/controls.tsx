@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { menuStore, blockStore } from 'ts/store';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -30,27 +30,24 @@ class Controls extends React.Component<Props, {}> {
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
 		this.onDrop = this.onDrop.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onOut = this.onOut.bind(this);
 	};
 
 	render (): any {
 		const { rootId, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
 
 		if (readOnly) {
 			return null;
 		};
 
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+
 		return (
 			<div 
-				className={[ 'editorControls', 'align' + check.object.layoutAlign ].join(' ')}
+				className={[ 'editorControls', 'align' + object.layoutAlign ].join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
-				onMouseOver={this.onOver}
-				onMouseOut={this.onOut}
 			>
 				<div className="buttons">
 					{!root.isObjectTask() ? (
@@ -90,7 +87,6 @@ class Controls extends React.Component<Props, {}> {
 		
 		menuStore.open('smile', { 
 			element: '#button-add-icon',
-			offsetY: 4,
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
@@ -178,14 +174,6 @@ class Controls extends React.Component<Props, {}> {
 		});
 	};
 
-	onOver (e: any) {
-		$('.headerMainEditSearch').addClass('active');
-	};
-
-	onOut (e: any) {
-		$('.headerMainEditSearch').removeClass('active');
-	};
-	
 };
 
 export default Controls;

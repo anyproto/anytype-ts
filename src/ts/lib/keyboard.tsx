@@ -1,8 +1,9 @@
-import { I, Util, DataUtil, SmileUtil, Storage, focus, history as historyPopup } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
+const Constant = require('json/constant.json');
 
 class Keyboard {
 	
@@ -14,6 +15,8 @@ class Keyboard {
 	timeoutPin: number = 0;
 	pressed: string[] = [];
 	match: any = {};
+	matchPopup: any = {};
+	source: any = null;
 	
 	isDragging: boolean = false;
 	isResizing: boolean = false;
@@ -22,6 +25,7 @@ class Keyboard {
 	isMouseDisabled: boolean = false;
 	isPinChecked: boolean = false;
 	isContextDisabled: boolean = false;
+	isBlurDisabled: boolean = false;
 	
 	init (history: any) {
 		this.history = history;
@@ -38,10 +42,7 @@ class Keyboard {
 	
 	onKeyDown (e: any) {
 		const { account } = authStore;
-		const { root } = blockStore;
-		const { focused } = focus;
-		const rootId = this.isMainEditor() ? this.match.params.id : root;
-		const isMainIndex = this.isMainIndex();
+		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
 
@@ -92,7 +93,6 @@ class Keyboard {
 				return;
 			};
 			popupStore.open('navigation', { 
-				preventResize: true,
 				data: { 
 					type: I.NavigationType.Go, 
 					rootId: rootId,
@@ -116,41 +116,54 @@ class Keyboard {
 			if (!check) {
 				return;
 			};
-			if (!this.isMainIndex() && !this.isMainEditor()) {
-				return;
-			};
 
 			e.preventDefault();
-			
-			let targetId = '';
-			let position = I.BlockPosition.Bottom;
-			
-			if (this.isMainEditor()) {
-				const fb = blockStore.getLeaf(rootId, focused);
-				if (fb) {
-					if (fb.isTextTitle()) {
-						const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
-						if (first) {
-							targetId = first.id;
-							position = I.BlockPosition.Top;
-						};
-					} else 
-					if (fb.isFocusable()) {
-						targetId = fb.id;
-					};
-				};
-			};
-			
-			DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
-				if (isMainIndex) {
-					DataUtil.objectOpen({ id: message.targetId });
-				} else {
-					DataUtil.objectOpenPopup({ id: message.targetId });
-				};
-			});
+			this.pageCreate();
 		});
 		
 		this.initPinCheck();
+	};
+
+	pageCreate () {
+		const { focused } = focus;
+		const rootId = this.getRootId();
+		const isMainIndex = this.isMainIndex();
+		const isMainEditor = this.isMainEditor();
+
+		if (!isMainIndex && !isMainEditor) {
+			return;
+		};
+
+		let targetId = '';
+		let position = I.BlockPosition.Bottom;
+		
+		if (this.isMainEditor()) {
+			const fb = blockStore.getLeaf(rootId, focused);
+			if (fb) {
+				if (fb.isTextTitle()) {
+					const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
+					if (first) {
+						targetId = first.id;
+						position = I.BlockPosition.Top;
+					};
+				} else 
+				if (fb.isFocusable()) {
+					targetId = fb.id;
+				};
+			};
+		};
+		
+		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
+			if (isMainIndex) {
+				DataUtil.objectOpen({ id: message.targetId });
+			} else {
+				DataUtil.objectOpenPopup({ id: message.targetId });
+			};
+		});
+	};
+
+	getRootId (): string {
+		return this.isMainEditor() ? this.match.params.id : blockStore.root;
 	};
 
 	onKeyUp (e: any) {
@@ -162,6 +175,8 @@ class Keyboard {
 	back () {
 		const { account } = authStore;
 		const isPopup = popupStore.isOpen('page');
+
+		crumbs.restore(I.CrumbsType.Page);
 		
 		if (isPopup) {
 			historyPopup.goBack((match: any) => { 
@@ -181,10 +196,14 @@ class Keyboard {
 
 			this.history.goBack();
 		};
+
+		this.restoreSource();
 	};
 
 	forward () {
 		const isPopup = popupStore.isOpen('page');
+
+		crumbs.restore(I.CrumbsType.Page);
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
@@ -231,7 +250,7 @@ class Keyboard {
 	setPinChecked (v: boolean) {
 		this.isPinChecked = v;
 	};
-	
+
 	initPinCheck () {
 		const { account } = authStore;
 		const pin = Storage.get('pin');
@@ -249,7 +268,7 @@ class Keyboard {
 			const pin = Storage.get('pin');
 			if (pin) {
 				this.setPinChecked(false);
-				this.history.push('/auth/pin-check');				
+				this.history.push('/auth/pin-check');
 			};
 		}, 5 * 60 * 1000);
 	};
@@ -257,9 +276,36 @@ class Keyboard {
 	setMatch (match: any) {
 		this.match = match;
 	};
+
+	setSource (source: any) {
+		this.source = Util.objectCopy(source);
+	};
+
+	restoreSource () {
+		if (!this.source) {
+			return;
+		};
+
+		const { type, data } = this.source;
+
+		switch (type) {
+			case I.Source.Popup:
+				window.setTimeout(() => {
+					popupStore.open(data.id, data.param);
+				}, Constant.delay.popup);
+				break;
+		};
+
+		this.setSource(null);
+	};
 	
 	disableMouse (v: boolean) {
 		this.isMouseDisabled = v;
+	};
+
+	// Flag to prevent blur events
+	disableBlur (v: boolean) {
+		this.isBlurDisabled = v;
 	};
 
 	// Flag to prevent menuBlockContext from closing

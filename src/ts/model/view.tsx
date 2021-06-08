@@ -39,6 +39,14 @@ class View implements I.View {
 		return this.relations.find((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 	};
 
+	getFilter (index: number) {
+		return this.filters[index] || {};
+	};
+
+	setFilter (index: number, filter: any) {
+		this.filters[index] = Object.assign(this.getFilter(index), filter);
+	};
+
 };
 
 class Relation implements I.Relation {
@@ -76,6 +84,9 @@ class Relation implements I.Relation {
 			maxCount: observable,
 			objectTypes: observable,
 			selectDict: observable,
+			scope: observable,
+			isHidden: observable,
+			isReadOnly: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
@@ -143,7 +154,7 @@ class Filter implements I.Filter {
 
 	relationKey: string = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
-	condition: I.FilterCondition = I.FilterCondition.Equal;
+	condition: I.FilterCondition = I.FilterCondition.None;
 	value: any = {};
 
 	constructor (props: I.Filter) {
@@ -151,7 +162,7 @@ class Filter implements I.Filter {
 		
 		self.relationKey = String(props.relationKey || '');
 		self.operator = Number(props.operator) || I.FilterOperator.And;
-		self.condition = Number(props.condition) || I.FilterCondition.Equal;
+		self.condition = Number(props.condition) || I.FilterCondition.None;
 		self.value = props.value;
 
 		decorate(self, {

@@ -1,9 +1,7 @@
 import { observable, action, computed, set, intercept, toJS } from 'mobx';
-import { I, M, Util, Decode } from 'ts/lib';
+import { I, M, Util } from 'ts/lib';
 
 const $ = require('jquery');
-const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const Constant = require('json/constant.json');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -15,8 +13,8 @@ class BlockStore {
 	@observable public storeIdRelation: string = '';
 
 	public treeMap: Map<string, any[]> = new Map();
-	public blockMap: Map<string, any[]> = new Map();
-	public detailMap: Map<string, Map<string, any>> = new Map();
+	public blockMap: Map<string, I.Block[]> = new Map();
+	public restrictionMap: Map<string, Map<string, any>> = new Map();
 
 	@computed
 	get root (): string {
@@ -89,85 +87,26 @@ class BlockStore {
 	};
 
 	@action
-	detailsSet (rootId: string, details: any[]) {
-		let map = this.detailMap.get(rootId);
-
-		if (!map) {
-			map = observable.map(new Map());
-			intercept(map as any, (change: any) => {
-				const item = map.get(change.name);
-				return Util.objectCompare(change.newValue, item) ? null :change;
-			});
-		};
-
-		for (let item of details) {
-			const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
-			intercept(object as any, (change: any) => { return Util.intercept(object, change); });
-			map.set(item.id, object);
-		};
-
-		this.detailMap.set(rootId, map);
-	};
-
-	@action
-	detailsUpdate (rootId: string, item: any, clear: boolean) {
-		if (!item.id || !item.details) {
-			return;
-		};
-
-		let map = this.detailMap.get(rootId);
-		let create = false;
-
-		if (!map) {
-			map = observable.map(new Map());
-			create = true;
-		} else 
-		if (clear) {
-			map.delete(item.id);
-		};
-
-		const object = observable.object(toJS(Object.assign(map.get(item.id) || {}, item.details)));
-		intercept(object as any, (change: any) => { return Util.intercept(object, change); });
-		map.set(item.id, object);
-
-		if (create) {
-			intercept(map as any, (change: any) => {
-				const item = map.get(change.name);
-				return Util.objectCompare(change.newValue, item) ? null :change;
-			});
-			this.detailMap.set(rootId, map);
-		};
-	};
-
-	detailsUpdateArray (rootId: string, blockId: string, details: any[]) {
-		let obj: any = {};
-		for (let item of details) {
-			obj[item.key] = item.value;
-		};
-		this.detailsUpdate(rootId, { id: blockId, details: obj }, false);
-	};
-
-	@action
-	blocksSet (rootId: string, blocks: I.Block[]) {
+	set (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
 		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
 	@action
-	blocksClear (rootId: string) {
+	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
 	};
 
 	@action
-	blocksClearAll () {
+	clearAll () {
 		this.blockMap = new Map();
 		this.treeMap = new Map();
-		this.detailMap = new Map();
+		this.restrictionMap = new Map();
 	};
 
 	@action
-	blockAdd (rootId: string, block: I.Block) {
+	add (rootId: string, block: I.Block) {
 		block = new M.Block(block);
 
 		let blocks = this.getBlocks(rootId);
@@ -189,7 +128,7 @@ class BlockStore {
 	};
 
 	@action
-	blockUpdate (rootId: string, param: any) {
+	update (rootId: string, param: any) {
 		let block = this.getLeaf(rootId, param.id);
 		if (!block) {
 			return;
@@ -198,7 +137,7 @@ class BlockStore {
 	};
 
 	@action
-	blockUpdateStructure (rootId: string, id: string, childrenIds: string[]) {
+	updateStructure (rootId: string, id: string, childrenIds: string[]) {
 		let map = this.getMap(rootId);
 
 		set(map[id], 'childrenIds', childrenIds);
@@ -214,12 +153,28 @@ class BlockStore {
 	};
 
 	@action
-	blockDelete (rootId: string, id: string) {
+	delete (rootId: string, id: string) {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
 		blocks = blocks.filter((it: any) => { return it.id != id; });
 		delete(map[id]);
+	};
+
+	restrictionsSet (rootId: string, restrictions: any) {
+		let map = this.restrictionMap.get(rootId);
+
+		if (!map) {
+			map = new Map();
+		};
+
+		map.set(rootId, restrictions.object);
+
+		for (let item of restrictions.dataview) {
+			map.set(item.blockId, item.restrictions);
+		};
+
+		this.restrictionMap.set(rootId, map);
 	};
 
 	getMap (rootId: string) {
@@ -395,6 +350,10 @@ class BlockStore {
 
 		let ret = [] as I.Block[];
 		for (let item of tree) {
+			if (!item) {
+				continue;
+			};
+
 			let cb = item.childBlocks;
 			delete(item.childBlocks);
 
@@ -406,19 +365,14 @@ class BlockStore {
 		return ret;
 	};
 
-	getDetailsMap (rootId: string) {
-		return this.detailMap.get(rootId) || new Map();
-	};
-
-	getDetails (rootId: string, id: string): any {
-		const map = this.getDetailsMap(rootId);
-		const item = map.get(id) || { _objectEmpty_: true };
-		return {
-			...item,
-			id: id,
-			name: String(item.name || Constant.default.name || ''),
-			layoutAlign: Number(item.layoutAlign) || I.BlockAlign.Left,
+	isAllowed (rootId: string, blockId: string, flag: any) {
+		const map = this.restrictionMap.get(rootId);
+		if (!map) {
+			return false;
 		};
+
+		const restrictions = map.get(blockId) || [];
+		return restrictions.indexOf(flag) < 0;
 	};
 
 };
