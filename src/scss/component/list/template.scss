@@ -16,6 +16,9 @@
 	}
 
 	.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
+	.item > .name {
+		.input { border: 0px; padding: 0px; height: 22px; }
+	}
 	.item:last-child { margin-right: 0px; }
 	.item.hover:before { display: block; }
 

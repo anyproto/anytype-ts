@@ -161,8 +161,9 @@ class BlockDataview extends React.Component<Props, {}> {
 	onRowAdd (e: any) {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const setOf = object.setOf || [];
 
-		if (!object.setOf.length) {
+		if (!setOf.length) {
 			C.BlockDataviewRecordCreate(rootId, block.id, {}, '', (message: any) => {
 				if (message.error.code) {
 					return;
@@ -183,7 +184,7 @@ class BlockDataview extends React.Component<Props, {}> {
 				noIcon: true,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: object.setOf },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
 					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 				],
 				sorts: [
