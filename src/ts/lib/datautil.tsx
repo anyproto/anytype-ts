@@ -1070,6 +1070,10 @@ class DataUtil {
 			ret.className.push('withDescription');
 		};
 
+		if (object.templateIsBundled) {
+			ret.className.push('isBundled');
+		};
+
 		if (ret.withIcon && ret.withCover) {
 			ret.className.push('withIconAndCover');
 		} else

@@ -208,7 +208,6 @@ class Page extends React.Component<Props, {}> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 		
-
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
 			Util.toCamelCase([ prefix, page, action ].join('-')),

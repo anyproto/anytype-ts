@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.block.blockCover { position: absolute; left: 24px; top: 38px; height: 312px; width: calc(100% - 48px); border-radius: 4px; overflow: hidden; }
+.block.blockCover { position: absolute; left: 16px; top: 38px; height: 312px; width: calc(100% - 32px); border-radius: 4px; overflow: hidden; }
 .block.blockCover {
 	.wrapMenu { display: none; }
 	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }

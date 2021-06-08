@@ -170,11 +170,11 @@ class EditorPage extends React.Component<Props, {}> {
 
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
-		this.resize();
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
+
 		this.resize();
 	};
 	
@@ -237,7 +237,6 @@ class EditorPage extends React.Component<Props, {}> {
 			this.loading = false;
 			this.focusTitle();
 			this.forceUpdate();
-			this.resize();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			blockStore.setNumbers(rootId);
@@ -245,6 +244,8 @@ class EditorPage extends React.Component<Props, {}> {
 			if (onOpen) {
 				onOpen();
 			};
+
+			this.resize();
 		});
 	};
 
@@ -1547,17 +1548,25 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId, isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
+		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
 		const root = blockStore.getLeaf(rootId, rootId);
+		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
+		const container = this.getScrollContainer();
+		const header = obj.find('#header');
+		const hh = header.height();
 
 		if (blocks.length && last.length) {
-			const container = this.getScrollContainer();
 			const ct = isPopup ? container.offset().top : 0;
 			const h = container.height();
 			const height = blocks.outerHeight() + blocks.offset().top - ct;
 
 			last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
+		};
+
+		if (note.length) {
+			note.css({ top: hh });
 		};
 
 		this.onResize(root?.fields?.width);

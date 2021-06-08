@@ -274,7 +274,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				if (!config.debug.ho && it.isHidden) {
 					return false;
 				};
-				return it.scope == I.RelationScope.Object;
+				return [ I.RelationScope.Object, I.RelationScope.Type ].indexOf(it.scope) >= 0;
 			});
 
 			this.relations.unshift({

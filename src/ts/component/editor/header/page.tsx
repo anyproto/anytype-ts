@@ -48,6 +48,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const templateIsBundled = object.templateIsBundled;
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
@@ -67,8 +68,8 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					<div id="dragValue" className="number">100%</div>
 				</div>
 
-				{object.templateIsBundled ? (
-					<div className="note">
+				{templateIsBundled ? (
+					<div id="note" className="note">
 						<div className="inner">
 							<div className="sides">
 								<div className="side left">
