@@ -17,7 +17,7 @@
 
 	.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
 	.item:last-child { margin-right: 0px; }
-	.item:hover:before { display: block; }
+	.item.hover:before { display: block; }
 
 	.item.add { border: 1px solid $colorLightGrey; border-radius: 8px; width: 344px; height: 216px; }
 

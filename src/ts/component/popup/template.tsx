@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, ObjectPreviewBlock, Loader, Title, Label, ListTemplate } from 'ts/component';
-import { I, C, keyboard } from 'ts/lib';
+import { Loader, Title, Label, ListTemplate } from 'ts/component';
+import { I, C, focus } from 'ts/lib';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
@@ -31,8 +30,6 @@ class PopupTemplate extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 
-		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -54,8 +51,6 @@ class PopupTemplate extends React.Component<Props, State> {
 					ref={(ref: any) => { this.ref = ref; }}
 					items={items}
 					offsetX={-128}
-					onMouseEnter={this.onMouseEnter}
-					onMouseLeave={this.onMouseLeave}
 					onClick={this.onClick} 
 				/>
 			</div>
@@ -65,6 +60,7 @@ class PopupTemplate extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.load();
+		focus.clear(true);
 
 		window.setTimeout(() => {
 			this.rebind();
@@ -72,7 +68,9 @@ class PopupTemplate extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		this.setActive();
+		if (this.ref) {
+			this.ref.setActive();
+		};
 	};
 
 	componentWillUnmount () {
@@ -112,51 +110,9 @@ class PopupTemplate extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { items } = this.state;
-
-		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			const dir = pressed == 'arrowleft' ? -1 : 1;
-			this.ref.n += dir;
-
-			if (this.ref.n < 0) {
-				this.ref.n = items.length - 1;
-			};
-			if (this.ref.n > items.length - 1) {
-				this.ref.n = 0;
-			};
-
-			this.ref.page = Math.floor(this.ref.n / 2);
-			this.ref.onArrow(0);
-			this.setActive();
-		});
-
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
-			this.onClick(e, items[this.n]);
-		});
-	};
-
-	onMouseEnter (e: any, item: any) {
-		this.n = this.state.items.findIndex((it: any) => { return it.id == item.id; });
-		this.setActive();
-	};
-
-	onMouseLeave (e: any, item: any) {
-		const node = $(ReactDOM.findDOMNode(this));
-
-		node.find('.item.hover').removeClass('hover');
-	};
-
-	setActive () {
-		const { items } = this.state;
-		const item = items[this.n];
-		if (!item) {
-			return;
+		if (this.ref) {
+			this.ref.onKeyUp(e);
 		};
-
-		const node = $(ReactDOM.findDOMNode(this));
-
-		node.find('.item.hover').removeClass('hover');
-		node.find('#item-' + item.id).addClass('hover');
 	};
 
 	onClick (e: any, item: any) {

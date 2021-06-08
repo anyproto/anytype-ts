@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ObjectPreviewBlock, Icon } from 'ts/component';
+import { keyboard } from 'ts/lib';
 
 interface Props {
 	items: any[];
 	offsetX: number;
 	canAdd?: boolean;
-	onMouseEnter?: (e: any, item: any) => void;
-	onMouseLeave?: (e: any, item: any) => void;
 	onClick?: (e: any, item: any) => void;
 	onAdd?: (e: any) => void;
 };
@@ -66,6 +65,14 @@ class ListTemplate extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		this.setActive();
+	};
+
+	componentDidUpdate () {
+		this.setActive();
+	};
+
 	getMaxPage () {
 		const { items, canAdd } = this.props;
 		const length = items.length + (canAdd ? 1 : 0);
@@ -73,17 +80,13 @@ class ListTemplate extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		const { onMouseEnter } = this.props;
-		if (onMouseEnter) {
-			onMouseEnter(e, item);
-		};
+		this.n = this.props.items.findIndex((it: any) => { return it.id == item.id; });
+		this.setActive();
 	};
 
 	onMouseLeave (e: any, item: any) {
-		const { onMouseLeave } = this.props;
-		if (onMouseLeave) {
-			onMouseLeave(e, item);
-		};
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.item.hover').removeClass('hover');
 	};
 
 	onClick (e: any, item: any) {
@@ -91,6 +94,44 @@ class ListTemplate extends React.Component<Props, {}> {
 		if (onClick) {
 			onClick(e, item);
 		};
+	};
+
+	setActive () {
+		const { items } = this.props;
+		const item = items[this.n];
+
+		if (!item) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.find('.item.hover').removeClass('hover');
+		node.find('#item-' + item.id).addClass('hover');
+	};
+
+	onKeyUp (e: any) {
+		const { items } = this.props;
+
+		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+			const dir = pressed == 'arrowleft' ? -1 : 1;
+			this.n += dir;
+
+			if (this.n < 0) {
+				this.n = items.length - 1;
+			};
+			if (this.n > items.length - 1) {
+				this.n = 0;
+			};
+
+			this.page = Math.floor(this.n / 2);
+			this.onArrow(0);
+			this.setActive();
+		});
+
+		keyboard.shortcut('enter, space', e, (pressed: string) => {
+			this.onClick(e, items[this.n]);
+		});
 	};
 
 	onArrow (dir: number) {
