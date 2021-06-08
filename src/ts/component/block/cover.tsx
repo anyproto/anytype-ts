@@ -62,7 +62,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId, readOnly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ]);
 		const { coverType, coverId } = object;
-		const canEdit = !readOnly && coverType && ([ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0);
+		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let elements = null;
@@ -104,7 +104,7 @@ class BlockCover extends React.Component<Props, State> {
 				</React.Fragment>
 			);
 		};
-		
+
 		return (
 			<div 
 				className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} 
@@ -114,10 +114,10 @@ class BlockCover extends React.Component<Props, State> {
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-				{canEdit ? (
+				{isImage ? (
 					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				) : (
-					<Cover id="cover" type={coverType} className={coverId} />
+					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
 				{!readOnly ? (
 					<div id="elements" className="elements">
@@ -249,49 +249,47 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ]);
 		const { coverId, coverType } = object;
-		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const node = $(ReactDOM.findDOMNode(this));
+		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		
-		if (!node.hasClass('wrap')) {
+		if (!isImage || !node.hasClass('wrap')) {
 			return;
 		};
 		
-		this.cover = node.find('#cover');
+		this.cover = node.find('.cover');
 		
-		if (canEdit) {
-			const el = this.cover.get(0);
-			if (!el) {
-				return;
-			};
+		const el = this.cover.get(0);
+		if (!el) {
+			return;
+		};
 
-			const cb = () => {
-				const object = detailStore.get(rootId, rootId, [ 'coverScale' ]);
-				const { coverScale } = object;
+		const cb = () => {
+			const object = detailStore.get(rootId, rootId, [ 'coverScale' ]);
+			const { coverScale } = object;
 
-				if (this.refDrag) {
-					this.refDrag.setValue(coverScale);
-				};
-				
-				this.rect = (node.get(0) as Element).getBoundingClientRect();
-				this.onScaleMove(coverScale);
-				this.cover.css({ opacity: 1 });
-				this.loaded = true;
+			if (this.refDrag) {
+				this.refDrag.setValue(coverScale);
 			};
 			
-			if (this.loaded) {
-				cb();
-			} else {
-				this.cover.css({ opacity: 0 });
-				el.onload = cb;
-			};
-			
-			if (coverType == I.CoverType.Upload) {
-				el.src = commonStore.imageUrl(coverId, Constant.size.cover);
-			};
+			this.rect = (node.get(0) as Element).getBoundingClientRect();
+			this.onScaleMove(coverScale);
+			this.cover.css({ opacity: 1 });
+			this.loaded = true;
+		};
+		
+		if (this.loaded) {
+			cb();
+		} else {
+			this.cover.css({ opacity: 0 });
+			el.onload = cb;
+		};
+		
+		if (coverType == I.CoverType.Upload) {
+			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
+		};
 
-			if (coverType == I.CoverType.Image) {
-				el.src = Util.coverSrc(coverId);
-			};
+		if (coverType == I.CoverType.Image) {
+			el.src = Util.coverSrc(coverId);
 		};
 	};
 	
