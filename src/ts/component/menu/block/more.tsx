@@ -53,10 +53,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const readOnly = block.isObjectReadOnly(); 
+			const allowedType = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]); 
+			const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]); 
 
-			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: !readOnly };
-			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: !readOnly };
+			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: allowedType };
+			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: allowedLayout };
 
 			sectionPage = (
 				<React.Fragment>
@@ -65,8 +66,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							<div className="sectionName">Type</div>
 							<MenuItemVertical 
 								{...itemType}
-								onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemType) } : undefined} 
-								className={readOnly ? 'isReadOnly' : ''}
+								onMouseEnter={allowedType ? (e: any) => { this.onOver(itemType) } : undefined} 
+								className={allowedType ? '' : 'isReadOnly'}
 							/>
 						</React.Fragment>
 					) : ''}
@@ -74,8 +75,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					<div className="sectionName">Layout</div>
 					<MenuItemVertical 
 						{...itemLayout}
-						onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemLayout) } : undefined} 
-						className={readOnly ? 'isReadOnly' : ''}
+						onMouseEnter={allowedLayout ? (e: any) => { this.onOver(itemLayout) } : undefined} 
+						className={allowedLayout ? '' : 'isReadOnly'}
 					/>
 				</React.Fragment>
 			);
@@ -170,16 +171,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const object = detailStore.get(rootId, blockId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
 		const cmd = Util.ctrlSymbol();
 
-		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
-		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
-		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
-		const linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
-		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
-		const move = { id: 'move', name: 'Move to', arrow: true };
-		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
-		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
+		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
+		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
+		let linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
+		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
+		let move = { id: 'move', name: 'Move to', arrow: true };
+		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
+		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let resize = { id: 'resize', name: 'Set layout width' };
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
@@ -200,12 +203,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				archive = { id: 'archivePage', icon: 'remove', name: 'Archive' };
 			};
 
+			// Restrictions
+			if (!allowed) {
+				undo = null;
+				redo = null;
+				align = null;
+				archive = null;
+				resize = null;
+			};
+
 			sections = [
-				{ 
-					children: [
-						{ id: 'resize', name: 'Set layout width' }
-					]
-				},
+				{ children: [ resize, align ] },
 				{
 					children: [
 						linkRoot,
@@ -217,12 +225,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ print ] },
 				{ children: [ archive ] }
 			];
-
-			if (!block.isObjectSet()) {
-				sections[0].children.push();
-			};
-
-			sections[0].children.push(align);
 
 			if (block.canHaveHistory()) {
 				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` });

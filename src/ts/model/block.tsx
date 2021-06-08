@@ -147,10 +147,6 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Relation);
 	};
 
-	isObjectReadOnly (): boolean { 
-		return this.isObjectSet() || this.isObjectFile() || this.isObjectImage() || this.isObjectType() || this.isObjectRelation();
-	};
-
 	isFeatured (): boolean {
 		return this.type == I.BlockType.Featured;
 	};

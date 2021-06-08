@@ -26,7 +26,8 @@ class FooterMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const canAdd = allowed && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
 
 		return (
 			<div className="footer footerMainEdit">
@@ -41,8 +42,9 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		const { focused } = focus;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 
-		if (!root || root.isObjectReadOnly()) {
+		if (!root || !allowed) {
 			return;
 		};
 		
