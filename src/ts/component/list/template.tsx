@@ -30,6 +30,8 @@ class ListTemplate extends React.Component<Props, {}> {
 		const isFirst = this.page == 0;
 		const isLast = this.page == this.getMaxPage();
 
+		console.log(this.page, this.getMaxPage());
+
 		const Item = (item: any) => {
 			const name = item.templateName || `Template ${item.index + 1}`;
 			return (
@@ -83,7 +85,7 @@ class ListTemplate extends React.Component<Props, {}> {
 	getMaxPage () {
 		const { items, canAdd } = this.props;
 		const length = items.length + (canAdd ? 1 : 0);
-		return Math.ceil(length / 2) - 1;
+		return Math.max(0, Math.ceil(length / 2) - 1);
 	};
 
 	onMouseEnter (e: any, item: any) {
