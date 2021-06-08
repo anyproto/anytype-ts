@@ -14,7 +14,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `New <span class="${sc}">Description</span> block. Anytype’s first relation. Description is a simple block that contains a short description, and can be used in databases for context extension, filtering, sorting and many more in the future. Please <a href="https://community.anytype.io/d/343-description-block-what-you-think-about-it">tell us</a> what you think!` },
 	{ style: I.TextStyle.Bulleted, text: `Entering pin code now open the last opened page, not dashboard.` },
 	{ style: I.TextStyle.Header2, text: `Design & UX` },
-	{ style: I.TextStyle.Bulleted, text: `Tray icons now have fast options to create New Object, Search Object, Import, Export, Quit and more.` },
+	{ style: I.TextStyle.Bulleted, text: `Tray icons now have fast options to create <span class="${sc}">New Object</span>, <span class="${sc}">Search Object</span>, <span class="${sc}">Import</span>, <span class="${sc}">Export</span>, <span class="${sc}">Quit</span> and more.` },
 	{ style: I.TextStyle.Bulleted, text: `Optimised application bar. It shows navigation options constantly. And also refreshed style for macOS Mojave` },
 	{ style: I.TextStyle.Header2, text: `Network` },
 	{ style: I.TextStyle.Bulleted, text: `Sync now works under restricted networks through special circuit relay logic <a href="https://docs.libp2p.io/concepts/circuit-relay/ ">This new concept</a>  helps to connect devices between VPN, cellular, WiFi with NAT, and many more. This means fast syncing in more cases. We will continue to improve sync across all network topologies, including LANs.` },
