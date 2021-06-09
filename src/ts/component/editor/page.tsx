@@ -632,15 +632,13 @@ class EditorPage extends React.Component<Props, {}> {
 		const st = win.scrollTop();
 		const element = $('#block-' + block.id);
 		const value = element.find('#value');
-
+		
 		let length = String(text || '').length;
+		range = range || {};
 
-		// Last line break in code block
-		if (block.isTextCode() && length) {
+		if (block.isTextCode() && length && (text[length - 1] == '\n')) {
 			length--;
 		};
-
-		range = range || {};
 
 		this.uiHide();
 		
