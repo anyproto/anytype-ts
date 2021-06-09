@@ -111,7 +111,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $('#menuBlockContext');
 
+		keyboard.disableContext(true);
 		focus.set(blockId, range);
+
 		if (type != 'style') {
 			focus.apply();
 		};
@@ -240,7 +242,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId)) {
-			keyboard.disableContext(true);
 			menuStore.closeAll(Constant.menuIds.context, () => {
 				menuStore.open(menuId, menuParam);
 			});
