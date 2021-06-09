@@ -15,7 +15,7 @@
 			background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
 		}
 
-		.inputWithFile { position: relative; z-index: 2; }
+		.inputWithFile { position: relative; }
 		
 		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
 		.colResize.active { opacity: 1; }
