@@ -78,11 +78,19 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+		const { onKeyDown } = this.props;
+
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
 	};
 
 	onFocus () {
