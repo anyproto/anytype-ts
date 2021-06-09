@@ -149,6 +149,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 				Storage.delete('popupNewBlock');
 
 				authStore.accountSet(message.account);
+				authStore.previewSet('');
+
 				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {
