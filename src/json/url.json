@@ -3,5 +3,6 @@
 	"telegram": "https://t.me/anytype",
 	"telegramClosedBeta": "https://t.me/joinchat/BsRYeRURhKcXDOyDA7_NLw",
 	"twitter": "https://twitter.com/AnytypeLabs",
-	"feedback": "https://anytype.io/send-feedback"
+	"feedback": "https://anytype.io/send-feedback",
+	"feedbackForm": "https://anytype.typeform.com/to/qVKKgQ6P#anytypeid=%s&osversion=%s&appversion=%s&os=%s"
 }

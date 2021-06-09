@@ -31,8 +31,8 @@
 		.item:last-child { border: 0px; }
 
 		.item {
-			.icon { position: absolute; left: 16px; top: 12px; }
-			.icon.user { top: 13px; }
+			.icon, .iconObject { position: absolute; left: 16px; top: 12px; }
+			.iconObject { top: 13px; }
 			.icon.cafe { left: 15px; width: 20px; height: 20px; background-size: 18px 16px; background-image: url('~img/icon/cafe.svg'); }
 			.info { padding-left: 28px; }
 		}
