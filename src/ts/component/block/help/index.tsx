@@ -42,18 +42,24 @@ class Block extends React.Component<Props, {}> {
 			case I.BlockType.Div:
 				let inner: any = null;
 				switch (style) {
+					case I.DivStyle.Line:
+						inner = (
+							<div className="line" />
+						);
+						break;
+
 					case I.DivStyle.Dot:
 						inner = (
-							<React.Fragment>
+							<div className="dots">
 								<div className="dot" />
 								<div className="dot" />
 								<div className="dot" />
-							</React.Fragment>
+							</div>
 						);
 						break;
 				};
 				
-				content = <div className="div">{inner}</div>;
+				content = <div className="wrap">{inner}</div>;
 				break;
 		};
 		
