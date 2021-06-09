@@ -36,8 +36,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			restr.push(I.RestrictionObject[r]);
 		};
 
-		console.log(restr);
-		
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -87,12 +85,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						className={allowedLayout ? '' : 'isReadOnly'}
 					/>
 
-					{config.sudo ? (
+					{config.sudo && restr.length ? (
 						<div className="section">
 							<div className="name">Restrictions</div>
 							<div className="items">
 								{restr.map((item: any, i: number) => (
-									<div className="item" key={i}>{item}</div>
+									<div className="item" key={i}>{item || 'Empty'}</div>
 								))}
 							</div>
 						</div>
