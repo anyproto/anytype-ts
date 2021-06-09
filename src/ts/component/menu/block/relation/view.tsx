@@ -35,6 +35,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { rootId, readOnly } = data;
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
+		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
@@ -55,6 +57,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
+								readOnly={!allowedValue}
+								canEdit={allowedRelation}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
@@ -208,6 +212,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	onEdit (e: any, relationKey: string) {
 		const { param, getId } = this.props;
 		const { data } = param;
+		const { rootId } = data;
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+
+		if (!allowed) {
+			return;
+		};
 		
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,

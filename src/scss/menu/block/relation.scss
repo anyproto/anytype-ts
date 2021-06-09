@@ -77,7 +77,7 @@
 
 		#section-featured::after { display: block; }
 
-		.item { padding: 0px 22px; margin-bottom: 1px; }
+		.item { padding: 0px 22px; margin-bottom: 1px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }
 
@@ -88,10 +88,11 @@
 			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
 
 			.info { padding: 5px 8px; }
-			.info:hover { background: rgba(172,169,150,0.1); }
+			.info.canEdit { cursor: pointer; }
+			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
 			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 242px); line-height: 22px; transition: background 0.2s ease-in-out; }
-			.cell:hover { background: rgba(172,169,150,0.1); }
+			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
 
 			.cell.c-select { padding: 4px 8px; }
 			.cell.c-select {
@@ -147,7 +148,6 @@
 				.cellContent { padding: 5px 8px; }
 			}
 		}
-		.item * { cursor: pointer; }
 	}
 
 }

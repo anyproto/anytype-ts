@@ -8,6 +8,8 @@ interface Props extends I.Relation {
 	block: I.Block;
 	isFeatured: boolean;
 	classNameWrap?: string;
+	readOnly?: boolean;
+	canEdit?: boolean;
 	onEdit(e: any, relationKey: string): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
@@ -21,7 +23,7 @@ const PREFIX = 'menuBlockRelationView';
 class MenuItemRelationView extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, relationKey, canEdit, readOnly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav', (isFeatured ? 'active' : '') ];
@@ -29,12 +31,16 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 
 		return (
 			<div className={[ 'item', 'sides', (isHidden ? 'isHidden' : '') ].join(' ')}>
-				<div id={`item-${relationKey}`} className="info" onClick={(e: any) => { onEdit(e, relationKey); }}>
+				<div 
+					id={`item-${relationKey}`} 
+					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
+					onClick={(e: any) => { onEdit(e, relationKey); }}
+				>
 					{name}
 				</div>
 				<div
 					id={id} 
-					className={[ 'cell', DataUtil.relationClass(format), 'canEdit' ].join(' ')} 
+					className={[ 'cell', DataUtil.relationClass(format), (!readOnly ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
 				>
 					<Cell 
@@ -51,7 +57,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						menuClassNameWrap={classNameWrap}
 						scrollContainer={Util.getEditorScrollContainer('menuBlockRelationView')}
 						pageContainer={Util.getEditorPageContainer('menuBlockRelationView')}
-						readOnly={false}
+						readOnly={readOnly}
 						onCellChange={onCellChange}
 						optionCommand={optionCommand}
 					/>
