@@ -360,7 +360,6 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 	
 	onClick (e: any, item: any) {
-		e.persist();
 		e.stopPropagation();
 
 		const { param, close } = this.props;
