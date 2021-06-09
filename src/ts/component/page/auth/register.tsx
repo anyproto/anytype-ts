@@ -8,7 +8,6 @@ import { Util, translate } from 'ts/lib';
 interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
-	preview: string;
 };
 
 const { dialog } = window.require('electron').remote;
@@ -21,7 +20,6 @@ class PageAuthRegister extends React.Component<Props, State> {
 
 	state = {
 		error: '',
-		preview: '',
 	};
 	
 	constructor (props: any) {
@@ -34,7 +32,8 @@ class PageAuthRegister extends React.Component<Props, State> {
 	
 	render () {
 		const { cover } = commonStore;
-		const { error, preview } = this.state;
+		const { error } = this.state;
+		const { name, preview } = authStore;
 
 		return (
 			<div>
@@ -83,7 +82,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 			
 			authStore.iconSet(path);
 			Util.loadPreviewBase64(Util.makeFileFromPath(path), {}, (image: string, param: any) => {
-				this.setState({ preview: image });
+				authStore.previewSet(image);
 			});
 		});
 	};
