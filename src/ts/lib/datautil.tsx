@@ -1063,7 +1063,7 @@ class DataUtil {
 		};
 
 		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
-			ret.className.push('noFeatured');
+			ret.className.push('noSystemBlocks');
 		};
 
 		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
