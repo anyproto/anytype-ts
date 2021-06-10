@@ -635,15 +635,27 @@ class MenuBlockAdd extends React.Component<Props, State> {
 						details.layout = type.layout;
 					};
 
-					popupStore.open('template', {
-						data: {
-							typeId: item.objectTypeId,
-							onSelect: (templateId: string) => {
-								DataUtil.pageCreate(rootId, blockId, details, position, templateId, (message: any) => {
-									DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-								});
+					const create = (templateId: string) => {
+						DataUtil.pageCreate(rootId, blockId, details, position, templateId, (message: any) => {
+							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+						});
+					};
+
+					const showMenu = () => {
+						popupStore.open('template', {
+							data: {
+								typeId: item.objectTypeId,
+								onSelect: create,
 							},
-						},
+						});
+					};
+
+					DataUtil.checkTemplateCnt([ item.objectTypeId ], 2, (message: any) => {
+						if (message.records.length > 1) {
+							showMenu();
+						} else {
+							create(message.records.length ? message.records[0].id : '');
+						};
 					});
 				} else 
 				if (item.type == I.BlockType.Page) {

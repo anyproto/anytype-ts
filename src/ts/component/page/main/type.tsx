@@ -376,15 +376,27 @@ class PageMainType extends React.Component<Props, State> {
 			layout: object.recommendedLayout,
 		};
 
-		popupStore.open('template', {
-			data: {
-				typeId: rootId,
-				onSelect: (templateId: string) => {
-					DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, templateId, (message: any) => {
-						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-					});
+		const create = (templateId: string) => {
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, templateId, (message: any) => {
+				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+			});
+		};
+
+		const showMenu = () => {
+			popupStore.open('template', {
+				data: {
+					typeId: rootId,
+					onSelect: create,
 				},
-			},
+			});
+		};
+
+		DataUtil.checkTemplateCnt([ rootId ], 2, (message: any) => {
+			if (message.records.length > 1) {
+				showMenu();
+			} else {
+				create(message.records.length ? message.records[0].id : '');
+			};
 		});
 	};
 

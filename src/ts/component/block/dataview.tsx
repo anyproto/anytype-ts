@@ -162,60 +162,67 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const setOf = object.setOf || [];
+		const element = $(e.currentTarget);
+
+		const create = (templateId: string) => {
+			C.BlockDataviewRecordCreate(rootId, block.id, {}, templateId, (message: any) => {
+				if (!message.error.code) {
+					dbStore.recordAdd(rootId, block.id, message.record);
+				};
+			});
+		};
 
 		if (!setOf.length) {
-			C.BlockDataviewRecordCreate(rootId, block.id, {}, '', (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				dbStore.recordAdd(rootId, block.id, message.record);
-			});
+			create('');
 			return;
 		};
 
-		menuStore.open('searchObject', {
-			element: $(e.currentTarget),
-			vertical: I.MenuDirection.Top,
-			className: 'single',
-			subIds: [ 'previewObject' ],
-			data: {
-				label: 'Choose a template',
-				noFilter: true,
-				noIcon: true,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-				],
-				sorts: [
-					{ relationKey: 'name', type: I.SortType.Asc },
-				],
-				dataMapper: (it: any, i: number) => {
-					it.name = it.templateName || `Template ${i + 1}`;
-					return it;
-				},
-				onOver: (e: any, context: any, item: any) => {
-					menuStore.close('previewObject', () => {
-						menuStore.open('previewObject', {
-							element: `#${context.props.getId()} #item-${item.id}`,
-							offsetX: context.props.getSize().width,
-							isSub: true,
-							vertical: I.MenuDirection.Center,
-							data: {
-								rootId: item.id,
-							}
+		const showMenu = () => {
+			menuStore.open('searchObject', {
+				element: element,
+				vertical: I.MenuDirection.Top,
+				className: 'single',
+				subIds: [ 'previewObject' ],
+				data: {
+					label: 'Choose a template',
+					noFilter: true,
+					noIcon: true,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
+						{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+					],
+					sorts: [
+						{ relationKey: 'name', type: I.SortType.Asc },
+					],
+					dataMapper: (it: any, i: number) => {
+						it.name = it.templateName || `Template ${i + 1}`;
+						return it;
+					},
+					onOver: (e: any, context: any, item: any) => {
+						menuStore.close('previewObject', () => {
+							menuStore.open('previewObject', {
+								element: `#${context.props.getId()} #item-${item.id}`,
+								offsetX: context.props.getSize().width,
+								isSub: true,
+								vertical: I.MenuDirection.Center,
+								data: { rootId: item.id }
+							});
 						});
-					});
-				},
-				onSelect: (item: any) => {
-					C.BlockDataviewRecordCreate(rootId, block.id, {}, item.id, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-						dbStore.recordAdd(rootId, block.id, message.record);
-					});
-				},
-			}
+					},
+					onSelect: (item: any) => {
+						create(item.id);
+					},
+				}
+			});
+		};
+
+		DataUtil.checkTemplateCnt(setOf, 2, (message: any) => {
+			if (message.records.length > 1) {
+				showMenu();
+			} else {
+				create(message.records.length ? message.records[0].id : '');
+			};
 		});
 	};
 

@@ -1141,6 +1141,24 @@ class DataUtil {
 		return value;
 	};
 
+	checkTemplateCnt (typeIds: string[], limit: number, callBack?: (message: any) => void) {
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeIds },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+		];
+
+		C.ObjectSearch(filters, [], '', 0, limit, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
 };
 
 export default new DataUtil();

@@ -11,7 +11,7 @@
 	.note {
 		.inner { display: inline-block; width: 704px; margin: 0px auto; vertical-align: middle; line-height: 1; }
 		.sides { display: flex; }
-		.side.left { width: 576px; margin-right: 34px; text-align: left; @include text-common; }
+		.side.left { width: 576px; margin-right: 34px; text-align: left; @include text-common; line-height: 20px; }
 		.side.right { text-align: right; }
 	}
 
