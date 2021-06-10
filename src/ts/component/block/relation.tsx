@@ -40,7 +40,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				{!relation ? 
 				(
 					<div className="sides">
-						<div className="info noValue" onClick={this.onMenu}>New relation</div>
+						<div className={[ 'info', 'noValue', (!readOnly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>New relation</div>
 					</div>
 				) : 
 				(
@@ -91,7 +91,11 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onMenu (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
+
+		if (readOnly) {
+			return;
+		};
 
 		menuStore.open('relationSuggest', { 
 			element: '#block-' + block.id,

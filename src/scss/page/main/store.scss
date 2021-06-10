@@ -61,7 +61,7 @@
 					.txt { width: 100%; }
 					.name { @include text-overflow-nw; line-height: 22px; }
 					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
-					.author { @include text-small; color: #6c6a5f; line-height: 18px; }
+					.author { @include text-small; color: $colorVeryDarkGrey; line-height: 18px; }
 					.line { width: 100%; height: 1px; background: #eae9e0; position: absolute; left: 0px; }
 				}
 
