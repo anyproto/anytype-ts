@@ -447,12 +447,13 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		const { param, getId, position } = this.props;
 		const { data } = param;
-		const { noFilter } = data;
+		const { noFilter, label } = data;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const h = this.getHeight();
 		const min = noFilter ? 44 + 28 : 300;
-		const height = Math.max(min, Math.min(h * LIMIT, items.length * h + 16));
+		const l = items.length + (label ? 1 : 0);
+		const height = Math.max(min, Math.min(h * LIMIT, l * h + 16));
 
 		obj.css({ height: height });
 		position();
