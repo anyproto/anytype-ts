@@ -171,15 +171,15 @@ const Mapper = {
 			};
 
 			return {
-				object: obj.getObjectList ? (obj.getObjectList() || []) : [],
-				dataview: obj.getDataviewList ? (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview) : [],
+				object: obj.getObjectList() || [],
+				dataview: (obj.getDataviewList() || []).map(Mapper.From.RestrictionsDataview),
 			};
 		},
 
 		RestrictionsDataview: (obj: any): any => {
 			return {
 				blockId: obj.getBlockid(),
-				restrictions: obj.getRestrictionsList(),
+				restrictions: obj.getRestrictionsList() || [],
 			};
 		},
 

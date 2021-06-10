@@ -26,7 +26,7 @@
 
 	.icon.arrow { 
 		position: absolute; top: 0px; width: 32px; height: 216px; background-image: url('~img/arrow/template0.svg'); 
-		cursor: pointer; background-size: 8px 32px; z-index: 20;
+		cursor: pointer; background-size: 8px 32px; z-index: 10;
 	}
 	.icon.arrow:hover { background-image: url('~img/arrow/template1.svg'); }
 	.icon.arrow.disabled:hover { background-image: url('~img/arrow/template0.svg'); }

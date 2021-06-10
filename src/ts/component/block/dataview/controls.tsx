@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, Util, translate } from 'ts/lib';
-import { menuStore, dbStore } from 'ts/store';
+import { Icon } from 'ts/component';
+import { I } from 'ts/lib';
+import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { C } from 'ts/lib';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
 interface Props extends I.ViewComponent {};
@@ -117,12 +116,7 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readOnly, getData, getView } = this.props;
-		const view = getView();
-		const sortCnt = view.sorts.length;
-		const filters = view.filters.filter((it: any) => {
-			return dbStore.getRelation(rootId, block.id, it.relationKey);
-		});
-		const filterCnt = filters.length;
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
 		if (id == 'manager') {
@@ -138,7 +132,7 @@ class Controls extends React.Component<Props, State> {
 			horizontal: I.MenuDirection.Center,
 			tabs: tabs,
 			data: {
-				readOnly: readOnly,
+				readOnly: readOnly || !allowed,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,
