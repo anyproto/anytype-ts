@@ -1512,8 +1512,9 @@ class EditorPage extends React.Component<Props, {}> {
 	onLastClick (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		
-		if (!root || root.isObjectSet()) {
+		if (!root || !allowed) {
 			return;
 		};
 

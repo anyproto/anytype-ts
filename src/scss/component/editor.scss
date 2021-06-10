@@ -65,7 +65,7 @@
 
 .editorWrapper.withIcon { padding-top: 122px; }
 .editorWrapper.withIcon {
-	.editorControls { height: 202px; }
+	.editorControls { height: 188px; }
 	.editorControls {
 		.buttons { padding-left: 116px; }
 		.btn.addIcon { display: none; }
@@ -98,6 +98,9 @@
 	}
 	.editorControls.align1 {
 		.buttons { left: 50%; padding-left: 84px; }
+	}
+	.editorControls.align2 { 
+		.buttons { padding-left: 0px; }
 	}
 }
 .editorWrapper.isHuman.withIconAndCover { padding-top: 208px; }
