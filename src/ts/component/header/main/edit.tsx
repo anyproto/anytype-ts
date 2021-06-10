@@ -47,8 +47,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
 		const object = detailStore.get(breadcrumbs, rootId, []);
+		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
+		const canSync = !object.templateIsBundled;
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
@@ -91,7 +92,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				</div>
 
 				<div className="side right">
-					<Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} />
+					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
 			</div>
