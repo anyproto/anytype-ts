@@ -191,6 +191,14 @@ const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('blockOpen', request, callBack);
 };
 
+const BlockShow = (blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Open.Request();
+	
+	request.setBlockid(blockId);
+
+	dispatcher.request('blockShow', request, callBack);
+};
+
 const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.OpenBreadcrumbs.Request();
 	dispatcher.request('blockOpenBreadcrumbs', request, callBack);
@@ -1019,6 +1027,7 @@ export {
 
 	BlockGetPublicWebURL,
 	BlockOpen,
+	BlockShow,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
 	BlockClose,

@@ -1,4 +1,4 @@
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { decorate, observable, intercept } from 'mobx';
 
 class Block implements I.Block {
@@ -35,12 +35,7 @@ class Block implements I.Block {
 			content: observable,
 		});
 
-		intercept(self as any, (change: any) => {
-			if (JSON.stringify(change.newValue) === JSON.stringify(self[change.name])) {
-				return null;
-			};
-			return change;
-		});
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 	canHaveChildren (): boolean {

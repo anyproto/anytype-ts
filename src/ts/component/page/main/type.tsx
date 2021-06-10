@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Pager, ObjectPreviewBlock, Button, ListTemplate } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, detailStore, dbStore, menuStore, popupStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
@@ -54,8 +54,7 @@ class PageMainType extends React.Component<Props, State> {
 		const { templates } = this.state;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
-		const { offset, total, viewId } = dbStore.getMeta(rootId, block.id);
+		const { total } = dbStore.getMeta(rootId, BLOCK_ID);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.nameType,
@@ -73,23 +72,6 @@ class PageMainType extends React.Component<Props, State> {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
 		relations.sort(DataUtil.sortByHidden);
-
-		let data = dbStore.getData(rootId, block.id).map((it: any) => {
-			it.name = String(it.name || Constant.default.name || '');
-			return it;
-		});
-
-		let pager = null;
-		if (total && data.length) {
-			pager = (
-				<Pager 
-					offset={offset} 
-					limit={Constant.limit.dataview.records} 
-					total={total} 
-					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
-				/>
-			);
-		};
 
 		const Editor = (item: any) => {
 			return (
@@ -133,35 +115,6 @@ class PageMainType extends React.Component<Props, State> {
 			</div>
 		);
 
-		const Row = (item: any) => {
-			const author = detailStore.get(rootId, item.creator, []);
-			return (
-				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
-					<td className="cell">
-						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-							<IconObject object={item} />
-							<div className="name">{item.name}</div>
-						</div>
-					</td>
-					<td className="cell">
-						{item.lastModifiedDate ? (
-							<div className="cellContent">
-								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
-							</div>
-						) : ''}
-					</td>
-					<td className="cell">
-						{!author._objectEmpty_ ? (
-							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
-								<IconObject object={author} />
-								<div className="name">{author.name}</div>
-							</div>
-						) : ''}
-					</td>
-				</tr>
-			);
-		};
-
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
@@ -194,6 +147,7 @@ class PageMainType extends React.Component<Props, State> {
 						{templates.length ? (
 							<div className="content">
 								<ListTemplate 
+									key="listTemplate"
 									items={templates}
 									canAdd={true}
 									onAdd={this.onTemplateAdd}
@@ -225,36 +179,7 @@ class PageMainType extends React.Component<Props, State> {
 					<div className="section set">
 						<div className="title">{total} objects</div>
 						<div className="content">
-							<table>
-								<thead>
-									<tr className="row">
-										<th className="cellHead">
-											<div className="name">Name</div>
-										</th>
-										<th className="cellHead">
-											<div className="name">Updated</div>
-										</th>
-										<th className="cellHead">
-											<div className="name">Owner</div>
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{!data.length ? (
-										<tr>
-											<td className="cell empty" colSpan={3}>No objects yet</td>
-										</tr>
-									) : (
-										<React.Fragment>
-											{data.map((item: any, i: number) => (
-												<Row key={i} {...item} />
-											))}
-										</React.Fragment>
-									)}
-								</tbody>
-							</table>
-
-							{pager}
+							<ListObject rootId={rootId} blockId={BLOCK_ID} />
 						</div>
 					</div>
 				</div>
@@ -511,14 +436,6 @@ class PageMainType extends React.Component<Props, State> {
 		const value = node.find('#editor-' + id);
 
 		return value.length ? String(value.get(0).innerText || '') : '';
-	};
-
-	getData (id: string, offset: number, callBack?: (message: any) => void) {
-		const rootId = this.getRootId();
-		const meta: any = { offset: offset };
-
-		dbStore.metaSet(rootId, BLOCK_ID, meta);
-		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, offset, Constant.limit.dataview.records, callBack);
 	};
 
 	placeHolderCheck (id: string) {

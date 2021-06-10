@@ -1,5 +1,11 @@
 import Block from './block';
-import { View, Relation, SelectOption, ViewRelation, Filter, Sort } from './view';
+import View from './view';
+import ViewRelation from './viewRelation';
+import Relation from './relation';
+import SelectOption from './selectOption';
+import Filter from './filter';
+import Sort from './sort';
+import ObjectType from './objectType';
 
 export { 
 	Block,
@@ -9,4 +15,5 @@ export {
 	ViewRelation,
 	Filter,
 	Sort,
+	ObjectType,
 };

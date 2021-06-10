@@ -317,9 +317,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.HistoryShow(rootId, '', (message: any) => {
-			dispatcher.onObjectShow(rootId, message.objectShow);
-
+		C.BlockShow(rootId, (message: any) => {
 			this.setState({ loading: false });
 		});
 	};

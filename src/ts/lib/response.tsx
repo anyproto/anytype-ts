@@ -122,6 +122,10 @@ const BlockOpen = (response: any) => {
 	return {};
 };
 
+const BlockShow = (response: any) => {
+	return {};
+}
+
 const ObjectShow = (response: any) => {
 	return {
 		rootId: response.getRootid(),
@@ -490,6 +494,7 @@ export {
 	BlockGetPublicWebURL,
 
 	BlockOpen,
+	BlockShow,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
 	
