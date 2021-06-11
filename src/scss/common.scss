@@ -49,7 +49,7 @@ html.platformMac.version11 {
 }
 
 html.platformWindows {
-	#drag { height: 30px; background: $colorBlack; z-index: 1000; }
+	#drag { height: 30px; background: $colorBlack; z-index: 1000; display: block; }
 	#drag {
 		.sides { display: flex; height: 100%; line-height: 30px; }
 		.side { width: 50%; }
