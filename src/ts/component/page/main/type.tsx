@@ -84,22 +84,24 @@ class PageMainType extends React.Component<Props, State> {
 							{object[item.id]}
 						</div>
 					) : (
-						<div 
-							id={'editor-' + item.id}
-							className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
-							contentEditable={true}
-							suppressContentEditableWarning={true}
-							onFocus={(e: any) => { this.onFocus(e, item); }}
-							onBlur={(e: any) => { this.onBlur(e, item); }}
-							onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-							onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
-							onInput={(e: any) => { this.onInput(e, item); }}
-							onSelect={(e: any) => { this.onSelectText(e, item); }}
-						>
-							{object[item.id]}
-						</div>
+						<React.Fragment>
+							<div 
+								id={'editor-' + item.id}
+								className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
+								contentEditable={true}
+								suppressContentEditableWarning={true}
+								onFocus={(e: any) => { this.onFocus(e, item); }}
+								onBlur={(e: any) => { this.onBlur(e, item); }}
+								onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
+								onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+								onInput={(e: any) => { this.onInput(e, item); }}
+								onSelect={(e: any) => { this.onSelectText(e, item); }}
+							>
+								{object[item.id]}
+							</div>
+							<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
+						</React.Fragment>
 					)}
-					<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
 				</div>
 			);
 		};
