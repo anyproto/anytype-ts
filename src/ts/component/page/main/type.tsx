@@ -130,7 +130,7 @@ class PageMainType extends React.Component<Props, State> {
 				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
+							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
 						<div className="side center">
 							<Editor className="title" id="name" />
