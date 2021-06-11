@@ -402,6 +402,14 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
 
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((c: any) => {
+				c.isBig = true;
+				return c;
+			});
+			return s;
+		});
+
 		if (config.allowDataview) {
 			sections = sections.concat([
 				{ id: 'relation', name: 'Relations', children: this.relations },
@@ -424,14 +432,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
-		} else {
-			sections = sections.map((s: any) => {
-				s.children = s.children.map((c: any) => {
-					c.isBig = true;
-					return c;
-				});
-				return s;
-			});
 		};
 		
 		sections = DataUtil.menuSectionsMap(sections);

@@ -10,6 +10,7 @@ class AuthStore {
 	@observable public accountList: I.Account[] = [];
 	@observable public pin: string = '';
 	@observable public icon: string = '';
+	@observable public preview: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public code: string = '';
@@ -54,6 +55,11 @@ class AuthStore {
 	@action
 	iconSet (v: string) {
 		this.icon = v;
+	};
+
+	@action
+	previewSet (v: string) {
+		this.preview = v;
 	};
 	
 	@action

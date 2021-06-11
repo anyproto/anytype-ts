@@ -488,7 +488,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
 				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 				];
 
 				if (!config.allowDataview) {
