@@ -26,7 +26,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId } = data;
 		const sections = this.getSections();
-		const object = detailStore.get(rootId, rootId, [ 'coverType' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType' ], true);
 		const { coverType } = object;
 		const canEdit = coverType && [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 
@@ -120,7 +120,7 @@ class MenuBlockCover extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
-		const object = detailStore.get(rootId, rootId, [ 'coverId' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverId' ], true);
 
 		if (!object.coverId) {
 			this.props.close();

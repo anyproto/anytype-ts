@@ -267,7 +267,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = detailStore.get(profile, profile);
+		const object = detailStore.get(profile, profile, []);
 
 		DataUtil.objectOpenEvent(e, object);
 	};
@@ -279,7 +279,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		let object: any = null;
 		if (item.isBlock) {
-			object = detailStore.get(root, item.content.targetBlockId);
+			object = detailStore.get(root, item.content.targetBlockId, []);
 		} else {
 			object = item;
 		};

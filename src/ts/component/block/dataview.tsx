@@ -160,7 +160,7 @@ class BlockDataview extends React.Component<Props, {}> {
 
 	onRowAdd (e: any) {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 

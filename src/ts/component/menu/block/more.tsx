@@ -368,7 +368,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
-					const object = detailStore.get(breadcrumbs, prev.content.targetBlockId);
+					const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {

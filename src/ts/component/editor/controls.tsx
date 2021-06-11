@@ -40,7 +40,7 @@ class Controls extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ], true);
 
 		return (
 			<div 

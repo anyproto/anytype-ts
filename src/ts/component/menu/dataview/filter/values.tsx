@@ -106,9 +106,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 					);
 				};
 
-				list = (item.value || []).map((it: string) => { 
-					return detailStore.get(rootId, it, []);
-				});
+				list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
 				list = list.filter((it: any) => { return !it._objectEmpty_; });
 
 				value = (

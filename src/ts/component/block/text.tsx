@@ -78,7 +78,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				const object = detailStore.get(rootId, mark.param);
+				const object = detailStore.get(rootId, mark.param, []);
 			};
 		};
 		
@@ -335,8 +335,9 @@ class BlockText extends React.Component<Props, {}> {
 			e.preventDefault();
 
 			const el = $(this);
-			if (!el.hasClass('dis')) {
-				const object = detailStore.get(rootId, el.data('param'));
+			const param = el.data('param');
+			if (!el.hasClass('dis') && param) {
+				const object = detailStore.get(rootId, param, []);
 				DataUtil.objectOpenEvent(e, object);
 			};
 		});

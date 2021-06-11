@@ -103,7 +103,7 @@ class DetailStore {
 		map.set(id, list);
 	};
 
-	get (rootId: string, id: string, keys?: string[]): any {
+	get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let map = this.map.get(rootId) || new Map();
 		let list = map.get(id) || [];
 
@@ -114,7 +114,9 @@ class DetailStore {
 		let object: any = {};
 
 		if (keys) {
-			keys = keys.concat(DEFAULT_KEYS);
+			if (!forceKeys) {
+				keys = keys.concat(DEFAULT_KEYS);
+			};
 			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
 		};
 

@@ -98,7 +98,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ]); }}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ], true); }}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}

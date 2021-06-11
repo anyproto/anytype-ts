@@ -167,7 +167,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ], true);
 
 		let featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
 		let idx = featured.findIndex((it: string) => { return it == relationKey; });

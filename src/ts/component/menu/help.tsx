@@ -43,8 +43,6 @@ class MenuHelp extends React.Component<Props, {}> {
 
 	onClick (e: any, item: any) {
 		const { account } = authStore;
-		const { profile } = blockStore;
-		const object = detailStore.get(profile, profile);
 
 		this.props.close();
 

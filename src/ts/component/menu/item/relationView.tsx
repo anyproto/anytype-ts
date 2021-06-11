@@ -21,7 +21,6 @@ interface Props extends I.Relation {
 
 const PREFIX = 'menuBlockRelationView';
 
-@observer
 class MenuItemRelationView extends React.Component<Props, {}> {
 
 	render () {
@@ -51,7 +50,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						storeId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
+						getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ], true); }}
 						viewType={I.ViewType.Grid}
 						index={0}
 						idPrefix={PREFIX}
