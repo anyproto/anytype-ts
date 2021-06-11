@@ -40,6 +40,7 @@ class Controls extends React.Component<Props, State> {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
 		});
 		const filterCnt = filters.length;
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -101,9 +102,7 @@ class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readOnly ? (
-							<Icon className="plus" tooltip="New object" onClick={onRowAdd} />
-						) : ''}
+						{!readOnly && allowed ? <Icon className="plus" tooltip="New object" onClick={onRowAdd} /> : ''}
 					</div>
 				</div>
 			</div>
