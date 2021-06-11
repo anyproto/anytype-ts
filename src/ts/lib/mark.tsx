@@ -316,7 +316,10 @@ class Mark {
 	};
 	
 	fromHtml (html: string): any[] {
-		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
+		const Markup = { '`': I.MarkType.Code, '*': I.MarkType.Bold };
+		const markups = Object.keys(Markup);
+		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
+		const rm = new RegExp('(\\' + markups.join('|\\') + ')([^\\' + markups.join('|\\') + ']*)(\\' + markups.join('|\\') + ')', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 
@@ -336,14 +339,14 @@ class Mark {
 		});
 
 		html = text;
-		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
+		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
 
 			let end = p1 == '/';
 			let offset = Number(text.indexOf(s)) || 0;
-			let type = Tags.indexOf(p2)
+			let type = Tags.indexOf(p2);
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
@@ -366,6 +369,25 @@ class Mark {
 
 			text = text.replace(s, '');
 			return '';
+		});
+
+		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
+			console.log(s, 'p1', p1, 'p2', p2, 'p3', p3);
+
+			p1 = String(p1 || '').trim();
+			p2 = String(p2 || '').trim();
+			p3 = String(p3 || '').trim();
+
+			let offset = Number(text.indexOf(s)) || 0;
+			let type = Markup[p1];
+
+			marks.push({
+				type: type,
+				range: { from: offset, to: offset + p2.length },
+				param: '',
+			});
+			text = text.replace(s, '');
+			return s;
 		});
 
 		return marks;
