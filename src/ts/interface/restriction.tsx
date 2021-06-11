@@ -6,6 +6,7 @@
 	Details		 = 4,
 	Type		 = 5,
 	Layout		 = 6, 
+	Template	 = 7,
 };
 
 export enum RestrictionDataview {

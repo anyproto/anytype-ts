@@ -65,6 +65,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		const allowedTemplate = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Template ]);
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -149,24 +150,25 @@ class PageMainType extends React.Component<Props, State> {
 						<div className="title">
 							{templates.length} templates
 
-							<div className="btn" onClick={this.onTemplateAdd}>
-								<Icon className="plus" />
-								New
-							</div>
+							{allowedTemplate ? (
+								<div className="btn" onClick={this.onTemplateAdd}>
+									<Icon className="plus" />New
+								</div>
+							) : ''}
 						</div>
 						{templates.length ? (
 							<div className="content">
 								<ListTemplate 
 									key="listTemplate"
 									items={templates}
-									canAdd={true}
+									canAdd={allowedTemplate}
 									onAdd={this.onTemplateAdd}
 									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
 								/>
 							</div>
 						) : (
 							<div className="empty">
-								This object type doesn't have templates yet
+								This object type doesn't have templates
 							</div>
 						)}
 					</div>	
