@@ -58,7 +58,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
 					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'readOnly' ].join(' ')}>
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadOnly' ].join(' ')}>
 							{object[item.id]}
 						</div>
 					) : (

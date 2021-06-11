@@ -73,7 +73,7 @@
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
-		.item.isReadOnly.hover::before { opacity: 0; }
+		.item.isReadOnly.hover::before, .item.isReadOnly:hover::before { opacity: 0; background: none; }
 
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
 		

@@ -30,7 +30,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { view, readOnly } = data;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
@@ -42,6 +42,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
+							className={readOnly ? 'isReadOnly' : ''}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
@@ -57,6 +58,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={view.name} 
+							readOnly={readOnly}
 							placeHolder={translate('menuDataviewViewEditName')}
 							maxLength={Constant.limit.dataview.viewName} 
 							onKeyUp={this.onKeyUp} 
@@ -187,7 +189,11 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	save () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, onSave } = data;
+		const { rootId, blockId, view, onSave, readOnly } = data;
+
+		if (readOnly) {
+			return;
+		};
 
 		const cb = () => {
 			if (onSave) {
@@ -218,7 +224,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view } = data;
+		const { rootId, blockId, view, readOnly } = data;
 		const views = dbStore.getViews(rootId, blockId);
 
 		const types = DataUtil.menuGetViews().map((it: any) => {
@@ -231,7 +237,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			{ id: 'type', name: 'View as', children: types }
 		];
 
-		if (view.id) {
+		if (view.id && !readOnly) {
 			sections.push({
 				children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
@@ -268,14 +274,17 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, view, onSelect, onSave } = data;
+		const { rootId, blockId, getData, getView, view, onSelect, onSave, readOnly } = data;
 		const current = getView();
+
+		if (readOnly) {
+			return;
+		};
 
 		if (item.sectionId == 'type') {
 			view.type = item.id;
 			this.forceUpdate();
 			this.save();
-
 		} else 
 		if (view.id) {
 			close();
