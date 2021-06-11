@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { commonStore, detailStore, blockStore } from 'ts/store';
 import { I, C, DataUtil, Action } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
@@ -15,6 +16,7 @@ interface State {
 const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
+@observer
 class ObjectPreviewBlock extends React.Component<Props, State> {
 	
 	state = {

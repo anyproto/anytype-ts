@@ -17,7 +17,8 @@ interface State {
 };
 
 const $ = require('jquery');
-const BLOCK_ID = 'dataview';
+const BLOCK_ID_OBJECT = 'dataview';
+const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
 const Constant = require('json/constant.json');
 
@@ -51,21 +52,21 @@ class PageMainType extends React.Component<Props, State> {
 
 		const { config } = commonStore;
 		const { isPopup } = this.props;
-		const { templates } = this.state;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID);
+		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeHolder = {
 			name: Constant.default.nameType,
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
+		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = true; //blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedTemplate = allowedObject;
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -191,7 +192,7 @@ class PageMainType extends React.Component<Props, State> {
 					<div className="section set">
 						<div className="title">{total} objects</div>
 						<div className="content">
-							<ListObject rootId={rootId} blockId={BLOCK_ID} />
+							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
 					</div>
 				</div>
@@ -251,24 +252,6 @@ class PageMainType extends React.Component<Props, State> {
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
 			};
-
-			this.loadTemplates();
-		});
-	};
-
-	loadTemplates () {
-		const rootId = this.getRootId();
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-		];
-		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
-		];
-
-		C.ObjectSearch(filters, sorts, '', 0, 0, (message: any) => {
-			this.setState({ templates: message.records });
 		});
 	};
 
@@ -300,7 +283,6 @@ class PageMainType extends React.Component<Props, State> {
 		const rootId = this.getRootId();
 
 		C.MakeTemplateByObjectType(rootId, (message) => {
-			this.loadTemplates();
 			DataUtil.objectOpenPopup({ id: message.id });
 		});
 	};

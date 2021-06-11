@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ObjectPreviewBlock, Icon, Input } from 'ts/component';
 import { C, keyboard } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props {
 	items: any[];
