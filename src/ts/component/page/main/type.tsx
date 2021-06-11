@@ -65,7 +65,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedTemplate = true; //blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Template ]);
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
