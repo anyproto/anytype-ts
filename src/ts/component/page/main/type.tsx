@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
-import { commonStore, detailStore, dbStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
 interface Props extends RouteComponentProps<any> {
@@ -61,7 +61,10 @@ class PageMainType extends React.Component<Props, State> {
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
-		const canCreate = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
+
+		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -76,32 +79,37 @@ class PageMainType extends React.Component<Props, State> {
 		const Editor = (item: any) => {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
-					<div 
-						id={'editor-' + item.id}
-						className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
-						contentEditable={true}
-						suppressContentEditableWarning={true}
-						onFocus={(e: any) => { this.onFocus(e, item); }}
-						onBlur={(e: any) => { this.onBlur(e, item); }}
-						onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
-						onInput={(e: any) => { this.onInput(e, item); }}
-						onSelect={(e: any) => { this.onSelectText(e, item); }}
-					>
-						{object[item.id]}
-					</div>
+					{!allowedDetails ? (
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'readOnly' ].join(' ')}>
+							{object[item.id]}
+						</div>
+					) : (
+						<div 
+							id={'editor-' + item.id}
+							className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
+							contentEditable={true}
+							suppressContentEditableWarning={true}
+							onFocus={(e: any) => { this.onFocus(e, item); }}
+							onBlur={(e: any) => { this.onBlur(e, item); }}
+							onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
+							onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+							onInput={(e: any) => { this.onInput(e, item); }}
+							onSelect={(e: any) => { this.onSelectText(e, item); }}
+						>
+							{object[item.id]}
+						</div>
+					)}
 					<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
 				</div>
 			);
 		};
 
 		const Relation = (item: any) => (
-			<div className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
+			<div className={[ 'item', (item.isHidden ? 'isHidden' : ''), (allowedRelation ? 'canEdit' : '') ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
 				</div>
-				<div className="value" />
 			</div>
 		);
 
@@ -131,7 +139,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 						<div className="side right">
-							{canCreate ? <Button text="Create" className="orange" onClick={this.onObjectAdd} /> : ''}
+							{allowedObject ? <Button text="Create" className="orange" onClick={this.onObjectAdd} /> : ''}
 						</div>
 					</div>
 
@@ -172,7 +180,7 @@ class PageMainType extends React.Component<Props, State> {
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
 							))}
-							<ItemAdd />
+							{allowedRelation ? <ItemAdd /> : ''}
 						</div>
 					</div>
 
