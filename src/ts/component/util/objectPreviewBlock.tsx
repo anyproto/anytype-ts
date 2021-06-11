@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil, dispatcher } from 'ts/lib';
+import { I, C, DataUtil, Action } from 'ts/lib';
 
 interface Props {
 	rootId: string;
@@ -305,6 +305,11 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.open();
+	};
+
+	componentWillUnmount () {
+		const { rootId } = this.props;
+		Action.pageClose(rootId);
 	};
 
 	open () {
