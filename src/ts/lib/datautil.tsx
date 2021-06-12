@@ -1025,7 +1025,7 @@ class DataUtil {
 			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
-			className: [ this.layoutClass(object.id, object.layout) ],
+			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
 		};
 
 		switch (object.layout) {

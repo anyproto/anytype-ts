@@ -41,7 +41,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const author = detailStore.get(rootId, object.creator, []);
 		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
-		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, className, ];
+		const cn = [ 'objectPreviewBlock' , check.className, className, ];
 
 		let n = 0;
 		let c = 0;
@@ -256,51 +256,45 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			);
 		};
 
-		let content = null;
-		if (loading) {
-			content = <Loader />;
-		} else {
-			content = (
-				<React.Fragment>
-					<div className="scroller">
-						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-						<div className="heading">
-							{isTask ? (
-								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
-							) : (
-								<IconObject size={48} iconSize={32} object={object} />
-							)}
-							<div className="name">{name}</div>
-							<div className="description">{description}</div>
-							<div className="author">{author.name}</div>
-						</div>
-						<div className="blocks">
-							{childBlocks.map((child: any, i: number) => {
-								const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
-
-								if (i == 0) {
-									cn.push('first');
-								};
-
-								if (i == childBlocks.length - 1) {
-									cn.push('last');
-								};
-
-								n++;
-								n = this.checkNumber(child, n);
-								return <Block key={child.id} className={cn.join(' ')} {...child} />;
-							})}
-						</div>
-					</div>
-					<div className="border" />
-				</React.Fragment>
-			);
-		};
-		
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>
-				{object.templateIsBundled ? <Icon className="logo" tooltip="Template is bundled" /> : ''}
-				{content}
+				{loading ? <Loader /> : (
+					<React.Fragment>
+						<div className="scroller">
+							{object.templateIsBundled ? <Icon className="logo" tooltip="Template is bundled" /> : ''}
+
+							{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+							<div className="heading">
+								{isTask ? (
+									<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
+								) : (
+									<IconObject size={48} iconSize={32} object={object} />
+								)}
+								<div className="name">{name}</div>
+								<div className="description">{description}</div>
+								<div className="author">{author.name}</div>
+							</div>
+							<div className="blocks">
+								{childBlocks.map((child: any, i: number) => {
+									const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+									if (i == 0) {
+										cn.push('first');
+									};
+
+									if (i == childBlocks.length - 1) {
+										cn.push('last');
+									};
+
+									n++;
+									n = this.checkNumber(child, n);
+									return <Block key={child.id} className={cn.join(' ')} {...child} />;
+								})}
+							</div>
+						</div>
+						<div className="border" />
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
