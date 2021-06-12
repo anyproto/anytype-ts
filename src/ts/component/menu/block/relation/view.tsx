@@ -211,7 +211,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	onEdit (e: any, relationKey: string) {
 		const { param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
@@ -222,6 +222,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,
 			horizontal: I.MenuDirection.Center,
+			classNameWrap: classNameWrap,
 			data: {
 				...data,
 				relationKey: relationKey,
