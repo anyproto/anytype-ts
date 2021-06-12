@@ -402,7 +402,7 @@ class BlockText extends React.Component<Props, {}> {
 		return String(obj.get(0).innerText || '');
 	};
 	
-	getMarksFromHtml (): I.Mark[] {
+	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		
@@ -689,7 +689,16 @@ class BlockText extends React.Component<Props, {}> {
 			menuStore.close('blockContext');
 		});
 		
-		this.marks = this.getMarksFromHtml();
+		const { marks, text } = this.getMarksFromHtml();
+
+		this.marks = marks;
+		if (value != text) {
+			this.setValue(text);
+
+			focus.set(focus.focused, { from: focus.range.to + 1, to: focus.range.to + 1 });
+			focus.apply();
+		};
+
 		this.placeHolderCheck();
 		this.setText(this.marks, false);
 	};

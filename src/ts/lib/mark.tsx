@@ -315,11 +315,16 @@ class Mark {
 		return obj;
 	};
 	
-	fromHtml (html: string): any[] {
-		const Markup = { '`': I.MarkType.Code, '*': I.MarkType.Bold };
-		const markups = Object.keys(Markup);
+	fromHtml (html: string): { marks: I.Mark[], text: string } {
+		const Markdown = [
+			{ key: '`', type: I.MarkType.Code },
+			{ key: '**', type: I.MarkType.Bold },
+			{ key: '__', type: I.MarkType.Bold },
+			{ key: '*', type: I.MarkType.Italic },
+			{ key: '_', type: I.MarkType.Italic },
+			{ key: '~~', type: I.MarkType.Strike },
+		];
 		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
-		const rm = new RegExp('(\\' + markups.join('|\\') + ')([^\\' + markups.join('|\\') + ']*)(\\' + markups.join('|\\') + ')', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 
@@ -330,7 +335,18 @@ class Mark {
 		let text = html;
 		let marks: any[] = [];
 
-		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string, o: number) => {
+		// Fix browser markup bug
+		html.replace(/<\/?(i|b)>/g, (s: string, p: string) => {
+			let r = '';
+			if (p == 'i') r = 'italic';
+			if (p == 'b') r = 'bold';
+			p = s.replace(p, r);
+			text = text.replace(s, p);
+			return '';
+		});
+
+		// Fix html special symbols
+		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '{';
 			if (p == '&gt;') p = '}';
 			if (p == '&amp;') p = '&';
@@ -371,26 +387,29 @@ class Mark {
 			return '';
 		});
 
-		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
-			console.log(s, 'p1', p1, 'p2', p2, 'p3', p3);
+		// Markdown
+		for (let item of Markdown) {
+			const k = Util.filterFix(item.key);
+			const rm = new RegExp('\\s(' + k + ')([^' + k + ']+)(' + k + ')\\s', 'ig');
 
-			p1 = String(p1 || '').trim();
-			p2 = String(p2 || '').trim();
-			p3 = String(p3 || '').trim();
+			html = text;
+			html.replace(rm, (s: string, p1: string, p2: string) => {
+				p1 = String(p1 || '').trim();
+				p2 = String(p2 || '').trim();
 
-			let offset = Number(text.indexOf(s)) || 0;
-			let type = Markup[p1];
+				let offset = Number(text.indexOf(s)) || 0;
 
-			marks.push({
-				type: type,
-				range: { from: offset, to: offset + p2.length },
-				param: '',
+				marks.push({
+					type: item.type,
+					range: { from: offset + 1, to: offset + 1 + p2.length },
+					param: '',
+				});
+				text = text.replace(s, ' ' + p2 + ' ');
+				return s;
 			});
-			text = text.replace(s, '');
-			return s;
-		});
+		};
 
-		return marks;
+		return { marks, text };
 	};
 	
 	paramToAttr (type: I.MarkType, param: string): string {
