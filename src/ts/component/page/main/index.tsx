@@ -191,7 +191,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 	onTab (id: Tab) {
 		this.state.tab = id;
-		this.setState({ tab: id });
+		this.setState({ tab: id, pages: [] });
 
 		Storage.set('indexTab', id);
 
@@ -219,7 +219,7 @@ class PageMainIndex extends React.Component<Props, State> {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
 		};
 
-		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -476,20 +476,8 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	getListHeight () {
-		const win = $(window);
-		const ww = win.width();
 		const size = Constant.size.index;
-		const list = this.getList();
-		const maxWidth = ww - size.border * 2;
-		const cnt = Math.floor(maxWidth / (size.width + size.margin));
-
-		let height = size.height + size.margin;
-		if (list.length > cnt) {
-			height *= 2;
-		};
-
-		height += 20;
-		return height;
+		return (size.height + size.margin) * 2 + size.margin * 2;
 	};
 
 	getList () {
