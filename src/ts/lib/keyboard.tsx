@@ -50,10 +50,10 @@ class Keyboard {
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (this.isMainEditor() || this.isFocused) {
+			if (!this.isMain() || (this.isMain() && !this.isMainIndex()) || this.isFocused) {
 				return;
 			};
-			this.history.goBack();
+			this.back();
 		});
 
 		if (platform == I.Platform.Mac) {
