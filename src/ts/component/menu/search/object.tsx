@@ -30,7 +30,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 	_isMounted: boolean = false;	
 	filter: string = '';
 	index: any = null;
-	cache: any = null;
+	cache: any = {};
 	items: any = [];
 	ref: any = null;
 	timeoutFilter: number = 0;
@@ -45,15 +45,11 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { n, loading, filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeHolder, label, isBig } = data;
+		const { value, placeHolder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
 		const placeHolderFocus = data.placeHolderFocus || 'Filter objects...';
 		const rowHeight = this.getHeight();
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -83,6 +79,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 				props.caption = (type ? type.name : undefined);
 			};
 
+			if (noIcon) {
+				props.object = undefined;
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -105,54 +105,58 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		return (
 			<div className={cn.join(' ')}>
-				{loading ? <Loader /> : ''}
-
-				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
-					placeHolder={placeHolder} 
-					placeHolderFocus={placeHolderFocus} 
-					onChange={(e: any) => { this.onKeyUp(e, false); }} 
-				/>
-
-				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="empty">
-						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
-					</div>
-				) : ''}
-
-				{this.cache && items.length && !loading ? (
+				{loading ? <Loader /> : (
 					<React.Fragment>
-						{label ? <div className="sectionName">{label}</div> : ''}
+						{!noFilter ? (
+							<Filter 
+								ref={(ref: any) => { this.ref = ref; }} 
+								placeHolder={placeHolder} 
+								placeHolderFocus={placeHolderFocus} 
+								onChange={(e: any) => { this.onKeyUp(e, false); }} 
+							/>
+						) : ''}
 
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => index < items.length}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={registerChild}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={rowHeight}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToIndex={n}
-											/>
+						{!items.length && !loading ? (
+							<div id="empty" key="empty" className="empty">
+								<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+							</div>
+						) : ''}
+
+						{this.cache && items.length && !loading ? (
+							<React.Fragment>
+								{label ? <div className="sectionName">{label}</div> : ''}
+
+								<div className="items">
+									<InfiniteLoader
+										rowCount={items.length}
+										loadMoreRows={() => {}}
+										isRowLoaded={({ index }) => index < items.length}
+										threshold={LIMIT}
+									>
+										{({ onRowsRendered, registerChild }) => (
+											<AutoSizer className="scrollArea">
+												{({ width, height }) => (
+													<List
+														ref={registerChild}
+														width={width}
+														height={height}
+														deferredMeasurmentCache={this.cache}
+														rowCount={items.length}
+														rowHeight={rowHeight}
+														rowRenderer={rowRenderer}
+														onRowsRendered={onRowsRendered}
+														overscanRowCount={10}
+														scrollToIndex={n}
+													/>
+												)}
+											</AutoSizer>
 										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
+									</InfiniteLoader>
+								</div>
+							</React.Fragment>
+						) : ''}
 					</React.Fragment>
-				) : ''}
+				)}
 			</div>
 		);
 	};
@@ -227,6 +231,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		const { param } = this.props;
 		const { data } = param;
+		const { dataMapper } = data;
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
@@ -248,7 +253,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), 0, 0, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -268,6 +273,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 				};
 			}));
 			this.items = this.items.filter(filterMapper);
+
+			if (dataMapper) {
+				this.items = this.items.map(dataMapper);
+			};
 
 			this.setState({ loading: false });
 		});
@@ -354,13 +363,20 @@ class MenuSearchObject extends React.Component<Props, State> {
 	};
 
 	onOver (e: any, item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onOver } = data;
+
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
+		};
+
+		if (onOver) {
+			onOver(e, this, item);
 		};
 	};
 	
 	onClick (e: any, item: any) {
-		e.persist();
 		e.stopPropagation();
 
 		const { param, close } = this.props;
@@ -417,8 +433,8 @@ class MenuSearchObject extends React.Component<Props, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
-		}, force ? 0 : 50);
+			this.setState({ filter: this.ref.getValue() });
+		}, force ? 0 : 500);
 	};
 
 	resize () {
@@ -428,11 +444,13 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		const { param, getId, position } = this.props;
 		const { data } = param;
-		const { isBig } = data;
+		const { noFilter, label } = data;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
+		const obj = $(`#${getId()} .content`);
 		const h = this.getHeight();
-		const height = Math.max(300, Math.min(h * LIMIT, items.length * h + 16));
+		const min = noFilter ? 44 + 28 : 300;
+		const l = items.length + (label ? 1 : 0);
+		const height = Math.max(min, Math.min(h * LIMIT, l * h + 16));
 
 		obj.css({ height: height });
 		position();

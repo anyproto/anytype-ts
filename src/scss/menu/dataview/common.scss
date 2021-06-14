@@ -21,10 +21,10 @@
 			.icon.dnd { margin-right: 2px; }
 		}
 
-		.item.empty { color: #6c6a5f; padding: 8px 16px 10px 16px; line-height: 22px; cursor: default; }
+		.item.empty { padding: 8px 16px 10px 16px; line-height: 22px; cursor: default; }
 		.item.empty:hover::before { opacity: 0; }
 
-		.label { color: $colorDarkGrey; @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
+		.label { color: $colorMediumGrey; @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
     }
 
     .menu.menuDataviewFilterList,

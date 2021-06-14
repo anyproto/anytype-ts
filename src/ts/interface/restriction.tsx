@@ -1,14 +1,16 @@
  export enum RestrictionObject {
-	Delete		 = 0,
-	Relation	 = 1,
-	Header		 = 2,
-	CreateBlock	 = 3,
+	None		 = 0,
+	Delete		 = 1,
+	Relation	 = 2,
+	Block		 = 3,
+	Details		 = 4,
+	Type		 = 5,
+	Layout		 = 6, 
 };
 
 export enum RestrictionDataview {
-	CreateView		 = 0,
-	Filters			 = 1,
-	CreateRelation	 = 2,
-	CreateObject	 = 3,
-	EditObject		 = 4,
+	None		 = 0,
+	Relation	 = 1,
+	Object		 = 2,
+	View		 = 3,
 };

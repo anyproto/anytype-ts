@@ -380,7 +380,7 @@ function menuInit () {
 							css_path: path.join(__dirname, '/electron/about.css'),
 							product_name: 'Anytype',
 							description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
-							copyright: 'Copyright (c) 2020 Anytype',
+							copyright: `Copyright (c) ${new Date().getFullYear()} Anytype Inc.`,
 							homepage: 'https://anytype.io',
 							package_json_dir: __dirname,
 							use_version_info: false,

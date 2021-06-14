@@ -1018,14 +1018,14 @@ class DataUtil {
 	};
 
 	checkDetails (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
 			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
-			className: [ this.layoutClass(object.id, object.layout) ],
+			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
 		};
 
 		switch (object.layout) {
@@ -1063,11 +1063,15 @@ class DataUtil {
 		};
 
 		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
-			ret.className.push('noFeatured');
+			ret.className.push('noSystemBlocks');
 		};
 
 		if ((object[Constant.relationKey.featured] || []).indexOf(Constant.relationKey.description) >= 0) {
 			ret.className.push('withDescription');
+		};
+
+		if (object.templateIsBundled) {
+			ret.className.push('isBundled');
 		};
 
 		if (ret.withIcon && ret.withCover) {
@@ -1135,6 +1139,24 @@ class DataUtil {
 				break;
 		};
 		return value;
+	};
+
+	checkTemplateCnt (typeIds: string[], limit: number, callBack?: (message: any) => void) {
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeIds },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+		];
+
+		C.ObjectSearch(filters, [], [ 'id' ], '', 0, limit, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
 	};
 
 };

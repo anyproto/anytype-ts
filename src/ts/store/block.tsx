@@ -365,14 +365,23 @@ class BlockStore {
 		return ret;
 	};
 
-	isAllowed (rootId: string, blockId: string, flag: any) {
+	getRestrictions (rootId: string, blockId: string) {
 		const map = this.restrictionMap.get(rootId);
 		if (!map) {
-			return false;
+			return [];
 		};
 
-		const restrictions = map.get(blockId) || [];
-		return restrictions.indexOf(flag) < 0;
+		return map.get(blockId) || [];
+	};
+
+	isAllowed (rootId: string, blockId: string, flags: any[]) {
+		const restrictions = this.getRestrictions(rootId, blockId);
+		for (let flag of flags) {
+			if (restrictions.indexOf(flag) >= 0) {
+				return false;
+			};
+		};
+		return true;
 	};
 
 };

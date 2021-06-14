@@ -48,6 +48,8 @@ class PageMainSet extends React.Component<Props, {}> {
 			description: 'Add a description',
 		};
 
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+
 		if (object.name == Constant.default.name) {
 			object.name = '';
 		};
@@ -55,21 +57,29 @@ class PageMainSet extends React.Component<Props, {}> {
 		const Editor = (item: any) => {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
-					<div 
-						id={'editor-' + item.id}
-						className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
-						contentEditable={true}
-						suppressContentEditableWarning={true}
-						onFocus={(e: any) => { this.onFocus(e, item); }}
-						onBlur={(e: any) => { this.onBlur(e, item); }}
-						onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-						onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
-						onInput={(e: any) => { this.onInput(e, item); }}
-						onSelect={(e: any) => { this.onSelectText(e, item); }}
-					>
-						{object[item.id]}
-					</div>
-					<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
+					{!allowedDetails ? (
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadOnly' ].join(' ')}>
+							{object[item.id]}
+						</div>
+					) : (
+						<React.Fragment>
+							<div 
+								id={'editor-' + item.id}
+								className={[ 'editor', 'focusable', 'c' + item.id ].join(' ')}
+								contentEditable={true}
+								suppressContentEditableWarning={true}
+								onFocus={(e: any) => { this.onFocus(e, item); }}
+								onBlur={(e: any) => { this.onBlur(e, item); }}
+								onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
+								onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+								onInput={(e: any) => { this.onInput(e, item); }}
+								onSelect={(e: any) => { this.onSelectText(e, item); }}
+							>
+								{object[item.id]}
+							</div>
+							<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
+						</React.Fragment>
+					)}
 				</div>
 			);
 		};
@@ -81,7 +91,7 @@ class PageMainSet extends React.Component<Props, {}> {
 				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={true} onSelect={this.onSelect} onUpload={this.onUpload} />
+							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
 						<div className="side right">
 							<Editor className="title" id="name" />

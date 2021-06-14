@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
 import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate } from 'ts/lib';
-import { blockStore, commonStore, dbStore, menuStore, detailStore } from 'ts/store';
+import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -98,7 +98,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ]); }}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ], true); }}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}
@@ -274,7 +274,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				if (!config.debug.ho && it.isHidden) {
 					return false;
 				};
-				return it.scope == I.RelationScope.Object;
+				return [ I.RelationScope.Object, I.RelationScope.Type ].indexOf(it.scope) >= 0;
 			});
 
 			this.relations.unshift({
@@ -402,6 +402,14 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
 
+		sections = sections.map((s: any) => {
+			s.children = s.children.map((c: any) => {
+				c.isBig = true;
+				return c;
+			});
+			return s;
+		});
+
 		if (config.allowDataview) {
 			sections = sections.concat([
 				{ id: 'relation', name: 'Relations', children: this.relations },
@@ -424,14 +432,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			};
 			
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
-		} else {
-			sections = sections.map((s: any) => {
-				s.children = s.children.map((c: any) => {
-					c.isBig = true;
-					return c;
-				});
-				return s;
-			});
 		};
 		
 		sections = DataUtil.menuSectionsMap(sections);
@@ -490,7 +490,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			passThrough: true,
 			className: param.className,
 			data: {
 				rootId: rootId,
@@ -559,6 +558,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 
 		let text = String(data.text || '');
 
+		const details: any = {};
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 		const onCommand = (message: any) => {
@@ -624,18 +624,41 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				if (item.type == I.BlockType.Relation) {
 					param.content.key = item.relationKey;
 				};
-				
-				if (item.type == I.BlockType.Page) {
-					const details: any = {};
-					
-					if (item.isObject) {
-						const type = dbStore.getObjectType(item.objectTypeId);
-						if (type) {
-							details.type = type.id;
-							details.layout = type.layout;
-						};
+
+				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
+					C.BlockListSetTextStyle(rootId, [ blockId ], item.itemId, onCommand);
+				} else 
+				if (item.isObject) {
+					const type = dbStore.getObjectType(item.objectTypeId);
+					if (type) {
+						details.type = type.id;
+						details.layout = type.layout;
 					};
 
+					const create = (templateId: string) => {
+						DataUtil.pageCreate(rootId, blockId, details, position, templateId, (message: any) => {
+							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+						});
+					};
+
+					const showMenu = () => {
+						popupStore.open('template', {
+							data: {
+								typeId: item.objectTypeId,
+								onSelect: create,
+							},
+						});
+					};
+
+					DataUtil.checkTemplateCnt([ item.objectTypeId ], 2, (message: any) => {
+						if (message.records.length > 1) {
+							showMenu();
+						} else {
+							create(message.records.length ? message.records[0].id : '');
+						};
+					});
+				} else 
+				if (item.type == I.BlockType.Page) {
 					DataUtil.pageCreate(rootId, blockId, details, position, '', (message: any) => {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});

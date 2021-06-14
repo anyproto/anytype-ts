@@ -10,6 +10,7 @@ class AuthStore {
 	@observable public accountList: I.Account[] = [];
 	@observable public pin: string = '';
 	@observable public icon: string = '';
+	@observable public preview: string = '';
 	@observable public name: string = '';
 	@observable public phrase: string = '';
 	@observable public code: string = '';
@@ -55,6 +56,11 @@ class AuthStore {
 	iconSet (v: string) {
 		this.icon = v;
 	};
+
+	@action
+	previewSet (v: string) {
+		this.preview = v;
+	};
 	
 	@action
 	nameSet (v: string) {
@@ -74,6 +80,7 @@ class AuthStore {
 	accountSet (account: I.Account) {
 		this.accountItem = account as I.Account;
 
+		Storage.set('accountId', account.id);
 		analytics.profile(account);
 		Sentry.setUser({ id: account.id });
 	};

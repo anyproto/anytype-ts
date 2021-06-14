@@ -73,12 +73,12 @@ class BlockText extends React.Component<Props, {}> {
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'readOnly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadOnly' : '') ];
 		let additional = null;
 
 		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				const object = detailStore.get(rootId, mark.param);
+				const object = detailStore.get(rootId, mark.param, []);
 			};
 		};
 		
@@ -335,8 +335,9 @@ class BlockText extends React.Component<Props, {}> {
 			e.preventDefault();
 
 			const el = $(this);
-			if (!el.hasClass('dis')) {
-				const object = detailStore.get(rootId, el.data('param'));
+			const param = el.data('param');
+			if (!el.hasClass('dis') && param) {
+				const object = detailStore.get(rootId, param, []);
 				DataUtil.objectOpenEvent(e, object);
 			};
 		});
@@ -923,6 +924,9 @@ class BlockText extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
+				onClose: () => {
+					keyboard.disableContext(false);
+				},
 				data: {
 					blockId: block.id,
 					blockIds: [ block.id ],

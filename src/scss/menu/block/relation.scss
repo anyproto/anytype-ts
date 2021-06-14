@@ -8,7 +8,7 @@
 
 	.menu.menuBlockRelationList,
 	.menu.menuBlockRelationView {
-		.icon.expand { display: none; }
+		.icon.edit { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
@@ -62,11 +62,12 @@
 
 	.menu.menuBlockRelationView { width: 640px; }
 	.menu.menuBlockRelationView {
-		.content { padding: 24px 0px; max-height: unset; }
+		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; border: 0px; padding: 0px; }
 
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
+		.sections { display: flex; flex-direction: column; height: 100%; }
 		.section > .name { @include text-common; padding: 5px 28px; position: relative; color: $colorBlack; }
 		.section > .name {
 			.icon.plus { position: absolute; right: 28px; top: 50%; margin-top: -10px; cursor: pointer; }
@@ -77,7 +78,8 @@
 
 		#section-featured::after { display: block; }
 
-		.item { padding: 0px 22px; margin-bottom: 1px; }
+		.scrollWrap { padding: 30px 0px 16px 0px; height: calc(100% - 54px); overflow-x: hidden; overflow-y: auto; }
+		.item { padding: 0px 22px; margin-bottom: 1px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }
 
@@ -88,10 +90,11 @@
 			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
 
 			.info { padding: 5px 8px; }
-			.info:hover { background: rgba(172,169,150,0.1); }
+			.info.canEdit { cursor: pointer; }
+			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
 			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 242px); line-height: 22px; transition: background 0.2s ease-in-out; }
-			.cell:hover { background: rgba(172,169,150,0.1); }
+			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
 
 			.cell.c-select { padding: 4px 8px; }
 			.cell.c-select {
@@ -147,7 +150,15 @@
 				.cellContent { padding: 5px 8px; }
 			}
 		}
-		.item * { cursor: pointer; }
+
+		.item.add { padding: 12px 22px; cursor: pointer; background: none; }
+		.item.add {
+			.line { margin: 0px; position: absolute; top: 0px; left: 22px; width: calc(100% - 44px); }
+			.info { width: 100%; }
+		}
+		.item.add:hover { 
+			.info { background: rgba(172,169,150,0.1); } 
+		}
 	}
 
 }

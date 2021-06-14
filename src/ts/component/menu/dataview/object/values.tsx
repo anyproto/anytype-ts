@@ -155,7 +155,7 @@ class MenuObjectValues extends React.Component<Props> {
 
 	onAdd () {
 		const { param, getId, close } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()} #item-add`,
@@ -165,6 +165,7 @@ class MenuObjectValues extends React.Component<Props> {
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
+			classNameWrap: classNameWrap,
 			onClose: () => { close(); },
 			data: {
 				...data,

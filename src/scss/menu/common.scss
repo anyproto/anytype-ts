@@ -19,9 +19,6 @@
 	.menu * { user-select: none; }
 
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
-	.menu.show {
-		.content { opacity: 1 !important; }
-	}
 	
 	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */
 	.menu.v2.h3 { transform-origin: 0% 0%; } /* left bottom */
@@ -41,7 +38,7 @@
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; opacity: 0; transition: opacity 0.05s ease-in-out; }
+		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
 		.loaderWrapper { 
@@ -49,7 +46,7 @@
 			background: rgba(255,255,255, 0.7);
 		}
 
-		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorDarkGrey; }
+		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
@@ -59,7 +56,7 @@
 		.inputWrap { padding: 0px 14px 8px 14px; }
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 	
-		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorDarkGrey; }
+		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorMediumGrey; }
 	
 		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: #fff; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
@@ -73,9 +70,9 @@
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
-		.item.isReadOnly.hover::before { opacity: 0; }
+		.item.isReadOnly.hover::before, .item.isReadOnly:hover::before { opacity: 0; background: none; }
 
-		.item.add { color: #929082; line-height: 20px; }
+		.item.add { color: $colorDarkGrey; line-height: 20px; }
 		
 		.item {
 			.name { display: inline-block; vertical-align: top; position: relative; }
@@ -100,12 +97,10 @@
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 		}
 
-		.item.empty { color: $colorDarkGrey; cursor: default; }
-		
 		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {
 			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
-			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: #6c6a5f; }
+			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: $colorVeryDarkGrey; }
 			.descr:empty { display: none; }
 			.info { padding-left: 52px; line-height: 40px; width: 100%; }
 			.txt { width: 100%; }
@@ -123,7 +118,7 @@
 			}
 
 			.caption { 
-				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
+				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorMediumGrey; @include text-small; text-align: right;
 				flex-shrink: 0; line-height: 20px;
 			}
 		}
@@ -131,7 +126,7 @@
 		.line { height: 1px; margin: 8px 14px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
-		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; font-weight: 500; }
+		.sectionName { padding: 5px 14px; @include text-small; color: $colorMediumGrey; font-weight: 500; }
 		
 		.section { padding: 8px 0px 0px 0px; }
 		.section::after {
@@ -140,7 +135,7 @@
 		.section:first-child { padding: 0px; }
 		.section:last-child { border: 0px; }
 		.section:last-child::after { display: none; }
-		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; font-weight: 500; }
+		.section > .name { padding: 3px 14px; margin-bottom: 2px; @include text-small; color: $colorMediumGrey; display: block; font-weight: 500; }
 	}
 
 	.menu.horizontal {

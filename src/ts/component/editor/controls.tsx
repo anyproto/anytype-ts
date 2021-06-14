@@ -9,7 +9,6 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	dataset?: any;
-	readOnly: boolean;
 };
 
 const { dialog } = window.require('electron').remote;
@@ -33,14 +32,15 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId, readOnly } = this.props;
+		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (readOnly) {
+		if (!allowed) {
 			return null;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ], true);
 
 		return (
 			<div 

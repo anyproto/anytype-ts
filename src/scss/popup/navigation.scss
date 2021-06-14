@@ -9,7 +9,7 @@
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
-			.txt { line-height: 24px; color: $colorDarkGrey; }
+			.txt { line-height: 24px; color: $colorMediumGrey; }
 		}
 		
 		.items {
@@ -22,7 +22,7 @@
 				.iconObject { position: absolute; left: 16px; top: 16px; transition: $transitionFast; }
 				.info { border: 0px; margin-top: -2px; padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
 				.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
-				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: #6c6a5f; }
+				.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: $colorVeryDarkGrey; }
 				.icon.arrow { 
 					width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
 					background-image: url('~img/arrow/nav0.svg');
@@ -52,7 +52,7 @@
 
 			.item.empty { line-height: 78px; cursor: default; }
 			.item.empty {
-				.name { display: inline-block; vertical-align: middle; color: $colorDarkGrey; }
+				.name { display: inline-block; vertical-align: middle; }
 			}
 		}
 
@@ -62,7 +62,7 @@
 		.selected {
 			.iconObject { margin-bottom: 8px; }
 			.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
-			.descr { @include text-small; color: #6c6a5f; @include text-overflow; max-height: 54px; }
+			.descr { @include text-small; color: $colorVeryDarkGrey; @include text-overflow; max-height: 54px; }
 			.cover { position: static; height: 156px; margin-top: 11px; }
 			.buttons { margin-top: 16px; display: flex; }
 			.buttons {

@@ -26,14 +26,14 @@
 		.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
-			.label { line-height: 24px; color: $colorDarkGrey; display: inline-block; vertical-align: middle; }
+			.label { line-height: 24px; color: $colorMediumGrey; display: inline-block; vertical-align: middle; }
 		}
 		
 		.items { height: 100%; }
 		.items {
 			.pad { height: 12px; }
 
-			.section { height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorDarkGrey; }
+			.section { height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
 
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 5px 16px; white-space: nowrap;
@@ -43,11 +43,11 @@
 				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; flex-shrink: 0; }
 				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 50%; }
 				.type { flex-shrink: 0; max-width: 33%; }
-				.descr { @include text-small; @include text-overflow-nw; line-height: 22px; color: #6c6a5f; display: inline-block; vertical-align: top; }
+				.descr { @include text-small; @include text-overflow-nw; line-height: 22px; color: $colorVeryDarkGrey; display: inline-block; vertical-align: top; }
 
 				.div { width: 2px; height: 22px; line-height: 22px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
 				.div {
-					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorDarkGrey; }
+					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
 				}
 			}
 

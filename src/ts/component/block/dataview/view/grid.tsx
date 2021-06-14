@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
 import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
-import { dbStore, menuStore } from 'ts/store';
+import { dbStore, menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -33,7 +33,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
-		const { list } = menuStore;
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 
 		let pager = null;
 		if (total && data.length) {
@@ -60,11 +60,12 @@ class ViewGrid extends React.Component<Props, {}> {
 									<BodyRow 
 										key={'grid-row-' + view.id + i} 
 										{...this.props} 
+										readOnly={readOnly || !allowed}
 										index={i} 
 										onRowOver={this.onRowOver} 
 									/>
 								))}
-								{!readOnly ? (
+								{!readOnly && allowed ? (
 									<tr>
 										<td className="cell add" colSpan={relations.length + 1}>
 											<div className="btn" onClick={onRowAdd}>

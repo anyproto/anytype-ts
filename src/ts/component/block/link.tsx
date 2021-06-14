@@ -61,11 +61,19 @@ class BlockLink extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+		const { onKeyDown } = this.props;
+
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
 	};
 
 	onFocus () {
@@ -77,7 +85,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const object = detailStore.get(rootId, targetBlockId);
+		const object = detailStore.get(rootId, targetBlockId, []);
 		const { _objectEmpty_ } = object;
 		
 		if (!_objectEmpty_ && (targetBlockId != rootId)) {
@@ -105,7 +113,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const { targetBlockId } = content;
-		const object = detailStore.get(rootId, targetBlockId, [ 'done' ]);
+		const object = detailStore.get(rootId, targetBlockId, []);
 
 		DataUtil.pageSetDone(targetBlockId, !object.done);
 	};

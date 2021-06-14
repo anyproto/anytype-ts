@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.pager { text-align: center; margin: 13px 0px 0px 0px; color: $colorDarkGrey; white-space: nowrap; @include text-common; }
+.pager { text-align: center; margin: 13px 0px 0px 0px; color: $colorMediumGrey; white-space: nowrap; @include text-common; }
 
 .pager {
     .page { 
@@ -12,7 +12,7 @@
 	
 	.dots { min-width: 24px; display: inline-block; padding: 0px 2px; text-align: center; margin-right: 8px; vertical-align: top; line-height: 24px; }
 
-    .icon.arrow { width: 24px; height: 24px; vertical-align: top; background-image: url('~img/arrow/pager0.svg'); }
+    .icon.arrow { width: 24px; height: 24px; vertical-align: top; background-image: url('~img/arrow/pager0.svg'); cursor: pointer; }
     .icon.arrow:hover { background-image: url('~img/arrow/pager1.svg'); }
 
     .icon.arrow.disabled:hover { background-image: url('~img/arrow/pager0.svg'); }

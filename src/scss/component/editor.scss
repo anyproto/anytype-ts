@@ -4,6 +4,17 @@
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
+	.note { 
+		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: #fff; position: absolute; 
+		left: 16px; top: 38px; width: calc(100% - 32px); line-height: 80px; text-align: center; z-index: 2;
+	}
+	.note {
+		.inner { display: inline-block; width: 704px; margin: 0px auto; vertical-align: middle; line-height: 1; }
+		.sides { display: flex; }
+		.side.left { width: 576px; margin-right: 34px; text-align: left; @include text-common; line-height: 20px; }
+		.side.right { text-align: right; }
+	}
+
 	.editor {
 		.icon.buttonAdd { 
 			width: 20px; height: 20px; position: absolute; z-index: 5; cursor: pointer; user-select: none;
@@ -18,12 +29,12 @@
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
-	.editorControls { position: absolute; width: inherit; height: 140px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
+	.editorControls { position: absolute; width: inherit; height: 150px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
 		.buttons { position: absolute; bottom: 0px; opacity: 0; }
 		
 		.btn { 
-			background: #fff; font-weight: 500; font-size: 14px; color: $colorDarkGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out;
+			background: #fff; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out;
 			margin-right: 10px; height: 28px; line-height: 26px; padding: 0px 10px; border-radius: 6px;
 		}
 		.btn:last-child { margin: 0px; }
@@ -87,6 +98,9 @@
 	}
 	.editorControls.align1 {
 		.buttons { left: 50%; padding-left: 84px; }
+	}
+	.editorControls.align2 { 
+		.buttons { padding-left: 0px; }
 	}
 }
 .editorWrapper.isHuman.withIconAndCover { padding-top: 208px; }

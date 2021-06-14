@@ -5,7 +5,7 @@
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; }
 
-		.head { color: $colorDarkGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorLightGrey; }
+		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorLightGrey; }
 		.head {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:last-child { margin-right: 0px; }
@@ -21,7 +21,7 @@
 		.empty { height: 100%; line-height: 256px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
-			.txt { line-height: 24px; color: $colorDarkGrey; }
+			.txt { line-height: 24px; color: $colorMediumGrey; }
 		}
 		
 		.section { padding-top: 0px; padding-bottom: 6px; border: 0px; }

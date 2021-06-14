@@ -191,6 +191,14 @@ const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('blockOpen', request, callBack);
 };
 
+const BlockShow = (blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Open.Request();
+	
+	request.setBlockid(blockId);
+
+	dispatcher.request('blockShow', request, callBack);
+};
+
 const BlockOpenBreadcrumbs = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.OpenBreadcrumbs.Request();
 	dispatcher.request('blockOpenBreadcrumbs', request, callBack);
@@ -629,12 +637,13 @@ const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: 
 	dispatcher.request('blockDataviewViewSetActive', request, callBack);
 };
 
-const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, callBack?: (message: any) => void) => {
+const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RecordCreate.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRecord(Encode.encodeStruct(record));
+	request.setTemplateid(templateId);
 
 	dispatcher.request('blockDataviewRecordCreate', request, callBack);
 };
@@ -877,7 +886,7 @@ const SetCreate = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('setCreate', request, callBack);
 };
 
-const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
@@ -885,6 +894,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], fullText: string, of
 	request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
+	//request.setKeysList(keys);
 
 	dispatcher.request('objectSearch', request, callBack);
 };
@@ -963,6 +973,31 @@ const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('makeTemplate', request, callBack);
 };
 
+const MakeTemplateByObjectType = (objectTypeUrl: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.MakeTemplateByObjectType.Request();
+	
+	request.setObjecttype(objectTypeUrl);
+
+	dispatcher.request('makeTemplateByObjectType', request, callBack);
+};
+
+const ApplyTemplate = (contextId: string, templateId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ApplyTemplate.Request();
+	
+	request.setContextid(contextId);
+	request.setTemplateid(templateId);
+
+	dispatcher.request('applyTemplate', request, callBack);
+};
+
+const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.ApplyTemplate.Request();
+	
+	request.setContextid(contextId);
+
+	dispatcher.request('cloneTemplate', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -993,6 +1028,7 @@ export {
 
 	BlockGetPublicWebURL,
 	BlockOpen,
+	BlockShow,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
 	BlockClose,
@@ -1082,5 +1118,7 @@ export {
 	ObjectRelationListAvailable,
 
 	MakeTemplate,
-
+	MakeTemplateByObjectType,
+	ApplyTemplate,
+	CloneTemplate,
 };

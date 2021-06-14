@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
-import { commonStore, blockStore, authStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
@@ -76,10 +76,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const children = blockStore.getChildren(rootId, rootId);
 		const length = childrenIds.length;
 		const width = root?.fields?.width;
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} readOnly={root.isObjectFile()} />
+				<Controls key="editorControls" {...this.props} />
 				
 				<div className="editor">
 					<div className="blocks">
@@ -92,7 +93,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readOnly={root.isObjectFile()}
+							readOnly={!allowed}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -111,7 +112,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={root.isObjectReadOnly()}
+									readOnly={!allowed}
 									getWrapper={this.getWrapper}
 									getWrapperWidth={this.getWrapperWidth}
 								/>
@@ -170,11 +171,11 @@ class EditorPage extends React.Component<Props, {}> {
 
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
-		this.resize();
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
 		};
+
 		this.resize();
 	};
 	
@@ -237,7 +238,6 @@ class EditorPage extends React.Component<Props, {}> {
 			this.loading = false;
 			this.focusTitle();
 			this.forceUpdate();
-			this.resize();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			blockStore.setNumbers(rootId);
@@ -245,6 +245,8 @@ class EditorPage extends React.Component<Props, {}> {
 			if (onOpen) {
 				onOpen();
 			};
+
+			this.resize();
 		});
 	};
 
@@ -296,9 +298,13 @@ class EditorPage extends React.Component<Props, {}> {
 	
 	close () {
 		const { isPopup, rootId, match } = this.props;
+		const object = detailStore.get(rootId, rootId);
 		
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (object.type == Constant.typeId.template) {
 			close = false;
 		};
 
@@ -353,7 +359,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, I.RestrictionObject.CreateBlock);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 
 		if (!root || !allowed) {
 			return;
@@ -632,15 +638,13 @@ class EditorPage extends React.Component<Props, {}> {
 		const st = win.scrollTop();
 		const element = $('#block-' + block.id);
 		const value = element.find('#value');
-
+		
 		let length = String(text || '').length;
+		range = range || {};
 
-		// Last line break in code block
-		if (block.isTextCode() && length) {
+		if (block.isTextCode() && length && (text[length - 1] == '\n')) {
 			length--;
 		};
-
-		range = range || {};
 
 		this.uiHide();
 		
@@ -855,9 +859,20 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 
+			let sRect = Util.selectionRect();
+			let vRect: any = {};
+			if (value && value.length) {
+				vRect = value.get(0).getBoundingClientRect();
+			} else 
+			if (element && element.length) {
+				vRect = element.get(0).getBoundingClientRect()
+			};
+
+			if (!sRect.y && !sRect.x && !sRect.width && !sRect.height) {
+				sRect = vRect;
+			};
+
 			const dir = pressed.match(Key.up) ? -1 : 1;
-			const sRect = Util.selectionRect();
-			const vRect = value.length ? value.get(0).getBoundingClientRect() : element.get(0).getBoundingClientRect();
 			const lh = parseInt(value.css('line-height'));
 			const sy = sRect.y + st;
 			const vy = vRect.y + st;
@@ -1510,8 +1525,9 @@ class EditorPage extends React.Component<Props, {}> {
 	onLastClick (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		
-		if (!root || root.isObjectSet()) {
+		if (!root || !allowed) {
 			return;
 		};
 
@@ -1547,17 +1563,25 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const { rootId, isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
+		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
 		const root = blockStore.getLeaf(rootId, rootId);
+		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
+		const container = this.getScrollContainer();
+		const header = obj.find('#header');
+		const hh = header.height();
 
 		if (blocks.length && last.length) {
-			const container = this.getScrollContainer();
 			const ct = isPopup ? container.offset().top : 0;
 			const h = container.height();
 			const height = blocks.outerHeight() + blocks.offset().top - ct;
 
 			last.css({ height: Math.max(Constant.size.lastBlock, h - height) });
+		};
+
+		if (note.length) {
+			note.css({ top: hh });
 		};
 
 		this.onResize(root?.fields?.width);

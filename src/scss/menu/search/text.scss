@@ -6,7 +6,7 @@
 		.flex { width: 100%; }
 		.input { width: 100%; height: 22px; padding: 0px; flex: auto; width: calc(100% - 100px); }
 		.buttons { 
-			flex: auto; white-space: nowrap; width: 100px; text-align: right; color: $colorDarkGrey; font-weight: 500; 
+			flex: auto; white-space: nowrap; width: 100px; text-align: right; color: $colorMediumGrey; font-weight: 500; 
 			user-select: none;
 		}
 		.buttons {

@@ -122,6 +122,10 @@ const BlockOpen = (response: any) => {
 	return {};
 };
 
+const BlockShow = (response: any) => {
+	return {};
+}
+
 const ObjectShow = (response: any) => {
 	return {
 		rootId: response.getRootid(),
@@ -381,8 +385,9 @@ const HistoryVersions = (response: any) => {
 };
 
 const HistoryShow = (response: any) => {
+	const version = response.getVersion();
 	return {
-		version: Mapper.From.HistoryVersion(response.getVersion()),
+		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
 		objectShow: ObjectShow(response.getObjectshow()),
 	};
 };
@@ -447,6 +452,18 @@ const MakeTemplate = (response: any) => {
 	};
 };
 
+const MakeTemplateByObjectType = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
+const CloneTemplate = (response: any) => {
+	return {
+		id: response.getId(),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -477,6 +494,7 @@ export {
 	BlockGetPublicWebURL,
 
 	BlockOpen,
+	BlockShow,
 	BlockOpenBreadcrumbs,
 	BlockSetBreadcrumbs,
 	
@@ -557,5 +575,7 @@ export {
 	ObjectRelationOptionAdd,
 
 	MakeTemplate,
+	MakeTemplateByObjectType,
+	CloneTemplate,
 
 };

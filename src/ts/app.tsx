@@ -41,6 +41,7 @@ import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
+import 'scss/component/list/template.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
@@ -87,6 +88,7 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
+import 'scss/popup/template.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -101,6 +103,8 @@ import 'scss/menu/relation.scss';
 
 import 'scss/menu/search/text.scss';
 import 'scss/menu/search/object.scss';
+
+import 'scss/menu/preview/object.scss';
 
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';

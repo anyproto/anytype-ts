@@ -29,7 +29,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		const sections = this.getSections();
-		
+		const restrictions = blockStore.getRestrictions(rootId, rootId);
+		const restr: any[] = [];
+
+		for (let r of restrictions) {
+			restr.push(I.RestrictionObject[r]);
+		};
+
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -53,10 +59,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const readOnly = block.isObjectReadOnly(); 
+			const allowedType = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]); 
+			const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]); 
 
-			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: !readOnly };
-			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: !readOnly };
+			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: allowedType };
+			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: allowedLayout };
 
 			sectionPage = (
 				<React.Fragment>
@@ -65,8 +72,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							<div className="sectionName">Type</div>
 							<MenuItemVertical 
 								{...itemType}
-								onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemType) } : undefined} 
-								className={readOnly ? 'isReadOnly' : ''}
+								onMouseEnter={allowedType ? (e: any) => { this.onOver(itemType) } : undefined} 
+								className={allowedType ? '' : 'isReadOnly'}
 							/>
 						</React.Fragment>
 					) : ''}
@@ -74,9 +81,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					<div className="sectionName">Layout</div>
 					<MenuItemVertical 
 						{...itemLayout}
-						onMouseEnter={!readOnly ? (e: any) => { this.onOver(itemLayout) } : undefined} 
-						className={readOnly ? 'isReadOnly' : ''}
+						onMouseEnter={allowedLayout ? (e: any) => { this.onOver(itemLayout) } : undefined} 
+						className={allowedLayout ? '' : 'isReadOnly'}
 					/>
+
+					{config.sudo && restr.length ? (
+						<div className="section">
+							<div className="name">Restrictions</div>
+							<div className="items">
+								{restr.map((item: any, i: number) => (
+									<div className="item" key={i}>{item || 'Empty'}</div>
+								))}
+							</div>
+						</div>
+					) : ''}
 				</React.Fragment>
 			);
 		};
@@ -161,7 +179,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId } = data;
+		const { blockId, rootId, objectId } = data;
 		const { config } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -170,16 +188,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const object = detailStore.get(rootId, blockId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
 		const cmd = Util.ctrlSymbol();
 
-		const undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
-		const redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
-		const print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
-		const linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
-		const search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
-		const move = { id: 'move', name: 'Move to', arrow: true };
-		const turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
-		const align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
+		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
+		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
+		let linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
+		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
+		let move = { id: 'move', name: 'Move to', arrow: true };
+		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
+		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let resize = { id: 'resize', name: 'Set layout width' };
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
@@ -200,12 +220,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				archive = { id: 'archivePage', icon: 'remove', name: 'Archive' };
 			};
 
+			// Restrictions
+			if (!allowed) {
+				undo = null;
+				redo = null;
+				align = null;
+				archive = null;
+				resize = null;
+			};
+
 			sections = [
-				{ 
-					children: [
-						{ id: 'resize', name: 'Set layout width' }
-					]
-				},
+				{ children: [ resize, align ] },
 				{
 					children: [
 						linkRoot,
@@ -218,12 +243,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ archive ] }
 			];
 
-			if (!block.isObjectSet()) {
-				sections[0].children.push();
-			};
-
-			sections[0].children.push(align);
-
 			if (block.canHaveHistory()) {
 				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` });
 			};
@@ -235,9 +254,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		} else 
 		if (block.isLink()) {
+			const object = detailStore.get(rootId, objectId);
+
+			let archive = null;
+			let remove = null;
+			if (object.isArchived) {
+				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
+			} else {
+				archive = { id: 'archiveIndex', icon: 'remove', name: 'Archive' };
+				remove = { id: 'remove', icon: 'unfav', name: 'Remove from Favorites' };
+			};
+
 			sections.push({ children: [
-				{ id: 'archiveIndex', icon: 'remove', name: 'Archive' },
-				{ id: 'remove', icon: 'unfav', name: 'Remove from Favorites' },
+				archive,
+				remove,
 				move,
 			]});
 		} else {
@@ -338,7 +368,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
-					const object = detailStore.get(breadcrumbs, prev.content.targetBlockId);
+					const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
@@ -351,6 +381,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'archiveIndex':
 				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], true);
+				break;
+
+			case 'unarchiveIndex':
+				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], false);
 				break;
 
 			case 'linkRoot':
@@ -413,7 +447,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			passThrough: true,
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {
@@ -455,7 +488,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.className = [ param.className, 'single' ].join(' ');
 
 				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 				];
 
 				if (!config.allowDataview) {

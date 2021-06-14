@@ -5,7 +5,7 @@
 	.block.blockRelation > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
 	.block.blockRelation {
-		.icon.expand { display: none; }
+		.icon.edit { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 
@@ -14,17 +14,18 @@
 		.sides { display: flex; }
 
 		.info { padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; }
-		.info.noValue { width: 100%; color: #cbc9bd; cursor: pointer; }
+		.info.noValue { width: 100%; color: #cbc9bd; }
+		.info.noValue.canEdit { cursor: pointer; }
 
 		.info {
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-				width: calc(100% - 24px); color: #6c6a5f;
+				width: calc(100% - 24px); color: $colorVeryDarkGrey;
 			}
 		}
 
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background 0.2s ease-in-out; }
-		.cell:hover { background: rgba(172,169,150,0.1); }
+		.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
 		
 		.cell.c-select { padding: 4px 8px; }
 		.cell.c-select {

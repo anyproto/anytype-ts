@@ -60,7 +60,7 @@ class PopupSearch extends React.Component<Props, State> {
 	render () {
 		const { pageId, filter, loading, showIcon, n } = this.state;
 		const { root, breadcrumbs } = blockStore;
-		const object = detailStore.get(breadcrumbs, pageId);
+		const object = detailStore.get(breadcrumbs, pageId, []);
 		const isRoot = pageId == root;
 		const items = this.getItems();
 
@@ -274,7 +274,7 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 
 		const { root, breadcrumbs } = blockStore;
-		const object = detailStore.get(breadcrumbs, id, [ 'name' ]);
+		const object = detailStore.get(breadcrumbs, id, []);
 		const isRoot = id == root;
 
 		if (this.ref) {
@@ -450,7 +450,7 @@ class PopupSearch extends React.Component<Props, State> {
 
 		this.setState({ loading: true, n: -1 });
 
-		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;

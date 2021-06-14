@@ -1,10 +1,10 @@
 import { observable, action, computed, set, intercept } from 'mobx';
-import { I, M, DataUtil } from 'ts/lib';
+import { I, M, DataUtil, Util } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
 class DbStore {
-	public objectTypeMap: Map<string, I.ObjectType> = observable.map(new Map());
+	public objectTypeList: I.ObjectType[] = observable.array([]);
 	public relationMap: Map<string, I.Relation[]> = observable.map(new Map());
 	public viewMap: Map<string, I.View[]> = observable.map(new Map());
 	public dataMap: Map<string, any[]> = observable.map(new Map());
@@ -12,21 +12,28 @@ class DbStore {
 
 	@computed
 	get objectTypes (): I.ObjectType[] {
-		let types = Array.from(this.objectTypeMap.values());
-
-		types = types.map((it: I.ObjectType) => {
-			return { ...it, name: it.name || Constant.default.name };
-		});
-
-		types.sort(DataUtil.sortByName);
-		return types;
+		return this.objectTypeList;
 	};
 
 	@action
 	objectTypesSet (types: I.ObjectType[]) {
+		let list = this.objectTypeList;
+
+		types = types.map((it: any) => { return new M.ObjectType(it); });
+
 		for (let type of types) {
-			this.objectTypeMap.set(type.id, observable(type));
+			const check = this.getObjectType(type.id);
+			if (check) {
+				this.objectTypeUpdate(type);
+			} else {
+				list.push(type);
+			};
 		};
+	};
+
+	@action
+	objectTypeAdd (type: any) {
+		this.objectTypeList.push(new M.ObjectType(type));
 	};
 
 	@action
@@ -39,7 +46,7 @@ class DbStore {
 
 	@action
 	objectTypesClear () {
-		this.objectTypeMap.clear();
+		this.objectTypeList = [];
 	};
 
 	@action
@@ -68,12 +75,12 @@ class DbStore {
 	@action
 	relationAdd (rootId: string, blockId: string, item: any) {
 		const relations = this.getRelations(rootId, blockId);
-		const relation = relations.find((it: I.Relation) => { return it.relationKey == item.relationKey; });
+		const relation = this.getRelation(rootId, blockId, item.relationKey);
 
 		if (relation) {
 			this.relationUpdate(rootId, blockId, item);
 		} else {
-			relations.push(item);
+			relations.push(new M.Relation(item));
 		};
 	};
 
@@ -186,12 +193,7 @@ class DbStore {
 	recordsSet (rootId: string, blockId: string, list: any[]) {
 		list = list.map((obj: any) => {
 			obj = observable(obj);
-			intercept(obj as any, (change: any) => {
-				if (JSON.stringify(change.newValue) === JSON.stringify(obj[change.name])) {
-					return null;
-				};
-				return change;
-			});
+			intercept(obj as any, (change: any) => { return Util.intercept(self, change); });
 			return obj;
 		});
 
@@ -208,12 +210,7 @@ class DbStore {
 		const data = this.getData(rootId, blockId);
 		obj = observable(obj);
 
-		intercept(obj as any, (change: any) => {
-			if (JSON.stringify(change.newValue) === JSON.stringify(obj[change.name])) {
-				return null;
-			};
-			return change;
-		});
+		intercept(obj as any, (change: any) => { return Util.intercept(self, change); });
 
 		data.push(obj);
 	};
@@ -242,7 +239,7 @@ class DbStore {
 	};
 
 	getObjectType (id: string): I.ObjectType {
-		return this.objectTypeMap.get(id);
+		return this.objectTypeList.find((it: I.ObjectType) => { return it.id == id; });
 	};
 
 	getObjectTypesForSBType (SBType: I.SmartBlockType): I.ObjectType[] {

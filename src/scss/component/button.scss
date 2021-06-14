@@ -14,6 +14,9 @@
 .button.grey.filled { background: $colorLightGrey; color: #fff; box-shadow: 0px 0px; }
 .button.grey.filled:hover { box-shadow: 0px 0px; }
 
+.button.dark { background: rgba(0,0,0,0.3); color: #fff; }
+.button.dark:hover { background: rgba(0,0,0,0.4); }
+
 .button.blank { line-height: 36px; background: none; border: solid 1px $colorLightGrey; }
 .button.blank:hover { border-color: $colorBlack; }
 
@@ -26,7 +29,7 @@ input.button { line-height: 1; }
 }
 
 .button.simple { 
-	height: auto; line-height: 1; padding: 0px; color: $colorDarkGrey; font-weight: bold; line-height: 1.43; 
+	height: auto; line-height: 1; padding: 0px; color: $colorMediumGrey; font-weight: bold; line-height: 1.43; 
 	letter-spacing: 0.1px; 
 }
 .button.simple:hover { color: $colorBlack; }

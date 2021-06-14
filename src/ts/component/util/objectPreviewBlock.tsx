@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Action } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
@@ -15,13 +16,15 @@ interface State {
 const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
+@observer
 class ObjectPreviewBlock extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
 	};
+	isOpen: boolean = false;
 
-	public  static defaultProps = {
+	public static defaultProps = {
 		className: '',
 	};
 	
@@ -36,12 +39,9 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
-		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => {
-			return !it.isLayoutHeader();
-		}).slice(0, 10);
+		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
-
-		const cn = [ 'objectPreviewBlock' , 'align' + object.layoutAlign, check.className, className, ];
+		const cn = [ 'objectPreviewBlock' , check.className, className, ];
 
 		let n = 0;
 		let c = 0;
@@ -49,7 +49,8 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const Block = (item: any) => {
 			const { content, fields } = item;
 			const { text, style, checked } = content;
-			const length = item.childBlocks.length;
+			const childBlocks = blockStore.getChildren(rootId, item.id);
+			const length = childBlocks.length;
 
 			let bullet = null;
 			let inner = null;
@@ -229,7 +230,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 
 					{length ? (
 						<div className="children">
-							{item.childBlocks.map((child: any, i: number) => {
+							{childBlocks.map((child: any, i: number) => {
 								const css: any = {};
 								const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
 
@@ -237,7 +238,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 									cn.push('first');
 								};
 
-								if (i == item.childBlocks.length - 1) {
+								if (i == childBlocks.length - 1) {
 									cn.push('last');
 								};
 
@@ -255,50 +256,45 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 			);
 		};
 
-		let content = null;
-		if (loading) {
-			content = <Loader />;
-		} else {
-			content = (
-				<React.Fragment>
-					<div className="scroller">
-						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-						<div className="heading">
-							{isTask ? (
-								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
-							) : (
-								<IconObject size={48} iconSize={32} object={object} />
-							)}
-							<div className="name">{name}</div>
-							<div className="description">{description}</div>
-							<div className="author">{author.name}</div>
-						</div>
-						<div className="blocks">
-							{childBlocks.map((child: any, i: number) => {
-								const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
-
-								if (i == 0) {
-									cn.push('first');
-								};
-
-								if (i == childBlocks.length - 1) {
-									cn.push('last');
-								};
-
-								n++;
-								n = this.checkNumber(child, n);
-								return <Block key={child.id} className={cn.join(' ')} {...child} />;
-							})}
-						</div>
-					</div>
-					<div className="border" />
-				</React.Fragment>
-			);
-		};
-		
 		return (
 			<div className={cn.join(' ')} onClick={onClick}>
-				{content}
+				{loading ? <Loader /> : (
+					<React.Fragment>
+						<div className="scroller">
+							{object.templateIsBundled ? <Icon className="logo" tooltip="Template is bundled" /> : ''}
+
+							{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+							<div className="heading">
+								{isTask ? (
+									<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
+								) : (
+									<IconObject size={48} iconSize={32} object={object} />
+								)}
+								<div className="name">{name}</div>
+								<div className="description">{description}</div>
+								<div className="author">{author.name}</div>
+							</div>
+							<div className="blocks">
+								{childBlocks.map((child: any, i: number) => {
+									const cn = [ n % 2 == 0 ? 'even' : 'odd' ];
+
+									if (i == 0) {
+										cn.push('first');
+									};
+
+									if (i == childBlocks.length - 1) {
+										cn.push('last');
+									};
+
+									n++;
+									n = this.checkNumber(child, n);
+									return <Block key={child.id} className={cn.join(' ')} {...child} />;
+								})}
+							</div>
+						</div>
+						<div className="border" />
+					</React.Fragment>
+				)}
 			</div>
 		);
 	};
@@ -307,12 +303,22 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		this.open();
 	};
 
-	open () {
+	componentWillUnmount () {
 		const { rootId } = this.props;
+		Action.pageClose(rootId);
+	};
+
+	open () {
+		const { loading } = this.state;
+		const { rootId } = this.props;
+
+		if (loading) {
+			return;
+		};
 
 		this.setState({ loading: true });
 
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockShow(rootId, (message: any) => {
 			this.setState({ loading: false });
 		});
 	};

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, Util, focus, keyboard } from 'ts/lib';
-import { dbStore, detailStore } from 'ts/store';
+import { I, C, DataUtil, Util, focus, keyboard } from 'ts/lib';
+import { dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {};
@@ -33,9 +33,8 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	render (): any {
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const items = this.getItems();
-		const object = detailStore.get(rootId, rootId);
 
 		const Item = (item: any) => {
 			return (
@@ -55,7 +54,7 @@ class BlockType extends React.Component<Props, State> {
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
 				<div className="placeHolder">
-					Choose object type (↓↑ to select) ot press ENTER to continue with Draft type
+					Choose object type (↓↑ to select) or press ENTER to continue with Draft type
 				</div>
 
 				<Filter 
@@ -221,17 +220,38 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		const { rootId, onKeyDown } = this.props;
+		const { rootId } = this.props;
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
 
-		C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
-			C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
-				focus.set(message.blockId, { from: 0, to: 0 });
-				focus.apply();
+		const create = (templateId: string) => {
+			C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
+				C.ApplyTemplate(rootId, templateId, () => {
+					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
+						focus.set(message.blockId, { from: 0, to: 0 });
+						focus.apply();
+					});
+				});
 			});
+		};
+
+		const showMenu = () => {
+			popupStore.open('template', {
+				data: {
+					typeId: item.id,
+					onSelect: create,
+				},
+			});
+		};
+
+		DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
+			if (message.records.length > 1) {
+				showMenu();
+			} else {
+				create(message.records.length ? message.records[0].id : '');
+			};
 		});
 	};
 

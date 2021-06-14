@@ -39,7 +39,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { editing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize, onParentClick } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -168,9 +168,9 @@ class CellText extends React.Component<Props, State> {
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="expand" onClick={(e: any) => { 
+					<Icon className="edit" onClick={(e: any) => { 
 						e.stopPropagation(); 
-						DataUtil.objectOpenPopup(record); 
+						onParentClick(e);
 					}} />
 				</React.Fragment>
 			);

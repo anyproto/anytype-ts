@@ -14,6 +14,8 @@ import MenuSmileSkin from './smile/skin';
 import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
 
+import MenuPreviewObject from './preview/object';
+
 import MenuThreadList from './thread/list';
 import MenuThreadStatus from './thread/status';
 
@@ -78,6 +80,8 @@ const Components: any = {
 
 	searchText:				 MenuSearchText,
 	searchObject:			 MenuSearchObject,
+
+	previewObject:			 MenuPreviewObject,
 
 	threadList:				 MenuThreadList,
 	threadStatus:			 MenuThreadStatus,
@@ -295,22 +299,20 @@ class Menu extends React.Component<Props, State> {
 	animate () {
 		const { param } = this.props;
 		const { noAnimation } = param;
+		const menu = $('#' + this.getId());
 
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
-			
-			const menu = $('#' + this.getId());
-
-			if (noAnimation) {
-				menu.addClass('noAnimation').css({ transform: 'none' });
-			} else {
+		if (noAnimation) {
+			menu.addClass('noAnimation show').css({ transform: 'none' });
+		} else {
+			raf(() => {
+				if (!this._isMounted) {
+					return;
+				};
+				
+				menu.addClass('show');
 				window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);
-			};
-
-			menu.addClass('show');
-		});
+			});
+		};
 	};
 	
 	position () {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
+import { blockStore } from 'ts/store';
 import { SortableContainer } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 
@@ -18,9 +19,10 @@ const $ = require('jquery');
 class HeadRow extends React.Component<Props, {}> {
 
 	render () {
-		const { block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
+		const { rootId, block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 		
 		const Row = SortableContainer((item: any) => (
 			<tr className="row">
@@ -34,7 +36,7 @@ class HeadRow extends React.Component<Props, {}> {
 					/>
 				))}
 				<th className="cellHead last">
-					{!readOnly ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+					{!readOnly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
 				</th>
 			</tr>
 		));

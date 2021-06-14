@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, Input, IconObject, Tag } from 'ts/component';
-import { commonStore, detailStore, dbStore, menuStore } from 'ts/store';
+import { Icon, Select, IconObject, Tag } from 'ts/component';
+import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -30,6 +30,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		if (!view) {
 			return null;
@@ -112,9 +113,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 						);
 					};
 
-					list = (item.value || []).map((it: string) => { 
-						return detailStore.get(rootId, it, []);
-					});
+					list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
 					list = list.filter((it: any) => { return !it._objectEmpty_; });
 
 					value = (
@@ -132,8 +131,8 @@ class MenuFilterList extends React.Component<Props, {}> {
 			};
 
 			return (
-				<form id={'item-' + item.id} className="item">
-					<Handle />
+				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadOnly' : '') ].join(' ')}>
+					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
 					<div className="txt">
@@ -157,10 +156,12 @@ class MenuFilterList extends React.Component<Props, {}> {
 						</div>
 					</div>
 
-					<div className="buttons">
-						<Icon className="more" onClick={(e: any) => { this.onMore(e, item.id); }} />
-						<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
-					</div>
+					{allowedView ? (
+						<div className="buttons">
+							<Icon className="more" onClick={(e: any) => { this.onMore(e, item.id); }} />
+							<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+						</div>
+					) : ''}
 				</form>
 			);
 		});
@@ -183,7 +184,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 							<div className="inner">No filters applied to this view</div>
 						</div>
 					) : ''}
-					<ItemAdd index={view.filters.length + 1} disabled={true} />
+					{allowedView ? <ItemAdd index={view.filters.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});

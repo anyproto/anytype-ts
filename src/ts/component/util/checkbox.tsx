@@ -42,7 +42,7 @@ class Checkbox extends React.Component<Props, State> {
 			cn.push(className);
 		};
 		if (readOnly) {
-			cn.push('readOnly');
+			cn.push('isReadOnly');
 		};
 		if (value) {
 			cn.push('active');

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, M, C, DataUtil } from 'ts/lib';
-import { Block, Drag } from 'ts/component';
-import { commonStore, blockStore, detailStore } from 'ts/store';
+import { Block, Drag, Button } from 'ts/component';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -32,10 +32,11 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
+		this.onClone = this.onClone.bind(this);
 	}
 
 	render (): any {
-		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste } = this.props;
+		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readOnly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const { config } = commonStore;
 
@@ -44,9 +45,11 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		};
 
 		const check = DataUtil.checkDetails(rootId);
+		const object = check.object;
 		const header = blockStore.getLeaf(rootId, 'header') || {};
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: check.object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const templateIsBundled = object.templateIsBundled;
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
@@ -66,12 +69,29 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 					<div id="dragValue" className="number">100%</div>
 				</div>
 
+				{templateIsBundled ? (
+					<div id="note" className="note">
+						<div className="inner">
+							<div className="sides">
+								<div className="side left">
+									This template cannot be changed, because it is Basic for this object type.<br />
+									If you want to edit, create a Duplicate of this template.
+								</div>
+								<div className="side right">
+									<Button className="dark" text="Duplicate" onClick={this.onClone} />
+								</div>
+							</div>
+						</div>
+					</div>
+				) : ''}
+
 				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
 				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
 
 				<Block 
 					key={header.id} 
 					{...this.props}
+					readOnly={readOnly}
 					index={0}
 					block={header}
 					onKeyDown={onKeyDown}
@@ -131,7 +151,17 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 			{ blockId: rootId, fields: { width: v } },
 		]);
 	};
-	
+
+	onClone (e: any) {
+		const { rootId } = this.props;
+
+		C.CloneTemplate(rootId, (message: any) => {
+			if (message.id) {
+				DataUtil.objectOpen({ id: message.id });
+			};
+		});
+	};
+
 };
 
 export default EditorHeaderPage;

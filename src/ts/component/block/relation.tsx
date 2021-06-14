@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Input, Cell } from 'ts/component';
+import { Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, detailStore, dbStore } from 'ts/store';
+import { menuStore, detailStore, dbStore, blockStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
@@ -34,13 +33,14 @@ class BlockRelation extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{!relation ? 
 				(
 					<div className="sides">
-						<div className="info noValue" onClick={this.onMenu}>New relation</div>
+						<div className={[ 'info', 'noValue', (!readOnly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>New relation</div>
 					</div>
 				) : 
 				(
@@ -50,7 +50,7 @@ class BlockRelation extends React.Component<Props, {}> {
 						</div>
 						<div 
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
+							className={[ 'cell', DataUtil.relationClass(relation.format), (allowed ? 'canEdit' : '') ].join(' ')} 
 							onClick={this.onCellClick}
 						>
 							<Cell 
@@ -59,7 +59,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ]); }}
+								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
 								viewType={I.ViewType.Grid}
 								readOnly={readOnly}
 								index={0}
@@ -78,11 +78,19 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		this.props.onKeyDown(e, '', [], { from: 0, to: 0 });
+		const { onKeyDown } = this.props;
+
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
 	};
 	
 	onKeyUp (e: any) {
-		this.props.onKeyUp(e, '', [], { from: 0, to: 0 });
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
 	};
 
 	onFocus () {
@@ -91,7 +99,11 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onMenu (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readOnly } = this.props;
+
+		if (readOnly) {
+			return;
+		};
 
 		menuStore.open('relationSuggest', { 
 			element: '#block-' + block.id,

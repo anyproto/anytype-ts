@@ -139,11 +139,11 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		
-		this.props.close();
+		close();
 		onChange(item.value);
 	};
 	

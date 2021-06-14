@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon } from 'ts/component';
-import { I, M, Util, DataUtil, keyboard, Key } from 'ts/lib';
-import arrayMove from 'array-move';
-import { menuStore, dbStore } from 'ts/store';
+import { I, Util, keyboard, Key } from 'ts/lib';
+import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -28,8 +27,9 @@ class MenuViewList extends React.Component<Props> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getData } = data;
+		const { getData, rootId, blockId } = data;
 		const items = this.getItems();
+		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -38,7 +38,7 @@ class MenuViewList extends React.Component<Props> {
 		const Item = SortableElement((item: any) => {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
-					<Handle />
+					{allowed ? <Handle /> : ''}
 					<div className="clickable" onClick={(e: any) => { getData(item.id, 0); }}>
 						<Icon className={'view c' + item.type} />
 						<div className="name">{item.name}</div>
@@ -63,7 +63,7 @@ class MenuViewList extends React.Component<Props> {
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} index={i} />
 					))}
-					<ItemAdd index={items.length} disabled={true} />
+					{allowed ? <ItemAdd index={items.length} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -187,12 +187,15 @@ class MenuViewList extends React.Component<Props> {
 
 		const { param, getId } = this.props;
 		const { data } = param;
+		const { rootId, blockId } = data;
+		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
+				readOnly: !allowed,
 				view: item,
 				onSave: () => { this.forceUpdate(); },
 			}

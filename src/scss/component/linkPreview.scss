@@ -10,7 +10,7 @@
 	.content { background: #fff; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; }
 	.loaderWrapper { margin: 0px; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 	.name { @include text-common; height: 22px; color: $colorBlack; @include text-overflow-nw; margin-bottom: 3px; }
-	.descr { @include text-small; height: 36px; color: #6c6a5f; margin: 2px 0px 7px 0px; @include text-overflow; }
+	.descr { @include text-small; height: 36px; color: $colorVeryDarkGrey; margin: 2px 0px 7px 0px; @include text-overflow; }
 	.link { @include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw;  }
 	.polygon { position: absolute; left: 0px; width: 100%; cursor: pointer; }
 		
@@ -22,7 +22,7 @@
 	.icon.fav { width: 16px; height: 16px; margin: -4px 6px 0px 0px; }
 	
 	.head { 
-		padding: 10px 16px 10px 16px; letter-spacing: -0.08px; color: $colorDarkGrey; font-weight: 500; position: absolute; left: 0px; width: 100%;
+		padding: 10px 16px 10px 16px; letter-spacing: -0.08px; color: $colorMediumGrey; font-weight: 500; position: absolute; left: 0px; width: 100%;
 	}
 	.head {
 		.item { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionFast; }

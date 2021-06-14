@@ -30,6 +30,7 @@ class MenuStore {
 
 		if (param.isSub) {
 			param.noAnimation = true;
+			param.passThrough = true;
 		};
 
 		const item = this.get(id);

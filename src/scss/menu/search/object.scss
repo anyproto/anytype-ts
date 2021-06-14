@@ -20,7 +20,7 @@
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
 			span { @include text-overflow-nw; max-width: 100%; display: block; }
-			.label { width: 100%; line-height: 24px; color: $colorDarkGrey; display: inline-block; vertical-align: middle; }
+			.label { width: 100%; line-height: 24px; color: $colorMediumGrey; display: inline-block; vertical-align: middle; }
 		}
 	}
 

@@ -13,7 +13,7 @@
 	.path { white-space: nowrap; }
 	.path {
 		.item { 
-			display: inline-block; vertical-align: top; color: #929082; margin-right: 6px; cursor: pointer; 
+			display: inline-block; vertical-align: top; color: $colorDarkGrey; margin-right: 6px; cursor: pointer; 
 			transition: color 0.2s ease-in-out; 
 		}
 		.item {
@@ -114,7 +114,7 @@
 	.header.headerMainEdit {
 		.side.left { opacity: 1; left: 14px; }
 		.side.left {
-			.btn { cursor: pointer; color: #6c6a5f; display: inline-block; vertical-align: top; border-radius: 6px; padding: 0px 10px; height: 28px; line-height: 26px; }
+			.btn { cursor: pointer; color: $colorVeryDarkGrey; display: inline-block; vertical-align: top; border-radius: 6px; padding: 0px 10px; height: 28px; line-height: 26px; }
 			.btn:hover { background-color: #f3f2ec; }
 			.btn {
 				.icon { width: 20px; height: 20px; margin-right: 4px; border-radius: 0px; vertical-align: middle; }
@@ -136,7 +136,7 @@
 	.side.right { right: 16px; }
 
 	.side {
-		.item { color: #6c6a5f; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; }
+		.item { color: $colorVeryDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; }
 		.item {
 			.icon.arrow { background-image: url('~img/arrow/history0.svg'); margin: 0px; }
 		}

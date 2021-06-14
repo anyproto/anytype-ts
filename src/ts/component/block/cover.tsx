@@ -60,7 +60,7 @@ class BlockCover extends React.Component<Props, State> {
 	render () {
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -247,8 +247,8 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ]);
-		const { coverId, coverType } = object;
+		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType', 'coverScale' ], true);
+		const { coverId, coverType, coverScale } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		
@@ -264,9 +264,6 @@ class BlockCover extends React.Component<Props, State> {
 		};
 
 		const cb = () => {
-			const object = detailStore.get(rootId, rootId, [ 'coverScale' ]);
-			const { coverScale } = object;
-
 			if (this.refDrag) {
 				this.refDrag.setValue(coverScale);
 			};
@@ -367,7 +364,7 @@ class BlockCover extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ]);
+		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
 		const { coverX, coverY } = object;
 		const value = node.find('#dragValue');
 

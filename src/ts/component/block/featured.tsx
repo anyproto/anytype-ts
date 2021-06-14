@@ -71,7 +71,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
+									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ], true); }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
@@ -106,12 +106,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	getItems () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId);
 
 		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelation(rootId, rootId, it);
-			const object = detailStore.get(rootId, rootId, [ it ]);
-
 			if (!relation) {
 				return false;
 			};
@@ -188,16 +186,17 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 	onType (e: any) {
 		const { rootId, block, readOnly } = this.props;
-		const root = blockStore.getLeaf(rootId, rootId);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
 
-		if (readOnly || root.isObjectSet()) {
-			const object = detailStore.get(rootId, rootId, [ 'type' ]);
+		if (readOnly || !allowed) {
+			const object = detailStore.get(rootId, rootId, []);
 			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
 			return;
 		};
 
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 		];
 
 		menuStore.closeAll(null, () => { 
