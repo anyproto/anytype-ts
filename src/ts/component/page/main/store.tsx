@@ -80,7 +80,7 @@ class PageMainStore extends React.Component<Props, State> {
 		const items = this.getItems();
 
 		let Item = null;
-		let mid = null;
+		let Mid: any = null;
 
 		const Author = (item: any) => {
 			if (item._objectEmpty_) {
@@ -127,7 +127,7 @@ class PageMainStore extends React.Component<Props, State> {
 					);
 				};
 
-				mid = (
+				Mid = () => (
 					<div className="mid">
 						<Title text="Type every object" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
@@ -155,7 +155,7 @@ class PageMainStore extends React.Component<Props, State> {
 					);
 				};
 
-				mid = (
+				Mid = () => (
 					<div className="mid">
 						<Title text="Template space" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
@@ -185,7 +185,7 @@ class PageMainStore extends React.Component<Props, State> {
 					);
 				};
 
-				mid = (
+				Mid = () => (
 					<div className="mid">
 						<Title text="All objects are connected" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
@@ -209,8 +209,11 @@ class PageMainStore extends React.Component<Props, State> {
 					hasFixedWidth={() => {}}
 				>
 					<div className="row" style={param.style}>
-						{item.children.map((smile: any, i: number) => {
-							return <Item key={i} id={smile.smile} {...smile} />;
+						{item.children.map((item: any, i: number) => {
+							if (item.id == 'mid') {
+								return <Mid key={i} {...item} />;
+							};
+							return <Item key={i} {...item} />;
 						})}
 					</div>
 				</CellMeasurer>
@@ -230,7 +233,6 @@ class PageMainStore extends React.Component<Props, State> {
 				</div>
 
 				<div className="body">
-					{mid}
 					{tabs}
 
 					{loading ? 
@@ -277,7 +279,7 @@ class PageMainStore extends React.Component<Props, State> {
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: this.getRowHeight(),
+			defaultHeight: 64,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 	};
@@ -297,13 +299,20 @@ class PageMainStore extends React.Component<Props, State> {
 		return id;
 	};
 
-	getRowHeight () {
+	getRowHeight (param: any) {
 		const { tab } = this.state;
+		const { index } = param;
 
 		let h = 0;
-		if (tab == Tab.Type) h = 96;
-		if (tab == Tab.Template) h = 280;
-		if (tab == Tab.Relation) h = 64;
+		if (tab == Tab.Type) {
+			h = index == 0 ? 238 : 96;
+		};
+		if (tab == Tab.Template) {
+			h = 280;
+		};
+		if (tab == Tab.Relation) {
+			h = index == 0 ? 180 : 64;
+		};
 		return h;
 	};
 
@@ -412,7 +421,9 @@ class PageMainStore extends React.Component<Props, State> {
 			return it;
 		});
 
-		let ret: any[] = [];
+		let ret: any[] = [
+			{ children: [ { id: 'mid' } ] }
+		];
 		let n = 0;
 		let row = { children: [] };
 		for (let i = 0; i < data.length; ++i) {
