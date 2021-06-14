@@ -145,12 +145,10 @@ class PageAuthSetup extends React.Component<Props, State> {
 			if (message.account) {
 				const accountId = message.account.id;
 
-				Storage.set('accountId', accountId);
-				Storage.delete('popupNewBlock');
-
 				authStore.accountSet(message.account);
 				authStore.previewSet('');
 
+				Storage.delete('popupNewBlock');
 				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {
@@ -174,7 +172,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
-				Storage.set('accountId', message.account.id);
+				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit(() => {
 					history.push('/main/index');
