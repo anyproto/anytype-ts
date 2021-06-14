@@ -253,7 +253,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Util.filterFix(filter), 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, Util.filterFix(filter), 0, 0, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -434,7 +434,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.setState({ filter: this.ref.getValue() });
-		}, force ? 0 : 50);
+		}, force ? 0 : 500);
 	};
 
 	resize () {

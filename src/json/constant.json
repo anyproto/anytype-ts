@@ -79,6 +79,8 @@
 		]
 	},
 
+	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "done" ],
+
 	"relationKey": {
 		"name": "name",
 		"description": "description",

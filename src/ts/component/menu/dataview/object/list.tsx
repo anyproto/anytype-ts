@@ -233,7 +233,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, filter, this.offset, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, this.offset, 0, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};

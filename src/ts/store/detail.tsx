@@ -2,7 +2,6 @@ import { observable, action, set, intercept, decorate } from 'mobx';
 import { I } from 'ts/lib';
 
 const Constant = require('json/constant.json');
-const DEFAULT_KEYS = [ 'id', 'name', 'description', 'iconEmoji', 'iconImage', 'relationFormat', 'type', 'layout', 'isHidden', 'done' ];
 
 interface Detail {
 	relationKey: string;
@@ -115,7 +114,7 @@ class DetailStore {
 
 		if (keys) {
 			if (!forceKeys) {
-				keys = keys.concat(DEFAULT_KEYS);
+				keys = keys.concat(Constant.defaultRelationKeys);
 			};
 			list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) >= 0; });
 		};
@@ -139,10 +138,6 @@ class DetailStore {
 
 	clearAll () {
 		this.map = new Map();
-	};
-
-	getDefaultKeys () {
-		return DEFAULT_KEYS;
 	};
 
 };

@@ -221,7 +221,7 @@ class PageMainIndex extends React.Component<Props, State> {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
 		};
 
-		C.ObjectSearch(filters, sorts, filter, 0, 100, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -299,11 +299,14 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { history } = this.props;
 		const { root } = blockStore;
 		const { config } = commonStore;
-		const options = [
+		const options: any[] = [
 			{ id: 'page', icon: 'page', name: 'Draft' },
-			{ id: 'link', icon: 'existing', name: 'Link to object', arrow: true },
 		];
 		const width = 176;
+
+		if (config.sudo) {
+			options.push({ id: 'link', icon: 'existing', name: 'Link to object', arrow: true });
+		};
 
 		if (config.allowDataview) {
 			options.push({ id: 'set', icon: 'set', name: 'New set' });
