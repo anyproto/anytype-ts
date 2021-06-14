@@ -30,7 +30,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 	_isMounted: boolean = false;	
 	filter: string = '';
 	index: any = null;
-	cache: any = null;
+	cache: any = {};
 	items: any = [];
 	ref: any = null;
 	timeoutFilter: number = 0;
@@ -50,10 +50,6 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
 		const placeHolderFocus = data.placeHolderFocus || 'Filter objects...';
 		const rowHeight = this.getHeight();
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -109,56 +105,58 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		return (
 			<div className={cn.join(' ')}>
-				{loading ? <Loader /> : ''}
-
-				{!noFilter ? (
-					<Filter 
-						ref={(ref: any) => { this.ref = ref; }} 
-						placeHolder={placeHolder} 
-						placeHolderFocus={placeHolderFocus} 
-						onChange={(e: any) => { this.onKeyUp(e, false); }} 
-					/>
-				) : ''}
-
-				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="empty">
-						<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-					</div>
-				) : ''}
-
-				{this.cache && items.length && !loading ? (
+				{loading ? <Loader /> : (
 					<React.Fragment>
-						{label ? <div className="sectionName">{label}</div> : ''}
+						{!noFilter ? (
+							<Filter 
+								ref={(ref: any) => { this.ref = ref; }} 
+								placeHolder={placeHolder} 
+								placeHolderFocus={placeHolderFocus} 
+								onChange={(e: any) => { this.onKeyUp(e, false); }} 
+							/>
+						) : ''}
 
-						<div className="items">
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => index < items.length}
-								threshold={LIMIT}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												ref={registerChild}
-												width={width}
-												height={height}
-												deferredMeasurmentCache={this.cache}
-												rowCount={items.length}
-												rowHeight={rowHeight}
-												rowRenderer={rowRenderer}
-												onRowsRendered={onRowsRendered}
-												overscanRowCount={10}
-												scrollToIndex={n}
-											/>
+						{!items.length && !loading ? (
+							<div id="empty" key="empty" className="empty">
+								<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+							</div>
+						) : ''}
+
+						{this.cache && items.length && !loading ? (
+							<React.Fragment>
+								{label ? <div className="sectionName">{label}</div> : ''}
+
+								<div className="items">
+									<InfiniteLoader
+										rowCount={items.length}
+										loadMoreRows={() => {}}
+										isRowLoaded={({ index }) => index < items.length}
+										threshold={LIMIT}
+									>
+										{({ onRowsRendered, registerChild }) => (
+											<AutoSizer className="scrollArea">
+												{({ width, height }) => (
+													<List
+														ref={registerChild}
+														width={width}
+														height={height}
+														deferredMeasurmentCache={this.cache}
+														rowCount={items.length}
+														rowHeight={rowHeight}
+														rowRenderer={rowRenderer}
+														onRowsRendered={onRowsRendered}
+														overscanRowCount={10}
+														scrollToIndex={n}
+													/>
+												)}
+											</AutoSizer>
 										)}
-									</AutoSizer>
-								)}
-							</InfiniteLoader>
-						</div>
+									</InfiniteLoader>
+								</div>
+							</React.Fragment>
+						) : ''}
 					</React.Fragment>
-				) : ''}
+				)}
 			</div>
 		);
 	};
