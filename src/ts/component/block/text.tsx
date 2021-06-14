@@ -877,9 +877,8 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, fields } = block;
 
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { isUnwrapped: !fields.isUnwrapped } },
-		], (message: any) => {
-		});
+			{ blockId: id, fields: { ...fields, isUnwrapped: !fields.isUnwrapped } },
+		]);
 	};
 	
 	onSelect (e: any) {
