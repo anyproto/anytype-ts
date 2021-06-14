@@ -32,6 +32,11 @@ class DbStore {
 	};
 
 	@action
+	objectTypeAdd (type: any) {
+		this.objectTypeList.push(new M.ObjectType(type));
+	};
+
+	@action
 	objectTypeUpdate (type: any) {
 		const item = this.getObjectType(type.id);
 		if (item) {

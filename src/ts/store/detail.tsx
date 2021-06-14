@@ -141,6 +141,10 @@ class DetailStore {
 		this.map = new Map();
 	};
 
+	getDefaultKeys () {
+		return DEFAULT_KEYS;
+	};
+
 };
 
 export let detailStore: DetailStore = new DetailStore();
