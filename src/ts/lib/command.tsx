@@ -894,7 +894,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
-	//request.setKeysList(keys);
+	request.setKeysList(keys);
 
 	dispatcher.request('objectSearch', request, callBack);
 };
