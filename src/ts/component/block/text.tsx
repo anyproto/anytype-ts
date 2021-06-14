@@ -924,6 +924,9 @@ class BlockText extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
+				onClose: () => {
+					keyboard.disableContext(false);
+				},
 				data: {
 					blockId: block.id,
 					blockIds: [ block.id ],
