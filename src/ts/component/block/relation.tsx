@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Input, Cell } from 'ts/component';
+import { Cell } from 'ts/component';
 import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, detailStore, dbStore } from 'ts/store';
+import { menuStore, detailStore, dbStore, blockStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {};
 
@@ -34,6 +33,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
@@ -50,7 +50,7 @@ class BlockRelation extends React.Component<Props, {}> {
 						</div>
 						<div 
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(relation.format), 'canEdit' ].join(' ')} 
+							className={[ 'cell', DataUtil.relationClass(relation.format), (allowed ? 'canEdit' : '') ].join(' ')} 
 							onClick={this.onCellClick}
 						>
 							<Cell 
