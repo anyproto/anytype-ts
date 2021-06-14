@@ -126,7 +126,7 @@ class DetailStore {
 		return {
 			...object,
 			id: id,
-			name: String(object.name || Constant.default.name || ''),
+			name: String(object.name || Constant.default.name),
 			layout: Number(object.layout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 		};
