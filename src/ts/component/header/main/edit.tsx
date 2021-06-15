@@ -47,7 +47,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const object = detailStore.get(breadcrumbs, rootId, []);
+		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
 		const canSync = !object.templateIsBundled;
 		const cn = [ 'header', 'headerMainEdit' ];
