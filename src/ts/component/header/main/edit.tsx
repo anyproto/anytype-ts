@@ -60,13 +60,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			<div id="header" className={cn.join(' ')}>
 				{isPopup ? (
 					<div className="side left">
+						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-
-						<div className="btn" onClick={this.onOpen}>
-							<Icon className="expand" />
-							<div className="txt">Open as object</div>
-						</div>
 					</div>
 				) : (
 					<div className="side left">
