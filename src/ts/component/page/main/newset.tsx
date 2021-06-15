@@ -58,15 +58,12 @@ class PageMainNewSet extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { objectTypes } = dbStore;
-
 		menuStore.open('objectTypeEdit', { 
 			element: '#button-add',
 			offsetX: 28,
 			data: {
 				onCreate: (type: I.ObjectType) => {
-					objectTypes.push(type);
-					dbStore.objectTypesSet(objectTypes);
+					dbStore.objectTypeAdd(type);
 				}
 			}
 		});

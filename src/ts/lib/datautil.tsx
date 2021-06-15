@@ -1025,7 +1025,7 @@ class DataUtil {
 			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
-			className: [ this.layoutClass(object.id, object.layout) ],
+			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
 		};
 
 		switch (object.layout) {
@@ -1148,7 +1148,7 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
-		C.ObjectSearch(filters, [], '', 0, limit, (message: any) => {
+		C.ObjectSearch(filters, [], [ 'id' ], '', 0, limit, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

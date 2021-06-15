@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { Icon, IconObject, Select } from 'ts/component';
 import { I, C } from 'ts/lib';
 import arrayMove from 'array-move';
-import { menuStore, dbStore } from 'ts/store';
+import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -31,6 +31,7 @@ class MenuSort extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const sortCnt = view.sorts.length;
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
 			{ id: String(I.SortType.Asc), name: 'Ascending' },
@@ -46,14 +47,14 @@ class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
-				<div className="item">
-					<Handle />
+				<div className={[ 'item', (!allowedView ? 'isReadOnly' : '') ].join(' ')}>
+					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
 						<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 						<Select id={[ 'filter', 'type', item.id ].join('-')} className="grey" options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
 					</div>
-					<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+					{allowedView ? <Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} /> : ''}
 				</div>
 			);
 		});
@@ -74,7 +75,7 @@ class MenuSort extends React.Component<Props, {}> {
 					{!view.sorts.length ? (
 						<div className="item empty">No sorts applied to this view</div>
 					) : ''}
-					<ItemAdd index={view.sorts.length + 1} disabled={true} />
+					{allowedView ? <ItemAdd index={view.sorts.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});

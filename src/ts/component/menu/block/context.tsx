@@ -80,8 +80,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				
 				{block.canHaveMarks() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-color'} className="color" inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, 'color'); }} />
-						<Icon id={'button-' + blockId + '-background'} className="color" inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, 'background'); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.TextColor}`} className="color" inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
 					</div>
 				) : ''}
 				
@@ -97,7 +97,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, onChange, dataset, range } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -122,13 +122,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		let mark: any = null;
 		let menuId = '';
 		let menuParam: any = {
-			element: '#button-' + blockId + '-' + type,
+			element: `#${getId()} #button-${blockId}-${type}`,
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
-			onClose: () => {
-				keyboard.disableContext(false);
-			},
 			data: {
 				rootId: rootId,
 				blockId: blockId,
@@ -207,7 +204,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				menuId = 'blockLink';
 				break;
 				
-			case 'color':
+			case I.MarkType.TextColor:
 				mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),
@@ -224,7 +221,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				menuId = 'blockColor';
 				break;
 				
-			case 'background':
+			case I.MarkType.BgColor:
 				mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),

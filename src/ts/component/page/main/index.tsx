@@ -106,22 +106,24 @@ class PageMainIndex extends React.Component<Props, State> {
 					</div>
 					
 					<div id="documents"> 
-						<div className="tabWrap">
-							<div className="tabs">
-								{Tabs.map((item: any, i: number) => (
-									<TabItem key={i} {...item} />
-								))}
+						{config.allowDataview ? (
+							<div className="tabWrap">
+								<div className="tabs">
+									{Tabs.map((item: any, i: number) => (
+										<TabItem key={i} {...item} />
+									))}
+								</div>
+								<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
+									<Icon className="search" />
+									<Filter 
+										ref={(ref: any) => { this.filterRef = ref; }} 
+										placeHolder="" 
+										placeHolderFocus="" 
+										onChange={this.onFilterChange}
+									/>
+								</div>
 							</div>
-							<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
-								<Icon className="search" />
-								<Filter 
-									ref={(ref: any) => { this.filterRef = ref; }} 
-									placeHolder="" 
-									placeHolderFocus="" 
-									onChange={this.onFilterChange}
-								/>
-							</div>
-						</div>
+						) : ''}
 						<ListIndex 
 							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
@@ -191,7 +193,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 	onTab (id: Tab) {
 		this.state.tab = id;
-		this.setState({ tab: id });
+		this.setState({ tab: id, pages: [] });
 
 		Storage.set('indexTab', id);
 
@@ -219,7 +221,7 @@ class PageMainIndex extends React.Component<Props, State> {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
 		};
 
-		C.ObjectSearch(filters, sorts, filter, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -297,11 +299,14 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { history } = this.props;
 		const { root } = blockStore;
 		const { config } = commonStore;
-		const options = [
+		const options: any[] = [
 			{ id: 'page', icon: 'page', name: 'Draft' },
-			{ id: 'link', icon: 'existing', name: 'Link to object', arrow: true },
 		];
 		const width = 176;
+
+		if (config.sudo) {
+			options.push({ id: 'link', icon: 'existing', name: 'Link to object', arrow: true });
+		};
 
 		if (config.allowDataview) {
 			options.push({ id: 'set', icon: 'set', name: 'New set' });
@@ -476,20 +481,8 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	getListHeight () {
-		const win = $(window);
-		const ww = win.width();
 		const size = Constant.size.index;
-		const list = this.getList();
-		const maxWidth = ww - size.border * 2;
-		const cnt = Math.floor(maxWidth / (size.width + size.margin));
-
-		let height = size.height + size.margin;
-		if (list.length > cnt) {
-			height *= 2;
-		};
-
-		height += 20;
-		return height;
+		return (size.height + size.margin) * 2 + size.margin * 2;
 	};
 
 	getList () {

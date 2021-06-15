@@ -84,7 +84,6 @@ class MenuAccount extends React.Component<Props, State> {
 				Util.checkError(message.error.code);
 			} else
 			if (message.account) {
-				Storage.set('accountId', id);
 				authStore.accountSet(message.account);
 				
 				DataUtil.onAuth();

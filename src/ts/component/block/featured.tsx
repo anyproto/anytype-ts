@@ -187,6 +187,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 	onType (e: any) {
 		const { rootId, block, readOnly } = this.props;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
 
 		if (readOnly || !allowed) {
 			const object = detailStore.get(rootId, rootId, []);
@@ -195,7 +196,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 		];
 
 		menuStore.closeAll(null, () => { 

@@ -71,7 +71,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		);
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item sides add" onClick={(e: any) => { this.onAdd(e); }}>
+			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
+				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
 					<div className="name">New</div>
@@ -81,9 +82,11 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		return (
 			<div className="sections">
-				{sections.map((item: any, i: number) => {
-					return <Section key={i} {...item} index={i} />;
-				})}
+				<div className="scrollWrap">
+					{sections.map((item: any, i: number) => {
+						return <Section key={i} {...item} index={i} />;
+					})}
+				</div>
 				{!readOnly ? <ItemAdd /> : ''}
 			</div>
 		);
@@ -203,7 +206,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+					C.ObjectRelationAdd(rootId, relation, () => { 
+
+						menuStore.close('relationSuggest'); 
+					});
 				},
 			}
 		});
@@ -211,7 +217,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	onEdit (e: any, relationKey: string) {
 		const { param, getId } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
@@ -222,6 +228,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		menuStore.open('blockRelationEdit', { 
 			element: `#${getId()} #item-${relationKey}`,
 			horizontal: I.MenuDirection.Center,
+			classNameWrap: classNameWrap,
 			data: {
 				...data,
 				relationKey: relationKey,
@@ -290,12 +297,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	resize () {
 		const { getId, position } = this.props;
-		const obj = $('#' + getId() + ' .content');
-		const sections = obj.find('.sections');
+		const obj = $(`#${getId()} .content`);
 		const win = $(window);
-		const height = Math.max(92, Math.min(win.height() - 56, sections.outerHeight() + 48));
 
-		obj.css({ height: height });
+		obj.css({ height: win.height() - Util.sizeHeader() - 16 });
 		position();
 	};
 

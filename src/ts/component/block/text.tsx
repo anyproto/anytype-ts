@@ -73,7 +73,7 @@ class BlockText extends React.Component<Props, {}> {
 		let marker: any = null;
 		let placeHolder = Constant.placeHolder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'readOnly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadOnly' : '') ];
 		let additional = null;
 
 		for (let mark of marks) {
@@ -886,9 +886,8 @@ class BlockText extends React.Component<Props, {}> {
 		const { id, fields } = block;
 
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { isUnwrapped: !fields.isUnwrapped } },
-		], (message: any) => {
-		});
+			{ blockId: id, fields: { ...fields, isUnwrapped: !fields.isUnwrapped } },
+		]);
 	};
 	
 	onSelect (e: any) {
@@ -933,6 +932,9 @@ class BlockText extends React.Component<Props, {}> {
 				vertical: I.MenuDirection.Top,
 				horizontal: I.MenuDirection.Center,
 				passThrough: true,
+				onClose: () => {
+					keyboard.disableContext(false);
+				},
 				data: {
 					blockId: block.id,
 					blockIds: [ block.id ],

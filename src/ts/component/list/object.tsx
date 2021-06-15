@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { IconObject, Pager } from 'ts/component';
 import { detailStore, dbStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
@@ -10,6 +11,7 @@ interface Props {
 
 const Constant = require('json/constant.json');
 
+@observer
 class ListObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {

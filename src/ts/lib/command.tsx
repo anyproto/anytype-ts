@@ -886,7 +886,7 @@ const SetCreate = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('setCreate', request, callBack);
 };
 
-const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
@@ -894,6 +894,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], fullText: string, of
 	request.setFulltext(fullText);
 	request.setOffset(offset);
 	request.setLimit(limit);
+	request.setKeysList(keys);
 
 	dispatcher.request('objectSearch', request, callBack);
 };

@@ -19,9 +19,6 @@
 	.menu * { user-select: none; }
 
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
-	.menu.show {
-		.content { opacity: 1 !important; }
-	}
 	
 	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */
 	.menu.v2.h3 { transform-origin: 0% 0%; } /* left bottom */
@@ -41,7 +38,7 @@
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; opacity: 0; transition: opacity 0.05s ease-in-out; }
+		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
 		.loaderWrapper { 
@@ -73,7 +70,7 @@
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
-		.item.isReadOnly.hover::before { opacity: 0; }
+		.item.isReadOnly.hover::before, .item.isReadOnly:hover::before { opacity: 0; background: none; }
 
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
 		

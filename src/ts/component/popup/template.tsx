@@ -101,7 +101,7 @@ class PopupTemplate extends React.Component<Props, State> {
 		];
 
 		this.setState({ loading: true });
-		C.ObjectSearch(filters, sorts, '', 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, [ 'id', 'templateName', 'templateIsBundled' ], '', 0, 0, (message: any) => {
 			this.setState({ loading: false, items: message.records });
 		});
 	};

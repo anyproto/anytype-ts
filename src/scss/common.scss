@@ -49,7 +49,7 @@ html.platformMac.version11 {
 }
 
 html.platformWindows {
-	#drag { height: 30px; background: $colorBlack; z-index: 1000; }
+	#drag { height: 30px; background: $colorBlack; z-index: 1000; display: block; }
 	#drag {
 		.sides { display: flex; height: 100%; line-height: 30px; }
 		.side { width: 50%; }
@@ -84,12 +84,6 @@ html.platformWindows {
 		}
 	}
 
-	.popups {
-		.popup.popupNavigation {
-			.innerWrap { top: 68px; }
-		}
-	}
-
 	::-webkit-scrollbar { width: 12px; }
 	::-webkit-scrollbar-thumb { 
 		width: 6px; background: rgba(0,0,0,0.5); border: 3px solid rgba(0, 0, 0, 0); border-radius: 6px; background-clip: padding-box; 
@@ -107,7 +101,7 @@ html.platformWindows {
 .rel { position: relative; }
 .disabled { opacity: 0.5 !important; cursor: default !important; }
 .dis { cursor: default !important; }
-.readOnly { -webkit-user-modify: unset !important; cursor: default !important; }
+.isReadOnly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over { overflow: hidden !important; }

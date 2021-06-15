@@ -69,7 +69,7 @@ class Input extends React.Component<Props, State> {
 			cn.push(className);
 		};
 		if (readOnly) {
-			cn.push('readOnly');
+			cn.push('isReadOnly');
 		};
 		
 		return (

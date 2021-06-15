@@ -29,7 +29,6 @@ class MenuHelp extends React.Component<Props, {}> {
 			//{ id: 'intercom', name: 'Help & feedback' },
 			{ id: 'feedback', name: 'Give feedback' },
 			{ id: 'community', name: 'Join community forum' },
-			{ id: 'telegramClosedBeta', name: 'Telegram closed group' },
 		];
 
 		return (
@@ -64,10 +63,6 @@ class MenuHelp extends React.Component<Props, {}> {
 
 			case 'community':
 				ipcRenderer.send('urlOpen', Url.community);
-				break;
-
-			case 'telegramClosedBeta':
-				ipcRenderer.send('urlOpen', Url.telegramClosedBeta);
 				break;
 
 			case 'intercom':

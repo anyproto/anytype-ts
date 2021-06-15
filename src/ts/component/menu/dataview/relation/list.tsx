@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
-import { menuStore, dbStore } from 'ts/store';
+import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -30,6 +30,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const { readOnly, rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		relations.map((it: any) => {
 			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
@@ -41,10 +42,20 @@ class MenuRelationList extends React.Component<Props, {}> {
 		));
 
 		const Item = SortableElement((item: any) => {
-			const canHide = item.relationKey != Constant.relationKey.name;
+			const canHide = allowedView && (item.relationKey != Constant.relationKey.name);
+			const canEdit = !readOnly && allowedView;
+			const cn = [ 'item' ];
+			
+			if (item.relation.isHidden) {
+				cn.push('isHidden');
+			};
+			if (!canEdit) {
+				cn.push('isReadOnly');
+			};
+
 			return (
-				<div id={'item-' + item.relationKey} className={[ 'item', (item.relation.isHidden ? 'isHidden' : '') ].join(' ')}>
-					<Handle />
+				<div id={'item-' + item.relationKey} className={cn.join(' ')}>
+					{allowedView ? <Handle /> : ''}
 					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>

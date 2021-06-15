@@ -12,4 +12,5 @@ export enum RestrictionDataview {
 	None		 = 0,
 	Relation	 = 1,
 	Object		 = 2,
+	View		 = 3,
 };
