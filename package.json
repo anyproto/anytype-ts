@@ -211,10 +211,6 @@
 				"to": "node_modules/lodash.escaperegexp"
 			},
 			{
-				"from": "",
-				"to": ""
-			},
-			{
 				"from": "node_modules/about-window",
 				"to": "node_modules/about-window"
 			},

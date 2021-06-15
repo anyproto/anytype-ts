@@ -17,16 +17,16 @@ stdin.on('end', function() {
 	let packageJSON = JSON.parse(packageFile);
 
 	lines = [ ...new Set(lines) ];
-	lines = lines.map((it) => {
+	lines = lines.filter(function (el) {
+		return el != "";
+	}).map((it) => {
 		return {
 			from: it,
 			to: it,
 		};
 	});
 
-	packageJSON.build.files = baseDepsJSON.concat(lines).filter(function (el) {
-		return el != "";
-	});
+	packageJSON.build.files = baseDepsJSON.concat(lines);
 	let jsonS = JSON.stringify(packageJSON, null, '\t');
 	fs.writeFileSync('package.json', jsonS);
 });
