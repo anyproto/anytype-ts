@@ -845,12 +845,19 @@ class DataUtil {
 	};
 
 	menuGetViews () {
-		return [
+		const { config } = commonStore;
+		
+		let ret = [
 			{ id: I.ViewType.Grid, name: 'Grid' },
-			{ id: I.ViewType.Gallery, name: 'Gallery' },
-			{ id: I.ViewType.List, name: 'List' },
-			{ id: I.ViewType.Board, name: 'Kanban' },
 		];
+		if (config.debug.ho) {
+			ret = ret.concat([
+				{ id: I.ViewType.Gallery, name: 'Gallery' },
+				{ id: I.ViewType.List, name: 'List' },
+				{ id: I.ViewType.Board, name: 'Kanban' },
+			]);
+		};
+		return ret;
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
