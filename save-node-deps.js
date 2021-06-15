@@ -17,6 +17,12 @@ stdin.on('end', function() {
 	let packageJSON = JSON.parse(packageFile);
 
 	lines = [ ...new Set(lines) ];
+	lines = lines.map((it) => {
+		return {
+			from: it,
+			to: it,
+		};
+	});
 
 	packageJSON.build.files = baseDepsJSON.concat(lines).filter(function (el) {
 		return el != "";
