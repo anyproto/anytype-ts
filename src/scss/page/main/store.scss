@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
 .pageMainStore {
-	.wrapper { height: 100%; width: 1000px; margin: 0px 0px 0px -500px; position: absolute; left: 50%; top: 0px; }
+	.wrapper { height: 100%; width: 100%; margin: 0px 0px 0px -50%; position: absolute; left: 50%; top: 0px; }
 
 	.content { height: 100%; padding-top: 40px; }
 
-	.head { width: 100%; height: 40px; padding: 8px 0px; text-align: center; position: absolute; top: 0px; left: 0px; z-index: 1; }
+	.head { width: 100%; height: 40px; padding: 8px 0px; text-align: center; position: absolute; top: 0px; left: 0px; z-index: 1; background: #fff; }
 	.head {
 		.tabs { 
 			white-space: nowrap; background: #eae9e0; display: inline-block; height: 28px; padding: 2px; border-radius: 6px;
@@ -44,7 +44,7 @@
 
 		.loaderWrapper { position: relative !important; }
 
-		.ReactVirtualized__List { padding: 48px 20px 48px 20px; }
+		.ReactVirtualized__List { padding: 48px; }
 
 		.items { height: 100%; }
 		.items {
@@ -73,7 +73,7 @@
 				.button { display: block; }
 			}
 
-			.item.type { margin: 0px 32px 32px 0px; width: 464px; height: 64px; padding-left: 80px; line-height: 64px; }
+			.item.type { margin: 0px 32px 32px 0px; width: calc(50% - 16px); height: 64px; padding-left: 80px; line-height: 64px; }
 			.item.type:nth-child(2n + 2) { margin-right: 0px; }
 			.item.type {
 				.line { bottom: -16px; }
@@ -86,7 +86,7 @@
 				.cover { width: 100%; height: 100%; position: relative; border-radius: inherit; }
 			}
 
-			.item.relation { width: 300px; padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; line-height: 48px; }
+			.item.relation { width: calc(33% - 15px); padding-left: 60px; height: 48px; margin: 0px 30px 16px 0px; line-height: 48px; }
 			.item.relation:nth-child(3n + 3) { margin-right: 0px; }
 			.item.relation {
 				.line { bottom: -8px; }
