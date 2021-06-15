@@ -25,7 +25,7 @@ class HeadRow extends React.Component<Props, {}> {
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 		
 		const Row = SortableContainer((item: any) => (
-			<tr className="row">
+			<div className="rowHead">
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 
@@ -35,10 +35,10 @@ class HeadRow extends React.Component<Props, {}> {
 						onResizeStart={onResizeStart} 
 					/>
 				))}
-				<th className="cellHead last">
+				<div className="cellHead last">
 					{!readOnly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
-				</th>
-			</tr>
+				</div>
+			</div>
 		));
 
 		return (

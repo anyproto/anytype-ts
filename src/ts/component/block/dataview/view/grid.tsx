@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon, Pager } from 'ts/component';
 import { I, C, Util, DataUtil, translate, keyboard } from 'ts/lib';
 import { dbStore, menuStore, blockStore } from 'ts/store';
+import { AutoSizer, WindowScroller, List } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
@@ -51,32 +52,56 @@ class ViewGrid extends React.Component<Props, {}> {
 			<div className="wrap">
 				<div className="scroll">
 					<div className="scrollWrap">
-						<table className="viewItem viewGrid">
-							<thead>
-								<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
-							</thead>
-							<tbody>
-								{data.map((item: any, i: number) => (
-									<BodyRow 
-										key={'grid-row-' + view.id + i} 
-										{...this.props} 
-										readOnly={readOnly || !allowed}
-										index={i} 
-										onRowOver={this.onRowOver} 
-									/>
-								))}
-								{!readOnly && allowed ? (
-									<tr>
-										<td className="cell add" colSpan={relations.length + 1}>
-											<div className="btn" onClick={onRowAdd}>
-												<Icon className="plus" />
-												<div className="name">{translate('blockDataviewNew')}</div>
-											</div>
-										</td>
-									</tr>
-								) : null}
-							</tbody>
-						</table>
+						<div className="viewItem viewGrid">
+							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
+
+							<WindowScroller scrollElement={window}>
+								{({ height, isScrolling, registerChild, scrollTop }) => {
+									return (
+										<AutoSizer disableHeight>
+											{({ width }) => {
+												return (
+													<div ref={registerChild}>
+														<List
+															autoHeight
+															height={height}
+															isScrolling={isScrolling}
+															rowCount={total}
+															rowHeight={50}
+															rowRenderer={({ key, index, style }) => {
+																return (
+																	<BodyRow 
+																		key={'grid-row-' + view.id + index} 
+																		{...this.props} 
+																		readOnly={readOnly || !allowed}
+																		index={index} 
+																		onRowOver={this.onRowOver} 
+																		style={style}
+																	/>
+																);
+															}}
+															scrollTop={scrollTop}
+															width={width}
+														/>
+													</div>
+												);
+											}}
+										</AutoSizer>
+									);
+								}}
+							</WindowScroller>
+
+							{!readOnly && allowed ? (
+								<div className="row add">
+									<div className="cell add">
+										<div className="btn" onClick={onRowAdd}>
+											<Icon className="plus" />
+											<div className="name">{translate('blockDataviewNew')}</div>
+										</div>
+									</div>
+								</div>
+							) : null}
+						</div>
 					</div>
 				</div>
 

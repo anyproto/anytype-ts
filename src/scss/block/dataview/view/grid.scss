@@ -2,9 +2,11 @@
 
 .blocks {
 	.block.blockDataview {
+		.rowHead { display: table-row; box-shadow: 0px 1px #e0ded2; }
+
 		.cellHead { 
 			text-align: left; color: $colorVeryDarkGrey; padding: 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
-			@include text-overflow-nw; cursor: grab;
+			@include text-overflow-nw; cursor: grab; display: table-cell;
 		}
 		.cellHead {
 			.cellContent { cursor: grab; }
@@ -24,11 +26,9 @@
 		}
 		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 
-        .viewItem.viewGrid { border-collapse: collapse; table-layout: fixed; width: 100%; }
+        .viewItem.viewGrid { display: table; width: 100%; position: relative; border-bottom: 1px solid #e0ded2; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
-
-			tbody { border-top: 1px solid #e0ded2; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
@@ -42,15 +42,18 @@
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
 
-			tr.active {
+			.row { display: table-row; border-bottom: 1px solid #e0ded2; }
+			.row.add { border: 0px; }
+
+			.row.active {
 				.cellContent.isName {
 					.icon.edit { display: block; }
 				}
 			}
-
-			tr:last-child .cell { border: 0px; }
 				
-			.cell { padding: 14px; border-bottom: 1px solid #e0ded2; vertical-align: top; position: relative; word-break: break-word; }
+			.cell { 
+				display:table-cell; padding: 14px; vertical-align: top; position: relative; word-break: break-word; 
+			}
 
 			.cell.isEditing {
 				.cellContent { min-width: 300px; padding: 14px; }
@@ -68,7 +71,7 @@
 				.cellContent { min-width: unset; }
 			}
 
-			.cell.add { color: $colorMediumGrey; line-height: 20px; padding: 14px; }
+			.cell.add { color: $colorMediumGrey; line-height: 20px; padding: 14px; width: 100%; display: block; }
 			.cell.add {
 				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
 				.btn:hover { color: $colorBlack; }

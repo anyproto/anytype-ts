@@ -143,7 +143,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(rootId, block.id);
 
-		return data[index];
+		return data[index] || {};
 	};
 
 	getView () {
