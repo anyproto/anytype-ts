@@ -17,10 +17,11 @@ interface State {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
+
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
-const Constant = require('json/constant.json');
 
 @observer
 class PageMainType extends React.Component<Props, State> {
@@ -43,6 +44,7 @@ class PageMainType extends React.Component<Props, State> {
 		this.onUpload = this.onUpload.bind(this);
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
+		this.onSetAdd = this.onSetAdd.bind(this);
 	};
 
 	render () {
@@ -143,7 +145,8 @@ class PageMainType extends React.Component<Props, State> {
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 						<div className="side right">
-							{allowedObject ? <Button text="Create" className="orange" onClick={this.onObjectAdd} /> : ''}
+							{allowedObject ? <Button text="New object" className="orange" onClick={this.onObjectAdd} /> : ''}
+							<Button text="New set" className="orange" onClick={this.onSetAdd} />
 						</div>
 					</div>
 
@@ -316,6 +319,20 @@ class PageMainType extends React.Component<Props, State> {
 			} else {
 				create(message.records.length ? message.records[0].id : '');
 			};
+		});
+	};
+
+	onSetAdd () {
+		const { root } = blockStore;
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+
+		C.BlockCreateSet(root, '', rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			DataUtil.objectOpen({ id: message.targetId, layout: I.ObjectLayout.Set });
 		});
 	};
 
