@@ -433,7 +433,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onTurnObject } = data;
+		const { rootId, blockId, onTurnObject, onAlign } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
@@ -545,7 +545,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								focus.apply();
 							});
 						};
+
 						close();
+
+						if (onAlign) {
+							onAlign(item);
+						};
 					}
 				});
 				break;
