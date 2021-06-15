@@ -390,7 +390,7 @@ class Mark {
 		// Markdown
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
-			const rm = new RegExp('\\s(' + k + ')([^' + k + ']+)(' + k + ')\\s', 'ig');
+			const rm = new RegExp('\\s?(' + k + ')([^' + k + ']+)(' + k + ')\\s', 'ig');
 
 			html = text;
 			html.replace(rm, (s: string, p1: string, p2: string) => {
