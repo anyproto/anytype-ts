@@ -47,7 +47,7 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			return null;
 		};
 		
-		const object = detailStore.get(breadcrumbs, rootId, []);
+		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
 		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
 		const canSync = !object.templateIsBundled;
 		const cn = [ 'header', 'headerMainEdit' ];
@@ -60,13 +60,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 			<div id="header" className={cn.join(' ')}>
 				{isPopup ? (
 					<div className="side left">
+						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-
-						<div className="btn" onClick={this.onOpen}>
-							<Icon className="expand" />
-							<div className="txt">Open as object</div>
-						</div>
 					</div>
 				) : (
 					<div className="side left">
@@ -80,8 +76,10 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
 						<div className="item">
-							<IconObject object={object} />
-							<div className="name">{object.name}</div>
+							<div className="flex">
+								<IconObject object={object} />
+								<div className="name">{object.name}</div>
+							</div>
 						</div>
 					</div>
 					<div className="icons">

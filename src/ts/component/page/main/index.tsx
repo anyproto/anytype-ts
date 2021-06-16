@@ -226,7 +226,18 @@ class PageMainIndex extends React.Component<Props, State> {
 				return;
 			};
 
-			this.setState({ pages: message.records });
+			let pages = message.records;
+			for (let page of pages) {
+				page.order = recent.findIndex((id: string) => { return id == page.id; });
+			};
+
+			pages.sort((c1: any, c2: any) => {
+				if (c1.order > c2.order) return -1;
+				if (c2.order < c1.order) return 1;
+				return 0;
+			});
+
+			this.setState({ pages: pages });
 		});
 	};
 
@@ -489,7 +500,6 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { root } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter, pages } = this.state;
-		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 		
 		let reg = null;
 		let list: any[] = [];

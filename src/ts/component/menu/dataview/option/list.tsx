@@ -43,7 +43,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const relation = data.relation.get();
 		const { n } = this.state;
 		const value = data.value || [];
-		const items = this.getItems();
+		const items = this.getItems(true);
 
 		if (!this.cache) {
 			return null;
@@ -126,7 +126,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const items = this.getItems();
+		const items = this.getItems(true);
 
 		this._isMounted = true;
 		this.focus();
@@ -144,7 +144,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { n } = this.state;
-		const items = this.getItems();
+		const items = this.getItems(false);
 
 		this.props.position();
 		this.resize();
@@ -193,7 +193,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
+		const items = this.getItems(false);
 		const { n } = this.state;
 		this.props.setHover((item ? item : items[n]), scroll);
 	};
@@ -301,7 +301,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		menuStore.updateData(this.props.id, { relation: observable.box(relation) });
 	};
 
-	getItems (): I.SelectOption[] {
+	getItems (withSections: boolean): I.SelectOption[] {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
@@ -318,7 +318,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
-			if (canAdd) {
+			if (canAdd && !items.length) {
 				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
 			};
 		};
@@ -335,7 +335,9 @@ class MenuOptionList extends React.Component<Props, State> {
 			if (!section.children.length) {
 				continue;
 			};
-			ret.push({ id: section.id, name: section.name, isSection: true });
+			if (withSections) {
+				ret.push({ id: section.id, name: section.name, isSection: true });
+			};
 			ret = ret.concat(section.children);
 		};
 
@@ -353,7 +355,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		let { n } = this.state;
 		
 		const k = e.key.toLowerCase();
-		const items = this.getItems();
+		const items = this.getItems(false);
 		const l = items.length;
 		const item = items[n];
 
@@ -394,7 +396,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 	resize () {
 		const { getId, position } = this.props;
-		const items = this.getItems();
+		const items = this.getItems(true);
 		const obj = $('#' + getId() + ' .content');
 		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
 

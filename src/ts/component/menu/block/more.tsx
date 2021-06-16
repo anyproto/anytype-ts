@@ -325,7 +325,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (onSelect) {
 			onSelect(item);
 		};
-		
+
 		focus.clear(false);
 		
 		switch (item.id) {
@@ -433,7 +433,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, onTurnObject, onAlign } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
@@ -502,6 +502,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					onSelect: (item: any) => {
 						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
 						close();
+
+						if (onTurnObject) {
+							onTurnObject(item);
+						};
 					}
 				});
 				break;
@@ -541,7 +545,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 								focus.apply();
 							});
 						};
+
 						close();
+
+						if (onAlign) {
+							onAlign(item);
+						};
 					}
 				});
 				break;

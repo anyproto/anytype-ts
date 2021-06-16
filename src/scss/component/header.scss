@@ -74,7 +74,7 @@
 .header.headerMainEdit {
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
-	.icon.big.home { width: 32px; margin-right: 10px; }
+	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
 	.icon.big.nav { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
 
@@ -83,7 +83,7 @@
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
-		.item { line-height: 20px; vertical-align: middle; max-width: 100%; text-align: left; }
+		.item { line-height: 20px; vertical-align: middle; max-width: calc(100% - 16px); text-align: left; }
 		.item {
 			.iconObject { flex-shrink: 0; }
 			.name { @include text-overflow-nw; width: 100%; }

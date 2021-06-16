@@ -173,6 +173,11 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			case 'more':
 				menuId = 'blockMore';
 				menuParam.subIds = Constant.menuIds.more;
+
+				menuParam.data = Object.assign(menuParam.data, {
+					onTurnObject: close,
+					onAlign: close,
+				});
 				break;
 				
 			case I.MarkType.Link:
