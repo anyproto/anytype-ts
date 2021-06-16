@@ -42,7 +42,7 @@
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
 
-			.row { display: table-row; border-bottom: 1px solid #e0ded2; }
+			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
 			.row.add { border: 0px; }
 
 			.row.active {
@@ -51,9 +51,7 @@
 				}
 			}
 				
-			.cell { 
-				display:table-cell; padding: 14px; vertical-align: top; position: relative; word-break: break-word; 
-			}
+			.cell { display: inline-block; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
 
 			.cell.isEditing {
 				.cellContent { min-width: 300px; padding: 14px; }
