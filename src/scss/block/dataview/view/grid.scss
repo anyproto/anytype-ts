@@ -34,7 +34,7 @@
 			.row.add { border: 0px; }
 			.row:first-child { top: 1px !important; }
 
-			.row.active {
+			.row:hover {
 				.cellContent.isName {
 					.icon.edit { display: block; }
 				}
