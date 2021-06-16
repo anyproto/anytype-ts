@@ -153,7 +153,12 @@ class Mark {
 				del = true;
 			};
 			
-			if (prev && (prev.range.to >= mark.range.from) && (prev.type == mark.type) && (prev.param == mark.param)) {
+			// Combine two marks into one
+			if (prev && 
+				([ I.MarkType.Mention, I.MarkType.Smile ].indexOf(prev.type) < 0) && 
+				(prev.range.to >= mark.range.from) && 
+				(prev.type == mark.type) && 
+				(prev.param == mark.param)) {
 				prev.range.to = mark.range.to;
 				del = true;
 			};
