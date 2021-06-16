@@ -74,17 +74,19 @@
 			.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 		.section:last-child::after { display: none; }
-		.section::after { margin: 12px 30px 3px 30px; display: none; }
+		.section::after { margin: 12px 28px 3px 28px; display: none; }
 
 		#section-featured::after { display: block; }
 
 		.scrollWrap { padding: 30px 0px 16px 0px; height: calc(100% - 54px); overflow-x: hidden; overflow-y: auto; }
-		.item { padding: 0px 22px; margin-bottom: 1px; cursor: default; }
+		.item { padding: 0px 20px; margin-bottom: 1px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }
+			.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); margin-right: 6px; }
 
 			.icon.fav {
 				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
+				margin: 0px;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
@@ -93,7 +95,7 @@
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
-			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 242px); line-height: 22px; transition: background 0.2s ease-in-out; }
+			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: 100%; line-height: 22px; transition: background 0.2s ease-in-out; }
 			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
 
 			.cell.c-select { padding: 4px 8px; }

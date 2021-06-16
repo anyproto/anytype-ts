@@ -709,43 +709,46 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const el = $('#block-' + block.id);
 
-		let rect = Util.selectionRect();
 		let value = this.getValue();
 
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
-
 		this.preventSaveOnBlur = true;
-
 		commonStore.filterSet(range.from, '');
-		menuStore.open('blockMention', {
-			element: el,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			offsetX: rect ? 0 : Constant.size.blockMenu,
-			onClose: () => {
-				this.preventSaveOnBlur = false;
-			},
-			data: {
-				rootId: rootId,
-				blockId: block.id,
-				marks: this.marks,
-				onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
-					value = Util.stringInsert(value, text, from, from);
-					this.marks = Mark.checkRanges(value, marks);
 
-					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-						focus.set(block.id, { from: to, to: to });
-						focus.apply();
+		raf(() => {
+			let rect = Util.selectionRect();
 
-						// Try to fix async detailsUpdate event
-						window.setTimeout(() => {
+			if (!rect.x && !rect.y && !rect.width && !rect.height) {
+				rect = null;
+			};
+
+			menuStore.open('blockMention', {
+				element: el,
+				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				offsetX: rect ? 0 : Constant.size.blockMenu,
+				onClose: () => {
+					this.preventSaveOnBlur = false;
+				},
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					marks: this.marks,
+					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
+						value = Util.stringInsert(value, text, from, from);
+						this.marks = Mark.checkRanges(value, marks);
+
+						DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 							focus.set(block.id, { from: to, to: to });
 							focus.apply();
-						}, 50);
-					});
+
+							// Try to fix async detailsUpdate event
+							window.setTimeout(() => {
+								focus.set(block.id, { from: to, to: to });
+								focus.apply();
+							}, 50);
+						});
+					},
 				},
-			},
+			});
 		});
 	};
 
