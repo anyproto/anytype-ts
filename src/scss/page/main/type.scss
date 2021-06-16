@@ -10,11 +10,11 @@
 		}
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
 
-		.head { display: flex; margin-bottom: 35px; positon: relative; }
+		.head { display: flex; margin-bottom: 35px; position: relative; }
 		.head {
 			.side.left { flex-shrink: 0; margin-right: 32px; }
 			.side.center { width: 100%; }
-			.side.right { flex-shrink: 0; text-align: right; position: relative; }
+			.side.right { flex-shrink: 0; text-align: right; position: absolute; right: 0px; top: 0px; z-index: 1; }
 			.side.right {
 				.button { height: 36px; line-height: 34px; white-space: nowrap; margin-right: 10px; }
 				.button:last-child { margin: 0px; }
