@@ -36,18 +36,6 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 
-		let pager = null;
-		if (total && data.length) {
-			pager = (
-				<Pager 
-					offset={offset} 
-					limit={Constant.limit.dataview.records} 
-					total={total} 
-					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-				/>
-			);
-		};
-		
 		return (
 			<div className="wrap">
 				<div className="scroll">
@@ -104,8 +92,6 @@ class ViewGrid extends React.Component<Props, {}> {
 						</div>
 					</div>
 				</div>
-
-				{pager}
 			</div>
 		);
 	};
