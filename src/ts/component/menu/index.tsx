@@ -245,7 +245,7 @@ class Menu extends React.Component<Props, State> {
 			obj.css({ height: param.height });
 		};
 
-		win.on('resizeMenu.' + this.getId(), () => { this.position(); });
+		win.on('resize.' + this.getId(), () => { this.position(); });
 
 		if (onOpen) {
 			onOpen(this);
@@ -293,7 +293,7 @@ class Menu extends React.Component<Props, State> {
 	};
 	
 	unbind () {
-		$(window).unbind('resizeMenu.' + this.getId());
+		$(window).unbind('resize.' + this.getId());
 	};
 	
 	animate () {
