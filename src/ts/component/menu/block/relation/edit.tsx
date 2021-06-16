@@ -85,7 +85,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		*/
 
 		return (
-			<form onSubmit={this.onSubmit}>
+			<form>
 				<div className="sectionName">Relation name</div>
 				<div className="inputWrap">
 					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} readOnly={this.isReadOnly()} onChange={this.onChange}  />
