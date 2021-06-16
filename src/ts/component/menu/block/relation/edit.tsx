@@ -103,7 +103,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				{opts}
 
 				<div className="inputWrap">
-					<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
+					<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
 				</div>
 				
 				{relation ? (

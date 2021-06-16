@@ -91,7 +91,7 @@
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
 
-			.info { padding: 5px 8px; }
+			.info { padding: 5px 8px; color: $colorDarkGrey; }
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
