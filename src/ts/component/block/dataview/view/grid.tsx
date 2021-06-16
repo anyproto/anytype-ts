@@ -22,7 +22,6 @@ class ViewGrid extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super (props);
 
-		this.onRowOver = this.onRowOver.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
@@ -56,18 +55,15 @@ class ViewGrid extends React.Component<Props, {}> {
 															isScrolling={isScrolling}
 															rowCount={total}
 															rowHeight={48}
-															rowRenderer={({ key, index, style }) => {
-																return (
-																	<BodyRow 
-																		key={'grid-row-' + view.id + index} 
-																		{...this.props} 
-																		readOnly={readOnly || !allowed}
-																		index={index} 
-																		onRowOver={this.onRowOver} 
-																		style={style}
-																	/>
-																);
-															}}
+															rowRenderer={({ key, index, style }) => (
+																<BodyRow 
+																	key={'grid-row-' + view.id + index} 
+																	{...this.props} 
+																	readOnly={readOnly || !allowed}
+																	index={index} 
+																	style={style}
+																/>
+															)}
 															scrollTop={scrollTop}
 															width={width}
 														/>
@@ -238,13 +234,6 @@ class ViewGrid extends React.Component<Props, {}> {
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 
 		window.setTimeout(() => { keyboard.setResize(false); }, 50);
-	};
-
-	onRowOver (id: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-
-		node.find('.row.active').removeClass('active');
-		node.find('#row-' + id).addClass('active');
 	};
 
 	onCellAdd (e: any) {

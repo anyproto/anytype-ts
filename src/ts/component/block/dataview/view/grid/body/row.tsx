@@ -9,7 +9,6 @@ interface Props extends I.ViewComponent {
 	readOnly: boolean;
 	style?: any;
 	getRecord(index: number): any;
-	onRowOver(index: number): void;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
 };
@@ -18,7 +17,7 @@ interface Props extends I.ViewComponent {
 class BodyRow extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, onRowOver, getRecord, style } = this.props;
+		const { index, getView, getRecord, style } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const record = getRecord(index);
@@ -29,7 +28,7 @@ class BodyRow extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={'row-' + index} onMouseOver={(e: any) => { onRowOver(index); }} className={cn.join(' ')} style={style}>
+			<div id={'row-' + index} className={cn.join(' ')} style={style}>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-cell-' + relation.relationKey} 
