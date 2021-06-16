@@ -17,5 +17,13 @@
 	"dist/*.node",
 	"!node_modules/**/*",
 	"node_modules/google-protobuf",
-	"node_modules/grpc-web"
+	"node_modules/grpc-web",
+	{
+      "from": "node_modules/lodash.isequal",
+      "to": "node_modules/lodash.isequal"
+    },
+    {
+      "from": "node_modules/lodash.escaperegexp",
+      "to": "node_modules/lodash.escaperegexp"
+    }
 ]

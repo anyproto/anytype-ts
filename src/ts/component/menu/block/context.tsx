@@ -175,9 +175,8 @@ class MenuBlockContext extends React.Component<Props, {}> {
 				menuParam.subIds = Constant.menuIds.more;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					onTurnObject: (item: any) => {
-						close();
-					}
+					onTurnObject: close,
+					onAlign: close,
 				});
 				break;
 				
