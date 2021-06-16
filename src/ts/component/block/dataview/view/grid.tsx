@@ -123,7 +123,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const { list } = menuStore;
 
 		for (let menu of list) {
-			win.trigger('resizeMenu.' + Util.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
 	};
 

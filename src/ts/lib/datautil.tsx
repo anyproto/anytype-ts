@@ -845,12 +845,19 @@ class DataUtil {
 	};
 
 	menuGetViews () {
-		return [
+		const { config } = commonStore;
+		
+		let ret = [
 			{ id: I.ViewType.Grid, name: 'Grid' },
-			{ id: I.ViewType.Gallery, name: 'Gallery' },
-			{ id: I.ViewType.List, name: 'List' },
-			{ id: I.ViewType.Board, name: 'Kanban' },
 		];
+		if (config.debug.ho) {
+			ret = ret.concat([
+				{ id: I.ViewType.Gallery, name: 'Gallery' },
+				{ id: I.ViewType.List, name: 'List' },
+				{ id: I.ViewType.Board, name: 'Kanban' },
+			]);
+		};
+		return ret;
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
@@ -860,8 +867,11 @@ class DataUtil {
 			if (s.name.match(reg)) {
 				return true;
 			};
+			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
 				let ret = false;
+				c._sortWeight_ = 0;
+
 				if (c.skipFilter) {
 					ret = true;
 				} else 
@@ -881,6 +891,7 @@ class DataUtil {
 						};
 					};
 				};
+				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
 			s.children.sort((c1: any, c2: any) => {
@@ -889,6 +900,12 @@ class DataUtil {
 				return 0;
 			});
 			return s.children.length > 0;
+		});
+
+		sections.sort((c1: any, c2: any) => {
+			if (c1._sortWeight_ > c2._sortWeight_) return -1;
+			if (c1._sortWeight_ < c2._sortWeight_) return 1;
+			return 0;
 		});
 		
 		return sections;
