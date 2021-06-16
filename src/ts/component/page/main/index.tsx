@@ -520,7 +520,7 @@ class PageMainIndex extends React.Component<Props, State> {
 					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(object.layout) < 0) && !object._objectEmpty_) {
 						return false;
 					};
-					if (reg && !object.name.match(reg)) {
+					if (reg && object.name && !object.name.match(reg)) {
 						return false;
 					};
 
