@@ -23,7 +23,6 @@ interface Props {
 
 const Constant = require('json/constant.json');
 const IconSrc = {
-	newSet: require('img/icon/set/new.svg'),
 };
 
 @observer
