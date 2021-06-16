@@ -402,7 +402,7 @@ class BlockText extends React.Component<Props, {}> {
 		return String(obj.get(0).innerText || '');
 	};
 	
-	getMarksFromHtml (): I.Mark[] {
+	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		
@@ -689,7 +689,16 @@ class BlockText extends React.Component<Props, {}> {
 			menuStore.close('blockContext');
 		});
 		
-		this.marks = this.getMarksFromHtml();
+		const { marks, text } = this.getMarksFromHtml();
+
+		this.marks = marks;
+		if (value != text) {
+			this.setValue(text);
+
+			focus.set(focus.focused, { from: focus.range.to + 1, to: focus.range.to + 1 });
+			focus.apply();
+		};
+
 		this.placeHolderCheck();
 		this.setText(this.marks, false);
 	};
@@ -700,43 +709,46 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const el = $('#block-' + block.id);
 
-		let rect = Util.selectionRect();
 		let value = this.getValue();
 
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
-
 		this.preventSaveOnBlur = true;
-
 		commonStore.filterSet(range.from, '');
-		menuStore.open('blockMention', {
-			element: el,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-			offsetX: rect ? 0 : Constant.size.blockMenu,
-			onClose: () => {
-				this.preventSaveOnBlur = false;
-			},
-			data: {
-				rootId: rootId,
-				blockId: block.id,
-				marks: this.marks,
-				onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
-					value = Util.stringInsert(value, text, from, from);
-					this.marks = Mark.checkRanges(value, marks);
 
-					DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
-						focus.set(block.id, { from: to, to: to });
-						focus.apply();
+		raf(() => {
+			let rect = Util.selectionRect();
 
-						// Try to fix async detailsUpdate event
-						window.setTimeout(() => {
+			if (!rect.x && !rect.y && !rect.width && !rect.height) {
+				rect = null;
+			};
+
+			menuStore.open('blockMention', {
+				element: el,
+				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				offsetX: rect ? 0 : Constant.size.blockMenu,
+				onClose: () => {
+					this.preventSaveOnBlur = false;
+				},
+				data: {
+					rootId: rootId,
+					blockId: block.id,
+					marks: this.marks,
+					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
+						value = Util.stringInsert(value, text, from, from);
+						this.marks = Mark.checkRanges(value, marks);
+
+						DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 							focus.set(block.id, { from: to, to: to });
 							focus.apply();
-						}, 50);
-					});
+
+							// Try to fix async detailsUpdate event
+							window.setTimeout(() => {
+								focus.set(block.id, { from: to, to: to });
+								focus.apply();
+							}, 50);
+						});
+					},
 				},
-			},
+			});
 		});
 	};
 
@@ -763,7 +775,7 @@ class BlockText extends React.Component<Props, {}> {
 				onSelect: (icon: string) => {
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
-						type: I.MarkType.Smile, 
+						type: I.MarkType.Emoji, 
 						param: icon, 
 						range: { from: range.from, to: range.from + 1 },
 					});
@@ -932,6 +944,7 @@ class BlockText extends React.Component<Props, {}> {
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
+					marks: Util.objectCopy(this.marks),
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;
 						this.setMarks(marks);

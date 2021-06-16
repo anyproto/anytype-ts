@@ -207,7 +207,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				},
 				addCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationAdd(rootId, relation, () => { 
-
 						menuStore.close('relationSuggest'); 
 					});
 				},

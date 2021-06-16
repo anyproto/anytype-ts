@@ -23,7 +23,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { range } = focus;
-		const { blockId, rootId } = data;
+		const { blockId, rootId, marks } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -31,7 +31,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 		
 		const { type, content } = block;
-		const { marks, style } = content;
+		const { style } = content;
 		
 		let markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
@@ -118,7 +118,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			focus.apply();
 		};
 		
-		let marks = Util.objectCopy(content.marks);
+		let marks = data.marks || [];
 		let mark: any = null;
 		let menuId = '';
 		let menuParam: any = {

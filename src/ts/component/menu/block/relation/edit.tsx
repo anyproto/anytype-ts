@@ -103,7 +103,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 				{opts}
 
 				<div className="inputWrap">
-					<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
+					<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
 				</div>
 				
 				{relation ? (
@@ -338,15 +338,13 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	add (newRelation: any) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand } = data;
 
 		if (addCommand) {
 			addCommand(rootId, blockId, newRelation);
 		};
-
-		close();
 	};
 
 	update (newRelation: any) {
