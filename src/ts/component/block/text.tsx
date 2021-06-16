@@ -402,7 +402,7 @@ class BlockText extends React.Component<Props, {}> {
 		return String(obj.get(0).innerText || '');
 	};
 	
-	getMarksFromHtml (): I.Mark[] {
+	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('.value');
 		
@@ -689,7 +689,16 @@ class BlockText extends React.Component<Props, {}> {
 			menuStore.close('blockContext');
 		});
 		
-		this.marks = this.getMarksFromHtml();
+		const { marks, text } = this.getMarksFromHtml();
+
+		this.marks = marks;
+		if (value != text) {
+			this.setValue(text);
+
+			focus.set(focus.focused, { from: focus.range.to + 1, to: focus.range.to + 1 });
+			focus.apply();
+		};
+
 		this.placeHolderCheck();
 		this.setText(this.marks, false);
 	};
@@ -763,7 +772,7 @@ class BlockText extends React.Component<Props, {}> {
 				onSelect: (icon: string) => {
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
-						type: I.MarkType.Smile, 
+						type: I.MarkType.Emoji, 
 						param: icon, 
 						range: { from: range.from, to: range.from + 1 },
 					});
@@ -932,6 +941,7 @@ class BlockText extends React.Component<Props, {}> {
 					rootId: rootId,
 					dataset: dataset,
 					range: { from: currentFrom, to: currentTo },
+					marks: Util.objectCopy(this.marks),
 					onChange: (marks: I.Mark[]) => {
 						this.marks = marks;
 						this.setMarks(marks);

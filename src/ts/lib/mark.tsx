@@ -153,7 +153,12 @@ class Mark {
 				del = true;
 			};
 			
-			if (prev && (prev.range.to >= mark.range.from) && (prev.type == mark.type) && (prev.param == mark.param)) {
+			// Combine two marks into one
+			if (prev && 
+				([ I.MarkType.Mention, I.MarkType.Emoji ].indexOf(prev.type) < 0) && 
+				(prev.range.to >= mark.range.from) && 
+				(prev.type == mark.type) && 
+				(prev.param == mark.param)) {
 				prev.range.to = mark.range.to;
 				del = true;
 			};
@@ -216,7 +221,7 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-		let hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
+		let hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -266,7 +271,7 @@ class Mark {
 			let prefix = '';
 			let suffix = '';
 
-			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Smile)) {
+			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Emoji)) {
 				prefix = '<smile></smile><name>';
 				suffix = '</name>';
 			};
@@ -315,8 +320,16 @@ class Mark {
 		return obj;
 	};
 	
-	fromHtml (html: string): any[] {
-		const rm = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
+	fromHtml (html: string): { marks: I.Mark[], text: string } {
+		const Markdown = [
+			{ key: '`', type: I.MarkType.Code },
+			{ key: '**', type: I.MarkType.Bold },
+			{ key: '__', type: I.MarkType.Bold },
+			{ key: '*', type: I.MarkType.Italic },
+			{ key: '_', type: I.MarkType.Italic },
+			{ key: '~~', type: I.MarkType.Strike },
+		];
+		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
 
@@ -327,7 +340,18 @@ class Mark {
 		let text = html;
 		let marks: any[] = [];
 
-		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string, o: number) => {
+		// Fix browser markup bug
+		html.replace(/<\/?(i|b)>/g, (s: string, p: string) => {
+			let r = '';
+			if (p == 'i') r = 'italic';
+			if (p == 'b') r = 'bold';
+			p = s.replace(p, r);
+			text = text.replace(s, p);
+			return '';
+		});
+
+		// Fix html special symbols
+		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
 			if (p == '&lt;') p = '{';
 			if (p == '&gt;') p = '}';
 			if (p == '&amp;') p = '&';
@@ -336,14 +360,14 @@ class Mark {
 		});
 
 		html = text;
-		html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
+		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
 
 			let end = p1 == '/';
 			let offset = Number(text.indexOf(s)) || 0;
-			let type = Tags.indexOf(p2)
+			let type = Tags.indexOf(p2);
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
@@ -368,7 +392,29 @@ class Mark {
 			return '';
 		});
 
-		return marks;
+		// Markdown
+		for (let item of Markdown) {
+			const k = Util.filterFix(item.key);
+			const rm = new RegExp('\\s?(' + k + ')([^' + k + ']+)(' + k + ')\\s', 'ig');
+
+			html = text;
+			html.replace(rm, (s: string, p1: string, p2: string) => {
+				p1 = String(p1 || '').trim();
+				p2 = String(p2 || '').trim();
+
+				let offset = Number(text.indexOf(s)) || 0;
+
+				marks.push({
+					type: item.type,
+					range: { from: offset + 1, to: offset + 1 + p2.length },
+					param: '',
+				});
+				text = text.replace(s, ' ' + p2 + ' ');
+				return s;
+			});
+		};
+
+		return { marks, text };
 	};
 	
 	paramToAttr (type: I.MarkType, param: string): string {
@@ -387,7 +433,7 @@ class Mark {
 				attr = 'contenteditable="false"';
 				break;
 
-			case I.MarkType.Smile:
+			case I.MarkType.Emoji:
 				attr = 'contenteditable="false"';
 				break;
 				
