@@ -29,7 +29,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getData, getView, readOnly, onRowAdd } = this.props;
+		const { rootId, block, getData, getView, readOnly, onRowAdd, isPopup, scrollContainer } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
@@ -43,7 +43,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						<div className="viewItem viewGrid">
 							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
 
-							<WindowScroller scrollElement={window}>
+							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window }>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
 									return (
 										<AutoSizer disableHeight>
@@ -52,7 +52,7 @@ class ViewGrid extends React.Component<Props, {}> {
 													<div ref={registerChild}>
 														<List
 															autoHeight
-															height={height}
+															height={Number(height) || 0}
 															isScrolling={isScrolling}
 															rowCount={total}
 															rowHeight={48}
