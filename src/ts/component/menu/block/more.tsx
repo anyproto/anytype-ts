@@ -438,7 +438,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -456,6 +455,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			},
 		};
 
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		switch (item.id) {
