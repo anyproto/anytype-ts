@@ -43,7 +43,7 @@ class ViewGrid extends React.Component<Props, {}> {
 						<div className="viewItem viewGrid">
 							<HeadRow {...this.props} onCellAdd={this.onCellAdd} onSortEnd={this.onSortEnd} onResizeStart={this.onResizeStart} />
 
-							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window }>
+							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
 									return (
 										<AutoSizer disableHeight>
