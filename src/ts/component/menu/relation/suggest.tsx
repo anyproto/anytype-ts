@@ -219,7 +219,9 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
 		};
-		ret.unshift({ id: 'add', name: name });
+		if (!ret.length) {
+			ret.unshift({ id: 'add', relationKey: 'add', name: name });
+		};
 		return ret;
 	};
 	
