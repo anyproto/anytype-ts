@@ -55,7 +55,7 @@ class ViewGrid extends React.Component<Props, {}> {
 															height={height}
 															isScrolling={isScrolling}
 															rowCount={total}
-															rowHeight={50}
+															rowHeight={48}
 															rowRenderer={({ key, index, style }) => {
 																return (
 																	<BodyRow 

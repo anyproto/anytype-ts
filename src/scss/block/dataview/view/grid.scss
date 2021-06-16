@@ -30,6 +30,16 @@
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
 
+			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
+			.row.add { border: 0px; }
+			.row:first-child { top: 1px !important; }
+
+			.row.active {
+				.cellContent.isName {
+					.icon.edit { display: block; }
+				}
+			}
+
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
 				.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
@@ -41,20 +51,11 @@
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
-
-			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
-			.row.add { border: 0px; }
-
-			.row.active {
-				.cellContent.isName {
-					.icon.edit { display: block; }
-				}
-			}
 				
-			.cell { display: inline-block; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
+			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
 
 			.cell.isEditing {
-				.cellContent { min-width: 300px; padding: 14px; }
+				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; }
 			}
 			.cell.isEditing.c-select { 
 				.cellContent { padding-bottom: 8px; }
