@@ -155,7 +155,7 @@ class Mark {
 			
 			// Combine two marks into one
 			if (prev && 
-				([ I.MarkType.Mention, I.MarkType.Smile ].indexOf(prev.type) < 0) && 
+				([ I.MarkType.Mention, I.MarkType.Emoji ].indexOf(prev.type) < 0) && 
 				(prev.range.to >= mark.range.from) && 
 				(prev.type == mark.type) && 
 				(prev.param == mark.param)) {
@@ -221,7 +221,7 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-		let hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Smile ];
+		let hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -271,7 +271,7 @@ class Mark {
 			let prefix = '';
 			let suffix = '';
 
-			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Smile)) {
+			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Emoji)) {
 				prefix = '<smile></smile><name>';
 				suffix = '</name>';
 			};
@@ -433,7 +433,7 @@ class Mark {
 				attr = 'contenteditable="false"';
 				break;
 
-			case I.MarkType.Smile:
+			case I.MarkType.Emoji:
 				attr = 'contenteditable="false"';
 				break;
 				

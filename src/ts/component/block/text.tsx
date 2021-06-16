@@ -772,7 +772,7 @@ class BlockText extends React.Component<Props, {}> {
 				onSelect: (icon: string) => {
 					this.marks = Mark.adjust(this.marks, range.from, 1);
 					this.marks = Mark.toggle(this.marks, { 
-						type: I.MarkType.Smile, 
+						type: I.MarkType.Emoji, 
 						param: icon, 
 						range: { from: range.from, to: range.from + 1 },
 					});
