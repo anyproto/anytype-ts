@@ -233,7 +233,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 		});
 
 		let options: any[] = relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return { 
 				id: relation.relationKey, 
 				name: relation.name, 
