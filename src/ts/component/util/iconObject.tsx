@@ -126,6 +126,8 @@ class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		size: 20,
+		offsetX: 0,
+		offsetY: 0,
 		tooltipY: I.MenuDirection.Bottom,
 		color: 'grey',
 	};
@@ -225,6 +227,8 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any) {
+		e.stopPropagation();
+
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;

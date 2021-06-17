@@ -106,6 +106,7 @@ html.platformWindows {
 .noAnimation { transition: none !important; }
 .over { overflow: hidden !important; }
 .empty { color: $colorMediumGrey; }
+.isDone { color: $colorMediumGrey; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

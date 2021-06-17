@@ -27,11 +27,19 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId, [ 'isArchived' ]);
-		const { _objectEmpty_, name, isArchived } = object;
-		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : '') ];
+		const { _objectEmpty_, name, isArchived, done, layout } = object;
+		const cn = [ 'focusable', 'c' + id ];
+
+		if ((layout == I.ObjectLayout.Task) && done) {
+			cn.push('isDone');
+		};
+
+		if (isArchived) {
+			cn.push('isArchived');
+		};
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
 				{_objectEmpty_ ? (
 					<div className="loading" data-target-block-id={content.targetBlockId}>
 						<Loader />
@@ -42,15 +50,13 @@ class BlockLink extends React.Component<Props, {}> {
 						<IconObject 
 							object={object} 
 							id={'block-page-' + id} 
-							offsetX={28} 
-							offsetY={-24} 
 							size={24} 
 							canEdit={!readOnly} 
 							onSelect={this.onSelect} 
 							onUpload={this.onUpload}
 							onCheckbox={this.onCheckbox}
 						/>
-						<div className="name" onClick={this.onClick}>
+						<div className="name">
 							<div className="txt">{name}</div>
 						</div>
 						<div className="archive">{translate('blockLinkArchived')}</div>

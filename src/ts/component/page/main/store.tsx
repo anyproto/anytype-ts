@@ -398,7 +398,7 @@ class PageMainStore extends React.Component<Props, State> {
 		};
 
 		dbStore.metaSet(rootId, BLOCK_ID, meta);
-		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, this.offset, Constant.limit.store.records, cb);
+		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, this.offset, 0, cb);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

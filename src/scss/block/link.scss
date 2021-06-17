@@ -3,15 +3,11 @@
 .blocks {
 	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
-		.name { 
-			display: inline-block; vertical-align: top; max-width: calc(100% - 30px); cursor: pointer; position: relative; 
-			@include text-overflow-nw;
-		}
+		.focusable { cursor: pointer; }
+
+		.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
 		.name {
-			.txt { 
-				transition: $transitionFast; line-height: inherit; vertical-align: top; @include text-overflow-nw; width: 100%; 
-				display: inline; position: relative;
-			}
+			.txt { line-height: inherit; vertical-align: top; @include text-overflow-nw; width: 100%; display: inline; position: relative; }
 			.txt::before {
 				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorMediumGrey; transition: $transitionFast;
 				position: absolute; bottom: 0px; left: 0px; z-index: 1;

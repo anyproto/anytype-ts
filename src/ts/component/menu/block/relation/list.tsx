@@ -210,7 +210,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 
 		sections[I.RelationScope.Object]				 = { id: I.RelationScope.Object, name: 'In this object', children: [] };
 		sections[I.RelationScope.Type]					 = { id: I.RelationScope.Type, name: 'Type', children: [] };
-		sections[I.RelationScope.SetOfTheSameType]		 = { id: I.RelationScope.SetOfTheSameType, name: 'Set of the same type', children: [] };
+		sections[I.RelationScope.SetOfTheSameType]		 = { id: I.RelationScope.SetOfTheSameType, name: 'Suggested', children: [] };
 		sections[I.RelationScope.ObjectsOfTheSameType]	 = { id: I.RelationScope.ObjectsOfTheSameType, name: 'Objects of the same type', children: [] };
 		sections[I.RelationScope.Library]				 = { id: I.RelationScope.Library, name: 'Library', children: [] };
 

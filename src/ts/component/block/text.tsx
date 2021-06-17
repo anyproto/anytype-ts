@@ -311,7 +311,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 
 			const object = detailStore.get(rootId, data.param, []);
-			const { _objectEmpty_ } = object;
+			const { _objectEmpty_, layout, done } = object;
 
 			let icon = null;
 			if (_objectEmpty_) {
@@ -319,6 +319,10 @@ class BlockText extends React.Component<Props, {}> {
 				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = <IconObject size={size} object={object} />;
+			};
+
+			if ((layout == I.ObjectLayout.Task) && done) {
+				item.addClass('isDone');
 			};
 
 			if (icon) {

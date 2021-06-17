@@ -23,6 +23,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		loading: false,
 	};
 	isOpen: boolean = false;
+	_isMounted: boolean = false;
 
 	public static defaultProps = {
 		className: '',
@@ -300,11 +301,14 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
 		this.open();
 	};
 
 	componentWillUnmount () {
 		const { rootId } = this.props;
+		
+		this._isMounted = false;
 		Action.pageClose(rootId);
 	};
 
@@ -312,13 +316,17 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		const { loading } = this.state;
 		const { rootId } = this.props;
 
-		if (loading) {
+		if (!this._isMounted || loading) {
 			return;
 		};
 
 		this.setState({ loading: true });
 
 		C.BlockShow(rootId, (message: any) => {
+			if (!this._isMounted) {
+				return;
+			};
+
 			this.setState({ loading: false });
 		});
 	};
