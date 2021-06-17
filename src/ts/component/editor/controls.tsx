@@ -26,6 +26,7 @@ class Controls extends React.Component<Props, {}> {
 		
 		this.onIcon = this.onIcon.bind(this);
 		this.onCover = this.onCover.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		
 		this.onDragOver = this.onDragOver.bind(this);
@@ -37,9 +38,10 @@ class Controls extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
-		if (!allowed) {
+		if (!allowedDetails) {
 			return null;
 		};
 
@@ -65,10 +67,12 @@ class Controls extends React.Component<Props, {}> {
 
 					{config.allowDataview ? (
 						<React.Fragment>
-							<div id="button-layout" className="btn">
-								<Icon className="layout" />
-								<div className="txt">{translate('editorControlLayout')}</div>
-							</div>
+							{allowedLayout ? (
+								<div id="button-layout" className="btn" onClick={this.onLayout}>
+									<Icon className="layout" />
+									<div className="txt">{translate('editorControlLayout')}</div>
+								</div>
+							) : ''}
 
 							<div id="button-relation" className="btn" onClick={this.onRelation}>
 								<Icon className="relation" />
@@ -152,7 +156,34 @@ class Controls extends React.Component<Props, {}> {
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
 	};
 
-	onRelation () {
+	onLayout (e: any) {
+		const { rootId } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const object = detailStore.get(rootId, rootId, []);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+
+		if (!allowed) {
+			return;
+		};
+		
+		menuStore.open('blockLayout', { 
+			element: '.editorControls #button-layout',
+			onOpen: () => {
+				node.addClass('hover');
+			},
+			onClose: () => {
+				node.removeClass('hover');
+			},
+			data: {
+				value: object.layout,
+				onChange: (layout: I.ObjectLayout) => {
+					DataUtil.pageSetLayout(rootId, layout);
+				},
+			}
+		});
+	};
+
+	onRelation (e: any) {
 		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const win = $(window);

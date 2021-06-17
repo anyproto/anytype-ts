@@ -1591,7 +1591,7 @@ class EditorPage extends React.Component<Props, {}> {
 			controls.css({ top: hh });
 		};
 		if (size.length) {
-			size.css({ top: hh + 4 });
+			size.css({ top: hh + 8 });
 		};
 		if (cover.length) {
 			cover.css({ top: hh });

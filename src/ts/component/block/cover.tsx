@@ -38,7 +38,9 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.onIcon = this.onIcon.bind(this);
 		this.onCover = this.onCover.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 		this.onRelation = this.onRelation.bind(this);
+
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
@@ -66,6 +68,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
 		let elements = null;
 		if (editing) {
@@ -105,10 +108,12 @@ class BlockCover extends React.Component<Props, State> {
 
 						{config.allowDataview ? (
 							<React.Fragment>
-								<div id="button-layout" className="btn white withIcon">
-									<Icon className="layout" />
-									<div className="txt">{translate('editorControlLayout')}</div>
-								</div>
+								{allowedLayout ? (
+									<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
+										<Icon className="layout" />
+										<div className="txt">{translate('editorControlLayout')}</div>
+									</div>
+								) : ''}
 
 								<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
 									<Icon className="relation" />
@@ -171,10 +176,17 @@ class BlockCover extends React.Component<Props, State> {
 	
 	onIconPage () {
 		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const elements = node.find('.elements');
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
-			offsetY: 17,
+			onOpen: () => {
+				elements.addClass('hover');
+			},
+			onClose: () => {
+				elements.removeClass('hover');
+			},
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
@@ -206,6 +218,34 @@ class BlockCover extends React.Component<Props, State> {
 				
 				DataUtil.pageSetIcon(rootId, '', message.hash);
 			});
+		});
+	};
+
+	onLayout (e: any) {
+		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const elements = node.find('.elements');
+		const object = detailStore.get(rootId, rootId, []);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+
+		if (!allowed) {
+			return;
+		};
+		
+		menuStore.open('blockLayout', { 
+			element: `#block-${block.id} #button-layout`,
+			onOpen: () => {
+				elements.addClass('hover');
+			},
+			onClose: () => {
+				elements.removeClass('hover');
+			},
+			data: {
+				value: object.layout,
+				onChange: (layout: I.ObjectLayout) => {
+					DataUtil.pageSetLayout(rootId, layout);
+				},
+			}
 		});
 	};
 
@@ -250,7 +290,6 @@ class BlockCover extends React.Component<Props, State> {
 		focus.clear(true);
 		menuStore.open('blockCover', {
 			element: `#block-${block.id} #button-cover`,
-			offsetY: 17,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');

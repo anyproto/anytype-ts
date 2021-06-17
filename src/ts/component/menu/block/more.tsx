@@ -56,20 +56,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sectionPage = null;
 		if (block && block.isPage() && config.allowDataview) {
-			const layouts = DataUtil.menuGetLayouts();
-			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const allowedLayout = true;//blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]); 
-			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: allowedLayout };
-
 			sectionPage = (
 				<React.Fragment>
-					<div className="sectionName">Layout</div>
-					<MenuItemVertical 
-						{...itemLayout}
-						onMouseEnter={allowedLayout ? (e: any) => { this.onOver(itemLayout) } : undefined} 
-						className={allowedLayout ? '' : 'isReadOnly'}
-					/>
-
 					{config.sudo && restr.length ? (
 						<div className="section">
 							<div className="name">Restrictions</div>
@@ -184,7 +172,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let resize = { id: 'resize', name: 'Set layout width' };
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
@@ -215,11 +202,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 				align = null;
 				archive = null;
-				resize = null;
 			};
 
 			sections = [
-				{ children: [ resize, align ] },
+				{ children: [ align ] },
 				{
 					children: [
 						linkRoot,
@@ -338,10 +324,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						ipcRenderer.send('urlOpen', message.url);
 					};
 				});
-				break;
-
-			case 'resize':
-				$('#editorWrapper').addClass('isResizing');
 				break;
 
 			case 'history':
