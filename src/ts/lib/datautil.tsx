@@ -610,17 +610,7 @@ class DataUtil {
 	};
 
 	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
-		const details = [ 
-			{ key: 'layoutAlign', value: align },
-		];
-
-		C.BlockListSetAlign(rootId, [ 
-			Constant.blockId.title, 
-			Constant.blockId.description, 
-			Constant.blockId.featured,
-		], align);
-
-		C.BlockSetDetails(rootId, details, callBack);
+		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
 	blockSetText (rootId: string, block: I.Block, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
