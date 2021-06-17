@@ -4,7 +4,6 @@
 	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
 		.focusable { cursor: pointer; }
-		.isDone { color: $colorMediumGrey; }
 
 		.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
 		.name {

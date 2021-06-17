@@ -27,8 +27,16 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId, [ 'isArchived' ]);
-		const { _objectEmpty_, name, isArchived, done } = object;
-		const cn = [ 'focusable', 'c' + id, (isArchived ? 'isArchived' : ''), (done ? 'isDone' : '') ];
+		const { _objectEmpty_, name, isArchived, done, layout } = object;
+		const cn = [ 'focusable', 'c' + id ];
+
+		if ((layout == I.ObjectLayout.Task) && done) {
+			cn.push('isDone');
+		};
+
+		if (isArchived) {
+			cn.push('isArchived');
+		};
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
