@@ -199,6 +199,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template', arrow: true };
 			};
 
+			if (block.isObjectTask()) {
+				align = null;
+			};
+
 			if (object.isArchived) {
 				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			} else {
