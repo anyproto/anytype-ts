@@ -67,6 +67,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
+		const showTemplates = type.id != Constant.typeId.page;
 
 		if (object.name == Constant.default.name) {
 			object.name = '';
@@ -147,32 +148,34 @@ class PageMainType extends React.Component<Props, State> {
 						</div>
 					</div>
 
-					<div className="section template">
-						<div className="title">
-							{templates.length} templates
+					{showTemplates ? (
+						<div className="section template">
+							<div className="title">
+								{templates.length} templates
 
-							{allowedTemplate ? (
-								<div className="btn" onClick={this.onTemplateAdd}>
-									<Icon className="plus" />New
+								{allowedTemplate ? (
+									<div className="btn" onClick={this.onTemplateAdd}>
+										<Icon className="plus" />New
+									</div>
+								) : ''}
+							</div>
+							{templates.length ? (
+								<div className="content">
+									<ListTemplate 
+										key="listTemplate"
+										items={templates}
+										canAdd={allowedTemplate}
+										onAdd={this.onTemplateAdd}
+										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+									/>
 								</div>
-							) : ''}
+							) : (
+								<div className="empty">
+									This object type doesn't have templates
+								</div>
+							)}
 						</div>
-						{templates.length ? (
-							<div className="content">
-								<ListTemplate 
-									key="listTemplate"
-									items={templates}
-									canAdd={allowedTemplate}
-									onAdd={this.onTemplateAdd}
-									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
-								/>
-							</div>
-						) : (
-							<div className="empty">
-								This object type doesn't have templates
-							</div>
-						)}
-					</div>	
+					) : ''}
 
 					<div className="section note dn">
 						<div className="title">Notes</div>
