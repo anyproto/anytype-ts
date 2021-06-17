@@ -7,8 +7,8 @@ import Cell from './cell';
 interface Props extends I.ViewComponent {
 	index: number;
 	readOnly: boolean;
+	style?: any;
 	getRecord(index: number): any;
-	onRowOver(index: number): void;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
 };
@@ -17,7 +17,7 @@ interface Props extends I.ViewComponent {
 class BodyRow extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, onRowOver, getRecord } = this.props;
+		const { index, getView, getRecord, style } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const record = getRecord(index);
@@ -28,17 +28,18 @@ class BodyRow extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<tr id={'row-' + index} onMouseOver={(e: any) => { onRowOver(index); }} className={cn.join(' ')}>
+			<div id={'row-' + index} className={cn.join(' ')} style={style}>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-cell-' + relation.relationKey} 
 						{...this.props} 
+						width={relation.width}
 						index={index} 
 						relationKey={relation.relationKey} 
 					/>
 				))}
-				<td className="cell last">&nbsp;</td>
-			</tr>
+				<div className="cell last" />
+			</div>
 		);
 	};
 

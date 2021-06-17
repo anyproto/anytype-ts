@@ -102,7 +102,12 @@ class BlockDataview extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		const { rootId, block } = this.props;
+		const { viewId } = dbStore.getMeta(rootId, block.id);
+
+		this.getData(viewId, 0);
 		this.resize();
+
 		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
 	};
 
@@ -116,24 +121,26 @@ class BlockDataview extends React.Component<Props, {}> {
 		$(window).unbind('resize.dataview');
 	};
 
-	getData (id: string, offset: number, callBack?: (message: any) => void) {
+	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const viewChange = id != viewId;
+		const viewChange = newViewId != viewId;
 		const meta: any = { offset: offset };
 		const cb = (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
 		};
+		const view = this.getView(newViewId);
+		const limit = view.type == I.ViewType.Grid ? 0 : Constant.limit.dataview.records;
 
 		if (viewChange) {
-			meta.viewId = id;
+			meta.viewId = newViewId;
 			dbStore.recordsSet(rootId, block.id, []);
 		};
 
 		dbStore.metaSet(rootId, block.id, meta);
-		C.BlockDataviewViewSetActive(rootId, block.id, id, offset, Constant.limit.dataview.records, cb);
+		C.BlockDataviewViewSetActive(rootId, block.id, newViewId, offset, limit, cb);
 
 		menuStore.closeAll();
 		$(window).trigger('resize.editor');
@@ -143,10 +150,10 @@ class BlockDataview extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(rootId, block.id);
 
-		return data[index];
+		return data[index] || {};
 	};
 
-	getView () {
+	getView (viewId?: string) {
 		const { rootId, block } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 
@@ -154,7 +161,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { viewId } = dbStore.getMeta(rootId, block.id);
+		viewId = viewId || dbStore.getMeta(rootId, block.id).viewId;
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
