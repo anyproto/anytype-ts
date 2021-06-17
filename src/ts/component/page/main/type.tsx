@@ -285,7 +285,7 @@ class PageMainType extends React.Component<Props, State> {
 	onTemplateAdd () {
 		const rootId = this.getRootId();
 
-		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, {}, '', (message) => {
+		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
 			if (!message.error.code) {
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
 				DataUtil.objectOpenPopup(message.record);
