@@ -138,7 +138,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.Type) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
-				id: 'setType', name: 'Set of the same type', 
+				id: 'setType', name: 'Suggested', 
 				children: items.filter((it: any) => { return (it.scope == I.RelationScope.SetOfTheSameType) && (featured.indexOf(it.relationKey) < 0); }),
 			},
 			{ 
