@@ -21,11 +21,12 @@
 			}
 
 			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin: 8px 0px 9px 0px; }
+			.descr { @include text-paragraph; margin-bottom: 9px; }
 
 			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
 
 			.wrap { position: relative; }
+			.wrap.title { width: calc(100% - 210px); height: 36px; }
 			.wrap {
 				.placeHolder { position: absolute; left: 0px; top: 0px; color: $colorMediumGrey; }
 			}
