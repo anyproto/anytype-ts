@@ -47,7 +47,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
 		const { n } = this.state;
-		const items = this.getItems();
+		const items = this.getItems(true);
 		const block = blockStore.getLeaf(rootId, blockId);
 		const length = block.getLength();
 		const idPrefix = 'menuBlockAdd';
@@ -213,7 +213,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	componentDidMount () {
 		const { getId } = this.props;
 		const { n } = this.state;
-		const items = this.getItems();
+		const items = this.getItems(false);
 		
 		this._isMounted = true;
 		this.rebind();
@@ -236,7 +236,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	
 	componentDidUpdate () {
 		const { filter } = commonStore;
-		const items = this.getItems();
+		const items = this.getItems(false);
 		const { n } = this.state;
 
 		if (!items.length && !this.emptyLength) {
@@ -324,7 +324,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	};
 	
 	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
+		const items = this.getItems(false);
 		if (item) {
 			this.state.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
@@ -342,7 +342,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		let { n } = this.state;
 
 		const k = e.key.toLowerCase();
-		const items = this.getItems();
+		const items = this.getItems(false);
 		const l = items.length;
 		const item = items[n];
 
@@ -438,15 +438,16 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		return sections;
 	};
 	
-	getItems () {
+	getItems (withSections: boolean) {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
 		for (let section of sections) {
-			items.push({ id: section.id, name: section.name, isSection: true });
+			if (withSections) {
+				items.push({ id: section.id, name: section.name, isSection: true });
+			};
 			items = items.concat(section.children);
 		};
-		
 		return items;
 	};
 	
@@ -694,7 +695,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 
 	resize () {
 		const { getId, position } = this.props;
-		const items = this.getItems();
+		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		
 		let height = 16;
