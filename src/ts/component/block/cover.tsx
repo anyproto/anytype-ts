@@ -36,8 +36,9 @@ class BlockCover extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onAddIcon = this.onAddIcon.bind(this);
-		this.onMenu = this.onMenu.bind(this);
+		this.onIcon = this.onIcon.bind(this);
+		this.onCover = this.onCover.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
 		this.onCancel = this.onCancel.bind(this);
@@ -58,6 +59,7 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	render () {
+		const { config } = commonStore;
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
@@ -79,7 +81,7 @@ class BlockCover extends React.Component<Props, State> {
 						<div id="dragValue" className="number">100%</div>
 					</div>
 					
-					<div className="buttons">
+					<div className="controlButtons">
 						<div className="btn white" onMouseDown={this.onSave}>{translate('commonSave')}</div>
 						<div className="btn white" onMouseDown={this.onCancel}>{translate('commonCancel')}</div>
 					</div>
@@ -88,18 +90,32 @@ class BlockCover extends React.Component<Props, State> {
 		} else {
 			elements = (
 				<React.Fragment>
-					<div className="buttons">
+					<div className="controlButtons">
 						{!root.isObjectTask() ? (
-							<div id="cover-button-add-icon" className="btn white addIcon withIcon" onClick={this.onAddIcon}>
-								<Icon />
+							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
+								<Icon className="icon" />
 								<div className="txt">{translate('editorControlIcon')}</div>
 							</div>
 						) : ''}
 
-						<div id="cover-button-edit-cover" className="btn white addCover withIcon" onClick={this.onMenu}>
-							<Icon />
-							<div className="txt">{translate('blockCoverUpdate')}</div>
+						<div id="button-cover" className="btn white withIcon" onClick={this.onCover}>
+							<Icon className="addCover" />
+							<div className="txt">{translate('editorControlCover')}</div>
 						</div>
+
+						{config.allowDataview ? (
+							<React.Fragment>
+								<div id="button-layout" className="btn white withIcon">
+									<Icon className="layout" />
+									<div className="txt">{translate('editorControlLayout')}</div>
+								</div>
+
+								<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
+									<Icon className="relation" />
+									<div className="txt">{translate('editorControlRelation')}</div>
+								</div>
+							</React.Fragment>
+						) : ''}
 					</div>
 				</React.Fragment>
 			);
@@ -145,19 +161,19 @@ class BlockCover extends React.Component<Props, State> {
 		$(window).unbind('resize.cover');
 	};
 
-	onAddIcon (e: any) {
+	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		focus.clear(true);
-		root.isObjectHuman() ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
 	};
 	
-	onAddIconPage () {
-		const { rootId } = this.props;
+	onIconPage () {
+		const { rootId, block } = this.props;
 		
 		menuStore.open('smile', { 
-			element: '#cover-button-add-icon',
+			element: `#block-${block.id} #button-icon`,
 			offsetY: 17,
 			data: {
 				onSelect: (icon: string) => {
@@ -170,7 +186,7 @@ class BlockCover extends React.Component<Props, State> {
 		});
 	};
 	
-	onAddIconUser () {
+	onIconUser () {
 		const { rootId } = this.props;
 		const options: any = { 
 			properties: [ 'openFile' ], 
@@ -192,15 +208,56 @@ class BlockCover extends React.Component<Props, State> {
 			});
 		});
 	};
+
+	onRelation () {
+		const { isPopup, rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const elements = node.find('.elements');
+		const win = $(window);
+		const st = win.scrollTop();
+
+		const param: any = {
+			element: `#block-${block.id} #button-relation`,
+			rect: { x: win.width() - 10, y: Util.sizeHeader() + st, width: 1, height: 1 },
+			horizontal: I.MenuDirection.Right,
+			noFlipX: true,
+			noFlipY: true,
+			subIds: Constant.menuIds.cell,
+			onOpen: () => {
+				elements.addClass('hover');
+			},
+			onClose: () => {
+				elements.removeClass('hover');
+				menuStore.closeAll();
+			},
+			data: {
+				rootId: rootId,
+			},
+		};
+
+		if (!isPopup) {
+			param.classNameWrap = 'fromHeader';
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
 	
-	onMenu (e: any) {
-		const { rootId } = this.props;
+	onCover (e: any) {
+		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const elements = node.find('.elements');
 		
 		focus.clear(true);
 		menuStore.open('blockCover', {
-			element: '#cover-button-edit-cover',
+			element: `#block-${block.id} #button-cover`,
 			offsetY: 17,
 			horizontal: I.MenuDirection.Center,
+			onOpen: () => {
+				elements.addClass('hover');
+			},
+			onClose: () => {
+				elements.removeClass('hover');
+			},
 			data: {
 				rootId: rootId,
 				onEdit: this.onEdit,

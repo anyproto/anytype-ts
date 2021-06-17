@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.editorWrapper { padding-top: 112px; width: 704px; margin: 0px auto; }
+.editorWrapper { padding-top: 86px; width: 704px; margin: 0px auto; }
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
@@ -29,29 +29,35 @@
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
-	.editorControls { position: absolute; width: inherit; height: 150px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
+	.editorControls { position: absolute; width: inherit; height: 98px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.buttons { position: absolute; bottom: 0px; opacity: 0; }
+		.controlButtons { position: absolute; bottom: 0px; opacity: 0; width: 100%; transition: opacity 0.2s ease-in-out; }
 		
 		.btn { 
-			background: #fff; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out;
-			margin-right: 10px; height: 28px; line-height: 26px; padding: 0px 10px; border-radius: 6px;
+			background: #fff; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+			height: 28px; margin-right: 8px; line-height: 26px; padding: 0px 8px 0px 6px; border-radius: 6px;
 		}
 		.btn:last-child { margin: 0px; }
-		.btn:hover { background: #f3f2ec; }
+		.btn:hover, .btn.hover { background: rgba(134, 125, 66, 0.08); color: $colorBlack; }
+
 		.btn {
-			.icon { width: 16px; height: 16px; margin-right: 6px; }
+			.icon { width: 20px; height: 20px; margin-right: 4px; }
+			.icon.icon { background-image: url('~img/icon/add/icon0.svg'); }
+			.icon.addCover { background-image: url('~img/icon/add/cover0.svg'); }
+			.icon.layout { background-image: url('~img/icon/add/layout0.svg'); }
+			.icon.relation { background-image: url('~img/icon/add/relation0.svg');  }
 		}
-		.btn.addIcon {
-			.icon { background-image: url('~img/icon/add/icon0.svg'); }
-		}
-		.btn.addCover {
-			.icon { background-image: url('~img/icon/add/cover0.svg'); }
+		.btn:hover, .btn.hover {
+			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
+			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
+			.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
+			.icon.relation { background-image: url('~img/icon/add/relation1.svg');  }
 		}
 	}
-	.editorControls:hover {
-		.buttons { opacity: 1; }
+	.editorControls:hover, .editorControls.hover {
+		.controlButtons { opacity: 1; }
 	}
+
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
 
@@ -60,50 +66,6 @@
 .editorWrapper.withDescription {
 	.blocks .block.blockText.description { display: flex; }
 }
-
-/* Page */
-
-.editorWrapper.withIcon { padding-top: 122px; }
-.editorWrapper.withIcon {
-	.editorControls { height: 188px; }
-	.editorControls {
-		.buttons { padding-left: 116px; }
-		.btn.addIcon { display: none; }
-	}
-	.editorControls.align1 {
-		.buttons { left: 50%; padding-left: 68px; }
-	}
-	.editorControls.align2 {
-		.buttons { padding-left: 0px; }
-	}
-}
-
-.editorWrapper.withCover { padding-top: 356px; }
-.editorWrapper.withCover {
-	.editorControls { display: none; }
-}
-
-.editorWrapper.withIconAndCover { padding-top: 232px; }
-.editorWrapper.withIconAndCover {
-	.editorControls { display: none; }
-}
-
-/* Human */
-
-.editorWrapper.isHuman.withIcon { padding-top: 122px; }
-.editorWrapper.isHuman.withIcon {
-	.editorControls { height: 240px; }
-	.editorControls { 
-		.buttons { padding-left: 148px; }
-	}
-	.editorControls.align1 {
-		.buttons { left: 50%; padding-left: 84px; }
-	}
-	.editorControls.align2 { 
-		.buttons { padding-left: 0px; }
-	}
-}
-.editorWrapper.isHuman.withIconAndCover { padding-top: 208px; }
 
 .editor.help {
 	.blocks {
@@ -127,16 +89,36 @@
 	}
 }
 
-html.platformWindows {
-	.editorWrapper #editorSize { top: 78px; }
+/* Page */
+
+.editorWrapper.withIcon {
+	#button-icon { display: none; }
+	.editorControls { height: 148px; }
+	.controlButtons { left: 114px; text-align: left !important; } 
 }
 
-html.platformMac.version11 {
-	.editorWrapper.withIcon { padding-top: 136px; }
-	.editorWrapper.withCover { padding-top: 370px; }
-	.editorWrapper.withIconAndCover { padding-top: 246px; }
+.editorWrapper.withCover { padding-top: 324px; }
 
-	/* Human */
-	.editorWrapper.isHuman.withIcon { padding-top: 136px; }
-	.editorWrapper.isHuman.withIconAndCover { padding-top: 222px; }
+.editorWrapper.withIconAndCover { padding-top: 232px; }
+.editorWrapper.withIconAndCover {
+	#button-icon { display: none; }
+	.controlButtons { left: 114px !important; text-align: left !important; } 
+}
+
+/* Human */ 
+.editorWrapper.withIcon {
+	.editorControls { height: 164px; }
+}
+
+.editorWrapper.isHuman.withIcon,
+.editorWrapper.isHuman.withIconAndCover
+{
+	.controlButtons { left: 144px !important; }
+}
+
+.editorWrapper.align1, .editorWrapper.isHuman.align1 { 
+	.controlButtons { left: 0px !important; text-align: center; }
+}
+.editorWrapper.align2, .editorWrapper.isHuman.align2 { 
+	.controlButtons { left: 0px !important; }
 }

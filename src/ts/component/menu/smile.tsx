@@ -313,15 +313,14 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	onSelect (id: string, skin: number) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		
 		this.skin = Number(skin) || 1;
 		Storage.set('skin', this.skin);
 		this.setLastIds(id, this.skin);
-		
-		this.props.close();
+		close();
 
 		if (onSelect) {
 			onSelect(SmileUtil.nativeById(id, this.skin));
@@ -331,10 +330,10 @@ class MenuSmile extends React.Component<Props, State> {
 	onMouseDown (n: number, id: string, skin: number) {
 		const win = $(window);
 		const item = EmojiData.emojis[id];
-		
+
 		this.id = id;
 		window.clearTimeout(this.timeoutMenu);
-		
+
 		if (item && item.skin_variations) {
 			this.timeoutMenu = window.setTimeout(() => {
 				win.unbind('mouseup.smile');

@@ -19,38 +19,13 @@
 
 			.selection { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 
-			.editorWrapper { padding-top: 96px; }
+			.block.blockCover { top: 38px; }
 
 			.editorWrapper.isSet { width: calc(100% - 96px); }
 			.editorWrapper.isSet {
 				.block.blockCover {
 					.elements { width: 100%; left: 0px; }
-					.elements {
-						.buttons { padding-left: 142px; }
-					}
 				}
-			}
-
-			.editorWrapper.isSet.withIcon {
-				.editorControls { height: 188px; }
-			}
-
-			.editorWrapper.withIcon { padding-top: 122px; }
-
-			.editorWrapper.withCover { padding-top: 318px; }
-
-			.editorWrapper.withIconAndCover { padding-top: 232px; }
-			.editorWrapper.withIconAndCover {
-				.block.blockCover .elements .buttons { padding-left: 118px; }
-				.block.blockCover.align1 .elements .buttons { padding-left: 68px; }
-			}
-
-			.editorWrapper.isHuman.withIcon { 
-				.editorControls { height: 274px; }
-			}
-
-			.editorWrapper.isHuman.withIconAndCover {
-				.block.blockCover .elements .buttons { padding-left: 150px; }
 			}
 		}
 

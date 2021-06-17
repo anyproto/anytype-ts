@@ -56,28 +56,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sectionPage = null;
 		if (block && block.isPage() && config.allowDataview) {
-			const type = dbStore.getObjectType(object.type);
 			const layouts = DataUtil.menuGetLayouts();
 			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const allowedType = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]); 
-			const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]); 
-
-			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: allowedType };
+			const allowedLayout = true;//blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]); 
 			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: allowedLayout };
 
 			sectionPage = (
 				<React.Fragment>
-					{type ? (
-						<React.Fragment>
-							<div className="sectionName">Type</div>
-							<MenuItemVertical 
-								{...itemType}
-								onMouseEnter={allowedType ? (e: any) => { this.onOver(itemType) } : undefined} 
-								className={allowedType ? '' : 'isReadOnly'}
-							/>
-						</React.Fragment>
-					) : ''}
-
 					<div className="sectionName">Layout</div>
 					<MenuItemVertical 
 						{...itemLayout}
