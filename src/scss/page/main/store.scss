@@ -13,7 +13,7 @@
 		.tabs {
 			.item { 
 				display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
-				font-weight: 500; cursor: pointer; transition: $transitionFast;
+				font-weight: 500; cursor: pointer;
 			}
 			.item.active { background: #fff; }
 			.item:last-child { margin: 0px; }

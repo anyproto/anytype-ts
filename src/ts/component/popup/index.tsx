@@ -104,8 +104,10 @@ class Popup extends React.Component<Props, {}> {
 			};
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
+			const wrap = node.find('#innerWrap');
+			
 			node.addClass('show');
-			window.setTimeout(() => { node.css({ transform: 'none' }); }, Constant.delay.popup);
+			window.setTimeout(() => { wrap.css({ transform: 'none' }); }, Constant.delay.popup);
 		});
 	};
 	
