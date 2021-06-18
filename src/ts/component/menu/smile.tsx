@@ -284,15 +284,15 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 
 	onUpload () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onUpload } = data;
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ]
+			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 
-		this.props.close();
+		close();
 		
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;

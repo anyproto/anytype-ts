@@ -243,7 +243,7 @@ class PageMainType extends React.Component<Props, State> {
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addCrumbs(rootId);
+		crumbs.addPage(rootId);
 		crumbs.addRecent(rootId);
 
 		C.BlockOpen(rootId, (message: any) => {
@@ -288,8 +288,11 @@ class PageMainType extends React.Component<Props, State> {
 	onTemplateAdd () {
 		const rootId = this.getRootId();
 
-		C.MakeTemplateByObjectType(rootId, (message) => {
-			DataUtil.objectOpenPopup({ id: message.id });
+		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
+			if (!message.error.code) {
+				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
+				DataUtil.objectOpenPopup(message.record);
+			};
 		});
 	};
 

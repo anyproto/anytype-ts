@@ -5,6 +5,7 @@ interface CrumbsObject {
 	ids: string[];
 };
 
+const LIMIT_PAGE = 10;
 const LIMIT_RECENT = 100;
 const ID = 'crumbs';
 
@@ -18,8 +19,9 @@ class Crumbs {
 		};
 	};
 
-	getKey (key: I.CrumbsType): string {
-		return Util.toCamelCase(key);
+	getKey (key: I.CrumbsType, suffix?: string): string {
+		suffix = String(suffix || '');
+		return Util.toCamelCase(key + (suffix ? '-' + suffix : ''));
 	};
 
 	getObj () {
@@ -28,7 +30,7 @@ class Crumbs {
 	
 	get (key: I.CrumbsType, suffix?: string): CrumbsObject {
 		const obj = this.getObj();
-		const item = (obj[this.getKey(key) + (suffix || '')] || {}) as CrumbsObject;
+		const item = (obj[this.getKey(key, suffix)] || {}) as CrumbsObject;
 
 		item.ids = item.ids || [];
 		return item;
@@ -50,7 +52,7 @@ class Crumbs {
 	};
 	
 	cut (key: I.CrumbsType, index: number, callBack?: () => void): CrumbsObject {
-		let item = this.get(key);
+		const item = this.get(key);
 		
 		this.savePrev(key, item);
 		
@@ -62,7 +64,7 @@ class Crumbs {
 	
 	restore (key: I.CrumbsType, callBack?: () => void): CrumbsObject {
 		const item = this.get(key);
-		const prev = this.get(key, 'Prev');
+		const prev = this.get(key, 'prev');
 
 		this.savePrev(key, item);
 		this.save(key, prev, callBack);
@@ -72,7 +74,7 @@ class Crumbs {
 	savePrev (key: I.CrumbsType, item: any) {
 		const obj = this.getObj();
 
-		obj[this.getKey(key) + 'Prev'] = item;
+		obj[this.getKey(key, 'prev')] = item;
 		Storage.set(ID, obj, true);
 	};
 
@@ -85,22 +87,24 @@ class Crumbs {
 		obj[this.getKey(key)] = item;
 		Storage.set(ID, obj, true);
 
-		let id = '';
+		let blockId = '';
 		if (key == I.CrumbsType.Page) {
-			id = blockStore.breadcrumbs;
+			blockId = blockStore.breadcrumbs;
 		};
 
-		if (id) {
-			C.BlockSetBreadcrumbs(id, item.ids, (message: any) => {
-				if (message.error.code) {
-					this.delete(key);
-				};
-				
-				if (callBack) {
-					callBack();
-				};
-			});
+		if (!blockId) {
+			return;
 		};
+
+		C.BlockSetBreadcrumbs(blockId, item.ids, (message: any) => {
+			if (message.error.code) {
+				this.delete(key);
+			};
+			
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 	
 	delete (key: I.CrumbsType) {
@@ -109,17 +113,21 @@ class Crumbs {
 		Storage.set(ID, obj, true);
 	};
 
-	addCrumbs (id: string) {
-		let cr = this.get(I.CrumbsType.Page);
+	addPage (id: string) {
+		let item = this.get(I.CrumbsType.Page);
 		let lastTargetId = '';
 		
-		if (cr.ids.length) {
-			lastTargetId = cr.ids[cr.ids.length - 1];
+		if (item.ids.length) {
+			lastTargetId = item.ids[item.ids.length - 1];
 		};
 		if (!lastTargetId || (lastTargetId != id)) {
-			cr = this.add(I.CrumbsType.Page, id);
+			item = this.add(I.CrumbsType.Page, id);
 		};
-		this.save(I.CrumbsType.Page, cr);
+		if (item.ids.length > LIMIT_PAGE) {
+			item.ids = item.ids.slice(item.ids.length - LIMIT_PAGE, item.ids.length);
+		};
+
+		this.save(I.CrumbsType.Page, item);
 	};
 
 	addRecent (id: string) {

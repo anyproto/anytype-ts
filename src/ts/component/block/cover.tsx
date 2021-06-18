@@ -202,7 +202,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ]
+			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 		
 		dialog.showOpenDialog(options).then((result: any) => {
@@ -344,7 +344,7 @@ class BlockCover extends React.Component<Props, State> {
 		
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType', 'coverScale' ], true);
-		const { coverId, coverType, coverScale } = object;
+		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		
@@ -360,10 +360,13 @@ class BlockCover extends React.Component<Props, State> {
 		};
 
 		const cb = () => {
+			const object = detailStore.get(rootId, rootId, [ 'coverScale' ], true);
+			const { coverScale } = object;
+
 			if (this.refDrag) {
 				this.refDrag.setValue(coverScale);
 			};
-			
+
 			this.rect = (node.get(0) as Element).getBoundingClientRect();
 			this.onScaleMove(coverScale);
 			this.cover.css({ opacity: 1 });

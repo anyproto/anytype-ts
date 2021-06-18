@@ -40,7 +40,8 @@
 	
 	"extension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
-		"video": [ "mp4", "m4v", "mov" ]
+		"video": [ "mp4", "m4v", "mov" ],
+		"cover": [ "jpg", "jpeg", "png" ]
 	},
 
 	"limit": {

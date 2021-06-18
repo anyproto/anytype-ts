@@ -203,16 +203,9 @@ class EditorPage extends React.Component<Props, {}> {
 		return this.width;
 	};
 
-	open (skipInit?: boolean) {
+	open () {
 		const { rootId, onOpen, history, isPopup } = this.props;
-		const { breadcrumbs } = blockStore;
 
-		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
-		if (!breadcrumbs && !skipInit) {
-			DataUtil.pageInit(() => { this.open(true); });
-			return;
-		};
-		
 		if (this.id == rootId) {
 			return;
 		};
@@ -220,7 +213,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addCrumbs(rootId);
+		crumbs.addPage(rootId);
 		crumbs.addRecent(rootId);
 
 		this.id = rootId;
