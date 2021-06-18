@@ -5,7 +5,7 @@ interface CrumbsObject {
 	ids: string[];
 };
 
-const LIMIT_PAGE = 1;
+const LIMIT_PAGE = 10;
 const LIMIT_RECENT = 100;
 const ID = 'crumbs';
 
