@@ -56,35 +56,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sectionPage = null;
 		if (block && block.isPage() && config.allowDataview) {
-			const type = dbStore.getObjectType(object.type);
-			const layouts = DataUtil.menuGetLayouts();
-			const layout = layouts.find((it: any) => { return it.id == object.layout; });
-			const allowedType = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]); 
-			const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]); 
-
-			const itemType = { id: 'type', object: {...type, layout: I.ObjectLayout.ObjectType }, name: (type?.name || Constant.default.name), arrow: allowedType };
-			const itemLayout = { id: 'layout', icon: layout?.icon, name: layout?.name, arrow: allowedLayout };
-
 			sectionPage = (
 				<React.Fragment>
-					{type ? (
-						<React.Fragment>
-							<div className="sectionName">Type</div>
-							<MenuItemVertical 
-								{...itemType}
-								onMouseEnter={allowedType ? (e: any) => { this.onOver(itemType) } : undefined} 
-								className={allowedType ? '' : 'isReadOnly'}
-							/>
-						</React.Fragment>
-					) : ''}
-
-					<div className="sectionName">Layout</div>
-					<MenuItemVertical 
-						{...itemLayout}
-						onMouseEnter={allowedLayout ? (e: any) => { this.onOver(itemLayout) } : undefined} 
-						className={allowedLayout ? '' : 'isReadOnly'}
-					/>
-
 					{config.sudo && restr.length ? (
 						<div className="section">
 							<div className="name">Restrictions</div>
@@ -199,7 +172,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let resize = { id: 'resize', name: 'Set layout width' };
+		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
@@ -217,35 +190,37 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			if (object.isArchived) {
 				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			} else {
-				archive = { id: 'archivePage', icon: 'remove', name: 'Archive' };
+				archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 			};
 
 			// Restrictions
+
+			if (block.isObjectTask()) {
+				align = null;
+			};
+
+			if (!block.canHaveHistory()) {
+				history = null;
+			};
+
 			if (!allowed) {
 				undo = null;
 				redo = null;
 				align = null;
 				archive = null;
-				resize = null;
+			};
+
+			if (!config.allowDataview) {
+				template = null;
 			};
 
 			sections = [
-				{ children: [ resize, align ] },
-				{
-					children: [
-						linkRoot,
-						config.allowDataview ? template : null,
-						search,
-					] 
-				},
-				{ children: [ undo, redo ] },
-				{ children: [ print ] },
-				{ children: [ archive ] }
+				{ children: [ align ] },
+				{ children: [ undo, redo, history, archive ] },
+				{ children: [ linkRoot, template ] },
+				{ children: [ search ] },
+				{ children: [ print ] }
 			];
-
-			if (block.canHaveHistory()) {
-				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` });
-			};
 
 			sections = sections.map((it: any, i: number) => {
 				it.id = 'page' + i;
@@ -349,10 +324,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						ipcRenderer.send('urlOpen', message.url);
 					};
 				});
-				break;
-
-			case 'resize':
-				$('#editorWrapper').addClass('isResizing');
 				break;
 
 			case 'history':

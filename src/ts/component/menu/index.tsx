@@ -30,6 +30,7 @@ import MenuBlockMore from './block/more';
 import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
+import MenuBlockLayout from './block/layout';
 
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
@@ -97,6 +98,7 @@ const Components: any = {
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
 	blockMention:			 MenuBlockMention,
+	blockLayout:			 MenuBlockLayout,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
 	blockRelationList:		 MenuBlockRelationList,

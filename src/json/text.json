@@ -115,8 +115,10 @@
 
 	"indexHi": { "en": "Hi, %s" },
 
-	"editorControlIcon": { "en": "Add icon" },
-	"editorControlCover": { "en": "Add cover" },
+	"editorControlIcon": { "en": "Icon" },
+	"editorControlCover": { "en": "Cover" },
+	"editorControlLayout": { "en": "Layout" },
+	"editorControlRelation": { "en": "Relations" },
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
@@ -192,7 +194,6 @@
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
-	"blockCoverUpdate": { "en": "Update cover" },
 
 	"blockFileError": { "en": "There was an error uploading the file" },
 

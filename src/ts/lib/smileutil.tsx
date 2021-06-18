@@ -7,6 +7,24 @@ const SKINS = [ '1F3FA', '1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF' ];
 const DIV = 65039;
 const DIV_UNI = '-200d-';
 
+const Mapping = {
+	a: 'name',
+	b: 'unified',
+	c: 'non_qualified',
+	d: 'has_img_apple',
+	e: 'has_img_google',
+	f: 'has_img_twitter',
+	g: 'has_img_emojione',
+	h: 'has_img_facebook',
+	i: 'has_img_messenger',
+	j: 'keywords',
+	k: 'sheet',
+	l: 'emoticons',
+	m: 'text',
+	n: 'short_names',
+	o: 'added_in',
+};
+
 class SmileUtil {
 
 	icons: any[] = [];
@@ -71,7 +89,7 @@ class SmileUtil {
 			return '';
 		};
 
-		const item = EmojiData.emojis[id];
+		const item = this.uncompress(EmojiData.emojis[id]);
 		if (!item) {
 			return '';
 		};
@@ -85,6 +103,17 @@ class SmileUtil {
 			};
 		};
 		return this.unifiedToNative(uni);
+	};
+
+	uncompress (item: any) {
+		for (let key in item) {
+			if (!Mapping[key]) {
+				continue;
+			};
+			item[Mapping[key]] = item[key];
+			delete(item[key]);
+		};
+		return item;
 	};
 
 	randomParam (): { id: string, skin: number } {

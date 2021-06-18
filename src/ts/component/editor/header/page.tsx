@@ -123,6 +123,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		const check = DataUtil.checkDetails(rootId);
 
 		getWrapper().attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		$(window).trigger('resize.editor');
 	};
 
 	onScaleStart (v: number) {

@@ -28,10 +28,8 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		this.onForward = this.onForward.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -39,7 +37,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 
 	render () {
 		const { match, isPopup, rootId } = this.props;
-		const { config } = commonStore;
 		const { breadcrumbs } = blockStore;
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -48,7 +45,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		};
 		
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
-		const canAdd = !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
 		const canSync = !object.templateIsBundled;
 		const cn = [ 'header', 'headerMainEdit' ];
 
@@ -81,11 +77,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 								<div className="name">{object.name}</div>
 							</div>
 						</div>
-					</div>
-					<div className="icons">
-						{config.allowDataview && canAdd ? (
-							<Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} />
-						) : ''}
 					</div>
 				</div>
 
@@ -226,42 +217,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 				type: I.NavigationType.Go, 
 			},
 		});
-	};
-
-	onRelation () {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
-		const { isPopup, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-relation`;
-		const param: any = {
-			element: elementId,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			subIds: Constant.menuIds.cell,
-			onClose: () => {
-				menuStore.closeAll();
-			},
-			data: {
-				relationKey: '',
-				readOnly: false,
-				rootId: rootId,
-			},
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
-		} else {
-			param.offsetY = 4;
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 
 	onPathOver () {
