@@ -19,6 +19,7 @@ interface Props extends I.Relation {
 	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void): void;
 };
 
+const Constant = require('json/constant.json');
 const PREFIX = 'menuBlockRelationView';
 
 class MenuItemRelationView extends React.Component<Props, {}> {
@@ -27,8 +28,15 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 		const { rootId, block, relationKey, canEdit, readOnly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
-		const fcn = [ 'fav', (isFeatured ? 'active' : ''), (readOnly ? 'dn' : '') ];
+		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
+
+		if (isFeatured) {
+			fcn.push('active');
+		};
+		if (readOnly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relationKey) >= 0)) {
+			fcn.push('dn');
+		};
 
 		return (
 			<div className={[ 'item', 'sides', (isHidden ? 'isHidden' : '') ].join(' ')}>
