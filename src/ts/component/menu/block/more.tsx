@@ -172,6 +172,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
@@ -186,17 +187,22 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template', arrow: true };
 			};
 
+			if (object.isArchived) {
+				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+			} else {
+				archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
+			};
+
+			// Restrictions
+
 			if (block.isObjectTask()) {
 				align = null;
 			};
 
-			if (object.isArchived) {
-				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
-			} else {
-				archive = { id: 'archivePage', icon: 'remove', name: 'Archive' };
+			if (!block.canHaveHistory()) {
+				history = null;
 			};
 
-			// Restrictions
 			if (!allowed) {
 				undo = null;
 				redo = null;
@@ -204,23 +210,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				archive = null;
 			};
 
+			if (!config.allowDataview) {
+				template = null;
+			};
+
 			sections = [
 				{ children: [ align ] },
-				{
-					children: [
-						linkRoot,
-						config.allowDataview ? template : null,
-						search,
-					] 
-				},
-				{ children: [ undo, redo ] },
-				{ children: [ print ] },
-				{ children: [ archive ] }
+				{ children: [ undo, redo, history, archive ] },
+				{ children: [ linkRoot, template ] },
+				{ children: [ search ] },
+				{ children: [ print ] }
 			];
-
-			if (block.canHaveHistory()) {
-				sections[2].children.unshift({ id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` });
-			};
 
 			sections = sections.map((it: any, i: number) => {
 				it.id = 'page' + i;

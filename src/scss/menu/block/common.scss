@@ -15,8 +15,6 @@
 		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 
 		.item.isReadOnly::before { opacity: 0 !important; }
-
-		#section-page0 { padding-top: 0px; }
 	}
 	.menu.menuBlockMore.fromIndex { width: 230px; }
 	
