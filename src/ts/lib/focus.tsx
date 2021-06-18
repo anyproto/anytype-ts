@@ -4,30 +4,42 @@ import { setRange } from 'selection-ranges';
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
+interface State {
+	focused: string;
+	range: I.TextRange;
+};
+
 class Focus {
 	
-	focused: string = '';
-	range: I.TextRange = { from: 0, to: 0 };
+	state: State = { 
+		focused: '', 
+		range: { from: 0, to: 0 } 
+	};
 	
 	set (id: string, range: I.TextRange): Focus {
 		if (!range) {
 			return;
 		};
-		
-		this.focused = String(id || '');
-		this.range.from = Number(range.from) || 0;
-		this.range.to = Number(range.to) || 0;
+
+		this.state = {
+			focused: String(id || ''),
+			range: {
+				from: Number(range.from) || 0,
+				to: Number(range.to) || 0,
+			}
+		};
 
 		return this;
 	};
-	
+
 	clear (withRange: boolean) {
 		this.clearRange(withRange);
 		this.set('', { from: 0, to: 0 });
 	};
 
 	clearRange (withRange: boolean) {
-		const el = $('.focusable.c' + this.focused);
+		const { focused } = this.state;
+		const el = $('.focusable.c' + focused);
 		
 		if (!el.length || el.hasClass('value')) {
 			keyboard.setFocus(false);
@@ -41,13 +53,15 @@ class Focus {
 	};
 	
 	apply (): Focus {
-		if (!this.focused) {
+		const { focused, range } = this.state;
+
+		if (!focused) {
 			return;
 		};
 		
 		$('.focusable.isFocused').removeClass('isFocused');
 
-		const node = $('.focusable.c' + this.focused);
+		const node = $('.focusable.c' + focused);
 		if (!node.length) {
 			return;
 		};
@@ -58,18 +72,20 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			el.setSelectionRange(this.range.from, this.range.to);
+			el.setSelectionRange(range.from, range.to);
 		} else
 		if (node.attr('contenteditable')) {
 			keyboard.setFocus(true);
-			setRange(el, { start: this.range.from, end: this.range.to });
+			setRange(el, { start: range.from, end: range.to });
 		};
 
 		return this;
 	};
 	
 	scroll (isPopup: boolean, id?: string) {
-		id = String(id || this.focused || '');
+		const { focused } = this.state;
+
+		id = String(id || focused || '');
 		if (!id) {
 			return;
 		};

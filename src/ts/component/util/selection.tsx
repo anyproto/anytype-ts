@@ -179,7 +179,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 		
 		const { isPopup } = this.props;
-		const { focused } = focus;
+		const { focused } = focus.state;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#selection-rect');
@@ -413,7 +413,7 @@ class SelectionProvider extends React.Component<Props, {}> {
 			return
 		};
 		
-		const { focused, range } = focus;
+		const { focused, range } = focus.state;
 		const rect = this.getRect(e.pageX, e.pageY);
 
 		if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {

@@ -257,7 +257,7 @@ class Block extends React.Component<Props, {}> {
 		const { block, dataset } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
-		const { focused } = focus;
+		const { focused } = focus.state;
 		
 		if (selection) {
 			selection.set(selection.get());

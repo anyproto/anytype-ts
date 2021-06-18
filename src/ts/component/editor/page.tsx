@@ -256,7 +256,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		const { rootId } = this.props;
-		const { focused, range } = focus;
+		const { focused, range } = focus.state;
 
 		let length = 0;
 		if (focused) {
@@ -447,7 +447,7 @@ class EditorPage extends React.Component<Props, {}> {
 	onKeyDownEditor (e: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
-		const { focused } = focus;
+		const { focused } = focus.state;
 
 		if (keyboard.isFocused || !selection) {
 			return;
@@ -619,11 +619,24 @@ class EditorPage extends React.Component<Props, {}> {
 				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
 			};
 		});
+
+		// Restore focus
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			focus.apply();
+		});
+
+		// Enter
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.blockCreate(focused, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			});
+		});
 	};
 
 	onKeyDownBlock (e: any, text: string, marks: I.Mark[], range: any) {
 		const { dataset, rootId } = this.props;
-		const { focused } = focus;
+		const { focused } = focus.state;
 		const { selection } = dataset || {};
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -969,7 +982,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { focused, range } = focus;
+		const { focused, range } = focus.state;
 		const { rootId, isPopup } = this.props;
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
@@ -1089,7 +1102,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 
-		let { focused, range } = focus;
+		let { focused, range } = focus.state;
 		let ids = selection.get(true);
 		if (!ids.length) {
 			ids = [ focused ];
@@ -1153,7 +1166,7 @@ class EditorPage extends React.Component<Props, {}> {
 	onPaste (e: any, force?: boolean, data?: any) {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
-		const { focused, range } = focus;
+		const { focused, range } = focus.state;
 		const filePath = path.join(userPath, 'tmp');
 		const currentFrom = range.from;
 		const currentTo = range.to;

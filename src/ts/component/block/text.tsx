@@ -699,7 +699,7 @@ class BlockText extends React.Component<Props, {}> {
 		if (value != text) {
 			this.setValue(text);
 
-			focus.set(focus.focused, { from: focus.range.to + 1, to: focus.range.to + 1 });
+			focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
 			focus.apply();
 		};
 
@@ -899,13 +899,13 @@ class BlockText extends React.Component<Props, {}> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup } = this.props;
-		const { from, to } = focus.range;
+		const { from, to } = focus.state.range;
 		const ids = DataUtil.selectionGet('', false, this.props);
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
 		
-		const { range } = focus;
+		const { range } = focus.state;
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
