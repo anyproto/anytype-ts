@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.block.blockCover { position: absolute; left: 16px; top: 38px; height: 312px; width: calc(100% - 32px); border-radius: 4px; overflow: hidden; }
+.block.blockCover { position: absolute; left: 16px; height: 312px; width: calc(100% - 32px); border-radius: 4px; overflow: hidden; }
 .block.blockCover {
 	.wrapMenu { display: none; }
 	.wrapContent { position: relative; z-index: 1; width: 100%; height: 100%; }
@@ -19,10 +19,7 @@
 	.wrap.isDragging, .wrap.isEditing { cursor: grab; }
 	
 	.wrap.isEditing {
-		.elements { opacity: 1; }
-		.elements { 
-			.btn { opacity: 1 !important; }
-		}
+		.controlButtons { opacity: 1; }
 	} 
 	.wrap.isDragging {
 		.elements { opacity: 0.5; }
@@ -34,35 +31,40 @@
 	img.cover { background-color: transparent; height: auto; }
 
 	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; }
-	.elements:hover { 
-		.btn { opacity: 1 !important; }
+	.elements:hover, .elements.hover { 
+		.controlButtons { opacity: 1; }
 	}
 	
 	.elements {
-		.buttons { position: absolute; left: 0px; bottom: 8px; }
+		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; opacity: 0; transition: opacity 0.2s ease-in-out; }
 		
-		.dragWrap { width: 160px; position: absolute; left: 50%; bottom: 8px; margin-left: -80px; display: flex; }
+		.dragWrap { width: 160px; position: absolute; left: 50%; bottom: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {
 			.input-drag { width: 96px; }
 			.number { width: calc(100% - 106px); }
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: 14px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block; opacity: 0;
-			padding: 0px 8px; border-radius: 4px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out; text-align: center;
+			font-weight: 500; font-size: 14px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block;
+			padding: 0px 8px 0px 6px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
 		}
 		.btn.withIcon { line-height: 22px; }
 		.btn.active { opacity: 1; }
 		.btn:last-child { margin: 0px; }
-		
+
 		.btn.white { background: rgba(255,255,255,0.7); }
-		.btn.white:hover, .btn.white.active { background: rgba(255,255,255,0.9); }
+		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
 		
 		.btn.black { color: #fff; background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 		
 		.btn {
-			.icon { width: 18px; height: 18px; background-size: 16px 16px; margin: 0px 6px 0px 0px; vertical-align: middle; }
+			.icon { width: 20px; height: 20px; background-size: 16px 16px; margin: 0px 4px 0px 0px; vertical-align: middle; }
+			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
+			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
+			.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
+			.icon.relation { background-image: url('~img/icon/add/relation1.svg'); }
+
 			.txt { line-height: 18px; vertical-align: middle; }
 		}
 		
@@ -70,69 +72,5 @@
 		.btn.drag {
 			.icon { background-image: url('~img/icon/cover/drag.svg'); }
 		}
-
-		.btn.addIcon {
-			.icon { background-image: url('~img/icon/add/icon1.svg'); }
-		}
-		.btn.addCover {
-			.icon { background-image: url('~img/icon/add/cover1.svg'); }
-		}
-	}
-}
-
-html.platformMac.version11 {
-	.block.blockCover { top: 52px; }
-	.loaderWrapper { top: 52px; height: calc(100% - 52px); }
-}
-
-/* Page */
-
-.editorWrapper.withIcon {
-	.block.blockCover {
-		.elements {
-			.btn.addIcon { display: none; }
-		}
-	}
-}
-
-.editorWrapper.withIconAndCover {
-	.block.blockCover {
-		.elements {
-			.btn.addIcon { display: none; }
-		}
-	}
-
-	.block.blockCover.align0 {
-		.elements {
-			.buttons { padding-left: 116px; }
-		}
-	}
-	.block.blockCover.align1 {
-		.elements {
-			.buttons { left: 50%; padding-left: 68px; }
-		}
-	}
-}
-
-/* Human */
-
-.editorWrapper.isHuman.withIconAndCover {
-	.block.blockCover.align0 {
-		.elements {
-			.buttons { padding-left: 150px; }
-		}
-	}
-	.block.blockCover.align1 {
-		.elements {
-			.buttons { left: 50%; padding-left: 84px; bottom: 30px; }
-		}
-	}
-}
-
-/* Set */
-
-.editorWrapper.isSet {
-	.block.blockCover {
-		.elements { width: calc(100% - 144px); left: 72px; margin: 0px; }
 	}
 }

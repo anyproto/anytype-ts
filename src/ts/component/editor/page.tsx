@@ -1559,6 +1559,10 @@ class EditorPage extends React.Component<Props, {}> {
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
+		const controls = node.find('.editorControls');
+		const size = node.find('#editorSize');
+		const cover = node.find('.block.blockCover');
+		const wrapper = $('.pageMainEdit .wrapper');
 		const root = blockStore.getLeaf(rootId, rootId);
 		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
@@ -1575,6 +1579,18 @@ class EditorPage extends React.Component<Props, {}> {
 
 		if (note.length) {
 			note.css({ top: hh });
+		};
+		if (controls.length) {	
+			controls.css({ top: hh });
+		};
+		if (size.length) {
+			size.css({ top: hh + 8 });
+		};
+		if (cover.length) {
+			cover.css({ top: hh });
+		};
+		if (isPopup) {
+			wrapper.css({ paddingTop: hh });
 		};
 
 		this.onResize(root?.fields?.width);

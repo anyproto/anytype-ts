@@ -25,8 +25,6 @@ class BlockIconPage extends React.Component<Props, {}> {
 					id={'block-icon-' + rootId} 
 					canEdit={!readOnly} 
 					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
-					offsetX={0} 
-					offsetY={16} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
 					size={96} 

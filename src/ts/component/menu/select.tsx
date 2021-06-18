@@ -174,7 +174,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 
-		let items = data.options || [];
+		let items = (data.options || []).filter((it: any) => { return it; });
 		if (data.filter) {
 			items = items.filter((it: any) => { return it.name.match(filter); });
 		};
