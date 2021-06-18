@@ -611,12 +611,19 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const element = map[first.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const next = blockStore.getNextBlock(rootId, first.id, -1);
+			const parentElement = map[parent.id];
+			const idx = parentElement.childrenIds.indexOf(first.id);
+			const nextId = parentElement.childrenIds[idx - 1];
+			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 			
 			if (canTab) {
-				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
+				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+					if (next && next.isTextToggle()) {
+						blockStore.toggle(rootId, next.id, true);
+					};
+				});
 			};
 		});
 	};
@@ -934,7 +941,6 @@ class EditorPage extends React.Component<Props, {}> {
 			const parentElement = map[parent.id];
 			const idx = parentElement.childrenIds.indexOf(block.id);
 			const nextId = parentElement.childrenIds[idx - 1];
-
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
