@@ -10,6 +10,7 @@ interface Props {
 	relationKey: string;
 	index: number;
 	readOnly: boolean;
+	width: number;
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
@@ -27,13 +28,14 @@ class BodyCell extends React.Component<Props, {}> {
 		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
 		const idPrefix = 'dataviewCell';
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
+		const width = DataUtil.relationWidth(this.props.width, relation.format);
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			cn.push('isName');
 		};
 
 		return (
-			<td key={id} id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}>
+			<div key={id} id={id} className={cn.join(' ')} onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }} style={{ width: width }}>
 				<Cell 
 					ref={(ref: any) => { onRef(ref, id); }} 
 					{...this.props}
@@ -42,7 +44,7 @@ class BodyCell extends React.Component<Props, {}> {
 					idPrefix={idPrefix}
 					onCellChange={onCellChange}
 				/>
-			</td>
+			</div>
 		);
 	};
 

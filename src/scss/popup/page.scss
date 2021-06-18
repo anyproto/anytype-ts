@@ -4,14 +4,13 @@
 	.popup.popupPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 		.page { padding: 0px; }
+		.header { position: absolute; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
+		.header {
+			.menu { right: 0px; top: 0px; }
+		}
 		.footer { display: none; }
 
 		.pageMainEdit {
-			.header { position: absolute; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
-			.header {
-				.menu { right: 0px; top: 0px; }
-			}
-
 			#bodyWrapper > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
 			
 			.content { height: 100%; padding-top: 38px; }

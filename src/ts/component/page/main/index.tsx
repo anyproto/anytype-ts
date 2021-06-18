@@ -307,86 +307,10 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	onAdd (e: any) {
-		const { history } = this.props;
 		const { root } = blockStore;
-		const { config } = commonStore;
-		const options: any[] = [
-			{ id: 'page', icon: 'page', name: 'Draft' },
-		];
-		const width = 176;
 
-		if (config.sudo) {
-			options.push({ id: 'link', icon: 'existing', name: 'Link to object', arrow: true });
-		};
-
-		if (config.allowDataview) {
-			options.push({ id: 'set', icon: 'set', name: 'New set' });
-		};
-
-		const close = () => {
-			menuStore.close('select');
-		};
-
-		menuStore.open('select', { 
-			element: '#button-add',
-			horizontal: I.MenuDirection.Center,
-			width: width,
-			className: 'add fixed',
-			subIds: [ 'searchObject' ],
-			data: {
-				value: '',
-				options: options,
-				noClose: true,
-				onMouseEnter: (event: any, item: any) => {
-					if (!item.arrow) {
-						menuStore.closeAll(Constant.menuIds.index);
-						return;
-					};
-
-					if ((item.id == 'link') && !menuStore.isOpen('searchObject', item.id)) {
-						const filters = [];
-
-						if (!config.allowDataview) {
-							filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Page ] });
-						};
-
-						menuStore.closeAll(Constant.menuIds.index, () => {
-							menuStore.open('searchObject', { 
-								menuKey: item.id,
-								element: '#menuSelect',
-								offsetX: width,
-								offsetY: -$('#menuSelect').height(),
-								isSub: true,
-								data: {
-									filters: filters,
-									type: I.NavigationType.Link, 
-									rootId: root,
-									skipId: root,
-									blockId: '',
-									position: I.BlockPosition.Bottom,
-									onSelect: (item: any) => {
-										close();
-									}
-								}, 
-							});
-						});
-					};
-				},
-				onSelect: (event: any, item: any) => {
-					if (item.id == 'page') {
-						DataUtil.pageCreate(root, '', {}, I.BlockPosition.Bottom, '', (message: any) => {
-							DataUtil.objectOpen({ id: message.targetId });
-						});
-
-						close();
-					};
-
-					if (item.id == 'set') {
-						close();
-						history.push('/main/newset');
-					};
-				},
-			}
+		DataUtil.pageCreate(root, '', {}, I.BlockPosition.Bottom, '', (message: any) => {
+			DataUtil.objectOpen({ id: message.targetId });
 		});
 	};
 
