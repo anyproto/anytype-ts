@@ -23,7 +23,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 		const rootId = this.getRootId();
 
 		return (
-			<div>
+			<React.Fragment>
 				<SelectionProvider rootId={rootId} isPopup={isPopup}>
 					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
 						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
@@ -35,7 +35,7 @@ class PageMainEdit extends React.Component<Props, {}> {
 				</SelectionProvider>
 				
 				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
-			</div>
+			</React.Fragment>
 		);
 	};
 	
