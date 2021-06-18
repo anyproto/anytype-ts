@@ -22,7 +22,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { range } = focus;
+		const { range } = focus.state;
 		const { blockId, rootId, marks } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 

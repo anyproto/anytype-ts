@@ -125,7 +125,7 @@ class Keyboard {
 	};
 
 	pageCreate () {
-		const { focused } = focus;
+		const { focused } = focus.state;
 		const rootId = this.getRootId();
 		const isMainIndex = this.isMainIndex();
 		const isMainEditor = this.isMainEditor();
