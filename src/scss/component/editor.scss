@@ -31,7 +31,7 @@
 	
 	.editorControls { position: absolute; width: inherit; height: 98px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
 	.editorControls {
-		.controlButtons { position: absolute; bottom: 0px; opacity: 0; width: 100%; transition: opacity 0.2s ease-in-out; }
+		.controlButtons { position: absolute; bottom: 0px; opacity: 0; width: 100%; }
 		
 		.btn { 
 			background: #fff; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
