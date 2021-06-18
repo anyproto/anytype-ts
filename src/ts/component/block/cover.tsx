@@ -174,7 +174,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ]
+			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 		
 		dialog.showOpenDialog(options).then((result: any) => {
