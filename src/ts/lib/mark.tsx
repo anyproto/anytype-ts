@@ -352,8 +352,8 @@ class Mark {
 
 		// Fix html special symbols
 		html.replace(/(&lt;|&gt;|&amp;)/g, (s: string, p: string) => {
-			if (p == '&lt;') p = '{';
-			if (p == '&gt;') p = '}';
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
 			if (p == '&amp;') p = '&';
 			text = text.replace(s, p);
 			return '';

@@ -265,6 +265,10 @@ class DragProvider extends React.Component<Props, {}> {
 			if (selection) {
 				selection.set(this.ids);
 			};
+
+			if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+				blockStore.toggle(rootId, targetId, true);
+			};
 		});
 	};
 

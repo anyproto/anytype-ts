@@ -1,5 +1,5 @@
 import { observable, action, computed, set, intercept, toJS } from 'mobx';
-import { I, M, Util } from 'ts/lib';
+import { I, M, Util, Storage } from 'ts/lib';
 
 const $ = require('jquery');
 
@@ -382,6 +382,14 @@ class BlockStore {
 			};
 		};
 		return true;
+	};
+
+	toggle (rootId: string, blockId: string, v: boolean) {
+		const element = $(`#block-${blockId}`);
+
+		v ? element.addClass('isToggled') : element.removeClass('isToggled');
+		Storage.setToggle(rootId, blockId, v);
+		$(window).trigger('resize.editor');
 	};
 
 };

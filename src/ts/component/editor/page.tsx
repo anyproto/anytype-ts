@@ -604,12 +604,19 @@ class EditorPage extends React.Component<Props, {}> {
 
 			const element = map[first.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const next = blockStore.getNextBlock(rootId, first.id, -1);
+			const parentElement = map[parent.id];
+			const idx = parentElement.childrenIds.indexOf(first.id);
+			const nextId = parentElement.childrenIds[idx - 1];
+			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 			
 			if (canTab) {
-				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner));
+				C.BlockListMove(rootId, rootId, ids, obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
+					if (next && next.isTextToggle()) {
+						blockStore.toggle(rootId, next.id, true);
+					};
+				});
 			};
 		});
 
@@ -642,7 +649,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
-		const element = $('#block-' + block.id);
+		const element = $(`#block-${block.id}`);
 		const value = element.find('#value');
 		
 		let length = String(text || '').length;
@@ -722,7 +729,7 @@ class EditorPage extends React.Component<Props, {}> {
 		// Duplicate
 		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockListDuplicate(rootId, [ focused ], focused, I.BlockPosition.Bottom, (message: any) => {
+			C.BlockListDuplicate(rootId, [ block.id ], block.id, I.BlockPosition.Bottom, (message: any) => {
 				if (message.blockIds.length) {
 					focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
 					focus.apply();
@@ -734,17 +741,17 @@ class EditorPage extends React.Component<Props, {}> {
 		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockAction', { 
-					element: '#block-' + focused,
+					element: `#block-${block.id}`,
 					offsetX: Constant.size.blockMenu,
 					data: {
-						blockId: focused,
-						blockIds: DataUtil.selectionGet(focused, true, this.props),
+						blockId: block.id,
+						blockIds: DataUtil.selectionGet(block.id, true, this.props),
 						rootId: rootId,
 						dataset: dataset,
 					},
 					onClose: () => {
 						selection.clear(true);
-						focus.set(focused, range);
+						focus.set(block.id, range);
 						focus.apply();
 					}
 				});
@@ -785,7 +792,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 				if (type == I.MarkType.Link) {
 					const mark = Mark.getInRange(marks, type, range);
-					const el = $('#block-' + focused);
+					const el = $(`#block-${block.id}`);
 
 					let rect = Util.selectionRect();
 					if (!rect.x && !rect.y && !rect.width && !rect.height) {
@@ -824,6 +831,18 @@ class EditorPage extends React.Component<Props, {}> {
 			this.onArrow(e, pressed, length);
 		});
 
+		keyboard.shortcut('arrowleft', e, (pressed: string) => {
+			if (block.isTextToggle() && (range.to == 0)) {
+				blockStore.toggle(rootId, block.id, false);
+			};
+		});
+
+		keyboard.shortcut('arrowright', e, (pressed: string) => {
+			if (block.isTextToggle() && (range.to == length)) {
+				blockStore.toggle(rootId, block.id, true);
+			};
+		});
+
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
 			if (menuOpen) {
 				return;
@@ -832,11 +851,11 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(rootId, focused, dir, (item: any) => {
+			const next = blockStore.getNextBlock(rootId, block.id, dir, (item: any) => {
 				return !item.isIcon() && !item.isTextTitle();
 			});
 			if (next) {
-				C.BlockListMove(rootId, rootId, [ focused ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
+				C.BlockListMove(rootId, rootId, [ block.id ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
 			};
 		});
 
@@ -887,7 +906,7 @@ class EditorPage extends React.Component<Props, {}> {
 				e.preventDefault();
 
 				focus.clear(true);
-				selection.set([ focused ]);
+				selection.set([ block.id ]);
 
 				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 			};
@@ -925,15 +944,26 @@ class EditorPage extends React.Component<Props, {}> {
 			const shift = pressed.match('shift');
 			const element = map[block.id];
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const next = blockStore.getNextBlock(rootId, block.id, -1);
+			const parentElement = map[parent.id];
+			const idx = parentElement.childrenIds.indexOf(block.id);
+			const nextId = parentElement.childrenIds[idx - 1];
+			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
 
-			if (canTab) {
-				C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+			if (!canTab) {
+				return;
+			};
+
+			C.BlockListMove(rootId, rootId, [ block.id ], obj.id, (shift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), (message: any) => {
+				window.setTimeout(() => {
 					focus.apply();
 				});
-			};
+
+				if (next && next.isTextToggle()) {
+					blockStore.toggle(rootId, next.id, true);
+				};
+			});
 		});
 
 		// Enter
@@ -1000,7 +1030,7 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		// Auto-open toggle blocks 
 		if (parent && parent.isTextToggle()) {
-			node.find('#block-' + parent.id).addClass('isToggled');
+			blockStore.toggle(rootId, parent.id, true);
 		};
 
 		window.setTimeout(() => {
@@ -1488,8 +1518,7 @@ class EditorPage extends React.Component<Props, {}> {
 			this.phraseCheck();
 
 			if (isToggle && isOpen) {
-				Storage.setToggle(rootId, message.blockId, true);
-				$('#block-' + message.blockId).addClass('isToggled');
+				blockStore.toggle(rootId, message.blockId, true);
 			};
 		});
 	};

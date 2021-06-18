@@ -595,7 +595,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && ([ Key.backspace, Key.escape ].indexOf(k) < 0) && !menuOpenAdd && !block.isTextCode()) {
+		if ((symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode()) {
 			value = Util.stringCut(value, range.from - 1, range.from);
 			onMenuAdd(id, value, range);
 		};
