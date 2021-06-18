@@ -106,24 +106,26 @@ class PageMainIndex extends React.Component<Props, State> {
 					</div>
 					
 					<div id="documents"> 
-						{config.allowDataview ? (
-							<div className="tabWrap">
-								<div className="tabs">
-									{Tabs.map((item: any, i: number) => (
-										<TabItem key={i} {...item} />
-									))}
-								</div>
-								<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
-									<Icon className="search" />
-									<Filter 
-										ref={(ref: any) => { this.filterRef = ref; }} 
-										placeHolder="" 
-										placeHolderFocus="" 
-										onChange={this.onFilterChange}
-									/>
-								</div>
+						<div className="tabWrap">
+							<div className="tabs">
+								{Tabs.map((item: any, i: number) => {
+									if (!config.allowDataview && (item.id == Tab.Draft)) {
+										return null;
+									};
+
+									return <TabItem key={i} {...item} />
+								})}
 							</div>
-						) : ''}
+							<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
+								<Icon className="search" />
+								<Filter 
+									ref={(ref: any) => { this.filterRef = ref; }} 
+									placeHolder="" 
+									placeHolderFocus="" 
+									onChange={this.onFilterChange}
+								/>
+							</div>
+						</div>
 						<ListIndex 
 							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
