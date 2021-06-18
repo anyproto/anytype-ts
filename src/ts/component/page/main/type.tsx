@@ -243,7 +243,7 @@ class PageMainType extends React.Component<Props, State> {
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addCrumbs(rootId);
+		crumbs.addPage(rootId);
 		crumbs.addRecent(rootId);
 
 		C.BlockOpen(rootId, (message: any) => {

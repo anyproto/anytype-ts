@@ -37,8 +37,8 @@ class Util {
 	};
 	
 	toCamelCase (str: string) {
-		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (str: string, p1: string, p2: string, offset: number, s: string) => {
-			return p1.toUpperCase();
+		return str.replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
+			return String(p1 || '').toUpperCase();
 		});
 	};
 
