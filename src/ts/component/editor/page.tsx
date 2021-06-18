@@ -203,16 +203,9 @@ class EditorPage extends React.Component<Props, {}> {
 		return this.width;
 	};
 
-	open (skipInit?: boolean) {
+	open () {
 		const { rootId, onOpen, history, isPopup } = this.props;
-		const { breadcrumbs } = blockStore;
 
-		// Fix editor refresh without breadcrumbs init, skipInit flag prevents recursion
-		if (!breadcrumbs && !skipInit) {
-			DataUtil.pageInit(() => { this.open(true); });
-			return;
-		};
-		
 		if (this.id == rootId) {
 			return;
 		};
@@ -220,7 +213,7 @@ class EditorPage extends React.Component<Props, {}> {
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addCrumbs(rootId);
+		crumbs.addPage(rootId);
 		crumbs.addRecent(rootId);
 
 		this.id = rootId;
@@ -1595,6 +1588,10 @@ class EditorPage extends React.Component<Props, {}> {
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
+		const controls = node.find('.editorControls');
+		const size = node.find('#editorSize');
+		const cover = node.find('.block.blockCover');
+		const wrapper = $('.pageMainEdit .wrapper');
 		const root = blockStore.getLeaf(rootId, rootId);
 		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
@@ -1611,6 +1608,18 @@ class EditorPage extends React.Component<Props, {}> {
 
 		if (note.length) {
 			note.css({ top: hh });
+		};
+		if (controls.length) {	
+			controls.css({ top: hh });
+		};
+		if (size.length) {
+			size.css({ top: hh + 8 });
+		};
+		if (cover.length) {
+			cover.css({ top: hh });
+		};
+		if (isPopup) {
+			wrapper.css({ paddingTop: hh });
 		};
 
 		this.onResize(root?.fields?.width);

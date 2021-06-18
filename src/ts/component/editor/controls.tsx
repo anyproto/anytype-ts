@@ -3,11 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
 import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { menuStore, blockStore, detailStore } from 'ts/store';
+import { commonStore, menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
+	isPopup: boolean;
 	dataset?: any;
 };
 
@@ -23,8 +24,10 @@ class Controls extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onAddIcon = this.onAddIcon.bind(this);
-		this.onAddCover = this.onAddCover.bind(this);
+		this.onIcon = this.onIcon.bind(this);
+		this.onCover = this.onCover.bind(this);
+		this.onLayout = this.onLayout.bind(this);
+		this.onRelation = this.onRelation.bind(this);
 		
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
@@ -32,35 +35,51 @@ class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
+		const { config } = commonStore;
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
-		if (!allowed) {
+		if (!allowedDetails) {
 			return null;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ], true);
-
 		return (
 			<div 
-				className={[ 'editorControls', 'align' + object.layoutAlign ].join(' ')}
+				className="editorControls"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}
 			>
-				<div className="buttons">
+				<div className="controlButtons">
 					{!root.isObjectTask() ? (
-						<div id="button-add-icon" className="btn addIcon" onClick={this.onAddIcon}>
-							<Icon />
+						<div id="button-icon" className="btn" onClick={this.onIcon}>
+							<Icon className="icon" />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 					) : ''}
 
-					<div id="button-add-cover" className="btn addCover" onClick={this.onAddCover}>
-						<Icon />
+					<div id="button-cover" className="btn" onClick={this.onCover}>
+						<Icon className="addCover" />
 						<div className="txt">{translate('editorControlCover')}</div>
 					</div>
+
+					{config.allowDataview ? (
+						<React.Fragment>
+							{allowedLayout ? (
+								<div id="button-layout" className="btn" onClick={this.onLayout}>
+									<Icon className="layout" />
+									<div className="txt">{translate('editorControlLayout')}</div>
+								</div>
+							) : ''}
+
+							<div id="button-relation" className="btn" onClick={this.onRelation}>
+								<Icon className="relation" />
+								<div className="txt">{translate('editorControlRelation')}</div>
+							</div>
+						</React.Fragment>
+					) : ''}
 				</div>
 			</div>
 		);
@@ -74,19 +93,26 @@ class Controls extends React.Component<Props, {}> {
 		this._isMounted = false;
 	};
 	
-	onAddIcon (e: any) {
+	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		focus.clear(true);
-		root.isObjectHuman() ? this.onAddIconUser() : this.onAddIconPage();
+		root.isObjectHuman() ? this.onIconUser() : this.onIconPage();
 	};
 	
-	onAddIconPage () {
+	onIconPage () {
 		const { rootId } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
 		
 		menuStore.open('smile', { 
-			element: '#button-add-icon',
+			element: '.editorControls #button-icon',
+			onOpen: () => {
+				node.addClass('hover');
+			},
+			onClose: () => {
+				node.removeClass('hover');
+			},
 			data: {
 				onSelect: (icon: string) => {
 					DataUtil.pageSetIcon(rootId, icon, '');
@@ -98,7 +124,7 @@ class Controls extends React.Component<Props, {}> {
 		});
 	};
 	
-	onAddIconUser () {
+	onIconUser () {
 		const { rootId } = this.props;
 		const options: any = { 
 			properties: [ 'openFile' ], 
@@ -121,13 +147,72 @@ class Controls extends React.Component<Props, {}> {
 		});
 	};
 	
-	onAddCover (e: any) {
+	onCover (e: any) {
 		const { rootId } = this.props;
 		const colors = DataUtil.coverColors();
 		const color = colors[Util.rand(0, colors.length - 1)];
 		
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+	};
+
+	onLayout (e: any) {
+		const { rootId } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const object = detailStore.get(rootId, rootId, []);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+
+		if (!allowed) {
+			return;
+		};
+		
+		menuStore.open('blockLayout', { 
+			element: '.editorControls #button-layout',
+			onOpen: () => {
+				node.addClass('hover');
+			},
+			onClose: () => {
+				node.removeClass('hover');
+			},
+			data: {
+				value: object.layout,
+				onChange: (layout: I.ObjectLayout) => {
+					DataUtil.pageSetLayout(rootId, layout);
+				},
+			}
+		});
+	};
+
+	onRelation (e: any) {
+		const { isPopup, rootId } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const win = $(window);
+		const st = win.scrollTop();
+
+		const param: any = {
+			element: '.editorControls #button-relation',
+			rect: { x: win.width() - 10, y: Util.sizeHeader() + st, width: 1, height: 1 },
+			horizontal: I.MenuDirection.Right,
+			noFlipX: true,
+			noFlipY: true,
+			subIds: Constant.menuIds.cell,
+			onOpen: () => {
+				node.addClass('hover');
+			},
+			onClose: () => {
+				node.removeClass('hover');
+				menuStore.closeAll();
+			},
+			data: {
+				rootId: rootId,
+			},
+		};
+
+		if (!isPopup) {
+			param.classNameWrap = 'fromHeader';
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 	
 	onDragOver (e: any) {

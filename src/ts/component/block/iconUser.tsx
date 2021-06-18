@@ -32,15 +32,20 @@ class BlockIconUser extends React.Component<Props, {}> {
 	
 	onClick (e: any) {
 		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, []);
+		const options = [
+			{ id: 'upload', name: 'Change' },
+		];
+
+		if (object.iconImage) {
+			options.push({ id: 'remove', name: 'Remove' });
+		};
 		
 		menuStore.open('select', { 
 			element: `#block-${rootId}-icon .iconObject`,
 			data: {
 				value: '',
-				options: [
-					{ id: 'upload', name: 'Change' },
-					{ id: 'remove', name: 'Remove' },
-				],
+				options: options,
 				onSelect: (event: any, item: any) => {
 					if (item.id == 'remove') {
 						DataUtil.pageSetIcon(rootId, '', '');
@@ -57,7 +62,7 @@ class BlockIconUser extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const options: any = { 
 			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ]
+			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
 		
 		dialog.showOpenDialog(options).then((result: any) => {
