@@ -309,10 +309,8 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	onAdd (e: any) {
-		const { root } = blockStore;
-
-		DataUtil.pageCreate(root, '', {}, I.BlockPosition.Bottom, '', (message: any) => {
-			DataUtil.objectOpen({ id: message.targetId });
+		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', (message: any) => {
+			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 
