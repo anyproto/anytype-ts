@@ -4,7 +4,7 @@
 	.popup.popupSearch {
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
-		.content { height: 432px; overflow: visible; transition: none; }
+		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; }
 		.innerWrap { top: 38px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; }
 		.dimmer { transition: none; }

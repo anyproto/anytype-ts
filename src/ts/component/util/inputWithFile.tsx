@@ -126,13 +126,13 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const { focused } = focus;
+		const { focused } = this.state;
 		const { block } = this.props;
 		
 		this.resize();
 		this.bind();
 		
-		if (this.state.focused) {
+		if (focused) {
 			if (this.urlRef) {
 				this.urlRef.focus();
 			};
@@ -141,7 +141,7 @@ class InputWithFile extends React.Component<Props, State> {
 	};
 	
 	componentWillUnmount () {
-		const { focused } = focus;
+		const { focused } = focus.state;
 		const { block } = this.props;
 		
 		this._isMounted = false;

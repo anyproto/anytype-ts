@@ -39,7 +39,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 
 	onAdd (e: any) {
 		const { rootId } = this.props;
-		const { focused } = focus;
+		const { focused } = focus.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const fb = blockStore.getLeaf(rootId, focused);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);

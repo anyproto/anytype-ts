@@ -46,8 +46,10 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
-							placeHolder={translate('menuDataviewOptionEditPlaceholder')} 
-							onBlur={this.onSubmit} 
+							placeHolder={translate('menuDataviewOptionEditPlaceholder')}
+							className={'textColor-' + this.color}
+							value={option.text}
+							onBlur={this.onSubmit}
 						/>
 					</div>
 					<div className="line" />
@@ -55,7 +57,16 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 				{colors.map((action: any, i: number) => {
 					let inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
-					return <MenuItemVertical id={i} key={i} {...action} icon="color" inner={inner} isActive={action.value == option.color} onClick={(e: any) => { this.onColor(e, action); }} />;
+					return (
+						<MenuItemVertical 
+							id={i} 
+							key={i} {...action} 
+							icon="color" 
+							inner={inner} 
+							checkbox={action.value == option.color} 
+							onClick={(e: any) => { this.onColor(e, action); }}
+						/>
+					);
 				})}
 
 				<div className="line" />
@@ -74,12 +85,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		this.color = option.color;
 		this.rebind();
-	};
-
-	componentDidUpdate () {
-		const { param } = this.props;
-		const { data } = param;
-		const { option } = data;
+		this.forceUpdate();
 	};
 
 	componentWillUnmount () {

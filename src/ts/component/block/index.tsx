@@ -257,7 +257,7 @@ class Block extends React.Component<Props, {}> {
 		const { block, dataset } = this.props;
 		const { id } = block;
 		const { selection } = dataset || {};
-		const { focused } = focus;
+		const { focused } = focus.state;
 		
 		if (selection) {
 			selection.set(selection.get());
@@ -291,13 +291,8 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (node.hasClass('isToggled')) {
-			node.removeClass('isToggled');
-			Storage.setToggle(rootId, block.id, false);
-		} else {
-			node.addClass('isToggled');
-			Storage.setToggle(rootId, block.id, true);
-		};
+		blockStore.toggle(rootId, block.id, !node.hasClass('isToggled'));
+		focus.apply();
 	};
 	
 	onToggleClick (e: any) {

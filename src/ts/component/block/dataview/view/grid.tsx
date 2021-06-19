@@ -34,6 +34,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const length = data.length;
 
 		return (
 			<div className="wrap">
@@ -53,7 +54,7 @@ class ViewGrid extends React.Component<Props, {}> {
 															autoHeight
 															height={Number(height) || 0}
 															isScrolling={isScrolling}
-															rowCount={total}
+															rowCount={data.length}
 															rowHeight={48}
 															rowRenderer={({ key, index, style }) => (
 																<BodyRow 
