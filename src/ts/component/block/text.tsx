@@ -468,7 +468,6 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
-				this.marks = Mark.checkRanges(value, this.marks);
 
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
