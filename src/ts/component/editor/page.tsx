@@ -53,7 +53,6 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onPrint = this.onPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
@@ -268,10 +267,6 @@ class EditorPage extends React.Component<Props, {}> {
 					focus.apply();
 				};
 				break;
-
-			case 'search':
-				this.onSearch();
-				break;
 		};
 	};
 	
@@ -451,12 +446,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const map = blockStore.getMap(rootId);
 		const platform = Util.getPlatform();
 
-		// Print
-		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
-			e.preventDefault();
-			this.onPrint();
-		});
-
 		// Select all
 		keyboard.shortcut('ctrl+a,cmd+a', e, (pressed: string) => {
 			e.preventDefault();
@@ -483,12 +472,6 @@ class EditorPage extends React.Component<Props, {}> {
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
-		});
-
-		// Search
-		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
-			e.preventDefault();
-			this.onSearch();
 		});
 
 		// History
@@ -661,24 +644,13 @@ class EditorPage extends React.Component<Props, {}> {
 
 		this.uiHide();
 		
-		// Print or prev string
-		keyboard.shortcut('ctrl+p, cmd+p', e, (pressed: string) => {
-			if (platform == I.Platform.Mac) {
-				if (pressed == 'cmd+p') {
-					e.preventDefault();
-					this.onPrint();
-				};
-				if (pressed == 'ctrl+p') {
-					this.onArrow(e, Key.up, length);
-				};
-			} else {
-				e.preventDefault();
-				this.onPrint();
-			};
-		});
-
-		// Next string
 		if (platform == I.Platform.Mac) {
+			// Print or prev string
+			keyboard.shortcut('ctrl+p', e, (pressed: string) => {
+				this.onArrow(e, Key.up, length);
+			});
+
+			// Next string
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
 				this.onArrow(e, Key.down, length);
 			});
@@ -712,12 +684,6 @@ class EditorPage extends React.Component<Props, {}> {
 		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
-		});
-
-		// Search
-		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
-			e.preventDefault();
-			this.onSearch();
 		});
 
 		// History
@@ -1341,29 +1307,9 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 
-	onPrint () {
-		focus.clearRange(true);
-		window.print();
-	};
-
 	onHistory () {
 		const { rootId, history } = this.props;
 		history.push('/main/history/' + rootId);
-	};
-
-	onSearch () {
-		const node = $(ReactDOM.findDOMNode(this));
-
-		window.setTimeout(() => {
-			menuStore.open('searchText', {
-				element: '#button-header-more',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Right,
-				data: {
-					container: node,
-				},
-			});
-		}, Constant.delay.menu);
 	};
 
 	getLayoutIds (ids: string[]) {
@@ -1610,7 +1556,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const cover = node.find('.block.blockCover');
 		const wrapper = $('.pageMainEdit .wrapper');
 		const root = blockStore.getLeaf(rootId, rootId);
-		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
+		const obj = $(Util.getPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
 		const header = obj.find('#header');
 		const hh = header.height();

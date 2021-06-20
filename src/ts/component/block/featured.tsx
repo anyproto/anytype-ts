@@ -75,7 +75,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
-									pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
+									pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
 									readOnly={readOnly}
 									isInline={true}

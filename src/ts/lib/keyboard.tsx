@@ -1,6 +1,8 @@
 import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
+const { ipcRenderer } = window.require('electron');
+
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
@@ -34,6 +36,9 @@ class Keyboard {
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
+
+		ipcRenderer.removeAllListeners('commandGlobal');
+		ipcRenderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
@@ -45,6 +50,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
+		const cmd = platform == I.Platform.Mac ? 'cmd' : 'ctrl';
 
 		this.pressed.push(key);
 
@@ -72,8 +78,14 @@ class Keyboard {
 			Util.linkPreviewHide(false);
 		});
 
+		// Print
+		keyboard.shortcut(`${cmd}+p`, e, (pressed: string) => {
+			e.preventDefault();
+			this.onPrint();
+		});
+
 		// Navigation search
-		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
+		this.shortcut(`${cmd}+s`, e, (pressed: string) => {
 			if (popupStore.isOpen('navigation') || !this.isPinChecked || !account) {
 				return;
 			};
@@ -85,6 +97,11 @@ class Keyboard {
 					rootId: rootId,
 				}, 
 			});
+		});
+
+		// Text search
+		this.shortcut(`${cmd}+f`, e, (pressed: string) => {
+			this.onSearch();
 		});
 
 		// Navigation links
@@ -212,6 +229,39 @@ class Keyboard {
 		} else {
 			this.history.goForward();
 		};
+	};
+
+	onCommand (cmd: string, arg: any) {
+		switch (cmd) {
+			case 'search':
+				this.onSearch();
+				break;
+
+			case 'print':
+				this.onPrint();
+				break;
+		};
+	};
+
+	onPrint () {
+		focus.clearRange(true);
+		window.print();
+	};
+
+	onSearch () {
+		const isPopup = popupStore.isOpen('page');
+
+		window.setTimeout(() => {
+			menuStore.open('searchText', {
+				element: '#header',
+				type: I.MenuType.Horizontal,
+				horizontal: I.MenuDirection.Right,
+				classNameWrap: 'fromHeader',
+				data: {
+					container: $(isPopup ? '#popupInnerWrap' : '.page'),
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	ctrlByPlatform (e: any) {

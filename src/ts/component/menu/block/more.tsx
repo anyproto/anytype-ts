@@ -176,6 +176,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
+<<<<<<< Updated upstream
+=======
+			sections = [
+				{ children: [ linkRoot ] },
+				{ children: [ search ] },
+				{ children: [ print ] },
+			];
+>>>>>>> Stashed changes
 		} else
 		if (block.isPage()) {
 			let template = null;
@@ -219,7 +227,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ undo, redo, history, archive ] },
 				{ children: [ linkRoot, template ] },
 				{ children: [ search ] },
-				{ children: [ print ] }
+				{ children: [ print ] },
 			];
 
 			sections = sections.map((it: any, i: number) => {
@@ -315,7 +323,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'print':
-				window.setTimeout(() => { window.print(); }, 300);
+				keyboard.onPrint();
 				break;
 				
 			case 'export':
@@ -334,7 +342,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'search':
-				ipcRenderer.send('proxyEvent', 'commandEditor', 'search');
+				keyboard.onSearch();
 				break;
 				
 			case 'archivePage':

@@ -19,7 +19,7 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 
 	render () {
 		return (
-			<div className="header headerMainIndex">
+			<div id="header" className="header headerMainIndex">
 				<div className="side center" onClick={this.onSearch}>Search for an object</div>
 
 				<div className="side right">

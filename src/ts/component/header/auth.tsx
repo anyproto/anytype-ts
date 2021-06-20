@@ -5,7 +5,7 @@ class HeaderAuth extends React.Component<{}, {}> {
 	
 	render () {
 		return (
-			<div className="header">
+			<div id="header" className="header">
 				<Icon className="logo" />
 			</div>
 		);

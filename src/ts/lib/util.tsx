@@ -763,7 +763,7 @@ class Util {
 		};
 	};
 
-	getEditorPageContainer (type: string) {
+	getPageContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':

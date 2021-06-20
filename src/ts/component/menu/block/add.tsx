@@ -104,7 +104,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								scrollContainer={Util.getEditorScrollContainer('menuBlockRelationList')}
-								pageContainer={Util.getEditorPageContainer('menuBlockRelationList')}
+								pageContainer={Util.getPageContainer('menuBlockRelationList')}
 								readOnly={true}
 								canOpen={false}
 							/>

@@ -924,7 +924,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = Util.getEditorPageContainer(isPopup ? 'popup' : 'page');
+			const pageContainer = Util.getPageContainer(isPopup ? 'popup' : 'page');
 			$(pageContainer).unbind('click.context').on('click.context', () => { menuStore.close('blockContext'); });
 
 			menuStore.open('blockContext', {
