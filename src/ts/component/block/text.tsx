@@ -468,7 +468,6 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
-				this.marks = Mark.checkRanges(value, this.marks);
 
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
@@ -692,19 +691,21 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			menuStore.close('blockContext');
 		});
-		
-		const { marks, text } = this.getMarksFromHtml();
-
-		this.marks = marks;
-		if (value != text) {
-			this.setValue(text);
-
-			focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
-			focus.apply();
-		};
 
 		this.placeHolderCheck();
-		this.setText(this.marks, false);
+
+		if (!block.isTextCode()) {
+			const { marks, text } = this.getMarksFromHtml();
+
+			this.marks = marks;
+			if (value != text) {
+				this.setValue(text);
+
+				focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
+				focus.apply();
+			};
+			this.setText(this.marks, false);
+		};
 	};
 
 	onMention () {
