@@ -1266,8 +1266,10 @@ class EditorPage extends React.Component<Props, {}> {
 				offsetX: Constant.size.blockMenu,
 				onOpen: () => {
 					if (block) {
-						focus.set(block.id, { from: currentFrom, to: currentTo });
-						focus.apply();
+						window.setTimeout(() => {
+							focus.set(block.id, { from: currentFrom, to: currentTo });
+							focus.apply();
+						});
 					};
 				},
 				data: {
