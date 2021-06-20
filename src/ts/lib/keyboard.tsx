@@ -50,7 +50,7 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
-		const cmd = platform == I.Platform.Mac ? 'cmd' : 'ctrl';
+		const cmd = this.ctrlKey();
 
 		this.pressed.push(key);
 
@@ -105,7 +105,7 @@ class Keyboard {
 		});
 
 		// Navigation links
-		this.shortcut('ctrl+o, cmd+o', e, (pressed: string) => {
+		this.shortcut(`${cmd}+o`, e, (pressed: string) => {
 			if (!account) {
 				return;
 			};
@@ -128,7 +128,7 @@ class Keyboard {
 		});
 
 		// Create new page
-		this.shortcut('ctrl+n, cmd+n', e, (pressed: string) => {
+		this.shortcut(`${cmd}+n`, e, (pressed: string) => {
 			let check = platform == I.Platform.Mac ? pressed == 'cmd+n' : true;
 			if (!check) {
 				return;
@@ -431,6 +431,16 @@ class Keyboard {
 		if (res) {
 			callBack(res);
 		};
+	};
+
+	ctrlSymbol () {
+		const platform = Util.getPlatform();
+		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	};
+
+	ctrlKey () {
+		const platform = Util.getPlatform();
+		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};
 	
 };

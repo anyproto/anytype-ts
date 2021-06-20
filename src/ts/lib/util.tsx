@@ -782,11 +782,6 @@ class Util {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};
 
-	ctrlSymbol () {
-		const platform = this.getPlatform();
-		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
-	};
-
 	sizeHeader (): number {
 		const platform = this.getPlatform();
 		const version = process.getSystemVersion();

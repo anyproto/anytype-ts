@@ -162,7 +162,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const cmd = Util.ctrlSymbol();
+		const cmd = keyboard.ctrlSymbol();
 		
 		if (!block) {
 			return [];

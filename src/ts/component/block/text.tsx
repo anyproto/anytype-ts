@@ -440,6 +440,7 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
 		const symbolBefore = range ? value[range.from - 1] : '';
+		const cmd = keyboard.ctrlKey();
 		
 		const menuOpen = menuStore.isOpen();
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
@@ -516,7 +517,7 @@ class BlockText extends React.Component<Props, {}> {
 			};
 		});
 
-		keyboard.shortcut('ctrl+e, cmd+e', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+e`, e, (pressed: string) => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};

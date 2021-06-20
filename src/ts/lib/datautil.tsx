@@ -754,7 +754,7 @@ class DataUtil {
 	
 	// Action menu
 	menuGetActions (hasFile: boolean) {
-		let cmd = Util.ctrlSymbol();
+		let cmd = keyboard.ctrlSymbol();
 
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },

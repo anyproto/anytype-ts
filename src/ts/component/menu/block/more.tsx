@@ -162,7 +162,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const object = detailStore.get(rootId, blockId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
-		const cmd = Util.ctrlSymbol();
+		const cmd = keyboard.ctrlSymbol();
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
