@@ -692,19 +692,21 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			menuStore.close('blockContext');
 		});
-		
-		const { marks, text } = this.getMarksFromHtml();
-
-		this.marks = marks;
-		if (value != text) {
-			this.setValue(text);
-
-			focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
-			focus.apply();
-		};
 
 		this.placeHolderCheck();
-		this.setText(this.marks, false);
+
+		if (!block.isTextCode()) {
+			const { marks, text } = this.getMarksFromHtml();
+
+			this.marks = marks;
+			if (value != text) {
+				this.setValue(text);
+
+				focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
+				focus.apply();
+			};
+			this.setText(this.marks, false);
+		};
 	};
 
 	onMention () {
