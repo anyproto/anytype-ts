@@ -364,10 +364,13 @@ class Mark {
 		html = text;
 
 		// Unicode symbols
-		html.replace(/(->|<-)/g, (s: string, p: string) => {
+		html.replace(/(-->|<--|<-->|->|<-)\s/g, (s: string, p: string) => {
 			if (p == '->') p = '→';
 			if (p == '<-') p = '←';
-			text = text.replace(s, p);
+			if (p == '-->') p = '⟶';
+			if (p == '<--') p = '⟵';
+			if (p == '<-->') p = '⟷';
+			text = text.replace(s, p + ' ');
 			return '';
 		});
 
