@@ -26,26 +26,25 @@ class Focus {
 			return;
 		};
 
-		this.prev = { ...this.state };
-
 		this.state = {
 			focused: String(id || ''),
 			range: {
 				from: Number(range.from) || 0,
 				to: Number(range.to) || 0,
-			}
+			},
 		};
 
+		this.prev = Util.objectCopy(this.state);
 		return this;
 	};
 
 	restore () {
-		this.state = { ...this.prev };
+		this.state = Util.objectCopy(this.prev);
 	};
 
 	clear (withRange: boolean) {
 		this.clearRange(withRange);
-		this.set('', { from: 0, to: 0 });
+		this.state = { focused: '', range: { from: 0, to: 0 } };
 	};
 
 	clearRange (withRange: boolean) {
