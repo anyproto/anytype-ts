@@ -535,11 +535,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						if (block.isPage()) {
 							DataUtil.pageSetAlign(rootId, align);
 						} else {
-							C.BlockListSetAlign(rootId, [ blockId ], align, (message: any) => {
-								focus.apply();
-							});
+							C.BlockListSetAlign(rootId, [ blockId ], align);
 						};
-
 						close();
 
 						if (onAlign) {

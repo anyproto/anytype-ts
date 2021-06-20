@@ -107,7 +107,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		};
 		
 		const { from, to } = range;
-		const { content } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		const obj = $('#menuBlockContext');
 
@@ -176,7 +175,10 @@ class MenuBlockContext extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onTurnObject: close,
-					onAlign: close,
+					onAlign: () => {
+						focus.clear(true);
+						close();
+					},
 				});
 				break;
 				

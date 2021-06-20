@@ -15,11 +15,18 @@ class Focus {
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
+
+	prev: State = { 
+		focused: '', 
+		range: { from: 0, to: 0 } 
+	};
 	
 	set (id: string, range: I.TextRange): Focus {
 		if (!range) {
 			return;
 		};
+
+		this.prev = { ...this.state };
 
 		this.state = {
 			focused: String(id || ''),
@@ -30,6 +37,10 @@ class Focus {
 		};
 
 		return this;
+	};
+
+	restore () {
+		this.state = { ...this.prev };
 	};
 
 	clear (withRange: boolean) {
