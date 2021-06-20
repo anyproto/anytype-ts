@@ -622,12 +622,14 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			selection.clear();
 			focus.restore();
 			focus.apply();
 		});
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
+			selection.clear();
 			focus.restore();
 
 			this.blockCreate(focused, I.BlockPosition.Bottom, {
