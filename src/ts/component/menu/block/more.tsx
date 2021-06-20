@@ -176,7 +176,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
 		let linkRoot = null; 
 		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-			return it.content.targetBlockId == rootId;
+			return it.isLink() && (it.content.targetBlockId == rootId);
 		});
 
 		if (favorites.length) {
@@ -380,8 +380,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'unlinkRoot':
-				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-					return it.content.targetBlockId == rootId;
+				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
+					return it.isLink() && (it.content.targetBlockId == rootId);
 				}).map((it: I.Block) => { return it.id; });
 
 				if (favorites.length) {
