@@ -227,13 +227,19 @@ class BlockType extends React.Component<Props, State> {
 		};
 
 		const create = (templateId: string) => {
-			C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
-				C.ApplyTemplate(rootId, templateId, () => {
-					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
-						focus.set(message.blockId, { from: 0, to: 0 });
-						focus.apply();
-					});
+			const onTemplate = () => {
+				C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
+					focus.set(message.blockId, { from: 0, to: 0 });
+					focus.apply();
 				});
+			};
+
+			C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
+				if (templateId) {
+					C.ApplyTemplate(rootId, templateId, onTemplate);
+				} else {
+					onTemplate();
+				};
 			});
 		};
 
