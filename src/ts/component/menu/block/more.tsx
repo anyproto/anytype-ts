@@ -176,14 +176,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
-<<<<<<< Updated upstream
-=======
 			sections = [
 				{ children: [ linkRoot ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
->>>>>>> Stashed changes
 		} else
 		if (block.isPage()) {
 			let template = null;
