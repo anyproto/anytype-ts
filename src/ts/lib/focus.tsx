@@ -16,7 +16,7 @@ class Focus {
 		range: { from: 0, to: 0 } 
 	};
 
-	prev: State = { 
+	backup: State = { 
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
@@ -34,12 +34,12 @@ class Focus {
 			},
 		};
 
-		this.prev = Util.objectCopy(this.state);
+		this.backup = Util.objectCopy(this.state);
 		return this;
 	};
 
 	restore () {
-		this.state = Util.objectCopy(this.prev);
+		this.state = Util.objectCopy(this.backup);
 	};
 
 	clear (withRange: boolean) {
