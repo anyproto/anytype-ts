@@ -639,7 +639,8 @@ class EditorPage extends React.Component<Props, {}> {
 		let length = String(text || '').length;
 		range = range || {};
 
-		if (block.isTextCode() && length && (text[length - 1] == '\n')) {
+		// Last line break doesn't expand range.to
+		if (length && (text[length - 1] == '\n')) {
 			length--;
 		};
 
