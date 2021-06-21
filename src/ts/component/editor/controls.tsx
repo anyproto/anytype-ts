@@ -39,6 +39,7 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
 		if (!allowedDetails) {
 			return null;
@@ -64,10 +65,12 @@ class Controls extends React.Component<Props, {}> {
 						<div className="txt">{translate('editorControlCover')}</div>
 					</div>
 
-					<div id="button-layout" className="btn" onClick={this.onLayout}>
-						<Icon className="layout" />
-						<div className="txt">{translate('editorControlLayout')}</div>
-					</div>
+					{allowedLayout ? (
+						<div id="button-layout" className="btn" onClick={this.onLayout}>
+							<Icon className="layout" />
+							<div className="txt">{translate('editorControlLayout')}</div>
+						</div>
+					) : ''}
 
 					{config.allowDataview ? (
 						<div id="button-relation" className="btn" onClick={this.onRelation}>
