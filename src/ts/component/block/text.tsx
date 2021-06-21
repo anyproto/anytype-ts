@@ -275,8 +275,9 @@ class BlockText extends React.Component<Props, {}> {
 		});
 		
 		items.on('mouseenter.link', function (e: any) {
-			let range = $(this).data('range').split('-');
-			let url = $(this).attr('href');
+			const el = $(this);
+			const range = el.data('range').split('-');
+			const url = el.attr('href');
 			
 			Util.linkPreviewShow(url, $(this), {
 				range: { 
