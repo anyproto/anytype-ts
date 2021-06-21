@@ -239,7 +239,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		value.get(0).innerHTML = html;
-		
+
 		if (!block.isTextCode() && (html != text)) {
 			this.renderLinks();
 			this.renderMentions();
@@ -256,6 +256,8 @@ class BlockText extends React.Component<Props, {}> {
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
+
+		console.log('RenderLinks', items.length);
 		
 		if (!items.length) {
 			return;
