@@ -632,7 +632,8 @@ class EditorPage extends React.Component<Props, {}> {
 			selection.clear();
 			focus.restore();
 
-			this.blockCreate(focused, I.BlockPosition.Bottom, {
+			const focused = focus.state.focused || Constant.blockId.title;
+			this.blockCreate(focused , I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});
