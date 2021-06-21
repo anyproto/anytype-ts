@@ -174,11 +174,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
-		let linkRoot = null; 
+		let resize = { id: 'resize', icon: 'resize', name: 'Set layout width' };
 		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
 			return it.isLink() && (it.content.targetBlockId == rootId);
 		});
 
+		let linkRoot = null;
 		if (favorites.length) {
 			linkRoot = { id: 'unlinkRoot', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
@@ -226,7 +227,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [ align ] },
+				{ children: [ resize, align ] },
 				{ children: [ undo, redo, history, archive ] },
 				{ children: [ linkRoot, template ] },
 				{ children: [ search ] },
@@ -315,6 +316,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		focus.clear(false);
 		
 		switch (item.id) {
+
+			case 'resize':
+				$('#editorWrapper').addClass('isResizing');
+				break;
+
 			case 'undo':
 				C.BlockUndo(rootId);
 				close = false;

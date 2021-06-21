@@ -129,7 +129,11 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 	getSections () {
 		return [
 			{ name: 'Choose layout type', children: DataUtil.menuTurnLayouts() },
-			{ children: [ { id: 'resize', icon: 'resize', name: 'Set layout width' } ] }
+			{ 
+				children: [ 
+					{ id: 'resize', icon: 'resize', name: 'Set layout width' } 
+				]
+			}
 		];
 	};
 	
