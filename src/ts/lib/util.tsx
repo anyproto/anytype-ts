@@ -748,7 +748,7 @@ class Util {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getEditorScrollContainer (type: string) {
+	getScrollContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':

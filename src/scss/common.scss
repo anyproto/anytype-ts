@@ -114,7 +114,7 @@ html.platformWindows {
 }
 
 a { color: $colorBlack; }
-search { background: yellow !important; color: $colorBlack !important; }
+search { background: yellow !important; color: $colorBlack !important; border-radius: 2px; }
 search.active { background: orange !important; }
 
 .dropTarget.isOver.middle { background: rgba(255,187,44,0.3) !important; }

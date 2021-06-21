@@ -77,7 +77,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					</div>
 				</div>
 
-				<div className="body">
+				<div className="body scrollable">
 					{sections.map((item: any, i: number) => (
 						<Section key={i} {...item} />
 					))}
