@@ -1623,8 +1623,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
-		const header = obj.find('#header');
-		const hh = header.height();
+		const hh = Util.sizeHeader();
 
 		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;
