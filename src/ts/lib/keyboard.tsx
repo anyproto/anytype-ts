@@ -126,7 +126,6 @@ class Keyboard {
 
 	pageCreate () {
 		const { focused } = focus.state;
-		const rootId = this.getRootId();
 		const isMainIndex = this.isMainIndex();
 		const isMainEditor = this.isMainEditor();
 
@@ -136,8 +135,11 @@ class Keyboard {
 
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
+		let rootId = '';
 		
 		if (this.isMainEditor()) {
+			rootId = this.getRootId();
+
 			const fb = blockStore.getLeaf(rootId, focused);
 			if (fb) {
 				if (fb.isTextTitle()) {
@@ -154,11 +156,7 @@ class Keyboard {
 		};
 		
 		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
-			if (isMainIndex) {
-				DataUtil.objectOpen({ id: message.targetId });
-			} else {
-				DataUtil.objectOpenPopup({ id: message.targetId });
-			};
+			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 

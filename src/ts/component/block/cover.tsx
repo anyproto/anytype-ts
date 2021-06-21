@@ -68,7 +68,8 @@ class BlockCover extends React.Component<Props, State> {
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
 		let elements = null;
 		if (editing) {
@@ -106,20 +107,18 @@ class BlockCover extends React.Component<Props, State> {
 							<div className="txt">{translate('editorControlCover')}</div>
 						</div>
 
-						{config.allowDataview ? (
-							<React.Fragment>
-								{allowedLayout ? (
-									<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
-										<Icon className="layout" />
-										<div className="txt">{translate('editorControlLayout')}</div>
-									</div>
-								) : ''}
+						{allowedLayout ? (
+							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
+								<Icon className="layout" />
+								<div className="txt">{translate('editorControlLayout')}</div>
+							</div>
+						) : ''}
 
-								<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
-									<Icon className="relation" />
-									<div className="txt">{translate('editorControlRelation')}</div>
-								</div>
-							</React.Fragment>
+						{config.allowDataview ? (
+							<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
+								<Icon className="relation" />
+								<div className="txt">{translate('editorControlRelation')}</div>
+							</div>
 						) : ''}
 					</div>
 				</React.Fragment>
@@ -226,11 +225,6 @@ class BlockCover extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const elements = node.find('.elements');
 		const object = detailStore.get(rootId, rootId, []);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-
-		if (!allowed) {
-			return;
-		};
 		
 		menuStore.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
@@ -240,7 +234,9 @@ class BlockCover extends React.Component<Props, State> {
 			onClose: () => {
 				elements.removeClass('hover');
 			},
+			subIds: Constant.menuIds.layout,
 			data: {
+				rootId: rootId,
 				value: object.layout,
 				onChange: (layout: I.ObjectLayout) => {
 					DataUtil.pageSetLayout(rootId, layout);

@@ -39,7 +39,7 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
 		if (!allowedDetails) {
 			return null;
@@ -65,20 +65,18 @@ class Controls extends React.Component<Props, {}> {
 						<div className="txt">{translate('editorControlCover')}</div>
 					</div>
 
-					{config.allowDataview ? (
-						<React.Fragment>
-							{allowedLayout ? (
-								<div id="button-layout" className="btn" onClick={this.onLayout}>
-									<Icon className="layout" />
-									<div className="txt">{translate('editorControlLayout')}</div>
-								</div>
-							) : ''}
+					{allowedLayout ? (
+						<div id="button-layout" className="btn" onClick={this.onLayout}>
+							<Icon className="layout" />
+							<div className="txt">{translate('editorControlLayout')}</div>
+						</div>
+					) : ''}
 
-							<div id="button-relation" className="btn" onClick={this.onRelation}>
-								<Icon className="relation" />
-								<div className="txt">{translate('editorControlRelation')}</div>
-							</div>
-						</React.Fragment>
+					{config.allowDataview ? (
+						<div id="button-relation" className="btn" onClick={this.onRelation}>
+							<Icon className="relation" />
+							<div className="txt">{translate('editorControlRelation')}</div>
+						</div>
 					) : ''}
 				</div>
 			</div>
@@ -160,11 +158,6 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const object = detailStore.get(rootId, rootId, []);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-
-		if (!allowed) {
-			return;
-		};
 		
 		menuStore.open('blockLayout', { 
 			element: '.editorControls #button-layout',
@@ -174,7 +167,9 @@ class Controls extends React.Component<Props, {}> {
 			onClose: () => {
 				node.removeClass('hover');
 			},
+			subIds: Constant.menuIds.layout,
 			data: {
+				rootId: rootId,
 				value: object.layout,
 				onChange: (layout: I.ObjectLayout) => {
 					DataUtil.pageSetLayout(rootId, layout);
