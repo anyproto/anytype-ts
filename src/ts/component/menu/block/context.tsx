@@ -186,7 +186,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			case I.MarkType.Link:
 				const offset = obj.offset();
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-				//close();
 
 				menuParam = Object.assign(menuParam, {
 					type: I.MenuType.Horizontal,
