@@ -137,6 +137,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			
 			default:
 				marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
+				menuStore.updateData(this.props.id, { marks: marks });
 				onChange(marks);
 				break;
 				
