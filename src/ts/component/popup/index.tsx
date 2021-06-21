@@ -39,7 +39,7 @@ class Popup extends React.Component<Props, {}> {
 
 	render () {
 		const { id } = this.props;
-		
+
 		const Components: any = {
 			settings: PopupSettings,
 			archive: PopupArchive,
@@ -111,7 +111,7 @@ class Popup extends React.Component<Props, {}> {
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
 			const wrap = node.find('#innerWrap');
-			
+
 			node.addClass('show');
 			window.setTimeout(() => { 
 				wrap.css({ transform: 'none' }); 

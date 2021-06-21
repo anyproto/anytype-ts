@@ -519,7 +519,7 @@ class DataUtil {
 		if (popupStore.isOpen(popupId)) {
 			popupStore.update(popupId, param);
 		} else {
-			window.setTimeout(() => { popupStore.open(popupId, param); }, Constant.delay.popup);
+			popupStore.open(popupId, param);
 		};
 	};
 	
