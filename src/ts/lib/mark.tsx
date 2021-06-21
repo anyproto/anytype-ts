@@ -406,8 +406,6 @@ class Mark {
 			return '';
 		});
 
-		console.log('TEXT', text);
-
 		// Markdown
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
@@ -419,8 +417,6 @@ class Mark {
 				p2 = String(p2 || '').trim();
 
 				let offset = Number(text.indexOf(s)) || 0;
-
-				console.log('p3', p3, p3.length);
 
 				marks.push({
 					type: item.type,
