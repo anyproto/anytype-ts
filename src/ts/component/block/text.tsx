@@ -41,6 +41,7 @@ class BlockText extends React.Component<Props, {}> {
 	clicks: number = 0;
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
+	html: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -213,7 +214,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { content } = block;
 		const fields = block.fields || {};
-		const { style } = content;
+		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const text = String(v || '');
@@ -240,10 +241,13 @@ class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 
-		if (!block.isTextCode() && (html != text)) {
-			this.renderLinks();
-			this.renderMentions();
-			this.renderEmoji();
+		if (!block.isTextCode() && (html != this.html) && marks.length) {
+			window.setTimeout(() => {
+				this.renderLinks();
+				this.renderMentions();
+				this.renderEmoji();
+			});
+			this.html = html;
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
@@ -257,8 +261,6 @@ class BlockText extends React.Component<Props, {}> {
 		const items = value.find('lnk');
 		const self = this;
 
-		console.log('RenderLinks', items.length);
-		
 		if (!items.length) {
 			return;
 		};
@@ -269,7 +271,7 @@ class BlockText extends React.Component<Props, {}> {
 			e.preventDefault();
 			ipcRenderer.send('urlOpen', $(this).attr('href'));
 		});
-			
+		
 		items.on('mouseenter.link', function (e: any) {
 			let range = $(this).data('range').split('-');
 			let url = $(this).attr('href');
