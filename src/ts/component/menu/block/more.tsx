@@ -186,7 +186,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isLinkArchive() || block.isObjectSet()) {
 			sections = [
 				{ children: [ linkRoot ] },
 			];

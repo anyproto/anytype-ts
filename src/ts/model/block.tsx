@@ -126,12 +126,20 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
+	isObjectFileKind (): boolean { 
+		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo());
+	};
+
 	isObjectFile (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.File);
 	};
 
 	isObjectImage (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Image);
+	};
+
+	isObjectVideo (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Video);
 	};
 
 	isObjectType (): boolean { 
