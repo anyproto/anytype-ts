@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, translate } from 'ts/lib';
 import { Input, MenuItemVertical, Button } from 'ts/component';
-import { dbStore, menuStore } from 'ts/store';
+import { dbStore, menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -33,11 +33,16 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
 		const relation = this.getRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const type = this.objectTypes.length ? this.objectTypes[0] : '';
 		const objectType = dbStore.getObjectType(type);
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
 		let ccn = [ 'item' ];
 		if (relation) {
@@ -110,7 +115,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 					<React.Fragment>
 						<div className="line" />
 						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
-						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} />
+						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{!this.isReadOnly() ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</React.Fragment>
 				) : ''}
@@ -188,8 +193,13 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	};
 
 	isReadOnly () {
+		const { param, getId } = this.props;
+		const { data } = param;
+		const { rootId, readOnly } = data;
 		const relation = this.getRelation();
-		return relation && (relation.isReadOnly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0));
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
+
+		return readOnly || !allowed || (relation && (relation.isReadOnly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0)));
 	};
 	
 	onRelationType (e: any) {
