@@ -1029,13 +1029,16 @@ class EditorPage extends React.Component<Props, {}> {
 
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
 		const parent = blockStore.getLeaf(rootId, next.parentId);
 		const l = next.getLength();
 		
 		// Auto-open toggle blocks 
 		if (parent && parent.isTextToggle()) {
 			blockStore.toggle(rootId, parent.id, true);
+		};
+
+		if (next.isTextToggle()) {
+			blockStore.toggle(rootId, next.id, true);
 		};
 
 		window.setTimeout(() => {
