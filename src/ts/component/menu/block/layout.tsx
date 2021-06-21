@@ -137,8 +137,13 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let resize = { id: 'resize', icon: 'resize', name: 'Set layout width' };
+
 		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
 			align = null;
+		};
+		if (!allowedDetails) {
+			resize = null;
 		};
 
 		let sections = [];
@@ -148,7 +153,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 		sections.push({ 
 			children: [ 
-				{ id: 'resize', icon: 'resize', name: 'Set layout width' },
+				resize,
 				align,
 			]
 		});

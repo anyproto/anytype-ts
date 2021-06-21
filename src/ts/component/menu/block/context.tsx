@@ -186,7 +186,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 			case I.MarkType.Link:
 				const offset = obj.offset();
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-				close();
 
 				menuParam = Object.assign(menuParam, {
 					type: I.MenuType.Horizontal,
@@ -204,7 +203,9 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						};
 
 						marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
+						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
+
 						window.setTimeout(() => { focus.apply(); }, 15);
 					}
 				});
