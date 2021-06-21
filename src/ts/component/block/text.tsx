@@ -269,15 +269,15 @@ class BlockText extends React.Component<Props, {}> {
 		
 		items.unbind('click.link mouseenter.link');
 			
-		items.on('click.link', function (e: any) {
-			e.preventDefault();
-			ipcRenderer.send('urlOpen', $(this).attr('href'));
-		});
-		
 		items.on('mouseenter.link', function (e: any) {
 			const el = $(this);
 			const range = el.data('range').split('-');
 			const url = el.attr('href');
+
+			el.on('click.link', function (e: any) {
+				e.preventDefault();
+				ipcRenderer.send('urlOpen', $(this).attr('href'));
+			});
 			
 			Util.linkPreviewShow(url, $(this), {
 				range: { 
