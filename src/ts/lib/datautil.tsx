@@ -514,13 +514,7 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		menuStore.closeAll();
-
-		if (popupStore.isOpen(popupId)) {
-			popupStore.update(popupId, param);
-		} else {
-			popupStore.open(popupId, param);
-		};
+		popupStore.open(popupId, param);
 	};
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {

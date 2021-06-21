@@ -41,7 +41,6 @@ class BlockText extends React.Component<Props, {}> {
 	clicks: number = 0;
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
-	html: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -241,13 +240,12 @@ class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 
-		if (!block.isTextCode() && (html != this.html) && marks.length) {
+		if (!block.isTextCode() && (html != text) && marks.length) {
 			window.setTimeout(() => {
 				this.renderLinks();
 				this.renderMentions();
 				this.renderEmoji();
 			});
-			this.html = html;
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
