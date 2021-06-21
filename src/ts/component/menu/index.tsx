@@ -132,6 +132,7 @@ class Menu extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	timeoutPoly: number = 0;
 	ref: any = null;
+	isAnimating: boolean = false;
 
 	state = {
 		tab: '',
@@ -299,6 +300,10 @@ class Menu extends React.Component<Props, State> {
 	};
 	
 	animate () {
+		if (this.isAnimating) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { noAnimation } = param;
 		const menu = $('#' + this.getId());
@@ -306,13 +311,18 @@ class Menu extends React.Component<Props, State> {
 		if (noAnimation) {
 			menu.addClass('noAnimation show').css({ transform: 'none' });
 		} else {
+			this.isAnimating = true;
+
 			raf(() => {
 				if (!this._isMounted) {
 					return;
 				};
 				
 				menu.addClass('show');
-				window.setTimeout(() => { menu.css({ transform: 'none' }); }, Constant.delay.menu);
+				window.setTimeout(() => { 
+					menu.css({ transform: 'none' }); 
+					this.isAnimating = false;
+				}, Constant.delay.menu);
 			});
 		};
 	};
