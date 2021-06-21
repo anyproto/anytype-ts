@@ -43,9 +43,9 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		if (!root) {
 			return null;
 		};
-		
+
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
-		const canSync = !object.templateIsBundled;
+		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {

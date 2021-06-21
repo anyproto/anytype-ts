@@ -27,7 +27,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		};
 
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const canAdd = allowed && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFile() && !root.isObjectImage();
+		const canAdd = allowed && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
 
 		return (
 			<div className="footer footerMainEdit">

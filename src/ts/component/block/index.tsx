@@ -65,7 +65,7 @@ class Block extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const { style, checked } = content || {};
+		const { style, checked } = content;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
 		let canSelect = true;

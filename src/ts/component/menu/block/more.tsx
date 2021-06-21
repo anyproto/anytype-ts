@@ -164,23 +164,34 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
 		const cmd = Util.ctrlSymbol();
 
+		let template = null;
+		let archive = null;
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
-		let linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
 		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
+		let linkRoot = null; 
+		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
+			return it.isLink() && (it.content.targetBlockId == rootId);
+		});
+
+		if (favorites.length) {
+			linkRoot = { id: 'unlinkRoot', icon: 'unfav', name: 'Remove from Favorites' };
+		} else {
+			linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to Favorites' };
+		};
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isLinkArchive() || block.isObjectSet()) {
+			sections = [
+				{ children: [ linkRoot ] },
+			];
 		} else
 		if (block.isPage()) {
-			let template = null;
-			let archive = null;
-
 			if (object.type == Constant.typeId.template) {	
 				template = { id: 'createPage', icon: 'template', name: 'Create object' };
 			} else {
@@ -367,6 +378,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				};
 				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
 				break;
+
+			case 'unlinkRoot':
+				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
+					return it.isLink() && (it.content.targetBlockId == rootId);
+				}).map((it: I.Block) => { return it.id; });
+
+				if (favorites.length) {
+					C.BlockUnlink(blockStore.root, favorites);
+				};
+				break;
 				
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
@@ -514,11 +535,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						if (block.isPage()) {
 							DataUtil.pageSetAlign(rootId, align);
 						} else {
-							C.BlockListSetAlign(rootId, [ blockId ], align, (message: any) => {
-								focus.apply();
-							});
+							C.BlockListSetAlign(rootId, [ blockId ], align);
 						};
-
 						close();
 
 						if (onAlign) {
