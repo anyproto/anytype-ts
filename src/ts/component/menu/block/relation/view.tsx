@@ -231,6 +231,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 			data: {
 				...data,
 				relationKey: relationKey,
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectRelationAdd(rootId, relation);
+				},
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

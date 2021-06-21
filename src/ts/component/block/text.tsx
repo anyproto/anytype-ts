@@ -256,6 +256,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	renderLinks () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('lnk');
@@ -290,6 +294,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderMentions () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('mention');
@@ -352,6 +360,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderEmoji () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('emoji');
