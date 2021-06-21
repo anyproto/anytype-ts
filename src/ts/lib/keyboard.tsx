@@ -249,8 +249,6 @@ class Keyboard {
 
 	onSearch () {
 		const isPopup = popupStore.isOpen();
-		const popup = $('.popup').last().find('#innerWrap');
-		const scrollable = popup.find('.scrollable');
 
 		window.setTimeout(() => {
 			menuStore.open('searchText', {
@@ -259,8 +257,6 @@ class Keyboard {
 				horizontal: I.MenuDirection.Right,
 				classNameWrap: 'fromHeader',
 				data: {
-					searchContainer: isPopup ? popup : $('.page'),
-					scrollContainer: isPopup ? (scrollable.length ? scrollable : popup) : $('html, body'),
 					isPopup: isPopup,
 				},
 			});

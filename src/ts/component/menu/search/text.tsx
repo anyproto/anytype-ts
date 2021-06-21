@@ -83,9 +83,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	search () {
-		const { param } = this.props;
-		const { data } = param;
-		const { searchContainer } = data;
+		const searchContainer = this.getSearchContainer();
 		const value = Util.filterFix(this.ref.getValue());
 
 		if (this.last != value) {
@@ -119,9 +117,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	clear () {
-		const { param } = this.props;
-		const { data } = param;
-		const { searchContainer } = data;
+		const searchContainer = this.getSearchContainer();
 
 		searchContainer.find('search').each((i: number, item: any) => {
 			item = $(item);
@@ -129,10 +125,39 @@ class MenuSearchText extends React.Component<Props, {}> {
 		});
 	};
 
+	getScrollContainer () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
+
+		if (!isPopup) {
+			return $(window);
+		} else {
+			const popup = $('.popup').last().find('#innerWrap');
+			const scrollable = popup.find('.scrollable');
+
+			return scrollable.length ? scrollable : popup;
+		};
+	};
+
+	getSearchContainer () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
+
+		if (!isPopup) {
+			return $('.page');
+		} else {
+			return $('.popup').last().find('#innerWrap');
+		};
+	};
+
 	focus () {
 		const { param } = this.props;
 		const { data } = param;
-		const { searchContainer, scrollContainer, isPopup } = data;
+		const { isPopup } = data;
+		const scrollContainer = this.getScrollContainer();
+		const searchContainer = this.getSearchContainer();
 		const items = searchContainer.find('search');
 		const offset = Constant.size.lastBlock + Util.sizeHeader();
 
@@ -160,7 +185,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 				wh = $(window).height();
 			};
 
-			scrollContainer.stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
+			scrollContainer.scrollTop(y - wh + offset);
 		};
 	};
 	
