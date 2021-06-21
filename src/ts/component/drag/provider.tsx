@@ -128,6 +128,8 @@ class DragProvider extends React.Component<Props, {}> {
 			data = this.hoverData;
 		};
 		let targetId = String(data.id || '');
+		let target = blockStore.getLeaf(rootId, targetId);
+		let position = this.position;
 
 		if (dt.files && dt.files.length) {
 			let paths: string[] = [];
@@ -136,10 +138,15 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 
 			console.log('[dragProvider.onDrop] paths', paths);
-			C.ExternalDropFiles(rootId, targetId, this.position, paths);
+
+			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
+				if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+					blockStore.toggle(rootId, targetId, true);
+				};
+			});
 		} else
-		if (this.hoverData && this.canDrop && (this.position != I.BlockPosition.None)) {
-			this.onDrop(e, data.dropType, data.rootId, targetId, this.position);
+		if (this.hoverData && this.canDrop && (position != I.BlockPosition.None)) {
+			this.onDrop(e, data.dropType, data.rootId, targetId, position);
 		};
 
 		this.clear();
