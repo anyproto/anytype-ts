@@ -374,7 +374,11 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
-	isAllowed (rootId: string, blockId: string, flags: any[]) {
+	isAllowed (rootId: string, blockId: string, flags: any[]): boolean {
+		if (!rootId || !blockId) {
+			return false;
+		};
+
 		const restrictions = this.getRestrictions(rootId, blockId);
 		for (let flag of flags) {
 			if (restrictions.indexOf(flag) >= 0) {

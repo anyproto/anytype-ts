@@ -68,7 +68,8 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockIds } = data;
+		const { rootId } = data;
+		const blockIds = data.blockIds || [];
 		
 		let hasQuote = false;
 		for (let id of blockIds) {

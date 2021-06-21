@@ -174,7 +174,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
-		let resize = { id: 'resize', icon: 'resize', name: 'Set layout width' };
 		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
 			return it.isLink() && (it.content.targetBlockId == rootId);
 		});
@@ -207,10 +206,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			// Restrictions
 
-			if (block.isObjectTask()) {
-				align = null;
-			};
-
 			if (!block.canHaveHistory()) {
 				history = null;
 			};
@@ -218,7 +213,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			if (!allowed) {
 				undo = null;
 				redo = null;
-				align = null;
 				archive = null;
 			};
 
@@ -227,7 +221,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [ resize, align ] },
 				{ children: [ undo, redo, history, archive ] },
 				{ children: [ linkRoot, template ] },
 				{ children: [ search ] },
@@ -245,6 +238,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			let archive = null;
 			let remove = null;
+
 			if (object.isArchived) {
 				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
 			} else {
@@ -316,10 +310,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		focus.clear(false);
 		
 		switch (item.id) {
-
-			case 'resize':
-				$('#editorWrapper').addClass('isResizing');
-				break;
 
 			case 'undo':
 				C.BlockUndo(rootId);
@@ -454,7 +444,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		if (config.allowDataview) {
+			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		};
 
 		switch (item.id) {
 			case 'createTemplate':
@@ -538,11 +530,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (align: I.BlockAlign) => {
-						if (block.isPage()) {
-							DataUtil.pageSetAlign(rootId, align);
-						} else {
-							C.BlockListSetAlign(rootId, [ blockId ], align);
-						};
+						C.BlockListSetAlign(rootId, [ blockId ], align);
 						close();
 
 						if (onAlign) {
