@@ -199,7 +199,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			if (object.isArchived) {
-				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+				//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			} else {
 				archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 			};
@@ -346,10 +346,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
-					const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
+						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
 						DataUtil.objectOpen(object);
 					} else {
 						history.push('/main/index');
