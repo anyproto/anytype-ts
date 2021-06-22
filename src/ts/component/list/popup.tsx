@@ -14,7 +14,7 @@ class ListPopup extends React.Component<Props, {}> {
 
 	render () {
 		const { list } = popupStore;
-		
+
 		return (
 			<div className="popups">
 				{list.map((item: I.Popup, i: number) => (

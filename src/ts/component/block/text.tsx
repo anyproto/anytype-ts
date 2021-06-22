@@ -213,7 +213,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { content } = block;
 		const fields = block.fields || {};
-		const { style } = content;
+		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const text = String(v || '');
@@ -239,11 +239,13 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		value.get(0).innerHTML = html;
-		
-		if (!block.isTextCode() && (html != text)) {
-			this.renderLinks();
-			this.renderMentions();
-			this.renderEmoji();
+
+		if (!block.isTextCode() && (html != text) && marks.length) {
+			window.setTimeout(() => {
+				this.renderLinks();
+				this.renderMentions();
+				this.renderEmoji();
+			});
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
@@ -252,25 +254,30 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	renderLinks () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
-		
+
 		if (!items.length) {
 			return;
 		};
 		
 		items.unbind('click.link mouseenter.link');
 			
-		items.on('click.link', function (e: any) {
-			e.preventDefault();
-			ipcRenderer.send('urlOpen', $(this).attr('href'));
-		});
-			
 		items.on('mouseenter.link', function (e: any) {
-			let range = $(this).data('range').split('-');
-			let url = $(this).attr('href');
+			const el = $(this);
+			const range = el.data('range').split('-');
+			const url = el.attr('href');
+
+			el.on('click.link', function (e: any) {
+				e.preventDefault();
+				ipcRenderer.send('urlOpen', $(this).attr('href'));
+			});
 			
 			Util.linkPreviewShow(url, $(this), {
 				range: { 
@@ -286,6 +293,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderMentions () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('mention');
@@ -348,6 +359,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderEmoji () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('emoji');

@@ -27,6 +27,7 @@ const Constant = require('json/constant.json');
 class Popup extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	isAnimating: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -38,7 +39,7 @@ class Popup extends React.Component<Props, {}> {
 
 	render () {
 		const { id } = this.props;
-		
+
 		const Components: any = {
 			settings: PopupSettings,
 			archive: PopupArchive,
@@ -98,6 +99,11 @@ class Popup extends React.Component<Props, {}> {
 	};
 	
 	animate () {
+		if (this.isAnimating) {
+			return;
+		};
+
+		this.isAnimating = true;
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -105,9 +111,12 @@ class Popup extends React.Component<Props, {}> {
 			
 			const node = $(ReactDOM.findDOMNode(this)); 
 			const wrap = node.find('#innerWrap');
-			
+
 			node.addClass('show');
-			window.setTimeout(() => { wrap.css({ transform: 'none' }); }, Constant.delay.popup);
+			window.setTimeout(() => { 
+				wrap.css({ transform: 'none' }); 
+				this.isAnimating = false;
+			}, Constant.delay.popup);
 		});
 	};
 	

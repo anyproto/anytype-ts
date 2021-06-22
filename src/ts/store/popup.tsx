@@ -19,16 +19,19 @@ class PopupStore {
 	open (id: string, param: I.PopupParam) {
 		param.data = param.data || {};
 
-		this.close(id, () => {
+		const item = this.get(id);
+		if (item) {
+			this.update(id, param);
+		} else {
 			this.popupList.push({ id: id, param: param });
-		});
-		
+		};
+
 		analytics.event(Util.toCamelCase('Popup-' + id));
 		menuStore.closeAll();
 	};
 
 	get (id: string): I.Popup {
-		return this.popupList.find((item: I.Menu) => { return item.id == id; });
+		return this.popupList.find((item: I.Popup) => { return item.id == id; });
 	};
 	
 	@action
@@ -97,7 +100,7 @@ class PopupStore {
 	
 	@action
 	closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.popupList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.popupList;
+		const items = ids && ids.length ? this.popupList.filter((it: I.Popup) => { return ids.indexOf(it.id) >= 0; }) : this.popupList;
 
 		for (let item of items) {
 			this.close(item.id);
