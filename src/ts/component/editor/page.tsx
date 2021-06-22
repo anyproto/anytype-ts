@@ -448,8 +448,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
-		const map = blockStore.getMap(rootId);
-		const platform = Util.getPlatform();
 
 		// Print
 		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
@@ -602,9 +600,9 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 
-			const element = map[first.id];
+			const element = blockStore.getMapElement(rootId, first.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = map[parent.id];
+			const parentElement = blockStore.getMapElement(rootId, parent.id);
 			const idx = parentElement.childrenIds.indexOf(first.id);
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
@@ -652,7 +650,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const platform = Util.getPlatform();
-		const map = blockStore.getMap(rootId);
 		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
 		const element = $(`#block-${block.id}`);
@@ -948,9 +945,9 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			
 			const shift = pressed.match('shift');
-			const element = map[block.id];
+			const element = blockStore.getMapElement(rootId, block.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = map[parent.id];
+			const parentElement = blockStore.getMapElement(rootId, parent.id);
 			const idx = parentElement.childrenIds.indexOf(block.id);
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
@@ -1013,7 +1010,6 @@ class EditorPage extends React.Component<Props, {}> {
 
 		const { focused, range } = focus.state;
 		const { rootId, isPopup } = this.props;
-		const map = blockStore.getMap(rootId);
 		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
@@ -1029,7 +1025,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// If block is closed toggle - find next block on the same level
 		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-			const element = map[block.parentId];
+			const element = blockStore.getMapElement(rootId, block.parentId);
 			const idx = element.childrenIds.indexOf(block.id);
 
 			next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
@@ -1392,11 +1388,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const { rootId } = this.props;
-		const map = blockStore.getMap(rootId);
 		
 		let ret: any[] = [];
 		for (let id of ids) {
-			let element = map[id];
+			let element = blockStore.getMapElement(rootId, id);
 			if (!element) {
 				continue;
 			};

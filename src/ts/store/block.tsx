@@ -13,7 +13,7 @@ class BlockStore {
 	@observable public storeIdTemplate: string = '';
 	@observable public storeIdRelation: string = '';
 
-	public treeMap: Map<string, any[]> = new Map();
+	public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
 	public blockMap: Map<string, I.Block[]> = new Map();
 	public restrictionMap: Map<string, Map<string, any>> = new Map();
 
@@ -119,7 +119,11 @@ class BlockStore {
 	@action
 	add (rootId: string, block: I.Block) {
 		let blocks = this.getBlocks(rootId);
-		blocks.push(new M.Block(block));
+
+		block = new M.Block(block);
+		blocks.push(block);
+
+		this.updateStructure(rootId, block.id, block.childrenIds);
 	};
 
 	@action
@@ -134,26 +138,31 @@ class BlockStore {
 	@action
 	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		let map = this.getMap(rootId);
+		let element = this.getMapElement(rootId, blockId);
 
-		set(map[blockId], 'childrenIds', childrenIds);
+		set(element, 'childrenIds', childrenIds);
+
+		map.set(blockId, element);
 
 		// Update parentId
-		for (let id in map) {
-			(map[id].childrenIds || []).map((it: string) => {
-				if (map[it]) {
-					map[it].parentId = id;
+		for (let [ id, item ] of map.entries()) {
+			(item.childrenIds || []).map((it: string) => {
+				const check = map.get(it);
+				if (check) {
+					check.parentId = id;
+					map.set(it, check);
 				};
 			});
 		};
 	};
 
 	@action
-	delete (rootId: string, id: string) {
+	delete (rootId: string, blockId: string) {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
-		blocks = blocks.filter((it: any) => { return it.id != id; });
-		delete(map[id]);
+		blocks = blocks.filter((it: any) => { return it.id != blockId; });
+		map.delete(blockId);
 	};
 
 	restrictionsSet (rootId: string, restrictions: any) {
@@ -173,7 +182,17 @@ class BlockStore {
 	};
 
 	getMap (rootId: string) {
-		return this.treeMap.get(rootId) || {};
+		return this.treeMap.get(rootId) || new Map();
+	};
+
+	getMapElement (rootId: string, blockId: string) {
+		const map = this.getMap(rootId);
+
+		let element = map.get(blockId);
+		if (!element) {
+			element = new M.BlockStructure({ parentId: '', childrenIds: [] });
+		};
+		return element;
 	};
 
 	getLeaf (rootId: string, id: string): any {
@@ -196,10 +215,8 @@ class BlockStore {
 		});
 	};
 
-	getChildrenIds (rootId: string, id: string): string[] {
-		const map = this.getMap(rootId);
-		const element = map[id] || {};
-
+	getChildrenIds (rootId: string, blockId: string): string[] {
+		const element = this.getMapElement(rootId, blockId);
 		return element.childrenIds || [];
 	};
 
@@ -284,27 +301,28 @@ class BlockStore {
 	};
 
 	getStructure (list: I.Block[]) {
+		let map: Map<string, I.BlockStructure> = new Map();
+
 		list = Util.objectCopy(list || []);
-
-		let map: any = {};
-
 		list.map((item: any) => {
-			map[item.id] = {
+			map.set(item.id, {
 				parentId: '',
 				childrenIds: item.childrenIds || [],
-			};
+			});
 		});
 
-		for (let id in map) {
-			(map[id].childrenIds || []).map((it: string) => {
-				if (map[it]) {
-					map[it].parentId = id;
+		for (let [ id, item ] of map.entries()) {
+			(item.childrenIds || []).map((it: string) => {
+				const check = map.get(it);
+				if (check) {
+					check.parentId = id;
+					map.set(it, check);
 				};
 			});
 		};
 
-		for (let id in map) {
-			map[id] = new M.BlockStructure(map[id]);
+		for (let [ id, item ] of map.entries()) {
+			map.set(id, new M.BlockStructure(item));
 		};
 
 		return map;
@@ -347,9 +365,9 @@ class BlockStore {
 	wrapTree (rootId: string) {
 		let map = this.getMap(rootId);
 		let ret: any = {};
-		for (let id in map) {
+		for (let [ id, item ] of map.entries()) {
 			ret[id] = this.getLeaf(rootId, id);
-			ret[id].parentId = String(map[id].parentId || '');
+			ret[id].parentId = String(item.parentId || '');
 			ret[id].childBlocks = this.getChildren(rootId, id);
 		};
 		return ret[rootId];

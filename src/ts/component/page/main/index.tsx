@@ -443,8 +443,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const list = this.getList();
 		const current = list[oldIndex];
 		const target = list[newIndex];
-		const map = blockStore.getMap(root);
-		const element = map[root];
+		const element = blockStore.getMapElement(root, root);
 		
 		if (!current || !target || !element) {
 			return;
