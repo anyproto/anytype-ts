@@ -250,6 +250,17 @@ class BlockStore {
 		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 
+	getHighestParent (rootId: string, blockId: string): I.Block {
+		const block = blockStore.getLeaf(rootId, blockId);
+		const parent = blockStore.getLeaf(rootId, block.parentId);
+
+		if (parent.isPage() || parent.isLayoutDiv()) {
+			return block;
+		} else {
+			return this.getHighestParent(rootId, parent.id);
+		};
+	};
+
 	setNumbers (rootId: string) {
 		const root = this.wrapTree(rootId);
 		if (!root) {

@@ -1013,6 +1013,8 @@ class EditorPage extends React.Component<Props, {}> {
 
 		const { focused, range } = focus.state;
 		const { rootId, isPopup } = this.props;
+		const map = blockStore.getMap(rootId);
+		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -1023,24 +1025,30 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		let next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		let next: I.Block = null;
+
+		// If block is closed toggle - find next block on the same level
+		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
+			const element = map[block.parentId];
+			const idx = element.childrenIds.indexOf(block.id);
+
+			next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
+		} else {
+			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		};
+
 		if (!next) {
 			return;
 		};
 
 		e.preventDefault();
 
-		const parent = blockStore.getLeaf(rootId, next.parentId);
+		const parent = blockStore.getHighestParent(rootId, next.id);
 		const l = next.getLength();
-		
-		// Auto-open toggle blocks 
-		if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
-			const map = blockStore.getMap(rootId);
-			const element = map[parent.id];
 
-			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { 
-				return (element.childrenIds.indexOf(it.id) < 0) && it.isFocusable(); 
-			});
+		// If highest parent is closed toggle, next is parent
+		if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
+			next = parent;
 		};
 
 		window.setTimeout(() => {
@@ -1049,7 +1057,7 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.scroll(isPopup);
 		});
 	};
-	
+
 	onSelectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
