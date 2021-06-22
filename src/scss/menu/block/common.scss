@@ -48,6 +48,7 @@
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 		}
 		.item * { cursor: pointer; }
+		.item::before { transition: none; }
 
 		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
 		.cellContent.c-longText {

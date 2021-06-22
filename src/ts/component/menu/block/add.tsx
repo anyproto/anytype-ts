@@ -46,11 +46,10 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
-		const { n } = this.state;
 		const items = this.getItems(true);
 		const block = blockStore.getLeaf(rootId, blockId);
-		const length = block.getLength();
 		const idPrefix = 'menuBlockAdd';
+		const idx = this.recalcIndex();
 
 		const rowRenderer = (param: any) => {
 			const { index } = param;
@@ -198,7 +197,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
-											scrollToIndex={n}
+											scrollToIndex={idx}
 										/>
 									)}
 								</AutoSizer>
@@ -323,12 +322,12 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive = (item?: any) => {
 		const items = this.getItems(false);
 		if (item) {
 			this.state.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
-		this.props.setHover((item ? item : items[this.state.n]), scroll);
+		this.props.setHover((item ? item : items[this.state.n]), false);
 	};
 	
 	onKeyDown (e: any) {
@@ -354,7 +353,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 					n = l - 1;
 				};
 				this.setState({ n: n });
-				this.setActive(null, true);
+				this.setActive(items[n]);
 				break;
 				
 			case Key.down:
@@ -364,7 +363,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 					n = 0;
 				};
 				this.setState({ n: n });
-				this.setActive(null, true);
+				this.setActive(items[n]);
 				break;
 				
 			case Key.tab:
@@ -458,7 +457,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	};
 	
 	onOver (e: any, item: any) {
-		this.setActive(item, false);
+		this.setActive(item);
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.add);
@@ -716,6 +715,16 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			return index > 0 ? HEIGHT_SECTION : HEIGHT;
 		};
 		return item.isBlock ? HEIGHT_DESCRIPTION : HEIGHT;
+	};
+
+	recalcIndex () {
+		const { n } = this.state;
+		const itemsWithSection = this.getItems(true);
+		const itemsWithoutSection = itemsWithSection.filter((it: any) => { return !it.isSection; });
+		const active: any = itemsWithoutSection[n] || {};
+		const idx = itemsWithSection.findIndex((it: any) => { return it.id == active.id; });
+
+		return idx;
 	};
 
 };

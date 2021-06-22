@@ -420,7 +420,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { content } = block;
 		const { color, bgColor } = content;
 		const items = this.getItems();
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		if (config.allowDataview) {
+			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		};
 		
 		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive(item, false);

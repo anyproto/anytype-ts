@@ -767,7 +767,7 @@ class Util {
 		switch (type) {
 			default:
 			case 'page':
-				return '.pageMain';
+				return 'body';
 
 			case 'popup':
 				return '#popupPage';

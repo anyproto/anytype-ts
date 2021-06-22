@@ -605,12 +605,18 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			selection.clear();
+			focus.restore();
 			focus.apply();
 		});
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			this.blockCreate(focused, I.BlockPosition.Bottom, {
+			selection.clear();
+			focus.restore();
+
+			const focused = focus.state.focused || Constant.blockId.title;
+			this.blockCreate(focused , I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
 			});
@@ -992,13 +998,16 @@ class EditorPage extends React.Component<Props, {}> {
 
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
 		const parent = blockStore.getLeaf(rootId, next.parentId);
 		const l = next.getLength();
 		
 		// Auto-open toggle blocks 
 		if (parent && parent.isTextToggle()) {
 			blockStore.toggle(rootId, parent.id, true);
+		};
+
+		if (next.isTextToggle()) {
+			blockStore.toggle(rootId, next.id, true);
 		};
 
 		window.setTimeout(() => {
@@ -1234,8 +1243,10 @@ class EditorPage extends React.Component<Props, {}> {
 				offsetX: Constant.size.blockMenu,
 				onOpen: () => {
 					if (block) {
-						focus.set(block.id, { from: currentFrom, to: currentTo });
-						focus.apply();
+						window.setTimeout(() => {
+							focus.set(block.id, { from: currentFrom, to: currentTo });
+							focus.apply();
+						});
 					};
 				},
 				data: {
@@ -1560,8 +1571,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const obj = $(Util.getPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
-		const header = obj.find('#header');
-		const hh = header.height();
+		const hh = Util.sizeHeader();
 
 		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;

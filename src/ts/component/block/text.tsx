@@ -213,7 +213,7 @@ class BlockText extends React.Component<Props, {}> {
 		const { block } = this.props;
 		const { content } = block;
 		const fields = block.fields || {};
-		const { style } = content;
+		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const text = String(v || '');
@@ -239,11 +239,13 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		value.get(0).innerHTML = html;
-		
-		if (!block.isTextCode() && (html != text)) {
-			this.renderLinks();
-			this.renderMentions();
-			this.renderEmoji();
+
+		if (!block.isTextCode() && (html != text) && marks.length) {
+			window.setTimeout(() => {
+				this.renderLinks();
+				this.renderMentions();
+				this.renderEmoji();
+			});
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
@@ -252,25 +254,30 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	renderLinks () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('lnk');
 		const self = this;
-		
+
 		if (!items.length) {
 			return;
 		};
 		
 		items.unbind('click.link mouseenter.link');
 			
-		items.on('click.link', function (e: any) {
-			e.preventDefault();
-			ipcRenderer.send('urlOpen', $(this).attr('href'));
-		});
-			
 		items.on('mouseenter.link', function (e: any) {
-			let range = $(this).data('range').split('-');
-			let url = $(this).attr('href');
+			const el = $(this);
+			const range = el.data('range').split('-');
+			const url = el.attr('href');
+
+			el.on('click.link', function (e: any) {
+				e.preventDefault();
+				ipcRenderer.send('urlOpen', $(this).attr('href'));
+			});
 			
 			Util.linkPreviewShow(url, $(this), {
 				range: { 
@@ -286,6 +293,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderMentions () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('mention');
@@ -348,6 +359,10 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	renderEmoji () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('emoji');
@@ -469,7 +484,6 @@ class BlockText extends React.Component<Props, {}> {
 			
 			if (block.isTextCode()) {
 				value = Util.stringInsert(value, '\t', range.from, range.from);
-				this.marks = Mark.checkRanges(value, this.marks);
 
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
@@ -693,19 +707,21 @@ class BlockText extends React.Component<Props, {}> {
 		keyboard.shortcut('backspace', e, (pressed: string) => {
 			menuStore.close('blockContext');
 		});
-		
-		const { marks, text } = this.getMarksFromHtml();
-
-		this.marks = marks;
-		if (value != text) {
-			this.setValue(text);
-
-			focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
-			focus.apply();
-		};
 
 		this.placeHolderCheck();
-		this.setText(this.marks, false);
+
+		if (!block.isTextCode()) {
+			const { marks, text } = this.getMarksFromHtml();
+
+			this.marks = marks;
+			if (value != text) {
+				this.setValue(text);
+
+				focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
+				focus.apply();
+			};
+			this.setText(this.marks, false);
+		};
 	};
 
 	onMention () {
@@ -925,8 +941,11 @@ class BlockText extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = Util.getPageContainer(isPopup ? 'popup' : 'page');
-			$(pageContainer).unbind('click.context').on('click.context', () => { menuStore.close('blockContext'); });
+			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page');
+			pageContainer.unbind('click.context').on('click.context', () => { 
+				pageContainer.unbind('click.context');
+				menuStore.close('blockContext'); 
+			});
 
 			menuStore.open('blockContext', {
 				element: el,

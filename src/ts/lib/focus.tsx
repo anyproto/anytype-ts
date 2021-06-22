@@ -15,6 +15,11 @@ class Focus {
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
+
+	backup: State = { 
+		focused: '', 
+		range: { from: 0, to: 0 } 
+	};
 	
 	set (id: string, range: I.TextRange): Focus {
 		if (!range) {
@@ -26,15 +31,20 @@ class Focus {
 			range: {
 				from: Number(range.from) || 0,
 				to: Number(range.to) || 0,
-			}
+			},
 		};
 
+		this.backup = Util.objectCopy(this.state);
 		return this;
+	};
+
+	restore () {
+		this.state = Util.objectCopy(this.backup);
 	};
 
 	clear (withRange: boolean) {
 		this.clearRange(withRange);
-		this.set('', { from: 0, to: 0 });
+		this.state = { focused: '', range: { from: 0, to: 0 } };
 	};
 
 	clearRange (withRange: boolean) {

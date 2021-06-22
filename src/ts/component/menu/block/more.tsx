@@ -164,18 +164,29 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
 		const cmd = keyboard.ctrlSymbol();
 
+		let template = null;
+		let archive = null;
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
-		let linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to dashboard' };
 		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
+		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
+			return it.isLink() && (it.content.targetBlockId == rootId);
+		});
+
+		let linkRoot = null;
+		if (favorites.length) {
+			linkRoot = { id: 'unlinkRoot', icon: 'unfav', name: 'Remove from Favorites' };
+		} else {
+			linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to Favorites' };
+		};
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFile() || block.isObjectImage() || block.isLinkArchive() || block.isObjectSet()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isLinkArchive() || block.isObjectSet()) {
 			sections = [
 				{ children: [ linkRoot ] },
 				{ children: [ search ] },
@@ -183,9 +194,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			];
 		} else
 		if (block.isPage()) {
-			let template = null;
-			let archive = null;
-
 			if (object.type == Constant.typeId.template) {	
 				template = { id: 'createPage', icon: 'template', name: 'Create object' };
 			} else {
@@ -200,10 +208,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			// Restrictions
 
-			if (block.isObjectTask()) {
-				align = null;
-			};
-
 			if (!block.canHaveHistory()) {
 				history = null;
 			};
@@ -211,7 +215,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			if (!allowed) {
 				undo = null;
 				redo = null;
-				align = null;
 				archive = null;
 			};
 
@@ -220,7 +223,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [ align ] },
 				{ children: [ undo, redo, history, archive ] },
 				{ children: [ linkRoot, template ] },
 				{ children: [ search ] },
@@ -238,6 +240,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			let archive = null;
 			let remove = null;
+
 			if (object.isArchived) {
 				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
 			} else {
@@ -309,6 +312,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		focus.clear(false);
 		
 		switch (item.id) {
+
 			case 'undo':
 				C.BlockUndo(rootId);
 				close = false;
@@ -372,6 +376,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				};
 				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
 				break;
+
+			case 'unlinkRoot':
+				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
+					return it.isLink() && (it.content.targetBlockId == rootId);
+				}).map((it: I.Block) => { return it.id; });
+
+				if (favorites.length) {
+					C.BlockUnlink(blockStore.root, favorites);
+				};
+				break;
 				
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
@@ -432,7 +446,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		if (config.allowDataview) {
+			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		};
 
 		switch (item.id) {
 			case 'createTemplate':
@@ -516,14 +532,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (align: I.BlockAlign) => {
-						if (block.isPage()) {
-							DataUtil.pageSetAlign(rootId, align);
-						} else {
-							C.BlockListSetAlign(rootId, [ blockId ], align, (message: any) => {
-								focus.apply();
-							});
-						};
-
+						C.BlockListSetAlign(rootId, [ blockId ], align);
 						close();
 
 						if (onAlign) {
