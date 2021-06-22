@@ -1,4 +1,5 @@
 import Block from './block';
+import BlockStructure from './blockStructure';
 import View from './view';
 import ViewRelation from './viewRelation';
 import Relation from './relation';
@@ -9,6 +10,7 @@ import ObjectType from './objectType';
 
 export { 
 	Block,
+	BlockStructure,
 	View,
 	Relation,
 	SelectOption,

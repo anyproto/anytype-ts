@@ -25,7 +25,6 @@ class DragProvider extends React.Component<Props, {}> {
 	refLayer: any = null;
 	type: string = '';
 	ids: string[] = [];
-	map: any;
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
@@ -173,7 +172,6 @@ class DragProvider extends React.Component<Props, {}> {
 		console.log('[dragProvider.onDragStart]', type, ids);
 
 		this.top = this.getScrollContainer().scrollTop();
-		this.map = blockStore.getMap(rootId);
 		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
 		this.unbind();
@@ -234,8 +232,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const target = blockStore.getLeaf(rootId, targetId);
-		const map = blockStore.getMap(rootId);
-		const element = map[targetId];
+		const element = blockStore.getMapElement(rootId, targetId);
 
 		if (!target || !element) {
 			return;
@@ -423,9 +420,9 @@ class DragProvider extends React.Component<Props, {}> {
 		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
-	getParentIds (id: string, parentIds: string[]) {
+	getParentIds (blockId: string, parentIds: string[]) {
 		const { rootId } = this.props;
-		const item = this.map[id];
+		const item = blockStore.getMapElement(rootId, blockId);
 
 		if (!item || (item.parentId == rootId)) {
 			return;

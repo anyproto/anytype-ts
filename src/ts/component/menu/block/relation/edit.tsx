@@ -44,12 +44,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const objectType = dbStore.getObjectType(type);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
-		let ccn = [ 'item' ];
-		if (relation) {
-			ccn.push('disabled');
-		};
-
-
 		const opts = null;
 		/*
 		const opts = (
@@ -107,6 +101,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 					<MenuItemVertical 
 						id="relation-type" 
 						icon={'relation ' + DataUtil.relationClass(this.format)} 
+						className={this.isReadOnly() ? 'isReadOnly' : ''}
 						name={translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
 						arrow={!relation}
