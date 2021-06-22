@@ -37,7 +37,7 @@ class MenuStore {
 		if (item) {
 			this.update(id, param);
 		} else {
-			this.menuList.push(observable({ id: id, param: param }));
+			this.menuList.push({ id: id, param: param });
 		};
 
 		analytics.event(Util.toCamelCase('Menu-' + id));
