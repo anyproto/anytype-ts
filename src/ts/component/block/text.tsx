@@ -241,7 +241,7 @@ class BlockText extends React.Component<Props, {}> {
 		value.get(0).innerHTML = html;
 
 		if (!block.isTextCode() && (html != text) && marks.length) {
-			window.setTimeout(() => {
+			raf(() => {
 				this.renderLinks();
 				this.renderMentions();
 				this.renderEmoji();
