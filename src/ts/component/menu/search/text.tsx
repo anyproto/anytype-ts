@@ -83,9 +83,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	search () {
-		const { param } = this.props;
-		const { data } = param;
-		const { container } = data;
+		const searchContainer = this.getSearchContainer();
 		const value = Util.filterFix(this.ref.getValue());
 
 		if (this.last != value) {
@@ -98,7 +96,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 			return;
 		};
 
-		findAndReplaceDOMText(container.get(0), {
+		findAndReplaceDOMText(searchContainer.get(0), {
 			preset: 'prose',
 			find: new RegExp(value, 'gi'),
 			wrap: 'search',
@@ -119,37 +117,75 @@ class MenuSearchText extends React.Component<Props, {}> {
 	};
 
 	clear () {
-		const { param } = this.props;
-		const { data } = param;
-		const { container } = data;
+		const searchContainer = this.getSearchContainer();
 
-		container.find('search').each((i: number, item: any) => {
+		searchContainer.find('search').each((i: number, item: any) => {
 			item = $(item);
 			item.replaceWith(item.html());
 		});
 	};
 
+	getScrollContainer () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
+
+		if (!isPopup) {
+			return $(window);
+		} else {
+			const popup = $('.popup').last().find('#innerWrap');
+			const scrollable = popup.find('.scrollable');
+
+			return scrollable.length ? scrollable : popup;
+		};
+	};
+
+	getSearchContainer () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
+
+		if (!isPopup) {
+			return $('.page');
+		} else {
+			return $('.popup').last().find('#innerWrap');
+		};
+	};
+
 	focus () {
 		const { param } = this.props;
 		const { data } = param;
-		const { container } = data;
-		const win = $(window);
-		const items = container.find('.editor search');
-		const wh = win.height();
+		const { isPopup } = data;
+		const scrollContainer = this.getScrollContainer();
+		const searchContainer = this.getSearchContainer();
+		const items = searchContainer.find('search');
 		const offset = Constant.size.lastBlock + Util.sizeHeader();
 
 		if (this.n > items.length - 1) {
 			this.n = 0;
 		};
 
-		container.find('search.active').removeClass('active');
+		searchContainer.find('search.active').removeClass('active');
 
 		const next = $(items.get(this.n));
 		if (next && next.length) {
 			next.addClass('active');
 		
-			const y = next.offset().top;
-			$('html, body').stop(true, true).animate({ scrollTop: y - wh + offset }, 100);
+			const st = searchContainer.scrollTop();
+			const no = next.offset().top;
+
+			let wh = 0;
+			let y = 0;
+
+			if (isPopup) {
+				y = no - searchContainer.offset().top + st;
+				wh = scrollContainer.height();
+			} else {
+				y = no;
+				wh = $(window).height();
+			};
+
+			scrollContainer.scrollTop(y - wh + offset);
 		};
 	};
 	

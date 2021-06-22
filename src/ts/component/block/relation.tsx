@@ -66,8 +66,8 @@ class BlockRelation extends React.Component<Props, {}> {
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								onCellChange={this.onCellChange}
-								scrollContainer={Util.getEditorScrollContainer(isPopup ? 'popup' : 'page')}
-								pageContainer={Util.getEditorPageContainer(isPopup ? 'popup' : 'page')}
+								scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
+								pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 								optionCommand={this.optionCommand}
 							/>
 						</div>
