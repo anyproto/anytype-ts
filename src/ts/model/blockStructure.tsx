@@ -17,9 +17,7 @@ class BlockStructure implements I.BlockStructure {
 			childrenIds: observable,
 		});
 
-		intercept(self as any, (change: any) => { 
-			return Util.intercept(self, change); 
-		});
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
