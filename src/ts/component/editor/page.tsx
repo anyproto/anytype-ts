@@ -846,6 +846,13 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		});
 
+		keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
+			if (block.isTextToggle()) {
+				e.preventDefault();
+				blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
+			};
+		});
+
 		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
 			if (menuOpen) {
 				return;
