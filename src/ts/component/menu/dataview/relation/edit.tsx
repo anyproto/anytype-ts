@@ -32,12 +32,16 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
 		const relation = this.getRelation();
 		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const type = this.objectTypes.length ? this.objectTypes[0] : '';
 		const objectType = dbStore.getObjectType(type);
+		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 
 		let ccn = [ 'item' ];
 		if (relation) {
@@ -47,8 +51,8 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const opts = (
 			<React.Fragment>
 				{/*isObject ? (
-					<React.Fragment>
-						<div className="sectionName">Type of target object</div>
+					<div className="section">
+						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
 							name={objectType ? (objectType.name || Constant.default.name) : 'Select object type'} 
@@ -56,13 +60,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							onMouseEnter={this.onObjectType} 
 							arrow={!this.isReadOnly()}
 						/>
-					</React.Fragment>
+					</div>
 				) : ''*/}
 
 				{isDate && relation ? (
-					<React.Fragment>
-						<div className="line" />
-
+					<div className="section">
 						<div className="item" onMouseEnter={this.menuClose}>
 							<Icon className="clock" />
 							<div className="name">Include time</div>
@@ -76,40 +78,52 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 							arrow={true} 
 							onMouseEnter={this.onDateSettings} 
 						/>
-					</React.Fragment>
+					</div>
 				) : ''}
 			</React.Fragment>
 		);
 
 		return (
 			<form onSubmit={this.onSubmit}>
-				<div className="sectionName">Relation name</div>
-				<div className="inputWrap">
-					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} readOnly={this.isReadOnly()} onChange={this.onChange} />
+				<div className="section noLine">
+					<div className="name">Relation name</div>
+					<div className="inputWrap">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							value={relation ? relation.name : ''} 
+							readOnly={this.isReadOnly()} 
+							onChange={this.onChange} 
+						/>
+					</div>
 				</div>
 
-				<div className="sectionName">Relation type</div>
-				<MenuItemVertical 
-					id="relation-type" 
-					icon={'relation ' + DataUtil.relationClass(this.format)} 
-					name={translate('relationName' + this.format)} 
-					onMouseEnter={this.onRelationType} 
-					arrow={!relation}
-				/>
+				<div className={[ 'section', (!opts && !this.isReadOnly() ? 'noLine' : '') ].join(' ')}>
+					<div className="name">Relation type</div>
+					<MenuItemVertical 
+						id="relation-type" 
+						icon={'relation ' + DataUtil.relationClass(this.format)} 
+						name={translate('relationName' + this.format)} 
+						onMouseEnter={this.onRelationType} 
+						arrow={!relation}
+					/>
+				</div>
 				
 				{opts}
 
-				<div className="inputWrap">
-					<Button id="button" text={relation ? 'Save' : 'Create'} className="grey filled c28" onClick={this.onSubmit} />
-				</div>
+				{!this.isReadOnly() ? (
+					<div className="section">
+						<div className="inputWrap">
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
+						</div>
+					</div>
+				) : ''}
 				
-				{relation ? (
-					<React.Fragment>
-						<div className="line" />
+				{relation && (allowed || !this.isReadOnly()) ? (
+					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
-						<MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} />
+						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{!this.isReadOnly() ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
-					</React.Fragment>
+					</div>
 				) : ''}
 			</form>
 		);
@@ -322,10 +336,11 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	isReadOnly () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readOnly } = data;
+		const { readOnly, rootId, blockId } = data;
 		const relation = this.getRelation();
+		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 
-		return readOnly || (relation && (relation.isReadOnly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0)));
+		return readOnly || !allowed || (relation && (relation.isReadOnly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0)));
 	};
 
 	save () {

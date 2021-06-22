@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, translate } from 'ts/lib';
-import { Input, MenuItemVertical, Button } from 'ts/component';
+import { Input, MenuItemVertical, Button, Icon, Switch } from 'ts/component';
 import { dbStore, menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -49,13 +49,14 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			ccn.push('disabled');
 		};
 
+
 		const opts = null;
 		/*
 		const opts = (
 			<React.Fragment>
 				{isObject ? (
-					<React.Fragment>
-						<div className="sectionName">Type of target object</div>
+					<div className="section">
+						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
@@ -63,13 +64,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							onMouseEnter={this.onObjectType} 
 							arrow={relation && !relation.isReadOnly}
 						/>
-					</React.Fragment>
+					</div>
 				) : ''}
 
 				{isDate && relation ? (
-					<React.Fragment>
-						<div className="line" />
-
+					<div className="section">
 						<div className="item" onMouseEnter={this.menuClose}>
 							<Icon className="clock" />
 							<div className="name">Include time</div>
@@ -83,7 +82,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							arrow={relation && !relation.isReadOnly} 
 							onMouseEnter={this.onDateSettings} 
 						/>
-					</React.Fragment>
+					</div>
 				) : ''}
 			</React.Fragment>
 		);
@@ -91,33 +90,45 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 		return (
 			<form onSubmit={this.onSubmit}>
-				<div className="sectionName">Relation name</div>
-				<div className="inputWrap">
-					<Input ref={(ref: any) => { this.ref = ref; }} value={relation ? relation.name : ''} readOnly={this.isReadOnly()} onChange={this.onChange}  />
+				<div className="section noLine">
+					<div className="name">Relation name</div>
+					<div className="inputWrap">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							value={relation ? relation.name : ''} 
+							readOnly={this.isReadOnly()} 
+							onChange={this.onChange} 
+						/>
+					</div>
 				</div>
 
-				<div className="sectionName">Relation type</div>
-				<MenuItemVertical 
-					id="relation-type" 
-					icon={'relation ' + DataUtil.relationClass(this.format)} 
-					name={translate('relationName' + this.format)} 
-					onMouseEnter={this.onRelationType} 
-					arrow={!relation}
-				/>
+				<div className={[ 'section', (!opts && !this.isReadOnly() ? 'noLine' : '') ].join(' ')}>
+					<div className="name">Relation type</div>
+					<MenuItemVertical 
+						id="relation-type" 
+						icon={'relation ' + DataUtil.relationClass(this.format)} 
+						name={translate('relationName' + this.format)} 
+						onMouseEnter={this.onRelationType} 
+						arrow={!relation}
+					/>
+				</div>
 				
 				{opts}
 
-				<div className="inputWrap">
-					<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
-				</div>
-				
-				{relation ? (
-					<React.Fragment>
-						<div className="line" />
-						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
+				{!this.isReadOnly() ? (
+					<div className="section">
+						<div className="inputWrap">
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
+						</div>
+					</div>
+				) : ''}
+
+				{relation && (allowed || !this.isReadOnly()) ? (
+					<div className="section">
+						{/*<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{!this.isReadOnly() ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
-					</React.Fragment>
+					</div>
 				) : ''}
 			</form>
 		);

@@ -262,7 +262,7 @@ class PageMainIndex extends React.Component<Props, State> {
 				searchWrap.removeClass('active');
 				body.unbind('click');
 
-				this.setFilter('';
+				this.setFilter('');
 			});
 		}, 210);
 	};

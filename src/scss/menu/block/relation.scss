@@ -48,7 +48,7 @@
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 		.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 
-		.button { width: 100%; margin-top: 8px; }
+		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
 		.item.disabled { cursor: default; opacity: 1 !important; }
