@@ -6,7 +6,7 @@ import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './m
 import { SmartBlockType, ObjectLayout, ObjectType, RelationType, RelationScope, Relation, OptionScope, SelectOption } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
-import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block } from './block';
+import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
 	DateFormat,
 	TimeFormat,
@@ -88,6 +88,7 @@ export {
 	BlockAlign,
 	BlockComponent,
 	Block,
+	BlockStructure,
 
 	DateFormat,
 	TimeFormat,

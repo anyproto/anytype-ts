@@ -118,24 +118,8 @@ class BlockStore {
 
 	@action
 	add (rootId: string, block: I.Block) {
-		block = new M.Block(block);
-
 		let blocks = this.getBlocks(rootId);
-		let map = this.getMap(rootId);
-
-		blocks.push(block);
-
-		map[block.id] = observable({
-			parentId: block.parentId,
-			childrenIds: block.childrenIds,
-		});
-
-		intercept(map[block.id] as any, (change: any) => {
-			if (change.newValue === map[block.id][change.name]) {
-				return null;
-			};
-			return change;
-		});
+		blocks.push(new M.Block(block));
 	};
 
 	@action
@@ -148,10 +132,10 @@ class BlockStore {
 	};
 
 	@action
-	updateStructure (rootId: string, id: string, childrenIds: string[]) {
+	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		let map = this.getMap(rootId);
 
-		set(map[id], 'childrenIds', childrenIds);
+		set(map[blockId], 'childrenIds', childrenIds);
 
 		// Update parentId
 		for (let id in map) {
@@ -305,10 +289,10 @@ class BlockStore {
 		let map: any = {};
 
 		list.map((item: any) => {
-			map[item.id] = observable({
+			map[item.id] = {
 				parentId: '',
 				childrenIds: item.childrenIds || [],
-			});
+			};
 		});
 
 		for (let id in map) {
@@ -317,6 +301,10 @@ class BlockStore {
 					map[it].parentId = id;
 				};
 			});
+		};
+
+		for (let id in map) {
+			map[id] = new M.BlockStructure(map[id]);
 		};
 
 		return map;
