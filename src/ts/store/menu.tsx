@@ -88,8 +88,6 @@ class MenuStore {
 	
 	@action
 	close (id: string, callBack?: () => void) {
-		console.trace();
-
 		const item = this.get(id);
 
 		if (!item) {

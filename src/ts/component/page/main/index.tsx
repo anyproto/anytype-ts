@@ -304,11 +304,12 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
+		const subIds = [ 'searchObject' ];
 		
 		let menuContext = null;
 		let favorites = []; 
 		let archive = null;
-		let linkRoot = null;
+		let link = null;
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
@@ -323,9 +324,9 @@ class PageMainIndex extends React.Component<Props, State> {
 		};
 
 		if (favorites.length) {
-			linkRoot = { id: 'unlink', icon: 'unfav', name: 'Remove from Favorites' };
+			link = { id: 'unlink', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			linkRoot = { id: 'link', icon: 'fav', name: 'Add to Favorites' };
+			link = { id: 'link', icon: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (object.isArchived) {
@@ -341,7 +342,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const options = [
 			archive,
 			move,
-			linkRoot,
+			link,
 		];
 
 		menuStore.open('select', { 
@@ -349,42 +350,46 @@ class PageMainIndex extends React.Component<Props, State> {
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
+			subIds: subIds,
 			onOpen: (context: any) => {
 				menuContext = context;
 			},
 			data: {
 				options: options,
 				onMouseEnter: (e: any, item: any) => {
-					if (item.id == 'move') {
-						const filters = [
-							{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-						];
+					menuStore.closeAll(subIds, () => {
+						if (item.id == 'move') {
+							const filters = [
+								{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+							];
 
-						if (!config.allowDataview) {
-							filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+							if (!config.allowDataview) {
+								filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+							};
+
+							menuStore.open('searchObject', {
+								element: `#menuSelect #item-${item.id}`,
+								offsetX: menuContext.getSize().width,
+								vertical: I.MenuDirection.Center,
+								isSub: true,
+								data: {
+									rootId: rootId,
+									blockId: item.id,
+									blockIds: [ item.id ],
+									type: I.NavigationType.Move, 
+									skipId: rootId,
+									position: I.BlockPosition.Bottom,
+									onSelect: (item: any) => {
+										menuContext.close();
+									},
+								}
+							});
 						};
-
-						menuStore.open('searchObject', {
-							element: `#menuSelect #item-${item.id}`,
-							offsetX: menuContext.getSize().width,
-							vertical: I.MenuDirection.Center,
-							isSub: true,
-							data: {
-								rootId: rootId,
-								blockId: item.id,
-								blockIds: [ item.id ],
-								type: I.NavigationType.Move, 
-								skipId: rootId,
-								position: I.BlockPosition.Bottom,
-								onSelect: (item: any) => {
-									menuContext.close();
-								},
-							}
-						});
-					};
+					});
 				},
 				onSelect: (e: any, el: any) => {
 					if (el.arrow) {
+						menuStore.closeAll(subIds);
 						return;
 					};
 
