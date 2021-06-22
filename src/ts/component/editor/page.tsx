@@ -1023,7 +1023,7 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		let next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		if (!next) {
 			return;
 		};
@@ -1034,12 +1034,13 @@ class EditorPage extends React.Component<Props, {}> {
 		const l = next.getLength();
 		
 		// Auto-open toggle blocks 
-		if (parent && parent.isTextToggle()) {
-			blockStore.toggle(rootId, parent.id, true);
-		};
+		if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
+			const map = blockStore.getMap(rootId);
+			const element = map[parent.id];
 
-		if (next.isTextToggle()) {
-			blockStore.toggle(rootId, next.id, true);
+			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { 
+				return (element.childrenIds.indexOf(it.id) < 0) && it.isFocusable(); 
+			});
 		};
 
 		window.setTimeout(() => {
@@ -1621,7 +1622,6 @@ class EditorPage extends React.Component<Props, {}> {
 		const cover = node.find('.block.blockCover');
 		const wrapper = $('.pageMainEdit .wrapper');
 		const root = blockStore.getLeaf(rootId, rootId);
-		const obj = $(Util.getEditorPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
 		const hh = Util.sizeHeader();
 
