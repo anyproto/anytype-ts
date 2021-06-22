@@ -199,14 +199,13 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		Storage.set('indexTab', id);
 
-		if ([ Tab.Recent, Tab.Draft ].indexOf(id) >= 0) {
+		if ([ Tab.Draft ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
 
 	load () {
 		const { tab, filter } = this.state;
-		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -214,10 +213,6 @@ class PageMainIndex extends React.Component<Props, State> {
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
 		];
-
-		if (tab == Tab.Recent) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: recent });
-		};
 
 		if (tab == Tab.Draft) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
@@ -228,18 +223,7 @@ class PageMainIndex extends React.Component<Props, State> {
 				return;
 			};
 
-			let pages = message.records;
-			for (let page of pages) {
-				page.order = recent.findIndex((id: string) => { return id == page.id; });
-			};
-
-			pages.sort((c1: any, c2: any) => {
-				if (c1.order > c2.order) return -1;
-				if (c2.order < c1.order) return 1;
-				return 0;
-			});
-
-			this.setState({ pages: pages });
+			this.setState({ pages: message.records });
 		});
 	};
 
@@ -428,12 +412,14 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	getList () {
-		const { root } = blockStore;
+		const { root, recent } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter, pages } = this.state;
 		
 		let reg = null;
 		let list: any[] = [];
+		let rootId = root;
+		let recentIds = [];
 
 		if (filter) {
 			reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -443,8 +429,14 @@ class PageMainIndex extends React.Component<Props, State> {
 			default:
 			case Tab.Favorite:
 			case Tab.Archive:
-				list = blockStore.getChildren(root, root, (it: any) => {
-					const object = detailStore.get(root, it.content.targetBlockId);
+			case Tab.Recent:
+				if (tab == Tab.Recent) {
+					rootId = recent;
+					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
+				};
+
+				list = blockStore.getChildren(rootId, rootId, (it: any) => {
+					const object = detailStore.get(rootId, it.content.targetBlockId);
 					if (it.content.style == I.LinkStyle.Archive) {
 						return false;
 					};
@@ -461,12 +453,23 @@ class PageMainIndex extends React.Component<Props, State> {
 						return !object.isArchived;
 					};
 				}).map((it: any) => {
+					if (tab == Tab.Recent) {
+						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
+					};
 					it.isBlock = true;
 					return it;
 				});
+
+				if (tab == Tab.Recent) {
+					list.sort((c1: any, c2: any) => {
+						if (c1._order > c2._order) return -1;
+						if (c2._order < c1._order) return 1;
+						return 0;
+					});
+				};
+
 				break;
 
-			case Tab.Recent:
 			case Tab.Draft:
 				list = pages;
 				break;
