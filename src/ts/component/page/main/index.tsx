@@ -116,7 +116,7 @@ class PageMainIndex extends React.Component<Props, State> {
 									return <TabItem key={i} {...item} />
 								})}
 							</div>
-							<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
+							<div id="searchWrap" className="searchWrap" onClick={this.onSearch}>
 								<Icon className="search" />
 								<Filter 
 									ref={(ref: any) => { this.filterRef = ref; }} 
@@ -260,17 +260,21 @@ class PageMainIndex extends React.Component<Props, State> {
 		window.setTimeout(() => {
 			body.unbind('click').on('click', (e: any) => {
 				searchWrap.removeClass('active');
-				body.unbind('click')
+				body.unbind('click');
+
+				this.setFilter('';
 			});
 		}, 210);
 	};
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: v });
-			this.load();
-		}, 500);
+		this.timeoutFilter = window.setTimeout(() => { this.setFilter(v); }, 500);
+	};
+
+	setFilter (v: string) {
+		this.setState({ filter: v });
+		this.load();
 	};
 
 	onAccount () {
