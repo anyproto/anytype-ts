@@ -46,7 +46,7 @@ class ListIndex extends React.Component<Props, {}> {
 			let btn = null;
 
 			if (item.isBlock) {
-				object = detailStore.get(root, item.content.targetBlockId, []);
+				object = item._object_;
 				targetId = item.content.targetBlockId;
 			} else {
 				object = item;

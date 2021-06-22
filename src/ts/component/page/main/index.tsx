@@ -67,7 +67,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	render () {
 		const { cover } = commonStore;
 		const { config } = commonStore;
-		const { root, profile } = blockStore;
+		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { tab } = this.state;
 
@@ -278,14 +278,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	onSelect (e: any, item: any) {
 		e.persist();
 
-		const { root } = blockStore;
-
-		let object: any = null;
-		if (item.isBlock) {
-			object = detailStore.get(root, item.content.targetBlockId, []);
-		} else {
-			object = item;
-		};
+		const object = item.isBlock ? item._object_ : item;
 
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, object);
@@ -299,9 +292,6 @@ class PageMainIndex extends React.Component<Props, State> {
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
-
-			crumbs.addRecent(message.targetId);
-			this.load();
 		});
 	};
 
@@ -436,26 +426,30 @@ class PageMainIndex extends React.Component<Props, State> {
 				};
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
-					const object = detailStore.get(rootId, it.content.targetBlockId);
+					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					const { layout, name, _objectEmpty_, isArchived } = object;
+
 					if (it.content.style == I.LinkStyle.Archive) {
 						return false;
 					};
-					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(object.layout) < 0) && !object._objectEmpty_) {
+					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_objectEmpty_) {
 						return false;
 					};
-					if (reg && object.name && !object.name.match(reg)) {
+					if (reg && name && !name.match(reg)) {
 						return false;
 					};
 
 					if (tab == Tab.Archive) {
-						return object.isArchived;
+						return isArchived;
 					} else {
-						return !object.isArchived;
+						return !isArchived;
 					};
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
+
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
 					it.isBlock = true;
 					return it;
 				});
