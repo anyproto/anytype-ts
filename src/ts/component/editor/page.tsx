@@ -1629,9 +1629,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
 		const wrapper = $('.pageMainEdit .wrapper');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
 		const container = this.getScrollContainer();
-		const hh = Util.sizeHeader();
+		const hh = header.height();
 
 		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;
@@ -1648,7 +1650,7 @@ class EditorPage extends React.Component<Props, {}> {
 			controls.css({ top: hh });
 		};
 		if (size.length) {
-			size.css({ top: hh + 8 });
+			size.css({ top: Util.sizeHeader() + 8 });
 		};
 		if (cover.length) {
 			cover.css({ top: hh });

@@ -37,8 +37,7 @@ const Tabs = [
 @observer
 class PageMainIndex extends React.Component<Props, State> {
 	
-	listRef: any = null;
-	filterRef: any = null;
+	refFilter: any = null;
 	id: string = '';
 	timeoutFilter: number = 0;
 
@@ -119,7 +118,7 @@ class PageMainIndex extends React.Component<Props, State> {
 							<div id="searchWrap" className="searchWrap" onClick={this.onSearch}>
 								<Icon className="search" />
 								<Filter 
-									ref={(ref: any) => { this.filterRef = ref; }} 
+									ref={(ref: any) => { this.refFilter = ref; }} 
 									placeHolder="" 
 									placeHolderFocus="" 
 									onChange={this.onFilterChange}
@@ -127,7 +126,6 @@ class PageMainIndex extends React.Component<Props, State> {
 							</div>
 						</div>
 						<ListIndex 
-							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
 							onMore={this.onMore}
@@ -239,13 +237,14 @@ class PageMainIndex extends React.Component<Props, State> {
 		};
 
 		searchWrap.addClass('active');
-		this.filterRef.focus();
+		this.refFilter.focus();
 
 		window.setTimeout(() => {
 			body.unbind('click').on('click', (e: any) => {
 				searchWrap.removeClass('active');
 				body.unbind('click');
 
+				this.refFilter.setValue('');
 				this.setFilter('');
 			});
 		}, 210);
