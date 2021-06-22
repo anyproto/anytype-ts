@@ -315,6 +315,9 @@ class PageMainIndex extends React.Component<Props, State> {
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
+
+			crumbs.addRecent(message.targetId);
+			this.load();
 		});
 	};
 
