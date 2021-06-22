@@ -604,6 +604,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			if (menuStore.isOpen()) {
+				return;
+			};
+
 			selection.clear();
 			focus.restore();
 			focus.apply();
@@ -611,6 +615,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
+			if (menuStore.isOpen()) {
+				return;
+			};
+
 			selection.clear();
 			focus.restore();
 

@@ -466,7 +466,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, blockCreate } = data;
+		const { rootId, blockId } = data;
 		const { config, filter } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		const block = blockStore.getLeaf(rootId, blockId);
