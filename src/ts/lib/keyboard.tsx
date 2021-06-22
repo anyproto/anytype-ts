@@ -1,6 +1,8 @@
 import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
+const { ipcRenderer } = window.require('electron');
+
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
@@ -34,6 +36,9 @@ class Keyboard {
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
+
+		ipcRenderer.removeAllListeners('commandGlobal');
+		ipcRenderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
@@ -45,12 +50,14 @@ class Keyboard {
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
+		const cmd = this.ctrlKey();
+		const isMain = this.isMain();
 
 		this.pressed.push(key);
 
 		// Go back
 		this.shortcut('backspace', e, (pressed: string) => {
-			if (!this.isMain() || (this.isMain() && !this.isMainIndex()) || this.isFocused) {
+			if (!isMain || (isMain && !this.isMainIndex()) || this.isFocused) {
 				return;
 			};
 			this.back();
@@ -72,55 +79,60 @@ class Keyboard {
 			Util.linkPreviewHide(false);
 		});
 
-		// Navigation search
-		this.shortcut('ctrl+s, cmd+s', e, (pressed: string) => {
-			if (popupStore.isOpen('navigation') || !this.isPinChecked || !account) {
-				return;
-			};
-			popupStore.open('search', { 
-				preventResize: true,
-				data: { 
-					type: I.NavigationType.Go, 
-					disableFirstKey: true,
-					rootId: rootId,
-				}, 
+		if (isMain) {
+			// Print
+			keyboard.shortcut(`${cmd}+p`, e, (pressed: string) => {
+				e.preventDefault();
+				this.onPrint();
 			});
-		});
 
-		// Navigation links
-		this.shortcut('ctrl+o, cmd+o', e, (pressed: string) => {
-			if (!account) {
-				return;
-			};
-			popupStore.open('navigation', { 
-				data: { 
-					type: I.NavigationType.Go, 
-					rootId: rootId,
-				}, 
+			// Navigation search
+			this.shortcut(`${cmd}+s`, e, (pressed: string) => {
+				if (popupStore.isOpen('search') || !this.isPinChecked) {
+					return;
+				};
+				popupStore.open('search', { 
+					preventResize: true,
+					data: { 
+						type: I.NavigationType.Go, 
+						disableFirstKey: true,
+						rootId: rootId,
+					}, 
+				});
 			});
-		});
 
-		// Go to dashboard
-		this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
-			let check = platform == I.Platform.Mac ? pressed == 'cmd+enter' : true;
-			if (!check || !authStore.account) {
-				return;
-			};
+			// Text search
+			this.shortcut(`${cmd}+f`, e, (pressed: string) => {
+				this.onSearch();
+			});
 
-			this.history.push('/main/index');
-		});
+			// Navigation links
+			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
+				popupStore.open('navigation', { 
+					data: { 
+						type: I.NavigationType.Go, 
+						rootId: rootId,
+					}, 
+				});
+			});
 
-		// Create new page
-		this.shortcut('ctrl+n, cmd+n', e, (pressed: string) => {
-			let check = platform == I.Platform.Mac ? pressed == 'cmd+n' : true;
-			if (!check) {
-				return;
-			};
+			// Go to dashboard
+			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
+				let check = platform == I.Platform.Mac ? pressed == 'cmd+enter' : true;
+				if (!check || !authStore.account) {
+					return;
+				};
 
-			e.preventDefault();
-			this.pageCreate();
-		});
-		
+				this.history.push('/main/index');
+			});
+
+			// Create new page
+			this.shortcut(`${cmd}+n`, e, (pressed: string) => {
+				e.preventDefault();
+				this.pageCreate();
+			});
+		};
+
 		this.initPinCheck();
 	};
 
@@ -210,6 +222,43 @@ class Keyboard {
 		} else {
 			this.history.goForward();
 		};
+	};
+
+	onCommand (cmd: string, arg: any) {
+		if (!this.isMain()) {
+			return;
+		};
+
+		switch (cmd) {
+			case 'search':
+				this.onSearch();
+				break;
+
+			case 'print':
+				this.onPrint();
+				break;
+		};
+	};
+
+	onPrint () {
+		focus.clearRange(true);
+		window.print();
+	};
+
+	onSearch () {
+		const isPopup = popupStore.isOpen();
+
+		window.setTimeout(() => {
+			menuStore.open('searchText', {
+				element: '#header',
+				type: I.MenuType.Horizontal,
+				horizontal: I.MenuDirection.Right,
+				classNameWrap: 'fromHeader',
+				data: {
+					isPopup: isPopup,
+				},
+			});
+		}, Constant.delay.menu);
 	};
 
 	ctrlByPlatform (e: any) {
@@ -379,6 +428,16 @@ class Keyboard {
 		if (res) {
 			callBack(res);
 		};
+	};
+
+	ctrlSymbol () {
+		const platform = Util.getPlatform();
+		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	};
+
+	ctrlKey () {
+		const platform = Util.getPlatform();
+		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};
 	
 };

@@ -23,7 +23,7 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 		const { version } = this.props;
 
 		return (
-			<div className="header headerMainHistory">
+			<div id="header" className="header headerMainHistory">
 				<div className="side left">
 					<div className="item grey" onClick={this.onBack}>
 						<Icon className="arrow" />{translate('headerHistoryCurrent')}

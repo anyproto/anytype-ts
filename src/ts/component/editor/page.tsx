@@ -53,7 +53,6 @@ class EditorPage extends React.Component<Props, {}> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onMenuAdd = this.onMenuAdd.bind(this);
 		this.onPaste = this.onPaste.bind(this);
-		this.onPrint = this.onPrint.bind(this);
 		this.onLastClick = this.onLastClick.bind(this);
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
@@ -268,10 +267,6 @@ class EditorPage extends React.Component<Props, {}> {
 					focus.apply();
 				};
 				break;
-
-			case 'search':
-				this.onSearch();
-				break;
 		};
 	};
 	
@@ -449,46 +444,34 @@ class EditorPage extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
 		const map = blockStore.getMap(rootId);
-		const platform = Util.getPlatform();
-
-		// Print
-		keyboard.shortcut('ctrl+p,cmd+p', e, (pressed: string) => {
-			e.preventDefault();
-			this.onPrint();
-		});
+		const cmd = keyboard.ctrlKey();
 
 		// Select all
-		keyboard.shortcut('ctrl+a,cmd+a', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 			e.preventDefault();
 			this.onSelectAll();
 		});
 
 		// Copy
-		keyboard.shortcut('ctrl+c, cmd+c', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {
 			this.onCopy(e, false);
 		});
 
 		// Cut
-		keyboard.shortcut('ctrl+x, cmd+x', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
 			this.onCopy(e, true);
 		});
 
 		// Undo
-		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
-		});
-
-		// Search
-		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
-			e.preventDefault();
-			this.onSearch();
 		});
 
 		// History
@@ -508,27 +491,27 @@ class EditorPage extends React.Component<Props, {}> {
 			let type = null;
 
 			// Bold
-			keyboard.shortcut('ctrl+b, cmd+b', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
 				type = I.MarkType.Bold;
 			});
 
 			// Italic
-			keyboard.shortcut('ctrl+i, cmd+i', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+i`, e, (pressed: string) => {
 				type = I.MarkType.Italic;
 			});
 
 			// Strike
-			keyboard.shortcut('ctrl+shift+s, cmd+shift+s', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
 				type = I.MarkType.Strike;
 			});
 
 			// Code
-			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+l`, e, (pressed: string) => {
 				type = I.MarkType.Code;
 			});
 
 			// Link
-			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
 				type = I.MarkType.Link;
 			});
 
@@ -555,14 +538,14 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 
 			// Duplicate
-			keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 				e.preventDefault();
 				focus.clear(true);
 				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
 			});
 
 			// Open action menu
-			keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
 				menuStore.close('blockContext', () => {
 					menuStore.open('blockAction', { 
 						element: '#block-' + ids[0],
@@ -657,34 +640,25 @@ class EditorPage extends React.Component<Props, {}> {
 		const st = win.scrollTop();
 		const element = $(`#block-${block.id}`);
 		const value = element.find('#value');
+		const cmd = keyboard.ctrlKey();
 		
 		let length = String(text || '').length;
 		range = range || {};
 
-		if (block.isTextCode() && length && (text[length - 1] == '\n')) {
+		// Last line break doesn't expand range.to
+		if (length && (text[length - 1] == '\n')) {
 			length--;
 		};
 
 		this.uiHide();
 		
-		// Print or prev string
-		keyboard.shortcut('ctrl+p, cmd+p', e, (pressed: string) => {
-			if (platform == I.Platform.Mac) {
-				if (pressed == 'cmd+p') {
-					e.preventDefault();
-					this.onPrint();
-				};
-				if (pressed == 'ctrl+p') {
-					this.onArrow(e, Key.up, length);
-				};
-			} else {
-				e.preventDefault();
-				this.onPrint();
-			};
-		});
-
-		// Next string
 		if (platform == I.Platform.Mac) {
+			// Print or prev string
+			keyboard.shortcut('ctrl+p', e, (pressed: string) => {
+				this.onArrow(e, Key.up, length);
+			});
+
+			// Next string
 			keyboard.shortcut('ctrl+n', e, (pressed: string) => {
 				this.onArrow(e, Key.down, length);
 			});
@@ -692,38 +666,32 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Select all
 		if ((range.from == 0) && (range.to == length)) {
-			keyboard.shortcut('ctrl+a, cmd+a', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 				e.preventDefault();
 				this.onSelectAll();
 			});
 		};
 
 		// Copy
-		keyboard.shortcut('ctrl+c, cmd+c', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+c`, e, (pressed: string) => {
 			this.onCopy(e, false);
 		});
 
 		// Cut
-		keyboard.shortcut('ctrl+x, cmd+x', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+x`, e, (pressed: string) => {
 			this.onCopy(e, true);
 		});
 
 		// Undo
-		keyboard.shortcut('ctrl+z, cmd+z', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
-		keyboard.shortcut('ctrl+shift+z, cmd+shift+z', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
-		});
-
-		// Search
-		keyboard.shortcut('ctrl+f, cmd+f', e, (pressed: string) => {
-			e.preventDefault();
-			this.onSearch();
 		});
 
 		// History
@@ -733,7 +701,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		// Duplicate
-		keyboard.shortcut('ctrl+d, cmd+d', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
 			C.BlockListDuplicate(rootId, [ block.id ], block.id, I.BlockPosition.Bottom, (message: any) => {
 				if (message.blockIds.length) {
@@ -744,7 +712,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		// Open action menu
-		keyboard.shortcut('ctrl+/, cmd+/, ctrl+shift+/', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockAction', { 
 					element: `#block-${block.id}`,
@@ -769,27 +737,27 @@ class EditorPage extends React.Component<Props, {}> {
 			let type = null;
 
 			// Bold
-			keyboard.shortcut('ctrl+b, cmd+b', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
 				type = I.MarkType.Bold;
 			});
 
 			// Italic
-			keyboard.shortcut('ctrl+i, cmd+i', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+i`, e, (pressed: string) => {
 				type = I.MarkType.Italic;
 			});
 
 			// Strike
-			keyboard.shortcut('ctrl+shift+s, cmd+shift+s', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
 				type = I.MarkType.Strike;
 			});
 
 			// Link
-			keyboard.shortcut('ctrl+k, cmd+k', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
 				type = I.MarkType.Link;
 			});
 
 			// Code
-			keyboard.shortcut('ctrl+l, cmd+l', e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+l`, e, (pressed: string) => {
 				type = I.MarkType.Code;
 			});
 
@@ -849,7 +817,7 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		});
 
-		keyboard.shortcut('ctrl+shift+arrowup, cmd+shift+arrowup, ctrl+shift+arrowdown, cmd+shift+arrowdown', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
 			if (menuOpen) {
 				return;
 			};
@@ -866,7 +834,7 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 
 		// Last/first block
-		keyboard.shortcut('ctrl+arrowup, cmd+arrowup, ctrl+arrowdown, cmd+arrowdown', e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+arrowup, ${cmd}+arrowdown`, e, (pressed: string) => {
 			if (menuOpen) {
 				return;
 			};
@@ -1361,29 +1329,9 @@ class EditorPage extends React.Component<Props, {}> {
 		});
 	};
 
-	onPrint () {
-		focus.clearRange(true);
-		window.print();
-	};
-
 	onHistory () {
 		const { rootId, history } = this.props;
 		history.push('/main/history/' + rootId);
-	};
-
-	onSearch () {
-		const node = $(ReactDOM.findDOMNode(this));
-
-		window.setTimeout(() => {
-			menuStore.open('searchText', {
-				element: '#button-header-more',
-				type: I.MenuType.Horizontal,
-				horizontal: I.MenuDirection.Right,
-				data: {
-					container: node,
-				},
-			});
-		}, Constant.delay.menu);
 	};
 
 	getLayoutIds (ids: string[]) {

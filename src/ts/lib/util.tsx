@@ -748,7 +748,7 @@ class Util {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getEditorScrollContainer (type: string) {
+	getScrollContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
@@ -763,7 +763,7 @@ class Util {
 		};
 	};
 
-	getEditorPageContainer (type: string) {
+	getPageContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
@@ -780,11 +780,6 @@ class Util {
 
 	dateForFile () {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
-	};
-
-	ctrlSymbol () {
-		const platform = this.getPlatform();
-		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
 	};
 
 	sizeHeader (): number {

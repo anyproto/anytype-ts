@@ -473,7 +473,12 @@ function menuInit () {
 				},
 				{
 					label: 'Search', accelerator: 'CmdOrCtrl+F',
-					click: () => { send('commandEditor', 'search'); }
+					click: () => { send('commandGlobal', 'search'); }
+				},
+				{ type: 'separator' },
+				{
+					label: 'Print', accelerator: 'CmdOrCtrl+P',
+					click: () => { send('commandGlobal', 'print'); }
 				},
 			]
 		},

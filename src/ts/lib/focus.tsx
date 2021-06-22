@@ -107,14 +107,15 @@ class Focus {
 
 		const container = isPopup ? $('#popupPage #innerWrap') : $(window);
 		const h = container.height();
+		const no = node.offset().top;
 		const o = Constant.size.lastBlock + Util.sizeHeader();
 		const st = container.scrollTop();
 
 		let y = 0;
 		if (isPopup) {
-			y = node.offset().top - container.offset().top + st;
+			y = no - container.offset().top + st;
 		} else {
-			y = node.offset().top;
+			y = no;
 		};
 
 		if ((y >= st) && (y <= st + h - o)) {

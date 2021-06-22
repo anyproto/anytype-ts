@@ -162,7 +162,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const object = detailStore.get(rootId, blockId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
-		const cmd = Util.ctrlSymbol();
+		const cmd = keyboard.ctrlSymbol();
 
 		let template = null;
 		let archive = null;
@@ -189,6 +189,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isLinkArchive() || block.isObjectSet()) {
 			sections = [
 				{ children: [ linkRoot ] },
+				{ children: [ search ] },
+				{ children: [ print ] },
 			];
 		} else
 		if (block.isPage()) {
@@ -225,7 +227,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ undo, redo, history, archive ] },
 				{ children: [ linkRoot, template ] },
 				{ children: [ search ] },
-				{ children: [ print ] }
+				{ children: [ print ] },
 			];
 
 			sections = sections.map((it: any, i: number) => {
@@ -303,7 +305,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'print':
-				window.setTimeout(() => { window.print(); }, 300);
+				keyboard.onPrint();
 				break;
 				
 			case 'export':
@@ -322,7 +324,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'search':
-				ipcRenderer.send('proxyEvent', 'commandEditor', 'search');
+				keyboard.onSearch();
 				break;
 				
 			case 'archivePage':
