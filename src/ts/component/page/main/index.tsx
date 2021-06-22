@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -299,31 +299,126 @@ class PageMainIndex extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match } = this.props;
-		const { root } = blockStore;
-		const node = $(ReactDOM.findDOMNode(this));
+		const { tab } = this.state;
+		const { root, recent } = blockStore;
+		const { config } = commonStore;
+		const object = item.isBlock ? item._object_ : item;
+		const rootId = tab == Tab.Recent ? recent : root;
+		
+		let menuContext = null;
+		let favorites = []; 
+		let archive = null;
+		let linkRoot = null;
+		let move = { id: 'move', name: 'Move to', arrow: true };
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
-		menuStore.open('blockMore', { 
+		if (config.allowDataview) {
+			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		};
+
+		if (item.isBlock) {
+			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
+				return it.isLink() && (it.content.targetBlockId == item.content.targetBlockId);
+			});
+		};
+
+		if (favorites.length) {
+			linkRoot = { id: 'unlink', icon: 'unfav', name: 'Remove from Favorites' };
+		} else {
+			linkRoot = { id: 'link', icon: 'fav', name: 'Add to Favorites' };
+		};
+
+		if (object.isArchived) {
+			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
+		} else {
+			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
+		};
+
+		if ([ Tab.Favorite, Tab.Archive ].indexOf(tab) < 0) {
+			move = null;
+		};
+
+		const options = [
+			archive,
+			move,
+			linkRoot,
+		];
+
+		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
-			subIds: Constant.menuIds.more,
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
 			data: {
-				rootId: root,
-				blockId: item.id,
-				objectId: item.isBlock ? item.content.targetBlockId : item.id,
-				blockIds: [ item.id ],
-				match: match,
+				options: options,
+				onMouseEnter: (e: any, item: any) => {
+					if (item.id == 'move') {
+						const filters = [
+							{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+						];
+
+						if (!config.allowDataview) {
+							filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+						};
+
+						menuStore.open('searchObject', {
+							element: `#menuSelect #item-${item.id}`,
+							offsetX: menuContext.getSize().width,
+							vertical: I.MenuDirection.Center,
+							isSub: true,
+							data: {
+								rootId: rootId,
+								blockId: item.id,
+								blockIds: [ item.id ],
+								type: I.NavigationType.Move, 
+								skipId: rootId,
+								position: I.BlockPosition.Bottom,
+								onSelect: (item: any) => {
+									menuContext.close();
+								},
+							}
+						});
+					};
+				},
+				onSelect: (e: any, el: any) => {
+					if (el.arrow) {
+						return;
+					};
+
+					switch (el.id) {
+						case 'archive':
+							C.BlockListSetPageIsArchived(rootId, [ item.content.targetBlockId ], true);
+							break;
+
+						case 'unarchive':
+							C.BlockListSetPageIsArchived(rootId, [ item.content.targetBlockId ], false);
+							break;
+
+						case 'link':
+							const newBlock = {
+								type: I.BlockType.Link,
+								content: {
+									targetBlockId: item.content.targetBlockId,
+								}
+							};
+							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+							break;
+
+						case 'unlink':
+							let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
+								return it.isLink() && (it.content.targetBlockId == item.content.targetBlockId);
+							}).map((it: I.Block) => { return it.id; });
+
+							if (favorites.length) {
+								C.BlockUnlink(blockStore.root, favorites);
+							};
+							break;
+					};
+				},
 			},
-			onOpen: () => {
-				raf(() => {
-					node.find('#item-' + item.id).addClass('active');
-				});
-			},
-			onClose: () => {
-				node.find('#item-' + item.id).removeClass('active');
-			}
 		});
 	};
 

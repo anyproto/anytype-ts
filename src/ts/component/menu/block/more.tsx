@@ -232,26 +232,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				it.id = 'page' + i;
 				return it;
 			});
-
-		} else 
-		if (block.isLink()) {
-			const object = detailStore.get(rootId, objectId);
-
-			let archive = null;
-			let remove = null;
-
-			if (object.isArchived) {
-				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
-			} else {
-				archive = { id: 'archiveIndex', icon: 'remove', name: 'Archive' };
-				remove = { id: 'remove', icon: 'unfav', name: 'Remove from Favorites' };
-			};
-
-			sections.push({ children: [
-				archive,
-				remove,
-				move,
-			]});
 		} else {
 			sections.push({ children: [
 				turn,
@@ -509,7 +489,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'move':
 				menuId = 'searchObject';
-				menuParam.className = [ param.className ].join(' ');
 
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
