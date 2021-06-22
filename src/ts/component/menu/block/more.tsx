@@ -200,6 +200,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			if (object.isArchived) {
 				//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+				archive = { id: 'unarchivePage', icon: 'remove', name: 'Restore from archive' };
 			} else {
 				archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 			};
@@ -355,6 +356,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						history.push('/main/index');
 					};
 				});
+				break;
+
+			case 'unarchivePage':
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], false);
 				break;
 
 			case 'archiveIndex':
