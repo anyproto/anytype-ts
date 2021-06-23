@@ -48,12 +48,9 @@
 		.input { border: 1px solid $colorLightGrey; padding: 0px 8px; }
 		.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 
-		.button { width: 100%; margin-top: 8px; }
+		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item.disabled { cursor: default; opacity: 1 !important; }
-		.item.disabled:hover::before { opacity: 0; }
-		
 		.icon.arrow { 
 			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
 			background-image: url('~img/arrow/menu.svg'); 

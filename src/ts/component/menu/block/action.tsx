@@ -504,7 +504,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'move':
 				menuId = 'searchObject';
-				menuParam.className = 'single';
 
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }

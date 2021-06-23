@@ -112,7 +112,7 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		const Relation = (item: any) => (
-			<div className={[ 'item', (item.isHidden ? 'isHidden' : ''), (allowedRelation ? 'canEdit' : '') ].join(' ')}>
+			<div className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
@@ -366,6 +366,7 @@ class PageMainType extends React.Component<Props, State> {
 
 	onRelationEdit (e: any, relationKey: string) {
 		const rootId = this.getRootId();
+		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		
 		menuStore.open('blockRelationEdit', { 
 			element: $(e.currentTarget),
@@ -373,7 +374,7 @@ class PageMainType extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: false,
+				readOnly: !allowed,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

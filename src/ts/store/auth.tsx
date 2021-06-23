@@ -115,6 +115,7 @@ class AuthStore {
 		commonStore.coverSetDefault();
 
 		blockStore.breadcrumbsSet('');
+		blockStore.recentSet('');
 		blockStore.clearAll();
 		detailStore.clearAll();
 

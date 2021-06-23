@@ -242,14 +242,7 @@ class Dispatcher {
 					break;
 
 				case 'blockSetChildrenIds':
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					childrenIds = data.getChildrenidsList() || [];
-					blockStore.updateStructure(rootId, id, childrenIds);
+					blockStore.updateStructure(rootId, data.getId(), data.getChildrenidsList());
 					break;
 
 				case 'blockSetFields':
@@ -677,7 +670,7 @@ class Dispatcher {
 
 		const object = detailStore.get(rootId, rootId, []);
 		
-		let childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
 
 		if ((object.type == Constant.typeId.page) && (childrenIds.length == 1)) {
 			childrenIds.push(Constant.blockId.type);

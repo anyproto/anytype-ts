@@ -443,7 +443,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const block = blockStore.getLeaf(rootId, focused);
 		const ids = selection.get();
-		const map = blockStore.getMap(rootId);
 		const cmd = keyboard.ctrlKey();
 
 		// Select all
@@ -585,12 +584,12 @@ class EditorPage extends React.Component<Props, {}> {
 				return;
 			};
 
-			const element = map[first.id];
+			const element = blockStore.getMapElement(rootId, first.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = map[parent.id];
+			const parentElement = blockStore.getMapElement(rootId, parent.id);
 			const idx = parentElement.childrenIds.indexOf(first.id);
 			const nextId = parentElement.childrenIds[idx - 1];
-			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
+			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, first.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 			
@@ -605,6 +604,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
+			if (menuStore.isOpen()) {
+				return;
+			};
+
 			selection.clear();
 			focus.restore();
 			focus.apply();
@@ -612,6 +615,10 @@ class EditorPage extends React.Component<Props, {}> {
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
+			if (menuStore.isOpen()) {
+				return;
+			};
+
 			selection.clear();
 			focus.restore();
 
@@ -635,7 +642,6 @@ class EditorPage extends React.Component<Props, {}> {
 		
 		const win = $(window);
 		const platform = Util.getPlatform();
-		const map = blockStore.getMap(rootId);
 		const menuOpen = menuStore.isOpen();
 		const st = win.scrollTop();
 		const element = $(`#block-${block.id}`);
@@ -817,6 +823,13 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		});
 
+		keyboard.shortcut('alt+arrowdown, alt+arrowup', e, (pressed: string) => {
+			if (block.isTextToggle()) {
+				e.preventDefault();
+				blockStore.toggle(rootId, block.id, pressed.match('arrowdown') ? true : false);
+			};
+		});
+
 		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
 			if (menuOpen) {
 				return;
@@ -916,9 +929,9 @@ class EditorPage extends React.Component<Props, {}> {
 			e.preventDefault();
 			
 			const shift = pressed.match('shift');
-			const element = map[block.id];
+			const element = blockStore.getMapElement(rootId, block.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
-			const parentElement = map[parent.id];
+			const parentElement = blockStore.getMapElement(rootId, parent.id);
 			const idx = parentElement.childrenIds.indexOf(block.id);
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
@@ -981,6 +994,7 @@ class EditorPage extends React.Component<Props, {}> {
 
 		const { focused, range } = focus.state;
 		const { rootId, isPopup } = this.props;
+		const block = blockStore.getLeaf(rootId, focused);
 		const dir = pressed.match(Key.up) ? -1 : 1;
 
 		if ((dir < 0) && range.to) {
@@ -991,23 +1005,30 @@ class EditorPage extends React.Component<Props, {}> {
 			return;
 		};
 
-		const next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		let next: I.Block = null;
+
+		// If block is closed toggle - find next block on the same level
+		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
+			const element = blockStore.getMapElement(rootId, block.parentId);
+			const idx = element.childrenIds.indexOf(block.id);
+
+			next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
+		} else {
+			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
+		};
+
 		if (!next) {
 			return;
 		};
 
 		e.preventDefault();
 
-		const parent = blockStore.getLeaf(rootId, next.parentId);
+		const parent = blockStore.getHighestParent(rootId, next.id);
 		const l = next.getLength();
-		
-		// Auto-open toggle blocks 
-		if (parent && parent.isTextToggle()) {
-			blockStore.toggle(rootId, parent.id, true);
-		};
 
-		if (next.isTextToggle()) {
-			blockStore.toggle(rootId, next.id, true);
+		// If highest parent is closed toggle, next is parent
+		if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
+			next = parent;
 		};
 
 		window.setTimeout(() => {
@@ -1016,7 +1037,7 @@ class EditorPage extends React.Component<Props, {}> {
 			focus.scroll(isPopup);
 		});
 	};
-	
+
 	onSelectAll () {
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
@@ -1331,11 +1352,10 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 		
 		const { rootId } = this.props;
-		const map = blockStore.getMap(rootId);
 		
 		let ret: any[] = [];
 		for (let id of ids) {
-			let element = map[id];
+			let element = blockStore.getMapElement(rootId, id);
 			if (!element) {
 				continue;
 			};
@@ -1568,10 +1588,11 @@ class EditorPage extends React.Component<Props, {}> {
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
 		const wrapper = $('.pageMainEdit .wrapper');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
-		const obj = $(Util.getPageContainer(isPopup ? 'popup' : 'page'));
 		const container = this.getScrollContainer();
-		const hh = Util.sizeHeader();
+		const hh = header.height();
 
 		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;
@@ -1588,7 +1609,7 @@ class EditorPage extends React.Component<Props, {}> {
 			controls.css({ top: hh });
 		};
 		if (size.length) {
-			size.css({ top: hh + 8 });
+			size.css({ top: Util.sizeHeader() + 8 });
 		};
 		if (cover.length) {
 			cover.css({ top: hh });

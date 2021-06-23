@@ -197,11 +197,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			if (object.type == Constant.typeId.template) {	
 				template = { id: 'createPage', icon: 'template', name: 'Create object' };
 			} else {
-				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template', arrow: true };
+				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
 			};
 
 			if (object.isArchived) {
-				archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+				//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+				archive = { id: 'unarchivePage', icon: 'remove', name: 'Restore from archive' };
 			} else {
 				archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 			};
@@ -233,26 +234,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				it.id = 'page' + i;
 				return it;
 			});
-
-		} else 
-		if (block.isLink()) {
-			const object = detailStore.get(rootId, objectId);
-
-			let archive = null;
-			let remove = null;
-
-			if (object.isArchived) {
-				archive = { id: 'unarchiveIndex', icon: 'remove', name: 'Restore' };
-			} else {
-				archive = { id: 'archiveIndex', icon: 'remove', name: 'Archive' };
-				remove = { id: 'remove', icon: 'unfav', name: 'Remove from Favorites' };
-			};
-
-			sections.push({ children: [
-				archive,
-				remove,
-				move,
-			]});
 		} else {
 			sections.push({ children: [
 				turn,
@@ -302,6 +283,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
+		const object = detailStore.get(rootId, rootId, []);
 		
 		let close = true;
 		
@@ -348,15 +330,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
-					const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
 					
 					if (prev) {
+						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
 						DataUtil.objectOpen(object);
 					} else {
 						history.push('/main/index');
 					};
 				});
+				break;
+
+			case 'unarchivePage':
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], false);
 				break;
 
 			case 'archiveIndex':
@@ -401,6 +387,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
+			case 'createTemplate':
+				C.MakeTemplate(rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.id, layout: object.layout });
+				});
+				break;
+
 			case 'removePage':
 				C.BlockListDeletePage([ blockId ], (message: any) => {
 					if (block.isPage()) {
@@ -424,7 +416,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onTurnObject, onAlign } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		
@@ -451,32 +442,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		switch (item.id) {
-			case 'createTemplate':
-				menuId = 'searchObject';
-				menuParam.className = [ param.className, 'big', 'single' ].join(' ');
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
-
-				menuParam.data = Object.assign(menuParam.data, {
-					isBig: true,
-					placeHolder: 'Find a type of object...',
-					label: 'Your object type library',
-					filters: filters,
-					onSelect: (item: any) => {
-						C.MakeTemplate(rootId, (message: any) => {
-							DataUtil.objectOpen({ id: message.id, layout: object.layout });
-						});
-						close();
-					}
-				});
-				break;
-
 			case 'turnObject':
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');
@@ -506,7 +471,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'move':
 				menuId = 'searchObject';
-				menuParam.className = [ param.className ].join(' ');
 
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }

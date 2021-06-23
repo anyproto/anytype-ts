@@ -17,6 +17,13 @@ class Crumbs {
 				blockStore.breadcrumbsSet(message.blockId);
 			});
 		};
+
+		if (!blockStore.recent) {
+			C.BlockOpenBreadcrumbs((message: any) => {
+				blockStore.recentSet(message.blockId);
+				this.save(I.CrumbsType.Recent, this.get(I.CrumbsType.Recent));
+			});
+		};
 	};
 
 	getKey (key: I.CrumbsType, suffix?: string): string {
@@ -90,6 +97,9 @@ class Crumbs {
 		let blockId = '';
 		if (key == I.CrumbsType.Page) {
 			blockId = blockStore.breadcrumbs;
+		};
+		if (key == I.CrumbsType.Recent) {
+			blockId = blockStore.recent;
 		};
 
 		if (!blockId) {

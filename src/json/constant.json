@@ -94,6 +94,7 @@
 
 	"typeId": {
 		"page": "_otpage",
+		"set": "_otset",
 		"template": "_ottemplate"
 	},
 
@@ -126,9 +127,10 @@
 			"cell": {
 				"default": 192,
 				"title": 288,
-				"min": 192,
+				"min": 20,
 				"max": 500,
-				"edit": 300
+				"edit": 300,
+				"icon": 70
 			}
 		},
 

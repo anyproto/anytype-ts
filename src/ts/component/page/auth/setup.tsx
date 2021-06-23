@@ -154,7 +154,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				if (match.params.id == 'register') {
 					history.push('/auth/success');
 				};
-				
+					
 				if (match.params.id == 'add') {
 					history.push('/auth/pin-select/add');
 				};

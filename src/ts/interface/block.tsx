@@ -62,6 +62,11 @@ export interface BlockComponent {
 	getWrapperWidth?(): number;
 };
 
+export interface BlockStructure {
+	parentId: string;
+	childrenIds: string[];
+};
+
 export interface Block {
 	id: string;
 	type: BlockType;

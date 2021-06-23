@@ -466,7 +466,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, blockCreate } = data;
+		const { rootId, blockId } = data;
 		const { config, filter } = commonStore;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -626,7 +626,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 				};
 
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
-					C.BlockListSetTextStyle(rootId, [ blockId ], item.itemId, onCommand);
+					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
 				} else 
 				if (item.isObject) {
 					const type = dbStore.getObjectType(item.objectTypeId);
@@ -685,7 +685,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		// Clear filter in block text
 		if (block) {
 			// Hack to prevent onBlur save
-			$(`#block-${blockId} .value`).text(text);
+			$(`#block-${blockId} #value`).first().text(text);
 			DataUtil.blockSetText(rootId, block, text, block.content.marks, true, cb);
 		} else {
 			cb();

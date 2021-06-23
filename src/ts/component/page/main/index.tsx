@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -16,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant: any = require('json/constant.json');
 
 enum Tab {
@@ -24,6 +23,7 @@ enum Tab {
 	Favorite = 'favorite',
 	Recent = 'recent',
 	Draft = 'draft',
+	Set = 'Set',
 	Archive = 'archive',
 }
 
@@ -31,14 +31,14 @@ const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Inbox' },
+	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Bin' },
 ];
 
 @observer
 class PageMainIndex extends React.Component<Props, State> {
 	
-	listRef: any = null;
-	filterRef: any = null;
+	refFilter: any = null;
 	id: string = '';
 	timeoutFilter: number = 0;
 
@@ -67,7 +67,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	render () {
 		const { cover } = commonStore;
 		const { config } = commonStore;
-		const { root, profile } = blockStore;
+		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { tab } = this.state;
 
@@ -116,10 +116,10 @@ class PageMainIndex extends React.Component<Props, State> {
 									return <TabItem key={i} {...item} />
 								})}
 							</div>
-							<div id="searchWrap" className="searchWrap" onMouseDown={this.onSearch}>
+							<div id="searchWrap" className="searchWrap" onClick={this.onSearch}>
 								<Icon className="search" />
 								<Filter 
-									ref={(ref: any) => { this.filterRef = ref; }} 
+									ref={(ref: any) => { this.refFilter = ref; }} 
 									placeHolder="" 
 									placeHolderFocus="" 
 									onChange={this.onFilterChange}
@@ -127,7 +127,6 @@ class PageMainIndex extends React.Component<Props, State> {
 							</div>
 						</div>
 						<ListIndex 
-							ref={(ref) => { this.listRef = ref; }}
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
 							onMore={this.onMore}
@@ -199,14 +198,13 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		Storage.set('indexTab', id);
 
-		if ([ Tab.Recent, Tab.Draft ].indexOf(id) >= 0) {
+		if ([ Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
 
 	load () {
 		const { tab, filter } = this.state;
-		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -215,12 +213,12 @@ class PageMainIndex extends React.Component<Props, State> {
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
 		];
 
-		if (tab == Tab.Recent) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: recent });
-		};
-
 		if (tab == Tab.Draft) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
+		};
+
+		if (tab == Tab.Set) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
 		};
 
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
@@ -228,18 +226,7 @@ class PageMainIndex extends React.Component<Props, State> {
 				return;
 			};
 
-			let pages = message.records;
-			for (let page of pages) {
-				page.order = recent.findIndex((id: string) => { return id == page.id; });
-			};
-
-			pages.sort((c1: any, c2: any) => {
-				if (c1.order > c2.order) return -1;
-				if (c2.order < c1.order) return 1;
-				return 0;
-			});
-
-			this.setState({ pages: pages });
+			this.setState({ pages: message.records });
 		});
 	};
 
@@ -255,22 +242,27 @@ class PageMainIndex extends React.Component<Props, State> {
 		};
 
 		searchWrap.addClass('active');
-		this.filterRef.focus();
+		this.refFilter.focus();
 
 		window.setTimeout(() => {
 			body.unbind('click').on('click', (e: any) => {
 				searchWrap.removeClass('active');
-				body.unbind('click')
+				body.unbind('click');
+
+				this.refFilter.setValue('');
+				this.setFilter('');
 			});
 		}, 210);
 	};
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
-		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: v });
-			this.load();
-		}, 500);
+		this.timeoutFilter = window.setTimeout(() => { this.setFilter(v); }, 500);
+	};
+
+	setFilter (v: string) {
+		this.setState({ filter: v });
+		this.load();
 	};
 
 	onAccount () {
@@ -290,14 +282,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	onSelect (e: any, item: any) {
 		e.persist();
 
-		const { root } = blockStore;
-
-		let object: any = null;
-		if (item.isBlock) {
-			object = detailStore.get(root, item.content.targetBlockId, []);
-		} else {
-			object = item;
-		};
+		const object = item.isBlock ? item._object_ : item;
 
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, object);
@@ -318,31 +303,132 @@ class PageMainIndex extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { match } = this.props;
-		const { root } = blockStore;
-		const node = $(ReactDOM.findDOMNode(this));
+		const { tab } = this.state;
+		const { root, recent } = blockStore;
+		const { config } = commonStore;
+		const object = item.isBlock ? item._object_ : item;
+		const rootId = tab == Tab.Recent ? recent : root;
+		const subIds = [ 'searchObject' ];
+		const targetBlockId = item.content?.targetBlockId;
+		
+		let menuContext = null;
+		let favorites = []; 
+		let archive = null;
+		let link = null;
+		let move = { id: 'move', name: 'Move to', arrow: true };
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
-		menuStore.open('blockMore', { 
+		if (config.allowDataview) {
+			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+		};
+
+		if (item.isBlock) {
+			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
+				return it.isLink() && (it.content.targetBlockId == targetBlockId);
+			});
+		};
+
+		if (favorites.length) {
+			link = { id: 'unlink', icon: 'unfav', name: 'Remove from Favorites' };
+		} else {
+			link = { id: 'link', icon: 'fav', name: 'Add to Favorites' };
+		};
+
+		if (object.isArchived) {
+			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
+		} else {
+			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
+		};
+
+		if ([ Tab.Favorite, Tab.Archive ].indexOf(tab) < 0) {
+			move = null;
+		};
+
+		const options = [
+			archive,
+			move,
+			link,
+		];
+
+		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
 			className: 'fromIndex',
-			subIds: Constant.menuIds.more,
+			subIds: subIds,
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
 			data: {
-				rootId: root,
-				blockId: item.id,
-				objectId: item.isBlock ? item.content.targetBlockId : item.id,
-				blockIds: [ item.id ],
-				match: match,
+				options: options,
+				onMouseEnter: (e: any, item: any) => {
+					menuStore.closeAll(subIds, () => {
+						if (item.id == 'move') {
+							const filters = [
+								{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+							];
+
+							if (!config.allowDataview) {
+								filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+							};
+
+							menuStore.open('searchObject', {
+								element: `#menuSelect #item-${item.id}`,
+								offsetX: menuContext.getSize().width,
+								vertical: I.MenuDirection.Center,
+								isSub: true,
+								data: {
+									rootId: rootId,
+									blockId: item.id,
+									blockIds: [ item.id ],
+									type: I.NavigationType.Move, 
+									skipId: rootId,
+									position: I.BlockPosition.Bottom,
+									onSelect: (item: any) => {
+										menuContext.close();
+									},
+								}
+							});
+						};
+					});
+				},
+				onSelect: (e: any, el: any) => {
+					if (el.arrow) {
+						menuStore.closeAll(subIds);
+						return;
+					};
+
+					switch (el.id) {
+						case 'archive':
+							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], true);
+							break;
+
+						case 'unarchive':
+							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], false);
+							break;
+
+						case 'link':
+							const newBlock = {
+								type: I.BlockType.Link,
+								content: {
+									targetBlockId: targetBlockId,
+								}
+							};
+							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+							break;
+
+						case 'unlink':
+							let favorites = blockStore.getChildren(root, root, (it: I.Block) => { 
+								return it.isLink() && (it.content.targetBlockId == targetBlockId);
+							}).map((it: I.Block) => { return it.id; });
+
+							if (favorites.length) {
+								C.BlockUnlink(root, favorites);
+							};
+							break;
+					};
+				},
 			},
-			onOpen: () => {
-				raf(() => {
-					node.find('#item-' + item.id).addClass('active');
-				});
-			},
-			onClose: () => {
-				node.find('#item-' + item.id).removeClass('active');
-			}
 		});
 	};
 
@@ -363,8 +449,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const list = this.getList();
 		const current = list[oldIndex];
 		const target = list[newIndex];
-		const map = blockStore.getMap(root);
-		const element = map[root];
+		const element = blockStore.getMapElement(root, root);
 		
 		if (!current || !target || !element) {
 			return;
@@ -421,12 +506,14 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	getList () {
-		const { root } = blockStore;
+		const { root, recent } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter, pages } = this.state;
 		
 		let reg = null;
 		let list: any[] = [];
+		let rootId = root;
+		let recentIds = [];
 
 		if (filter) {
 			reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -436,30 +523,52 @@ class PageMainIndex extends React.Component<Props, State> {
 			default:
 			case Tab.Favorite:
 			case Tab.Archive:
-				list = blockStore.getChildren(root, root, (it: any) => {
-					const object = detailStore.get(root, it.content.targetBlockId);
+			case Tab.Recent:
+				if (tab == Tab.Recent) {
+					rootId = recent;
+					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
+				};
+
+				list = blockStore.getChildren(rootId, rootId, (it: any) => {
+					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					const { layout, name, _objectEmpty_, isArchived } = object;
+
 					if (it.content.style == I.LinkStyle.Archive) {
 						return false;
 					};
-					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(object.layout) < 0) && !object._objectEmpty_) {
+					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_objectEmpty_) {
 						return false;
 					};
-					if (reg && object.name && !object.name.match(reg)) {
+					if (reg && name && !name.match(reg)) {
 						return false;
 					};
 
 					if (tab == Tab.Archive) {
-						return object.isArchived;
+						return isArchived;
 					} else {
-						return !object.isArchived;
+						return !isArchived;
 					};
 				}).map((it: any) => {
+					if (tab == Tab.Recent) {
+						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
+					};
+
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
 					it.isBlock = true;
 					return it;
 				});
+
+				if (tab == Tab.Recent) {
+					list.sort((c1: any, c2: any) => {
+						if (c1._order > c2._order) return -1;
+						if (c2._order < c1._order) return 1;
+						return 0;
+					});
+				};
+
 				break;
 
-			case Tab.Recent:
+			case Tab.Set:
 			case Tab.Draft:
 				list = pages;
 				break;

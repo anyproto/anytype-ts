@@ -213,13 +213,16 @@ class ViewGrid extends React.Component<Props, {}> {
 		const el = node.find('#' + DataUtil.cellId('head', id, ''));
 		const offset = el.offset();
 		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == id; });
+		const size = Constant.size.dataview.cell;
 
 		let width = e.pageX - offset.left;
-		width = Math.max(Constant.size.dataview.cell.min, width); 
-		width = Math.min(Constant.size.dataview.cell.max, width);
+		width = Math.max(size.min, width); 
+		width = Math.min(size.max, width);
 
 		view.relations[idx].width = width;
 		el.css({ width: width });
+		width <= size.icon ? el.addClass('small') : el.removeClass('small');
+
 		node.find('.resizable').trigger('resize');
 
 		this.resizeLast();

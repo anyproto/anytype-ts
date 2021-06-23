@@ -66,7 +66,6 @@ class Block extends React.Component<Props, {}> {
 		};
 
 		const { style, checked } = content;
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
 
 		let canSelect = true;
 		let canDrop = !readOnly;
@@ -98,10 +97,11 @@ class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 
-				if (block.isTextToggle() && !childrenIds.length && !readOnly) {
-					empty = (
-						<div className="emptyToggle" onClick={this.onToggleClick}>{translate('blockTextToggleEmpty')}</div>
-					);
+				if (block.isTextToggle() && !readOnly) {
+					const childrenIds = blockStore.getChildrenIds(rootId, id);
+					if (!childrenIds.length) {
+						empty = <div className="emptyToggle" onClick={this.onToggleClick}>{translate('blockTextToggleEmpty')}</div>;
+					};
 				};
 
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} />;

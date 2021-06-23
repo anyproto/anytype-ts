@@ -57,7 +57,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation = item.relation;
 			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
-			const condition: any = conditionOptions.find((it: any) => { return it.id == '123'; }) || {};
+			const condition: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
 
 			let value = null;
 			let list = [];
