@@ -94,6 +94,7 @@
 
 	"typeId": {
 		"page": "_otpage",
+		"set": "_otset",
 		"template": "_ottemplate"
 	},
 

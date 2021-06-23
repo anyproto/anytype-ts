@@ -197,7 +197,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			if (object.type == Constant.typeId.template) {	
 				template = { id: 'createPage', icon: 'template', name: 'Create object' };
 			} else {
-				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template', arrow: true };
+				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
 			};
 
 			if (object.isArchived) {
@@ -283,6 +283,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
+		const object = detailStore.get(rootId, rootId, []);
 		
 		let close = true;
 		
@@ -386,6 +387,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
+			case 'createTemplate':
+				C.MakeTemplate(rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.id, layout: object.layout });
+				});
+				break;
+
 			case 'removePage':
 				C.BlockListDeletePage([ blockId ], (message: any) => {
 					if (block.isPage()) {
@@ -409,7 +416,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onTurnObject, onAlign } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		
@@ -436,32 +442,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		switch (item.id) {
-			case 'createTemplate':
-				menuId = 'searchObject';
-				menuParam.className = [ param.className, 'big', 'single' ].join(' ');
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
-
-				menuParam.data = Object.assign(menuParam.data, {
-					isBig: true,
-					placeHolder: 'Find a type of object...',
-					label: 'Your object type library',
-					filters: filters,
-					onSelect: (item: any) => {
-						C.MakeTemplate(rootId, (message: any) => {
-							DataUtil.objectOpen({ id: message.id, layout: object.layout });
-						});
-						close();
-					}
-				});
-				break;
-
 			case 'turnObject':
 				menuId = 'searchObject';
 				menuParam.className = [ param.className, 'single' ].join(' ');

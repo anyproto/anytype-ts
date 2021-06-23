@@ -227,8 +227,6 @@ class IconObject extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any) {
-		e.stopPropagation();
-
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
@@ -239,6 +237,8 @@ class IconObject extends React.Component<Props, {}> {
 		};
 
 		if (canEdit) {
+			e.stopPropagation();
+
 			if (layout == I.ObjectLayout.Task) {
 				onCheckbox(e);
 			};

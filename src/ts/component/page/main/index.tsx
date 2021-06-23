@@ -16,7 +16,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const raf = require('raf');
 const Constant: any = require('json/constant.json');
 
 enum Tab {
@@ -24,6 +23,7 @@ enum Tab {
 	Favorite = 'favorite',
 	Recent = 'recent',
 	Draft = 'draft',
+	Set = 'Set',
 	Archive = 'archive',
 }
 
@@ -31,6 +31,7 @@ const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Inbox' },
+	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Bin' },
 ];
 
@@ -197,7 +198,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		Storage.set('indexTab', id);
 
-		if ([ Tab.Draft ].indexOf(id) >= 0) {
+		if ([ Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
@@ -214,6 +215,10 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (tab == Tab.Draft) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
+		};
+
+		if (tab == Tab.Set) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
 		};
 
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
@@ -563,6 +568,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 				break;
 
+			case Tab.Set:
 			case Tab.Draft:
 				list = pages;
 				break;
