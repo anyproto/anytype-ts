@@ -142,8 +142,6 @@ class BlockStore {
 
 		set(element, 'childrenIds', childrenIds);
 
-		map.set(blockId, element);
-
 		// Update parentId
 		for (let [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {

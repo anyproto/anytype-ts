@@ -685,7 +685,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		// Clear filter in block text
 		if (block) {
 			// Hack to prevent onBlur save
-			$(`#block-${blockId} .value`).text(text);
+			$(`#block-${blockId} #value`).first().text(text);
 			DataUtil.blockSetText(rootId, block, text, block.content.marks, true, cb);
 		} else {
 			cb();
