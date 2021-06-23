@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, DataUtil } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { I } from 'ts/lib';
+import { IconObject } from 'ts/component';
 import { SortableHandle } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 import { menuStore } from 'ts/store';
@@ -25,6 +25,7 @@ class HeadHandle extends React.Component<Props, {}> {
 
 		const Handle = SortableHandle(() => (
 			<div className="flex" onMouseDown={this.onMouseDown} onClick={onClick}>
+				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltip={name} />
 				<div className="name">{name}</div>
 			</div>
 		));

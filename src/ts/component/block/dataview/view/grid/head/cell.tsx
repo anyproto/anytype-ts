@@ -13,6 +13,8 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
+const Constant = require('json/constant.json');
+
 @observer
 class HeadCell extends React.Component<Props, {}> {
 
@@ -27,10 +29,17 @@ class HeadCell extends React.Component<Props, {}> {
 		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
 		const { format, name } = relation;
 		const width = DataUtil.relationWidth(this.props.width, relation.format);
+		const size = Constant.size.dataview.cell;
 
 		const Cell = SortableElement((item: any) => {
+			const cn = [ 'cellHead', DataUtil.relationClass(relation.format) ];
+			
+			if (width <= size.icon) {
+				cn.push('small');
+			};
+
 			return (
-				<div id={DataUtil.cellId('head', relationKey, '')} className={'cellHead ' + DataUtil.relationClass(relation.format)} style={{ width: width }}>
+				<div id={DataUtil.cellId('head', relationKey, '')} className={cn.join(' ')} style={{ width: width }}>
 					<div className="cellContent">
 						<Handle {...relation} onClick={this.onEdit} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }}>

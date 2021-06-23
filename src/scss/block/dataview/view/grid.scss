@@ -10,7 +10,7 @@
 		}
 		.cellHead {
 			.cellContent { cursor: grab; }
-			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; flex-shrink: 0; }
+			.iconObject { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: top; flex-shrink: 0; display: none; }
 			.name { 
 				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px); 
 				@include text-overflow-nw;
@@ -19,6 +19,9 @@
 			.resize {
 				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
 			}
+		}
+		.cellHead.small {
+			.iconObject { display: block; }
 		}
 		.cellHead.last { overflow: visible; }
 		.cellHead.last {
