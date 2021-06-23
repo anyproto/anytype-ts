@@ -6,6 +6,7 @@ import { translate } from 'ts/lib';
 interface Props {
 	className?: string;
 	inputClassName?: string;
+	value?: string;
 	placeHolder?: string;
 	placeHolderFocus?: string;
 	onFocus?(e: any): void;
@@ -37,7 +38,7 @@ class Filter extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { placeHolder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
+		const { value, placeHolder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
 		const cn = [ 'filter', className ];
 
 		return (
@@ -47,6 +48,7 @@ class Filter extends React.Component<Props, {}> {
 						ref={(ref: any) => { this.ref = ref; }} 
 						className={inputClassName}
 						placeHolder={placeHolder} 
+						value={value}
 						onFocus={this.onFocus} 
 						onBlur={this.onBlur} 
 						onChange={this.onChange} 
@@ -58,6 +60,10 @@ class Filter extends React.Component<Props, {}> {
 				<div className="line" />
 			</div>
 		);
+	};
+
+	componentDidMount() {
+		this.ref.setValue(this.props.value);
 	};
 
 	focus () {

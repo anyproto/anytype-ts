@@ -112,6 +112,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 								ref={(ref: any) => { this.ref = ref; }} 
 								placeHolder={placeHolder} 
 								placeHolderFocus={placeHolderFocus} 
+								value={filter}
 								onChange={(e: any) => { this.onKeyUp(e, false); }} 
 							/>
 						) : ''}
