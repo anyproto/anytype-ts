@@ -158,12 +158,16 @@ class SmileUtil {
 			return this.cache[icon];
 		};
 
-		let data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+		let data: any = null;
 
-		// Try to get emoji with divider byte
-		if (!data) {
-			data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);
-		};
+		try {
+			data = getEmojiDataFromNative(icon, 'apple', EmojiData);
+
+			// Try to get emoji with divider byte
+			if (!data) {
+				data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);
+			};
+		} catch (e) {};
 
 		if (data) {
 			this.cache[icon] = { 

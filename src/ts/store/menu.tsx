@@ -88,11 +88,6 @@ class MenuStore {
 	
 	@action
 	close (id: string, callBack?: () => void) {
-		console.log('[close]', id);
-		if (id == 'dataviewOptionValues') {
-			console.trace();
-		};
-
 		const item = this.get(id);
 
 		if (!item) {
