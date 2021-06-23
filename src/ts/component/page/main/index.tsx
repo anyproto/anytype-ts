@@ -219,6 +219,14 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
+			filters.push({ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
+				value: [
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			});
 		};
 
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
