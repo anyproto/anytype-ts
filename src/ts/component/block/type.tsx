@@ -90,6 +90,8 @@ class BlockType extends React.Component<Props, State> {
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
 
+		items.sort(DataUtil.sortByName);
+
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
