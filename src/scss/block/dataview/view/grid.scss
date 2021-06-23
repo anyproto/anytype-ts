@@ -6,7 +6,7 @@
 
 		.cellHead { 
 			text-align: left; color: $colorVeryDarkGrey; padding: 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
-			@include text-overflow-nw; cursor: grab; display: table-cell;
+			@include text-overflow-nw; cursor: grab; display: inline-block;
 		}
 		.cellHead {
 			.cellContent { cursor: grab; }

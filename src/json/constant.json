@@ -126,7 +126,7 @@
 			"cell": {
 				"default": 192,
 				"title": 288,
-				"min": 192,
+				"min": 20,
 				"max": 500,
 				"edit": 300
 			}
