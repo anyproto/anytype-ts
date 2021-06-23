@@ -589,7 +589,7 @@ class EditorPage extends React.Component<Props, {}> {
 			const parentElement = blockStore.getMapElement(rootId, parent.id);
 			const idx = parentElement.childrenIds.indexOf(first.id);
 			const nextId = parentElement.childrenIds[idx - 1];
-			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
+			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, first.id, -1);
 			const obj = shift ? parent : next;
 			const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 			
