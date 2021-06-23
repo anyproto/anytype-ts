@@ -107,6 +107,7 @@ html.platformWindows {
 .over { overflow: hidden !important; }
 .empty { color: $colorMediumGrey; }
 .isDone { color: $colorMediumGrey; }
+.placeHolder { pointer-events: none; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

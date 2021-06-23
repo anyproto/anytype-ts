@@ -54,6 +54,8 @@ class PageMainSet extends React.Component<Props, {}> {
 			object.name = '';
 		};
 
+		console.log(allowedDetails);
+
 		const Editor = (item: any) => {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
