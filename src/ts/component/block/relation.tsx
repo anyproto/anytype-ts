@@ -33,7 +33,8 @@ class BlockRelation extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedRelation = !readOnly && !relation.isReadOnly;
+		const allowedValue = allowedRelation && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
@@ -50,7 +51,7 @@ class BlockRelation extends React.Component<Props, {}> {
 						</div>
 						<div 
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(relation.format), (allowed ? 'canEdit' : '') ].join(' ')} 
+							className={[ 'cell', DataUtil.relationClass(relation.format), (allowedValue ? 'canEdit' : '') ].join(' ')} 
 							onClick={this.onCellClick}
 						>
 							<Cell 
@@ -61,7 +62,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								relationKey={relation.relationKey}
 								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
 								viewType={I.ViewType.Grid}
-								readOnly={readOnly}
+								readOnly={!allowedValue}
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
