@@ -2,11 +2,11 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead { display: table-row; box-shadow: 0px 1px #e0ded2; }
+		.rowHead { display: table-row; box-shadow: 0px 1px #e0ded2; white-space: nowrap; }
 
 		.cellHead { 
 			text-align: left; color: $colorVeryDarkGrey; padding: 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
-			@include text-overflow-nw; cursor: grab; display: inline-block;
+			@include text-overflow-nw; cursor: grab; display: inline-block; vertical-align: top;
 		}
 		.cellHead {
 			.cellContent { cursor: grab; }
