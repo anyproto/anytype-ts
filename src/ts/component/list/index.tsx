@@ -135,6 +135,10 @@ class ListIndex extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidUpdate () {
+		$(window).trigger('resize');
+	};
+
 	onCheckbox (e: any, item: any) {
 		e.preventDefault();
 		e.stopPropagation();

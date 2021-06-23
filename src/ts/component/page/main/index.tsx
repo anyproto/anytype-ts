@@ -304,6 +304,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
+		const targetBlockId = item.content?.targetBlockId;
 		
 		let menuContext = null;
 		let favorites = []; 
@@ -318,7 +319,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (item.isBlock) {
 			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-				return it.isLink() && (it.content.targetBlockId == item.content.targetBlockId);
+				return it.isLink() && (it.content.targetBlockId == targetBlockId);
 			});
 		};
 
@@ -394,30 +395,30 @@ class PageMainIndex extends React.Component<Props, State> {
 
 					switch (el.id) {
 						case 'archive':
-							C.BlockListSetPageIsArchived(rootId, [ item.content.targetBlockId ], true);
+							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], true);
 							break;
 
 						case 'unarchive':
-							C.BlockListSetPageIsArchived(rootId, [ item.content.targetBlockId ], false);
+							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], false);
 							break;
 
 						case 'link':
 							const newBlock = {
 								type: I.BlockType.Link,
 								content: {
-									targetBlockId: item.content.targetBlockId,
+									targetBlockId: targetBlockId,
 								}
 							};
 							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
 							break;
 
 						case 'unlink':
-							let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
-								return it.isLink() && (it.content.targetBlockId == item.content.targetBlockId);
+							let favorites = blockStore.getChildren(root, root, (it: I.Block) => { 
+								return it.isLink() && (it.content.targetBlockId == targetBlockId);
 							}).map((it: I.Block) => { return it.id; });
 
 							if (favorites.length) {
-								C.BlockUnlink(blockStore.root, favorites);
+								C.BlockUnlink(root, favorites);
 							};
 							break;
 					};
