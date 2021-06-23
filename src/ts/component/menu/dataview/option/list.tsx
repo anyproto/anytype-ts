@@ -51,6 +51,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			const active = value.indexOf(item.id) >= 0;
 			
 			let content = null;
 			if (item.id == 'add') {
@@ -72,6 +73,7 @@ class MenuOptionList extends React.Component<Props, State> {
 						<div className="buttons">
 							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 						</div>
+						{active ? <Icon className="chk" /> : ''}
 					</div>
 				);
 			};
@@ -270,20 +272,18 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.close('dataviewOptionEdit', () => {
-			menuStore.open('dataviewOptionEdit', { 
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: 288,
-				vertical: I.MenuDirection.Center,
-				passThrough: true,
-				noFlipY: true,
-				noAnimation: true,
-				classNameWrap: classNameWrap,
-				data: {
-					...data,
-					option: item,
-				}
-			});
+		menuStore.open('dataviewOptionEdit', { 
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: 288,
+			vertical: I.MenuDirection.Center,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
+			classNameWrap: classNameWrap,
+			data: {
+				...data,
+				option: item,
+			}
 		});
 	};
 	
