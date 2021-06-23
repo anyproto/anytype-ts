@@ -313,7 +313,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Local, name: 'Everywhere', children: [] };
-		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Format', children: [] };
+		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Suggested', children: [] };
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
