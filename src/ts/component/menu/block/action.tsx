@@ -78,7 +78,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			<div>
 				<Filter 
 					ref={(ref: any) => { this.ref = ref; }} 
-					placeHolderFocus="Filter actions..." 
+					placeholderFocus="Filter actions..." 
 					value={filter}
 					onFocus={this.onFilterFocus} 
 					onBlur={this.onFilterBlur} 
@@ -500,7 +500,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
-					placeHolder: 'Find a type of object...',
+					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
 					filters: filters,
 					onSelect: (item: any) => {

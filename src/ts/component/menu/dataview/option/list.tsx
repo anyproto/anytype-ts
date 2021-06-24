@@ -96,7 +96,7 @@ class MenuOptionList extends React.Component<Props, State> {
 			<div className="wrap">
 				<Filter 
 					ref={(ref: any) => { this.ref = ref; }} 
-					placeHolderFocus="Filter or create options..." 
+					placeholderFocus="Filter or create options..." 
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>

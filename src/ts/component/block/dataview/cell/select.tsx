@@ -47,7 +47,7 @@ class CellSelect extends React.Component<Props, State> {
 						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeHolderCell${relation.format}`)}</div>
+					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

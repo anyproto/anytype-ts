@@ -363,16 +363,16 @@
 	"layout8": { "en": "Image" },
 	"layout20": { "en": "Database" },
 
-	"placeHolderCell0": { "en": "Enter text" },
-	"placeHolderCell1": { "en": "Enter text" },	
-	"placeHolderCell2": { "en": "Enter number" },	
-	"placeHolderCell3": { "en": "Select status" },	
-	"placeHolderCell4": { "en": "Enter date" },	
-	"placeHolderCell5": { "en": "Select files" },	
-	"placeHolderCell7": { "en": "Enter url" },	
-	"placeHolderCell8": { "en": "Enter e-mail" },	
-	"placeHolderCell9": { "en": "Enter phone" },	
-	"placeHolderCell11": { "en": "Select tags" },	
-	"placeHolderCell100": { "en": "Select objects" }
+	"placeholderCell0": { "en": "Enter text" },
+	"placeholderCell1": { "en": "Enter text" },	
+	"placeholderCell2": { "en": "Enter number" },	
+	"placeholderCell3": { "en": "Select status" },	
+	"placeholderCell4": { "en": "Enter date" },	
+	"placeholderCell5": { "en": "Select files" },	
+	"placeholderCell7": { "en": "Enter url" },	
+	"placeholderCell8": { "en": "Enter e-mail" },	
+	"placeholderCell9": { "en": "Enter phone" },
+	"placeholderCell11": { "en": "Select tags" },
+	"placeholderCell100": { "en": "Select objects" }
 
 }

@@ -119,12 +119,14 @@ class BlockFeatured extends React.Component<Props, {}> {
 			if (relation.format == I.RelationType.Checkbox) {
 				return true;
 			};
+			/*
 			if (!object[it]) {
 				return false;
 			};
 			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
 				return false;
 			};
+			*/
 			return true;
 		});
 	};
@@ -209,8 +211,8 @@ class BlockFeatured extends React.Component<Props, {}> {
 					rootId: rootId,
 					blockId: block.id,
 					blockIds: [ block.id ],
-					placeHolder: 'Change object type',
-					placeHolderFocus: 'Change object type',
+					placeholder: 'Change object type',
+					placeholderFocus: 'Change object type',
 					filters: filters,
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);

@@ -50,7 +50,7 @@ class PageAuthRegister extends React.Component<Props, State> {
 							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
 					
-						<Input ref={(ref: any) => this.nameRef = ref} placeHolder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+						<Input ref={(ref: any) => this.nameRef = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
 						<Button type="input" text={translate('authRegisterSubmit')} className="orange" />
 					</form>
 				</Frame>

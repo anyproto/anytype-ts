@@ -7,7 +7,7 @@ interface Props {
 	id?: string;
 	name?: string;
 	type?: string;
-	placeHolder?: string;
+	placeholder?: string;
 	value: string;
 	autoComplete?: string;
 	maxLength?: number;
@@ -61,7 +61,7 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, name, placeHolder, className, autoComplete, readOnly, maxLength, multiple, accept, onClick } = this.props;
+		const { id, name, placeholder, className, autoComplete, readOnly, maxLength, multiple, accept, onClick } = this.props;
 		
 		let type: string = this.state.type || this.props.type;
 		let cn = [ 'input', 'input-' + type ];
@@ -77,7 +77,7 @@ class Input extends React.Component<Props, State> {
 				type={type}
 				name={name}
 				id={id}
-				placeholder={placeHolder}
+				placeholder={placeholder}
 				value={this.state.value}
 				className={cn.join(' ')}
 				autoComplete={autoComplete ? autoComplete : name}

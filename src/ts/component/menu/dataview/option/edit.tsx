@@ -46,7 +46,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
-							placeHolder={translate('menuDataviewOptionEditPlaceholder')}
+							placeholder={translate('menuDataviewOptionEditPlaceholder')}
 							className={'textColor-' + this.color}
 							value={option.text}
 							onBlur={this.onSubmit}

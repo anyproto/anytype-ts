@@ -54,14 +54,14 @@ class BlockType extends React.Component<Props, State> {
 		
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
-				<div className="placeHolder">
+				<div className="placeholder">
 					Choose object type (↓↑ to select) or press ENTER to continue with Draft type
 				</div>
 
 				<Filter 
 					ref={(ref: any) => { this.ref = ref; }} 
 					inputClassName={'focusable c' + block.id}
-					placeHolderFocus="Filter types..." 
+					placeholderFocus="Filter types..." 
 					value={filter}
 					onFocus={this.onFilterFocus}
 					onChange={this.onFilterChange}

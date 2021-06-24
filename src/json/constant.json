@@ -33,7 +33,7 @@
 		"tooltip": 200
 	},
 	
-	"placeHolder": {
+	"placeholder": {
 		"default": "Type text or / for commands",
 		"filter": "Type to filter"
 	},

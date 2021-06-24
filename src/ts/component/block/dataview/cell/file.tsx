@@ -53,7 +53,7 @@ class CellFile extends React.Component<Props, State> {
 						))}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeHolderCell${relation.format}`)}</div>
+					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

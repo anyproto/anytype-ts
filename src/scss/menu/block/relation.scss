@@ -92,6 +92,10 @@
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
+			.cellContent {
+				.empty { display: block; }
+			}
+
 			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; }
 			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
 

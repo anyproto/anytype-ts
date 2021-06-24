@@ -98,7 +98,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			<div className="wrap">
 				<Filter 
 					ref={(ref: any) => { this.ref = ref; }} 
-					placeHolderFocus="Filter objects..." 
+					placeholderFocus="Filter objects..." 
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>

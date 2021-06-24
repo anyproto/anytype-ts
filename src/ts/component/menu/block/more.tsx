@@ -455,7 +455,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
-					placeHolder: 'Find a type of object...',
+					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
 					filters: filters,
 					onSelect: (item: any) => {
@@ -513,7 +513,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.offsetY = -36;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					placeHolder: 'Find a type of object...',
+					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },

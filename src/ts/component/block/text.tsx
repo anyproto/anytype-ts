@@ -71,7 +71,7 @@ class BlockText extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let marker: any = null;
-		let placeHolder = Constant.placeHolder.default;
+		let placeholder = Constant.placeholder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadOnly' : '') ];
 		let additional = null;
@@ -84,7 +84,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		switch (style) {
 			case I.TextStyle.Title:
-				placeHolder = Constant.default.name;
+				placeholder = Constant.default.name;
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
@@ -92,7 +92,7 @@ class BlockText extends React.Component<Props, {}> {
 				break;
 
 			case I.TextStyle.Description:
-				placeHolder = 'Add a description';
+				placeholder = 'Add a description';
 				break;
 
 			case I.TextStyle.Quote:
@@ -170,7 +170,7 @@ class BlockText extends React.Component<Props, {}> {
 					{additional}
 				</div>
 				<div className="wrap">
-					<span className={[ 'placeHolder', 'c' + id ].join(' ')}>{placeHolder}</span>
+					<span className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
 					{editor}
 				</div>
 			</div>
@@ -249,7 +249,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		if (block.isTextTitle() || block.isTextDescription()) {
-			this.placeHolderCheck();
+			this.placeholderCheck();
 		};
 	};
 	
@@ -429,7 +429,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	onInput (e: any) {
-		this.placeHolderCheck();
+		this.placeholderCheck();
 	};
 	
 	onKeyDown (e: any) {
@@ -554,7 +554,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		focus.set(id, range);
 		if (!keyboard.isSpecial(k)) {
-			this.placeHolderHide();
+			this.placeholderHide();
 		};
 		
 		onKeyDown(e, value, this.marks, range);
@@ -708,7 +708,7 @@ class BlockText extends React.Component<Props, {}> {
 			menuStore.close('blockContext');
 		});
 
-		this.placeHolderCheck();
+		this.placeholderCheck();
 
 		if (!block.isTextCode()) {
 			const { marks, text } = this.getMarksFromHtml();
@@ -841,7 +841,7 @@ class BlockText extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		e.persist();
 
-		this.placeHolderCheck();
+		this.placeholderCheck();
 		keyboard.setFocus(true);
 	};
 	
@@ -850,7 +850,7 @@ class BlockText extends React.Component<Props, {}> {
 			this.setText(this.marks, true);
 		};
 
-		this.placeHolderHide();
+		this.placeholderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
 	};
@@ -1003,36 +1003,36 @@ class BlockText extends React.Component<Props, {}> {
 		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
 	};
 	
-	placeHolderCheck () {
+	placeholderCheck () {
 		const value = this.getValue();
-		value.length ? this.placeHolderHide() : this.placeHolderShow();			
+		value.length ? this.placeholderHide() : this.placeholderShow();			
 	};
 
-	placeHolderSet (v: string) {
+	placeholderSet (v: string) {
 		if (!this._isMounted) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder').text(v);
+		node.find('.placeholder').text(v);
 	};
 	
-	placeHolderHide () {
+	placeholderHide () {
 		if (!this._isMounted) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder').hide();
+		node.find('.placeholder').hide();
 	};
 	
-	placeHolderShow () {
+	placeholderShow () {
 		if (!this._isMounted) {
 			return;
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder').show();
+		node.find('.placeholder').show();
 	};
 	
 	getRange () {

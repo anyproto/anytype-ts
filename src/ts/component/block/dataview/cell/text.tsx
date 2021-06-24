@@ -74,11 +74,11 @@ class CellText extends React.Component<Props, State> {
 			} else 
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
-				let placeHolder = [ 'dd.mm.yyyy' ];
+				let placeholder = [ 'dd.mm.yyyy' ];
 				
 				if (viewRelation.includeTime) {
 					mask.push('99:99');
-					placeHolder.push('hh:mm');
+					placeholder.push('hh:mm');
 				};
 
 				let maskOptions = {
@@ -94,7 +94,7 @@ class CellText extends React.Component<Props, State> {
 						id="input" 
 						{...item} 
 						maskOptions={maskOptions} 
-						placeHolder={placeHolder.join(' ')} 
+						placeholder={placeholder.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
 						onSelect={this.onSelect}
 					/>
@@ -125,7 +125,7 @@ class CellText extends React.Component<Props, State> {
 				} else {
 					return (
 						<div className="empty">
-							{translate(`placeHolderCell${relation.format}`)}
+							{translate(`placeholderCell${relation.format}`)}
 						</div>
 					);
 				};

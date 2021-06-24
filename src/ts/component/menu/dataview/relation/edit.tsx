@@ -214,7 +214,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
 			data: {
-				placeHolder: 'Find a type of object...',
+				placeholder: 'Find a type of object...',
 				label: 'Your object type library',
 				value: value,
 				filters: [

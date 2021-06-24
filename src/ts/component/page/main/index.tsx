@@ -120,8 +120,8 @@ class PageMainIndex extends React.Component<Props, State> {
 								<Icon className="search" />
 								<Filter 
 									ref={(ref: any) => { this.refFilter = ref; }} 
-									placeHolder="" 
-									placeHolderFocus="" 
+									placeholder="" 
+									placeholderFocus="" 
 									value={filter}
 									onChange={this.onFilterChange}
 								/>

@@ -7,7 +7,7 @@ const $ = require('jquery');
 interface Props {
 	id?: string;
 	name?: string;
-	placeHolder?: string;
+	placeholder?: string;
 	value?: string;
 	autoComplete?: string;
 	maxLength?: number;
@@ -48,7 +48,7 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, name, className, placeHolder, autoComplete, readOnly, maxLength } = this.props;
+		const { id, name, className, placeholder, autoComplete, readOnly, maxLength } = this.props;
 		const { value } = this.state;
 		
 		let cn = [ 'textarea' ];
@@ -60,7 +60,7 @@ class Textarea extends React.Component<Props, State> {
 			<textarea
 				name={name}
 				id={id}
-				placeholder={placeHolder}
+				placeholder={placeholder}
 				value={value}
 				className={cn.join(' ')}
 				autoComplete={autoComplete}
