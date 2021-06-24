@@ -133,10 +133,10 @@ class MenuSearchText extends React.Component<Props, {}> {
 		if (!isPopup) {
 			return $(window);
 		} else {
-			const popup = $('.popup').last().find('#innerWrap');
-			const scrollable = popup.find('.scrollable');
+			const container = this.getSearchContainer();
+			const scrollable = container.find('.scrollable');
 
-			return scrollable.length ? scrollable : popup;
+			return scrollable.length ? scrollable : container;
 		};
 	};
 
