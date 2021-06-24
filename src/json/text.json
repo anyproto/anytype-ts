@@ -361,6 +361,18 @@
 	"layout6": { "en": "File" },
 	"layout7": { "en": "Dashboard" },
 	"layout8": { "en": "Image" },
-	"layout20": { "en": "Database" }
-	
+	"layout20": { "en": "Database" },
+
+	"placeHolderCell0": { "en": "Enter text" },
+	"placeHolderCell1": { "en": "Enter text" },	
+	"placeHolderCell2": { "en": "Enter number" },	
+	"placeHolderCell3": { "en": "Select status" },	
+	"placeHolderCell4": { "en": "Enter date" },	
+	"placeHolderCell5": { "en": "Select files" },	
+	"placeHolderCell7": { "en": "Enter url" },	
+	"placeHolderCell8": { "en": "Enter e-mail" },	
+	"placeHolderCell9": { "en": "Enter phone" },	
+	"placeHolderCell11": { "en": "Select tags" },	
+	"placeHolderCell100": { "en": "Select objects" }
+
 }

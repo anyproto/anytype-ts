@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, DataUtil, keyboard } from 'ts/lib';
+import { I, Util, DataUtil, keyboard, translate } from 'ts/lib';
 import { Icon, Input, IconObject } from 'ts/component';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -46,7 +46,6 @@ class CellText extends React.Component<Props, State> {
 			return null;
 		};
 
-		let { iconEmoji, iconImage, layout } = record || {};
 		let viewRelation: any = {};
 
 		if (getView) {
@@ -57,10 +56,10 @@ class CellText extends React.Component<Props, State> {
 		let EditorComponent = null;
 		let value = record[relation.relationKey];
 
-		if (relation.format != I.RelationType.Date) {
-			value = String(value || '');
-		} else {
+		if (relation.format == I.RelationType.Date) {
 			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+		} else {
+			value = String(value || '');
 		};
 
 		if (relation.format == I.RelationType.LongText) {
@@ -120,9 +119,17 @@ class CellText extends React.Component<Props, State> {
 				/>
 			);
 		} else {
-			Name = (item: any) => (
-				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
-			);
+			Name = (item: any) => {
+				if (item.name) {
+					return <div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />;
+				} else {
+					return (
+						<div className="empty">
+							{translate(`placeHolderCell${relation.format}`)}
+						</div>
+					);
+				};
+			};
 
 			if (relation.format == I.RelationType.Date) {
 				const format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
@@ -174,11 +181,8 @@ class CellText extends React.Component<Props, State> {
 					}} />
 				</React.Fragment>
 			);
-		} else 
-		if (editing) {
-			content = <Name name={value} />;
 		} else {
-			content = <span className="name" dangerouslySetInnerHTML={{ __html: value }} />;
+			content = <Name name={value} />;
 		};
 
 		return content;

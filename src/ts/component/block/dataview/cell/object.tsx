@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import ItemObject from './item/object';
@@ -43,7 +43,7 @@ class CellObject extends React.Component<Props, State> {
 						})}
 					</React.Fragment>
 				) : (
-					<div className="empty">Select objects</div>
+					<div className="empty">{translate(`placeHolderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

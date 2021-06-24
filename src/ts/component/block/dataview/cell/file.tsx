@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject } from 'ts/component';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, DataUtil, Util, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { detailStore } from 'ts/store';
 
@@ -25,7 +25,7 @@ class CellFile extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, index, getRecord, canEdit, iconSize } = this.props;
+		const { rootId, block, readOnly, relation, index, getRecord, canEdit, iconSize } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -34,10 +34,6 @@ class CellFile extends React.Component<Props, State> {
 		let value = this.getValue();
 		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
 		value = value.filter((it: any) => { return !it._objectEmpty_; });
-
-		if (!value.length) {
-			return <div className="empty">Add a file</div>;
-		};
 
 		const Item = (item: any) => (
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
@@ -50,9 +46,15 @@ class CellFile extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				{value.map((item: any, i: number) => (
-					<Item key={i} {...item} />
-				))}
+				{value.length ? (
+					<React.Fragment>
+						{value.map((item: any, i: number) => (
+							<Item key={i} {...item} />
+						))}
+					</React.Fragment>
+				) : (
+					<div className="empty">{translate(`placeHolderCell${relation.format}`)}</div>
+				)}
 			</div>
 		);
 	};
