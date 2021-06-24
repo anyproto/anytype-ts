@@ -109,7 +109,7 @@ class PageMainIndex extends React.Component<Props, State> {
 						<div className="tabWrap">
 							<div className="tabs">
 								{Tabs.map((item: any, i: number) => {
-									if (!config.allowDataview && (item.id == Tab.Draft)) {
+									if (!config.allowDataview && ([ Tab.Draft, Tab.Set ].indexOf(item.id) >= 0)) {
 										return null;
 									};
 
