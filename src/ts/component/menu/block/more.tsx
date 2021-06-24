@@ -185,9 +185,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to Favorites' };
 		};
 
+		if (object.isArchived) {
+			//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+			archive = { id: 'unarchivePage', icon: 'remove', name: 'Restore from archive' };
+		} else {
+			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
+		};
+
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isLinkArchive() || block.isObjectSet()) {
 			sections = [
+				{ children: [ archive ] },
 				{ children: [ linkRoot ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
@@ -198,13 +206,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				template = { id: 'createPage', icon: 'template', name: 'Create object' };
 			} else {
 				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
-			};
-
-			if (object.isArchived) {
-				//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
-				archive = { id: 'unarchivePage', icon: 'remove', name: 'Restore from archive' };
-			} else {
-				archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 			};
 
 			// Restrictions
