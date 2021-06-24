@@ -47,7 +47,8 @@
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
-				.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
+				.empty { visibility: hidden; }
+				.name, .empty { line-height: 20px; @include text-overflow-nw; width: 100%; }
 			}
 
 			.cell.isName, .cellContent.isName { cursor: pointer; }
