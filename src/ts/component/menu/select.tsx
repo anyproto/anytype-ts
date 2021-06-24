@@ -75,7 +75,11 @@ class MenuSelect extends React.Component<Props, {}> {
 		return (
 			<React.Fragment>
 				{withFilter ?
-					<Filter ref={(ref: any) => { this.ref = ref; }} onChange={this.onFilterChange} />
+					<Filter 
+						ref={(ref: any) => { this.ref = ref; }} 
+						value={filter}
+						onChange={this.onFilterChange} 
+					/>
 				: ''}
 				{!items.length ? (
 					<div className="item empty">No options found</div>

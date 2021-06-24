@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Tag, Icon } from 'ts/component';
-import { I, Util, DataUtil } from 'ts/lib';
-import { menuStore } from 'ts/store';
+import { I, Util, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
@@ -35,7 +34,6 @@ class CellSelect extends React.Component<Props, State> {
 
 		const value = this.getValue();
 		const canClear = relation.format == I.RelationType.Status;
-		const placeHolder = relation.format == I.RelationType.Status ? 'Select status' : 'Select tags';
 
 		return (
 			<div className="wrap">
@@ -49,7 +47,7 @@ class CellSelect extends React.Component<Props, State> {
 						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (
-					<div className="empty">{placeHolder}</div>
+					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

@@ -15,6 +15,7 @@
 	"default": {
 		"name": "Untitled",
 		"nameType": "New type",
+		"nameSet": "New set",
 		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 3,
@@ -33,7 +34,7 @@
 		"tooltip": 200
 	},
 	
-	"placeHolder": {
+	"placeholder": {
 		"default": "Type text or / for commands",
 		"filter": "Type to filter"
 	},

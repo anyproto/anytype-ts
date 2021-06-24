@@ -45,10 +45,10 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { n, loading, filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { value, placeHolder, label, isBig, noFilter, noIcon } = data;
+		const { value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
-		const placeHolderFocus = data.placeHolderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 		const rowHeight = this.getHeight();
 
 		const rowRenderer = (param: any) => {
@@ -110,8 +110,9 @@ class MenuSearchObject extends React.Component<Props, State> {
 						{!noFilter ? (
 							<Filter 
 								ref={(ref: any) => { this.ref = ref; }} 
-								placeHolder={placeHolder} 
-								placeHolderFocus={placeHolderFocus} 
+								placeholder={placeholder} 
+								placeholderFocus={placeholderFocus} 
+								value={filter}
 								onChange={(e: any) => { this.onKeyUp(e, false); }} 
 							/>
 						) : ''}

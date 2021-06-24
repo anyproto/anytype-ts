@@ -98,7 +98,12 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter objects..." onChange={this.onFilterChange} />
+				<Filter 
+					ref={(ref: any) => { this.ref = ref; }} 
+					placeholderFocus="Filter objects..." 
+					value={filter}
+					onChange={this.onFilterChange} 
+				/>
 
 				<div className="items">
 					<InfiniteLoader

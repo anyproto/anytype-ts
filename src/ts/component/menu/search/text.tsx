@@ -32,7 +32,7 @@ class MenuSearchText extends React.Component<Props, {}> {
 		
 		return (
 			<div className="flex">
-				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('commonSearch')} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} />
 				<div className="buttons">
 					<div className="btn" onClick={this.onSearch}>{translate('commonSearchButton')}</div>
 				</div>

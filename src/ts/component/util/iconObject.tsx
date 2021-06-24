@@ -186,6 +186,15 @@ class IconObject extends React.Component<Props, {}> {
 				};
 				break;
 
+			case I.ObjectLayout.Set:
+				if (iconEmoji || iconImage) {
+					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+				} else {
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={ObjectType} className={icn.join(' ')} />;
+				};
+				break;
+
 			case I.ObjectLayout.Relation:
 				const key = iconSize < 28 ? 'small' : 'big';
 				if (Relation[key][relationFormat]) {

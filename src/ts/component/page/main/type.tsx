@@ -58,7 +58,7 @@ class PageMainType extends React.Component<Props, State> {
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const placeHolder = {
+		const placeholder = {
 			name: Constant.default.nameType,
 			description: 'Add a description',
 		};
@@ -104,7 +104,7 @@ class PageMainType extends React.Component<Props, State> {
 							>
 								{object[item.id]}
 							</div>
-							<div className={[ 'placeHolder', 'c' + item.id ].join(' ')}>{placeHolder[item.id]}</div>
+							<div className={[ 'placeholder', 'c' + item.id ].join(' ')}>{placeholder[item.id]}</div>
 						</React.Fragment>
 					)}
 				</div>
@@ -214,10 +214,18 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const { focused } = focus.state;
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, []);
+
 		this.open();
 
 		for (let id of EDITOR_IDS) {
-			this.placeHolderCheck(id);
+			this.placeholderCheck(id);
+		};
+
+		if (!focused && !object._empty_) {
+			focus.set('name', { from: object.name.length, to: object.name.length });
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
@@ -385,7 +393,7 @@ class PageMainType extends React.Component<Props, State> {
 	onFocus (e: any, item: any) {
 		keyboard.setFocus(true);
 
-		this.placeHolderCheck(item.id);
+		this.placeholderCheck(item.id);
 	};
 
 	onBlur (e: any, item: any) {
@@ -395,11 +403,11 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	onInput (e: any, item: any) {
-		this.placeHolderCheck(item.id);
+		this.placeholderCheck(item.id);
 	};
 
 	onKeyDown (e: any, item: any) {
-		this.placeHolderCheck(item.id);
+		this.placeholderCheck(item.id);
 
 		if (item.id == 'name') {
 			keyboard.shortcut('enter', e, (pressed: string) => {
@@ -409,7 +417,7 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: any, item: any) {
-		this.placeHolderCheck(item.id);
+		this.placeholderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
@@ -456,27 +464,27 @@ class PageMainType extends React.Component<Props, State> {
 		return value.length ? String(value.get(0).innerText || '') : '';
 	};
 
-	placeHolderCheck (id: string) {
+	placeholderCheck (id: string) {
 		const value = this.getValue(id);
-		value.length ? this.placeHolderHide(id) : this.placeHolderShow(id);			
+		value.length ? this.placeholderHide(id) : this.placeholderShow(id);			
 	};
 
-	placeHolderHide (id: string) {
+	placeholderHide (id: string) {
 		if (!this._isMounted) {
 			return;
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder.c' + id).hide();
+		node.find('.placeholder.c' + id).hide();
 	};
 	
-	placeHolderShow (id: string) {
+	placeholderShow (id: string) {
 		if (!this._isMounted) {
 			return;
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeHolder.c' + id).show();
+		node.find('.placeholder.c' + id).show();
 	};
 
 	getRootId () {

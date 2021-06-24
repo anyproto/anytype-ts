@@ -107,7 +107,7 @@ class DetailStore {
 		let list = map.get(id) || [];
 
 		if (!list.length) {
-			return { _objectEmpty_: true };
+			return { _empty_: true };
 		};
 		
 		let object: any = {};

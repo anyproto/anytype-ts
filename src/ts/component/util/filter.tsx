@@ -6,8 +6,9 @@ import { translate } from 'ts/lib';
 interface Props {
 	className?: string;
 	inputClassName?: string;
-	placeHolder?: string;
-	placeHolderFocus?: string;
+	value?: string;
+	placeholder?: string;
+	placeholderFocus?: string;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, v: string): void;
@@ -22,7 +23,7 @@ class Filter extends React.Component<Props, {}> {
 	public static defaultProps = {
 		className: '',
 		inputClassName: '',
-		placeHolder: translate('commonFilterClick'),
+		placeholder: translate('commonFilterClick'),
 	};
 	
 	ref: any = null;
@@ -37,7 +38,7 @@ class Filter extends React.Component<Props, {}> {
 	};
 	
 	render () {
-		const { placeHolder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
+		const { value, placeholder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
 		const cn = [ 'filter', className ];
 
 		return (
@@ -46,7 +47,8 @@ class Filter extends React.Component<Props, {}> {
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						className={inputClassName}
-						placeHolder={placeHolder} 
+						placeholder={placeholder} 
+						value={value}
 						onFocus={this.onFocus} 
 						onBlur={this.onBlur} 
 						onChange={this.onChange} 
@@ -60,6 +62,10 @@ class Filter extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount() {
+		this.ref.setValue(this.props.value);
+	};
+
 	focus () {
 		this.ref.focus();
 	};
@@ -69,13 +75,13 @@ class Filter extends React.Component<Props, {}> {
 	};
 
 	onFocus (e: any) {
-		const { placeHolderFocus, onFocus } = this.props;
+		const { placeholderFocus, onFocus } = this.props;
 
-		if (placeHolderFocus) {
+		if (placeholderFocus) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('.input');
 
-			input.attr({ placeHolder: placeHolderFocus });
+			input.attr({ placeholder: placeholderFocus });
 		};
 
 		if (onFocus) { 
@@ -84,13 +90,13 @@ class Filter extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		const { placeHolderFocus, placeHolder, onBlur } = this.props;
+		const { placeholderFocus, placeholder, onBlur } = this.props;
 
-		if (placeHolderFocus) {
+		if (placeholderFocus) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('.input');
 
-			input.attr({ placeHolder: placeHolder });
+			input.attr({ placeholder: placeholder });
 		};
 
 		if (onBlur) {

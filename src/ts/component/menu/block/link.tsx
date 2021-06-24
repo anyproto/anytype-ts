@@ -22,7 +22,7 @@ class MenuBlockLink extends React.Component<Props, {}> {
 		
 		return (
 			<form className="flex" onSubmit={this.onLink}>
-				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeHolder={translate('menuBlockLinkPlaceholder')} />
+				<Input ref={(ref: any) => { this.ref = ref; }} value={value} placeholder={translate('menuBlockLinkPlaceholder')} />
 				<div className="buttons">
 					<div className="btn" onClick={this.onLink}>{translate('menuBlockLinkLink')}</div>
 					<div className="btn" onClick={this.onUnlink}>{translate('menuBlockLinkUnlink')}</div>

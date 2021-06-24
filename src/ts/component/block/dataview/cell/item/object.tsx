@@ -18,7 +18,7 @@ class ItemObject extends React.Component<Props, {}> {
 		const { rootId, id, iconSize, onClick } = this.props;
 		const object = detailStore.get(rootId, id, []);
 
-		if (object._objectEmpty_) {
+		if (object._empty_) {
 			return null;
 		};
 

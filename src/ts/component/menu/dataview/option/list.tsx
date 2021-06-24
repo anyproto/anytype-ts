@@ -51,6 +51,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			const active = value.indexOf(item.id) >= 0;
 			
 			let content = null;
 			if (item.id == 'add') {
@@ -72,6 +73,7 @@ class MenuOptionList extends React.Component<Props, State> {
 						<div className="buttons">
 							<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 						</div>
+						{active ? <Icon className="chk" /> : ''}
 					</div>
 				);
 			};
@@ -92,7 +94,12 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		return (
 			<div className="wrap">
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter or create options..." onChange={this.onFilterChange} />
+				<Filter 
+					ref={(ref: any) => { this.ref = ref; }} 
+					placeholderFocus="Filter or create options..." 
+					value={filter}
+					onChange={this.onFilterChange} 
+				/>
 
 				<div className="items">
 					<InfiniteLoader
@@ -270,20 +277,18 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.close('dataviewOptionEdit', () => {
-			menuStore.open('dataviewOptionEdit', { 
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: 288,
-				vertical: I.MenuDirection.Center,
-				passThrough: true,
-				noFlipY: true,
-				noAnimation: true,
-				classNameWrap: classNameWrap,
-				data: {
-					...data,
-					option: item,
-				}
-			});
+		menuStore.open('dataviewOptionEdit', { 
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: 288,
+			vertical: I.MenuDirection.Center,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
+			classNameWrap: classNameWrap,
+			data: {
+				...data,
+				option: item,
+			}
 		});
 	};
 	
@@ -313,7 +318,7 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Local, name: 'Everywhere', children: [] };
-		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Format', children: [] };
+		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Suggested', children: [] };
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');

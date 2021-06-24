@@ -35,6 +35,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	render () {
+		const { filter } = this.state;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
@@ -75,7 +76,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		return (
 			<div>
-				<Filter ref={(ref: any) => { this.ref = ref; }} placeHolderFocus="Filter actions..." onFocus={this.onFilterFocus} onBlur={this.onFilterBlur} onChange={this.onFilterChange} />
+				<Filter 
+					ref={(ref: any) => { this.ref = ref; }} 
+					placeholderFocus="Filter actions..." 
+					value={filter}
+					onFocus={this.onFilterFocus} 
+					onBlur={this.onFilterBlur} 
+					onChange={this.onFilterChange} 
+				/>
 				
 				{!sections.length ? <div className="item empty">{translate('commonFilterEmpty')}</div> : ''}
 				{sections.map((item: any, i: number) => (
@@ -492,7 +500,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
-					placeHolder: 'Find a type of object...',
+					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
 					filters: filters,
 					onSelect: (item: any) => {

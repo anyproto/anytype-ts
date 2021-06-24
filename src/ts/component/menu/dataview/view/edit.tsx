@@ -59,7 +59,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={view.name} 
 							readOnly={readOnly}
-							placeHolder={translate('menuDataviewViewEditName')}
+							placeholder={translate('menuDataviewViewEditName')}
 							maxLength={Constant.limit.dataview.viewName} 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}

@@ -1066,7 +1066,7 @@ class EditorPage extends React.Component<Props, {}> {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
-			$('.placeHolder.c' + blockId).text(Constant.placeHolder.filter);
+			$('.placeholder.c' + blockId).text(Constant.placeholder.filter);
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
 	};
@@ -1093,7 +1093,7 @@ class EditorPage extends React.Component<Props, {}> {
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
-				$('.placeHolder.c' + blockId).text(Constant.placeHolder.default);
+				$('.placeholder.c' + blockId).text(Constant.placeholder.default);
 			},
 			data: {
 				blockId: blockId,
@@ -1389,10 +1389,6 @@ class EditorPage extends React.Component<Props, {}> {
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
-		if (!blockId) {
-			return;
-		};
-
 		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
 			this.phraseCheck();
@@ -1566,6 +1562,8 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 			};
 		};
+
+		console.log(create);
 
 		if (create) {
 			this.blockCreate(last ? last.id : '', I.BlockPosition.Bottom, { type: I.BlockType.Text });

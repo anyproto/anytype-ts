@@ -119,7 +119,7 @@ class MenuObjectValues extends React.Component<Props> {
 
 		let value = this.getValue();
 		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
-		value = value.filter((it: any) => { return !it._objectEmpty_; });
+		value = value.filter((it: any) => { return !it._empty_; });
 		
 		if (!config.debug.ho) {
 			value = value.filter((it: any) => { return !it.isHidden; });

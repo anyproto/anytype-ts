@@ -153,7 +153,7 @@ class PopupSearch extends React.Component<Props, State> {
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						value={object.name} 
-						placeHolder={translate('popupSearchPlaceholder')} 
+						placeholder={translate('popupSearchPlaceholder')} 
 						onKeyDown={this.onKeyDownSearch} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 						onFocus={this.onFocus}

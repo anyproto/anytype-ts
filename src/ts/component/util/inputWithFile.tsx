@@ -60,7 +60,7 @@ class InputWithFile extends React.Component<Props, State> {
 		const { icon, textUrl, textFile, withFile, readOnly } = this.props;
 
 		let cn = [ 'inputWithFile', 'resizable' ];		
-		let placeHolder = textUrl;
+		let placeholder = textUrl;
 		let onFocus = focused ? () => {} : this.onFocus;
 		let onBlur = focused ? this.onBlur : () => {};
 		let or = ' or ';
@@ -90,7 +90,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 		
 		if (withFile && focused) {
-			placeHolder += or + (!isSmall ? textFile : '');
+			placeholder += or + (!isSmall ? textFile : '');
 		};
 		
 		return (
@@ -101,7 +101,7 @@ class InputWithFile extends React.Component<Props, State> {
 					<form id="form" onSubmit={this.onSubmit}>
 						{focused ? (
 							<span>
-								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeHolder={placeHolder} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
+								<Input id="url" ref={(ref: any) => { this.urlRef = ref; }} placeholder={placeholder} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
 								<Button type="input" className="dn" />
 							</span>
 						) : (

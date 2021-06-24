@@ -361,6 +361,18 @@
 	"layout6": { "en": "File" },
 	"layout7": { "en": "Dashboard" },
 	"layout8": { "en": "Image" },
-	"layout20": { "en": "Database" }
-	
+	"layout20": { "en": "Database" },
+
+	"placeholderCell0": { "en": "Enter text" },
+	"placeholderCell1": { "en": "Enter text" },	
+	"placeholderCell2": { "en": "Enter number" },	
+	"placeholderCell3": { "en": "Select status" },	
+	"placeholderCell4": { "en": "Enter date" },	
+	"placeholderCell5": { "en": "Select files" },	
+	"placeholderCell7": { "en": "Enter url" },	
+	"placeholderCell8": { "en": "Enter e-mail" },	
+	"placeholderCell9": { "en": "Enter phone" },
+	"placeholderCell11": { "en": "Select tags" },
+	"placeholderCell100": { "en": "Select objects" }
+
 }

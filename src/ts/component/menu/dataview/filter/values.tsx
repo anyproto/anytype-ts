@@ -107,7 +107,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				};
 
 				list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
-				list = list.filter((it: any) => { return !it._objectEmpty_; });
+				list = list.filter((it: any) => { return !it._empty_; });
 
 				value = (
 					<React.Fragment>
@@ -140,7 +140,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
-							placeHolder="dd.mm.yyyy hh:mm:ss"
+							placeholder="dd.mm.yyyy hh:mm:ss"
 							maskOptions={{ mask: '99.99.9999 99:99:99' }}
 							onFocus={(e: any) => { this.onFocusDate(e); }}
 							onSelect={(e: any) => { this.onSelect(e); }}
@@ -157,7 +157,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={item.value} 
-							placeHolder={translate('commonValue')} 
+							placeholder={translate('commonValue')} 
 							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
 							onSelect={(e: any) => { this.onSelect(e); }}
 						/>

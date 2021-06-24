@@ -35,6 +35,7 @@ class BlockType extends React.Component<Props, State> {
 	render (): any {
 		const { block } = this.props;
 		const items = this.getItems();
+		const { filter } = this.state;
 
 		const Item = (item: any) => {
 			return (
@@ -53,14 +54,15 @@ class BlockType extends React.Component<Props, State> {
 		
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
-				<div className="placeHolder">
+				<div className="placeholder">
 					Choose object type (↓↑ to select) or press ENTER to continue with Draft type
 				</div>
 
 				<Filter 
 					ref={(ref: any) => { this.ref = ref; }} 
 					inputClassName={'focusable c' + block.id}
-					placeHolderFocus="Filter types..." 
+					placeholderFocus="Filter types..." 
+					value={filter}
 					onFocus={this.onFilterFocus}
 					onChange={this.onFilterChange}
 				/>
@@ -89,6 +91,8 @@ class BlockType extends React.Component<Props, State> {
 		const { filter } = this.state;
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
+
+		items.sort(DataUtil.sortByName);
 
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');

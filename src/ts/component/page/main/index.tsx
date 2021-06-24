@@ -32,7 +32,7 @@ const Tabs = [
 	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Inbox' },
 	{ id: Tab.Set, name: 'Sets' },
-	{ id: Tab.Archive, name: 'Bin' },
+	{ id: Tab.Archive, name: 'Archive' },
 ];
 
 @observer
@@ -69,7 +69,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
-		const { tab } = this.state;
+		const { tab, filter } = this.state;
 
 		if (!element) {
 			return null;
@@ -120,8 +120,9 @@ class PageMainIndex extends React.Component<Props, State> {
 								<Icon className="search" />
 								<Filter 
 									ref={(ref: any) => { this.refFilter = ref; }} 
-									placeHolder="" 
-									placeHolderFocus="" 
+									placeholder="" 
+									placeholderFocus="" 
+									value={filter}
 									onChange={this.onFilterChange}
 								/>
 							</div>
@@ -539,12 +540,12 @@ class PageMainIndex extends React.Component<Props, State> {
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
 					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
-					const { layout, name, _objectEmpty_, isArchived } = object;
+					const { layout, name, _empty_, isArchived } = object;
 
 					if (it.content.style == I.LinkStyle.Archive) {
 						return false;
 					};
-					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_objectEmpty_) {
+					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
 						return false;
 					};
 					if (reg && name && !name.match(reg)) {

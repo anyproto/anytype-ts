@@ -43,7 +43,8 @@
 			.clickable { width: 100%; }
 		}
 		.item:hover {
-			.clickable { width: calc(100% - 24px); }
+			.clickable { width: calc(100% - 52px); }
+			.icon.chk { right: 32px; }
 		}
 	}
 	

@@ -53,11 +53,11 @@ class PopupFeedback extends React.Component<Props, State> {
 					<React.Fragment>
 						<div className="row">
 							<Label text={translate('popupFeedbackBugLabel1')} />
-							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeHolder={translate('popupFeedbackBugText1')} />
+							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeholder={translate('popupFeedbackBugText1')} />
 						</div>
 						<div className="row">
 							<Label text={translate('popupFeedbackBugLabel2')} />
-							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder={translate('popupFeedbackBugText2')} />
+							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeholder={translate('popupFeedbackBugText2')} />
 						</div>
 					</React.Fragment>
 				);
@@ -68,11 +68,11 @@ class PopupFeedback extends React.Component<Props, State> {
 					<React.Fragment>
 						<div className="row">
 							<Label text={translate('popupFeedbackFeatureLabel1')} />
-							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeHolder={translate('popupFeedbackFeatureText1')} />
+							<Textarea ref={(ref: any) => { this.refObject.text1 = ref; }} placeholder={translate('popupFeedbackFeatureText1')} />
 						</div>
 						<div className="row">
 							<Label text={translate('popupFeedbackFeatureLabel2')} />
-							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeHolder={translate('popupFeedbackFeatureText2')} />
+							<Textarea ref={(ref: any) => { this.refObject.text2 = ref; }} placeholder={translate('popupFeedbackFeatureText2')} />
 						</div>
 					</React.Fragment>
 				);
@@ -117,14 +117,14 @@ class PopupFeedback extends React.Component<Props, State> {
 
 							<div className="row">
 								<Label text={translate('popupFeedbackScreenLabel')} />
-								<Input ref={(ref: any) => { this.refObject.link = ref; }} placeHolder={translate('popupFeedbackScreenText')} />
+								<Input ref={(ref: any) => { this.refObject.link = ref; }} placeholder={translate('popupFeedbackScreenText')} />
 							</div>
 
 							<div className="row last">
 								<Label text={translate('popupFeedbackContacts')} />
 								<div className="flex">
-									<Input ref={(ref: any) => { this.refObject.name = ref; }} placeHolder={translate('popupFeedbackName')} />
-									<Input ref={(ref: any) => { this.refObject.email = ref; }} placeHolder={translate('popupFeedbackEmail')} />
+									<Input ref={(ref: any) => { this.refObject.name = ref; }} placeholder={translate('popupFeedbackName')} />
+									<Input ref={(ref: any) => { this.refObject.email = ref; }} placeholder={translate('popupFeedbackEmail')} />
 								</div>
 							</div>
 							
