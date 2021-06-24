@@ -199,20 +199,25 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		Storage.set('indexTab', id);
 
-		if ([ Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
+		if ([ Tab.Archive, Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
 
 	load () {
 		const { tab, filter } = this.state;
+		const { config } = commonStore;
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
 		];
+
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
+		};
 
 		if (tab == Tab.Draft) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
@@ -531,7 +536,6 @@ class PageMainIndex extends React.Component<Props, State> {
 		switch (tab) {
 			default:
 			case Tab.Favorite:
-			case Tab.Archive:
 			case Tab.Recent:
 				if (tab == Tab.Recent) {
 					rootId = recent;
@@ -551,12 +555,7 @@ class PageMainIndex extends React.Component<Props, State> {
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-
-					if (tab == Tab.Archive) {
-						return isArchived;
-					} else {
-						return !isArchived;
-					};
+					return !isArchived;
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
@@ -577,6 +576,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 				break;
 
+			case Tab.Archive:
 			case Tab.Set:
 			case Tab.Draft:
 				list = pages;
