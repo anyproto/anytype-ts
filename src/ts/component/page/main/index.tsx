@@ -32,7 +32,7 @@ const Tabs = [
 	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Inbox' },
 	{ id: Tab.Set, name: 'Sets' },
-	{ id: Tab.Archive, name: 'Bin' },
+	{ id: Tab.Archive, name: 'Archive' },
 ];
 
 @observer
