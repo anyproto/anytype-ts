@@ -215,10 +215,6 @@ class PageMainIndex extends React.Component<Props, State> {
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
 		];
 
-		if (!config.debug.ho) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
-
 		if (tab == Tab.Draft) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
 		};
