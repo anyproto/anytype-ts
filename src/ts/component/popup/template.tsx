@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader, Title, Label, ListTemplate } from 'ts/component';
 import { I, C, focus } from 'ts/lib';
+import { dbStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	history: any;
@@ -35,6 +36,10 @@ class PopupTemplate extends React.Component<Props, State> {
 
 	render () {
 		const { items, loading } = this.state;
+		const { param } = this.props;
+		const { data } = param;
+		const { typeId } = data;
+		const type = dbStore.getObjectType(typeId);
 
 		if (loading) {
 			return <Loader />;
@@ -44,7 +49,7 @@ class PopupTemplate extends React.Component<Props, State> {
 			<div className="wrapper">
 				<div className="head">
 					<Title text="Choose a template" />
-					<Label text="Type “Friend” has 3 templates, use ←→ to switch and ENTER to choose" />
+					<Label text={`Type “${type.name}” has 3 templates, use ←→ to switch and ENTER to choose`} />
 				</div>
 
 				<ListTemplate 
