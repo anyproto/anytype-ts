@@ -165,8 +165,6 @@ class IconObject extends React.Component<Props, {}> {
 		let icon = null;
 		let icn = [];
 
-		console.log(name, size, iconSize);
-
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:
@@ -300,6 +298,9 @@ class IconObject extends React.Component<Props, {}> {
 
 		let s = Size[size];
 
+		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
+			s = 16;
+		};
 		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
 			s = 40;
 		};
