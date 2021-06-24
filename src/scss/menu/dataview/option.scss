@@ -40,10 +40,10 @@
 
 		.item { display: flex; height: 28px; }
 		.item {
-			.clickable { width: 100%; }
+			.clickable { width: calc(100% - 20px); }
 		}
 		.item:hover {
-			.clickable { width: calc(100% - 52px); }
+			.clickable { width: calc(100% - 40px); }
 			.icon.chk { right: 32px; }
 		}
 	}
