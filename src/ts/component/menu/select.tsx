@@ -60,7 +60,7 @@ class MenuSelect extends React.Component<Props, {}> {
 				>
 					<MenuItemVertical 
 						{...item} 
-						icon={item.icon || item.id}
+						icon={item.icon}
 						className={cn.join(' ')} 
 						isActive={item.id == value} 
 						checkbox={item.id == value} 

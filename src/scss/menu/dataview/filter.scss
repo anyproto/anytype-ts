@@ -18,6 +18,7 @@
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
 			.select:hover, .select.active { background: none; }
 			.select {
+				.icon.relation { display: none; }
 				.icon.arrow { display: none; }
 			}
 

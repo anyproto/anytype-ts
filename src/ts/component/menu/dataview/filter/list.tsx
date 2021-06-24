@@ -236,13 +236,13 @@ class MenuFilterList extends React.Component<Props, {}> {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return { 
 				id: relation.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
 				name: relation.name, 
 				isHidden: relation.isHidden,
 				format: relation.format,
 			};
 		});
 
-		options.sort(DataUtil.sortByName);
 		return options;
 	};
 	
