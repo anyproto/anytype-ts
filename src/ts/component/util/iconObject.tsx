@@ -31,7 +31,13 @@ interface Props {
 	onMouseLeave?(e: any): void;
 };
 
-const IDS40 = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.ObjectType ];
+const IDS40 = [ 
+	I.ObjectLayout.Page, 
+	I.ObjectLayout.Set, 
+	I.ObjectLayout.File, 
+	I.ObjectLayout.Image, 
+	I.ObjectLayout.ObjectType,
+];
 
 const Size = {
 	16: 16,
@@ -158,6 +164,8 @@ class IconObject extends React.Component<Props, {}> {
 		let iconSize = this.iconSize(layout, size);
 		let icon = null;
 		let icn = [];
+
+		console.log(name, size, iconSize);
 
 		switch (layout) {
 			default:
@@ -295,6 +303,10 @@ class IconObject extends React.Component<Props, {}> {
 		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
 			s = 40;
 		};
+		if ((size == 48) && (layout == I.ObjectLayout.Relation)) {
+			s = 28;
+		};
+
 		if (iconSize) {
 			s = iconSize;
 		};
