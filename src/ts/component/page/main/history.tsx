@@ -6,7 +6,9 @@ import { blockStore } from 'ts/store';
 import { I, M, C, Util, DataUtil, dispatcher, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> { };
+interface Props extends RouteComponentProps<any> {
+	isPopup: boolean;
+};
 
 interface State {
 	versions: I.HistoryVersion[];
@@ -103,19 +105,10 @@ class PageMainHistory extends React.Component<Props, State> {
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
-							{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
 							<div className="editor">
 								<div className="blocks">
-									{check.withIcon ? (
-										<Block 
-											key={icon.id} 
-											{...this.props} 
-											rootId={rootId}
-											block={icon} 
-											className="root" 
-											readOnly={true}
-										/>	
-									) : ''}
+									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
+									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readOnly={true} /> : ''}
 									
 									{children.map((block: I.Block, i: number) => {
 										return (
@@ -377,14 +370,29 @@ class PageMainHistory extends React.Component<Props, State> {
 	};
 
 	resize () {
+		const { isPopup } = this.props;
+
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
+		const cover = node.find('.block.blockCover');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const header = obj.find('#header');
+		const wrapper = $('.pageMainHistory .wrapper');
 		const height = win.height();
+		const hh = header.outerHeight();
 
 		sideLeft.css({ height: height });
 		sideRight.css({ height: height });
+
+		if (cover.length) {
+			cover.css({ top: hh });
+		};
+
+		if (isPopup) {
+			wrapper.css({ paddingTop: hh });
+		};
 	};
 
 	getWrapperWidth (): number {
