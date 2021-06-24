@@ -325,7 +325,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		let favorites = []; 
 		let archive = null;
 		let link = null;
-		let move = { id: 'move', name: 'Move to', arrow: true };
+		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 
 		if (config.allowDataview) {
