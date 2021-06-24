@@ -35,6 +35,7 @@ class BlockType extends React.Component<Props, State> {
 	render (): any {
 		const { block } = this.props;
 		const items = this.getItems();
+		const { filter } = this.state;
 
 		const Item = (item: any) => {
 			return (
@@ -61,6 +62,7 @@ class BlockType extends React.Component<Props, State> {
 					ref={(ref: any) => { this.ref = ref; }} 
 					inputClassName={'focusable c' + block.id}
 					placeHolderFocus="Filter types..." 
+					value={filter}
 					onFocus={this.onFilterFocus}
 					onChange={this.onFilterChange}
 				/>

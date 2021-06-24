@@ -69,7 +69,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
-		const { tab } = this.state;
+		const { tab, filter } = this.state;
 
 		if (!element) {
 			return null;
@@ -122,6 +122,7 @@ class PageMainIndex extends React.Component<Props, State> {
 									ref={(ref: any) => { this.refFilter = ref; }} 
 									placeHolder="" 
 									placeHolderFocus="" 
+									value={filter}
 									onChange={this.onFilterChange}
 								/>
 							</div>

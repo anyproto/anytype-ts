@@ -114,6 +114,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 					<Filter 
 						ref={(ref: any) => { this.ref = ref; }} 
 						placeHolderFocus="Filter relations or create a new one..." 
+						value={filter}
 						onChange={this.onFilterChange} /> 
 				) : ''}
 
