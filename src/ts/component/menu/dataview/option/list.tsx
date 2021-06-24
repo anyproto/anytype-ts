@@ -277,18 +277,20 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.open('dataviewOptionEdit', { 
-			element: `#${getId()} #item-${item.id}`,
-			offsetX: 288,
-			vertical: I.MenuDirection.Center,
-			passThrough: true,
-			noFlipY: true,
-			noAnimation: true,
-			classNameWrap: classNameWrap,
-			data: {
-				...data,
-				option: item,
-			}
+		menuStore.close('dataviewOptionEdit', () => {
+			menuStore.open('dataviewOptionEdit', { 
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: 288,
+				vertical: I.MenuDirection.Center,
+				passThrough: true,
+				noFlipY: true,
+				noAnimation: true,
+				classNameWrap: classNameWrap,
+				data: {
+					...data,
+					option: item,
+				}
+			});
 		});
 	};
 	
