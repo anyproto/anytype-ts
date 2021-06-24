@@ -553,6 +553,7 @@ class PageMainIndex extends React.Component<Props, State> {
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
+
 					return !isArchived;
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {
