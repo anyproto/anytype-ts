@@ -322,10 +322,10 @@ class BlockText extends React.Component<Props, {}> {
 			};
 
 			const object = detailStore.get(rootId, data.param, []);
-			const { _objectEmpty_, layout, done } = object;
+			const { _empty_, layout, done } = object;
 
 			let icon = null;
-			if (_objectEmpty_) {
+			if (_empty_) {
 				item.addClass('dis');
 				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {

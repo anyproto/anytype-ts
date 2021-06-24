@@ -27,7 +27,7 @@ class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readOnly } = this.props;
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId, [ 'isArchived' ]);
-		const { _objectEmpty_, name, isArchived, done, layout } = object;
+		const { _empty_, name, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
 
 		if ((layout == I.ObjectLayout.Task) && done) {
@@ -40,7 +40,7 @@ class BlockLink extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
-				{_objectEmpty_ ? (
+				{_empty_ ? (
 					<div className="loading" data-target-block-id={content.targetBlockId}>
 						<Loader />
 						<div className="name">{translate('blockLinkSyncing')}</div>
@@ -92,9 +92,9 @@ class BlockLink extends React.Component<Props, {}> {
 		const { content } = block;
 		const { targetBlockId } = content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _objectEmpty_ } = object;
+		const { _empty_ } = object;
 		
-		if (!_objectEmpty_ && (targetBlockId != rootId)) {
+		if (!_empty_ && (targetBlockId != rootId)) {
 			DataUtil.objectOpenEvent(e, object);
 		};
 	};

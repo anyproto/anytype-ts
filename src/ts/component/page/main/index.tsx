@@ -540,12 +540,12 @@ class PageMainIndex extends React.Component<Props, State> {
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
 					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
-					const { layout, name, _objectEmpty_, isArchived } = object;
+					const { layout, name, _empty_, isArchived } = object;
 
 					if (it.content.style == I.LinkStyle.Archive) {
 						return false;
 					};
-					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_objectEmpty_) {
+					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
 						return false;
 					};
 					if (reg && name && !name.match(reg)) {

@@ -31,7 +31,7 @@ class BlockFile extends React.Component<Props, {}> {
 		const { state } = content;
 		
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
-		if (object._objectEmpty_) {
+		if (object._empty_) {
 			object = Util.objectCopy(content);
 			object.sizeInBytes = object.size;
 		};

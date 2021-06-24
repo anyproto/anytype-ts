@@ -83,7 +83,7 @@ class PageMainStore extends React.Component<Props, State> {
 		let Mid: any = null;
 
 		const Author = (item: any) => {
-			if (item._objectEmpty_) {
+			if (item._empty_) {
 				return null;
 			};
 			return (

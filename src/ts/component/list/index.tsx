@@ -54,12 +54,12 @@ class ListIndex extends React.Component<Props, {}> {
 				showMenu = false;
 			};
 
-			const { _objectEmpty_, layout, iconEmoji, iconImage } = object;
+			const { _empty_, layout, iconEmoji, iconImage } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
 			const name = object.name || Constant.default.name;
 
-			if (_objectEmpty_) {
+			if (_empty_) {
 				return (
 					<div className="item isLoading" data-target-id={targetId}>
 						<div className="iconObject c48 animatedBackground" />

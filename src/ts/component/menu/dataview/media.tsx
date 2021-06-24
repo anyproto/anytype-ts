@@ -33,7 +33,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		
 		let value = Util.objectCopy(data.value || []);
 		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
-		value = value.filter((it: any) => { return !it._objectEmpty_; });
+		value = value.filter((it: any) => { return !it._empty_; });
 
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />

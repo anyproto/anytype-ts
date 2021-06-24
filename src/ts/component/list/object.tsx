@@ -55,7 +55,7 @@ class ListObject extends React.Component<Props, {}> {
 						) : ''}
 					</td>
 					<td className="cell">
-						{!author._objectEmpty_ ? (
+						{!author._empty_ ? (
 							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
 								<IconObject object={author} />
 								<div className="name">{author.name}</div>

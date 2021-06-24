@@ -214,10 +214,18 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
+		const { focused } = focus.state;
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, []);
+
 		this.open();
 
 		for (let id of EDITOR_IDS) {
 			this.placeholderCheck(id);
+		};
+
+		if (!focused && !object._empty_) {
+			focus.set('name', { from: object.name.length, to: object.name.length });
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
