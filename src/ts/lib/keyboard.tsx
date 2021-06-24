@@ -259,7 +259,7 @@ class Keyboard {
 				horizontal: I.MenuDirection.Right,
 				classNameWrap: 'fromHeader',
 				data: {
-					isPopup: popup ? true : false,
+					isPopup: popupStore.isOpen(),
 				},
 			});
 		}, Constant.delay.menu);

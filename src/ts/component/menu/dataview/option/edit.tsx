@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, translate } from 'ts/lib';
-import { Icon, Input, Filter, MenuItemVertical } from 'ts/component';
+import { I, DataUtil, Util, translate, keyboard } from 'ts/lib';
+import { Icon, Filter, MenuItemVertical } from 'ts/component';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { menuStore } from 'ts/store';
@@ -14,12 +14,13 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 	
 	ref: any = null;
 	color: string = null;
+	timeout: number = 0;
 
 	constructor(props: any) {
 		super(props);
 
-		this.onSubmit = this.onSubmit.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 
 	render () {
@@ -42,18 +43,15 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<div className="filter">
-					<div className="inner">
-						<Input 
-							ref={(ref: any) => { this.ref = ref; }} 
-							placeholder={translate('menuDataviewOptionEditPlaceholder')}
-							className={'textColor-' + this.color}
-							value={option.text}
-							onBlur={this.onSubmit}
-						/>
-					</div>
-					<div className="line" />
-				</div>
+				<Filter
+					ref={(ref: any) => { this.ref = ref; }}
+					placeholder={translate('menuDataviewOptionEditPlaceholder')}
+					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
+					className={'textColor-' + this.color}
+					value={option.text}
+					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
+					onBlur={this.onBlur}
+				/>
 
 				{colors.map((action: any, i: number) => {
 					let inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
@@ -94,6 +92,7 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const { rebind } = data;
 
 		this.unbind();
+		window.clearTimeout(this.timeout);
 		
 		if (rebind) {
 			rebind();
@@ -108,16 +107,31 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 
-	onSubmit (e: any) {
+	onKeyUp (e: any, v: string) {
 		e.preventDefault();
 
-		const value = this.ref.getValue();
-		if (!value) {
+		const { close } = this.props;
+
+		let ret = false;
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.save();
+			close();
+		});
+
+		if (ret) {
 			return;
 		};
 
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			this.save();
+		}, 500);
+	};
+
+	onBlur () {
+		window.clearTimeout(this.timeout);
 		this.save();
-		this.props.close();
 	};
 
 	onColor (e: any, item: any) {

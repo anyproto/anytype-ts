@@ -15,8 +15,11 @@
 		}
 		.head {
 			.iconObject { margin-right: 6px; }
-			.icon { width: 20px; height: 20px; vertical-align: top; margin-right: 6px; }
-			.icon.search { background-image: url('~img/icon/search.svg'); }
+			
+			.icon { width: 18px; height: 18px; vertical-align: top; margin: 2px 6px 0px 0px; }
+			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
+			.icon.home { background-image: url('~img/icon/popup/search/home.svg'); }
+
 			.input { 
 				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
 				vertical-align: top;
@@ -36,16 +39,16 @@
 			.section { height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
 
 			.item { 
-				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 5px 16px; white-space: nowrap;
+				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 7px 16px; white-space: nowrap;
 				display: flex;
 			}
 			.item {
-				.iconObject { transition: $transitionFast; vertical-align: top; margin: 2px 6px 0px 0px; flex-shrink: 0; }
-				.name { @include text-overflow-nw; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 50%; }
+				.iconObject { transition: $transitionFast; vertical-align: top; margin-right: 6px; flex-shrink: 0; }
+				.name { @include text-overflow-nw; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 50%; }
 				.type { flex-shrink: 0; max-width: 33%; }
-				.descr { @include text-small; @include text-overflow-nw; line-height: 22px; color: $colorVeryDarkGrey; display: inline-block; vertical-align: top; }
+				.descr { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; display: inline-block; vertical-align: top; }
 
-				.div { width: 2px; height: 22px; line-height: 22px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
+				.div { width: 2px; height: 18px; line-height: 18px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
 				.div {
 					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
 				}

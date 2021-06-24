@@ -1092,6 +1092,8 @@ class DataUtil {
 	sortByName (c1: any, c2: any) {
 		const n1 = c1.name.toLowerCase();
 		const n2 = c2.name.toLowerCase();
+		if (!n1 && n2) return 1;
+		if (n1 && !n2) return -1;
 		if (n1 > n2) return 1;
 		if (n1 < n2) return -1;
 		return 0;
@@ -1110,7 +1112,8 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-				value = parseFloat(String(value || '0'));
+				value = String(value || '0').replace(/,\s?/g, '.');
+				value = parseFloat(value);
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {

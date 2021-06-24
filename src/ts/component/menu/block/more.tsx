@@ -161,11 +161,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const object = detailStore.get(rootId, blockId);
-		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]);
+		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const cmd = keyboard.ctrlSymbol();
 
 		let template = null;
 		let archive = null;
+		let linkRoot = null;
+
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
@@ -178,7 +181,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return it.isLink() && (it.content.targetBlockId == rootId);
 		});
 
-		let linkRoot = null;
 		if (favorites.length) {
 			linkRoot = { id: 'unlinkRoot', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
@@ -190,6 +192,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'unarchivePage', icon: 'remove', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
+		};
+
+		console.log(allowedDetails);
+
+		if (!allowedDetails) {
+			archive = null;
 		};
 
 		let sections = [];
@@ -214,10 +222,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				history = null;
 			};
 
-			if (!allowed) {
+			if (!allowedBlock) {
 				undo = null;
 				redo = null;
-				archive = null;
 			};
 
 			if (!config.allowDataview) {

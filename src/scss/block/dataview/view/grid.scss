@@ -20,8 +20,11 @@
 				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
 			}
 		}
+		.cellHead.small { text-align: center; }
 		.cellHead.small {
+			.flex { display: inline-block; }
 			.iconObject { display: block; }
+			.name { display: none; }
 		}
 		.cellHead.last { overflow: visible; }
 		.cellHead.last {
@@ -35,7 +38,6 @@
 
 			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
 			.row.add { border: 0px; }
-			.row:first-child { top: 1px !important; height: 47px !important; }
 
 			.row:hover {
 				.cellContent.isName {
@@ -45,7 +47,8 @@
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
-				.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
+				.empty { visibility: hidden; }
+				.name, .empty { line-height: 20px; @include text-overflow-nw; width: 100%; }
 			}
 
 			.cell.isName, .cellContent.isName { cursor: pointer; }

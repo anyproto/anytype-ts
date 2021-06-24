@@ -70,6 +70,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		const { tab, filter } = this.state;
+		const canDrag = [ Tab.Favorite ].indexOf(tab) >= 0
 
 		if (!element) {
 			return null;
@@ -135,7 +136,7 @@ class PageMainIndex extends React.Component<Props, State> {
 							onSortEnd={this.onSortEnd}
 							getList={this.getList}
 							helperContainer={() => { return $('#documents').get(0); }} 
-							canDrag={[ Tab.Favorite, Tab.Archive ].indexOf(tab) >= 0}
+							canDrag={canDrag}
 						/>
 					</div>
 				</div>
@@ -464,6 +465,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		if (!current || !target || !element) {
 			return;
 		};
+
 		
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		const oidx = element.childrenIds.indexOf(current.id);
