@@ -720,8 +720,9 @@ class BlockText extends React.Component<Props, {}> {
 				focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
 				focus.apply();
 			};
-			this.setText(this.marks, false);
 		};
+
+		this.setText(this.marks, false);
 	};
 
 	onMention () {
