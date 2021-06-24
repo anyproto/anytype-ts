@@ -20,8 +20,11 @@
 				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
 			}
 		}
+		.cellHead.small { text-align: center; }
 		.cellHead.small {
+			.flex { display: inline-block; }
 			.iconObject { display: block; }
+			.name { display: none; }
 		}
 		.cellHead.last { overflow: visible; }
 		.cellHead.last {
