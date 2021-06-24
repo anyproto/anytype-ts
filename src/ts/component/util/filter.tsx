@@ -111,16 +111,24 @@ class Filter extends React.Component<Props, {}> {
 	};
 
 	onChange (e: any, v: string) {	
+		const { onChange } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 
 		v ? node.addClass('active') : node.removeClass('active');
 
-		this.props.onChange(v);
+		if (onChange) {
+			onChange(v);
+		};
 	};
 
 	setValue (v: string) {
+		const { onChange } = this.props;
+
 		this.ref.setValue(v);
-		this.props.onChange(v);
+		
+		if (onChange) {
+			onChange(v);
+		};
 	};
 
 	getValue () {
