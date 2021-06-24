@@ -1,9 +1,9 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import 'react-virtualized/styles.css';
 
 import Item from 'ts/component/menu/item/relationView';
 
@@ -82,7 +82,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 		return (
 			<div className="sections">
-				<div className="scrollWrap">
+				<div id="scrollWrap" className="scrollWrap">
 					{sections.map((item: any, i: number) => {
 						return <Section key={i} {...item} index={i} />;
 					})}
@@ -93,8 +93,13 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scrollWrap = node.find('#scrollWrap');
+
 		this.resize();
 		$('body').addClass('over');
+
+		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
 
 	componentDidUpdate () {
@@ -107,6 +112,15 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	componentWillUnmount () {
 		$('body').removeClass('over');
+	};
+
+	onScroll () {
+		const win = $(window);
+		const { list } = menuStore;
+
+		for (let menu of list) {
+			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+		};
 	};
 
 	getSections () {
