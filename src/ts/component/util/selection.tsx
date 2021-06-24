@@ -379,11 +379,11 @@ class SelectionProvider extends React.Component<Props, {}> {
 		};
 			
 		const cached = this.cacheRect(item);
-		if (!cached || !Util.rectsCollide(rect, cached)) {
+		if (!cached || !this.rectsCollide(rect, cached)) {
 			return;
 		};
 
-		const block = $('#block-' + id);
+		const block = $(`#block-${id}`);
 		
 		if ((e.ctrlKey || e.metaKey)) {
 			if (this.lastIds.indexOf(id) < 0) {
@@ -443,9 +443,9 @@ class SelectionProvider extends React.Component<Props, {}> {
 				this.focused = selected.data('id');
 				this.range = range;
 			};
-			
+
 			if (this.range) {
-				if (this.range.end && (this.range.start != this.range.end)) {
+				if (this.range.end) {
 					$('.isSelected').removeClass('isSelected');
 				};
 				
@@ -599,6 +599,14 @@ class SelectionProvider extends React.Component<Props, {}> {
 			dataset.selection = this;
 			return React.cloneElement(child, { dataset: dataset });
 		});
+	};
+
+	rectsCollide (rect1: any, rect2: any) {
+		return this.coordsCollide(rect1.x, rect1.y, rect1.width, rect1.height, rect2.x, rect2.y, rect2.width, rect2.height);
+	};
+	
+	coordsCollide (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 	
 };
