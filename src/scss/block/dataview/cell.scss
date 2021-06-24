@@ -1,8 +1,7 @@
 @import "~scss/_vars";
 
-.cell.c-shortText { cursor: text; }
-.cell.c-shortText {
-	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; }
+.cell.c-shortText, .cell.c-url, .cell.c-email, .cell.c-phone {
+	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; width: 100%; }
 }
 
 .cell.c-select {
