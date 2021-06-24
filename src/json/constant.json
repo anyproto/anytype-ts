@@ -15,6 +15,7 @@
 	"default": {
 		"name": "Untitled",
 		"nameType": "New type",
+		"nameSet": "New set",
 		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 3,
