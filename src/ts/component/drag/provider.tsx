@@ -304,7 +304,7 @@ class DragProvider extends React.Component<Props, {}> {
 		if (this.hoverData) {
 			if (!isFileDrag && (this.type == I.DragItem.Block)) {
 				let parentIds: string[] = [];
-				this.getParentIds(this.hoverData.id, parentIds);
+				this.getParentIds(rootId, this.hoverData.id, parentIds);
 
 				for (let dropId of this.ids) {
 					if ((dropId == this.hoverData.id) || (parentIds.length && (parentIds.indexOf(dropId) >= 0))) {
@@ -420,16 +420,14 @@ class DragProvider extends React.Component<Props, {}> {
 		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
-	getParentIds (blockId: string, parentIds: string[]) {
-		const { rootId } = this.props;
+	getParentIds (rootId: string, blockId: string, parentIds: string[]) {
 		const item = blockStore.getMapElement(rootId, blockId);
-
-		if (!item || (item.parentId == rootId)) {
+		if (!item.parentId || (item.parentId == rootId)) {
 			return;
 		};
 
 		parentIds.push(item.parentId);
-		this.getParentIds(item.parentId, parentIds);
+		this.getParentIds(rootId, item.parentId, parentIds);
 	};
 
 	getDirectionClass (dir: I.BlockPosition) {
