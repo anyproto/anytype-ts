@@ -415,7 +415,11 @@ class PopupSearch extends React.Component<Props, State> {
 			if (this.ref) {
 				this.ref.focus();
 			};
-			this.setState({ pages: message.records, loading: false });
+			
+			const pages = message.records;
+			pages.sort(DataUtil.sortByName);
+
+			this.setState({ pages: pages, loading: false });
 		});
 	};
 
