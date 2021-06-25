@@ -43,8 +43,6 @@
 		.emptyToggle:hover { color: $colorBlack; }
 	}
 
-	.focusable.isFocused { background: rgba(134, 125, 66, 0.05); }
-
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
 
 	.block.isReadOnly {

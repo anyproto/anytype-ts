@@ -87,14 +87,20 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			<form onSubmit={this.onSubmit}>
 				<div className="section noLine">
 					<div className="name">Relation name</div>
-					<div className="inputWrap">
-						<Input 
-							ref={(ref: any) => { this.ref = ref; }} 
-							value={relation ? relation.name : ''} 
-							readOnly={this.isReadOnly()} 
-							onChange={this.onChange} 
-						/>
-					</div>
+					{!this.isReadOnly() ? (
+						<div className="inputWrap">
+							<Input 
+								ref={(ref: any) => { this.ref = ref; }} 
+								value={relation ? relation.name : ''} 
+								onChange={this.onChange} 
+							/>
+						</div>
+					) : (
+						<div className="item isReadOnly">
+							<Icon className="lock" />
+							{relation ? relation.name : ''}
+						</div>
+					)}
 				</div>
 
 				<div className={[ 'section', (!opts && !this.isReadOnly() ? 'noLine' : '') ].join(' ')}>
@@ -103,6 +109,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						id="relation-type" 
 						icon={'relation ' + DataUtil.relationClass(this.format)} 
 						name={translate('relationName' + this.format)} 
+						className={this.isReadOnly() ? 'isReadOnly' : ''}
 						onMouseEnter={this.onRelationType} 
 						arrow={!relation}
 					/>
@@ -322,7 +329,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 	checkButton () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const name = this.ref.getValue();
+		const name = this.ref ? this.ref.getValue() : '';
 		const button = node.find('#button');
 		const canSave = name.length && !this.isReadOnly();
 
@@ -347,7 +354,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const name = this.ref.getValue();
+		const name = this.ref ? this.ref.getValue() : '';
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!name || !block) {

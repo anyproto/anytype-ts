@@ -21,7 +21,7 @@
 			}
 
 			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin-bottom: 9px; }
+			.descr { @include text-paragraph; margin: 7px 0px; }
 
 			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
 

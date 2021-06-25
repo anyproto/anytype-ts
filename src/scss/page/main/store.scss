@@ -44,23 +44,22 @@
 
 		.loaderWrapper { position: relative !important; }
 
-		.ReactVirtualized__List { padding: 48px; }
+		.ReactVirtualized__List { padding: 48px 104px; }
 
 		.items { height: 100%; }
 		.items {
 			.row { white-space: nowrap; }
 
 			.item { display: inline-block; vertical-align: top; position: relative; cursor: pointer; }
-
 			.item {
 				.iconObject.isObjectType, .iconObject.isRelation { position: absolute; left: 0px; top: 0px; }
 				.iconObject.isHuman { vertical-align: middle; margin: -1px 4px 0px 0px; }
 
 				.info { height: 100%; position: relative; }
 				.info {
-					.txt { width: 100%; }
+					.txt { width: 100%; vertical-align: top; }
 					.name { @include text-overflow-nw; line-height: 22px; }
-					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px 3px 0px; }
+					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px; }
 					.author { @include text-small; color: $colorVeryDarkGrey; line-height: 18px; }
 					.line { width: 100%; height: 1px; background: #eae9e0; position: absolute; left: 0px; }
 				}
