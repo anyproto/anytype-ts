@@ -64,10 +64,12 @@ class PopupHelp extends React.Component<Props, {}> {
 
 		this.renderLinks();
 		this.rebind();
+		this.resize();
 	};
 
 	componentDidUpdate () {
 		this.renderLinks();
+		this.resize();
 	};
 
 	componentWillUnmount () {
