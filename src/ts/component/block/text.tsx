@@ -847,13 +847,13 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		if (!this.preventSaveOnBlur && keyboard.isFocused) {
-			this.setText(this.marks, true);
-		};
-
 		this.placeholderHide();
 		focus.clearRange(true);
 		keyboard.setFocus(false);
+
+		if (!this.preventSaveOnBlur) {
+			this.setText(this.marks, true);
+		};
 	};
 	
 	onPaste (e: any) {
