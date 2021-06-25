@@ -47,7 +47,7 @@
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
-				.empty { visibility: hidden; }
+				.empty { visibility: hidden; display: block; }
 				.name, .empty { line-height: 20px; @include text-overflow-nw; width: 100%; }
 			}
 
