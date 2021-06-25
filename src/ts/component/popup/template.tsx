@@ -49,7 +49,7 @@ class PopupTemplate extends React.Component<Props, State> {
 			<div className="wrapper">
 				<div className="head">
 					<Title text="Choose a template" />
-					<Label text={`Type “${type.name}” has 3 templates, use ←→ to switch and ENTER to choose`} />
+					<Label text={`Type “${type.name}” has ${items.length} templates, use ←→ to switch and ENTER to choose`} />
 				</div>
 
 				<ListTemplate 
