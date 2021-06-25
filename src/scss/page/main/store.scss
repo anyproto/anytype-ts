@@ -57,7 +57,7 @@
 
 				.info { height: 100%; position: relative; }
 				.info {
-					.txt { width: 100%; vertical-align: top; }
+					.txt { width: 100%; vertical-align: middle; }
 					.name { @include text-overflow-nw; line-height: 22px; }
 					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px; }
 					.author { @include text-small; color: $colorVeryDarkGrey; line-height: 18px; }
