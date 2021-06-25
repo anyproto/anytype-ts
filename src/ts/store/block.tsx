@@ -140,6 +140,10 @@ class BlockStore {
 		let map = this.getMap(rootId);
 		let element = this.getMapElement(rootId, blockId);
 
+		if (!element) {
+			return;
+		};
+
 		set(element, 'childrenIds', childrenIds);
 
 		map.set(blockId, element);
@@ -187,12 +191,7 @@ class BlockStore {
 
 	getMapElement (rootId: string, blockId: string) {
 		const map = this.getMap(rootId);
-
-		let element = map.get(blockId);
-		if (!element) {
-			element = new M.BlockStructure({ parentId: '', childrenIds: [] });
-		};
-		return element;
+		return map.get(blockId);
 	};
 
 	getLeaf (rootId: string, id: string): any {
@@ -217,7 +216,7 @@ class BlockStore {
 
 	getChildrenIds (rootId: string, blockId: string): string[] {
 		const element = this.getMapElement(rootId, blockId);
-		return element.childrenIds || [];
+		return element ? (element.childrenIds || []) : [];
 	};
 
 	getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {

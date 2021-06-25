@@ -422,7 +422,7 @@ class DragProvider extends React.Component<Props, {}> {
 
 	getParentIds (rootId: string, blockId: string, parentIds: string[]) {
 		const item = blockStore.getMapElement(rootId, blockId);
-		if (!item.parentId || (item.parentId == rootId)) {
+		if (!item || (item.parentId == rootId)) {
 			return;
 		};
 

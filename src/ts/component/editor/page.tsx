@@ -587,6 +587,11 @@ class EditorPage extends React.Component<Props, {}> {
 			const element = blockStore.getMapElement(rootId, first.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const parentElement = blockStore.getMapElement(rootId, parent.id);
+
+			if (!element || !parentElement) {
+				return;
+			};
+
 			const idx = parentElement.childrenIds.indexOf(first.id);
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, first.id, -1);
@@ -932,6 +937,11 @@ class EditorPage extends React.Component<Props, {}> {
 			const element = blockStore.getMapElement(rootId, block.id);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
 			const parentElement = blockStore.getMapElement(rootId, parent.id);
+
+			if (!element || !parentElement) {
+				return;
+			};
+
 			const idx = parentElement.childrenIds.indexOf(block.id);
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
@@ -1008,11 +1018,12 @@ class EditorPage extends React.Component<Props, {}> {
 		let next: I.Block = null;
 
 		// If block is closed toggle - find next block on the same level
-		if (block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
+		if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
 			const element = blockStore.getMapElement(rootId, block.parentId);
-			const idx = element.childrenIds.indexOf(block.id);
-
-			next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
+			if (element) {
+				const idx = element.childrenIds.indexOf(block.id);
+				next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
+			};
 		} else {
 			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		};
