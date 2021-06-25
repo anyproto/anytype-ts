@@ -59,7 +59,7 @@
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 		
 		.btn {
-			.icon { width: 20px; height: 20px; background-size: 16px 16px; margin: 0px 4px 0px 0px; vertical-align: middle; }
+			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: middle; }
 			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
 			.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
@@ -70,7 +70,7 @@
 		
 		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }
 		.btn.drag {
-			.icon { background-image: url('~img/icon/cover/drag.svg'); }
+			.icon { background-size: 16px 16px; background-image: url('~img/icon/cover/drag.svg'); }
 		}
 	}
 }
