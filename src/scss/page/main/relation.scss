@@ -10,7 +10,7 @@
 			.side.right { width: calc(100% - 128px); }
 
 			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin: 8px 0px 9px 0px; }
+			.descr { @include text-paragraph; margin: 7px 0px; }
 		}
 
 		.block {

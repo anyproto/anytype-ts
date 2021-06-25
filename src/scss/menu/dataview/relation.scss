@@ -20,6 +20,8 @@
 
 		.item.disabled { cursor: default; opacity: 1 !important; }
 		.item.disabled:hover::before { opacity: 0; }
+
+		.icon.lock { margin-right: 6px; }
 		
 		.icon.arrow { 
 			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
