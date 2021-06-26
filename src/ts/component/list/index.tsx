@@ -42,8 +42,6 @@ class ListIndex extends React.Component<Props, {}> {
 			let object: any = null;
 			let targetId = '';
 			let icon = null;
-			let showMenu = true;
-			let btn = null;
 
 			if (item.isBlock) {
 				object = item._object_;
@@ -51,7 +49,6 @@ class ListIndex extends React.Component<Props, {}> {
 			} else {
 				object = item;
 				targetId = item.id;
-				showMenu = false;
 			};
 
 			const { _empty_, layout, iconEmoji, iconImage } = object;
@@ -72,7 +69,6 @@ class ListIndex extends React.Component<Props, {}> {
 			/*
 			if (content.style == I.LinkStyle.Archive) {
 				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />;
-				showMenu = false;
 			} else 
 			*/
 			if (layout == I.ObjectLayout.Task) {
@@ -80,10 +76,6 @@ class ListIndex extends React.Component<Props, {}> {
 				icon = <IconObject size={20} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
 			} else {
 				icon = <IconObject size={48} object={object} />;
-			};
-
-			if (showMenu) {
-				btn = <Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />;
 			};
 
 			return (
@@ -98,12 +90,10 @@ class ListIndex extends React.Component<Props, {}> {
 					{icon}
 					<div className="name">{name}</div>
 					<div className="type">{type ? type.name : ''}</div>
-					{btn}
-					<div className="click" onClick={(e: any) => { onSelect(e, item); }} onContextMenu={(e: any) => { 
-						if (showMenu) {
-							onMore(e, item); 
-						};
-					}} />
+
+					<Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />
+
+					<div className="click" onClick={(e: any) => { onSelect(e, item); }} onContextMenu={(e: any) => { onMore(e, item); }} />
 				</div>
 			);
 		});

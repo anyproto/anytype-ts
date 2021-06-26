@@ -320,8 +320,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
-		const targetBlockId = item.content?.targetBlockId;
-		
+
 		let menuContext = null;
 		let favorites = []; 
 		let archive = null;
@@ -335,7 +334,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (item.isBlock) {
 			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-				return it.isLink() && (it.content.targetBlockId == targetBlockId);
+				return it.isLink() && (it.content.targetBlockId == object.id);
 			});
 		};
 
@@ -346,12 +345,13 @@ class PageMainIndex extends React.Component<Props, State> {
 		};
 
 		if (object.isArchived) {
+			link = null;
 			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if ([ Tab.Favorite, Tab.Archive ].indexOf(tab) < 0) {
+		if ([ Tab.Favorite ].indexOf(tab) < 0) {
 			move = null;
 		};
 
@@ -411,18 +411,26 @@ class PageMainIndex extends React.Component<Props, State> {
 
 					switch (el.id) {
 						case 'archive':
-							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], true);
+							if (item.isBlock) {
+								C.BlockListSetPageIsArchived(rootId, [ object.id ], true);
+							} else {
+								DataUtil.pageSetArchived(object.id, true, () => { this.load(); });
+							};
 							break;
 
 						case 'unarchive':
-							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], false);
+							if (item.isBlock) {
+								C.BlockListSetPageIsArchived(rootId, [ object.id ], false);
+							} else {
+								DataUtil.pageSetArchived(object.id, false, () => { this.load(); });
+							};
 							break;
 
 						case 'link':
 							const newBlock = {
 								type: I.BlockType.Link,
 								content: {
-									targetBlockId: targetBlockId,
+									targetBlockId: object.id,
 								}
 							};
 							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
@@ -430,7 +438,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 						case 'unlink':
 							let favorites = blockStore.getChildren(root, root, (it: I.Block) => { 
-								return it.isLink() && (it.content.targetBlockId == targetBlockId);
+								return it.isLink() && (it.content.targetBlockId == object.id);
 							}).map((it: I.Block) => { return it.id; });
 
 							if (favorites.length) {
