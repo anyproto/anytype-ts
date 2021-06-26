@@ -313,7 +313,7 @@ class CellText extends React.Component<Props, State> {
 			value = value ? Util.parseDate(value) : null;
 		};
 
-		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
+		if ((relation.format != I.RelationType.Date) && JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
 			this.setState({ editing: false });
 			return;
 		};
