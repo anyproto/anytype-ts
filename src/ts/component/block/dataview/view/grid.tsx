@@ -180,10 +180,14 @@ class ViewGrid extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const content = cell.find('.cellContent');
+		const x = cell.position().left;
+		const width = content.outerWidth();
+		const sx = scroll.scrollLeft();
+		const ww = $(window).width();
 
 		content.css({ left: 0, right: 'auto' });
 
-		if (content.offset().left + content.outerWidth() + 32 >= scroll.scrollLeft()) {
+		if (x - sx + width >= ww - 32) {
 			content.css({ left: 'auto', right: 0 });
 		};
 	};

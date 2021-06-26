@@ -612,6 +612,8 @@ const BlockDataviewViewUpdate = (contextId: string, blockId: string, viewId: str
 	request.setViewid(viewId);
 	request.setView(Mapper.To.View(view));
 
+	console.trace();
+
 	dispatcher.request('blockDataviewViewUpdate', request, callBack);
 };
 
