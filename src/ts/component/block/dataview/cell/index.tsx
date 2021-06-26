@@ -107,7 +107,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
@@ -319,7 +319,7 @@ class Cell extends React.Component<Props, {}> {
 					menuStore.open(menuId, param);
 
 					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
-					win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					//win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 				}, Constant.delay.menu);
 			};
 		} else {

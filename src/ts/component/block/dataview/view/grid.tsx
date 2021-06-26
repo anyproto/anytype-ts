@@ -22,6 +22,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super (props);
 
+		this.cellPosition = this.cellPosition.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
@@ -63,6 +64,7 @@ class ViewGrid extends React.Component<Props, {}> {
 																	readOnly={readOnly || !allowed}
 																	index={index} 
 																	style={style}
+																	cellPosition={this.cellPosition}
 																/>
 															)}
 															scrollTop={scrollTop}
@@ -167,6 +169,23 @@ class ViewGrid extends React.Component<Props, {}> {
 		wrap.css({ width: vw, paddingRight: pr });
 		
 		this.resizeLast();
+	};
+
+	cellPosition (cellId: string) {
+		const cell = $(`#${cellId}`);
+		if (!cell.hasClass('isEditing')) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+		const content = cell.find('.cellContent');
+
+		content.css({ left: 0, right: 'auto' });
+
+		if (content.offset().left + content.outerWidth() + 32 >= scroll.scrollLeft()) {
+			content.css({ left: 'auto', right: 0 });
+		};
 	};
 
 	resizeLast () {

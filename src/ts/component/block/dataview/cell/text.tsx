@@ -11,6 +11,7 @@ interface State {
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewCalendar';
 
@@ -198,8 +199,8 @@ class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { editing } = this.state;
-		const { id, relation, index, getRecord } = this.props;
-		const cell = $('#' + id);
+		const { id, relation, index, getRecord, cellPosition } = this.props;
+		const cell = $(`#${id}`);
 		const record = getRecord(index);
 
 		if (editing) {
@@ -219,8 +220,15 @@ class CellText extends React.Component<Props, State> {
 			};
 
 			cell.addClass('isEditing');
+
+			if (cellPosition) {
+				cellPosition(id);
+			};
 		} else {
-			cell.removeClass('isEditing');
+			raf(() => {
+				cell.removeClass('isEditing');
+				cell.find('.cellContent').css({ left: '', right: '' });
+			});
 		};
 
 		if (commonStore.cellId) {
