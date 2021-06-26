@@ -490,9 +490,11 @@ class App extends React.Component<Props, State> {
 			});
 		});
 
-		ipcRenderer.on('shutdown', (e, relaunch) => {
+		ipcRenderer.on('shutdownStart', (e, relaunch) => {
 			this.setState({ loading: true });
+		});
 
+		ipcRenderer.on('shutdown', (e, relaunch) => {
 			C.Shutdown(() => {
 				ipcRenderer.send('shutdown', relaunch);
 			});

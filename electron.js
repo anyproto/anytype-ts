@@ -751,6 +751,8 @@ function exit (relaunch) {
 
 	Util.log('info', 'MW shutdown is starting, relaunch: ' + relaunch);
 
+	send('shutdownStart');
+
 	if (useGRPC) {
 		if (server) {
 			server.stop().then(()=>{
