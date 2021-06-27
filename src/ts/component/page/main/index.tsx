@@ -257,13 +257,14 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		window.setTimeout(() => {
 			page.unbind('click').on('click', (e: any) => {
+				if ($.contains(searchWrap.get(0), e.target)) {
+					return;
+				};
+
 				searchWrap.removeClass('active');
 				page.unbind('click');
 
-				window.setTimeout(() => {
-					this.refFilter.setValue('');
-					this.setFilter('');
-				}, 210);
+				window.setTimeout(() => { this.setFilter(''); }, 210);
 			});
 		}, 210);
 	};
@@ -274,6 +275,9 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	setFilter (v: string) {
+		if (this.refFilter) {
+			this.refFilter.setValue(v);
+		};
 		this.setState({ filter: v });
 		this.load();
 	};
