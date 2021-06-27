@@ -202,10 +202,6 @@ class BlockDataview extends React.Component<Props, {}> {
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
-					dataMapper: (it: any, i: number) => {
-						it.name = it.templateName || `Template ${i + 1}`;
-						return it;
-					},
 					onOver: (e: any, context: any, item: any) => {
 						menuStore.close('previewObject', () => {
 							menuStore.open('previewObject', {

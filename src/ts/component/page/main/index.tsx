@@ -246,7 +246,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const searchWrap = node.find('#searchWrap');
-		const body = node.find('#body');
+		const page = $('.page');
 
 		if (searchWrap.hasClass('active')) {
 			return;
@@ -256,12 +256,14 @@ class PageMainIndex extends React.Component<Props, State> {
 		this.refFilter.focus();
 
 		window.setTimeout(() => {
-			body.unbind('click').on('click', (e: any) => {
+			page.unbind('click').on('click', (e: any) => {
 				searchWrap.removeClass('active');
-				body.unbind('click');
+				page.unbind('click');
 
-				this.refFilter.setValue('');
-				this.setFilter('');
+				window.setTimeout(() => {
+					this.refFilter.setValue('');
+					this.setFilter('');
+				}, 210);
 			});
 		}, 210);
 	};
@@ -291,6 +293,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any, item: any) {
+		e.stopPropagation();
 		e.persist();
 
 		const object = item.isBlock ? item._object_ : item;
