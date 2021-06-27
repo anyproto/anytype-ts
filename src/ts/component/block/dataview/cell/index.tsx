@@ -47,6 +47,7 @@ class Cell extends React.Component<Props, {}> {
 		const canEdit = this.canEdit();
 		const cn = [ 
 			'cellContent', 
+			'c-' + relation.relationKey,
 			DataUtil.relationClass(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == Constant.relationKey.name ? 'isName' : ''),

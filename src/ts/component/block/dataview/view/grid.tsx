@@ -212,7 +212,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		lastHead.css({ width: (width > mw ? 48 : 'auto') });
 	};
 
-	onResizeStart (e: any, id: string) {
+	onResizeStart (e: any, relationKey: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -220,22 +220,22 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		$('body').addClass('colResize');
 		win.unbind('mousemove.cell mouseup.cell');
-		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
-		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
+		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, relationKey); });
+		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, relationKey); });
 
 		keyboard.setResize(true);
 	};
 
-	onResizeMove (e: any, id: string) {
+	onResizeMove (e: any, relationKey: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const { getView } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#' + DataUtil.cellId('head', id, ''));
+		const el = node.find(`#${DataUtil.cellId('head', relationKey, '')}`);
 		const offset = el.offset();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == id; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;
 
 		let width = e.pageX - offset.left;
@@ -243,15 +243,14 @@ class ViewGrid extends React.Component<Props, {}> {
 		width = Math.min(size.max, width);
 
 		view.relations[idx].width = width;
+
 		el.css({ width: width });
 		width <= size.icon ? el.addClass('small') : el.removeClass('small');
-
-		node.find('.resizable').trigger('resize');
-
+		
 		this.resizeLast();
 	};
 
-	onResizeEnd (e: any, id: string) {
+	onResizeEnd (e: any, relationKey: string) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 
