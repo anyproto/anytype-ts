@@ -64,6 +64,9 @@
 
 			.cell.isEditing {
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; }
+				.cellContent.isName {
+					.name { width: 100%; }
+				}
 			}
 			.cell.isEditing.c-select { 
 				.cellContent { padding-bottom: 8px; }
