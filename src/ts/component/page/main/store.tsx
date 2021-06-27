@@ -360,7 +360,6 @@ class PageMainStore extends React.Component<Props, State> {
 	};
 
 	onCreateType (e: any) {
-		const { objectTypes } = dbStore;
 		const param: any = { 
 			name: '',
 			layout: I.ObjectLayout.Page, 
