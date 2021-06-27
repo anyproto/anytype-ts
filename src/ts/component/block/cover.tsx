@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.BlockComponent {};
 
 interface State {
-	editing: boolean;
+	isEditing: boolean;
 	loading: boolean;
 };
 
@@ -21,7 +21,7 @@ class BlockCover extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	state = {
-		editing: false,
+		isEditing: false,
 		loading: false,
 	};
 	cover: any = null;
@@ -62,7 +62,7 @@ class BlockCover extends React.Component<Props, State> {
 	
 	render () {
 		const { config } = commonStore;
-		const { editing, loading } = this.state;
+		const { isEditing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
 		const { coverType, coverId } = object;
@@ -72,7 +72,7 @@ class BlockCover extends React.Component<Props, State> {
 		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
 		let elements = null;
-		if (editing) {
+		if (isEditing) {
 			elements = (
 				<React.Fragment>
 					<div key="btn-drag" className="btn black drag withIcon">
@@ -127,7 +127,7 @@ class BlockCover extends React.Component<Props, State> {
 
 		return (
 			<div 
-				className={[ 'wrap', (editing ? 'isEditing' : '') ].join(' ')} 
+				className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
 				onMouseDown={this.onDragStart} 
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
@@ -307,7 +307,7 @@ class BlockCover extends React.Component<Props, State> {
 	};
 	
 	onEdit (e: any) {
-		this.setState({ editing: true });
+		this.setState({ isEditing: true });
 	};
 	
 	onUploadStart () {
@@ -316,21 +316,21 @@ class BlockCover extends React.Component<Props, State> {
 	
 	onUpload () {
 		this.loaded = false;
-		this.setState({ loading: false, editing: true });
+		this.setState({ loading: false, isEditing: true });
 	};
 	
 	onSave (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		this.setState({ editing: false });
+		this.setState({ isEditing: false });
 	};
 	
 	onCancel (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		this.setState({ editing: false });
+		this.setState({ isEditing: false });
 	};
 	
 	resize () {
@@ -388,9 +388,9 @@ class BlockCover extends React.Component<Props, State> {
 	onDragStart (e: any) {
 		e.preventDefault();
 		
-		const { editing } = this.state;
+		const { isEditing } = this.state;
 		
-		if (!this._isMounted || !editing) {
+		if (!this._isMounted || !isEditing) {
 			return false;
 		};
 		

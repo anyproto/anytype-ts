@@ -35,12 +35,14 @@
         .viewItem.viewGrid { display: table; width: 100%; position: relative; border-bottom: 1px solid #e0ded2; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
+			.icon.edit { width: 48px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
 			.row.add { border: 0px; }
 
 			.row:hover {
 				.cellContent.isName {
+					.name { width: calc(100% - 24px); }
 					.icon.edit { display: block; }
 				}
 			}

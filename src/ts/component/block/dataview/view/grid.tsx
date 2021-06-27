@@ -187,7 +187,7 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		content.css({ left: 0, right: 'auto' });
 
-		if (x - sx + width >= ww - 32) {
+		if (x - sx + width >= ww - 64) {
 			content.css({ left: 'auto', right: 0 });
 		};
 	};

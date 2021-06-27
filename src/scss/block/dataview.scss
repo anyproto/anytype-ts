@@ -11,7 +11,10 @@
 		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); transition: none; }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 		
-		.icon.edit { display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; }
+		.icon.edit { 
+			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; 
+			background-size: 20px;
+		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.icon.back, .icon.forward { width: 20px; height: 20px; }
