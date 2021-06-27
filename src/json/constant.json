@@ -85,6 +85,7 @@
 	},
 
 	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", "done" ],
+	"systemRelationKeys": [ "name", "description", "createdDate", "lastModifiedBy", "lastModifiedDate", "creator", "objectType", "lastOpenedDate" ],
 
 	"relationKey": {
 		"name": "name",

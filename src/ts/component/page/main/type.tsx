@@ -79,6 +79,7 @@ class PageMainType extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
+		relations = relations.filter((it: any) => { return Constant.systemRelationKeys.indexOf(it.relationKey) < 0; });
 		relations.sort(DataUtil.sortByHidden);
 
 		const Editor = (item: any) => {
