@@ -311,7 +311,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	getItems (withSections: boolean): I.SelectOption[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
 
 		let items = relation.selectDict || [];
@@ -319,8 +319,12 @@ class MenuOptionList extends React.Component<Props, State> {
 		let ret = [];
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
-		sections[I.OptionScope.Relation] = { id: I.OptionScope.Local, name: 'Everywhere', children: [] };
+		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Suggested', children: [] };
+
+		if (filterMapper) {
+			items = items.filter(filterMapper);
+		};
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');

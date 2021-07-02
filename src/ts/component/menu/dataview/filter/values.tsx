@@ -380,6 +380,9 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 					blockId: blockId,
 					value: item.value || [], 
 					relation: observable.box(relation),
+					filterMapper: (it: any) => {
+						return [ I.OptionScope.Local ].indexOf(it.scope) >= 0;
+					},
 					onChange: (value: any) => {
 						this.onChange('value', value);
 					},
