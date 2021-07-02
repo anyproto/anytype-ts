@@ -324,8 +324,11 @@ class MenuOptionList extends React.Component<Props, State> {
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			const check = items.filter((it: I.SelectOption) => { return it.text == data.filter; });
+
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
-			if (canAdd && !items.length) {
+
+			if (canAdd && !check.length) {
 				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
 			};
 		};
