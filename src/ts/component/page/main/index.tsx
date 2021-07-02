@@ -402,7 +402,7 @@ class PageMainIndex extends React.Component<Props, State> {
 									type: I.NavigationType.Move, 
 									skipId: rootId,
 									position: I.BlockPosition.Bottom,
-									onSelect: (item: any) => {
+									onSelect: (el: any) => {
 										menuContext.close();
 									},
 								}

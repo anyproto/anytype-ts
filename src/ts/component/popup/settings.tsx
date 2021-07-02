@@ -59,7 +59,6 @@ class PopupSettings extends React.Component<Props, State> {
 		const pin = Storage.get('pin');
 
 		let content = null;
-		let inputs = [];
 		let Item = null;
 
 		let Head = (item: any) => (
@@ -124,7 +123,7 @@ class PopupSettings extends React.Component<Props, State> {
 				let covers1 = [  ];
 				let covers2 = [];
 
-				for (let i = 1; i <= 11; ++i) {
+				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
@@ -133,7 +132,7 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 
 				if (coverImage) {
-					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
+					covers1.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
 				};
 
 				Item = (item: any) => (

@@ -356,7 +356,8 @@ class MenuSearchObject extends React.Component<Props, State> {
 					this.onClick(e, item);
 				};
 				break;
-				
+
+			case Key.left:	
 			case Key.escape:
 				this.props.close();
 				break;
