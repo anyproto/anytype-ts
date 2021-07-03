@@ -264,7 +264,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<Pin 
 							value={Storage.get('pin')} 
 							onSuccess={this.onCheckPin} 
-							onError={() => { this.setState({ error: translate('popupSettintsSectionPinError') }) }} 
+							onError={() => { this.setState({ error: translate('popupSettingsPinError') }) }} 
 						/>
 					</div>
 				);
