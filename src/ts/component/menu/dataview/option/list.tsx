@@ -313,14 +313,17 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
+		const value = this.getValue();
 
-		let items = relation.selectDict || [];
+		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};
 		let ret = [];
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Suggested', children: [] };
+
+		items = items.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 
 		if (filterMapper) {
 			items = items.filter(filterMapper);
