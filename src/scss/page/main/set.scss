@@ -25,9 +25,6 @@
 			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative; }
 
 			.wrap { position: relative; }
-			.wrap {
-				.placeholder { position: absolute; left: 0px; top: 0px; color: $colorMediumGrey; }
-			}
 		}
 	}
 }
