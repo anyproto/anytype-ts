@@ -122,6 +122,8 @@ class AuthStore {
 		dbStore.objectTypesClear();
 
 		this.accountItem = null;
+		this.nameSet('');
+		this.previewSet('');
 		this.phraseSet('');
 	};
 	
