@@ -127,6 +127,7 @@ class DetailStore {
 			...object,
 			id: id,
 			name: String(object.name || Constant.default.name),
+			type: String(object.type || Constant.typeId.page),
 			layout: Number(object.layout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 		};
