@@ -51,6 +51,10 @@
 		.item::before { transition: none; }
 
 		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
+		.cellContent {
+			.empty { display: block; }
+		}
+
 		.cellContent.c-longText {
 			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
 		}

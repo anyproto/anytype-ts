@@ -25,7 +25,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, relation, getRecord, index } = this.props;
+		const { rootId, block, relation, getRecord, index, placeholder } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -47,7 +47,7 @@ class CellSelect extends React.Component<Props, State> {
 						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

@@ -106,6 +106,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								pageContainer={Util.getPageContainer('menuBlockRelationList')}
 								readOnly={true}
 								canOpen={false}
+								placeholder={translate('placeholderCellCommon')}
 							/>
 						</div>
 					</div>

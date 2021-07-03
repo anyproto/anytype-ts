@@ -32,9 +32,9 @@
 			.item.btn { line-height: 20px; }
 		}
 		
-		.buttons { display: flex; margin-bottom: 8px; font-weight: 500; color: $colorMediumGrey; }
+		.buttons { display: flex; font-weight: 500; color: $colorMediumGrey; }
 		.buttons {
-			.side { padding: 24px 0px; height: 74px; width: 50%; white-space: nowrap; }
+			.side { padding: 23px 0px; height: 72px; width: 50%; white-space: nowrap; }
 			.side.left { padding-left: 14px; }
 			.side.right { line-height: 26px; text-align: right; }
 

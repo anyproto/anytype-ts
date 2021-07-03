@@ -363,6 +363,7 @@
 	"layout8": { "en": "Image" },
 	"layout20": { "en": "Database" },
 
+	"placeholderCellCommon": { "en": "No field" },
 	"placeholderCell0": { "en": "Enter text" },
 	"placeholderCell1": { "en": "Enter text" },	
 	"placeholderCell2": { "en": "Enter number" },	

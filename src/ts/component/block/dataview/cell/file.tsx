@@ -25,7 +25,7 @@ class CellFile extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, relation, index, getRecord, canEdit, iconSize } = this.props;
+		const { rootId, block, readOnly, relation, index, getRecord, canEdit, iconSize, placeholder } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -53,7 +53,7 @@ class CellFile extends React.Component<Props, State> {
 						))}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

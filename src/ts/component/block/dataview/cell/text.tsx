@@ -40,7 +40,7 @@ class CellText extends React.Component<Props, State> {
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize, onParentClick } = this.props;
+		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize, onParentClick, placeholder } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -75,11 +75,11 @@ class CellText extends React.Component<Props, State> {
 			} else 
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
-				let placeholder = [ 'dd.mm.yyyy' ];
+				let ph = [ 'dd.mm.yyyy' ];
 				
 				if (viewRelation.includeTime) {
 					mask.push('99:99');
-					placeholder.push('hh:mm');
+					ph.push('hh:mm');
 				};
 
 				let maskOptions = {
@@ -95,7 +95,7 @@ class CellText extends React.Component<Props, State> {
 						id="input" 
 						{...item} 
 						maskOptions={maskOptions} 
-						placeholder={placeholder.join(' ')} 
+						placeholder={ph.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
 						onSelect={this.onSelect}
 					/>
@@ -126,7 +126,7 @@ class CellText extends React.Component<Props, State> {
 				} else {
 					return (
 						<div className="empty">
-							{translate(`placeholderCell${relation.format}`)}
+							{placeholder || translate(`placeholderCell${relation.format}`)}
 						</div>
 					);
 				};

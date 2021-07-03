@@ -25,7 +25,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, getRecord, index, relation, iconSize } = this.props;
+		const { rootId, getRecord, index, relation, iconSize, placeholder } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -43,7 +43,7 @@ class CellObject extends React.Component<Props, State> {
 						})}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);

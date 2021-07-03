@@ -111,6 +111,7 @@ export interface Cell {
 	pageContainer?: string;
 	isInline?: boolean;
 	iconSize?: number;
+	placeholder?: string;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
