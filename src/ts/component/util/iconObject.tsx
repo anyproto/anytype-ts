@@ -60,7 +60,7 @@ const FontSize = {
 	18: 10,
 	20: 12,
 	24: 13,
-	40: 18,
+	40: 24,
 	48: 28,
 	56: 34,
 	64: 44,
@@ -160,7 +160,6 @@ class IconObject extends React.Component<Props, {}> {
 			cn.push('canEdit');
 		};
 
-		
 		let iconSize = this.iconSize(layout, size);
 		let icon = null;
 		let icn = [];
@@ -187,6 +186,7 @@ class IconObject extends React.Component<Props, {}> {
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
+					cn.push('withoutImage');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={name ? this.typeSvg() : ObjectType} className={icn.join(' ')} />;
 				};
@@ -196,6 +196,7 @@ class IconObject extends React.Component<Props, {}> {
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
+					cn.push('withoutImage');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={name ? this.typeSvg() : ObjectType} className={icn.join(' ')} />;
 				};

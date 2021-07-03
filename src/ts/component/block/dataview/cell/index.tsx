@@ -188,9 +188,6 @@ class Cell extends React.Component<Props, {}> {
 		switch (relation.format) {
 
 			case I.RelationType.Date:
-				param = Object.assign(param, {
-					offsetY: 14,
-				});
 				param.data = Object.assign(param.data, {
 					value: param.data.value || Util.time(),
 				});

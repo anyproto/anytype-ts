@@ -68,7 +68,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<div className="item" onMouseEnter={this.menuClose}>
 							<Icon className="clock" />
 							<div className="name">Include time</div>
-							<Switch value={viewRelation ? viewRelation.includeTime : false} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+							<Switch value={viewRelation ? viewRelation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 						</div>
 
 						<MenuItemVertical 
@@ -85,7 +85,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		return (
 			<form onSubmit={this.onSubmit}>
-				<div className="section noLine">
+				<div className="section">
 					<div className="name">Relation name</div>
 					{!this.isReadOnly() ? (
 						<div className="inputWrap">

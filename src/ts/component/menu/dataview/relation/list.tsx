@@ -63,7 +63,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 					{canHide ? (
 						<Switch 
 							value={item.isVisible} 
-							className="orange" 
 							onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} 
 						/>
 					 ) : ''}

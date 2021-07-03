@@ -129,6 +129,7 @@ class Controls extends React.Component<Props, State> {
 		menuStore.open(menu, { 
 			element: `#button-${id}`,
 			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
 			tabs: tabs,
 			data: {
 				readOnly: readOnly || !allowed,

@@ -99,7 +99,10 @@
 }
 
 .iconObject.c48.isRelation, 
-.iconObject.c40.isRelation { border-radius: 8px; background-color: #f3f2ec; }
+.iconObject.c40.isRelation,
+.iconObject.c48.withoutImage, 
+.iconObject.c40.withoutImage
+{ border-radius: 8px; background-color: #f3f2ec; }
 
 .iconObject.isHuman { border-radius: 100% !important; }
 
