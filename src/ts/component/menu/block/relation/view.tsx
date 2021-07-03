@@ -292,8 +292,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const obj = $(`#${getId()}`);
 		const container = obj.find('.content');
 		const cell = obj.find(`#${id}`);
-		const y = Math.max(0, cell.offset().top - container.offset().top);
+		
+		if (!container.length || !cell.length) {
+			return;
+		};
 
+		const y = Math.max(0, cell.offset().top - container.offset().top);
 		container.scrollTop(y);
 	};
 
