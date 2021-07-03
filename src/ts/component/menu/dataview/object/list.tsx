@@ -202,8 +202,11 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
+		const value = this.getValue();
 		
 		let ret = Util.objectCopy(this.items);
+
+		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 
 		if (data.filter && canAdd) {
 			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });
