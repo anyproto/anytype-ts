@@ -135,12 +135,14 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 	onAdd (e: any) {
 		const { getId, close, param } = this.props;
+		const { classNameWrap } = param;
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #item-add`,
 			className: 'single',
 			offsetX: param.width,
 			offsetY: -36,
+			classNameWrap: classNameWrap,
 			data: {
 				noClose: true,
 				placeholderFocus: 'Find a file...',
@@ -194,7 +196,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 	onMore (e: any, item: any) {
 		const { getId, param, id } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { onChange } = data;
 		const element = $(`#${getId()} #item-${item.id}`);
 
@@ -203,6 +205,7 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		menuStore.open('select', { 
 			element: element.find('.icon.more'),
 			horizontal: I.MenuDirection.Center,
+			classNameWrap: classNameWrap,
 			onClose: () => {
 				element.removeClass('active');
 			},

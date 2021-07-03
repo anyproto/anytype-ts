@@ -71,7 +71,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ], true); }}
+									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
