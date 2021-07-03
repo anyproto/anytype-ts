@@ -66,8 +66,13 @@ class Filter extends React.Component<Props, {}> {
 		this.ref.setValue(this.props.value);
 	};
 
+	componentDidUpdate () {
+		this.checkButton();
+	};
+
 	focus () {
 		this.ref.focus();
+		this.checkButton();
 	};
 
 	blur () {
