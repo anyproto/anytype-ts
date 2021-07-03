@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Textarea } from 'ts/component';
-import { I, keyboard } from 'ts/lib';
+import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { setRange } from 'selection-ranges';
 
 interface Props extends I.Menu {};
 
@@ -28,34 +28,32 @@ class MenuText extends React.Component<Props, {}> {
 		const { value } = data;
 
 		return (
-			<Textarea 
+			<div 
+				id="input"
 				ref={(ref: any) => { this.ref = ref; }} 
-				id="input" 
-				value={value}
+				contentEditable={true}
+				suppressContentEditableWarning={true}
 				onBlur={this.onBlur}
 				onInput={this.onInput}
-			/>
+			>
+				{value}
+			</div>
 		);
 	};
 
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { param, getId } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
 		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+		const length = value.length;
 
-		this.ref.focus();
-		this.ref.setValue(value);
+		node.focus();
+		setRange(node.get(0), { start: length, end: length });
 
-		if (input.length) {
-			let length = value.length;
-			input.get(0).setSelectionRange(length, length);
-		};
-
-		window.setTimeout(() => { this.resize(); });
+		this.resize();
 	};
 
 	componentWillUnmount () {
@@ -71,8 +69,17 @@ class MenuText extends React.Component<Props, {}> {
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(this.ref.getValue());
+		onChange(this.getValue());
 		close();
+	};
+
+	getValue (): string {
+		if (!this._isMounted) {
+			return '';
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		return String(node.get(0).innerText || '');
 	};
 
 	resize () {
