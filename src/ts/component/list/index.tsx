@@ -66,14 +66,9 @@ class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			/*
-			if (content.style == I.LinkStyle.Archive) {
-				icon = <IconObject size={48} object={{ layout: I.ObjectLayout.Page, iconEmoji: ':wastebasket:' }} />;
-			} else 
-			*/
 			if (layout == I.ObjectLayout.Task) {
 				cn.push('isTask');
-				icon = <IconObject size={20} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
+				icon = <IconObject size={18} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
 			} else {
 				icon = <IconObject size={48} object={object} />;
 			};

@@ -194,10 +194,6 @@ class Block implements I.Block {
 		return this.isLink() && (this.content.style == I.LinkStyle.Page);
 	};
 	
-	isLinkArchive (): boolean {
-		return this.isLink() && (this.content.style == I.LinkStyle.Archive);
-	};
-	
 	isIcon (): boolean {
 		return this.isIconPage() || this.isIconUser();
 	};

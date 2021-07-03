@@ -68,7 +68,7 @@ class Focus {
 		if (!focused) {
 			return;
 		};
-		
+
 		$('.focusable.isFocused').removeClass('isFocused');
 
 		const node = $('.focusable.c' + focused);

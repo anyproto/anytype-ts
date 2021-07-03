@@ -19,7 +19,7 @@ const { dialog } = window.require('electron').remote;
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
-const HEIGHT_SECTION = 34;
+const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
 
 class MenuSmile extends React.Component<Props, State> {

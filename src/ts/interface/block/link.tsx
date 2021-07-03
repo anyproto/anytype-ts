@@ -4,7 +4,6 @@ export enum LinkStyle {
 	Page		 = 0,
 	Dataview	 = 1,
 	Dashboard	 = 2,
-	Archive		 = 3,
 };
 
 export interface ContentLink {

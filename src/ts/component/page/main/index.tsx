@@ -559,9 +559,6 @@ class PageMainIndex extends React.Component<Props, State> {
 					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
 					const { layout, name, _empty_, isArchived } = object;
 
-					if (it.content.style == I.LinkStyle.Archive) {
-						return false;
-					};
 					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
 						return false;
 					};

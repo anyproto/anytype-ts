@@ -125,8 +125,8 @@ class PageMainSet extends React.Component<Props, {}> {
 			this.placeholderCheck(id);
 		};
 
-		if (!focused && !object._empty_) {
-			focus.set('name', { from: object.name.length, to: object.name.length });
+		if (!focused && !object._empty_ && (object.name == Constant.default.name)) {
+			focus.set('name', { from: 0, to: 0 });
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
