@@ -48,7 +48,7 @@
 
 			.row:hover {
 				.cellContent.isName {
-					.name { width: calc(100% - 24px); }
+					.name { width: calc(100% - 44px) !important; }
 					.icon.edit { display: block; }
 				}
 			}
