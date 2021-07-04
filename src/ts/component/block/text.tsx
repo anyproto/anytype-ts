@@ -569,15 +569,15 @@ class BlockText extends React.Component<Props, {}> {
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
 		const Markdown = {
-			'[\\*\\-\\+]': I.TextStyle.Bulleted,
-			'\\[\\]': I.TextStyle.Checkbox,
-			'1\\.': I.TextStyle.Numbered,
-			'#': I.TextStyle.Header1,
-			'##': I.TextStyle.Header2,
-			'###': I.TextStyle.Header3,
-			'\\>': I.TextStyle.Toggle,
-			'"': I.TextStyle.Quote,
-			'```': I.TextStyle.Code,
+			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
+			'\\[\\]':		 I.TextStyle.Checkbox,
+			'1\\.':			 I.TextStyle.Numbered,
+			'#':			 I.TextStyle.Header1,
+			'##':			 I.TextStyle.Header2,
+			'###':			 I.TextStyle.Header3,
+			'\\>':			 I.TextStyle.Toggle,
+			'"':			 I.TextStyle.Quote,
+			'```':			 I.TextStyle.Code,
 		};
 
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
