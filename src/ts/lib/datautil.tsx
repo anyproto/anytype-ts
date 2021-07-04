@@ -378,7 +378,6 @@ class DataUtil {
 			commonStore.gatewaySet(message.gatewayUrl);
 			
 			blockStore.rootSet(root);
-			blockStore.archiveSet(message.archiveBlockId);
 			blockStore.storeSetType(message.marketplaceTypeId);
 			blockStore.storeSetTemplate(message.marketplaceTemplateId);
 			blockStore.storeSetRelation(message.marketplaceRelationId);

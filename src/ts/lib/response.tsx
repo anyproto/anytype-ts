@@ -17,7 +17,6 @@ const ImageGetBlob = (response: any) => {
 const ConfigGet = (response: any) => {
 	return {
 		homeBlockId: response.getHomeblockid(),
-		archiveBlockId: response.getArchiveblockid(),
 		profileBlockId: response.getProfileblockid(),
 		gatewayUrl: response.getGatewayurl(),
 		marketplaceTypeId: response.getMarketplacetypeid(),
