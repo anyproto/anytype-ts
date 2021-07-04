@@ -102,31 +102,37 @@ class MenuOptionList extends React.Component<Props, State> {
 				/>
 
 				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={registerChild}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-										scrollToIndex={n}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
+					{items.length ? (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={registerChild}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToIndex={n}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					) : (
+						<div className="item empty">
+							No options available
+						</div>
+					)}
 				</div>
 			</div>
 		);
@@ -210,7 +216,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		item.id == 'add' ? this.onMenuAdd(e) : this.onValueAdd(item.id);
+		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
 
 	onValueAdd (id: string) {
@@ -247,7 +253,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		return Util.objectCopy(value);
 	};
 
-	onMenuAdd (e: any) {
+	onOptionAdd () {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, rootId, blockId, record, optionCommand } = data;
@@ -265,6 +271,7 @@ class MenuOptionList extends React.Component<Props, State> {
 			};
 
 			this.ref.setValue('');
+			this.onFilterChange('');
 			this.onValueAdd(message.option.id);
 
 			window.setTimeout(() => { this.resize(); }, 50);
@@ -414,8 +421,9 @@ class MenuOptionList extends React.Component<Props, State> {
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems(true);
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const offset = 58;
+		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
