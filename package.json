@@ -111,7 +111,7 @@
 		"lodash.isequal": "^4.5.0",
 		"lowlight": "^1.15.0",
 		"mem": "^6.1.1",
-		"mobx": "^5.15.7",
+		"mobx": "^6.3.2",
 		"mobx-decorators": "^6.0.1",
 		"mobx-devtools-mst": "^0.9.26",
 		"mobx-logger": "^0.7.1",
