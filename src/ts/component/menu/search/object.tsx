@@ -6,20 +6,19 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
 	n: number;
 	filter: string;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const LIMIT = 10;
 
-@observer
-class MenuSearchObject extends React.Component<Props, State> {
+const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -467,6 +466,6 @@ class MenuSearchObject extends React.Component<Props, State> {
 		return this.props.param.data.isBig ? 56 : 28;
 	};
 	
-};
+});
 
 export default MenuSearchObject;

@@ -3,10 +3,9 @@ import { Icon } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
-@observer
-class MenuRelationType extends React.Component<Props, {}> {
+const MenuRelationType = observer(class MenuRelationType extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -60,6 +59,6 @@ class MenuRelationType extends React.Component<Props, {}> {
 		onSelect(item);
 	};
 	
-};
+});
 
 export default MenuRelationType;

@@ -5,12 +5,11 @@ import { Util, C } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props {};
+interface Props {}
 
 const $ = require('jquery');
 
-@observer
-class Progress extends React.Component<Props, {}> {
+const Progress = observer(class Progress extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -66,6 +65,6 @@ class Progress extends React.Component<Props, {}> {
 		C.ProcessCancel(id);
 	};
 	
-};
+});
 
 export default Progress;

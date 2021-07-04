@@ -7,13 +7,12 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
 	history: any; 
-};
+}
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
-class MenuBlockRelationEdit extends React.Component<Props, {}> {
+const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
@@ -389,6 +388,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		return dbStore.getRelation(rootId, rootId, relationKey);
 	};
 
-};
+});
 
 export default MenuBlockRelationEdit;

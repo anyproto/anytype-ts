@@ -7,13 +7,12 @@ import { dbStore } from 'ts/store';
 
 import Card from './gallery/card';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class ViewGallery extends React.Component<Props, {}> {
+const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, getData, getView } = this.props;
@@ -73,6 +72,6 @@ class ViewGallery extends React.Component<Props, {}> {
 		win.trigger('resize.editor');
 	};
 	
-};
+});
 
 export default ViewGallery;

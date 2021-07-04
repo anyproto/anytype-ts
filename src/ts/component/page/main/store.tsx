@@ -8,12 +8,12 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 
 interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
-};
+}
 
 interface State {
 	tab: string;
 	loading: boolean;
-};
+}
 
 enum Tab {
 	None = '',
@@ -52,8 +52,7 @@ const Tabs = [
 
 const BLOCK_ID = 'dataview';
 
-@observer
-class PageMainStore extends React.Component<Props, State> {
+const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
 	state = {
 		tab: '',
@@ -444,6 +443,6 @@ class PageMainStore extends React.Component<Props, State> {
 		return ret;
 	};
 
-};
+});
 
 export default PageMainStore;

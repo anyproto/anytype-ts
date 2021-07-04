@@ -4,14 +4,13 @@ import { MenuItemVertical, Input, Button } from 'ts/component';
 import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	layout: I.ObjectLayout;
-};
+}
 
-@observer
-class MenuObjectTypeEdit extends React.Component<Props, State> {
+const MenuObjectTypeEdit = observer(class MenuObjectTypeEdit extends React.Component<Props, State> {
 
 	ref: any = null;
 	state = {
@@ -101,6 +100,6 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 		close();
 	};
 	
-};
+});
 
 export default MenuObjectTypeEdit;

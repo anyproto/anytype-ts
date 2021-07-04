@@ -1,4 +1,4 @@
-import { observable, action, computed, set } from 'mobx';
+import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Util, analytics } from 'ts/lib';
 import { menuStore } from 'ts/store';
 
@@ -6,17 +6,28 @@ const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 class PopupStore {
-	@observable public popupList: I.Popup[] = [];
 
-	timeout: number = 0;
-	
-	@computed
-	get list(): I.Popup[] {
+    public popupList: I.Popup[] = [];
+
+    timeout: number = 0;
+
+    constructor () {
+        makeObservable(this, {
+            popupList: observable,
+            list: computed,
+            open: action,
+            update: action,
+            updateData: action,
+            close: action,
+            closeAll: action
+        });
+    };
+
+    get list(): I.Popup[] {
 		return this.popupList;
 	};
-	
-	@action
-	open (id: string, param: I.PopupParam) {
+
+    open (id: string, param: I.PopupParam) {
 		param.data = param.data || {};
 
 		const item = this.get(id);
@@ -30,12 +41,11 @@ class PopupStore {
 		menuStore.closeAll();
 	};
 
-	get (id: string): I.Popup {
+    get (id: string): I.Popup {
 		return this.popupList.find((item: I.Popup) => { return item.id == id; });
-	};
-	
-	@action
-	update (id: string, param: any) {
+	}
+
+    update (id: string, param: any) {
 		const item = this.get(id);
 		if (!item) {
 			return;
@@ -44,23 +54,22 @@ class PopupStore {
 		set(item, { param: param });
 	};
 
-	@action
-	updateData (id: string, data: any) {
+    updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
 			this.update(id, item.param);
 		};
 	};
-	
-	isOpen (id?: string): boolean {
+
+    isOpen (id?: string): boolean {
 		if (!id) {
 			return this.popupList.length > 0;
 		};
 		return this.get(id) ? true : false;
 	};
 
-	isOpenList (ids: string[]) {
+    isOpenList (ids: string[]) {
 		for (let id of ids) {
 			if (this.isOpen(id)) {
 				return true;
@@ -68,9 +77,8 @@ class PopupStore {
 		};
 		return false;
 	};
-	
-	@action
-	close (id: string, callBack?: () => void) {
+
+    close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 		if (!item) {
 			if (callBack) {
@@ -97,9 +105,8 @@ class PopupStore {
 			};
 		}, Constant.delay.popup);
 	};
-	
-	@action
-	closeAll (ids?: string[], callBack?: () => void) {
+
+    closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.popupList.filter((it: I.Popup) => { return ids.indexOf(it.id) >= 0; }) : this.popupList;
 
 		for (let item of items) {
@@ -113,10 +120,10 @@ class PopupStore {
 		};
 	};
 
-	clearTimeout () {
+    clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};
-	
+
 };
 
 export let popupStore: PopupStore = new PopupStore();

@@ -5,13 +5,12 @@ import { authStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil, translate, Util } from 'ts/lib';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const MENU_ID = 'threadStatus';
 
-@observer
-class MenuThreadList extends React.Component<Props, {}> {
+const MenuThreadList = observer(class MenuThreadList extends React.Component<Props, {}> {
 
 	timeoutMenu: number = 0;
 	timeoutClose: number = 0;
@@ -146,6 +145,6 @@ class MenuThreadList extends React.Component<Props, {}> {
 		};
 	};
 	
-};
+});
 
 export default MenuThreadList;

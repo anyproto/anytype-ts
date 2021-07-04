@@ -15,12 +15,11 @@ interface Props {
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
-};
+}
 
 const Constant = require('json/constant.json');
 
-@observer
-class BodyCell extends React.Component<Props, {}> {
+const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, relationKey, index, readOnly, onRef, onCellClick, onCellChange } = this.props;
@@ -53,6 +52,6 @@ class BodyCell extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default BodyCell;

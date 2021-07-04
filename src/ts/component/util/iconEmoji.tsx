@@ -19,14 +19,13 @@ interface Props {
 	menuId?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
-};
+}
 
 const Constant = require('json/constant.json');
 const IconSrc = {
 };
 
-@observer
-class IconEmoji extends React.Component<Props, {}> {
+const IconEmoji = observer(class IconEmoji extends React.Component<Props, {}> {
 	
 	public static defaultProps = {
 		offsetX: 0,
@@ -93,6 +92,6 @@ class IconEmoji extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default IconEmoji;

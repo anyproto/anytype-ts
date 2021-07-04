@@ -11,7 +11,7 @@ import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
-};
+}
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -28,10 +28,9 @@ const langs = [
 ];
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
-};
+}
 
-@observer
-class BlockText extends React.Component<Props, {}> {
+const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
@@ -1046,6 +1045,6 @@ class BlockText extends React.Component<Props, {}> {
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
-};
+});
 
 export default BlockText;

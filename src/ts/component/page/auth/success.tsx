@@ -5,11 +5,10 @@ import { translate, DataUtil } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
-interface State {};
+interface Props extends RouteComponentProps<any> {}
+interface State {}
 
-@observer
-class PageAuthSuccess extends React.Component<Props, State> {
+const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<Props, State> {
 
 	constructor (props: any) {
 		super(props);
@@ -40,6 +39,6 @@ class PageAuthSuccess extends React.Component<Props, State> {
 		DataUtil.onAuth();
 	};
 
-};
+});
 
 export default PageAuthSuccess;

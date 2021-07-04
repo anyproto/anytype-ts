@@ -7,12 +7,11 @@ import { menuStore } from 'ts/store';
 
 interface Props extends I.Relation {
 	onClick?: (e: any) => void;
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class HeadHandle extends React.Component<Props, {}> {
+const HeadHandle = observer(class HeadHandle extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -38,6 +37,6 @@ class HeadHandle extends React.Component<Props, {}> {
 		menuStore.closeAll();
 	};
 
-};
+});
 
 export default HeadHandle;

@@ -5,13 +5,12 @@ import { Storage, translate, C } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 interface State {
 	error: string;
-};
+}
 
-@observer
-class PageAuthSelect extends React.Component<Props, State> {
+const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Props, State> {
 
 	state = {
 		error: ''
@@ -66,6 +65,6 @@ class PageAuthSelect extends React.Component<Props, State> {
 		});
 	};
 	
-};
+});
 
 export default PageAuthSelect;

@@ -6,14 +6,13 @@ import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
 
 interface Props extends I.Menu { 
 	history: any; 
-};
+}
 
 interface State {
 	error: string;
-};
+}
 
-@observer
-class MenuAccount extends React.Component<Props, State> {
+const MenuAccount = observer(class MenuAccount extends React.Component<Props, State> {
 	
 	state = {
 		error: ''
@@ -96,6 +95,6 @@ class MenuAccount extends React.Component<Props, State> {
 		history.push('/auth/register/add');
 	};
 	
-};
+});
 
 export default MenuAccount;

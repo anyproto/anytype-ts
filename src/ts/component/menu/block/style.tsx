@@ -5,12 +5,11 @@ import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
 import { blockStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuBlockStyle extends React.Component<Props, {}> {
+const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Props, {}> {
 	
 	n: number = 0;
 	
@@ -195,6 +194,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default MenuBlockStyle;

@@ -5,15 +5,14 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
 const HEIGHT = 28;
 const LIMIT = 10;
 
-@observer
-class MenuSelect extends React.Component<Props, {}> {
+const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
@@ -317,6 +316,6 @@ class MenuSelect extends React.Component<Props, {}> {
 		position();
 	};
 
-};
+});
 
 export default MenuSelect;

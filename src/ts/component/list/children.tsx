@@ -15,10 +15,9 @@ interface Props extends RouteComponentProps<any> {
 	onResizeStart? (e: any, index: number): void;
 	getWrapperWidth?(): number;
 	getWrapper?(): any;
-};
+}
 
-@observer
-class ListChildren extends React.Component<Props, {}> {
+const ListChildren = observer(class ListChildren extends React.Component<Props, {}> {
 	
 	refObj: any = {};
 	
@@ -75,6 +74,6 @@ class ListChildren extends React.Component<Props, {}> {
 		);
 	};
 	
-};
+});
 
 export default ListChildren;

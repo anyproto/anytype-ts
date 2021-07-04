@@ -7,13 +7,13 @@ import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
 interface State {
 	tab: Tab;
 	filter: string;
 	pages: any[];
-};
+}
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
@@ -35,8 +35,7 @@ const Tabs = [
 	{ id: Tab.Archive, name: 'Archive' },
 ];
 
-@observer
-class PageMainIndex extends React.Component<Props, State> {
+const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
 	refFilter: any = null;
 	id: string = '';
@@ -597,6 +596,6 @@ class PageMainIndex extends React.Component<Props, State> {
 		return list;
 	};
 
-};
+});
 
 export default PageMainIndex;

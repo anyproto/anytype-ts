@@ -11,12 +11,11 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	block: I.Block;
 	index: number;
 	onResizeStart(e: any, key: string): void;
-};
+}
 
 const Constant = require('json/constant.json');
 
-@observer
-class HeadCell extends React.Component<Props, {}> {
+const HeadCell = observer(class HeadCell extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -77,6 +76,6 @@ class HeadCell extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default HeadCell;

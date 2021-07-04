@@ -5,19 +5,18 @@ import { I, C, Util, DataUtil, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 interface State {
 	isEditing: boolean;
 	loading: boolean;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;
 
-@observer
-class BlockCover extends React.Component<Props, State> {
+const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	state = {
@@ -558,6 +557,6 @@ class BlockCover extends React.Component<Props, State> {
 		return Math.min(1, Math.max(0, p));
 	};
 
-};
+});
 
 export default BlockCover;

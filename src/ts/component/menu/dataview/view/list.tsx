@@ -6,12 +6,11 @@ import { I, Util, keyboard, Key } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuViewList extends React.Component<Props> {
+const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	n: number = 0;
@@ -264,6 +263,6 @@ class MenuViewList extends React.Component<Props> {
 		};
 	};
 	
-};
+});
 
 export default MenuViewList;

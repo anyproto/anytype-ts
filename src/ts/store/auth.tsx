@@ -1,83 +1,102 @@
-import { observable, action, computed, set } from 'mobx';
+import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, analytics, crumbs } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore } from 'ts/store';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'ts/lib';
 
 class AuthStore {
-	@observable public dataPath: string = '';
-	@observable public accountItem: I.Account = null;
-	@observable public accountList: I.Account[] = [];
-	@observable public pin: string = '';
-	@observable public icon: string = '';
-	@observable public preview: string = '';
-	@observable public name: string = '';
-	@observable public phrase: string = '';
-	@observable public code: string = '';
-	@observable public threadMap: Map<string, any> = new Map();
-	
-	@computed
-	get accounts(): I.Account[] {
+
+    public dataPath: string = '';
+    public accountItem: I.Account = null;
+    public accountList: I.Account[] = [];
+    public pin: string = '';
+    public icon: string = '';
+    public preview: string = '';
+    public name: string = '';
+    public phrase: string = '';
+    public code: string = '';
+    public threadMap: Map<string, any> = new Map();
+
+    constructor () {
+        makeObservable(this, {
+            dataPath: observable,
+            accountItem: observable,
+            accountList: observable,
+            pin: observable,
+            icon: observable,
+            preview: observable,
+            name: observable,
+            phrase: observable,
+            code: observable,
+            threadMap: observable,
+            accounts: computed,
+            account: computed,
+            path: computed,
+            pathSet: action,
+            pinSet: action,
+            phraseSet: action,
+            codeSet: action,
+            iconSet: action,
+            previewSet: action,
+            nameSet: action,
+            accountAdd: action,
+            accountSet: action,
+            threadSet: action,
+            threadRemove: action,
+            logout: action
+        });
+    };
+
+    get accounts (): I.Account[] {
 		return this.accountList;
 	};
 
-	@computed
-	get account(): I.Account {
+    get account (): I.Account {
 		return this.accountItem;
 	};
 
-	@computed
-	get path(): string {
+    get path (): string {
 		return this.dataPath || Storage.get('dataPath') || '';
 	};
-	
-	@action
-	pathSet (v: string) {
+
+    pathSet (v: string) {
 		this.dataPath = v;
 		Storage.set('dataPath', v);
 	};
-	
-	@action
-	pinSet (v: string) {
+
+    pinSet (v: string) {
 		this.pin = v;
 	};
-	
-	@action
-	phraseSet (v: string) {
+
+    phraseSet (v: string) {
 		this.phrase = v;
 	};
-	
-	@action
-	codeSet (v: string) {
+
+    codeSet (v: string) {
 		this.code = v;
 	};
-	
-	@action
-	iconSet (v: string) {
+
+    iconSet (v: string) {
 		this.icon = v;
 	};
 
-	@action
-	previewSet (v: string) {
+    previewSet (v: string) {
 		this.preview = v;
 	};
-	
-	@action
-	nameSet (v: string) {
+
+    nameSet (v: string) {
 		this.name = v;
 	};
-	
-	@action
-	accountAdd (account: I.Account) {
+
+    accountAdd (account: I.Account) {
 		this.accountList.push(account);
 	};
 
-	accountClear () {
+    accountClear () {
 		this.accountList = [];
 	};
-	
-	@action
-	accountSet (account: I.Account) {
+
+    accountSet (account: I.Account) {
 		this.accountItem = account as I.Account;
 
 		Storage.set('accountId', account.id);
@@ -85,8 +104,7 @@ class AuthStore {
 		Sentry.setUser({ id: account.id });
 	};
 
-	@action
-	threadSet (rootId: string, obj: any) {
+    threadSet (rootId: string, obj: any) {
 		const thread = this.threadMap.get(rootId);
 		if (thread) {
 			set(thread, observable(obj));
@@ -95,17 +113,15 @@ class AuthStore {
 		};
 	};
 
-	@action
-	threadRemove (rootId: string) {
+    threadRemove (rootId: string) {
 		this.threadMap.delete(rootId);
 	};
 
-	threadGet (rootId) {
+    threadGet (rootId) {
 		return this.threadMap.get(rootId) || {};
 	};
 
-	@action
-	logout () {
+    logout() {
 		Storage.logout();
 
 		keyboard.setPinChecked(false);
@@ -126,7 +142,7 @@ class AuthStore {
 		this.previewSet('');
 		this.phraseSet('');
 	};
-	
+
 };
 
 export let authStore: AuthStore = new AuthStore();

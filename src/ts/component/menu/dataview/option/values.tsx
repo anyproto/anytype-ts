@@ -7,12 +7,11 @@ import arrayMove from 'array-move';
 import { menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuOptionValues extends React.Component<Props> {
+const MenuOptionValues = observer(class MenuOptionValues extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	n: number = 0;
@@ -291,6 +290,6 @@ class MenuOptionValues extends React.Component<Props> {
 		};
 	};
 	
-};
+});
 
 export default MenuOptionValues;

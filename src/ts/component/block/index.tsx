@@ -26,14 +26,13 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	css?: any;
 	className?: string;
 	iconSize?: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const SNAP = 0.02;
 
-@observer
-class Block extends React.Component<Props, {}> {
+const Block = observer(class Block extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		align: I.BlockAlign.Left,
@@ -583,6 +582,6 @@ class Block extends React.Component<Props, {}> {
 		});
 	};
 	
-};
+});
 
 export default Block;

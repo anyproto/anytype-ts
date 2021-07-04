@@ -1,5 +1,5 @@
 import { I, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class Filter implements I.Filter {
 
@@ -16,7 +16,7 @@ class Filter implements I.Filter {
 		self.condition = Number(props.condition) || I.FilterCondition.None;
 		self.value = props.value;
 
-		decorate(self, {
+		makeObservable(self, {
 			relationKey: observable,
 			operator: observable,
 			condition: observable,

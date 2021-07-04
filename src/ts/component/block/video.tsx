@@ -5,13 +5,12 @@ import { I, C, translate, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class BlockVideo extends React.Component<Props, {}> {
+const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	div: number = 0;
@@ -326,6 +325,6 @@ class BlockVideo extends React.Component<Props, {}> {
 		return Math.floor(p * rect.width / (this.div || 1));
 	};
 	
-};
+});
 
 export default BlockVideo;

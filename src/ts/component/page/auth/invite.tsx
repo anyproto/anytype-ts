@@ -5,13 +5,12 @@ import { I, Storage, translate, C } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 interface State {
 	error: string;
-};
+}
 
-@observer
-class PageAuthInvite extends React.Component<Props, State> {
+const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Props, State> {
 
 	ref: any;
 
@@ -74,6 +73,6 @@ class PageAuthInvite extends React.Component<Props, State> {
 		history.push('/auth/setup/' + match.params.id);	
 	};
 	
-};
+});
 
 export default PageAuthInvite;

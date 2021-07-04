@@ -11,13 +11,12 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class BlockDataview extends React.Component<Props, {}> {
+const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
@@ -285,6 +284,6 @@ class BlockDataview extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default BlockDataview;

@@ -8,7 +8,7 @@ interface Props extends I.ViewComponent {
 	columnId: number;
 	index: number;
 	idx: number;
-};
+}
 
 const getItemStyle = (snapshot: any, style: any) => {
 	if (snapshot.isDragging) {
@@ -17,8 +17,7 @@ const getItemStyle = (snapshot: any, style: any) => {
 	return style;
 };
 
-@observer
-class Card extends React.Component<Props, {}> {
+const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
 		const { columnId, idx, index, getView, onCellClick, onRef } = this.props;
@@ -57,6 +56,6 @@ class Card extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default Card;

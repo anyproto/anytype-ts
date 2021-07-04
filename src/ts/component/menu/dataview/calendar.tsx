@@ -5,14 +5,13 @@ import { observer } from 'mobx-react';
 
 const Constant = require('json/constant.json');
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	value: number;
-};
+}
 
-@observer
-class MenuCalendar extends React.Component<Props, State> {
+const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, State> {
 	
 	state = {
 		value: 0,
@@ -183,6 +182,6 @@ class MenuCalendar extends React.Component<Props, State> {
 		return days;
 	};
 	
-};
+});
 
 export default MenuCalendar;

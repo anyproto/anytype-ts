@@ -17,12 +17,11 @@ interface Props extends RouteComponentProps<any> {
 	onResize?(v: number): void;
 	getWrapper?(): any;
 	getWrapperWidth?(): number;
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class EditorHeaderPage extends React.Component<Props, {}> {
+const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component<Props, {}> {
 	
 	refDrag: any = null;
 
@@ -163,6 +162,6 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default EditorHeaderPage;

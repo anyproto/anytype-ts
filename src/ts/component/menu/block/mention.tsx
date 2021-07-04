@@ -6,20 +6,19 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
 	n: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 10;
 
-@observer
-class MenuBlockMention extends React.Component<Props, State> {
+const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -323,6 +322,6 @@ class MenuBlockMention extends React.Component<Props, State> {
 		position();
 	};
 	
-};
+});
 
 export default MenuBlockMention;

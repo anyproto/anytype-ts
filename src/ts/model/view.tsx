@@ -1,5 +1,5 @@
 import { I, M, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 const Constant = require('json/constant.json');
 
@@ -23,7 +23,7 @@ class View implements I.View {
 		self.filters = (props.filters || []).map((it: I.Filter) => { return new M.Filter(it); });
 		self.sorts = (props.sorts || []).map((it: I.Sort) => { return new M.Sort(it); });
 
-		decorate(self, {
+		makeObservable(self, {
 			id: observable,
 			name: observable,
 			type: observable,

@@ -5,7 +5,7 @@ import { Icon, Loader } from 'ts/component';
 import { observer } from 'mobx-react';
 import { I, C, Mark, Util, translate } from 'ts/lib';
 
-interface Props {};
+interface Props {}
 interface State {
 	loading: boolean;
 	title: string;
@@ -13,7 +13,7 @@ interface State {
 	url: string;
 	faviconUrl: string;
 	imageUrl: string;
-};
+}
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -22,8 +22,7 @@ const { ipcRenderer } = window.require('electron');
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-@observer
-class LinkPreview extends React.Component<Props, State> {
+const LinkPreview = observer(class LinkPreview extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
@@ -238,6 +237,6 @@ class LinkPreview extends React.Component<Props, State> {
 		});
 	};
 	
-};
+});
 
 export default LinkPreview;

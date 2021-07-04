@@ -12,10 +12,9 @@ interface Props extends I.ViewComponent {
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
-};
+}
 
-@observer
-class BodyRow extends React.Component<Props, {}> {
+const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 
 	render () {
 		const { index, getView, getRecord, style } = this.props;
@@ -44,6 +43,6 @@ class BodyRow extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default BodyRow;

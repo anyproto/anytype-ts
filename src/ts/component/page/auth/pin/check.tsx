@@ -5,14 +5,13 @@ import { Storage, translate, keyboard } from 'ts/lib';
 import { authStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
 interface State {
 	error: string;
-};
+}
 
-@observer
-class PageAuthPinCheck extends React.Component<Props, State> {
+const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component<Props, State> {
 	
 	state = {
 		error: ''
@@ -68,6 +67,6 @@ class PageAuthPinCheck extends React.Component<Props, State> {
 		};
 	};
 	
-};
+});
 
 export default PageAuthPinCheck;

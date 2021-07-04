@@ -1,5 +1,5 @@
 import { I, M, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 const Constant = require('json/constant.json');
 
@@ -26,7 +26,7 @@ class ObjectType implements I.ObjectType {
 		self.relations = (props.relations || []).map((it: any) => { return new M.Relation(it); });
 		self.types = props.types || [];
 
-		decorate(self, {
+		makeObservable(self, {
 			name: observable,
 			description: observable,
 			layout: observable,

@@ -6,14 +6,13 @@ import { observer } from 'mobx-react';
 import { dbStore } from 'ts/store';
 import Column from './board/column';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {}
 
 const GROUP = 'name';
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
-class ViewBoard extends React.Component<Props, {}> {
+const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -113,6 +112,6 @@ class ViewBoard extends React.Component<Props, {}> {
 		return columns;
 	};
 	
-};
+});
 
 export default ViewBoard;

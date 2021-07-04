@@ -1,5 +1,5 @@
 import { I, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class ViewRelation implements I.ViewRelation {
 
@@ -20,7 +20,7 @@ class ViewRelation implements I.ViewRelation {
 		self.dateFormat = Number(props.dateFormat) || I.DateFormat.MonthAbbrBeforeDay;
 		self.timeFormat = Number(props.timeFormat) || I.TimeFormat.H12;
 
-		decorate(self, {
+		makeObservable(self, {
 			width: observable,
 			isVisible: observable,
 			includeTime: observable, 

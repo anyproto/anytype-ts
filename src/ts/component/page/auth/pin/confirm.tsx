@@ -5,17 +5,16 @@ import { Storage, translate } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
 interface State {
 	error: string;
-};
+}
 
 const sha1 = require('sha1');
 const Constant: any = require('json/constant.json');
 
-@observer
-class PageAuthPinConfirm extends React.Component<Props, State> {
+const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Component<Props, State> {
 	
 	refObj: any = {};
 	state = {
@@ -78,6 +77,6 @@ class PageAuthPinConfirm extends React.Component<Props, State> {
 		};
 	};
 
-};
+});
 
 export default PageAuthPinConfirm;

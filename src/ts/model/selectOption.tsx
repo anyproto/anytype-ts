@@ -1,5 +1,5 @@
 import { I, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class SelectOption implements I.SelectOption {
 	
@@ -16,7 +16,7 @@ class SelectOption implements I.SelectOption {
 		self.color = String(props.color || '');
 		self.scope = Number(props.scope) || I.OptionScope.Local;
 
-		decorate(self, {
+		makeObservable(self, {
 			text: observable,
 			color: observable,
 		});

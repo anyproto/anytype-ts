@@ -5,12 +5,12 @@ import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } 
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
 	n: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -20,8 +20,7 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
-@observer
-class MenuBlockAdd extends React.Component<Props, State> {
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	emptyLength: number = 0;
@@ -728,6 +727,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		return idx;
 	};
 
-};
+});
 
 export default MenuBlockAdd;

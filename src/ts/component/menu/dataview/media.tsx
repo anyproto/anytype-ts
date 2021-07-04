@@ -7,13 +7,12 @@ import { observer } from 'mobx-react';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const { dialog } = window.require('electron').remote;
 
-@observer
-class MenuDataviewMedia extends React.Component<Props, {}> {
+const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -228,6 +227,6 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default MenuDataviewMedia;

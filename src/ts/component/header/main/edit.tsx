@@ -10,13 +10,12 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
 	dataset?: any;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class HeaderMainEdit extends React.Component<Props, {}> {
+const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 
@@ -240,6 +239,6 @@ class HeaderMainEdit extends React.Component<Props, {}> {
 		return (isPopup ? '.popup' : '') + ' .header';
 	};
 	
-};
+});
 
 export default HeaderMainEdit;

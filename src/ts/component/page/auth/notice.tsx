@@ -5,10 +5,9 @@ import { I, Storage, translate, C } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
-@observer
-class PageAuthNotice extends React.Component<Props, {}> {
+const PageAuthNotice = observer(class PageAuthNotice extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -41,6 +40,6 @@ class PageAuthNotice extends React.Component<Props, {}> {
 		this.props.history.push('/auth/select');
 	};
 	
-};
+});
 
 export default PageAuthNotice;

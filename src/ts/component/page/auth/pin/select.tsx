@@ -5,16 +5,15 @@ import { translate, Storage } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
 interface State {
 	error: string;
-};
+}
 
 const Constant: any = require('json/constant.json');
 
-@observer
-class PageAuthPinSelect extends React.Component<Props, State> {
+const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Component<Props, State> {
 	
 	refObj: any = {};
 	state = {
@@ -60,6 +59,6 @@ class PageAuthPinSelect extends React.Component<Props, State> {
 		history.push('/auth/pin-confirm/' + match.params.id);
 	};
 	
-};
+});
 
 export default PageAuthPinSelect;

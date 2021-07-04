@@ -6,12 +6,12 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	n: number;
 	loading: boolean;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -19,8 +19,7 @@ const HEIGHT = 28;
 const LIMIT = 20;
 const MENU_ID = 'dataviewObjectValues';
 
-@observer
-class MenuDataviewObjectList extends React.Component<Props, State> {
+const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -404,6 +403,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		position();
 	};
 
-};
+});
 
 export default MenuDataviewObjectList;

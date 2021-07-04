@@ -5,13 +5,12 @@ import { I, C, Mark, Util, DataUtil, focus, keyboard } from 'ts/lib';
 import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class MenuBlockContext extends React.Component<Props, {}> {
+const MenuBlockContext = observer(class MenuBlockContext extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -267,6 +266,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default MenuBlockContext;

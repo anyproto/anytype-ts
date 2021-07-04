@@ -6,13 +6,12 @@ import { dbStore } from 'ts/store';
 
 import Row from './list/row';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class ViewList extends React.Component<Props, {}> {
+const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, getData, getView } = this.props;
@@ -50,6 +49,6 @@ class ViewList extends React.Component<Props, {}> {
 		win.trigger('resize.editor');
 	};
 
-};
+});
 
 export default ViewList;

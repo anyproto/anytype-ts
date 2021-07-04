@@ -1,5 +1,5 @@
 import { I, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class Sort implements I.Sort {
 
@@ -12,7 +12,7 @@ class Sort implements I.Sort {
 		self.relationKey = String(props.relationKey || '');
 		self.type = Number(props.type) || I.SortType.Asc;
 
-		decorate(self, {
+		makeObservable(self, {
 			relationKey: observable,
 			type: observable,
 		});

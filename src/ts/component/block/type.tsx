@@ -5,16 +5,15 @@ import { I, C, DataUtil, Util, focus, keyboard } from 'ts/lib';
 import { dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 interface State {
 	filter: string;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class BlockType extends React.Component<Props, State> {
+const BlockType = observer(class BlockType extends React.Component<Props, State> {
 
 	ref: any = null;
 	n: number = -1;
@@ -276,6 +275,6 @@ class BlockType extends React.Component<Props, State> {
 		this.setState({ filter: this.ref.getValue() });
 	};
 	
-};
+});
 
 export default BlockType;

@@ -5,12 +5,11 @@ import { I, C, Key, keyboard, Util, DataUtil } from 'ts/lib';
 import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuDataviewDate extends React.Component<Props, {}> {
+const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	n: number = 0;
@@ -261,6 +260,6 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default MenuDataviewDate;

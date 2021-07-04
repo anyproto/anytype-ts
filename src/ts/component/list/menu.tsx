@@ -6,10 +6,9 @@ import { I } from 'ts/lib';
 
 interface Props {
 	history: any;
-};
+}
 
-@observer
-class ListMenu extends React.Component<Props, {}> {
+const ListMenu = observer(class ListMenu extends React.Component<Props, {}> {
 
 	render () {
 		const { history } = this.props;
@@ -25,6 +24,6 @@ class ListMenu extends React.Component<Props, {}> {
 		);
 	};
 	
-};
+});
 
 export default ListMenu;

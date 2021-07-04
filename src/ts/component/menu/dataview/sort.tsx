@@ -7,13 +7,12 @@ import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class MenuSort extends React.Component<Props, {}> {
+const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 	
 	items: I.Sort[] = [];
 	
@@ -197,6 +196,6 @@ class MenuSort extends React.Component<Props, {}> {
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 	
-};
+});
 
 export default MenuSort;

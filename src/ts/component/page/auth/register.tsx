@@ -5,16 +5,15 @@ import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Util, translate } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 interface State {
 	error: string;
-};
+}
 
 const { dialog } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 
-@observer
-class PageAuthRegister extends React.Component<Props, State> {
+const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
 
 	nameRef: any;
 
@@ -112,6 +111,6 @@ class PageAuthRegister extends React.Component<Props, State> {
 		};
 	};
 	
-};
+});
 
 export default PageAuthRegister;

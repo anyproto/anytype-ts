@@ -8,19 +8,18 @@ import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	n: number;
-};
+}
 
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
 const LIMIT = 40;
 
-@observer
-class MenuOptionList extends React.Component<Props, State> {
+const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	ref: any = null;
@@ -429,6 +428,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		position();
 	};
 	
-};
+});
 
 export default MenuOptionList;

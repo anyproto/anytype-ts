@@ -9,10 +9,9 @@ interface Props {
 	id: string;
 	iconSize: number;
 	onClick?: (e: any, item: any) => void;
-};
+}
 
-@observer
-class ItemObject extends React.Component<Props, {}> {
+const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, id, iconSize, onClick } = this.props;
@@ -35,6 +34,6 @@ class ItemObject extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default ItemObject;

@@ -5,13 +5,12 @@ import { I, C, focus } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 
-@observer
-class BlockBookmark extends React.Component<Props, {}> {
+const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -157,6 +156,6 @@ class BlockBookmark extends React.Component<Props, {}> {
 		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
 	};
 	
-};
+});
 
 export default BlockBookmark;

@@ -5,10 +5,9 @@ import { I } from 'ts/lib';
 import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any>  {};
+interface Props extends RouteComponentProps<any>  {}
 
-@observer
-class HeaderMainIndex extends React.Component<Props, {}> {
+const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -46,6 +45,6 @@ class HeaderMainIndex extends React.Component<Props, {}> {
 		popupStore.open('settings', {});
 	};
 
-};
+});
 
 export default HeaderMainIndex;

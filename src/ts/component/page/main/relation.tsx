@@ -8,10 +8,9 @@ import { detailStore } from 'ts/store';
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-};
+}
 
-@observer
-class PageMainRelation extends React.Component<Props, {}> {
+const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, {}> {
 
 	id: string = '';
 	refHeader: any = null;
@@ -117,6 +116,6 @@ class PageMainRelation extends React.Component<Props, {}> {
 		return rootId ? rootId : match.params.id;
 	};
 
-};
+});
 
 export default PageMainRelation;

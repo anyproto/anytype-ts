@@ -3,10 +3,9 @@ import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {};
+interface Props extends I.Cell {}
 
-@observer
-class CellCheckbox extends React.Component<Props, {}> {
+const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -39,6 +38,6 @@ class CellCheckbox extends React.Component<Props, {}> {
 		onChange(!value);
 	};
 	
-};
+});
 
 export default CellCheckbox;
