@@ -6,7 +6,6 @@ import { menuStore, popupStore } from 'ts/store';
 import { RouteComponentProps } from 'react-router';
 
 import PopupSettings from './settings';
-import PopupArchive from './archive';
 import PopupNavigation from './navigation';
 import PopupSearch from './search';
 import PopupHelp from './help';
@@ -42,7 +41,6 @@ class Popup extends React.Component<Props, {}> {
 
 		const Components: any = {
 			settings: PopupSettings,
-			archive: PopupArchive,
 			navigation: PopupNavigation,
 			search: PopupSearch,
 			confirm: PopupConfirm,
