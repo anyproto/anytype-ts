@@ -194,8 +194,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 		};
 
-		console.log(allowedDetails);
-
 		if (!allowedDetails) {
 			archive = null;
 		};

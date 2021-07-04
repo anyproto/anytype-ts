@@ -1575,8 +1575,6 @@ class EditorPage extends React.Component<Props, {}> {
 			};
 		};
 
-		console.log(create);
-
 		if (create) {
 			this.blockCreate(last ? last.id : '', I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {

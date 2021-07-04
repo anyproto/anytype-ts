@@ -169,8 +169,6 @@ class ViewGrid extends React.Component<Props, {}> {
 			vw += PADDING;
 		};
 
-		console.log(grid.height());
-
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
