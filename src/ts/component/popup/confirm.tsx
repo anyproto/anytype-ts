@@ -32,8 +32,8 @@ class PopupConfirm extends React.Component<Props, {}> {
 				) : ''}
 				<Title text={title} />
 				<Label text={text} />
-				{canConfirm ? <Button text={textConfirm} className="orange" onClick={this.onConfirm} /> : ''}
-				{canCancel ? <Button text={textCancel} className="grey" onClick={this.onCancel} /> : ''}
+				{canConfirm ? <Button text={textConfirm} onClick={this.onConfirm} /> : ''}
+				{canCancel ? <Button text={textCancel} color="grey" onClick={this.onCancel} /> : ''}
 			</React.Fragment>
 		);
 	};

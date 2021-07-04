@@ -205,7 +205,7 @@ class PopupSettings extends React.Component<Props, State> {
 						) : ''}
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => { this.onConfirmPhrase(); }} />
+								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { this.onConfirmPhrase(); }} />
 							</div>
 						) : ''}
 					</div>
@@ -329,7 +329,7 @@ class PopupSettings extends React.Component<Props, State> {
 						</div>
 
 						<Label className="last" text={translate('popupSettingsImportZip')} />
-						<Button text={translate('popupSettingsImportOk')} className="orange" onClick={() => { this.onImport('notion'); }} />
+						<Button text={translate('popupSettingsImportOk')} onClick={() => { this.onImport('notion'); }} />
 					</div>
 				);
 				break;
@@ -342,7 +342,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<Title text={translate('popupSettingsExportMarkdownTitle')} />
 						<Label text={translate('popupSettingsExportMarkdownText')} />
 
-						<Button text={translate('popupSettingsExportOk')} className="orange" onClick={() => { this.onExport(I.ExportFormat.Markdown); }} />
+						<Button text={translate('popupSettingsExportOk')} onClick={() => { this.onExport(I.ExportFormat.Markdown); }} />
 					</div>
 				);
 				break;

@@ -120,7 +120,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{!this.isReadOnly() ? (
 					<div className="section">
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
 						</div>
 					</div>
 				) : ''}

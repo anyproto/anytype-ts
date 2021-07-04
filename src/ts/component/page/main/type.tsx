@@ -148,7 +148,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 						<div className="side right">
-							<Button id="button-create" text="Create" className="orange" onClick={this.onCreate} />
+							<Button id="button-create" text="Create" onClick={this.onCreate} />
 						</div>
 					</div>
 

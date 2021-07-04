@@ -44,8 +44,8 @@ class PageAuthLogin extends React.Component<Props, State> {
 					<form onSubmit={this.onSubmit}>
 						<Textarea ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginPhrase')} />
 						<div className="buttons">
-							<Button type="input" text={translate('authLoginLogin')} className="orange" />
-							<Button text={translate('authLoginBack')} className="grey" onClick={this.onCancel} />
+							<Button type="input" text={translate('authLoginLogin')} />
+							<Button text={translate('authLoginBack')} color="grey" onClick={this.onCancel} />
 						</div>
 					</form>
 				</Frame>

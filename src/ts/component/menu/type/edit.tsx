@@ -47,7 +47,7 @@ class MenuObjectTypeEdit extends React.Component<Props, State> {
 				/>
 
 				<div className="buttons">
-					<Button text={translate('commonCreate')} className="orange" onClick={this.onCreate} />
+					<Button text={translate('commonCreate')} onClick={this.onCreate} />
 				</div>
 			</div>
 		);
