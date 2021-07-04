@@ -32,6 +32,8 @@ class BlockCover extends React.Component<Props, State> {
 	cx: number = 0;
 	cy: number =  0;
 	loaded: boolean = false;
+	scale: number = 0;
+	coords: { x: number, y: number } = { x: 0, y: 0 };
 	
 	constructor (props: any) {
 		super(props);
@@ -64,7 +66,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { editing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -323,7 +325,12 @@ class BlockCover extends React.Component<Props, State> {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		this.setState({ editing: false });
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+
+		DataUtil.pageSetCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
+			this.setState({ editing: false });
+		});
 	};
 	
 	onCancel (e: any) {
@@ -339,7 +346,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType', 'coverScale' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ], true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -426,7 +433,7 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		const { rootId, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -437,8 +444,8 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.x = e.pageX - this.rect.x - this.x;
 		this.y = e.pageY - this.rect.y - this.y;
-	
-		DataUtil.pageSetCoverXY(rootId, this.cx / this.rect.cw, this.cy / this.rect.ch);
+
+		this.coords = { x: this.cx / this.rect.cw, y: this.cy / this.rect.ch };
 	};
 	
 	onScaleStart (v: number) {
@@ -483,11 +490,11 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		const { rootId, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
 		selection.preventSelect(false);
-		DataUtil.pageSetCoverScale(rootId, v);
+		this.scale = v;
 	};
 	
 	onDragOver (e: any) {
