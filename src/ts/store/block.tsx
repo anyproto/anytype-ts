@@ -165,7 +165,10 @@ class BlockStore {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
-		blocks = blocks.filter((it: any) => { return it.id != blockId; });
+		this.blockMap.set(rootId, blocks.filter((it: any) => { return it.id != blockId; }));
+
+		console.log('DELETE', rootId, blockId, blocks.filter((it: any) => { return it.id != blockId; }));
+
 		map.delete(blockId);
 	};
 

@@ -664,6 +664,7 @@ class Dispatcher {
 
 	blockTypeCheck (rootId: string) {
 		const { config } = commonStore;
+		
 		if (!config.allowDataview) {
 			return;
 		};
