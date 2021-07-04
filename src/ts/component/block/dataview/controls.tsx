@@ -44,7 +44,7 @@ class Controls extends React.Component<Props, State> {
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize views', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
+			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
 		const ButtonItem = (item: any) => {
