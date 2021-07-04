@@ -404,7 +404,7 @@ class Keyboard {
 	};
 	
 	isSpecial (k: string): boolean {
-		const keys: string[] = [ Key.backspace, Key.tab, Key.enter ];
+		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter ];
 		return this.isArrow(k) || keys.indexOf(k) >= 0;
 	};
 
