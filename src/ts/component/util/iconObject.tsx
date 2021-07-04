@@ -126,6 +126,7 @@ const Color = {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 @observer
 class IconObject extends React.Component<Props, {}> {
@@ -359,7 +360,7 @@ class IconObject extends React.Component<Props, {}> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || '');
+		let name = String(object.name || Constant.default.name);
 		name = SmileUtil.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 
