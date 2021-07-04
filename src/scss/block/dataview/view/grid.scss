@@ -38,7 +38,7 @@
         .viewItem.viewGrid { display: table; width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
-			.icon.edit { width: 48px; height: 48px; position: absolute; right: 0px; top: 0px; }
+			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.row { 
 				display: table-row; white-space: nowrap; box-shadow: 0px 1px #e0ded2 inset; left: 2px !important; width: calc(100% - 4px) !important; 
@@ -48,7 +48,7 @@
 
 			.row:hover {
 				.cellContent.isName {
-					.name { width: calc(100% - 44px) !important; }
+					.name { width: calc(100% - 36px) !important; }
 					.icon.edit { display: block; }
 				}
 			}

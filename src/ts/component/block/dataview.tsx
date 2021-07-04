@@ -255,12 +255,8 @@ class BlockDataview extends React.Component<Props, {}> {
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
-		//dbStore.recordUpdate(rootId, block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, (message: any) => {
-			if (!message.error.code && callBack) {
-				callBack(message);
-			};
-		});
+		dbStore.recordUpdate(rootId, block.id, obj);
+		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
