@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead { display: table-row; box-shadow: 0px 1px #e0ded2 inset, 0px -1px #e0ded2 inset; white-space: nowrap; }
+		.rowHead { display: block; box-shadow: 0px 1px #e0ded2 inset; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; }
 
 		.cellHead { 
 			text-align: left; color: $colorDarkGrey; padding: 14px; font-weight: 400; line-height: 20px; position: relative; 
@@ -37,8 +37,9 @@
 			.icon.checkbox { vertical-align: top; }
 			.icon.edit { width: 48px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
-			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
+			.row { display: table-row; white-space: nowrap; box-shadow: 0px 1px #e0ded2; left: 2px !important; width: calc(100% - 4px) !important; }
 			.row.add { border: 0px; }
+			.row:first-child { box-shadow: 0px 1px #e0ded2, 0px -1px #e0ded2; }
 
 			.row:hover {
 				.cellContent.isName {

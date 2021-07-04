@@ -14,7 +14,8 @@ interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const PADDING = 32;
+const PADDING = 30;
+const HEIGHT = 48;
 
 @observer
 class ViewGrid extends React.Component<Props, {}> {
@@ -54,21 +55,21 @@ class ViewGrid extends React.Component<Props, {}> {
 														<List
 															autoHeight
 															height={Number(height) || 0}
+															width={Number(width) || 0}
 															isScrolling={isScrolling}
 															rowCount={data.length}
-															rowHeight={48}
+															rowHeight={HEIGHT}
 															rowRenderer={({ key, index, style }) => (
 																<BodyRow 
 																	key={'grid-row-' + view.id + index} 
 																	{...this.props} 
 																	readOnly={readOnly || !allowed}
 																	index={index} 
-																	style={style}
+																	style={{ ...style, top: style.top + 2 }}
 																	cellPosition={this.cellPosition}
 																/>
 															)}
 															scrollTop={scrollTop}
-															width={width}
 														/>
 													</div>
 												);
@@ -138,13 +139,16 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getView, scrollContainer } = this.props;
+		const { rootId, block, getView, scrollContainer } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const wrap = node.find('.scrollWrap');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const ww = $(scrollContainer).width();
 		const mw = ww - PADDING * 2;
+		const data = dbStore.getData(rootId, block.id);
+		const length = data.length;
 
 		let vw = 0;
 		let margin = 0;
@@ -165,8 +169,11 @@ class ViewGrid extends React.Component<Props, {}> {
 			vw += PADDING;
 		};
 
+		console.log(grid.height());
+
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
+		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
 		
 		this.resizeLast();
 	};
