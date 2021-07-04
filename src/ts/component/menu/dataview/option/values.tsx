@@ -39,7 +39,7 @@ class MenuOptionValues extends React.Component<Props> {
 			return (
 				<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<Handle />
-					<div className="clickable">
+					<div className="clickable" onClick={(e: any) => { this.onEdit(e, item); }}>
 						<Tag {...item} className={DataUtil.tagClass(relation.format)} />
 					</div>
 					<div className="buttons">
