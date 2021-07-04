@@ -166,9 +166,6 @@ class BlockStore {
 		let map = this.getMap(rootId);
 
 		this.blockMap.set(rootId, blocks.filter((it: any) => { return it.id != blockId; }));
-
-		console.log('DELETE', rootId, blockId, blocks.filter((it: any) => { return it.id != blockId; }));
-
 		map.delete(blockId);
 	};
 
