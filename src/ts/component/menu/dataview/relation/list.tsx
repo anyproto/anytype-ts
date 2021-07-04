@@ -80,10 +80,17 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{relations.map((item: any, i: number) => {
-						return <Item key={item.relationKey} {...item} index={i} />;
-					})}
-					{!readOnly ? <ItemAdd index={relations.length + 1} disabled={true} /> : ''}
+					<div className="scrollWrap">
+						{relations.map((item: any, i: number) => {
+							return <Item key={item.relationKey} {...item} index={i} />;
+						})}
+					</div>
+					{!readOnly ? (
+						<div className="bottom">
+							<div className="line" />
+							<ItemAdd index={relations.length + 1} disabled={true} /> 
+						</div>
+					) : ''}
 				</div>
 			);
 		});

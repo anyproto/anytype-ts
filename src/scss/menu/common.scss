@@ -125,7 +125,7 @@
 			}
 		}
 
-		.line { height: 1px; margin: 8px 14px; background: $colorLightGrey; }
+		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
 		.sectionName { padding: 5px 14px; @include text-small; color: $colorDarkGrey; font-weight: 500; }
