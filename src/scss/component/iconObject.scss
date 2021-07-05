@@ -22,6 +22,7 @@
 	.iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
+
 	.iconEmoji {
 		.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
 		.emoji-mart-emoji {
@@ -94,18 +95,14 @@
 .iconObject.c40, .iconObject.c48, .iconObject.c64 {
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
-.iconObject.c48.isPage, .iconObject.c48.isImage, .iconObject.c48.isSet {
-	.iconImage { border-radius: 8px; }
-}
 
 .iconObject.c48.isRelation, 
-.iconObject.c40.isRelation,
-.iconObject.c48.withoutImage, 
-.iconObject.c40.withoutImage
+.iconObject.c40.isRelation
 { border-radius: 8px; background-color: #f3f2ec; }
 
-.iconObject.withoutImage { background-color: #f3f2ec; }
+.iconObject.withLetter { border-radius: 8px; background-color: #f3f2ec; }
 
 .iconObject.isHuman { border-radius: 100% !important; }
+.iconObject.withImage { border-radius: 2px !important; }
 
 .iconObject.canEdit { cursor: pointer; }

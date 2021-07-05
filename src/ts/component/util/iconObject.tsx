@@ -168,6 +168,10 @@ class IconObject extends React.Component<Props, {}> {
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:
+				if (iconImage) {
+					cn.push('withImage');
+				};
+
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				};
@@ -187,17 +191,21 @@ class IconObject extends React.Component<Props, {}> {
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
-					cn.push('withoutImage');
+					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.Set:
+				if (iconImage) {
+					cn.push('withImage');
+				};
+
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
-					cn.push('withoutImage');
+					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
