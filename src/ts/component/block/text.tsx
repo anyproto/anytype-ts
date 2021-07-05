@@ -565,9 +565,20 @@ class BlockText extends React.Component<Props, {}> {
 		
 		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
-		const { id } = block;
+		const { id, content } = block;
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
+		const Markdown = {
+			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
+			'\\[\\]':		 I.TextStyle.Checkbox,
+			'1\\.':			 I.TextStyle.Numbered,
+			'#':			 I.TextStyle.Header1,
+			'##':			 I.TextStyle.Header2,
+			'###':			 I.TextStyle.Header3,
+			'\\>':			 I.TextStyle.Toggle,
+			'"':			 I.TextStyle.Quote,
+			'```':			 I.TextStyle.Code,
+		};
 
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
@@ -580,6 +591,7 @@ class BlockText extends React.Component<Props, {}> {
 			focus.apply();
 		};
 		let symbolBefore = range ? value[range.from - 1] : '';
+		let reg = null;
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -638,67 +650,37 @@ class BlockText extends React.Component<Props, {}> {
 			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
-		
-		// Make list
-		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isTextBulleted()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Bulleted } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make checkbox
-		if ((value == '[]') && !block.isTextCheckbox()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Checkbox } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make numbered
-		if ((value == '1. ') && !block.isTextNumbered()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Numbered } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make h1
-		if ((value == '# ') && !block.isTextHeader1()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header1 } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make h2
-		if ((value == '## ') && !block.isTextHeader2()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make h3
-		if ((value == '### ') && !block.isTextHeader3()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make toggle
-		if ((value == '> ') && !block.isTextToggle()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make quote
-		if ((value == '" ') && !block.isTextQuote()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make code
-		if ((value == '/code' || value == '```') && !block.isTextCode()) {
-			C.BlockCreate({ 
-				type: I.BlockType.Text, 
-				fields: { 
-					lang: (Storage.get('codeLang') || Constant.default.codeLang),
-				},
-				content: { style: I.TextStyle.Code } 
-			}, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
 
+		// Parse markdown commands
+		for (let k in Markdown) {
+			reg = new RegExp(`^(${k} )`);
+			const style = Markdown[k];
+
+			if (value.match(reg) && (content.style != style)) {
+				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+
+				const newBlock: any = { 
+					type: I.BlockType.Text, 
+					fields: {},
+					content: { 
+						...content, 
+						checked: false,
+						text: value, 
+						style: style,
+					},
+				};
+				
+				if (style == I.TextStyle.Code) {
+					newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
+					newBlock.content.marks = [];
+				};
+
+				C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+				cmdParsed = true;
+				break;
+			};
+		};
+		
 		if (cmdParsed) {
 			menuStore.close('blockAdd');
 			return;
