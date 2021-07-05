@@ -187,7 +187,7 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		return this.isMainEditor() ? this.match.params.id : blockStore.root;
+		return this.match?.params?.id || blockStore.root;
 	};
 
 	onKeyUp (e: any) {

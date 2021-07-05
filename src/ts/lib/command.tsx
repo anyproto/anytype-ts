@@ -20,6 +20,15 @@ const DebugSync = (limit: number, callBack?: (message: any) => void) => {
 	dispatcher.request('debugSync', request, callBack);
 };
 
+const DebugTree = (blockId: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.Tree.Request();
+
+	request.setBlockid(blockId);
+	request.setPath(path);
+
+	dispatcher.request('debugTree', request, callBack);
+};
+
 const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
 	
@@ -1001,6 +1010,7 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 export {
 	VersionGet,
 	DebugSync,
+	DebugTree,
 
 	ImageGetBlob,
 	ConfigGet,

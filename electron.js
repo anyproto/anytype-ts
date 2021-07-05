@@ -145,6 +145,7 @@ function initTray () {
 		{ type: 'separator' },
 
 		{ label: 'Object diagnostics', click: () => { win.show(); send('debugSync'); } },
+		{ label: 'Tree diagnostics', click: () => { win.show(); send('debugTree'); } },
 
 		{ type: 'separator' },
 
@@ -415,10 +416,7 @@ function menuInit () {
 		{
 			role: 'fileMenu',
 			submenu: [
-				{
-					label: 'Show work directory',
-					click: () => { shell.openPath(app.getPath('userData')); }
-				},
+				{ label: 'Show work directory', click: () => { shell.openPath(app.getPath('userData')); } },
 				{
 					label: 'Import',
 					click: () => { send('popup', 'settings', { data: { page: 'importIndex' } }); }
@@ -427,14 +425,15 @@ function menuInit () {
 					label: 'Export',
 					click: () => { send('popup', 'settings', { data: { page: 'exportMarkdown' } }); }
 				},
-				{
-					label: 'Save as file',
-					click: () => { send('command', 'save'); }
-				},
-				{
-					label: 'Object diagnostics',
-					click: () => { send('debugSync'); }
-				},
+				{ label: 'Save as file', click: () => { send('command', 'save'); } },
+
+				{ type: 'separator' },
+
+				{ label: 'Object diagnostics', click: () => { send('debugSync'); } },
+				{ label: 'Tree diagnostics', click: () => { win.show(); send('debugTree'); } },
+
+				{ type: 'separator' },
+
 				{ role: 'close' },
 			]
 		},

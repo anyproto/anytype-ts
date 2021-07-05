@@ -332,8 +332,10 @@ class App extends React.Component<Props, State> {
 		const body = $('body');
 		const phrase = Storage.get('phrase');
 		const node = $(ReactDOM.findDOMNode(this));
-		const loader = node.find('#loader');
 		const logo = node.find('#logo');
+		const logsDir = path.join(userPath, 'logs');
+
+		try { fs.mkdirSync(logsDir); } catch (err) {};
 
 		ipcRenderer.send('appLoaded', true);
 
@@ -473,19 +475,21 @@ class App extends React.Component<Props, State> {
 			body.removeClass('fullScreen');
 		});
 
-		ipcRenderer.on('debugSync', (e: any, route: string) => {
+		ipcRenderer.on('debugSync', (e: any) => {
 			C.DebugSync(100, (message: any) => {
-				let logsDir = path.join(userPath, 'logs');
-				try { fs.mkdirSync(logsDir); } catch (err) {};
-
-				let log = path.join(logsDir, 'sync_' + Util.dateForFile() + '.json');
-				try {
-					fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
-				} catch(e) {
-					console.log('[DebugSync] Failed to save a file');
+				if (!message.error.code) {
+					this.logToFile('sync', message);
 				};
+			});
+		});
 
-				ipcRenderer.send('pathOpen', logsDir);
+		ipcRenderer.on('debugTree', (e: any) => {
+			const rootId = keyboard.getRootId();
+
+			C.DebugTree(rootId, logsDir, (message: any) => {
+				if (!message.error.code) {
+					ipcRenderer.send('pathOpen', logsDir);
+				};
 			});
 		});
 
@@ -498,6 +502,18 @@ class App extends React.Component<Props, State> {
 				ipcRenderer.send('shutdown', relaunch);
 			});
 		});
+	};
+
+	logToFile (name: string, message: any) {
+		let logsDir = path.join(userPath, 'logs');
+		let log = path.join(logsDir, name + '_' + Util.dateForFile() + '.json');
+		try {
+			fs.writeFileSync(log, JSON.stringify(message, null, 5), 'utf-8');
+		} catch(e) {
+			console.log('[DebugSync] Failed to save a file');
+		};
+
+		ipcRenderer.send('pathOpen', logsDir);
 	};
 
 	setWindowEvents () {
