@@ -194,6 +194,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onFav (e: any, relationKey: string) {
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -329,11 +331,18 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const win = $(window);
+		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const offset = isPopup ? 16 : 120;
 
-		obj.css({ height: win.height() - Util.sizeHeader() - 16 });
+		obj.css({ 
+			height: container.height() - Util.sizeHeader() - 16,
+			width: Math.max(480, container.width() / 2 - offset),
+		});
+
 		position();
 	};
 

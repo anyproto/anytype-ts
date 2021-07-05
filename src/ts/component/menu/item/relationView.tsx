@@ -31,16 +31,20 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
+		const cn = [ 'item', 'sides' ];
 
+		if (isHidden) {
+			cn.push('isHidden');
+		};
+		if (canFav) {
+			cn.push('canFav');
+		};
 		if (isFeatured) {
 			fcn.push('active');
 		};
-		if (!canFav) {
-			fcn.push('dn');
-		};
 
 		return (
-			<div className={[ 'item', 'sides', (isHidden ? 'isHidden' : '') ].join(' ')}>
+			<div className={cn.join(' ')}>
 				<div 
 					id={`item-${relationKey}`} 
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
@@ -72,8 +76,8 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						onCellChange={onCellChange}
 						optionCommand={optionCommand}
 					/>
+					<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
 				</div>
-				<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
 			</div>
 		);
     };

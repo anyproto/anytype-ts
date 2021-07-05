@@ -249,12 +249,19 @@ class BlockCover extends React.Component<Props, State> {
 		const { isPopup, rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const elements = node.find('.elements');
-		const win = $(window);
-		const st = win.scrollTop();
+		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const st = container.scrollTop();
+		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+
+		if (isPopup) {
+			const offset = container.offset();
+			rect.x += offset.left;
+			rect.y += offset.top;
+		};
 
 		const param: any = {
 			element: `#block-${block.id} #button-relation`,
-			rect: { x: win.width() - 10, y: Util.sizeHeader() + st, width: 1, height: 1 },
+			rect: rect,
 			horizontal: I.MenuDirection.Right,
 			noFlipX: true,
 			noFlipY: true,
