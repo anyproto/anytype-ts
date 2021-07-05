@@ -225,7 +225,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (!config.allowDataview) {
+			if (!config.allowDataview || (object.type == Constant.typeId.page)) {
 				template = null;
 			};
 
