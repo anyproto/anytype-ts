@@ -175,7 +175,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any, v: string) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { view } = data;
 
@@ -219,6 +219,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeout);
 		this.save();
+		this.props.close();
 	};
 
 	getSections () {

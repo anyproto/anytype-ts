@@ -60,7 +60,12 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		const ViewItem = SortableElement((item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
+			<div 
+				id={'view-item-' + item.id} 
+				className={'item ' + (item.active ? 'active' : '')} 
+				onClick={(e: any) => { getData(item.id, 0); }} 
+				onContextMenu={(e: any) => { this.onView(e, item); }}
+			>
 				{item.name}
 			</div>
 		));
@@ -123,6 +128,7 @@ class Controls extends React.Component<Props, State> {
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+				{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 			];
 		};
 
@@ -137,7 +143,27 @@ class Controls extends React.Component<Props, State> {
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
+				view: getView(),
 			},
+		});
+	};
+
+	onView (e: any, item: any) {
+		e.stopPropagation();
+
+		const { rootId, block } = this.props;
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+
+		menuStore.open('dataviewViewEdit', { 
+			element: `#view-item-${item.id}`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				readOnly: !allowed,
+				view: item,
+				onSave: () => { this.forceUpdate(); },
+			}
 		});
 	};
 
