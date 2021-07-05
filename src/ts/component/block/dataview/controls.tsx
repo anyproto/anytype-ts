@@ -86,7 +86,7 @@ class Controls extends React.Component<Props, State> {
 			<div className="dataviewControls">
 				<div className="buttons">
 					<div id="sideLeft" className="side left">
-						<div id="button-view" className="first">
+						<div className="first">
 							<div 
 								id={'view-item-' + view.id} 
 								className="viewItem active" 
@@ -153,7 +153,7 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		menuStore.open(menu, { 
-			element: `#button-${id}`,
+			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			tabs: tabs,
@@ -175,7 +175,7 @@ class Controls extends React.Component<Props, State> {
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
-			element: `#view-item-${item.id}`,
+			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId: rootId,
