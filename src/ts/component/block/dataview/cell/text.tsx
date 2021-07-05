@@ -159,9 +159,7 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			if (viewType != I.ViewType.Grid) {
-				value = value || Constant.default.name;
-			};
+			value = value || Constant.default.name;
 
 			content = (
 				<React.Fragment>

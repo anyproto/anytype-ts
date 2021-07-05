@@ -189,7 +189,7 @@ class IconObject extends React.Component<Props, {}> {
 				} else {
 					cn.push('withoutImage');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={name ? this.typeSvg() : ObjectType} className={icn.join(' ')} />;
+					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -199,7 +199,7 @@ class IconObject extends React.Component<Props, {}> {
 				} else {
 					cn.push('withoutImage');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={name ? this.typeSvg() : ObjectType} className={icn.join(' ')} />;
+					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 

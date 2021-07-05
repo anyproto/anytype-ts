@@ -162,7 +162,7 @@ class Cell extends React.Component<Props, {}> {
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
-			offsetY: 1,
+			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
 			className: menuClassName,

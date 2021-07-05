@@ -47,7 +47,6 @@ class MenuObjectValues extends React.Component<Props> {
 						<IconObject object={item} />
 						<div className="name">{item.name}</div>
 					</span>
-					<div className="caption">{type.name}</div>
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);
