@@ -371,7 +371,6 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	onSetAdd () {
-		const { root } = blockStore;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 

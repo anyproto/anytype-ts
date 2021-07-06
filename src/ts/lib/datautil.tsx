@@ -918,7 +918,7 @@ class DataUtil {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: I.Relation) => { 
-				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {	
+				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {
 					return true;
 				};
 				return !it.isHidden; 
@@ -945,6 +945,11 @@ class DataUtil {
 
 		return relations.map((relation: any) => {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
+			
+			if ([ Constant.relationKey.name ].indexOf(relation.relationKey) >= 0) {
+				vr.isVisible = true;
+			};
+
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
