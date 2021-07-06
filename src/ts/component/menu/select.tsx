@@ -23,7 +23,6 @@ class MenuSelect extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
-		this.onSelect = this.onSelect.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
@@ -64,7 +63,7 @@ class MenuSelect extends React.Component<Props, {}> {
 						className={cn.join(' ')} 
 						isActive={item.id == value} 
 						checkbox={item.id == value} 
-						onClick={(e: any) => { this.onSelect(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						style={param.style}
 					/>
@@ -232,10 +231,19 @@ class MenuSelect extends React.Component<Props, {}> {
 			case Key.space:
 				e.preventDefault();
 				if (item) {
-					this.onSelect(e, item);
+					item.arrow ? this.onOver(e, item) : this.onClick(e, item);
 				};
 				break;
-				
+
+			case Key.right:
+				e.preventDefault();
+
+				if (item) {
+					this.onOver(e, item);
+				};
+				break;
+
+			case Key.left:	
 			case Key.escape:
 				e.preventDefault();
 				this.props.close();
@@ -254,14 +262,14 @@ class MenuSelect extends React.Component<Props, {}> {
 
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(item, false);
+		};
 
-			if (onMouseEnter) {
-				onMouseEnter(e, item);
-			};
+		if (onMouseEnter) {
+			onMouseEnter(e, item);
 		};
 	};
 	
-	onSelect (e: any, item: any) {
+	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect, canSelectInitial, noClose } = data;

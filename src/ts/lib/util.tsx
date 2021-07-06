@@ -435,9 +435,10 @@ class Util {
 	
 	fileSize (v: number) {
 		v = Number(v) || 0;
-		let g = v / (1024 * 1024 * 1024);
-		let m = v / (1024 * 1024);
-		let k = v / 1024;
+		let unit = 1024;
+		let g = v / (unit * unit * unit);
+		let m = v / (unit * unit);
+		let k = v / unit;
 		if (g > 1) {
 			v = sprintf('%fGB', this.round(g, 2));
 		} else if (m > 1) {

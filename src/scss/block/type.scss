@@ -4,7 +4,7 @@
 	.block.blockType { 
 		.wrapMenu { visibility: hidden; }
 
-		.placeholder { @include text-common; color: #cbc9bd; margin-bottom: 20px; }
+		.placeholder { @include text-common; margin-bottom: 20px; position: static; }
 
 		.filter { padding: 0px; margin-bottom: 8px; }
 		.filter {

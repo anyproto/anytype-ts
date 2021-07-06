@@ -348,8 +348,9 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 
-		if (!root || !allowed) {
+		if (!root || !allowed || (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			return;
 		};
 		
@@ -1573,8 +1574,6 @@ class EditorPage extends React.Component<Props, {}> {
 				};
 			};
 		};
-
-		console.log(create);
 
 		if (create) {
 			this.blockCreate(last ? last.id : '', I.BlockPosition.Bottom, { type: I.BlockType.Text });

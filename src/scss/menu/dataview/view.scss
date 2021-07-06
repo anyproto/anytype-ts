@@ -3,14 +3,14 @@
 .menus {
 	.menu.menuDataviewViewList { width: 360px; }
 	.menu.menuDataviewViewList {
-		.label { font-weight: 600; margin-bottom: 3px; @include text-common; color: $colorBlack; }
-
-		.item { display: flex; line-height: 40px; padding: 8px 14px; }
-		.item {
-			.icon.dnd { height: 40px; background-size: 20px 20px; vertical-align: middle; }
+		.item.big { display: flex; padding: 10px; line-height: 26px; }
+		.item.big {
+			.icon.dnd { height: 26px; background-size: 20px; vertical-align: middle; }
 			.buttons {
 				.icon { vertical-align: middle; }
 			}
+
+			.name { @include text-header3; }
 
 			.icon.view { width: 40px; height: 40px; margin-right: 10px; }
 			.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid1.svg'); }
@@ -20,7 +20,8 @@
 
 			.clickable { width: calc(100% - 22px); }
 		}
+
 	}
 
-	.menu.menuDataviewViewEdit { width: 296px; }
+	.menu.menuDataviewViewEdit { width: 360px; }
 }

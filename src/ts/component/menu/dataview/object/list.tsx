@@ -202,8 +202,11 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
+		const value = this.getValue();
 		
 		let ret = Util.objectCopy(this.items);
+
+		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 
 		if (data.filter && canAdd) {
 			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });
@@ -248,7 +251,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || Constant.default.name);
+				it.name = String(it.name || DataUtil.defaultName('page'));
 				return it;
 			}));
 

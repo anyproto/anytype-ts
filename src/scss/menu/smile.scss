@@ -4,6 +4,7 @@
 	.menu.menuSmile { width: 384px; user-select: none; }
 	.menu.menuSmile {
 		.content { overflow: visible; padding-bottom: 0px; }
+		.ReactVirtualized__Grid__innerScrollContainer { margin: 0px; }
 
 		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorLightGrey; }
 		.head {
@@ -12,9 +13,9 @@
 			.btn:hover { color: $colorBlack; }
 		}
 		
-		.filter.withHead { padding-top: 11px; }
+		.filter.withHead { padding-top: 8px; }
 		.filter {
-			.inner { height: 32px; }
+			.inner { height: 35px; }
 		}
 	
 		.items { overflow: auto; height: 288px; }
@@ -24,8 +25,8 @@
 			.txt { line-height: 24px; color: $colorMediumGrey; }
 		}
 		
-		.section { padding-top: 0px; padding-bottom: 6px; border: 0px; }
-		.section:first-child { padding-top: 8px; }
+		.section { padding: 11px 14px !important; border: 0px; }
+		.section > .name { padding: 0px; margin: 0px; }
 		
 		.row { padding: 0px 12px; }
 		

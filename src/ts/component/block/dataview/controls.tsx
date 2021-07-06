@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { I } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
@@ -11,7 +12,6 @@ interface State {
 	page: number;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 @observer
@@ -34,7 +34,6 @@ class Controls extends React.Component<Props, State> {
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
-		const limit = Constant.limit.dataview.views;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter((it: any) => {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
@@ -44,7 +43,7 @@ class Controls extends React.Component<Props, State> {
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
-			{ id: 'manager', name: 'Customize views', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
+			{ id: 'manager', name: 'Customize view', menu: 'dataviewRelationList', on: (filterCnt > 0 || sortCnt > 0) },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -60,32 +59,46 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		const ViewItem = SortableElement((item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
+			<div 
+				id={'view-item-' + item.id} 
+				className={'viewItem ' + (item.active ? 'active' : '')} 
+				onClick={(e: any) => { getData(item.id, 0); }} 
+				onContextMenu={(e: any) => { this.onView(e, item); }}
+			>
 				{item.name}
 			</div>
 		));
 
 		const Views = SortableContainer((item: any) => (
-			<div className="views">
-				{views.slice(page * limit, (page + 1) * limit).map((item: I.View, i: number) => (
-					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
+			<div id="views" className="views">
+				{views.map((item: I.View, i: number) => (
+					<ViewItem 
+						key={i} 
+						{...item} 
+						active={item.id == viewId} 
+						index={i} 
+					/>
 				))}
-
-				<div id="button-more" className="item btn" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
-					<Icon className="more" tooltip="Views" />
-				</div>
-
-				{/*<div className="item dn">
-					<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
-					<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
-				</div>*/}
 			</div>
 		));
 		
 		return (
 			<div className="dataviewControls">
 				<div className="buttons">
-					<div className="side left">
+					<div id="sideLeft" className="side left">
+						<div className="first">
+							<div 
+								id={'view-item-' + view.id} 
+								className="viewItem active" 
+								onClick={(e: any) => { this.onButton(e, 'view', 'dataviewViewList'); }} 
+								onContextMenu={(e: any) => { this.onView(e, view); }}
+							>
+								{view.name}
+
+								<Icon className="arrow" />
+							</div>
+						</div>
+
 						<Views 
 							axis="x" 
 							lockAxis="x"
@@ -98,7 +111,7 @@ class Controls extends React.Component<Props, State> {
 						/>
 					</div>
 
-					<div className="side right">
+					<div id="sideRight" className="side right">
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
@@ -107,6 +120,18 @@ class Controls extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		$(window).unbind('resize.controls');
 	};
 	
 	onButton (e: any, id: string, menu: string) {
@@ -123,12 +148,14 @@ class Controls extends React.Component<Props, State> {
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+				{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 			];
 		};
 
 		menuStore.open(menu, { 
-			element: `#button-${id}`,
+			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
 			tabs: tabs,
 			data: {
 				readOnly: readOnly || !allowed,
@@ -136,7 +163,27 @@ class Controls extends React.Component<Props, State> {
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
+				view: getView(),
 			},
+		});
+	};
+
+	onView (e: any, item: any) {
+		e.stopPropagation();
+
+		const { rootId, block } = this.props;
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+
+		menuStore.open('dataviewViewEdit', { 
+			element: $(e.currentTarget),
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				readOnly: !allowed,
+				view: item,
+				onSave: () => { this.forceUpdate(); },
+			}
 		});
 	};
 
@@ -144,22 +191,13 @@ class Controls extends React.Component<Props, State> {
 		const { oldIndex, newIndex } = result;
 	};
 
-	onArrow (dir: number) {
-		let { page } = this.state;
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const views = node.find('#views');
+		const sideLeft = node.find('#sideLeft');
 
-		page += dir;
-		page = Math.max(0, page);
-		page = Math.min(this.getMaxPage(), page);
-
-		this.setState({ page: page });
-	};
-
-	getMaxPage () {
-		const { rootId, block } = this.props;
-		const views = dbStore.getViews(rootId, block.id);
-		const limit = Constant.limit.dataview.views;
-
-		return Math.ceil(views.length / limit) - 1;
+		menuStore.close('dataviewViewEdit');
+		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
 };

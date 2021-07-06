@@ -27,8 +27,8 @@ class PopupPrompt extends React.Component<Props, {}> {
 		return (
 			<form onSubmit={this.onSubmit}>
 				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} placeholder={placeholder} maxLength={maxLength} />
-				<Button type="input" text={translate('commonOk')} className="orange" />
-				<Button text={translate('commonCancel')} className="grey" onClick={this.onCancel} />
+				<Button type="input" text={translate('commonOk')} />
+				<Button text={translate('commonCancel')} color="grey" onClick={this.onCancel} />
 			</form>
 		);
 	};

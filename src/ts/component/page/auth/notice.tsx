@@ -30,7 +30,7 @@ class PageAuthNotice extends React.Component<Props, {}> {
 					<Label text={translate('authNoticeLabel')} />
 							
 					<div className="buttons">
-						<Button text={translate('authNoticeStart')} onClick={this.onClick} className="orange" />
+						<Button text={translate('authNoticeStart')} onClick={this.onClick} />
 					</div>
 				</Frame>
 			</div>

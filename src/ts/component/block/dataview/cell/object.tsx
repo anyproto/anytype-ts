@@ -6,7 +6,7 @@ import ItemObject from './item/object';
 
 interface Props extends I.Cell {};
 interface State { 
-	editing: boolean; 
+	isEditing: boolean; 
 };
 
 const $ = require('jquery');
@@ -15,7 +15,7 @@ const $ = require('jquery');
 class CellObject extends React.Component<Props, State> {
 
 	state = {
-		editing: false,
+		isEditing: false,
 	};
 
 	constructor (props: any) {
@@ -25,7 +25,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, getRecord, index, relation, iconSize } = this.props;
+		const { rootId, getRecord, index, relation, iconSize, placeholder } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -43,18 +43,18 @@ class CellObject extends React.Component<Props, State> {
 						})}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);
 	};
 
 	componentDidUpdate () {
-		const { editing } = this.state;
+		const { isEditing } = this.state;
 		const { id } = this.props;
 		const cell = $('#' + id);
 
-		if (editing) {
+		if (isEditing) {
 			cell.addClass('isEditing');
 		} else {
 			cell.removeClass('isEditing');
@@ -63,10 +63,10 @@ class CellObject extends React.Component<Props, State> {
 
 	setEditing (v: boolean) {
 		const { canEdit } = this.props;
-		const { editing } = this.state;
+		const { isEditing } = this.state;
 
-		if (canEdit && (v != editing)) {
-			this.setState({ editing: v });
+		if (canEdit && (v != isEditing)) {
+			this.setState({ isEditing: v });
 		};
 	};
 

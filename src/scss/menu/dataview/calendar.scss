@@ -3,18 +3,22 @@
 .menus {
 	.menu.menuDataviewCalendar { width: 276px; }
 	.menu.menuDataviewCalendar {
+		.content { padding: 16px 0px; }
 		.inner { user-select: none; }
 
-		.head { padding: 8px 16px 0px 16px; }
+		.head { padding: 0px 16px; }
 		.head {
 			.date { color: $colorMediumGrey; margin-bottom: 6px; }
 			.sides { display: flex; margin-bottom: 10px; }
 			.side { width: 50%; }
 			.side.right { text-align: right; }
+			.side.right {
+				.select { margin-right: -4px; }
+			}
 		}
 
 		.body { padding: 0px 16px; }
-		.foot { padding: 11px 16px 3px 16px; }
+		.foot { padding: 0px 16px; }
 		.foot {
 			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionFast; }
 			.btn:last-child { margin: 0px; }
@@ -45,15 +49,15 @@
 			.icon.arrow:hover { background-color: #ebe9e0; }
 			.icon.arrow.right { transform: rotateZ(180deg); }
 		}
+
+		.line { margin: 8px 16px 11px 16px; }
 		
 		.input { 
 			height: 28px; border-radius: 4px; border: solid 1px #d2d0c2; margin-bottom: 10px; padding: 0px 10px;
 			background: none; width: 100px; vertical-align: top;
 		}
 
-		.select { 
-			border: 0px; padding: 0px; height: 28px; vertical-align: top; @include text-paragraph; font-weight: 500; padding: 4px 20px 4px 6px;
-		}
+		.select { border: 0px; padding: 0px; height: 24px; vertical-align: top; @include text-paragraph; font-weight: 500; padding: 2px 20px 2px 4px; }
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/select/big.svg'); }
 		}

@@ -78,7 +78,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 									If you want to edit, create a Duplicate of this template.
 								</div>
 								<div className="side right">
-									<Button className="dark" text="Duplicate" onClick={this.onClone} />
+									<Button color="dark" text="Duplicate" onClick={this.onClone} />
 								</div>
 							</div>
 						</div>

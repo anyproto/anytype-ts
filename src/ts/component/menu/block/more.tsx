@@ -194,14 +194,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 		};
 
-		console.log(allowedDetails);
-
 		if (!allowedDetails) {
 			archive = null;
 		};
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isLinkArchive() || block.isObjectSet()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
 			sections = [
 				{ children: [ archive ] },
 				{ children: [ linkRoot ] },
@@ -227,7 +225,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (!config.allowDataview) {
+			if (!config.allowDataview || (object.type == Constant.typeId.page)) {
 				template = null;
 			};
 

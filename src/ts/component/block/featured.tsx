@@ -53,7 +53,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 					onMouseLeave={this.onMouseLeave}
 				>
-					<div className="name">{type.name || Constant.default.name}</div>
+					<div className="name">{type.name || DataUtil.defaultName('type')}</div>
 				</div>
 
 				{items.map((relationKey: any, i: any) => {
@@ -71,7 +71,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ], true); }}
+									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 interface Props {
 	id?: string;
 	value?: boolean;
+	color?: string;
 	className?: string;
 	onChange?(e: any, value: boolean): void;
 };
@@ -15,7 +15,8 @@ interface State {
 class Switch extends React.Component<Props, State> {
 
 	public static defaultProps = {
-		value: false
+		value: false,
+		color: 'orange',
 	};
 
 	state = {
@@ -29,10 +30,10 @@ class Switch extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, className } = this.props;
+		const { id, color, className } = this.props;
 		const { value } = this.state;
 		
-		let cn = [ 'switch' ];
+		let cn = [ 'switch', color ];
 		if (className) {
 			cn.push(className);
 		};

@@ -30,7 +30,7 @@ class PageAuthSuccess extends React.Component<Props, State> {
 					<IconObject size={64} object={{ iconEmoji: '🎉' }} />
 					<Title text={translate('authSuccessTitle')} />
 					<Label text={translate('authSuccessLabel')} />
-					<Button className="orange" text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
+					<Button text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
 				</Frame>
 			</div>
 		);

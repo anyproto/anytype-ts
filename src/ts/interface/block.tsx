@@ -124,7 +124,6 @@ export interface Block {
 
 	isLink?(): boolean;
 	isLinkPage?(): boolean;
-	isLinkArchive?(): boolean;
 
 	isIcon?(): boolean;
 	isIconPage?(): boolean;

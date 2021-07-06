@@ -14,7 +14,8 @@ interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const PADDING = 32;
+const PADDING = 30;
+const HEIGHT = 48;
 
 @observer
 class ViewGrid extends React.Component<Props, {}> {
@@ -22,6 +23,7 @@ class ViewGrid extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super (props);
 
+		this.cellPosition = this.cellPosition.bind(this);
 		this.onCellAdd = this.onCellAdd.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
@@ -53,20 +55,21 @@ class ViewGrid extends React.Component<Props, {}> {
 														<List
 															autoHeight
 															height={Number(height) || 0}
+															width={Number(width) || 0}
 															isScrolling={isScrolling}
 															rowCount={data.length}
-															rowHeight={48}
+															rowHeight={HEIGHT}
 															rowRenderer={({ key, index, style }) => (
 																<BodyRow 
 																	key={'grid-row-' + view.id + index} 
 																	{...this.props} 
 																	readOnly={readOnly || !allowed}
 																	index={index} 
-																	style={style}
+																	style={{ ...style, top: style.top + 2 }}
+																	cellPosition={this.cellPosition}
 																/>
 															)}
 															scrollTop={scrollTop}
-															width={width}
 														/>
 													</div>
 												);
@@ -136,13 +139,16 @@ class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getView, scrollContainer } = this.props;
+		const { rootId, block, getView, scrollContainer } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const wrap = node.find('.scrollWrap');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const ww = $(scrollContainer).width();
 		const mw = ww - PADDING * 2;
+		const data = dbStore.getData(rootId, block.id);
+		const length = data.length;
 
 		let vw = 0;
 		let margin = 0;
@@ -165,8 +171,30 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
+		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
 		
 		this.resizeLast();
+	};
+
+	cellPosition (cellId: string) {
+		const cell = $(`#${cellId}`);
+		if (!cell.hasClass('isEditing')) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('.scroll');
+		const content = cell.find('.cellContent');
+		const x = cell.position().left;
+		const width = content.outerWidth();
+		const sx = scroll.scrollLeft();
+		const ww = $(window).width();
+
+		content.css({ left: 0, right: 'auto' });
+
+		if (x - sx + width >= ww - 64) {
+			content.css({ left: 'auto', right: 0 });
+		};
 	};
 
 	resizeLast () {
@@ -189,7 +217,7 @@ class ViewGrid extends React.Component<Props, {}> {
 		lastHead.css({ width: (width > mw ? 48 : 'auto') });
 	};
 
-	onResizeStart (e: any, id: string) {
+	onResizeStart (e: any, relationKey: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -197,22 +225,22 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		$('body').addClass('colResize');
 		win.unbind('mousemove.cell mouseup.cell');
-		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, id); });
-		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, id); });
+		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, relationKey); });
+		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, relationKey); });
 
 		keyboard.setResize(true);
 	};
 
-	onResizeMove (e: any, id: string) {
+	onResizeMove (e: any, relationKey: string) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const { getView } = this.props;
 		const view = getView();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#' + DataUtil.cellId('head', id, ''));
+		const el = node.find(`#${DataUtil.cellId('head', relationKey, '')}`);
 		const offset = el.offset();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == id; });
+		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 		const size = Constant.size.dataview.cell;
 
 		let width = e.pageX - offset.left;
@@ -220,15 +248,14 @@ class ViewGrid extends React.Component<Props, {}> {
 		width = Math.min(size.max, width);
 
 		view.relations[idx].width = width;
+
 		el.css({ width: width });
 		width <= size.icon ? el.addClass('small') : el.removeClass('small');
-
-		node.find('.resizable').trigger('resize');
-
+		
 		this.resizeLast();
 	};
 
-	onResizeEnd (e: any, id: string) {
+	onResizeEnd (e: any, relationKey: string) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 

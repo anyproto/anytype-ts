@@ -111,6 +111,7 @@ export interface Cell {
 	pageContainer?: string;
 	isInline?: boolean;
 	iconSize?: number;
+	placeholder?: string;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
@@ -119,6 +120,7 @@ export interface Cell {
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
+	cellPosition?: (cellId: string) => void;
 };
 
 export interface ContentDataview {

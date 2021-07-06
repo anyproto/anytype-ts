@@ -27,9 +27,6 @@
 
 			.wrap { position: relative; }
 			.wrap.title { width: calc(100% - 210px); height: 36px; }
-			.wrap {
-				.placeholder { position: absolute; left: 0px; top: 0px; color: $colorMediumGrey; }
-			}
 		}
 
 		.section { margin-bottom: 32px; }

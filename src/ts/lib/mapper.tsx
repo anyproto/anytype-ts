@@ -237,7 +237,7 @@ const Mapper = {
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
-				value: Decode.decodeValue(obj.getValue()),
+				value: obj.hasValue() ? Decode.decodeValue(obj.getValue()) : null,
 			};
 		},
 

@@ -13,14 +13,10 @@
 	},
 
 	"default": {
-		"name": "Untitled",
-		"nameType": "New type",
-		"nameSet": "New set",
 		"icon": ":page_facing_up:",
 		"lang": "en",
-		"cover": 3,
-		"codeLang": "javascript",
-		"viewName": "New view"
+		"cover": 12,
+		"codeLang": "javascript"
 	},
 	
 	"langs": [
@@ -48,7 +44,6 @@
 	"limit": {
 		"dataview": {
 			"records": 50,
-			"views": 100000,
 			"viewName": 24
 		},
 		"store": {
@@ -84,7 +79,8 @@
 		]
 	},
 
-	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "done" ],
+	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", "done" ],
+	"systemRelationKeys": [ "name", "description", "createdDate", "lastModifiedBy", "lastModifiedDate", "creator", "objectType", "lastOpenedDate" ],
 
 	"relationKey": {
 		"name": "name",

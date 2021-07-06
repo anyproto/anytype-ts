@@ -45,6 +45,7 @@ class PageMainType extends React.Component<Props, State> {
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
+		this.onCreate = this.onCreate.bind(this);
 	};
 
 	render () {
@@ -59,7 +60,7 @@ class PageMainType extends React.Component<Props, State> {
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: Constant.default.nameType,
+			name: DataUtil.defaultName('type'),
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
@@ -71,7 +72,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedTemplate = allowedObject;
 		const showTemplates = type.id != Constant.typeId.page;
 
-		if (object.name == Constant.default.name) {
+		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
 		};
 
@@ -79,6 +80,7 @@ class PageMainType extends React.Component<Props, State> {
 		if (!config.debug.ho) {
 			relations = relations.filter((it: any) => { return !it.isHidden; });
 		};
+		relations = relations.filter((it: any) => { return Constant.systemRelationKeys.indexOf(it.relationKey) < 0; });
 		relations.sort(DataUtil.sortByHidden);
 
 		const Editor = (item: any) => {
@@ -146,8 +148,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
 						</div>
 						<div className="side right">
-							{allowedObject ? <Button text="New object" className="orange" onClick={this.onObjectAdd} /> : ''}
-							<Button text="New set" className="orange" onClick={this.onSetAdd} />
+							<Button id="button-create" text="Create" onClick={this.onCreate} />
 						</div>
 					</div>
 
@@ -304,6 +305,39 @@ class PageMainType extends React.Component<Props, State> {
 		});
 	};
 
+	onCreate () {
+		const rootId = this.getRootId();
+		const type: any = dbStore.getObjectType(rootId) || {};
+		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const options = [];
+
+		if (allowedObject) {
+			options.push({ id: 'object', name: 'New object' });
+		};
+
+		options.push({ id: 'set', name: 'New set of objects' });
+
+		menuStore.open('select', { 
+			element: `#button-create`,
+			offsetY: 8,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				options: options,
+				onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'object':
+							this.onObjectAdd();
+							break;
+
+						case 'set':
+							this.onSetAdd();
+							break;
+					};
+				},
+			},
+		});
+	};
+
 	onObjectAdd () {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
@@ -337,16 +371,13 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	onSetAdd () {
-		const { root } = blockStore;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.BlockCreateSet('', '', rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
-			if (message.error.code) {
-				return;
+		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+			if (!message.error.code) {
+				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};
-
-			DataUtil.objectOpenPopup({ id: message.targetId, layout: I.ObjectLayout.Set });
 		});
 	};
 

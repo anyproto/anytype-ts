@@ -46,7 +46,19 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
 						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
+
 						item.isFeatured = section.id == 'featured';
+
+						let canEdit = allowedRelation;
+						let canFav = allowedValue;
+
+						if (item.isReadOnly) {
+							canEdit = false;
+						};
+						if ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) >= 0) {
+							canEdit = false;
+							canFav = false;
+						};
 
 						return (
 							<Item 
@@ -58,7 +70,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
 								readOnly={!allowedValue}
-								canEdit={allowedRelation}
+								canEdit={canEdit}
+								canFav={canFav}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
@@ -181,6 +194,8 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	onFav (e: any, relationKey: string) {
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -279,8 +294,12 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const obj = $(`#${getId()}`);
 		const container = obj.find('.content');
 		const cell = obj.find(`#${id}`);
-		const y = Math.max(0, cell.offset().top - container.offset().top);
+		
+		if (!container.length || !cell.length) {
+			return;
+		};
 
+		const y = Math.max(0, cell.offset().top - container.offset().top);
 		container.scrollTop(y);
 	};
 
@@ -312,11 +331,18 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const win = $(window);
+		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const offset = isPopup ? 16 : 120;
 
-		obj.css({ height: win.height() - Util.sizeHeader() - 16 });
+		obj.css({ 
+			height: container.height() - Util.sizeHeader() - 16,
+			width: Math.max(480, container.width() / 2 - offset),
+		});
+
 		position();
 	};
 

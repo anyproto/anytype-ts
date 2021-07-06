@@ -163,8 +163,8 @@ class PopupNavigation extends React.Component<Props, State> {
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
 					{withButtons ? (
 						<div className="buttons">
-							<Button text={confirm} className="orange" onClick={(e: any) => { this.onConfirm(e, item); }} />
-							<Button text={translate('popupNavigationCancel')} className="blank" onClick={(e: any) => { close(); }} />
+							<Button text={confirm} onClick={(e: any) => { this.onConfirm(e, item); }} />
+							<Button text={translate('popupNavigationCancel')} color="blank" onClick={(e: any) => { close(); }} />
 						</div>
 					) : ''}
 				</div>
@@ -625,7 +625,7 @@ class PopupNavigation extends React.Component<Props, State> {
 	};
 	
 	getPage (page: any): I.PageInfo {
-		page.details.name = String(page.details.name || Constant.default.name || '');
+		page.details.name = String(page.details.name || DataUtil.defaultName('page'));
 
 		return {
 			...page,

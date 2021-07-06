@@ -47,9 +47,16 @@ class MenuSearchObject extends React.Component<Props, State> {
 		const { data } = param;
 		const { value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
-		const cn = [ 'wrap', (label ? 'withLabel' : '') ];
+		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 		const rowHeight = this.getHeight();
+
+		if (label) {
+			cn.push('withLabel');
+		};
+		if (!noFilter) {
+			cn.push('withFilter');
+		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -105,59 +112,57 @@ class MenuSearchObject extends React.Component<Props, State> {
 
 		return (
 			<div className={cn.join(' ')}>
-				{loading ? <Loader /> : (
+				{!noFilter ? (
+					<Filter 
+						ref={(ref: any) => { this.ref = ref; }} 
+						placeholder={placeholder} 
+						placeholderFocus={placeholderFocus} 
+						value={filter}
+						onChange={(e: any) => { this.onKeyUp(e, false); }} 
+					/>
+				) : ''}
+
+				{loading ? <Loader /> : ''}
+
+				{!items.length && !loading ? (
+					<div id="empty" key="empty" className="empty">
+						<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					</div>
+				) : ''}
+
+				{this.cache && items.length && !loading ? (
 					<React.Fragment>
-						{!noFilter ? (
-							<Filter 
-								ref={(ref: any) => { this.ref = ref; }} 
-								placeholder={placeholder} 
-								placeholderFocus={placeholderFocus} 
-								value={filter}
-								onChange={(e: any) => { this.onKeyUp(e, false); }} 
-							/>
-						) : ''}
+						{label ? <div className="sectionName">{label}</div> : ''}
 
-						{!items.length && !loading ? (
-							<div id="empty" key="empty" className="empty">
-								<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
-							</div>
-						) : ''}
-
-						{this.cache && items.length && !loading ? (
-							<React.Fragment>
-								{label ? <div className="sectionName">{label}</div> : ''}
-
-								<div className="items">
-									<InfiniteLoader
-										rowCount={items.length}
-										loadMoreRows={() => {}}
-										isRowLoaded={({ index }) => index < items.length}
-										threshold={LIMIT}
-									>
-										{({ onRowsRendered, registerChild }) => (
-											<AutoSizer className="scrollArea">
-												{({ width, height }) => (
-													<List
-														ref={registerChild}
-														width={width}
-														height={height}
-														deferredMeasurmentCache={this.cache}
-														rowCount={items.length}
-														rowHeight={rowHeight}
-														rowRenderer={rowRenderer}
-														onRowsRendered={onRowsRendered}
-														overscanRowCount={10}
-														scrollToIndex={n}
-													/>
-												)}
-											</AutoSizer>
+						<div className="items">
+							<InfiniteLoader
+								rowCount={items.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => index < items.length}
+								threshold={LIMIT}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={registerChild}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={rowHeight}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToIndex={n}
+											/>
 										)}
-									</InfiniteLoader>
-								</div>
-							</React.Fragment>
-						) : ''}
+									</AutoSizer>
+								)}
+							</InfiniteLoader>
+						</div>
 					</React.Fragment>
-				)}
+				) : ''}
 			</div>
 		);
 	};
@@ -270,7 +275,7 @@ class MenuSearchObject extends React.Component<Props, State> {
 			this.items = this.items.concat(message.records.map((it: any) => {
 				return {
 					...it, 
-					name: String(it.name || Constant.default.name),
+					name: String(it.name || DataUtil.defaultName('page')),
 				};
 			}));
 			this.items = this.items.filter(filterMapper);
@@ -356,7 +361,8 @@ class MenuSearchObject extends React.Component<Props, State> {
 					this.onClick(e, item);
 				};
 				break;
-				
+
+			case Key.left:	
 			case Key.escape:
 				this.props.close();
 				break;

@@ -38,34 +38,31 @@
 	.elements {
 		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; opacity: 0; transition: opacity 0.2s ease-in-out; }
 		
-		.dragWrap { width: 160px; position: absolute; left: 50%; bottom: 8px; margin-left: -80px; display: flex; z-index: 1; }
+		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {
 			.input-drag { width: 96px; }
 			.number { width: calc(100% - 106px); }
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: 14px; height: 24px; line-height: 24px; cursor: pointer; display: inline-block;
+			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; cursor: pointer; display: inline-block;
 			padding: 0px 8px 0px 6px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
 		}
-		.btn.withIcon { line-height: 22px; }
-		.btn.active { opacity: 1; }
 		.btn:last-child { margin: 0px; }
+		.btn.withIcon { line-height: 26px; }
 
 		.btn.white { background: rgba(255,255,255,0.7); }
 		.btn.white:hover, .btn.white.hover { background: rgba(255,255,255,0.9); }
 		
 		.btn.black { color: #fff; background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
-		
+
 		.btn {
 			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: middle; }
 			.icon.icon { background-image: url('~img/icon/add/icon1.svg'); }
 			.icon.addCover { background-image: url('~img/icon/add/cover1.svg'); }
 			.icon.layout { background-image: url('~img/icon/add/layout1.svg'); }
 			.icon.relation { background-image: url('~img/icon/add/relation1.svg'); }
-
-			.txt { line-height: 18px; vertical-align: middle; }
 		}
 		
 		.btn.drag { position: absolute; cursor: grab; width: 210px; top: 50%; left: 50%; margin: -12px 0px 0px -105px; }

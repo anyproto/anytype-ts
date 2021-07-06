@@ -86,6 +86,10 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		this.forceUpdate();
 	};
 
+	componentDidUpdate () {
+		this.focus();
+	};
+
 	componentWillUnmount () {
 		const { param } = this.props;
 		const { data } = param;
@@ -97,6 +101,14 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		if (rebind) {
 			rebind();
 		};
+	};
+
+	focus () {
+		window.setTimeout(() => { 
+			if (this.ref) {
+				this.ref.focus(); 
+			};
+		}, 15);
 	};
 
 	rebind () {

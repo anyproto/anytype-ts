@@ -22,4 +22,10 @@ html.debug {
 	.blockLast { background: rgba(0,0,255,0.1); }
 	
 	.isHidden { background: rgba(255,192,203,0.3) !important; }
+
+	.menuBlockRelationView {
+		.info { background: rgba(0,0,255,0.1); }
+		.cell { background: rgba(0,0,255,0.1); }
+		.icon.fav { background-color: rgba(0,0,255,0.1); }
+	}
 } 

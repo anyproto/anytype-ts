@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Cell {};
 interface State { 
-	editing: boolean; 
+	isEditing: boolean; 
 };
 
 const $ = require('jquery');
@@ -15,7 +15,7 @@ class CellSelect extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	state = {
-		editing: false,
+		isEditing: false,
 	};
 
 	constructor (props: any) {
@@ -25,7 +25,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, relation, getRecord, index } = this.props;
+		const { rootId, block, relation, getRecord, index, placeholder } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -47,7 +47,7 @@ class CellSelect extends React.Component<Props, State> {
 						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (
-					<div className="empty">{translate(`placeholderCell${relation.format}`)}</div>
+					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
 				)}
 			</div>
 		);
@@ -62,11 +62,11 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { editing } = this.state;
+		const { isEditing } = this.state;
 		const { id } = this.props;
 		const cell = $('#' + id);
 
-		if (editing) {
+		if (isEditing) {
 			cell.addClass('isEditing');
 		} else {
 			cell.removeClass('isEditing');
@@ -75,10 +75,10 @@ class CellSelect extends React.Component<Props, State> {
 
 	setEditing (v: boolean) {
 		const { canEdit } = this.props;
-		const { editing } = this.state;
+		const { isEditing } = this.state;
 
-		if (canEdit && (v != editing)) {
-			this.setState({ editing: v });
+		if (canEdit && (v != isEditing)) {
+			this.setState({ isEditing: v });
 		};
 	};
 

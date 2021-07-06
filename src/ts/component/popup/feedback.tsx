@@ -98,7 +98,7 @@ class PopupFeedback extends React.Component<Props, State> {
 						<IconObject size={64} object={{ iconEmoji: ':relieved:' }} />
 						<Title text={translate('popupFeedbackSuccessTitle')} />
 						<Label text={translate('popupFeedbackSuccessText')} />
-						<Button className="orange" text={translate('popupFeedbackSuccessBack')} onClick={() => { this.props.close(); }} />
+						<Button text={translate('popupFeedbackSuccessBack')} onClick={() => { this.props.close(); }} />
 					</React.Fragment>
 				) : (
 					<React.Fragment>

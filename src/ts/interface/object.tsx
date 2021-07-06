@@ -78,6 +78,7 @@ export interface ObjectType {
 	layout: ObjectLayout;
 	iconEmoji: string;
 	isHidden: boolean;
+	isArchived?: boolean;
 	relations: Relation[];
 	types: SmartBlockType[];
 };

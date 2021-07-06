@@ -132,7 +132,7 @@ class PageMainStore extends React.Component<Props, State> {
 						<Title text="Type every object" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
 
-						<Button text="Create a new type" className="orange" onClick={(e: any) => { this.onCreateType(e); }} />
+						<Button text="Create a new type" onClick={(e: any) => { this.onCreateType(e); }} />
 					</div>
 				);
 				break;
@@ -160,7 +160,7 @@ class PageMainStore extends React.Component<Props, State> {
 						<Title text="Template space" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
 
-						<Button text="Create a new template" className="orange" onClick={(e: any) => { this.onCreateTemplate(); }} />
+						<Button text="Create a new template" onClick={(e: any) => { this.onCreateTemplate(); }} />
 					</div>
 				);
 				break;
@@ -190,7 +190,7 @@ class PageMainStore extends React.Component<Props, State> {
 						<Title text="All objects are connected" />
 						<Label text="Our beautifully-designed templates come with hundreds" />
 
-						<Button text="Create a new type" className="orange" />
+						<Button text="Create a new type" />
 					</div>
 				);
 				break;
@@ -360,7 +360,6 @@ class PageMainStore extends React.Component<Props, State> {
 	};
 
 	onCreateType (e: any) {
-		const { objectTypes } = dbStore;
 		const param: any = { 
 			name: '',
 			layout: I.ObjectLayout.Page, 
@@ -415,7 +414,7 @@ class PageMainStore extends React.Component<Props, State> {
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
 		const data = Util.objectCopy(dbStore.getData(rootId, BLOCK_ID)).map((it: any) => {
-			it.name = String(it.name || Constant.default.name || '');
+			it.name = String(it.name || DataUtil.defaultName('page'));
 			return it;
 		});
 

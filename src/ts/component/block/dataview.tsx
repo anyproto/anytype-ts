@@ -202,10 +202,6 @@ class BlockDataview extends React.Component<Props, {}> {
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
-					dataMapper: (it: any, i: number) => {
-						it.name = it.templateName || `Template ${i + 1}`;
-						return it;
-					},
 					onOver: (e: any, context: any, item: any) => {
 						menuStore.close('previewObject', () => {
 							menuStore.open('previewObject', {
@@ -236,25 +232,17 @@ class BlockDataview extends React.Component<Props, {}> {
 	onCellClick (e: any, relationKey: string, index: number) {
 		const { rootId, block } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
-
-		if (!relation) {
-			return;
-		};
-
-		const record = this.getRecord(index);
-		if (relation.relationKey == Constant.relationKey.name) {
-			DataUtil.objectOpenPopup(record);
-			return;
-		};
-
-		if (relation.isReadOnly) {
-			return;
-		};
-
 		const id = DataUtil.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
+		const record = this.getRecord(index);
 
-		if (ref) {
+		if (!relation || !ref || !record) {
+			return;
+		};
+
+		if ((relation.relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
+			DataUtil.objectOpenPopup(record);
+		} else {
 			ref.onClick(e);
 		};
 	};

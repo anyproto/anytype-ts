@@ -36,13 +36,28 @@ class Keyboard {
 		let win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
+		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
 
 		ipcRenderer.removeAllListeners('commandGlobal');
 		ipcRenderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common');
+		$(window).unbind('keyup.common keydown.common mousedown.common');
+	};
+
+	onMouseDown (e: any) {
+		// Mouse back
+		if (e.buttons & 8) {
+			e.preventDefault();
+			this.back();
+		};
+
+		// Mouse forward
+		if (e.buttons & 16) {
+			e.preventDefault();
+			this.forward();
+		};
 	};
 	
 	onKeyDown (e: any) {
@@ -172,7 +187,7 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		return this.isMainEditor() ? this.match.params.id : blockStore.root;
+		return this.match?.params?.id || blockStore.root;
 	};
 
 	onKeyUp (e: any) {
@@ -389,7 +404,7 @@ class Keyboard {
 	};
 	
 	isSpecial (k: string): boolean {
-		const keys: string[] = [ Key.backspace, Key.tab, Key.enter ];
+		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter ];
 		return this.isArrow(k) || keys.indexOf(k) >= 0;
 	};
 

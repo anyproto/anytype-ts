@@ -5,7 +5,6 @@ const $ = require('jquery');
 
 class BlockStore {
 	@observable public rootId: string = '';
-	@observable public archiveId: string = '';
 	@observable public profileId: string = '';
 	@observable public breadcrumbsId: string = '';
 	@observable public recentId: string = '';
@@ -20,11 +19,6 @@ class BlockStore {
 	@computed
 	get root (): string {
 		return this.rootId;
-	};
-
-	@computed
-	get archive (): string {
-		return this.archiveId;
 	};
 
 	@computed
@@ -60,11 +54,6 @@ class BlockStore {
 	@action
 	rootSet (id: string) {
 		this.rootId = String(id || '');
-	};
-
-	@action
-	archiveSet (id: string) {
-		this.archiveId = String(id || '');
 	};
 
 	@action
@@ -165,7 +154,7 @@ class BlockStore {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
-		blocks = blocks.filter((it: any) => { return it.id != blockId; });
+		this.blockMap.set(rootId, blocks.filter((it: any) => { return it.id != blockId; }));
 		map.delete(blockId);
 	};
 

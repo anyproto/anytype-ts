@@ -11,7 +11,7 @@
 
 		.head { 
 			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
-			transform: translateX(-50%); padding: 4px 8px;
+			transform: translateX(-50%); padding: 4px 8px; -webkit-app-region: no-drag;
 		}
 		.head {
 			.iconObject { margin-right: 6px; }

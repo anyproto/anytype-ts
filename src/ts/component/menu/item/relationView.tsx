@@ -11,6 +11,7 @@ interface Props extends I.Relation {
 	classNameWrap?: string;
 	readOnly?: boolean;
 	canEdit?: boolean;
+	canFav?: boolean;
 	onEdit(e: any, relationKey: string): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
@@ -25,21 +26,25 @@ const PREFIX = 'menuBlockRelationView';
 class MenuItemRelationView extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, canEdit, readOnly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, relationKey, canEdit, canFav, readOnly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
+		const cn = [ 'item', 'sides' ];
 
+		if (isHidden) {
+			cn.push('isHidden');
+		};
+		if (canFav) {
+			cn.push('canFav');
+		};
 		if (isFeatured) {
 			fcn.push('active');
 		};
-		if (readOnly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relationKey) >= 0)) {
-			fcn.push('dn');
-		};
 
 		return (
-			<div className={[ 'item', 'sides', (isHidden ? 'isHidden' : '') ].join(' ')}>
+			<div className={cn.join(' ')}>
 				<div 
 					id={`item-${relationKey}`} 
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
@@ -59,7 +64,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						storeId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ], true); }}
+						getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
 						viewType={I.ViewType.Grid}
 						index={0}
 						idPrefix={PREFIX}
@@ -71,8 +76,8 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						onCellChange={onCellChange}
 						optionCommand={optionCommand}
 					/>
+					<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
 				</div>
-				<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
 			</div>
 		);
     };

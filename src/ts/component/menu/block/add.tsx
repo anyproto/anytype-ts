@@ -106,6 +106,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								pageContainer={Util.getPageContainer('menuBlockRelationList')}
 								readOnly={true}
 								canOpen={false}
+								placeholder={translate('placeholderCellCommon')}
 							/>
 						</div>
 					</div>
@@ -416,8 +417,14 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		};
 		
 		if (filter && filter.text) {
+			const actions = DataUtil.menuGetActions(false);
+
+			if (block.canTurnPage()) {
+				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+			};
+
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: DataUtil.menuGetActions(false) },
+				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {
@@ -471,7 +478,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		const block = blockStore.getLeaf(rootId, blockId);
 
-		const filters = [
+		let filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
 		];
 
@@ -526,6 +533,25 @@ class MenuBlockAdd extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
+				});
+				break;
+
+			case 'turnObject':
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
+				menuParam.data = Object.assign(menuParam.data, {
+					placeholder: 'Find a type of object...',
+					label: 'Your object type library',
+					filters: filters,
+					onSelect: (item: any) => {
+						this.moveToPage(item.id);
+						close();
+					}
 				});
 				break;
 
@@ -690,6 +716,23 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		} else {
 			cb();
 		};
+	};
+
+	moveToPage (type: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId, rootId, dataset } = data;
+		const { selection } = dataset || {};
+		
+		let ids = [];
+		if (selection) {
+			ids = selection.get();
+		};
+		if (!ids.length) {
+			ids = [ blockId ];
+		};
+
+		C.BlockListConvertChildrenToPages(rootId, ids, type);
 	};
 
 	resize () {

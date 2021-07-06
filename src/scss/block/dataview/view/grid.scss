@@ -2,10 +2,13 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead { display: table-row; box-shadow: 0px 1px #e0ded2 inset, 0px -1px #e0ded2 inset; white-space: nowrap; }
+		.rowHead { 
+			display: block; box-shadow: 0px 1px #e0ded2 inset; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; 
+			height: 48px;
+		}
 
 		.cellHead { 
-			text-align: left; color: $colorVeryDarkGrey; padding: 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+			text-align: left; color: $colorDarkGrey; padding: 14px; font-weight: 400; line-height: 20px; position: relative; 
 			@include text-overflow-nw; cursor: grab; display: inline-block; vertical-align: top;
 		}
 		.cellHead {
@@ -32,15 +35,20 @@
 		}
 		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 
-        .viewItem.viewGrid { display: table; width: 100%; position: relative; border-bottom: 1px solid #e0ded2; }
+        .viewItem.viewGrid { display: table; width: 100%; position: relative; box-shadow: 0px -1px #e0ded2 inset; }
 		.viewItem.viewGrid {
 			.icon.checkbox { vertical-align: top; }
+			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
-			.row { display: table-row; border-bottom: 1px solid #e0ded2; white-space: nowrap; }
+			.row { 
+				display: table-row; white-space: nowrap; box-shadow: 0px 1px #e0ded2 inset; left: 2px !important; width: calc(100% - 4px) !important; 
+				height: 48px;
+			}
 			.row.add { border: 0px; }
 
 			.row:hover {
 				.cellContent.isName {
+					.name { width: calc(100% - 40px) !important; }
 					.icon.edit { display: block; }
 				}
 			}
@@ -62,6 +70,9 @@
 
 			.cell.isEditing {
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; }
+				.cellContent.isName {
+					.name { width: 100%; }
+				}
 			}
 			.cell.isEditing.c-select { 
 				.cellContent { padding-bottom: 8px; }

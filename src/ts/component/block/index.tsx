@@ -45,8 +45,8 @@ class Block extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
-		this.onToggleClick = this.onToggleClick.bind(this);
-		this.onEmptyClick = this.onEmptyClick.bind(this);
+		this.onEmptyToggle = this.onEmptyToggle.bind(this);
+		this.onEmptyColumn = this.onEmptyColumn.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
 		this.onMenuClick = this.onMenuClick.bind(this);
@@ -100,7 +100,7 @@ class Block extends React.Component<Props, {}> {
 				if (block.isTextToggle() && !readOnly) {
 					const childrenIds = blockStore.getChildrenIds(rootId, id);
 					if (!childrenIds.length) {
-						empty = <div className="emptyToggle" onClick={this.onToggleClick}>{translate('blockTextToggleEmpty')}</div>;
+						empty = <div className="emptyToggle" onClick={this.onEmptyToggle}>{translate('blockTextToggleEmpty')}</div>;
 					};
 				};
 
@@ -241,7 +241,7 @@ class Block extends React.Component<Props, {}> {
 					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 					
 					{block.isLayoutColumn() ? (
-						<div className="columnEmpty" onClick={this.onEmptyClick} />
+						<div className="columnEmpty" onClick={this.onEmptyColumn} />
 					) : ''}
 				</div>
 			</div>
@@ -256,12 +256,14 @@ class Block extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		const { block, dataset } = this.props;
 		const { id } = block;
-		const { selection } = dataset || {};
+		//const { selection } = dataset || {};
 		const { focused } = focus.state;
 		
+		/*
 		if (selection) {
 			selection.set(selection.get());
 		};
+		*/
 
 		if (focused == id) {
 			focus.apply();
@@ -276,9 +278,9 @@ class Block extends React.Component<Props, {}> {
 
 	initToggle () {
 		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 
 		if (block.id && block.isTextToggle()) {
+			const node = $(ReactDOM.findDOMNode(this));
 			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
 		};
 	};
@@ -295,7 +297,7 @@ class Block extends React.Component<Props, {}> {
 		focus.apply();
 	};
 	
-	onToggleClick (e: any) {
+	onEmptyToggle (e: any) {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const param = {
@@ -564,7 +566,7 @@ class Block extends React.Component<Props, {}> {
 		$(window).unbind('mousemove.block mouseup.block');
 	};
 	
-	onEmptyClick () {
+	onEmptyColumn () {
 		const { rootId, block } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		

@@ -31,24 +31,16 @@ class ListTemplate extends React.Component<Props, {}> {
 		const isFirst = this.page == 0;
 		const isLast = this.page == this.getMaxPage();
 
-		const Item = (item: any) => {
-			const name = item.templateName || `Template ${item.index + 1}`;
-			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
-				>
-					<ObjectPreviewBlock rootId={item.id} onClick={(e: any) => { this.onClick(e, item); }} />
-					<div className="name">
-						{item.templateIsBundled ? name : (
-							<Input value={name} onChange={(e: any, v: string) => { this.onChange(e, item, v); }} />
-						)}
-					</div>
-				</div>
-			);
-		};
+		const Item = (item: any) => (
+			<div 
+				id={'item-' + item.id} 
+				className="item" 
+				onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+				onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+			>
+				<ObjectPreviewBlock rootId={item.id} onClick={(e: any) => { this.onClick(e, item); }} />
+			</div>
+		);
 
 		const ItemAdd = () => (
 			<div className="item add" onClick={onAdd}>
@@ -102,15 +94,6 @@ class ListTemplate extends React.Component<Props, {}> {
 		if (onClick) {
 			onClick(e, item);
 		};
-	};
-
-	onChange (e: any, item: any, value: string) {
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			C.BlockSetDetails(item.id, [ 
-				{ key: 'templateName', value: value },
-			]);
-		}, 500);
 	};
 
 	setActive () {

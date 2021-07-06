@@ -6,10 +6,7 @@
 		.wrap { flex: auto; position: relative; padding: 0px; width: 100%; }
 		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
 
-		.placeholder { 
-			color: #cbc9bd; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
-			width: 100%; height: 100%; cursor: text; pointer-events: none;
-		}
+		.placeholder { display: none; overflow: hidden; }
 
 		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
 		

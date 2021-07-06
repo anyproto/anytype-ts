@@ -41,7 +41,7 @@
 		.tabWrap {
 			.tabs { 
 				line-height: 44px; height: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; display: inline-block; @include text-paragraph; 
-				color: rgba(255,255,255,0.6); font-weight: 700; user-select: none;
+				color: rgba(255,255,255,0.6); font-weight: 700; user-select: none; white-space: nowrap;
 			}
 			.tabs {
 				.tab { 
@@ -83,7 +83,7 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; line-height: 20px; max-height: 60px; width: 100%; word-break: break-word;
+				@include text-common; max-height: 60px; width: 100%; word-break: break-word;
 				-webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; display: -webkit-box;
 			}
 			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
@@ -109,7 +109,7 @@
 
 		.item.isTask { padding-left: 40px; }
 		.item.isTask {
-			.iconObject { position: absolute; left: 16px; top: 16px; z-index: 1; margin: 0px; }
+			.iconObject { position: absolute; left: 16px; top: 18px; z-index: 1; margin: 0px; }
 			.name { -webkit-line-clamp: 3; }
 		}
 		

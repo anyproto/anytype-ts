@@ -102,31 +102,37 @@ class MenuOptionList extends React.Component<Props, State> {
 				/>
 
 				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={registerChild}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-										scrollToIndex={n}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
+					{items.length ? (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={registerChild}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+											scrollToIndex={n}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					) : (
+						<div className="item empty">
+							No options available
+						</div>
+					)}
 				</div>
 			</div>
 		);
@@ -210,7 +216,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	onClick (e: any, item: any) {
-		item.id == 'add' ? this.onMenuAdd(e) : this.onValueAdd(item.id);
+		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
 
 	onValueAdd (id: string) {
@@ -247,7 +253,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		return Util.objectCopy(value);
 	};
 
-	onMenuAdd (e: any) {
+	onOptionAdd () {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, rootId, blockId, record, optionCommand } = data;
@@ -265,6 +271,7 @@ class MenuOptionList extends React.Component<Props, State> {
 			};
 
 			this.ref.setValue('');
+			this.onFilterChange('');
 			this.onValueAdd(message.option.id);
 
 			window.setTimeout(() => { this.resize(); }, 50);
@@ -311,24 +318,34 @@ class MenuOptionList extends React.Component<Props, State> {
 	getItems (withSections: boolean): I.SelectOption[] {
 		const { param } = this.props;
 		const { data } = param;
-		const { canAdd } = data;
+		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
+		const value = this.getValue();
 
-		let items = relation.selectDict || [];
+		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};
 		let ret = [];
 
 		sections[I.OptionScope.Local] = { id: I.OptionScope.Local, name: 'In this object', children: [] };
-		sections[I.OptionScope.Relation] = { id: I.OptionScope.Local, name: 'Everywhere', children: [] };
+		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Suggested', children: [] };
+
+		if (filterMapper) {
+			items = items.filter(filterMapper);
+		};
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			const check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
+
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
-			if (canAdd && !items.length) {
+
+			if (canAdd && !check.length) {
 				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
 			};
 		};
+
+		items = items.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 
 		for (let item of items) {
 			if (!sections[item.scope]) {
@@ -404,8 +421,9 @@ class MenuOptionList extends React.Component<Props, State> {
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems(true);
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const offset = 58;
+		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

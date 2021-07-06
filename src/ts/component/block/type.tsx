@@ -238,13 +238,11 @@ class BlockType extends React.Component<Props, State> {
 				});
 			};
 
-			C.BlockObjectTypeSet(rootId, item.id, (message: any) => {
-				if (templateId) {
-					C.ApplyTemplate(rootId, templateId, onTemplate);
-				} else {
-					onTemplate();
-				};
-			});
+			if (templateId) {
+				C.ApplyTemplate(rootId, templateId, onTemplate);
+			} else {
+				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
+			};
 		};
 
 		const showMenu = () => {

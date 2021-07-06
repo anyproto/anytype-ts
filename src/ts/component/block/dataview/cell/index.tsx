@@ -47,6 +47,7 @@ class Cell extends React.Component<Props, {}> {
 		const canEdit = this.canEdit();
 		const cn = [ 
 			'cellContent', 
+			'c-' + relation.relationKey,
 			DataUtil.relationClass(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == Constant.relationKey.name ? 'isName' : ''),
@@ -107,7 +108,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
+		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
@@ -161,7 +162,7 @@ class Cell extends React.Component<Props, {}> {
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
-			offsetY: 1,
+			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
 			className: menuClassName,
@@ -187,9 +188,6 @@ class Cell extends React.Component<Props, {}> {
 		switch (relation.format) {
 
 			case I.RelationType.Date:
-				param = Object.assign(param, {
-					offsetY: 14,
-				});
 				param.data = Object.assign(param.data, {
 					value: param.data.value || Util.time(),
 				});

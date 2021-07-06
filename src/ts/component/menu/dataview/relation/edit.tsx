@@ -55,7 +55,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
-							name={objectType ? (objectType.name || Constant.default.name) : 'Select object type'} 
+							name={objectType ? (objectType.name || DataUtil.defaultName('page')) : 'Select object type'} 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							onMouseEnter={this.onObjectType} 
 							arrow={!this.isReadOnly()}
@@ -68,7 +68,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<div className="item" onMouseEnter={this.menuClose}>
 							<Icon className="clock" />
 							<div className="name">Include time</div>
-							<Switch value={viewRelation ? viewRelation.includeTime : false} className="green" onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
+							<Switch value={viewRelation ? viewRelation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
 						</div>
 
 						<MenuItemVertical 
@@ -85,7 +85,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 		return (
 			<form onSubmit={this.onSubmit}>
-				<div className="section noLine">
+				<div className="section">
 					<div className="name">Relation name</div>
 					{!this.isReadOnly() ? (
 						<div className="inputWrap">
@@ -120,7 +120,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				{!this.isReadOnly() ? (
 					<div className="section">
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} className="grey filled c28" />
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
 						</div>
 					</div>
 				) : ''}

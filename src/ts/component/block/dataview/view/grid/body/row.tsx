@@ -8,6 +8,7 @@ interface Props extends I.ViewComponent {
 	index: number;
 	readOnly: boolean;
 	style?: any;
+	cellPosition?: (cellId: string) => void;
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;

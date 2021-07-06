@@ -243,10 +243,9 @@ class DbStore {
 	};
 
 	getObjectTypesForSBType (SBType: I.SmartBlockType): I.ObjectType[] {
-		let types = this.objectTypes.filter((it: I.ObjectType) => {
-			return it.types.indexOf(SBType) >= 0;
+		return this.objectTypes.filter((it: I.ObjectType) => {
+			return (it.types.indexOf(SBType) >= 0) && !it.isArchived;
 		});
-		return types;
 	};
 
 	getRelations (rootId: string, blockId: string): I.Relation[] {

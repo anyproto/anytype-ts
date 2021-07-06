@@ -8,48 +8,41 @@ interface Props {
 	subType?: string;
 	text?: string;
 	className?: string;
+	color?: string;
 	onClick?(e: any): void;
 };
 
 class Button extends React.Component<Props, {}> {
 
 	public static defaultProps = {
-		subType: 'submit'
+		subType: 'submit',
+		color: 'orange',
+		className: '',
     };
 
 	render () {
-		const { id, type, subType, icon, text, className, onClick } = this.props;
+		const { id, type, subType, icon, text, className, color, onClick } = this.props;
 
-		let Component: React.ReactType<{}>;
-		let cn = [ 'button' ];
-		
-		if (className) {
-			cn.push(className);
-		};
+		let content = null;
+		let cn = [ 'button', color, className ];
 		
 		switch (type) {
 		
 			default:
-				Component = () => { 
-					return (
-						<div id={id} className={cn.join(' ')} onMouseDown={onClick}>
-							{icon ? <Icon className={icon} /> : ''}
-							<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
-						</div>
-					);
-				};
+				content = ( 
+					<div id={id} className={cn.join(' ')} onMouseDown={onClick}>
+						{icon ? <Icon className={icon} /> : ''}
+						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
+					</div>
+				);
 				break;
 				
 			case 'input':
-				Component = () => { 
-					return (
-						<input id={id} type={subType} className={cn.join(' ')} onMouseDown={onClick} value={text} />
-					);
-				};
+				content = <input id={id} type={subType} className={cn.join(' ')} onMouseDown={onClick} value={text} />
 				break;
 		};
 		
-		return <Component />;
+		return content;
 	};
 	
 };

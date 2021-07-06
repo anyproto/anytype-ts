@@ -246,7 +246,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const searchWrap = node.find('#searchWrap');
-		const body = node.find('#body');
+		const page = $('.page');
 
 		if (searchWrap.hasClass('active')) {
 			return;
@@ -256,12 +256,15 @@ class PageMainIndex extends React.Component<Props, State> {
 		this.refFilter.focus();
 
 		window.setTimeout(() => {
-			body.unbind('click').on('click', (e: any) => {
-				searchWrap.removeClass('active');
-				body.unbind('click');
+			page.unbind('click').on('click', (e: any) => {
+				if ($.contains(searchWrap.get(0), e.target)) {
+					return;
+				};
 
-				this.refFilter.setValue('');
-				this.setFilter('');
+				searchWrap.removeClass('active');
+				page.unbind('click');
+
+				window.setTimeout(() => { this.setFilter(''); }, 210);
 			});
 		}, 210);
 	};
@@ -272,6 +275,9 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	setFilter (v: string) {
+		if (this.refFilter) {
+			this.refFilter.setValue(v);
+		};
 		this.setState({ filter: v });
 		this.load();
 	};
@@ -291,6 +297,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 	
 	onSelect (e: any, item: any) {
+		e.stopPropagation();
 		e.persist();
 
 		const object = item.isBlock ? item._object_ : item;
@@ -320,8 +327,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
-		const targetBlockId = item.content?.targetBlockId;
-		
+
 		let menuContext = null;
 		let favorites = []; 
 		let archive = null;
@@ -335,7 +341,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (item.isBlock) {
 			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-				return it.isLink() && (it.content.targetBlockId == targetBlockId);
+				return it.isLink() && (it.content.targetBlockId == object.id);
 			});
 		};
 
@@ -346,12 +352,13 @@ class PageMainIndex extends React.Component<Props, State> {
 		};
 
 		if (object.isArchived) {
+			link = null;
 			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if ([ Tab.Favorite, Tab.Archive ].indexOf(tab) < 0) {
+		if ([ Tab.Favorite ].indexOf(tab) < 0) {
 			move = null;
 		};
 
@@ -395,7 +402,7 @@ class PageMainIndex extends React.Component<Props, State> {
 									type: I.NavigationType.Move, 
 									skipId: rootId,
 									position: I.BlockPosition.Bottom,
-									onSelect: (item: any) => {
+									onSelect: (el: any) => {
 										menuContext.close();
 									},
 								}
@@ -411,18 +418,26 @@ class PageMainIndex extends React.Component<Props, State> {
 
 					switch (el.id) {
 						case 'archive':
-							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], true);
+							if (item.isBlock) {
+								C.BlockListSetPageIsArchived(rootId, [ object.id ], true);
+							} else {
+								DataUtil.pageSetArchived(object.id, true, () => { this.load(); });
+							};
 							break;
 
 						case 'unarchive':
-							C.BlockListSetPageIsArchived(rootId, [ targetBlockId ], false);
+							if (item.isBlock) {
+								C.BlockListSetPageIsArchived(rootId, [ object.id ], false);
+							} else {
+								DataUtil.pageSetArchived(object.id, false, () => { this.load(); });
+							};
 							break;
 
 						case 'link':
 							const newBlock = {
 								type: I.BlockType.Link,
 								content: {
-									targetBlockId: targetBlockId,
+									targetBlockId: object.id,
 								}
 							};
 							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
@@ -430,7 +445,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 						case 'unlink':
 							let favorites = blockStore.getChildren(root, root, (it: I.Block) => { 
-								return it.isLink() && (it.content.targetBlockId == targetBlockId);
+								return it.isLink() && (it.content.targetBlockId == object.id);
 							}).map((it: I.Block) => { return it.id; });
 
 							if (favorites.length) {
@@ -544,9 +559,6 @@ class PageMainIndex extends React.Component<Props, State> {
 					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
 					const { layout, name, _empty_, isArchived } = object;
 
-					if (it.content.style == I.LinkStyle.Archive) {
-						return false;
-					};
 					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
 						return false;
 					};

@@ -75,7 +75,6 @@ class IconEmoji extends React.Component<Props, {}> {
 			};
 		} else 
 		if (hash) {
-			cn.push('withImage');
 			element = <img src={commonStore.imageUrl(hash, Constant.size.iconPage)} className={[ 'iconImage', 'c' + size ].join(' ')}  onDragStart={(e: any) => { e.preventDefault(); }} />;
 		} else 
 		if (iconClass) {

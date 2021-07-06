@@ -3,12 +3,19 @@
 .menus {
 	.menu.menuDataviewRelationList { width: 360px; }
 	.menu.menuDataviewRelationList {
-		.content { max-height: 350px; }
+		.content { overflow: visible; max-height: unset; padding: 0px; }
+		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: auto; max-height: 350px; }
+
 		.item { padding: 4px 10px; }
 		.item {
 			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
+		}
+
+		.bottom { padding: 0px 0px 8px 0px; }
+		.bottom {
+			.line { margin-top: 0px; }
 		}
 	}
 	

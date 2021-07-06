@@ -13,7 +13,6 @@ interface Props extends I.Popup {
 
 interface State {
 	pageId: string;
-	showIcon: boolean;
 	loading: boolean;
 	filter: string;
 	pages: any[];
@@ -30,7 +29,6 @@ class PopupSearch extends React.Component<Props, State> {
 	_isMounted: boolean = false;
 	state = {
 		pageId: '',
-		showIcon: false,
 		loading: false,
 		filter: '',
 		pages: [] as any[],
@@ -47,7 +45,6 @@ class PopupSearch extends React.Component<Props, State> {
 	constructor (props: any) {
 		super (props);
 
-		this.onKeyDownSearch = this.onKeyDownSearch.bind(this);
 		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onClick = this.onClick.bind(this);
@@ -58,10 +55,9 @@ class PopupSearch extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { pageId, filter, loading, showIcon, n } = this.state;
-		const { root, breadcrumbs } = blockStore;
+		const { pageId, filter, loading, n } = this.state;
+		const { breadcrumbs } = blockStore;
 		const object = detailStore.get(breadcrumbs, pageId, []);
-		const isRoot = pageId == root;
 		const items = this.getItems();
 
 		const div = (
@@ -70,7 +66,6 @@ class PopupSearch extends React.Component<Props, State> {
 			</div>
 		);
 
-		let iconSearch = null;
 		let iconHome = (
 			<div className="iconObject c20">
 				<div className="iconEmoji c18">
@@ -78,16 +73,6 @@ class PopupSearch extends React.Component<Props, State> {
 				</div>
 			</div>
 		);
-
-		if (showIcon) {
-			if (isRoot) {
-				iconSearch = <Icon key="icon-home" className="home big" />;
-			} else {
-				iconSearch = <IconObject object={object} />;
-			};
-		} else {
-			iconSearch = <Icon key="icon-search" className="search" />;
-		};
 
 		const Item = (item: any) => {
 			let type = dbStore.getObjectType(item.type);
@@ -106,7 +91,7 @@ class PopupSearch extends React.Component<Props, State> {
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || Constant.default.name}</div>
+							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 
@@ -149,12 +134,11 @@ class PopupSearch extends React.Component<Props, State> {
 				{loading ? <Loader /> : ''}
 				
 				<form id="head" className="head" onSubmit={this.onSubmit}>
-					{iconSearch}
+					 <Icon key="icon-search" className="search" />
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
 						value={object.name} 
 						placeholder={translate('popupSearchPlaceholder')} 
-						onKeyDown={this.onKeyDownSearch} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 						onFocus={this.onFocus}
 						onBlur={this.onBlur}
@@ -208,11 +192,10 @@ class PopupSearch extends React.Component<Props, State> {
 		this._isMounted = true;
 
 		this.setCrumbs(rootId);
-		this.initSearch(rootId);
 		this.focus = true;
 		this.select = true;
 
-		this.setState({ pageId: rootId, showIcon: true });
+		this.setState({ pageId: rootId });
 		this.load();
 		this.rebind();
 
@@ -268,21 +251,6 @@ class PopupSearch extends React.Component<Props, State> {
 		$(window).unbind('keydown.search resize.search');
 	};
 	
-	initSearch (id: string) {
-		if (!id) {
-			return;
-		};
-
-		const { root, breadcrumbs } = blockStore;
-		const object = detailStore.get(breadcrumbs, id, []);
-		const isRoot = id == root;
-
-		if (this.ref) {
-			this.ref.setValue(isRoot ? 'Home' : object.name);
-			this.ref.select();
-		};
-	};
-
 	onSubmit (e: any) {
 		e.preventDefault();
 		this.onKeyUpSearch(e, true);
@@ -400,18 +368,6 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 	};
 
-	onKeyDownSearch (e: any) {
-		const { showIcon } = this.state;
-		const newState: any = {};
-
-		if (showIcon) {
-			newState.showIcon = false;
-		};
-		if (Util.objectLength(newState)) {
-			this.setState(newState);
-		};
-	};
-	
 	onKeyUpSearch (e: any, force: boolean) {
 		if (this.disableFirstKey) {
 			this.disableFirstKey = false;
@@ -459,7 +415,11 @@ class PopupSearch extends React.Component<Props, State> {
 			if (this.ref) {
 				this.ref.focus();
 			};
-			this.setState({ pages: message.records, loading: false });
+			
+			const pages = message.records;
+			pages.sort(DataUtil.sortByName);
+
+			this.setState({ pages: pages, loading: false });
 		});
 	};
 
@@ -479,7 +439,11 @@ class PopupSearch extends React.Component<Props, State> {
 		});
 
 		return pages.map((it: any) => {
-			return { ...it, isRoot: it.id == root, name: String(it.name || Constant.default.name) }
+			return { 
+				...it, 
+				isRoot: it.id == root, 
+				name: String(it.name || DataUtil.defaultName('page')) 
+			};
 		});
 	};
 

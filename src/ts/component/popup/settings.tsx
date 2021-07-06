@@ -59,7 +59,6 @@ class PopupSettings extends React.Component<Props, State> {
 		const pin = Storage.get('pin');
 
 		let content = null;
-		let inputs = [];
 		let Item = null;
 
 		let Head = (item: any) => (
@@ -124,7 +123,7 @@ class PopupSettings extends React.Component<Props, State> {
 				let covers1 = [  ];
 				let covers2 = [];
 
-				for (let i = 1; i <= 11; ++i) {
+				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
@@ -133,7 +132,7 @@ class PopupSettings extends React.Component<Props, State> {
 				};
 
 				if (coverImage) {
-					covers2.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
+					covers1.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
 				};
 
 				Item = (item: any) => (
@@ -206,7 +205,7 @@ class PopupSettings extends React.Component<Props, State> {
 						) : ''}
 						{this.onConfirmPhrase ? (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} className="orange" onClick={() => { this.onConfirmPhrase(); }} />
+								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { this.onConfirmPhrase(); }} />
 							</div>
 						) : ''}
 					</div>
@@ -265,7 +264,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<Pin 
 							value={Storage.get('pin')} 
 							onSuccess={this.onCheckPin} 
-							onError={() => { this.setState({ error: translate('popupSettintsSectionPinError') }) }} 
+							onError={() => { this.setState({ error: translate('popupSettingsPinError') }) }} 
 						/>
 					</div>
 				);
@@ -330,7 +329,7 @@ class PopupSettings extends React.Component<Props, State> {
 						</div>
 
 						<Label className="last" text={translate('popupSettingsImportZip')} />
-						<Button text={translate('popupSettingsImportOk')} className="orange" onClick={() => { this.onImport('notion'); }} />
+						<Button text={translate('popupSettingsImportOk')} onClick={() => { this.onImport('notion'); }} />
 					</div>
 				);
 				break;
@@ -343,7 +342,7 @@ class PopupSettings extends React.Component<Props, State> {
 						<Title text={translate('popupSettingsExportMarkdownTitle')} />
 						<Label text={translate('popupSettingsExportMarkdownText')} />
 
-						<Button text={translate('popupSettingsExportOk')} className="orange" onClick={() => { this.onExport(I.ExportFormat.Markdown); }} />
+						<Button text={translate('popupSettingsExportOk')} onClick={() => { this.onExport(I.ExportFormat.Markdown); }} />
 					</div>
 				);
 				break;

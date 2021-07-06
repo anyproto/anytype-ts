@@ -55,10 +55,13 @@
 		.cell.isEditing.c-number, 
 		.cell.isEditing.c-url, 
 		.cell.isEditing.c-phone, 
-		.cell.isEditing.c-email,
-		.cell.isEditing.c-date
+		.cell.isEditing.c-email
 		{
 			.cellContent { padding: 5px 8px !important; }
+		}
+
+		.cell.isEditing.c-date {
+			.cellContent { padding: 5px 8px 4px 8px !important; }
 		}
 
 		.cell.c-object {

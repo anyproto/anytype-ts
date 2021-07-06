@@ -7,10 +7,11 @@ import { observer } from 'mobx-react';
 interface Props extends I.Cell {};
 
 interface State { 
-	editing: boolean; 
+	isEditing: boolean; 
 };
 
 const $ = require('jquery');
+const raf = require('raf');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewCalendar';
 
@@ -19,7 +20,7 @@ class CellText extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	state = {
-		editing: false,
+		isEditing: false,
 	};
 	range: any = null;
 	ref: any = null;
@@ -38,8 +39,8 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { editing } = this.state;
-		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize, onParentClick } = this.props;
+		const { isEditing } = this.state;
+		const { index, relation, viewType, getView, getRecord, canEdit, isInline, iconSize, onParentClick, placeholder } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -63,10 +64,10 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		if (relation.format == I.RelationType.LongText) {
-			value = value.replace(/\n/g, !editing && isInline ? ' ' : '<br/>');
+			value = value.replace(/\n/g, !isEditing && isInline ? ' ' : '<br/>');
 		};
 
-		if (editing) {
+		if (isEditing) {
 			if (relation.format == I.RelationType.LongText) {
 				EditorComponent = (item: any) => (
 					<span dangerouslySetInnerHTML={{ __html: value }} />
@@ -74,11 +75,11 @@ class CellText extends React.Component<Props, State> {
 			} else 
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
-				let placeholder = [ 'dd.mm.yyyy' ];
+				let ph = [ 'dd.mm.yyyy' ];
 				
 				if (viewRelation.includeTime) {
 					mask.push('99:99');
-					placeholder.push('hh:mm');
+					ph.push('hh:mm');
 				};
 
 				let maskOptions = {
@@ -94,7 +95,7 @@ class CellText extends React.Component<Props, State> {
 						id="input" 
 						{...item} 
 						maskOptions={maskOptions} 
-						placeholder={placeholder.join(' ')} 
+						placeholder={ph.join(' ')} 
 						onKeyUp={this.onKeyUpDate} 
 						onSelect={this.onSelect}
 					/>
@@ -125,7 +126,7 @@ class CellText extends React.Component<Props, State> {
 				} else {
 					return (
 						<div className="empty">
-							{translate(`placeholderCell${relation.format}`)}
+							{placeholder || translate(`placeholderCell${relation.format}`)}
 						</div>
 					);
 				};
@@ -158,9 +159,7 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			if (viewType != I.ViewType.Grid) {
-				value = value || Constant.default.name;
-			};
+			value = value || DataUtil.defaultName('page');
 
 			content = (
 				<React.Fragment>
@@ -197,12 +196,12 @@ class CellText extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { editing } = this.state;
-		const { id, relation, index, getRecord } = this.props;
-		const cell = $('#' + id);
+		const { isEditing } = this.state;
+		const { id, relation, index, getRecord, cellPosition } = this.props;
+		const cell = $(`#${id}`);
 		const record = getRecord(index);
 
-		if (editing) {
+		if (isEditing) {
 			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 
 			if (relation.format == I.RelationType.Date) {
@@ -219,8 +218,15 @@ class CellText extends React.Component<Props, State> {
 			};
 
 			cell.addClass('isEditing');
+
+			if (cellPosition) {
+				cellPosition(id);
+			};
 		} else {
-			cell.removeClass('isEditing');
+			raf(() => {
+				cell.removeClass('isEditing');
+				cell.find('.cellContent').css({ left: '', right: '' });
+			});
 		};
 
 		if (commonStore.cellId) {
@@ -241,10 +247,10 @@ class CellText extends React.Component<Props, State> {
 		};
 
 		const { canEdit } = this.props;
-		const { editing } = this.state;
+		const { isEditing } = this.state;
 
-		if (canEdit && (v != editing)) {
-			this.setState({ editing: v });
+		if (canEdit && (v != isEditing)) {
+			this.setState({ isEditing: v });
 		};
 	};
 
@@ -261,7 +267,7 @@ class CellText extends React.Component<Props, State> {
 			if (onChange) {
 				onChange(value, () => {
 					menuStore.closeAll(Constant.menuIds.cell);
-					this.setState({ editing: false });
+					this.setState({ isEditing: false });
 				});
 			};
 		});
@@ -303,17 +309,16 @@ class CellText extends React.Component<Props, State> {
 
 		if (relation.format == I.RelationType.Date) {
 			value = value ? Util.parseDate(value) : null;
-		};
-
+		} else 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
-			this.setState({ editing: false });
+			this.setState({ isEditing: false });
 			return;
 		};
 
 		if (onChange) {
 			onChange(value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
-					this.setState({ editing: false });
+					this.setState({ isEditing: false });
 				};
 			});
 		};

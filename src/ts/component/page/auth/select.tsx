@@ -40,8 +40,8 @@ class PageAuthSelect extends React.Component<Props, State> {
 					<Error text={error} />
 								
 					<div className="buttons">
-						<Button text={translate('authSelectLogin')} type="input" className="orange" onClick={this.onLogin} />
-						<Button text={translate('authSelectSignup')} type="input" className="grey" onClick={this.onRegister} />
+						<Button text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
+						<Button text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
 					</div>
 				</Frame>
 			</div>

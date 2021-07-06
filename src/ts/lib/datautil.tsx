@@ -378,7 +378,6 @@ class DataUtil {
 			commonStore.gatewaySet(message.gatewayUrl);
 			
 			blockStore.rootSet(root);
-			blockStore.archiveSet(message.archiveBlockId);
 			blockStore.storeSetType(message.marketplaceTypeId);
 			blockStore.storeSetTemplate(message.marketplaceTemplateId);
 			blockStore.storeSetRelation(message.marketplaceRelationId);
@@ -565,31 +564,20 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
-	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
-		x = Number(x) || 0;
-		y = Number(y) || 0;
-
-		const details = [ 
-			{ key: 'coverX', value: x },
-			{ key: 'coverY', value: y },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-
-	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
-		scale = Number(scale) || 0;
-
-		const details = [ 
-			{ key: 'coverScale', value: scale },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		done = Boolean(done);
 
 		const details = [ 
 			{ key: 'done', value: done },
+		];
+		C.BlockSetDetails(rootId, details, callBack);
+	};
+
+	pageSetArchived (rootId: string, isArchived: boolean, callBack?: (message: any) => void) {
+		isArchived = Boolean(isArchived);
+
+		const details = [ 
+			{ key: 'isArchived', value: isArchived },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 	};
@@ -690,7 +678,7 @@ class DataUtil {
 					id: 'object' + i++, 
 					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
-					name: type.name || Constant.default.name, 
+					name: type.name || this.defaultName('page'), 
 					description: type.description,
 					isObject: true,
 					isHidden: type.isHidden,
@@ -728,7 +716,7 @@ class DataUtil {
 					id: 'object' + i++, 
 					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
-					name: type.name || Constant.default.name, 
+					name: type.name || this.defaultName('page'), 
 					description: type.description,
 					isObject: true,
 					isHidden: type.isHidden,
@@ -929,7 +917,12 @@ class DataUtil {
 		let o = 0;
 
 		if (!config.debug.ho) {
-			relations = relations.filter((it: I.Relation) => { return !it.isHidden; });
+			relations = relations.filter((it: I.Relation) => { 
+				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {
+					return true;
+				};
+				return !it.isHidden; 
+			});
 		};
 
 		for (let i = 0; i < view.relations.length; ++i) {
@@ -952,6 +945,11 @@ class DataUtil {
 
 		return relations.map((relation: any) => {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
+			
+			if ([ Constant.relationKey.name ].indexOf(relation.relationKey) >= 0) {
+				vr.isVisible = true;
+			};
+
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
@@ -1090,8 +1088,8 @@ class DataUtil {
 	};
 
 	sortByName (c1: any, c2: any) {
-		const n1 = c1.name.toLowerCase();
-		const n2 = c2.name.toLowerCase();
+		const n1 = String(c1.name || '').toLowerCase();
+		const n2 = String(c2.name || '').toLowerCase();
 		if (!n1 && n2) return 1;
 		if (n1 && !n2) return -1;
 		if (n1 > n2) return 1;
@@ -1161,6 +1159,10 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	defaultName (key: string) {
+		return translate(Util.toCamelCase('defaultName-' + key));
 	};
 
 };

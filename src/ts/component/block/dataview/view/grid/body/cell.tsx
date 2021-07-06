@@ -29,9 +29,14 @@ class BodyCell extends React.Component<Props, {}> {
 		const idPrefix = 'dataviewCell';
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const width = DataUtil.relationWidth(this.props.width, relation.format);
+		const size = Constant.size.dataview.cell;
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			cn.push('isName');
+		};
+
+		if (width <= size.icon) {
+			cn.push('small');
 		};
 
 		return (
