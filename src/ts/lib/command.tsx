@@ -887,10 +887,12 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
 };
 
-const SetCreate = (url: string, callBack?: (message: any) => void) => {
+const SetCreate = (url: string, details: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Set.Create.Request();
 	
 	request.setObjecttypeurl(url);
+	request.setDetails(Encode.encodeStruct(details));
+	request.setTemplateid(templateId);
 
 	dispatcher.request('setCreate', request, callBack);
 };

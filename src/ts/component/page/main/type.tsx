@@ -374,12 +374,10 @@ class PageMainType extends React.Component<Props, State> {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.BlockCreateSet('', '', rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
-			if (message.error.code) {
-				return;
+		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+			if (!message.error.code) {
+				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};
-
-			DataUtil.objectOpenPopup({ id: message.targetId, layout: I.ObjectLayout.Set });
 		});
 	};
 

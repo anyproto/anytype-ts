@@ -692,7 +692,7 @@ class BlockText extends React.Component<Props, {}> {
 		this.placeholderCheck();
 
 		if (!block.isTextCode()) {
-			const { marks, text } = this.getMarksFromHtml();
+			let { marks, text } = this.getMarksFromHtml();
 			this.marks = marks;
 
 			if (value != text) {
