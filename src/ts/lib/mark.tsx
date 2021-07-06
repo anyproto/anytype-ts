@@ -409,10 +409,10 @@ class Mark {
 		// Markdown
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
-			const rm = new RegExp('(' + k + ')([^' + k + ']+)(?:' + k + ')(\\s)', 'ig');
+			const rm = new RegExp('(' + k + ')([^' + k + ']+)(' + k + ')(\\s)', 'ig');
 
 			html = text;
-			html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
+			html.replace(rm, (s: string, p1: string, p2: string, p3: string, p4: string) => {
 				p1 = String(p1 || '').trim();
 				p2 = String(p2 || '').trim();
 
@@ -420,10 +420,10 @@ class Mark {
 
 				marks.push({
 					type: item.type,
-					range: { from: offset, to: offset + p2.length + p3.length },
+					range: { from: offset, to: offset + p2.length },
 					param: '',
 				});
-				text = text.replace(s, p2 + p3);
+				text = text.replace(s, p2 + ' ');
 				return s;
 			});
 		};
