@@ -29,8 +29,8 @@ class Focus {
 		this.state = {
 			focused: String(id || ''),
 			range: {
-				from: Number(range.from) || 0,
-				to: Number(range.to) || 0,
+				from: Math.max(0, Number(range.from) || 0),
+				to: Math.max(0, Number(range.to) || 0),
 			},
 		};
 

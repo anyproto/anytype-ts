@@ -699,7 +699,8 @@ class BlockText extends React.Component<Props, {}> {
 			if (value != text) {
 				this.setValue(text);
 
-				focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
+				const diff = value.length - text.length;
+				focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
 				focus.apply();
 			};
 		};
