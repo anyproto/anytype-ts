@@ -300,7 +300,10 @@ class PageMainType extends React.Component<Props, State> {
 		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
 			if (!message.error.code) {
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
-				//DataUtil.objectOpenPopup(message.record);
+
+				window.setTimeout(() => {
+					DataUtil.objectOpenPopup(message.record);
+				}, 50);
 			};
 		});
 	};

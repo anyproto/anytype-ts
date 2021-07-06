@@ -1552,7 +1552,7 @@ class EditorPage extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		
+
 		if (!root || !allowed) {
 			return;
 		};
