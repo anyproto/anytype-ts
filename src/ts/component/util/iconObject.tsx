@@ -368,7 +368,7 @@ class IconObject extends React.Component<Props, {}> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || Constant.default.name);
+		let name = String(object.name || DataUtil.defaultName('page'));
 		name = SmileUtil.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 

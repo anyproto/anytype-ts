@@ -55,7 +55,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
-							name={objectType ? (objectType.name || Constant.default.name) : 'Select object type'} 
+							name={objectType ? (objectType.name || DataUtil.defaultName('page')) : 'Select object type'} 
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							onMouseEnter={this.onObjectType} 
 							arrow={!this.isReadOnly()}

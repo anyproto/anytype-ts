@@ -60,7 +60,7 @@ class PageMainType extends React.Component<Props, State> {
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: Constant.default.nameType,
+			name: DataUtil.defaultName('type'),
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
@@ -72,7 +72,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedTemplate = allowedObject;
 		const showTemplates = type.id != Constant.typeId.page;
 
-		if (object.name == Constant.default.name) {
+		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
 		};
 

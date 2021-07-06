@@ -53,7 +53,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 					onMouseLeave={this.onMouseLeave}
 				>
-					<div className="name">{type.name || Constant.default.name}</div>
+					<div className="name">{type.name || DataUtil.defaultName('type')}</div>
 				</div>
 
 				{items.map((relationKey: any, i: any) => {

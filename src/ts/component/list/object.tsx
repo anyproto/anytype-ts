@@ -20,7 +20,7 @@ class ListObject extends React.Component<Props, {}> {
 	render () {
 		const { rootId, blockId } = this.props;
 		const items = Util.objectCopy(dbStore.getData(rootId, blockId)).map((it: any) => {
-			it.name = String(it.name || Constant.default.name || '');
+			it.name = String(it.name || DataUtil.defaultName('page'));
 			return it;
 		});
 		const { offset, total, viewId } = dbStore.getMeta(rootId, blockId);

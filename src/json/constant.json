@@ -13,14 +13,10 @@
 	},
 
 	"default": {
-		"name": "Untitled",
-		"nameType": "New type",
-		"nameSet": "New set",
 		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 12,
-		"codeLang": "javascript",
-		"viewName": "New view"
+		"codeLang": "javascript"
 	},
 	
 	"langs": [

@@ -84,7 +84,7 @@ class BlockText extends React.Component<Props, {}> {
 		
 		switch (style) {
 			case I.TextStyle.Title:
-				placeholder = Constant.default.name;
+				placeholder = DataUtil.defaultName('page');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };

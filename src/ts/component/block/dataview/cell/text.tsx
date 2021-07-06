@@ -159,7 +159,7 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			value = value || Constant.default.name;
+			value = value || DataUtil.defaultName('page');
 
 			content = (
 				<React.Fragment>

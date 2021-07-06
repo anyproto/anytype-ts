@@ -678,7 +678,7 @@ class DataUtil {
 					id: 'object' + i++, 
 					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
-					name: type.name || Constant.default.name, 
+					name: type.name || this.defaultName('page'), 
 					description: type.description,
 					isObject: true,
 					isHidden: type.isHidden,
@@ -716,7 +716,7 @@ class DataUtil {
 					id: 'object' + i++, 
 					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
-					name: type.name || Constant.default.name, 
+					name: type.name || this.defaultName('page'), 
 					description: type.description,
 					isObject: true,
 					isHidden: type.isHidden,
@@ -1154,6 +1154,10 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	defaultName (key: string) {
+		return translate(Util.toCamelCase('defaultName-' + key));
 	};
 
 };

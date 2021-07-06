@@ -91,7 +91,7 @@ class PopupSearch extends React.Component<Props, State> {
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || Constant.default.name}</div>
+							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 
@@ -439,7 +439,11 @@ class PopupSearch extends React.Component<Props, State> {
 		});
 
 		return pages.map((it: any) => {
-			return { ...it, isRoot: it.id == root, name: String(it.name || Constant.default.name) }
+			return { 
+				...it, 
+				isRoot: it.id == root, 
+				name: String(it.name || DataUtil.defaultName('page')) 
+			};
 		});
 	};
 
