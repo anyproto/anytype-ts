@@ -235,6 +235,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const element = blockStore.getMapElement(rootId, targetId);
 
 		if (!target || !element) {
+			console.log('[dragProvider.onDrop] No target or element', target, element);
 			return;
 		};
 
@@ -350,20 +351,26 @@ class DragProvider extends React.Component<Props, {}> {
 				this.position = I.BlockPosition.None;
 			};
 
-			// You cant only drop into Paragraphs and list
+			// You can only drop into Paragraphs and Lists
 			if (
 				(this.position == I.BlockPosition.Inner) &&
 				isText &&
-				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
+				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
 			) {
 				this.position = I.BlockPosition.None;
 			};
 
+			// You can only drop into text blocks and links
 			if (
 				(this.position == I.BlockPosition.Inner) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
-				this.position = I.BlockPosition.None;
+				if (ey <= y + height * 0.5) {
+					this.position = I.BlockPosition.Top;
+				} else
+				if (ey >= y + height * 0.5) {
+					this.position = I.BlockPosition.Bottom;
+				};
 			};
 
 			// You can't drop on Featured
