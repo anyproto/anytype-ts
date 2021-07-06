@@ -564,26 +564,6 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
-	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
-		x = Number(x) || 0;
-		y = Number(y) || 0;
-
-		const details = [ 
-			{ key: 'coverX', value: x },
-			{ key: 'coverY', value: y },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-
-	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
-		scale = Number(scale) || 0;
-
-		const details = [ 
-			{ key: 'coverScale', value: scale },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		done = Boolean(done);
 

@@ -9,6 +9,7 @@ interface Props extends I.BlockComponent {};
 
 interface State {
 	isEditing: boolean;
+	justUploaded: boolean;
 	loading: boolean;
 };
 
@@ -22,6 +23,7 @@ class BlockCover extends React.Component<Props, State> {
 	_isMounted = false;
 	state = {
 		isEditing: false,
+		justUploaded: false,
 		loading: false,
 	};
 	cover: any = null;
@@ -32,6 +34,9 @@ class BlockCover extends React.Component<Props, State> {
 	cx: number = 0;
 	cy: number =  0;
 	loaded: boolean = false;
+	scale: number = 0;
+	coords: { x: number, y: number } = { x: 0, y: 0 };
+	old: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -64,7 +69,7 @@ class BlockCover extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readOnly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -321,23 +326,43 @@ class BlockCover extends React.Component<Props, State> {
 		this.setState({ loading: true });
 	};
 	
-	onUpload () {
+	onUpload (hash: string) {
+		const { rootId } = this.props;
+
+		this.old = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+
+		DataUtil.pageSetCover(rootId, I.CoverType.Upload, hash, 0, -0.5);
+
 		this.loaded = false;
-		this.setState({ loading: false, isEditing: true });
+		this.setState({ loading: false, isEditing: true, justUploaded: true });
 	};
 	
 	onSave (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		this.setState({ isEditing: false });
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+
+		DataUtil.pageSetCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
+			this.old = null;
+			this.setState({ isEditing: false, justUploaded: false });
+		});
 	};
 	
 	onCancel (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
+
+		const { rootId } = this.props;
+		const { justUploaded } = this.state;
+
+		if (justUploaded && this.old) {
+			DataUtil.pageSetCover(rootId, this.old.coverType, this.old.coverId, this.old.coverX, this.old.coverY, this.old.coverScale);
+		};
 		
-		this.setState({ isEditing: false });
+		this.old = null;
+		this.setState({ isEditing: false, justUploaded: false });
 	};
 	
 	resize () {
@@ -346,7 +371,7 @@ class BlockCover extends React.Component<Props, State> {
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType', 'coverScale' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ], true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -433,7 +458,7 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		const { rootId, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -444,8 +469,8 @@ class BlockCover extends React.Component<Props, State> {
 		
 		this.x = e.pageX - this.rect.x - this.x;
 		this.y = e.pageY - this.rect.y - this.y;
-	
-		DataUtil.pageSetCoverXY(rootId, this.cx / this.rect.cw, this.cy / this.rect.ch);
+
+		this.coords = { x: this.cx / this.rect.cw, y: this.cy / this.rect.ch };
 	};
 	
 	onScaleStart (v: number) {
@@ -490,11 +515,11 @@ class BlockCover extends React.Component<Props, State> {
 			return false;
 		};
 		
-		const { rootId, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
 		selection.preventSelect(false);
-		DataUtil.pageSetCoverScale(rootId, v);
+		this.scale = v;
 	};
 	
 	onDragOver (e: any) {
