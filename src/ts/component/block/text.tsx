@@ -415,15 +415,15 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value');
+		const value = node.find('#value');
 		const obj = Mark.cleanHtml(value.html());
-		
+
 		return String(obj.get(0).innerText || '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value');
+		const value = node.find('#value');
 		
 		return Mark.fromHtml(value.html());
 	};
@@ -623,8 +623,7 @@ class BlockText extends React.Component<Props, {}> {
 
 		// Open add menu
 		if ((symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode()) {
-			value = Util.stringCut(value, range.from - 1, range.from);
-			onMenuAdd(id, value, range);
+			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 		};
 		
 		// Make div
@@ -694,8 +693,8 @@ class BlockText extends React.Component<Props, {}> {
 
 		if (!block.isTextCode()) {
 			const { marks, text } = this.getMarksFromHtml();
-
 			this.marks = marks;
+
 			if (value != text) {
 				this.setValue(text);
 
@@ -1025,7 +1024,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const range = getRange(node.find('.value').get(0) as Element);
+		const range = getRange(node.find('#value').get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
