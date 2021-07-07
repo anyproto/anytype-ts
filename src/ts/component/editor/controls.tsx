@@ -192,7 +192,6 @@ class Controls extends React.Component<Props, {}> {
 		};
 
 		const param: any = {
-			element: '.editorControls #button-relation',
 			rect: rect,
 			horizontal: I.MenuDirection.Left,
 			noFlipX: true,

@@ -265,9 +265,8 @@ class BlockCover extends React.Component<Props, State> {
 		};
 
 		const param: any = {
-			element: `#block-${block.id} #button-relation`,
 			rect: rect,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Left,
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
