@@ -279,15 +279,17 @@ class IconObject extends React.Component<Props, {}> {
 
 		const { id, offsetX, offsetY, onSelect, onUpload } = this.props;
 		const object = this.getObject();
+		const { iconEmoji, iconImage } = object;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const noUpload = layout == I.ObjectLayout.ObjectType;
 
 		menuStore.open('smile', { 
-			element: '#' + id,
+			element: `#${id}`,
 			offsetX: offsetX,
 			offsetY: offsetY,
 			data: {
 				noUpload: noUpload,
+				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);

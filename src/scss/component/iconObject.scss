@@ -96,11 +96,10 @@
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
 
-.iconObject.c48.isRelation, 
-.iconObject.c40.isRelation
-{ border-radius: 8px; background-color: #f3f2ec; }
+.iconObject.c40.isRelation, .iconObject.c48.isRelation { border-radius: 8px; background-color: #f3f2ec; }
+.iconObject.c40.withLetter, .iconObject.c48.withLetter { border-radius: 8px; }
 
-.iconObject.withLetter { border-radius: 8px; background-color: #f3f2ec; }
+.iconObject.withLetter { background-color: #f3f2ec; }
 
 .iconObject.isHuman { border-radius: 100% !important; }
 .iconObject.withImage { border-radius: 2px !important; }

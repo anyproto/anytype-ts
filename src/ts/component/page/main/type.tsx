@@ -57,7 +57,6 @@ class PageMainType extends React.Component<Props, State> {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('type'),
@@ -65,12 +64,13 @@ class PageMainType extends React.Component<Props, State> {
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
+		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
-		const showTemplates = type.id != Constant.typeId.page;
+		const showTemplates = [ Constant.typeId.page, Constant.typeId.image, Constant.typeId.file ].indexOf(type) >= 0;
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -280,7 +280,7 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
@@ -300,6 +300,7 @@ class PageMainType extends React.Component<Props, State> {
 		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
 			if (!message.error.code) {
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
+
 				DataUtil.objectOpenPopup(message.record);
 			};
 		});

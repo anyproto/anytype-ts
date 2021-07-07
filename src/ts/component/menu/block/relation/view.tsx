@@ -337,10 +337,11 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const obj = $(`#${getId()} .content`);
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const offset = isPopup ? 16 : 120;
+		const min = isPopup ? 480 : 640;
 
 		obj.css({ 
 			height: container.height() - Util.sizeHeader() - 16,
-			width: Math.max(480, container.width() / 2 - offset),
+			width: Math.max(min, container.width() / 2 - offset),
 		});
 
 		position();

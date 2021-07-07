@@ -341,6 +341,15 @@ class DragProvider extends React.Component<Props, {}> {
 				this.position = I.BlockPosition.Right;
 			};
 
+			const recalcPosition = () => {
+				if (ey <= y + height * 0.5) {
+					this.position = I.BlockPosition.Top;
+				} else
+				if (ey >= y + height * 0.5) {
+					this.position = I.BlockPosition.Bottom;
+				};
+			};
+
 			// You can't drop on Icon
 			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
 				this.position = I.BlockPosition.None;
@@ -357,7 +366,7 @@ class DragProvider extends React.Component<Props, {}> {
 				isText &&
 				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
 			) {
-				this.position = I.BlockPosition.None;
+				recalcPosition();
 			};
 
 			// You can only drop into text blocks and links
@@ -365,12 +374,7 @@ class DragProvider extends React.Component<Props, {}> {
 				(this.position == I.BlockPosition.Inner) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
-				if (ey <= y + height * 0.5) {
-					this.position = I.BlockPosition.Top;
-				} else
-				if (ey >= y + height * 0.5) {
-					this.position = I.BlockPosition.Bottom;
-				};
+				recalcPosition();
 			};
 
 			// You can't drop on Featured

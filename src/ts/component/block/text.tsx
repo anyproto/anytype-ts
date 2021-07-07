@@ -475,6 +475,14 @@ class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+			e.preventDefault();
+
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onKeyDown(e, value, this.marks, range);
+			});
+		});
+
 		keyboard.shortcut('tab', e, (pressed: string) => {
 			e.preventDefault();
 

@@ -149,7 +149,7 @@ class Mark {
 				del = true;
 			};
 			
-			if (mark.range.to < 0) {
+			if ((mark.range.from < 0) || (mark.range.to < 0)) {
 				del = true;
 			};
 			
@@ -432,7 +432,7 @@ class Mark {
 				// Marks should be moved by replacement lengths
 				for (let i in marks) {
 					let m = marks[i];
-					if (m.range.from > from) {
+					if (m.range.from >= from) {
 						m.range.from -= p2.length;
 						m.range.to -= p2.length + p4.length;
 					};
