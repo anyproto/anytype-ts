@@ -302,7 +302,9 @@ class PageMainType extends React.Component<Props, State> {
 				focus.clear(true);
 
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
-				DataUtil.objectOpenPopup(message.record);
+				window.setTimeout(() => {
+					DataUtil.objectOpenPopup(message.record);
+				}, 50);
 			};
 		});
 	};
