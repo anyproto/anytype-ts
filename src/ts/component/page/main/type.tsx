@@ -233,18 +233,11 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		const rootId = this.getRootId();
-		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
-
 		this._isMounted = false;
 		this.close();
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		for (let template of templates) {
-			Action.pageClose(template.id, false);
-		};
 	};
 
 	open () {
