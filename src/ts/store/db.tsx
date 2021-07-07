@@ -38,6 +38,8 @@ class DbStore {
 
 	@action
 	objectTypeUpdate (type: any) {
+		console.log('[objectTypeUpdate]', type);
+
 		const item = this.getObjectType(type.id);
 		if (item) {
 			set(item, type);

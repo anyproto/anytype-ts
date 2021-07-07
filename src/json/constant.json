@@ -92,7 +92,8 @@
 	"typeId": {
 		"page": "_otpage",
 		"set": "_otset",
-		"template": "_ottemplate"
+		"template": "_ottemplate",
+		"type": "_otobjectType"
 	},
 
 	"blockId": {
