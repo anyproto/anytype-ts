@@ -280,7 +280,7 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
@@ -301,9 +301,7 @@ class PageMainType extends React.Component<Props, State> {
 			if (!message.error.code) {
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
 
-				window.setTimeout(() => {
-					DataUtil.objectOpenPopup(message.record);
-				}, 50);
+				DataUtil.objectOpenPopup(message.record);
 			};
 		});
 	};

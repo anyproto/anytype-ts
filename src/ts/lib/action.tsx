@@ -6,13 +6,13 @@ const { ipcRenderer } = window.require('electron');
 
 class Action {
 
-	pageClose (rootId: string) {
+	pageClose (rootId: string, close: boolean) {
 		const { profile } = blockStore;
 		if (rootId == profile) {
 			return;
 		};
 
-		C.BlockClose(rootId, (message: any) => {
+		const onClose = () => {
 			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
 			for (let block of blocks) {
 				dbStore.relationsClear(rootId, block.id);
@@ -25,7 +25,13 @@ class Action {
 			detailStore.clear(rootId);
 			dbStore.relationsClear(rootId, rootId);
 			authStore.threadRemove(rootId);
-		});
+		};
+
+		if (close) {
+			C.BlockClose(rootId, onClose);
+		} else {
+			onClose();
+		};
 	};
 	
 	download (block: I.Block) {

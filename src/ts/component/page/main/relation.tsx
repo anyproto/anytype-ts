@@ -108,7 +108,7 @@ class PageMainRelation extends React.Component<Props, {}> {
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
