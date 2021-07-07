@@ -70,7 +70,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
-		const showTemplates = [ Constant.typeId.page, Constant.typeId.image, Constant.typeId.file ].indexOf(type) >= 0;
+		const showTemplates = [ Constant.typeId.page, Constant.typeId.image, Constant.typeId.file, Constant.typeId.type, Constant.typeId.set ].indexOf(rootId) < 0;
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -299,8 +299,9 @@ class PageMainType extends React.Component<Props, State> {
 
 		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
 			if (!message.error.code) {
-				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
+				focus.clear(true);
 
+				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
 				DataUtil.objectOpenPopup(message.record);
 			};
 		});
@@ -377,6 +378,7 @@ class PageMainType extends React.Component<Props, State> {
 
 		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
 			if (!message.error.code) {
+				focus.clear(true);
 				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};
 		});
