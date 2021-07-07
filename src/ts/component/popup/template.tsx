@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Loader, Title, Label, ListTemplate } from 'ts/component';
-import { I, C, focus } from 'ts/lib';
+import { I, C, focus, Action } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -79,8 +79,14 @@ class PopupTemplate extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
+		const { items } = this.state;
+
 		this._isMounted = false;
 		this.unbind();
+
+		for (let item of items) {
+			Action.pageClose(item.id, false);
+		};
 	};
 
 	unbind () {

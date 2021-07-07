@@ -233,11 +233,18 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
+		const rootId = this.getRootId();
+		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
+
 		this._isMounted = false;
 		this.close();
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
+
+		for (let template of templates) {
+			Action.pageClose(template.id, false);
+		};
 	};
 
 	open () {
@@ -302,9 +309,7 @@ class PageMainType extends React.Component<Props, State> {
 				focus.clear(true);
 
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
-				window.setTimeout(() => {
-					DataUtil.objectOpenPopup(message.record);
-				}, 50);
+				DataUtil.objectOpenPopup(message.record);
 			};
 		});
 	};
@@ -381,10 +386,7 @@ class PageMainType extends React.Component<Props, State> {
 		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-
-				window.setTimeout(() => {
-					DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
-				}, 50);
+				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};
 		});
 	};
