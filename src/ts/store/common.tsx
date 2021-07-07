@@ -135,7 +135,7 @@ class CommonStore {
 	};
 
 	configSet (config: any) {
-		this.configObj = config;
+		set(this.configObj, config);
 	};
 	
 };
