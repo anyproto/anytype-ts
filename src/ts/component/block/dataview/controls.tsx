@@ -53,7 +53,7 @@ class Controls extends React.Component<Props, State> {
 					id={'button-' + item.id} 
 					className={cn.join(' ')}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
+					onClick={(e: any) => { this.onButton(e, `button-${item.id}`, item.menu); }}
 				/>
 			);
 		};
@@ -90,7 +90,7 @@ class Controls extends React.Component<Props, State> {
 							<div 
 								id={'view-item-' + view.id} 
 								className="viewItem active" 
-								onClick={(e: any) => { this.onButton(e, 'view', 'dataviewViewList'); }} 
+								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
 								onContextMenu={(e: any) => { this.onView(e, view); }}
 							>
 								{view.name}
@@ -107,7 +107,7 @@ class Controls extends React.Component<Props, State> {
 							distance={10}
 							onSortEnd={this.onSortEnd}
 							helperClass="isDragging"
-							helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
+							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
 						/>
 					</div>
 
@@ -143,7 +143,7 @@ class Controls extends React.Component<Props, State> {
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
-		if (id == 'manager') {
+		if (id == 'button-manager') {
 			tabs = [
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
@@ -153,7 +153,7 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		menuStore.open(menu, { 
-			element: $(e.currentTarget),
+			element: `#${id}`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			tabs: tabs,
