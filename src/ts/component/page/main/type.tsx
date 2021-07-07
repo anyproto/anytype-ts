@@ -70,7 +70,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
-		const showTemplates = [ Constant.typeId.page, Constant.typeId.image, Constant.typeId.file ].indexOf(type) >= 0;
+		const showTemplates = [ Constant.typeId.page, Constant.typeId.image, Constant.typeId.file, Constant.typeId.type, Constant.typeId.set ].indexOf(rootId) < 0;
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
