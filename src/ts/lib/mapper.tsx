@@ -17,8 +17,6 @@ const Mapper = {
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
 				allowDataview: obj.getEnabledataview(),
-				allowDebug: obj.getEnabledebug(),
-				allowReleaseChannelSwitch: obj.getEnablereleasechannelswitch(),
 			};
 		},
 		

@@ -4,8 +4,6 @@ export interface Account {
 
 export interface AccountConfig {
 	allowDataview: boolean;
-	allowDebug: boolean;
-	allowReleaseChannelSwitch: boolean;
 };
 
 export enum Platform {
