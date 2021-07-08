@@ -130,7 +130,6 @@ class DetailStore {
 			type: String(object.type || Constant.typeId.page),
 			layout: Number(object.layout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
-			isReadonly: Boolean(object.isReadonly),
 		};
 	};
 
