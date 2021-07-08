@@ -126,9 +126,10 @@
 			},
 			"cell": {
 				"default": 192,
-				"title": 288,
+				"format1": 500,
+
 				"min": 48,
-				"max": 500,
+				"max": 800,
 				"edit": 300,
 				"icon": 70
 			}
