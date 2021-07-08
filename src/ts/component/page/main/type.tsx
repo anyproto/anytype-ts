@@ -22,6 +22,14 @@ const Constant = require('json/constant.json');
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
+const NO_TEMPLATES = [ 
+	Constant.typeId.page, 
+	Constant.typeId.image, 
+	Constant.typeId.file, 
+	Constant.typeId.video, 
+	Constant.typeId.type, 
+	Constant.typeId.set, 
+];
 
 const PageMainType = observer(class PageMainType extends React.Component<Props, State> {
 
@@ -56,22 +64,22 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: Constant.default.nameType,
+			name: DataUtil.defaultName('type'),
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
+		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
-		const showTemplates = type.id != Constant.typeId.page;
+		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
 
-		if (object.name == Constant.default.name) {
+		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
 		};
 
@@ -86,7 +94,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
 					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadOnly' ].join(' ')}>
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')}>
 							{object[item.id]}
 						</div>
 					) : (
@@ -113,7 +121,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 
 		const Relation = (item: any) => (
-			<div className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
+			<div id={'item-' + item.relationKey} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
@@ -144,7 +152,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="side right">
 							<Button id="button-create" text="Create" onClick={this.onCreate} />
@@ -279,7 +287,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
@@ -298,6 +306,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
 			if (!message.error.code) {
+				focus.clear(true);
+
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
 				DataUtil.objectOpenPopup(message.record);
 			};
@@ -370,16 +380,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	onSetAdd () {
-		const { root } = blockStore;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.BlockCreateSet('', '', rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
-			if (message.error.code) {
-				return;
+		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+			if (!message.error.code) {
+				focus.clear(true);
+				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};
-
-			DataUtil.objectOpenPopup({ id: message.targetId, layout: I.ObjectLayout.Set });
 		});
 	};
 
@@ -415,7 +423,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: !allowed,
+				readonly: !allowed,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

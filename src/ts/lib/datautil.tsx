@@ -378,7 +378,6 @@ class DataUtil {
 			commonStore.gatewaySet(message.gatewayUrl);
 			
 			blockStore.rootSet(root);
-			blockStore.archiveSet(message.archiveBlockId);
 			blockStore.storeSetType(message.marketplaceTypeId);
 			blockStore.storeSetTemplate(message.marketplaceTemplateId);
 			blockStore.storeSetRelation(message.marketplaceRelationId);
@@ -565,26 +564,6 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
-	pageSetCoverXY (rootId: string, x: number, y: number, callBack?: (message: any) => void) {
-		x = Number(x) || 0;
-		y = Number(y) || 0;
-
-		const details = [ 
-			{ key: 'coverX', value: x },
-			{ key: 'coverY', value: y },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-
-	pageSetCoverScale (rootId: string, scale: number, callBack?: (message: any) => void) {
-		scale = Number(scale) || 0;
-
-		const details = [ 
-			{ key: 'coverScale', value: scale },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
 		done = Boolean(done);
 
@@ -704,7 +683,7 @@ class DataUtil {
 					id: 'object' + i++, 
 					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
-					name: type.name || Constant.default.name, 
+					name: type.name || this.defaultName('page'), 
 					description: type.description,
 					isObject: true,
 					isHidden: type.isHidden,
@@ -742,7 +721,7 @@ class DataUtil {
 					id: 'object' + i++, 
 					objectTypeId: type.id, 
 					iconEmoji: type.iconEmoji, 
-					name: type.name || Constant.default.name, 
+					name: type.name || this.defaultName('page'), 
 					description: type.description,
 					isObject: true,
 					isHidden: type.isHidden,
@@ -944,7 +923,7 @@ class DataUtil {
 
 		if (!config.debug.ho) {
 			relations = relations.filter((it: I.Relation) => { 
-				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {	
+				if ([ Constant.relationKey.name ].indexOf(it.relationKey) >= 0) {
 					return true;
 				};
 				return !it.isHidden; 
@@ -971,6 +950,11 @@ class DataUtil {
 
 		return relations.map((relation: any) => {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
+			
+			if ([ Constant.relationKey.name ].indexOf(relation.relationKey) >= 0) {
+				vr.isVisible = true;
+			};
+
 			return new M.ViewRelation({
 				...vr,
 				relationKey: relation.relationKey,
@@ -980,7 +964,8 @@ class DataUtil {
 	};
 
 	relationWidth (width: number, format: I.RelationType): number {
-		return Number(width || Constant.size.dataview.cell[this.relationClass(format)]) || Constant.size.dataview.cell.default;
+		const size = Constant.size.dataview.cell;
+		return Number(width || size['format' + format]) || size.default;
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {
@@ -1180,6 +1165,10 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	defaultName (key: string) {
+		return translate(Util.toCamelCase('defaultName-' + key));
 	};
 
 };

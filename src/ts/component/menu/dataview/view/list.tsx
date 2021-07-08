@@ -36,10 +36,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 		const Item = SortableElement((item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<div id={'item-' + item.id} className="item big" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					{allowed ? <Handle /> : ''}
 					<div className="clickable" onClick={(e: any) => { getData(item.id, 0); }}>
-						<Icon className={'view c' + item.type} />
 						<div className="name">{item.name}</div>
 					</div>
 					<div className="buttons">
@@ -69,7 +68,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		
 		return (
 			<div>
-				<div className="label">Views</div>
+				<div className="sectionName">Views</div>
 				<List 
 					axis="y" 
 					transitionDuration={150}
@@ -194,7 +193,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
-				readOnly: !allowed,
+				readonly: !allowed,
 				view: item,
 				onSave: () => { this.forceUpdate(); },
 			}

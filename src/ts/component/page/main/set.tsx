@@ -43,13 +43,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: Constant.default.nameSet,
+			name: DataUtil.defaultName('set'),
 			description: 'Add a description',
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (object.name == Constant.default.name) {
+		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
 		};
 
@@ -57,7 +57,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
 					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadOnly' ].join(' ')}>
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')}>
 							{object[item.id]}
 						</div>
 					) : (
@@ -124,7 +124,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			this.placeholderCheck(id);
 		};
 
-		if (!focused && !object._empty_ && (object.name == Constant.default.name)) {
+		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('set'))) {
 			focus.set('name', { from: 0, to: 0 });
 		};
 
@@ -179,7 +179,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
@@ -224,7 +224,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: false,
+				readonly: false,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

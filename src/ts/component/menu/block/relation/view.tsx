@@ -31,7 +31,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, readOnly } = data;
+		const { rootId, readonly } = data;
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
@@ -51,11 +51,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						let canEdit = allowedRelation;
 						let canFav = allowedValue;
 
-						if (item.isReadOnly) {
+						if (item.isReadonlyRelation) {
 							canEdit = false;
 						};
 						if ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) >= 0) {
-							canEdit = false;
 							canFav = false;
 						};
 
@@ -68,7 +67,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readOnly={!allowedValue}
+								readonly={!allowedValue && !item.isReadonlyValue}
 								canEdit={canEdit}
 								canFav={canFav}
 								classNameWrap={classNameWrap}
@@ -99,7 +98,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						return <Section key={i} {...item} index={i} />;
 					})}
 				</div>
-				{!readOnly ? <ItemAdd /> : ''}
+				{!readonly ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
@@ -193,6 +192,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	onFav (e: any, relationKey: string) {
+		e.stopPropagation();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
@@ -270,10 +271,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	onCellClick (e: any, relationKey: string, index: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readOnly } = data;
+		const { rootId, readonly } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (!relation || readOnly || relation.isReadOnly) {
+		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
 		};
 
@@ -328,11 +329,19 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { getId, position, param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const win = $(window);
+		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const offset = isPopup ? 16 : 120;
+		const min = isPopup ? 480 : 640;
 
-		obj.css({ height: win.height() - Util.sizeHeader() - 16 });
+		obj.css({ 
+			height: container.height() - Util.sizeHeader() - 16,
+			width: Math.max(min, container.width() / 2 - offset),
+		});
+
 		position();
 	};
 

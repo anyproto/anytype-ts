@@ -17,7 +17,6 @@ const ImageGetBlob = (response: any) => {
 const ConfigGet = (response: any) => {
 	return {
 		homeBlockId: response.getHomeblockid(),
-		archiveBlockId: response.getArchiveblockid(),
 		profileBlockId: response.getProfileblockid(),
 		gatewayUrl: response.getGatewayurl(),
 		marketplaceTypeId: response.getMarketplacetypeid(),
@@ -132,6 +131,7 @@ const ObjectShow = (response: any) => {
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
 		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
 		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
 	};
 };

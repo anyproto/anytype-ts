@@ -44,7 +44,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 							<div className="title">{object.name}</div>
 							<div className="descr">{object.description}</div>
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
 					</div>
 				</div>
@@ -107,7 +107,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 

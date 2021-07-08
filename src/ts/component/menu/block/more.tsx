@@ -174,6 +174,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
 		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
+		let link = { id: 'link', name: 'Link to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
@@ -202,7 +203,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
 			sections = [
 				{ children: [ archive ] },
-				{ children: [ linkRoot ] },
+				{ children: [ linkRoot, link ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
@@ -216,7 +217,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			// Restrictions
 
-			if (!block.canHaveHistory()) {
+			if (!block.canHaveHistory() || object.templateIsBundled) {
 				history = null;
 			};
 
@@ -225,13 +226,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (!config.allowDataview) {
+			if (!config.allowDataview || (object.type == Constant.typeId.page)) {
 				template = null;
 			};
 
 			sections = [
 				{ children: [ undo, redo, history, archive ] },
-				{ children: [ linkRoot, template ] },
+				{ children: [ linkRoot, link, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
@@ -336,7 +337,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+
+					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
+						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
+					};
 					
 					if (prev) {
 						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
@@ -348,15 +357,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'unarchivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], false);
-				break;
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], false, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
 
-			case 'archiveIndex':
-				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], true);
-				break;
-
-			case 'unarchiveIndex':
-				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], false);
+					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
+						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
+					};
+				});
 				break;
 
 			case 'linkRoot':
@@ -378,7 +387,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					C.BlockUnlink(blockStore.root, favorites);
 				};
 				break;
-				
+
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
 					if (block.isPage()) {
@@ -489,6 +498,28 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
+					skipId: rootId,
+					position: I.BlockPosition.Bottom,
+					onSelect: (item: any) => {
+						close();
+					}
+				});
+				break;
+
+			case 'link':
+				menuId = 'searchObject';
+
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (!config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				};
+
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: filters,
+					type: I.NavigationType.LinkTo,
 					skipId: rootId,
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {

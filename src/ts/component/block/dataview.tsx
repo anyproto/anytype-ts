@@ -43,7 +43,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
-		const readOnly = false; // TMP
+		const readonly = false; // TMP
 
 		if (!view) {
 			return null;
@@ -73,7 +73,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			<div>
 				<Controls 
 					{...this.props} 
-					readOnly={readOnly} 
+					readonly={readonly} 
 					getData={this.getData} 
 					getView={this.getView} 
 					getRecord={this.getRecord}
@@ -86,7 +86,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{...this.props} 
 						scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
-						readOnly={readOnly} 
+						readonly={readonly} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
 						getView={this.getView} 
@@ -254,12 +254,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
-		//dbStore.recordUpdate(rootId, block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, (message: any) => {
-			if (!message.error.code && callBack) {
-				callBack(message);
-			};
-		});
+		dbStore.recordUpdate(rootId, block.id, obj);
+		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

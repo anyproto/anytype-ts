@@ -24,7 +24,7 @@
 	.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark0.svg'); }
 }
 
-.inputWithFile.isReadOnly {
+.inputWithFile.isReadonly {
 	.urlToggle { cursor: default; }
 	.border { border: 0px; cursor: default; }
 	.fileWrap:hover .border { color: $colorMediumGrey; }

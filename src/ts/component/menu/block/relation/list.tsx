@@ -86,7 +86,7 @@ const MenuBlockRelationList = observer(class MenuBlockRelationList extends React
 								menuClassName="fromBlock"
 								scrollContainer={Util.getScrollContainer('menuBlockRelationList')}
 								pageContainer={Util.getPageContainer('menuBlockRelationList')}
-								readOnly={true}
+								readonly={true}
 							/>
 						</div>
 					</div>

@@ -29,7 +29,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getData, getView, readOnly, onRowAdd, isPopup, scrollContainer } = this.props;
+		const { rootId, block, getData, getView, readonly, onRowAdd, isPopup, scrollContainer } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
@@ -62,7 +62,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 																<BodyRow 
 																	key={'grid-row-' + view.id + index} 
 																	{...this.props} 
-																	readOnly={readOnly || !allowed}
+																	readonly={readonly || !allowed}
 																	index={index} 
 																	style={{ ...style, top: style.top + 2 }}
 																	cellPosition={this.cellPosition}
@@ -78,7 +78,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 								}}
 							</WindowScroller>
 
-							{!readOnly && allowed ? (
+							{!readonly && allowed ? (
 								<div className="row add">
 									<div className="cell add">
 										<div className="btn" onClick={onRowAdd}>
@@ -267,19 +267,21 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	onCellAdd (e: any) {
-		const { rootId, block, readOnly, getData, getView } = this.props;
+		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
-		menuStore.open('relationSuggest', { 
+		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
 			data: {
-				readOnly: readOnly,
+				readonly: readonly,
 				getData: getData,
 				getView: getView,
 				rootId: rootId,
 				blockId: block.id,
+				/*
 				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
@@ -289,6 +291,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
 				},
+				*/
 			}
 		});
 	};

@@ -1,4 +1,4 @@
-import { observable, action, computed, set, intercept, toJS, makeObservable } from 'mobx';
+import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, Util, Storage } from 'ts/lib';
 
 const $ = require('jquery');
@@ -6,7 +6,6 @@ const $ = require('jquery');
 class BlockStore {
 
     public rootId: string = '';
-    public archiveId: string = '';
     public profileId: string = '';
     public breadcrumbsId: string = '';
     public recentId: string = '';
@@ -21,7 +20,6 @@ class BlockStore {
     constructor() {
         makeObservable(this, {
             rootId: observable,
-            archiveId: observable,
             profileId: observable,
             breadcrumbsId: observable,
             recentId: observable,
@@ -29,7 +27,6 @@ class BlockStore {
             storeIdTemplate: observable,
             storeIdRelation: observable,
             root: computed,
-            archive: computed,
             profile: computed,
             breadcrumbs: computed,
             recent: computed,
@@ -37,7 +34,6 @@ class BlockStore {
             storeTemplate: computed,
             storeRelation: computed,
             rootSet: action,
-            archiveSet: action,
             profileSet: action,
             storeSetType: action,
             storeSetTemplate: action,
@@ -56,10 +52,6 @@ class BlockStore {
 
     get root (): string {
 		return this.rootId;
-	};
-
-    get archive (): string {
-		return this.archiveId;
 	};
 
     get profile (): string {
@@ -90,11 +82,7 @@ class BlockStore {
 		this.rootId = String(id || '');
 	};
 
-    archiveSet (id: string) {
-		this.archiveId = String(id || '');
-	};
-
-    profileSet (id: string) {
+	profileSet (id: string) {
 		this.profileId = String(id || '');
 	};
 
@@ -179,7 +167,7 @@ class BlockStore {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
-		blocks = blocks.filter((it: any) => { return it.id != blockId; });
+		this.blockMap.set(rootId, blocks.filter((it: any) => { return it.id != blockId; }));
 		map.delete(blockId);
 	};
 

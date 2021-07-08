@@ -13,14 +13,10 @@
 	},
 
 	"default": {
-		"name": "Untitled",
-		"nameType": "New type",
-		"nameSet": "New set",
 		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 12,
-		"codeLang": "javascript",
-		"viewName": "New view"
+		"codeLang": "javascript"
 	},
 	
 	"langs": [
@@ -48,7 +44,6 @@
 	"limit": {
 		"dataview": {
 			"records": 50,
-			"views": 100000,
 			"viewName": 24
 		},
 		"store": {
@@ -84,8 +79,34 @@
 		]
 	},
 
-	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", "done" ],
-	"systemRelationKeys": [ "name", "description", "createdDate", "lastModifiedBy", "lastModifiedDate", "creator", "objectType", "lastOpenedDate" ],
+	"defaultRelationKeys": [ 
+		"id", 
+		"name", 
+		"description", 
+		"iconEmoji", 
+		"iconImage", 
+		"relationFormat", 
+		"type", 
+		"layout", 
+		"isHidden", 
+		"isArchived", 
+		"isReadonly", 
+		"done", 
+		"fileExt", 
+		"fileMimeType" 
+	],
+
+	"systemRelationKeys": [ 
+		"name", 
+		"description", 
+		"creator", 
+		"type", 
+		"lastOpenedDate",
+		"createdDate", 
+		"lastModifiedBy", 
+		"lastModifiedDate", 
+		"addedDate"
+	],
 
 	"relationKey": {
 		"name": "name",
@@ -97,7 +118,11 @@
 	"typeId": {
 		"page": "_otpage",
 		"set": "_otset",
-		"template": "_ottemplate"
+		"template": "_ottemplate",
+		"type": "_otobjectType",
+		"image": "_otimage",
+		"file": "_otfile",
+		"video": "_otvideo"
 	},
 
 	"blockId": {
@@ -128,9 +153,10 @@
 			},
 			"cell": {
 				"default": 192,
-				"title": 288,
+				"format1": 500,
+
 				"min": 48,
-				"max": 500,
+				"max": 1000,
 				"edit": 300,
 				"icon": 70
 			}

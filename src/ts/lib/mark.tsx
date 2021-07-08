@@ -149,7 +149,7 @@ class Mark {
 				del = true;
 			};
 			
-			if (mark.range.to < 0) {
+			if ((mark.range.from < 0) || (mark.range.to < 0)) {
 				del = true;
 			};
 			
@@ -321,14 +321,6 @@ class Mark {
 	};
 	
 	fromHtml (html: string): { marks: I.Mark[], text: string } {
-		const Markdown = [
-			{ key: '`', type: I.MarkType.Code },
-			{ key: '**', type: I.MarkType.Bold },
-			{ key: '__', type: I.MarkType.Bold },
-			{ key: '*', type: I.MarkType.Italic },
-			{ key: '_', type: I.MarkType.Italic },
-			{ key: '~~', type: I.MarkType.Strike },
-		];
 		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
@@ -406,28 +398,53 @@ class Mark {
 			return '';
 		});
 
+		return this.fromMarkdown(text, marks);
+	};
+
+	fromMarkdown (html: string, marks: I.Mark[]) {
+		const Markdown = [
+			{ key: '`', type: I.MarkType.Code },
+			{ key: '**', type: I.MarkType.Bold },
+			{ key: '__', type: I.MarkType.Bold },
+			{ key: '*', type: I.MarkType.Italic },
+			{ key: '_', type: I.MarkType.Italic },
+			{ key: '~~', type: I.MarkType.Strike },
+		];
+
+		let text = html;
+
 		// Markdown
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
-			const rm = new RegExp('(' + k + ')([^' + k + ']+)(?:' + k + ')(\\s)', 'ig');
+			const rm = new RegExp('([^\\*_]+|^)(' + k + ')([^' + k + ']+)(' + k + ')(\\s|$)', 'ig');
 
-			html = text;
-			html.replace(rm, (s: string, p1: string, p2: string, p3: string) => {
-				p1 = String(p1 || '').trim();
-				p2 = String(p2 || '').trim();
+			html.replace(rm, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
+				p1 = String(p1 || '');
+				p2 = String(p2 || '');
+				p3 = String(p3 || '');
+				p4 = String(p4 || '');
+				p5 = String(p5 || '');
 
 				let offset = Number(text.indexOf(s)) || 0;
+				let from = offset + p1.length;
+				let to = from + p3.length;
 
-				marks.push({
-					type: item.type,
-					range: { from: offset, to: offset + p2.length + p3.length },
-					param: '',
-				});
-				text = text.replace(s, p2 + p3);
+				// Marks should be moved by replacement lengths
+				for (let i in marks) {
+					let m = marks[i];
+					if (m.range.from >= from) {
+						m.range.from -= p2.length;
+						m.range.to -= p2.length + p4.length;
+					};
+				};
+
+				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
+				text = text.replace(s, p1 + p3 + ' ');
 				return s;
 			});
 		};
 
+		marks = this.checkRanges(text, marks);
 		return { marks, text };
 	};
 	

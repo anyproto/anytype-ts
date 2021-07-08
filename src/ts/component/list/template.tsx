@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { ObjectPreviewBlock, Icon, Input } from 'ts/component';
-import { C, keyboard } from 'ts/lib';
-import { observer } from 'mobx-react';
+import { ObjectPreviewBlock, Icon } from 'ts/component';
+import { keyboard, Action } from 'ts/lib';
 
 interface Props {
 	items: any[];
@@ -71,6 +70,14 @@ class ListTemplate extends React.Component<Props, {}> {
 
 	componentDidUpdate () {
 		this.setActive();
+	};
+
+	componentWillUnmount () {
+		const { items } = this.props;
+
+		for (let item of items) {
+			Action.pageClose(item.id, false);
+		};
 	};
 
 	getMaxPage () {

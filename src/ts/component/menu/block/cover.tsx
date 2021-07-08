@@ -85,10 +85,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					return;
 				};
 
-				DataUtil.pageSetCover(rootId, I.CoverType.Upload, message.hash, 0, -0.5);
-
 				if (onUpload) {
-					onUpload();
+					onUpload(message.hash);
 				};
 			});
 		});

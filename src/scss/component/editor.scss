@@ -27,7 +27,7 @@
 		.blockLast { margin-left: -50px; }
 	}
 
-	#editorSize { position: fixed; width: 400px; top: 48px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }
+	#editorSize { position: absolute; width: 400px; top: 48px; left: 50%; margin-left: -200px; z-index: 10; visibility: hidden; }
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	

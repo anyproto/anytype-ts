@@ -200,6 +200,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		window.clearTimeout(this.timeoutFilter);
 	};
 
 	rebind () {
@@ -274,7 +276,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.items = this.items.concat(message.records.map((it: any) => {
 				return {
 					...it, 
-					name: String(it.name || Constant.default.name),
+					name: String(it.name || DataUtil.defaultName('page')),
 				};
 			}));
 			this.items = this.items.filter(filterMapper);

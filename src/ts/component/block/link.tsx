@@ -23,7 +23,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId, [ 'isArchived' ]);
 		const { _empty_, name, isArchived, done, layout } = object;
@@ -50,7 +50,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 							object={object} 
 							id={'block-page-' + id} 
 							size={24} 
-							canEdit={!readOnly} 
+							canEdit={!readonly} 
 							onSelect={this.onSelect} 
 							onUpload={this.onUpload}
 							onCheckbox={this.onCheckbox}

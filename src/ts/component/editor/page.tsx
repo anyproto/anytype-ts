@@ -91,7 +91,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readOnly={!allowed}
+							readonly={!allowed}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -110,7 +110,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={!allowed}
+									readonly={!allowed}
 									getWrapper={this.getWrapper}
 									getWrapperWidth={this.getWrapperWidth}
 								/>
@@ -296,7 +296,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 	
@@ -347,9 +347,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const object = detailStore.get(rootId, rootId, []);
+		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 
-		if (!root || !allowed || (object.type == Constant.typeId.page)) {
+		if (!root || !allowed || (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			return;
 		};
 		
@@ -1551,7 +1551,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		
+
 		if (!root || !allowed) {
 			return;
 		};

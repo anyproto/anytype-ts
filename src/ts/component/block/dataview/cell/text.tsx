@@ -158,9 +158,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			if (viewType != I.ViewType.Grid) {
-				value = value || Constant.default.name;
-			};
+			value = value || DataUtil.defaultName('page');
 
 			content = (
 				<React.Fragment>

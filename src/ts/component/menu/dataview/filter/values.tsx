@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, DataUtil, Util, translate } from 'ts/lib';
 import { Select, Tag, Icon, IconObject, Input } from 'ts/component';
-import { menuStore, dbStore, detailStore } from 'ts/store';
+import { commonStore, menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -36,6 +36,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
+		const relationOptions = this.getRelationOptions();
 		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
 			{ id: '1', name: 'Checked' },
@@ -173,6 +174,17 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		return (
 			<div>
 				<div className="section">
+					<div className="item">
+						<Select 
+							id={[ 'filter', 'relation', item.id ].join('-')} 
+							className="relation" 
+							arrowClassName="light"
+							options={relationOptions}
+							value={item.relationKey} 
+							onChange={(v: string) => { this.onChange('relationKey', v); }} 
+						/>
+					</div>
+
 					<div className="item">
 						<Select
 							id="condition"
@@ -415,6 +427,35 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				},
 			});
 		});
+	};
+
+	getRelationOptions () {
+		const { config } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			if (!relation || (!config.debug.ho && relation.isHidden) || (relation.format == I.RelationType.File)) {
+				return false;
+			};
+			return true;
+		});
+
+		let options: any[] = relations.map((it: I.ViewRelation) => {
+			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+				name: relation.name, 
+				isHidden: relation.isHidden,
+				format: relation.format,
+			};
+		});
+
+		return options;
 	};
 
 	checkClear (v: any) {

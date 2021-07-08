@@ -90,7 +90,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || Constant.default.name}</div>
+							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 
@@ -190,7 +190,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
 
-		this.setCrumbs(rootId);
+		crumbs.addPage(rootId);
 		this.focus = true;
 		this.select = true;
 
@@ -438,7 +438,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		});
 
 		return pages.map((it: any) => {
-			return { ...it, isRoot: it.id == root, name: String(it.name || Constant.default.name) }
+			return { 
+				...it, 
+				isRoot: it.id == root, 
+				name: String(it.name || DataUtil.defaultName('page')) 
+			};
 		});
 	};
 
@@ -473,12 +477,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		return true;
 	};
 
-	setCrumbs (id: string) {
-		let cr = crumbs.get(I.CrumbsType.Page);
-		cr = crumbs.add(I.CrumbsType.Page, id);
-		crumbs.save(I.CrumbsType.Page, cr);
-	};
-	
 	onClick (e: any, item: any) {
 		if (e.persist) {
 			e.persist();

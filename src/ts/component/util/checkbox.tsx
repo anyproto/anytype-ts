@@ -8,7 +8,7 @@ interface Props {
 	id?: string;
 	value: boolean;
 	className?: string;
-	readOnly?: boolean;
+	readonly?: boolean;
 	onChange?(e: any, value: boolean): void;
 };
 
@@ -35,14 +35,14 @@ class Checkbox extends React.Component<Props, State> {
 
 	render () {
 		const { value } = this.state;
-		const { id, className, readOnly } = this.props;
+		const { id, className, readonly } = this.props;
 
 		let cn = [ 'icon', 'checkbox' ];
 		if (className) {
 			cn.push(className);
 		};
-		if (readOnly) {
-			cn.push('isReadOnly');
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 		if (value) {
 			cn.push('active');

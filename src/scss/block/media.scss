@@ -52,7 +52,7 @@
 	}
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 
-	.block.blockMedia.isReadOnly > .wrapContent > .selectable > .dropTarget .icon.resize { display: none; }
+	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.resize { display: none; }
 	
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }

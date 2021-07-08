@@ -44,8 +44,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
-		this.onToggleClick = this.onToggleClick.bind(this);
-		this.onEmptyClick = this.onEmptyClick.bind(this);
+		this.onEmptyToggle = this.onEmptyToggle.bind(this);
+		this.onEmptyColumn = this.onEmptyColumn.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
 		this.onMenuClick = this.onMenuClick.bind(this);
@@ -57,7 +57,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, index, className, block, readOnly } = this.props;
+		const { rootId, css, index, className, block, readonly } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 
 		if (!id) {
@@ -67,7 +67,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const { style, checked } = content;
 
 		let canSelect = true;
-		let canDrop = !readOnly;
+		let canDrop = !readonly;
 		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block) ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
@@ -82,8 +82,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		if (fields.isUnwrapped) {
 			cn.push('isUnwrapped');
 		};
-		if (readOnly) {
-			cn.push('isReadOnly');
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 
 		if (bgColor) {
@@ -96,10 +96,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 
-				if (block.isTextToggle() && !readOnly) {
+				if (block.isTextToggle() && !readonly) {
 					const childrenIds = blockStore.getChildrenIds(rootId, id);
 					if (!childrenIds.length) {
-						empty = <div className="emptyToggle" onClick={this.onToggleClick}>{translate('blockTextToggleEmpty')}</div>;
+						empty = <div className="emptyToggle" onClick={this.onEmptyToggle}>{translate('blockTextToggleEmpty')}</div>;
 					};
 				};
 
@@ -209,7 +209,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		let rowDropTargets = null;
 		if (block.isLayoutRow()) {
-			if (readOnly) {
+			if (readonly) {
 				rowDropTargets = (
 					<React.Fragment>
 						<div className="dropTarget targetTop" />
@@ -240,7 +240,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
 					
 					{block.isLayoutColumn() ? (
-						<div className="columnEmpty" onClick={this.onEmptyClick} />
+						<div className="columnEmpty" onClick={this.onEmptyColumn} />
 					) : ''}
 				</div>
 			</div>
@@ -253,14 +253,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 	
 	componentDidUpdate () {
-		const { block, dataset } = this.props;
+		const { block } = this.props;
 		const { id } = block;
-		const { selection } = dataset || {};
 		const { focused } = focus.state;
-		
-		if (selection) {
-			selection.set(selection.get());
-		};
 
 		if (focused == id) {
 			focus.apply();
@@ -275,9 +270,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 	initToggle () {
 		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
 
 		if (block.id && block.isTextToggle()) {
+			const node = $(ReactDOM.findDOMNode(this));
 			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
 		};
 	};
@@ -294,7 +289,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		focus.apply();
 	};
 	
-	onToggleClick (e: any) {
+	onEmptyToggle (e: any) {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		const param = {
@@ -375,9 +370,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	onResizeStart (e: any, index: number) {
 		e.stopPropagation();
 
-		const { dataset, rootId, block, readOnly } = this.props;
+		const { dataset, rootId, block, readonly } = this.props;
 
-		if (!this._isMounted || readOnly) {
+		if (!this._isMounted || readonly) {
 			return;
 		};
 
@@ -519,11 +514,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block.isLayoutRow() || keyboard.isDragging || readOnly) {
+		if (!block.isLayoutRow() || keyboard.isDragging || readonly) {
 			return;
 		};
 		
@@ -563,7 +558,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		$(window).unbind('mousemove.block mouseup.block');
 	};
 	
-	onEmptyClick () {
+	onEmptyColumn () {
 		const { rootId, block } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		

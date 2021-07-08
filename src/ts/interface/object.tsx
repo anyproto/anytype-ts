@@ -78,7 +78,8 @@ export interface ObjectType {
 	layout: ObjectLayout;
 	iconEmoji: string;
 	isHidden: boolean;
-	isArchived?: boolean;
+	isArchived: boolean;
+	isReadonly: boolean;
 	relations: Relation[];
 	types: SmartBlockType[];
 };
@@ -90,7 +91,8 @@ export interface Relation {
 	name: string;
 	dataSource: number;
 	isHidden: boolean;
-	isReadOnly: boolean;
+	isReadonlyValue: boolean;
+	isReadonlyRelation: boolean;
 	objectTypes: string[];
 	selectDict: any[];
 	maxCount: number;

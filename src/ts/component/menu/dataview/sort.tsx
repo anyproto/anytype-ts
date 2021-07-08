@@ -46,7 +46,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
-				<div className={[ 'item', (!allowedView ? 'isReadOnly' : '') ].join(' ')}>
+				<div className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">

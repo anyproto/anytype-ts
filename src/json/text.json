@@ -363,6 +363,12 @@
 	"layout8": { "en": "Image" },
 	"layout20": { "en": "Database" },
 
+	"defaultNamePage": { "en": "Untitled" },
+	"defaultNameSet": { "en": "New set" },
+	"defaultNameType": { "en": "New type" },
+	"defaultNameRelation": { "en": "New relation" },
+	"defaultNameView": { "en": "New view" },
+
 	"placeholderCellCommon": { "en": "No field" },
 	"placeholderCell0": { "en": "Enter text" },
 	"placeholderCell1": { "en": "Enter text" },	

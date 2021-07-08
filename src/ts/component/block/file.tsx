@@ -25,7 +25,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { state } = content;
 		
@@ -52,7 +52,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 							textFile="Upload a file" 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
-							readOnly={readOnly} 
+							readonly={readonly} 
 						/>
 					</React.Fragment>
 				);

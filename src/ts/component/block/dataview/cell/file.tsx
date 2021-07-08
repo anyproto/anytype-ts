@@ -24,7 +24,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, relation, index, getRecord, canEdit, iconSize, placeholder } = this.props;
+		const { rootId, block, readonly, relation, index, getRecord, canEdit, iconSize, placeholder } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;

@@ -19,7 +19,7 @@ class FooterAuth extends React.Component<Props, {}> {
 		return (
 			<div className="footer">
 				<div className="copy">{Util.date('Y', date)}, Anytype</div>
-				<Icon id="button-help" className="help light"  tooltip="Help" onClick={this.onHelp} />
+				<Icon id="button-help" className="help light" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>
 		);
 	};

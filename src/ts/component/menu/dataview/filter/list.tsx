@@ -47,8 +47,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			const { relationKey, condition, value } = filter;
 		};
 
-		const relationOptions = this.getRelationOptions();
-
 		const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
 		));
@@ -130,20 +128,13 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			};
 
 			return (
-				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadOnly' : '') ].join(' ')}>
+				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
-					<div className="txt">
-						<Select 
-							id={[ 'filter', 'relation', item.id ].join('-')} 
-							className="relation" 
-							arrowClassName="light"
-							options={relationOptions}
-							value={item.relationKey} 
-							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
-						/>
-						<div className="flex" onClick={(e: any) => { this.onMore(e, item.id); }}>
+					<div className="txt" onClick={(e: any) => { this.onMore(e, item.id); }}>
+						<div className="name">{relation.name}</div>
+						<div className="flex">
 							<div className="condition grey">
 								{condition.name}
 							</div>
@@ -175,15 +166,22 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{filters.map((item: any, i: number) => (
-						<Item key={i} {...item} id={i} index={i} />
-					))}
-					{!filters.length ? (
-						<div className="item empty">
-							<div className="inner">No filters applied to this view</div>
+					<div className="scrollWrap">
+						{filters.map((item: any, i: number) => (
+							<Item key={i} {...item} id={i} index={i} />
+						))}
+						{!filters.length ? (
+							<div className="item empty">
+								<div className="inner">No filters applied to this view</div>
+							</div>
+						) : ''}
+					</div>
+					{allowedView ? (
+						<div className="bottom">
+							<div className="line" />
+							<ItemAdd index={view.filters.length + 1} disabled={true} /> 
 						</div>
 					) : ''}
-					{allowedView ? <ItemAdd index={view.filters.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
@@ -216,35 +214,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		menuStore.closeAll(Constant.menuIds.cell);
 	};
 
-	getRelationOptions () {
-		const { config } = commonStore;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
-		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			if (!relation || (!config.debug.ho && relation.isHidden) || (relation.format == I.RelationType.File)) {
-				return false;
-			};
-			return true;
-		});
-
-		let options: any[] = relations.map((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: relation.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-				name: relation.name, 
-				isHidden: relation.isHidden,
-				format: relation.format,
-			};
-		});
-
-		return options;
-	};
-	
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
@@ -357,6 +326,35 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			};
 			window.setTimeout(() => { this.forceUpdate(); }, 50);
 		});
+	};
+
+	getRelationOptions () {
+		const { config } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+		
+		const relations = view.relations.filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			if (!relation || (!config.debug.ho && relation.isHidden) || (relation.format == I.RelationType.File)) {
+				return false;
+			};
+			return true;
+		});
+
+		let options: any[] = relations.map((it: I.ViewRelation) => {
+			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(relation.format),
+				name: relation.name, 
+				isHidden: relation.isHidden,
+				format: relation.format,
+			};
+		});
+
+		return options;
 	};
 
 });

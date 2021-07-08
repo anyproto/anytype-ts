@@ -18,7 +18,7 @@ const $ = require('jquery');
 const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readOnly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
+		const { rootId, block, readonly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
@@ -35,7 +35,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 					/>
 				))}
 				<div className="cellHead last">
-					{!readOnly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+					{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
 				</div>
 			</div>
 		));

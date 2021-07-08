@@ -53,7 +53,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 			const { _empty_, layout, iconEmoji, iconImage } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
-			const name = object.name || Constant.default.name;
+			const name = object.name || DataUtil.defaultName('page');
 
 			if (_empty_) {
 				return (

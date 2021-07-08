@@ -41,7 +41,7 @@
 		.tabWrap {
 			.tabs { 
 				line-height: 44px; height: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; display: inline-block; @include text-paragraph; 
-				color: rgba(255,255,255,0.6); font-weight: 700; user-select: none;
+				color: rgba(255,255,255,0.6); font-weight: 700; user-select: none; white-space: nowrap;
 			}
 			.tabs {
 				.tab { 

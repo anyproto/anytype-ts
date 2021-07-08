@@ -250,7 +250,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || Constant.default.name);
+				it.name = String(it.name || DataUtil.defaultName('page'));
 				return it;
 			}));
 

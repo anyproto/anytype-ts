@@ -106,8 +106,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 						<div className={cn.join(' ')}>
 							<div className="editor">
 								<div className="blocks">
-									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
-									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readOnly={true} /> : ''}
+									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
+									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
 									
 									{children.map((block: I.Block, i: number) => {
 										return (
@@ -122,7 +122,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 												onMenuAdd={() => {}}
 												onPaste={() => {}}
 												getWrapperWidth={this.getWrapperWidth}
-												readOnly={true}
+												readonly={true}
 											/>
 										)
 									})}

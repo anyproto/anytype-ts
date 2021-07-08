@@ -126,6 +126,7 @@ const Color = {
 };
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const IconObject = observer(class IconObject extends React.Component<Props, {}> {
 
@@ -166,6 +167,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:
+				if (iconImage) {
+					cn.push('withImage');
+				};
+
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				};
@@ -185,19 +190,23 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
-					cn.push('withoutImage');
+					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={name ? this.typeSvg() : ObjectType} className={icn.join(' ')} />;
+					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
 			case I.ObjectLayout.Set:
+				if (iconImage) {
+					cn.push('withImage');
+				};
+
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
-					cn.push('withoutImage');
+					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={name ? this.typeSvg() : ObjectType} className={icn.join(' ')} />;
+					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -211,6 +220,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 			case I.ObjectLayout.Image:
 				if (id) {
+					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
@@ -269,15 +279,17 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 		const { id, offsetX, offsetY, onSelect, onUpload } = this.props;
 		const object = this.getObject();
+		const { iconEmoji, iconImage } = object;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const noUpload = layout == I.ObjectLayout.ObjectType;
 
 		menuStore.open('smile', { 
-			element: '#' + id,
+			element: `#${id}`,
 			offsetX: offsetX,
 			offsetY: offsetY,
 			data: {
 				noUpload: noUpload,
+				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {
 						onSelect(icon);
@@ -358,7 +370,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || '');
+		let name = String(object.name || DataUtil.defaultName('page'));
 		name = SmileUtil.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 

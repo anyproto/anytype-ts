@@ -1,7 +1,5 @@
-import { I, M, Util } from 'ts/lib';
+import { I, M, Util, DataUtil } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
-
-const Constant = require('json/constant.json');
 
 class View implements I.View {
 	
@@ -16,7 +14,7 @@ class View implements I.View {
 		let self = this;
 		
 		self.id = String(props.id || '');
-		self.name = String(props.name || Constant.default.name);
+		self.name = String(props.name || DataUtil.defaultName('view'));
 		self.type = Number(props.type) || I.ViewType.Grid;
 		
 		self.relations = (props.relations || []).map((it: I.ViewRelation) => { return new M.ViewRelation(it); });

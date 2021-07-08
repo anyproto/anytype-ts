@@ -108,13 +108,9 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
+		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
-
-		if (!relation || readOnly || relation.isReadOnly) {
-			return;
-		};
 
 		if (!this.canEdit()) {
 			return;
@@ -162,7 +158,7 @@ class Cell extends React.Component<Props, {}> {
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
-			offsetY: 1,
+			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
 			className: menuClassName,
@@ -344,10 +340,11 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	canEdit () {
-		const { readOnly, viewType } = this.props;
+		const { readonly, viewType, getRecord, index } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
 
-		if (!relation || readOnly || relation.isReadOnly) {
+		if (!relation || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if (relation.format == I.RelationType.Checkbox) {

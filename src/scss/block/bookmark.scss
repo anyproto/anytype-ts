@@ -41,5 +41,6 @@
 		.icon.fav { width: 16px; height: 16px; margin: -2px 4px 0px 0px; }
 	}
 	
+	.block.blockBookmark > .wrapContent { border-radius: 6px; }
 	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 0px; padding-bottom: 0px; }
 }

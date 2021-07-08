@@ -263,7 +263,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 
 		this._isMounted = true;
 
-		this.setCrumbs(rootId);
+		crumbs.addPage(rootId);
 		this.setState({ pageId: rootId });
 		this.loadPage(rootId);
 
@@ -488,7 +488,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 		const filter = (it: I.PageInfo) => { return this.filterMapper(it, config); };
 
 		this.setState({ loading: true });
-		this.setCrumbs(id);
+		crumbs.addPage(id);
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
@@ -531,12 +531,6 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 		return true;
 	};
 
-	setCrumbs (id: string) {
-		let cr = crumbs.get(I.CrumbsType.Page);
-		cr = crumbs.add(I.CrumbsType.Page, id);
-		crumbs.save(I.CrumbsType.Page, cr);
-	};
-	
 	onClick (e: any, item: I.PageInfo) {
 		e.stopPropagation();
 		this.loadPage(item.id);
@@ -624,7 +618,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 	};
 	
 	getPage (page: any): I.PageInfo {
-		page.details.name = String(page.details.name || Constant.default.name || '');
+		page.details.name = String(page.details.name || DataUtil.defaultName('page'));
 
 		return {
 			...page,

@@ -64,7 +64,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -72,7 +72,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let marker: any = null;
 		let placeholder = Constant.placeholder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadOnly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
 		let additional = null;
 
 		for (let mark of marks) {
@@ -83,7 +83,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		switch (style) {
 			case I.TextStyle.Title:
-				placeholder = Constant.default.name;
+				placeholder = DataUtil.defaultName('page');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
@@ -132,7 +132,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		let editor = null;
-		if (readOnly) {
+		if (readonly) {
 			editor = (
 				<div id="value" className={cv.join(' ')} />
 			);
@@ -141,7 +141,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				<div
 					id="value"
 					className={cv.join(' ')}
-					contentEditable={!readOnly}
+					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
@@ -414,15 +414,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value');
+		const value = node.find('#value');
 		const obj = Mark.cleanHtml(value.html());
-		
+
 		return String(obj.get(0).innerText || '');
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('.value');
+		const value = node.find('#value');
 		
 		return Mark.fromHtml(value.html());
 	};
@@ -472,6 +472,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			});
 
 			ret = true;
+		});
+
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+			e.preventDefault();
+
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onKeyDown(e, value, this.marks, range);
+			});
 		});
 
 		keyboard.shortcut('tab', e, (pressed: string) => {
@@ -564,9 +572,20 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		const { rootId, block, onMenuAdd } = this.props;
 		const { filter } = commonStore;
-		const { id } = block;
+		const { id, content } = block;
 		const range = this.getRange();
 		const k = e.key.toLowerCase();
+		const Markdown = {
+			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
+			'\\[\\]':		 I.TextStyle.Checkbox,
+			'1\\.':			 I.TextStyle.Numbered,
+			'#':			 I.TextStyle.Header1,
+			'##':			 I.TextStyle.Header2,
+			'###':			 I.TextStyle.Header3,
+			'\\>':			 I.TextStyle.Toggle,
+			'"':			 I.TextStyle.Quote,
+			'```':			 I.TextStyle.Code,
+		};
 
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
@@ -579,6 +598,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			focus.apply();
 		};
 		let symbolBefore = range ? value[range.from - 1] : '';
+		let reg = null;
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -610,8 +630,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		// Open add menu
 		if ((symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode()) {
-			value = Util.stringCut(value, range.from - 1, range.from);
-			onMenuAdd(id, value, range);
+			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 		};
 		
 		// Make div
@@ -637,67 +656,37 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			C.BlockCreate({ type: I.BlockType.File, content: { type: I.FileType.Video } }, rootId, id, I.BlockPosition.Replace, cb);
 			cmdParsed = true;
 		};
-		
-		// Make list
-		if (([ '* ', '- ', '+ ' ].indexOf(value) >= 0) && !block.isTextBulleted()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Bulleted } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make checkbox
-		if ((value == '[]') && !block.isTextCheckbox()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Checkbox } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make numbered
-		if ((value == '1. ') && !block.isTextNumbered()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Numbered } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make h1
-		if ((value == '# ') && !block.isTextHeader1()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header1 } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make h2
-		if ((value == '## ') && !block.isTextHeader2()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header2 } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make h3
-		if ((value == '### ') && !block.isTextHeader3()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Header3 } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make toggle
-		if ((value == '> ') && !block.isTextToggle()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Toggle } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make quote
-		if ((value == '" ') && !block.isTextQuote()) {
-			C.BlockCreate({ type: I.BlockType.Text, content: { style: I.TextStyle.Quote } }, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
-		
-		// Make code
-		if ((value == '/code' || value == '```') && !block.isTextCode()) {
-			C.BlockCreate({ 
-				type: I.BlockType.Text, 
-				fields: { 
-					lang: (Storage.get('codeLang') || Constant.default.codeLang),
-				},
-				content: { style: I.TextStyle.Code } 
-			}, rootId, id, I.BlockPosition.Replace, cb);
-			cmdParsed = true;
-		};
 
+		// Parse markdown commands
+		for (let k in Markdown) {
+			reg = new RegExp(`^(${k} )`);
+			const style = Markdown[k];
+
+			if (value.match(reg) && (content.style != style)) {
+				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+
+				const newBlock: any = { 
+					type: I.BlockType.Text, 
+					fields: {},
+					content: { 
+						...content, 
+						checked: false,
+						text: value, 
+						style: style,
+					},
+				};
+				
+				if (style == I.TextStyle.Code) {
+					newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
+					newBlock.content.marks = [];
+				};
+
+				C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+				cmdParsed = true;
+				break;
+			};
+		};
+		
 		if (cmdParsed) {
 			menuStore.close('blockAdd');
 			return;
@@ -710,13 +699,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.placeholderCheck();
 
 		if (!block.isTextCode()) {
-			const { marks, text } = this.getMarksFromHtml();
-
+			let { marks, text } = this.getMarksFromHtml();
 			this.marks = marks;
+
 			if (value != text) {
 				this.setValue(text);
 
-				focus.set(focus.state.focused, { from: focus.state.range.to + 1, to: focus.state.range.to + 1 });
+				const diff = value.length - text.length;
+				focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
 				focus.apply();
 			};
 		};
@@ -868,11 +858,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheckbox (e: any) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { checked } = content;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 		
@@ -883,11 +873,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onLang (v: string) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const l = String(content.text || '').length;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 		
@@ -1041,7 +1031,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const range = getRange(node.find('.value').get(0) as Element);
+		const range = getRange(node.find('#value').get(0) as Element);
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
