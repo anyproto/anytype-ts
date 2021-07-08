@@ -112,10 +112,6 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
-		if (!relation || readOnly || relation.isReadOnly) {
-			return;
-		};
-
 		if (!this.canEdit()) {
 			return;
 		};

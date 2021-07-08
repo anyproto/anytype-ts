@@ -139,7 +139,7 @@ class DragProvider extends React.Component<Props, {}> {
 			console.log('[dragProvider.onDrop] paths', paths);
 
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
-				if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+				if (target && target.isTextToggle() && (position == I.BlockPosition.Inner)) {
 					blockStore.toggle(rootId, targetId, true);
 				};
 			});
