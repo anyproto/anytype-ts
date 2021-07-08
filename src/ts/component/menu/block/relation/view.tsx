@@ -52,11 +52,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 						let canEdit = allowedRelation;
 						let canFav = allowedValue;
 
-						if (item.isReadonly) {
+						if (item.isReadonlyRelation) {
 							canEdit = false;
 						};
 						if ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) >= 0) {
-							canEdit = false;
 							canFav = false;
 						};
 
@@ -69,7 +68,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readonly={!allowedValue}
+								readonly={!allowedValue && !item.isReadonlyValue}
 								canEdit={canEdit}
 								canFav={canFav}
 								classNameWrap={classNameWrap}
@@ -276,7 +275,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const { rootId, readonly } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (!relation || readonly || relation.isReadonly) {
+		if (!relation || readonly || relation.isReadonlyValue) {
 			return;
 		};
 

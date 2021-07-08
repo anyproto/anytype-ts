@@ -10,7 +10,8 @@ class Relation implements I.Relation {
 	objectTypes: string[] = [];
 	format: I.RelationType = I.RelationType.LongText;
 	isHidden: boolean = false;
-	isReadonly: boolean = false;
+	isReadonlyRelation: boolean = false;
+	isReadonlyValue: boolean = false;
 	maxCount: number = 0;
 	scope: I.RelationScope = I.RelationScope.Object;
 	selectDict: any[] = [] as any[];
@@ -25,7 +26,8 @@ class Relation implements I.Relation {
 		self.objectTypes = props.objectTypes || [];
 		self.format = props.format || I.RelationType.LongText;
 		self.isHidden = Boolean(props.isHidden);
-		self.isReadonly = Boolean(props.isReadonly);
+		self.isReadonlyRelation = Boolean(props.isReadonlyRelation);
+		self.isReadonlyValue = Boolean(props.isReadonlyValue);
 		self.maxCount = Number(props.maxCount) || 0;
 		self.scope = props.scope || I.RelationScope.Object;
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new M.SelectOption(it); });

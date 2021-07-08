@@ -91,7 +91,8 @@ export interface Relation {
 	name: string;
 	dataSource: number;
 	isHidden: boolean;
-	isReadonly: boolean;
+	isReadonlyValue: boolean;
+	isReadonlyRelation: boolean;
 	objectTypes: string[];
 	selectDict: any[];
 	maxCount: number;
