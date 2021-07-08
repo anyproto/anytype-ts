@@ -217,7 +217,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			// Restrictions
 
-			if (!block.canHaveHistory()) {
+			if (!block.canHaveHistory() || object.templateIsBundled) {
 				history = null;
 			};
 
