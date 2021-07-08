@@ -337,7 +337,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				
 			case 'archivePage':
 				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
 					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+
+					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
+						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
+					};
 					
 					if (prev) {
 						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
@@ -349,15 +357,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'unarchivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], false);
-				break;
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], false, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
 
-			case 'archiveIndex':
-				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], true);
-				break;
-
-			case 'unarchiveIndex':
-				C.BlockListSetPageIsArchived(rootId, [ block.content.targetBlockId ], false);
+					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
+						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
+					};
+				});
 				break;
 
 			case 'linkRoot':

@@ -93,7 +93,7 @@
 		"page": "_otpage",
 		"set": "_otset",
 		"template": "_ottemplate",
-		"type": "_ottype",
+		"type": "_otobjectType",
 		"image": "_otimage",
 		"file": "_otfile"
 	},
