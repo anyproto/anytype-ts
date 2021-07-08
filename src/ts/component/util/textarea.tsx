@@ -64,7 +64,7 @@ class Textarea extends React.Component<Props, State> {
 				value={value}
 				className={cn.join(' ')}
 				autoComplete={autoComplete}
-				readonly={readonly}
+				readOnly={readonly}
 				onChange={this.onChange}
 				onKeyDown={this.onKeyDown}
 				onKeyUp={this.onKeyUp}

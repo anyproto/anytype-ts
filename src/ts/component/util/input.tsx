@@ -81,7 +81,7 @@ class Input extends React.Component<Props, State> {
 				value={this.state.value}
 				className={cn.join(' ')}
 				autoComplete={autoComplete ? autoComplete : name}
-				readonly={readonly}
+				readOnly={readonly}
 				onChange={this.onChange}
 				onKeyUp={this.onKeyUp}
 				onKeyDown={this.onKeyDown}
