@@ -17,13 +17,13 @@ class BlockIconPage extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId, readOnly } = this.props;
+		const { rootId, readonly } = this.props;
 		
 		return (
 			<React.Fragment>
 				<IconObject 
 					id={'block-icon-' + rootId} 
-					canEdit={!readOnly} 
+					canEdit={!readonly} 
 					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 

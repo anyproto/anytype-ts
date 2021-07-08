@@ -6,7 +6,7 @@ import Cell from './cell';
 
 interface Props extends I.ViewComponent {
 	index: number;
-	readOnly: boolean;
+	readonly: boolean;
 	style?: any;
 	cellPosition?: (cellId: string) => void;
 	getRecord(index: number): any;

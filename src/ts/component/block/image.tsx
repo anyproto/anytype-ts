@@ -32,7 +32,7 @@ class BlockImage extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block, readOnly } = this.props;
+		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { width } = fields;
 		const { state } = content;
@@ -57,7 +57,7 @@ class BlockImage extends React.Component<Props, {}> {
 							accept={Constant.extension.image} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
-							readOnly={readOnly} 
+							readonly={readonly} 
 						/>
 					</React.Fragment>
 				);

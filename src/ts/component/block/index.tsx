@@ -58,7 +58,7 @@ class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, index, className, block, readOnly } = this.props;
+		const { rootId, css, index, className, block, readonly } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 
 		if (!id) {
@@ -68,7 +68,7 @@ class Block extends React.Component<Props, {}> {
 		const { style, checked } = content;
 
 		let canSelect = true;
-		let canDrop = !readOnly;
+		let canDrop = !readonly;
 		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block) ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
@@ -83,8 +83,8 @@ class Block extends React.Component<Props, {}> {
 		if (fields.isUnwrapped) {
 			cn.push('isUnwrapped');
 		};
-		if (readOnly) {
-			cn.push('isReadOnly');
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 
 		if (bgColor) {
@@ -97,7 +97,7 @@ class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 
-				if (block.isTextToggle() && !readOnly) {
+				if (block.isTextToggle() && !readonly) {
 					const childrenIds = blockStore.getChildrenIds(rootId, id);
 					if (!childrenIds.length) {
 						empty = <div className="emptyToggle" onClick={this.onEmptyToggle}>{translate('blockTextToggleEmpty')}</div>;
@@ -210,7 +210,7 @@ class Block extends React.Component<Props, {}> {
 
 		let rowDropTargets = null;
 		if (block.isLayoutRow()) {
-			if (readOnly) {
+			if (readonly) {
 				rowDropTargets = (
 					<React.Fragment>
 						<div className="dropTarget targetTop" />
@@ -371,9 +371,9 @@ class Block extends React.Component<Props, {}> {
 	onResizeStart (e: any, index: number) {
 		e.stopPropagation();
 
-		const { dataset, rootId, block, readOnly } = this.props;
+		const { dataset, rootId, block, readonly } = this.props;
 
-		if (!this._isMounted || readOnly) {
+		if (!this._isMounted || readonly) {
 			return;
 		};
 
@@ -515,11 +515,11 @@ class Block extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id } = block;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!block.isLayoutRow() || keyboard.isDragging || readOnly) {
+		if (!block.isLayoutRow() || keyboard.isDragging || readonly) {
 			return;
 		};
 		

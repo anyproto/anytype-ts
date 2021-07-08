@@ -71,12 +71,12 @@
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget .value.isFocused { background: none; }
 
-	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
-	.block.blockText.isReadOnly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .value { min-height: 24px; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
 
-	.block.blockText.isReadOnly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
-	.block.blockText.isReadOnly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 44px; }
+	.block.blockText.isReadonly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
+	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 44px; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
@@ -136,7 +136,7 @@
 		}
 	}
 
-	.block.blockText.code.isReadOnly > .wrapContent > .selectable > .dropTarget > .flex {
+	.block.blockText.code.isReadonly > .wrapContent > .selectable > .dropTarget > .flex {
 		.value { white-space: pre !important; }
 		.additional { display: none; }
 	}

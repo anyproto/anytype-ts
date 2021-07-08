@@ -79,7 +79,7 @@
 		]
 	},
 
-	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", "done", "fileExt", "fileMimeType" ],
+	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", "isReadonly", "done", "fileExt", "fileMimeType" ],
 	"systemRelationKeys": [ "name", "description", "createdDate", "lastModifiedBy", "lastModifiedDate", "creator", "objectType", "lastOpenedDate" ],
 
 	"relationKey": {

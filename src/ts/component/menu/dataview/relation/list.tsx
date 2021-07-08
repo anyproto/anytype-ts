@@ -27,7 +27,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readOnly, rootId, blockId, getView } = data;
+		const { readonly, rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
@@ -43,14 +43,14 @@ class MenuRelationList extends React.Component<Props, {}> {
 
 		const Item = SortableElement((item: any) => {
 			const canHide = allowedView && (item.relationKey != Constant.relationKey.name);
-			const canEdit = !readOnly && allowedView;
+			const canEdit = !readonly && allowedView;
 			const cn = [ 'item' ];
 			
 			if (item.relation.isHidden) {
 				cn.push('isHidden');
 			};
 			if (!canEdit) {
-				cn.push('isReadOnly');
+				cn.push('isReadonly');
 			};
 
 			return (
@@ -85,7 +85,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 							return <Item key={item.relationKey} {...item} index={i} />;
 						})}
 					</div>
-					{!readOnly ? (
+					{!readonly ? (
 						<div className="bottom">
 							<div className="line" />
 							<ItemAdd index={relations.length + 1} disabled={true} /> 
@@ -150,9 +150,9 @@ class MenuRelationList extends React.Component<Props, {}> {
 	onEdit (e: any, id: string) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readOnly } = data;
+		const { readonly } = data;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 		

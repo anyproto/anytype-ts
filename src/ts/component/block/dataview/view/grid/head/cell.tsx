@@ -54,7 +54,7 @@ class HeadCell extends React.Component<Props, {}> {
 	};
 
 	onEdit (e: any) {
-		const { rootId, block, readOnly, getData, getView, relationKey } = this.props;
+		const { rootId, block, readonly, getData, getView, relationKey } = this.props;
 
 		if (keyboard.isResizing) {
 			return;
@@ -69,7 +69,7 @@ class HeadCell extends React.Component<Props, {}> {
 				rootId: rootId,
 				blockId: block.id,
 				relationKey: relationKey,
-				readOnly: readOnly,
+				readonly: readonly,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
 				},
