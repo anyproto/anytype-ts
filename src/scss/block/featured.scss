@@ -15,7 +15,7 @@
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
-			.element { margin: -1px 6px 0px 0px; vertical-align: middle; line-height: inherit; background: none !important; }
+			.element { margin: -1px 6px 0px 0px; vertical-align: top; line-height: inherit; background: none !important; display: inline; }
 			.element:last-child { margin-right: 0px; }
 
 			.tagItem { margin-top: -3px; margin-right: 6px; vertical-align: middle; }
@@ -25,6 +25,7 @@
 			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; white-space: normal; }
 
 			.empty { vertical-align: top; display: inline; }
+			.flex { display: inline; }
 		}
 
 		.cellContent.c-file { padding: 5px 3px; }
