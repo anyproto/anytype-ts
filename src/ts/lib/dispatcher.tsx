@@ -216,11 +216,7 @@ class Dispatcher {
 					break;
 
 				case 'objectShow':
-					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
-
-					let res = Response.ObjectShow(data);
-					this.onObjectShow(rootId, res);
+					this.onObjectShow(rootId, Response.ObjectShow(data));
 					break;
 
 				case 'blockAdd':
@@ -636,6 +632,9 @@ class Dispatcher {
 	onObjectShow (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
 		let root = blocks.find((it: any) => { return it.id == rootId; });
+
+		dbStore.relationsSet(rootId, rootId, message.relations);
+		dbStore.objectTypesSet(message.objectTypes);
 
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
