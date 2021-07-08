@@ -32,7 +32,7 @@ class BlockVideo extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { block, readOnly } = this.props;
+		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;
 		
@@ -59,7 +59,7 @@ class BlockVideo extends React.Component<Props, {}> {
 							accept={Constant.extension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
-							readOnly={readOnly} 
+							readonly={readonly} 
 						/>
 					</React.Fragment>
 				);

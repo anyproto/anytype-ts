@@ -194,7 +194,7 @@ class MenuViewList extends React.Component<Props> {
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
-				readOnly: !allowed,
+				readonly: !allowed,
 				view: item,
 				onSave: () => { this.forceUpdate(); },
 			}

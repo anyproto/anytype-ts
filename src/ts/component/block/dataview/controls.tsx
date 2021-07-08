@@ -29,7 +29,7 @@ class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, rootId, block, getView, readOnly, onRowAdd } = this.props;
+		const { getData, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
@@ -115,7 +115,7 @@ class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readOnly && allowed ? <Icon className="plus" tooltip="New object" onClick={onRowAdd} /> : ''}
+						{!readonly && allowed ? <Icon className="plus" tooltip="New object" onClick={onRowAdd} /> : ''}
 					</div>
 				</div>
 			</div>
@@ -139,7 +139,7 @@ class Controls extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, readOnly, getData, getView } = this.props;
+		const { rootId, block, readonly, getData, getView } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
@@ -158,7 +158,7 @@ class Controls extends React.Component<Props, State> {
 			offsetY: 10,
 			tabs: tabs,
 			data: {
-				readOnly: readOnly || !allowed,
+				readonly: readonly || !allowed,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,
@@ -180,7 +180,7 @@ class Controls extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
-				readOnly: !allowed,
+				readonly: !allowed,
 				view: item,
 				onSave: () => { this.forceUpdate(); },
 			}
