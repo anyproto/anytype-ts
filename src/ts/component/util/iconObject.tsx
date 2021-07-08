@@ -221,6 +221,7 @@ class IconObject extends React.Component<Props, {}> {
 
 			case I.ObjectLayout.Image:
 				if (id) {
+					cn.push('withImage');
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
