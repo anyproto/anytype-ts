@@ -280,6 +280,7 @@ class BlockStore {
 						};
 					} else {
 						n = 0;
+						item.number = 0;
 					};
 				};
 
