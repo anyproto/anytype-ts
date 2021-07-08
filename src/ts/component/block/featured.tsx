@@ -151,7 +151,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (!relation || relation.isReadonly) {
+		if (!relation || relation.isReadonlyValue) {
 			return;
 		};
 

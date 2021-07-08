@@ -109,7 +109,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 
 		this.init();
 
-		if (this.refDrag) {
+		if (root && this.refDrag) {
 			this.refDrag.setValue(root.fields.width);
 		};
 	};

@@ -56,7 +56,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
 							name={objectType ? objectType.name : 'Select object type'} 
 							onMouseEnter={this.onObjectType} 
-							arrow={relation && !relation.isReadonly}
+							className={this.isReadonly() ? 'isReadonly' : ''}
+							arrow={this.isReadonly()}
 						/>
 					</div>
 				) : ''}
@@ -73,7 +74,8 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 							id="date-settings" 
 							icon="settings" 
 							name="Preferences" 
-							arrow={relation && !relation.isReadonly} 
+							arrow={!this.isReadonly()} 
+							className={this.isReadonly() ? 'isReadonly' : ''}
 							onMouseEnter={this.onDateSettings} 
 						/>
 					</div>
@@ -212,7 +214,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
-		return readonly || !allowed || (relation && (relation.isReadonly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0)));
+		return readonly || !allowed || (relation && relation.isReadonlyRelation);
 	};
 	
 	onRelationType (e: any) {
@@ -241,7 +243,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { getId } = this.props;
 		const relation = this.getRelation();
 
-		if (relation && relation.isReadonly) {
+		if (relation && relation.isReadonlyRelation) {
 			return;
 		};
 
@@ -268,7 +270,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const relation = this.getRelation();
 
-		if (relation.isReadonly) {
+		if (relation && relation.isReadonlyRelation) {
 			return;
 		};
 

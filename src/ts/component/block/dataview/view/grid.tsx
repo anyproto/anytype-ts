@@ -272,15 +272,17 @@ class ViewGrid extends React.Component<Props, {}> {
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
-		menuStore.open('relationSuggest', { 
+		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
 			data: {
 				readonly: readonly,
 				getData: getData,
 				getView: getView,
 				rootId: rootId,
 				blockId: block.id,
+				/*
 				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
@@ -290,6 +292,7 @@ class ViewGrid extends React.Component<Props, {}> {
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
 				},
+				*/
 			}
 		});
 	};

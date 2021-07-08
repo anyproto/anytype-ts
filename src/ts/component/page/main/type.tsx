@@ -22,6 +22,14 @@ const Constant = require('json/constant.json');
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
+const NO_TEMPLATES = [ 
+	Constant.typeId.page, 
+	Constant.typeId.image, 
+	Constant.typeId.file, 
+	Constant.typeId.video, 
+	Constant.typeId.type, 
+	Constant.typeId.set, 
+];
 
 @observer
 class PageMainType extends React.Component<Props, State> {
@@ -70,7 +78,7 @@ class PageMainType extends React.Component<Props, State> {
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
-		const showTemplates = [ Constant.typeId.page, Constant.typeId.image, Constant.typeId.file, Constant.typeId.type, Constant.typeId.set ].indexOf(rootId) < 0;
+		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -114,7 +122,7 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		const Relation = (item: any) => (
-			<div className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
+			<div id={'item-' + item.relationKey} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>

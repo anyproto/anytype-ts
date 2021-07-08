@@ -24,6 +24,7 @@ class ListObject extends React.Component<Props, {}> {
 			return it;
 		});
 		const { offset, total, viewId } = dbStore.getMeta(rootId, blockId);
+		const isFileType = [ Constant.typeId.file, Constant.typeId.image ].indexOf(rootId) >= 0;
 
 		let pager = null;
 		if (total && items.length) {
@@ -47,21 +48,25 @@ class ListObject extends React.Component<Props, {}> {
 							<div className="name">{item.name}</div>
 						</div>
 					</td>
-					<td className="cell">
-						{item.lastModifiedDate ? (
-							<div className="cellContent">
-								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
-							</div>
-						) : ''}
-					</td>
-					<td className="cell">
-						{!author._empty_ ? (
-							<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
-								<IconObject object={author} />
-								<div className="name">{author.name}</div>
-							</div>
-						) : ''}
-					</td>
+					{!isFileType ? (
+						<td className="cell">
+							{item.lastModifiedDate ? (
+								<div className="cellContent">
+									{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
+								</div>
+							) : ''}
+						</td>
+					) : null}
+					{!isFileType ? (
+						<td className="cell">
+							{!author._empty_ ? (
+								<div className="cellContent cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, author); }}>
+									<IconObject object={author} />
+									<div className="name">{author.name}</div>
+								</div>
+							) : ''}
+						</td>
+					) : null}
 				</tr>
 			);
 		};
@@ -74,12 +79,16 @@ class ListObject extends React.Component<Props, {}> {
 							<th className="cellHead">
 								<div className="name">Name</div>
 							</th>
-							<th className="cellHead">
-								<div className="name">Updated</div>
-							</th>
-							<th className="cellHead">
-								<div className="name">Owner</div>
-							</th>
+							{!isFileType ? (
+								<th className="cellHead">
+									<div className="name">Updated</div>
+								</th>
+							) : null}
+							{!isFileType ? (
+								<th className="cellHead">
+									<div className="name">Owner</div>
+								</th>
+							) : null}
 						</tr>
 					</thead>
 					<tbody>

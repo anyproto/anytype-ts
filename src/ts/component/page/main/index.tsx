@@ -372,6 +372,27 @@ class PageMainIndex extends React.Component<Props, State> {
 			link,
 		];
 
+		const onArchive = (v: boolean) => {
+			const cb = (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				if (object.type == Constant.typeId.type) {
+					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
+				};
+			};
+
+			if (item.isBlock) {
+				C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
+			} else {
+				DataUtil.pageSetArchived(object.id, v, (message: any) => {
+					cb(message);
+					this.load();
+				});
+			};
+		};
+
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
@@ -420,19 +441,11 @@ class PageMainIndex extends React.Component<Props, State> {
 
 					switch (el.id) {
 						case 'archive':
-							if (item.isBlock) {
-								C.BlockListSetPageIsArchived(rootId, [ object.id ], true);
-							} else {
-								DataUtil.pageSetArchived(object.id, true, () => { this.load(); });
-							};
+							onArchive(true);
 							break;
 
 						case 'unarchive':
-							if (item.isBlock) {
-								C.BlockListSetPageIsArchived(rootId, [ object.id ], false);
-							} else {
-								DataUtil.pageSetArchived(object.id, false, () => { this.load(); });
-							};
+							onArchive(false);
 							break;
 
 						case 'link':

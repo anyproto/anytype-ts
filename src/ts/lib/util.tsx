@@ -453,8 +453,8 @@ class Util {
 
 	fileIcon (obj: any): string {
 		const n = obj.name.split('.');
-		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
-		const e = String(obj.fileExt || n[n.length - 1] || '');
+		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '').toLowerCase();
+		const e = String(obj.fileExt || n[n.length - 1] || '').toLowerCase();
 
 		let t: string[] = [];
 		let icon = '';
@@ -478,7 +478,7 @@ class Util {
 			icon = 'archive';
 		};
 
-		if ([ 'xls', 'xlsx' ].indexOf(e) >= 0) {
+		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
 			icon = 'table';
 		};
 		

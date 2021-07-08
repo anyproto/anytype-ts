@@ -17,6 +17,10 @@ html.debug {
 		.block.blockText.code {
 			.icon.codeWrap { background-color: rgba(0, 0, 255, 0.1); }
 		}
+
+		.block.blockFeatured {
+			.cellContent { background-color: rgba(0, 0, 255, 0.1); }
+		}
 	}
 
 	.blockLast { background: rgba(0,0,255,0.1); }

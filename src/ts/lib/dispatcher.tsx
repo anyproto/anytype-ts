@@ -128,7 +128,7 @@ class Dispatcher {
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;
 		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
-			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', 'rootId', rootId);
+			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
 			};
@@ -187,8 +187,6 @@ class Dispatcher {
 			let block: any = null;
 			let details: any = null;
 			let viewId: string = '';
-			let view: any = null;
-			let childrenIds: string[] = [];
 			let keys: string[] = [];
 			let ids: string[] = [];
 			let type = this.eventType(message.getValueCase());
@@ -218,11 +216,7 @@ class Dispatcher {
 					break;
 
 				case 'objectShow':
-					dbStore.relationsSet(rootId, rootId, (data.getRelationsList() || []).map(Mapper.From.Relation));
-					dbStore.objectTypesSet((data.getObjecttypesList() || []).map(Mapper.From.ObjectType));
-
-					let res = Response.ObjectShow(data);
-					this.onObjectShow(rootId, res);
+					this.onObjectShow(rootId, Response.ObjectShow(data));
 					break;
 
 				case 'blockAdd':
@@ -638,6 +632,9 @@ class Dispatcher {
 	onObjectShow (rootId: string, message: any) {
 		let { blocks, details, restrictions } = message;
 		let root = blocks.find((it: any) => { return it.id == rootId; });
+
+		dbStore.relationsSet(rootId, rootId, message.relations);
+		dbStore.objectTypesSet(message.objectTypes);
 
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
