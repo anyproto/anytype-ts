@@ -607,7 +607,7 @@ class DataUtil {
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
-			dispatcher.setNumbers(rootId);
+			//dispatcher.setNumbers(rootId);
 			
 			if (callBack) {
 				callBack(message);

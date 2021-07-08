@@ -267,10 +267,9 @@ class BlockStore {
 			return;
 		};
 
-		const cb = (list: any[]) => {
+		const cb = (n: number, list: any[]) => {
 			list = list || [];
 
-			let n = 0;
 			for (let item of list) {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
@@ -281,11 +280,11 @@ class BlockStore {
 					};
 				};
 
-				cb(item.childBlocks);
+				cb(item.isLayoutDiv() ? n : 0, item.childBlocks);
 			};
 		};
 
-		cb(root.childBlocks);
+		cb(0, root.childBlocks);
 	};
 
 	getStructure (list: I.Block[]) {
