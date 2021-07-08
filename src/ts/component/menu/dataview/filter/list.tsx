@@ -129,7 +129,7 @@ class MenuFilterList extends React.Component<Props, {}> {
 			};
 
 			return (
-				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadOnly' : '') ].join(' ')}>
+				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 

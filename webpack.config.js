@@ -16,7 +16,7 @@ module.exports = (env) => {
 		optimization: {
 			minimize: false,
 			removeAvailableModules: false,
-    		removeEmptyChunks: false,
+    		removeEmptyChunks: true,
     		splitChunks: false,
 		},
 		

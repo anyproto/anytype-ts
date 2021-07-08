@@ -79,8 +79,34 @@
 		]
 	},
 
-	"defaultRelationKeys": [ "id", "name", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", "done" ],
-	"systemRelationKeys": [ "name", "description", "createdDate", "lastModifiedBy", "lastModifiedDate", "creator", "objectType", "lastOpenedDate" ],
+	"defaultRelationKeys": [ 
+		"id", 
+		"name", 
+		"description", 
+		"iconEmoji", 
+		"iconImage", 
+		"relationFormat", 
+		"type", 
+		"layout", 
+		"isHidden", 
+		"isArchived", 
+		"isReadonly", 
+		"done", 
+		"fileExt", 
+		"fileMimeType" 
+	],
+
+	"systemRelationKeys": [ 
+		"name", 
+		"description", 
+		"creator", 
+		"type", 
+		"lastOpenedDate",
+		"createdDate", 
+		"lastModifiedBy", 
+		"lastModifiedDate", 
+		"addedDate"
+	],
 
 	"relationKey": {
 		"name": "name",
@@ -93,8 +119,10 @@
 		"page": "_otpage",
 		"set": "_otset",
 		"template": "_ottemplate",
+		"type": "_otobjectType",
 		"image": "_otimage",
-		"file": "_otfile"
+		"file": "_otfile",
+		"video": "_otvideo"
 	},
 
 	"blockId": {
@@ -125,9 +153,10 @@
 			},
 			"cell": {
 				"default": 192,
-				"title": 288,
+				"format1": 500,
+
 				"min": 48,
-				"max": 500,
+				"max": 1000,
 				"edit": 300,
 				"icon": 70
 			}

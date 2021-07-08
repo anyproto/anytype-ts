@@ -38,7 +38,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup, readOnly } = this.props;
+		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type) || {};
@@ -77,7 +77,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readOnly={readOnly}
+									readonly={readonly}
 									isInline={true}
 									idPrefix={PREFIX}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
@@ -151,7 +151,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (!relation || relation.isReadOnly) {
+		if (!relation || relation.isReadonlyValue) {
 			return;
 		};
 
@@ -187,11 +187,11 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
 
-		if (readOnly || !allowed) {
+		if (readonly || !allowed) {
 			const object = detailStore.get(rootId, rootId, []);
 			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
 			return;
@@ -259,7 +259,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 			},
 			data: {
 				relationKey: '',
-				readOnly: false,
+				readonly: false,
 				rootId: rootId,
 			},
 		};

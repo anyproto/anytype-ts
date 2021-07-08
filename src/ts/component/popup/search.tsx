@@ -191,7 +191,7 @@ class PopupSearch extends React.Component<Props, State> {
 		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
 
-		this.setCrumbs(rootId);
+		crumbs.addPage(rootId);
 		this.focus = true;
 		this.select = true;
 
@@ -478,12 +478,6 @@ class PopupSearch extends React.Component<Props, State> {
 		return true;
 	};
 
-	setCrumbs (id: string) {
-		let cr = crumbs.get(I.CrumbsType.Page);
-		cr = crumbs.add(I.CrumbsType.Page, id);
-		crumbs.save(I.CrumbsType.Page, cr);
-	};
-	
 	onClick (e: any, item: any) {
 		if (e.persist) {
 			e.persist();

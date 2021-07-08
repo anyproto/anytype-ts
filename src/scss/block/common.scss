@@ -45,10 +45,10 @@
 
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
 
-	.block.isReadOnly {
+	.block.isReadonly {
 		.colResize { display: none; }
 	}
-	.block.isReadOnly > .wrapMenu > .icon.dnd { display: none; }
+	.block.isReadonly > .wrapMenu > .icon.dnd { display: none; }
 	
 	.block.align0 > .wrapContent { text-align: left; }
 	.block.align1 > .wrapContent { text-align: center; }

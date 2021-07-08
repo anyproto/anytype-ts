@@ -197,6 +197,8 @@ const Mapper = {
 				layout: obj.getLayout(),
 				iconEmoji: obj.getIconemoji(),
 				isHidden: obj.getHidden(),
+				isArchived: obj.getIsarchived(),
+				isReadonly: obj.getReadonly(),
 				types: obj.getTypesList(),
 				relations: (obj.getRelationsList() || []).map(Mapper.From.Relation),
 			};
@@ -210,7 +212,8 @@ const Mapper = {
 				name: obj.getName(),
 				dataSource: obj.getDatasource(),
 				isHidden: obj.getHidden(),
-				isReadOnly: obj.getReadonly(),
+				isReadonlyValue: obj.getReadonly(),
+				isReadonlyRelation: obj.getReadonlyrelation(),
 				maxCount: obj.getMaxcount(),
 				objectTypes: obj.getObjecttypesList(),
 				scope: obj.getScope(),
@@ -530,7 +533,7 @@ const Mapper = {
 			item.setDefaultvalue(obj.defaultValue);
 			item.setDatasource(obj.dataSource);
 			item.setHidden(obj.isHidden);
-			item.setReadonly(obj.isReadOnly);
+			item.setReadonly(obj.isReadonly);
 			item.setMaxcount(obj.maxCount);
 			item.setObjecttypesList(obj.objectTypes);
 			item.setSelectdictList((obj.selectDict || []).map(Mapper.To.SelectOption));

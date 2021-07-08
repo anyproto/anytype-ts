@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, Action } from 'ts/lib';
 import { ObjectPreviewBlock } from 'ts/component';
 
 interface Props extends I.Menu {};
@@ -14,6 +14,14 @@ class MenuPreviewObject extends React.Component<Props, {}> {
 		return (
 			<ObjectPreviewBlock rootId={rootId} />
 		);
+	};
+
+	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
+		Action.pageClose(rootId, false);
 	};
 
 };

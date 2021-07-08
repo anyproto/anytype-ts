@@ -959,7 +959,8 @@ class DataUtil {
 	};
 
 	relationWidth (width: number, format: I.RelationType): number {
-		return Number(width || Constant.size.dataview.cell[this.relationClass(format)]) || Constant.size.dataview.cell.default;
+		const size = Constant.size.dataview.cell;
+		return Number(width || size['format' + format]) || size.default;
 	};
 
 	dataviewRelationAdd (rootId: string, blockId: string, relation: any, view?: I.View, callBack?: (message: any) => void) {

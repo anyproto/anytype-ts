@@ -133,6 +133,7 @@ const ObjectShow = (response: any) => {
 		blocks: (response.getBlocksList() || []).map(Mapper.From.Block),
 		details: (response.getDetailsList() || []).map(Mapper.From.Details),
 		objectTypes: (response.getObjecttypesList() || []).map(Mapper.From.ObjectType),
+		relations: (response.getRelationsList() || []).map(Mapper.From.Relation),
 		restrictions: Mapper.From.Restrictions(response.getRestrictions()),
 	};
 };

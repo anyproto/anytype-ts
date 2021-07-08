@@ -201,6 +201,8 @@ class MenuSearchObject extends React.Component<Props, State> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		window.clearTimeout(this.timeoutFilter);
 	};
 
 	rebind () {

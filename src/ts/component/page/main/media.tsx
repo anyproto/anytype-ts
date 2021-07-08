@@ -73,7 +73,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 				<div id="blocks" className={cn.join(' ')}>
 					<div className="side left">
 						{isVideo || isImage ? (
-							<Block {...this.props} key={file.id} rootId={rootId} block={file} readOnly={true} />
+							<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
 						) : (
 							<IconObject object={object} size={96} />
 						)}
@@ -86,12 +86,12 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-							<Button text="Download" className="download blank" onClick={this.onDownload} />
+							<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
 						</div>
 
 						<div className="section">
 							{relations.map((item: any) => (
-								<Block {...this.props} key={item.id} rootId={rootId} block={item} readOnly={true} />
+								<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} />
 							))}
 						</div>
 					</div>

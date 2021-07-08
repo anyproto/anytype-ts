@@ -72,7 +72,7 @@ export interface ViewRelation {
 export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
-	readOnly: boolean;
+	readonly: boolean;
 	scrollContainer?: string;
 	pageContainer?: string;
 	isPopup?: boolean;
@@ -104,7 +104,7 @@ export interface Cell {
 	relation?: I.Relation;
 	index?: number;
 	viewType: I.ViewType;
-	readOnly?: boolean;
+	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
 	scrollContainer?: string;
