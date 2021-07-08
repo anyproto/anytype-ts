@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher } from 'ts/lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -607,7 +607,7 @@ class DataUtil {
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
-			blockStore.setNumbers(rootId);
+			dispatcher.setNumbers(rootId);
 			
 			if (callBack) {
 				callBack(message);
