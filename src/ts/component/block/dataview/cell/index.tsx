@@ -340,10 +340,11 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	canEdit () {
-		const { readonly, viewType } = this.props;
+		const { readonly, viewType, getRecord, index } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
 
-		if (!relation || readonly || relation.isReadonly) {
+		if (!relation || readonly || relation.isReadonly || record.isReadonly) {
 			return false;
 		};
 		if (relation.format == I.RelationType.Checkbox) {
