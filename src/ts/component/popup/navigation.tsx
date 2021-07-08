@@ -264,7 +264,7 @@ class PopupNavigation extends React.Component<Props, State> {
 
 		this._isMounted = true;
 
-		this.setCrumbs(rootId);
+		crumbs.addPage(rootId);
 		this.setState({ pageId: rootId });
 		this.loadPage(rootId);
 
@@ -489,7 +489,7 @@ class PopupNavigation extends React.Component<Props, State> {
 		const filter = (it: I.PageInfo) => { return this.filterMapper(it, config); };
 
 		this.setState({ loading: true });
-		this.setCrumbs(id);
+		crumbs.addPage(id);
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
 			if (message.error.code) {
@@ -532,12 +532,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		return true;
 	};
 
-	setCrumbs (id: string) {
-		let cr = crumbs.get(I.CrumbsType.Page);
-		cr = crumbs.add(I.CrumbsType.Page, id);
-		crumbs.save(I.CrumbsType.Page, cr);
-	};
-	
 	onClick (e: any, item: I.PageInfo) {
 		e.stopPropagation();
 		this.loadPage(item.id);

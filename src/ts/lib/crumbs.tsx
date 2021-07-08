@@ -43,13 +43,11 @@ class Crumbs {
 		return item;
 	};
 	
-	add (key: I.CrumbsType, id: string, callBack?: () => void): CrumbsObject {
+	add (key: I.CrumbsType, item: CrumbsObject, id: string, callBack?: () => void): CrumbsObject {
 		if (!id) {
 			return;
 		};
 		
-		const item = this.get(key);
-
 		this.savePrev(key, item);
 		
 		item.ids.push(id);
@@ -131,7 +129,7 @@ class Crumbs {
 			lastTargetId = item.ids[item.ids.length - 1];
 		};
 		if (!lastTargetId || (lastTargetId != id)) {
-			item = this.add(I.CrumbsType.Page, id);
+			item = this.add(I.CrumbsType.Page, item, id);
 		};
 		if (item.ids.length > LIMIT_PAGE) {
 			item.ids = item.ids.slice(item.ids.length - LIMIT_PAGE, item.ids.length);
@@ -146,13 +144,14 @@ class Crumbs {
 		};
 
 		let item = this.get(I.CrumbsType.Recent);
-
-		item = this.add(I.CrumbsType.Recent, id);
-		item.ids = Util.arrayUnique(item.ids);
+		item.ids = item.ids.filter((it: string) => { return it != id; });
+		item = this.add(I.CrumbsType.Recent, item, id);
 
 		if (item.ids.length > LIMIT_RECENT) {
 			item.ids = item.ids.slice(item.ids.length - LIMIT_RECENT, item.ids.length);
 		};
+
+		item.ids = Util.arrayUnique(item.ids);
 
 		this.save(I.CrumbsType.Recent, item);
 	};
