@@ -34,7 +34,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
 		const allowedRelation = !readonly && (!relation || (relation && !relation.isReadonlyRelation));
-		const allowedValue = allowedRelation && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]) && !relation.isReadonlyValue;
+		const allowedValue = allowedRelation && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
