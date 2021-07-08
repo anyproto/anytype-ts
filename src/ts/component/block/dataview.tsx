@@ -165,7 +165,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any) {
+	onRowAdd (e: any, dir: number) {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
@@ -174,7 +174,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const create = (templateId: string) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, {}, templateId, (message: any) => {
 				if (!message.error.code) {
-					dbStore.recordAdd(rootId, block.id, message.record);
+					dbStore.recordAdd(rootId, block.id, message.record, dir);
 				};
 			});
 		};

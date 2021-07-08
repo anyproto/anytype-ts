@@ -463,7 +463,7 @@ class Dispatcher {
 					data.records = data.getRecordsList() || [];
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordAdd(rootId, block.id, item);
+						dbStore.recordAdd(rootId, block.id, item, 1);
 					};
 					break;
 
