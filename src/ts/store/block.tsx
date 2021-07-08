@@ -275,7 +275,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$('#marker-' + item.id).text(`${n}.`);
+						$(`#marker-${item.id}`).text(`${n}.`);
 					} else {
 						n = 0;
 					};
@@ -285,7 +285,7 @@ class BlockStore {
 			};
 		};
 
-		window.setTimeout(() => { cb(root.childBlocks); }, 10);
+		cb(root.childBlocks);
 	};
 
 	getStructure (list: I.Block[]) {
