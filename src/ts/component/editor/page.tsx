@@ -92,7 +92,7 @@ class EditorPage extends React.Component<Props, {}> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							onResize={(v: number) => { this.onResize(v); }}
-							readOnly={!allowed}
+							readonly={!allowed}
 							getWrapper={this.getWrapper}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -111,7 +111,7 @@ class EditorPage extends React.Component<Props, {}> {
 									onKeyUp={this.onKeyUpBlock}  
 									onMenuAdd={this.onMenuAdd}
 									onPaste={this.onPaste}
-									readOnly={!allowed}
+									readonly={!allowed}
 									getWrapper={this.getWrapper}
 									getWrapperWidth={this.getWrapperWidth}
 								/>

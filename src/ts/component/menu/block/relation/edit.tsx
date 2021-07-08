@@ -208,11 +208,11 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 	isReadonly () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, readOnly } = data;
+		const { rootId, readonly } = data;
 		const relation = this.getRelation();
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 
-		return readOnly || !allowed || (relation && (relation.isReadonly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0)));
+		return readonly || !allowed || (relation && (relation.isReadonly || ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(relation.relationKey) >= 0)));
 	};
 	
 	onRelationType (e: any) {

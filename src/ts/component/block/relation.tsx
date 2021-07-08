@@ -27,13 +27,13 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId, block, readOnly, isPopup } = this.props;
+		const { rootId, block, readonly, isPopup } = this.props;
 		const { content } = block;
 		const { key } = content;
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
-		const allowedRelation = !readOnly && (!relation || (relation && !relation.isReadonly));
+		const allowedRelation = !readonly && (!relation || (relation && !relation.isReadonly));
 		const allowedValue = allowedRelation && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (
@@ -41,7 +41,7 @@ class BlockRelation extends React.Component<Props, {}> {
 				{!relation ? 
 				(
 					<div className="sides">
-						<div className={[ 'info', 'noValue', (!readOnly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>New relation</div>
+						<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={this.onMenu}>New relation</div>
 					</div>
 				) : 
 				(
@@ -62,7 +62,7 @@ class BlockRelation extends React.Component<Props, {}> {
 								relationKey={relation.relationKey}
 								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
 								viewType={I.ViewType.Grid}
-								readOnly={!allowedValue}
+								readonly={!allowedValue}
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
@@ -100,9 +100,9 @@ class BlockRelation extends React.Component<Props, {}> {
 	};
 
 	onMenu (e: any) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 

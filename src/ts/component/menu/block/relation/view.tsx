@@ -32,7 +32,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, readOnly } = data;
+		const { rootId, readonly } = data;
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
@@ -69,7 +69,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readOnly={!allowedValue}
+								readonly={!allowedValue}
 								canEdit={canEdit}
 								canFav={canFav}
 								classNameWrap={classNameWrap}
@@ -100,7 +100,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 						return <Section key={i} {...item} index={i} />;
 					})}
 				</div>
-				{!readOnly ? <ItemAdd /> : ''}
+				{!readonly ? <ItemAdd /> : ''}
 			</div>
 		);
 	};
@@ -273,10 +273,10 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	onCellClick (e: any, relationKey: string, index: number) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readOnly } = data;
+		const { rootId, readonly } = data;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (!relation || readOnly || relation.isReadonly) {
+		if (!relation || readonly || relation.isReadonly) {
 			return;
 		};
 

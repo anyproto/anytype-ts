@@ -104,7 +104,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								menuClassName="fromBlock"
 								scrollContainer={Util.getScrollContainer('menuBlockRelationList')}
 								pageContainer={Util.getPageContainer('menuBlockRelationList')}
-								readOnly={true}
+								readonly={true}
 								canOpen={false}
 								placeholder={translate('placeholderCellCommon')}
 							/>

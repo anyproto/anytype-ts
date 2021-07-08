@@ -9,7 +9,7 @@ interface Props {
 	block: I.Block;
 	relationKey: string;
 	index: number;
-	readOnly: boolean;
+	readonly: boolean;
 	width: number;
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
@@ -23,9 +23,9 @@ const Constant = require('json/constant.json');
 class BodyCell extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, index, readOnly, onRef, onCellClick, onCellChange } = this.props;
+		const { rootId, block, relationKey, index, readonly, onRef, onCellClick, onCellChange } = this.props;
 		const relation: any = dbStore.getRelation(rootId, block.id, relationKey) || {};
-		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readOnly ? 'canEdit' : '') ];
+		const cn = [ 'cell', DataUtil.relationClass(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = 'dataviewCell';
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const width = DataUtil.relationWidth(this.props.width, relation.format);

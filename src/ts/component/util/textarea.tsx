@@ -11,7 +11,7 @@ interface Props {
 	value?: string;
 	autoComplete?: string;
 	maxLength?: number;
-	readOnly?: boolean;
+	readonly?: boolean;
 	className?: string;
 	onChange?(e: any, value: string): void;
 	onKeyDown?(e: any, value: string): void;
@@ -48,7 +48,7 @@ class Textarea extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, name, className, placeholder, autoComplete, readOnly, maxLength } = this.props;
+		const { id, name, className, placeholder, autoComplete, readonly, maxLength } = this.props;
 		const { value } = this.state;
 		
 		let cn = [ 'textarea' ];
@@ -64,7 +64,7 @@ class Textarea extends React.Component<Props, State> {
 				value={value}
 				className={cn.join(' ')}
 				autoComplete={autoComplete}
-				readOnly={readOnly}
+				readonly={readonly}
 				onChange={this.onChange}
 				onKeyDown={this.onKeyDown}
 				onKeyUp={this.onKeyUp}

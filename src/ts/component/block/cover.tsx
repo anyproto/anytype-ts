@@ -68,7 +68,7 @@ class BlockCover extends React.Component<Props, State> {
 	render () {
 		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
-		const { rootId, readOnly } = this.props;
+		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -144,7 +144,7 @@ class BlockCover extends React.Component<Props, State> {
 				) : (
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
-				{!readOnly ? (
+				{!readonly ? (
 					<div id="elements" className="elements">
 						{elements}
 					</div>

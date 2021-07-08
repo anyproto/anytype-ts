@@ -225,7 +225,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: false,
+				readonly: false,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

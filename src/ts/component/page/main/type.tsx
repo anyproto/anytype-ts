@@ -145,7 +145,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="side right">
 							<Button id="button-create" text="Create" onClick={this.onCreate} />
@@ -416,7 +416,7 @@ class PageMainType extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: !allowed,
+				readonly: !allowed,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

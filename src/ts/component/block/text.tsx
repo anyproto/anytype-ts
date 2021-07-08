@@ -65,7 +65,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -73,7 +73,7 @@ class BlockText extends React.Component<Props, {}> {
 		let marker: any = null;
 		let placeholder = Constant.placeholder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadonly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
 		let additional = null;
 
 		for (let mark of marks) {
@@ -133,7 +133,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		let editor = null;
-		if (readOnly) {
+		if (readonly) {
 			editor = (
 				<div id="value" className={cv.join(' ')} />
 			);
@@ -142,7 +142,7 @@ class BlockText extends React.Component<Props, {}> {
 				<div
 					id="value"
 					className={cv.join(' ')}
-					contentEditable={!readOnly}
+					contentEditable={!readonly}
 					suppressContentEditableWarning={true}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
@@ -859,11 +859,11 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onCheckbox (e: any) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { checked } = content;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 		
@@ -874,11 +874,11 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onLang (v: string) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const l = String(content.text || '').length;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 		

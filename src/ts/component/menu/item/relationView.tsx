@@ -9,7 +9,7 @@ interface Props extends I.Relation {
 	block: I.Block;
 	isFeatured: boolean;
 	classNameWrap?: string;
-	readOnly?: boolean;
+	readonly?: boolean;
 	canEdit?: boolean;
 	canFav?: boolean;
 	onEdit(e: any, relationKey: string): void;
@@ -26,7 +26,7 @@ const PREFIX = 'menuBlockRelationView';
 class MenuItemRelationView extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, relationKey, canEdit, canFav, readOnly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, relationKey, canEdit, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
@@ -50,12 +50,12 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onEdit(e, relationKey); }}
 				>
-					{!canEdit || readOnly ? <Icon className="lock" /> : ''}
+					{!canEdit || readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
 				<div
 					id={id} 
-					className={[ 'cell', DataUtil.relationClass(format), (!readOnly ? 'canEdit' : '') ].join(' ')} 
+					className={[ 'cell', DataUtil.relationClass(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
 				>
 					<Cell 
@@ -72,7 +72,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						menuClassNameWrap={classNameWrap}
 						scrollContainer={Util.getScrollContainer('menuBlockRelationView')}
 						pageContainer={Util.getPageContainer('menuBlockRelationView')}
-						readOnly={readOnly}
+						readonly={readonly}
 						onCellChange={onCellChange}
 						optionCommand={optionCommand}
 					/>

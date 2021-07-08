@@ -60,7 +60,7 @@ class Column extends React.Component<Props, {}> {
 						relationKey={groupId} 
 						viewType={I.ViewType.Board}
 						getRecord={() => { return head; }}
-						readOnly={true} 
+						readonly={true} 
 					/>
 				</div>
 			);

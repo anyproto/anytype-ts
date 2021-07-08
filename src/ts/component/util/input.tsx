@@ -13,7 +13,7 @@ interface Props {
 	maxLength?: number;
 	className?: string;
 	multiple?: boolean;
-	readOnly?: boolean;
+	readonly?: boolean;
 	accept?: string;
 	maskOptions?: any;
 	onChange?(e: any, value: string): void;
@@ -61,14 +61,14 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, name, placeholder, className, autoComplete, readOnly, maxLength, multiple, accept, onClick } = this.props;
+		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick } = this.props;
 		
 		let type: string = this.state.type || this.props.type;
 		let cn = [ 'input', 'input-' + type ];
 		if (className) {
 			cn.push(className);
 		};
-		if (readOnly) {
+		if (readonly) {
 			cn.push('isReadonly');
 		};
 		
@@ -81,7 +81,7 @@ class Input extends React.Component<Props, State> {
 				value={this.state.value}
 				className={cn.join(' ')}
 				autoComplete={autoComplete ? autoComplete : name}
-				readOnly={readOnly}
+				readonly={readonly}
 				onChange={this.onChange}
 				onKeyUp={this.onKeyUp}
 				onKeyDown={this.onKeyDown}

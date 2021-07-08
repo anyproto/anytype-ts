@@ -9,7 +9,7 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
-	readOnly: boolean;
+	readonly: boolean;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onMenuAdd? (id: string, text: string, range: I.TextRange): void;
@@ -36,7 +36,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 	}
 
 	render (): any {
-		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readOnly } = this.props;
+		const { rootId, onKeyDown, onKeyUp, onMenuAdd, onPaste, readonly } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const { config } = commonStore;
 
@@ -91,7 +91,7 @@ class EditorHeaderPage extends React.Component<Props, {}> {
 				<Block 
 					key={header.id} 
 					{...this.props}
-					readOnly={readOnly}
+					readonly={readonly}
 					index={0}
 					block={header}
 					onKeyDown={onKeyDown}
