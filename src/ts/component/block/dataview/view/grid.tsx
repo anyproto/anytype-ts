@@ -274,7 +274,8 @@ class ViewGrid extends React.Component<Props, {}> {
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Center,
+			offsetY: 10,
 			data: {
 				readonly: readonly,
 				getData: getData,
