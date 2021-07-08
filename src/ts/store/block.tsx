@@ -274,7 +274,10 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$(`#marker-${item.id}`).text(`${n}.`);
+						if (item.number !== n) {
+							item.number = n;
+							$(`#marker-${item.id}`).text(`${n}.`);
+						};
 					} else {
 						n = 0;
 					};
