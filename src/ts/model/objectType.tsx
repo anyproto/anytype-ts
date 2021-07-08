@@ -9,6 +9,7 @@ class ObjectType implements I.ObjectType {
 	layout: I.ObjectLayout = I.ObjectLayout.Page;
 	iconEmoji: string = '';
 	isHidden: boolean = false;
+	isReadonly: boolean = false;
 	relations: I.Relation[] = [];
 	types: I.SmartBlockType[] = [];
 
@@ -21,6 +22,7 @@ class ObjectType implements I.ObjectType {
 		self.iconEmoji = String(props.iconEmoji || '');
 		self.layout = props.layout || I.ObjectLayout.Page;
 		self.isHidden = Boolean(props.isHidden);
+		self.isReadonly = Boolean(props.isReadonly);
 		self.relations = (props.relations || []).map((it: any) => { return new M.Relation(it); });
 		self.types = props.types || [];
 

@@ -77,7 +77,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 
 		if (readOnly) {
-			cn.push('isReadOnly');
+			cn.push('isReadonly');
 		};
 		
 		if (isIcon) {

@@ -358,6 +358,10 @@ class PageMainIndex extends React.Component<Props, State> {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
+		if (object.isReadonly) {
+			archive = null;
+		};
+
 		if ([ Tab.Favorite ].indexOf(tab) < 0) {
 			move = null;
 		};

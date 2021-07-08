@@ -84,7 +84,7 @@ class Block extends React.Component<Props, {}> {
 			cn.push('isUnwrapped');
 		};
 		if (readOnly) {
-			cn.push('isReadOnly');
+			cn.push('isReadonly');
 		};
 
 		if (bgColor) {

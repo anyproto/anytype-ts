@@ -33,7 +33,7 @@ class BlockRelation extends React.Component<Props, {}> {
 		const relation = dbStore.getRelation(rootId, rootId, key);
 		const idPrefix = 'blockRelationCell' + block.id;
 		const id = DataUtil.cellId(idPrefix, key, '0');
-		const allowedRelation = !readOnly && (!relation || (relation && !relation.isReadOnly));
+		const allowedRelation = !readOnly && (!relation || (relation && !relation.isReadonly));
 		const allowedValue = allowedRelation && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (

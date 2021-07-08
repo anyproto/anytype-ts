@@ -73,7 +73,7 @@ class BlockText extends React.Component<Props, {}> {
 		let marker: any = null;
 		let placeholder = Constant.placeholder.default;
 		let ct = color ? 'textColor textColor-' + color : '';
-		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadOnly' : '') ];
+		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readOnly ? 'isReadonly' : '') ];
 		let additional = null;
 
 		for (let mark of marks) {

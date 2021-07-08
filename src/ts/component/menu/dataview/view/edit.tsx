@@ -42,7 +42,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
-							className={readOnly ? 'isReadOnly' : ''}
+							className={readOnly ? 'isReadonly' : ''}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>

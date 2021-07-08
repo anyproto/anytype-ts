@@ -282,9 +282,15 @@ class MenuSearchObject extends React.Component<Props, State> {
 			}));
 			this.items = this.items.filter(filterMapper);
 
-			if (dataMapper) {
-				this.items = this.items.map(dataMapper);
-			};
+			this.items = this.items.map((it: any) => {
+				it.isReadonly = Boolean(it.isReadonly);
+				delete(it.isReadonly);
+
+				if (dataMapper) {
+					it = dataMapper(it);
+				};
+				return it;
+			});
 
 			this.setState({ loading: false });
 		});

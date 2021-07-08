@@ -50,7 +50,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 				cn.push('isHidden');
 			};
 			if (!canEdit) {
-				cn.push('isReadOnly');
+				cn.push('isReadonly');
 			};
 
 			return (

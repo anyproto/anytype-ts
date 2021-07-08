@@ -112,7 +112,7 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
-		if (!relation || readOnly || relation.isReadOnly) {
+		if (!relation || readOnly || relation.isReadonly) {
 			return;
 		};
 
@@ -347,7 +347,7 @@ class Cell extends React.Component<Props, {}> {
 		const { readOnly, viewType } = this.props;
 		const relation = this.getRelation();
 
-		if (!relation || readOnly || relation.isReadOnly) {
+		if (!relation || readOnly || relation.isReadonly) {
 			return false;
 		};
 		if (relation.format == I.RelationType.Checkbox) {
