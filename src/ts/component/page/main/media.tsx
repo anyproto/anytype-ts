@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject } from 'ts/component';
-import { I, M, C, Util, crumbs, Action } from 'ts/lib';
+import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -81,7 +81,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 					<div className="side right">
 						<div className="head">
-							<div className="title">{object.name}</div>
+							<div className="title">{DataUtil.fileName(object)}</div>
 							<div className="descr">{object.description}</div>
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />

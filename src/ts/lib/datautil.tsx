@@ -1166,6 +1166,10 @@ class DataUtil {
 		return translate(Util.toCamelCase('defaultName-' + key));
 	};
 
+	fileName (object: any) {
+		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
+	};
+
 };
 
 export default new DataUtil();
