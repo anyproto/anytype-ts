@@ -616,8 +616,7 @@ class Dispatcher {
 	};
 
 	setNumbers (rootId: string) {
-		window.clearTimeout(this.timeoutNumbers);
-		this.timeoutNumbers = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 50);
+		window.setTimeout(() => { blockStore.setNumbers(rootId); }, 50);
 	};
 
 	sort (c1: any, c2: any) {
