@@ -206,13 +206,13 @@ class DbStore {
 	};
 
 	@action
-	recordAdd (rootId: string, blockId: string, obj: any) {
+	recordAdd (rootId: string, blockId: string, obj: any, dir: number) {
 		const data = this.getData(rootId, blockId);
 		obj = observable(obj);
 
 		intercept(obj as any, (change: any) => { return Util.intercept(self, change); });
 
-		data.push(obj);
+		dir > 0 ? data.push(obj) : data.unshift(obj);
 	};
 
 	@action

@@ -115,7 +115,7 @@ class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowed ? <Icon className="plus" tooltip="New object" onClick={onRowAdd} /> : ''}
+						{!readonly && allowed ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 			</div>

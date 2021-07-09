@@ -75,6 +75,7 @@ export interface Block {
 	fields: any;
 	align?: BlockAlign;
 	bgColor?: string;
+	number?: number;
 	content: any;
 	childrenIds: string[];
 	

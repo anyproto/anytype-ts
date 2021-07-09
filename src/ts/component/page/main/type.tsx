@@ -309,7 +309,7 @@ class PageMainType extends React.Component<Props, State> {
 			if (!message.error.code) {
 				focus.clear(true);
 
-				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
+				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 				DataUtil.objectOpenPopup(message.record);
 			};
 		});

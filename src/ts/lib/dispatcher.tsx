@@ -23,7 +23,8 @@ class Dispatcher {
 
 	service: any = null;
 	stream: any = null;
-	timeout: number = 0;
+	timeoutStream: number = 0;
+	timeoutNumbers: number = 0;
 
 	constructor () {
 		/// #if USE_ADDON
@@ -69,8 +70,8 @@ class Dispatcher {
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
 
-			window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(() => { this.listenEvents(); }, 1000);
+			window.clearTimeout(this.timeoutStream);
+			this.timeoutStream = window.setTimeout(() => { this.listenEvents(); }, 1000);
 		});
 	};
 
@@ -462,7 +463,7 @@ class Dispatcher {
 					data.records = data.getRecordsList() || [];
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordAdd(rootId, block.id, item);
+						dbStore.recordAdd(rootId, block.id, item, 1);
 					};
 					break;
 
@@ -610,8 +611,13 @@ class Dispatcher {
 					break;
 			};
 		};
+		
+		this.setNumbers(rootId);
+	};
 
-		blockStore.setNumbers(rootId);
+	setNumbers (rootId: string) {
+		window.clearTimeout(this.timeoutNumbers);
+		this.timeoutNumbers = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 50);
 	};
 
 	sort (c1: any, c2: any) {
