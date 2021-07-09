@@ -3,7 +3,9 @@
 		size: A4;
 		margin: 0px 0px 2cm 0px;
 	}
-	
+
+	body { -webkit-print-color-adjust: exact; }
+
 	.header { display: none; }
 	.footer { display: none; }
 	
