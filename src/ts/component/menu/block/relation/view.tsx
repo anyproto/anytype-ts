@@ -46,19 +46,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
 						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
-
-						item.isFeatured = section.id == 'featured';
-
-						let canEdit = allowedRelation;
-						let canFav = allowedValue;
-
-						if (item.isReadonlyRelation) {
-							canEdit = false;
-						};
-						if ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) >= 0) {
-							canFav = false;
-						};
-
 						return (
 							<Item 
 								key={id} 
@@ -69,8 +56,9 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
 								readonly={!allowedValue && !item.isReadonlyValue}
-								canEdit={canEdit}
-								canFav={canFav}
+								canEdit={allowedRelation && !item.isReadonlyRelation}
+								canFav={allowedValue && [ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) < 0}
+								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}

@@ -20,7 +20,6 @@ interface Props extends I.Relation {
 	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void): void;
 };
 
-const Constant = require('json/constant.json');
 const PREFIX = 'menuBlockRelationView';
 
 class MenuItemRelationView extends React.Component<Props, {}> {
