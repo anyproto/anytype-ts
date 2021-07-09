@@ -264,31 +264,39 @@ class BlockStore {
 	setNumbers (rootId: string) {
 		const root = this.wrapTree(rootId);
 		if (!root) {
+			console.log('[setNumbers] no root');
 			return;
 		};
 
-		const cb = (n: number, list: any[]) => {
-			list = list || [];
+		const list = this.unwrapTree([ root ]);
 
-			for (let item of list) {
-				if (!item.isLayout()) {
-					if (item.isTextNumbered()) {
-						n++;
-						if (item.number !== n) {
-							item.number = n;
-							$(`#marker-${item.id}`).text(`${n}.`);
-						};
-					} else {
-						n = 0;
-						item.number = 0;
-					};
+		let n = 0;
+		for (let i = 0; i < list.length; ++i) {
+			const item = list[i];
+			const next = list[(i + 1)];
+			const element = this.getMapElement(rootId, item.id);
+			const parent = this.getMapElement(rootId, element.parentId);
+
+			if (item.isTextNumbered()) {
+				n++;
+				if (item.number != n) {
+					item.number = n;
+					$(`#marker-${item.id}`).text(`${n}.`);
 				};
+			};
 
-				cb(item.isLayoutDiv() ? n : 0, item.childBlocks);
+			if (item.isLayout() && !item.isLayoutDiv()) {
+				n = 0;
+			};
+
+			if (next && !next.isTextNumbered() && !next.isLayoutDiv()) {
+				n = 0;
+			};
+
+			if (parent && (item.id == parent.childrenIds[parent.childrenIds.length - 1]) && !item.isLayoutDiv() && next && !next.isLayoutDiv()) {
+				n = 0;
 			};
 		};
-
-		cb(0, root.childBlocks);
 	};
 
 	getStructure (list: I.Block[]) {
