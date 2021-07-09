@@ -353,7 +353,7 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (object.isArchived) {
 			link = null;
-			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
+			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
