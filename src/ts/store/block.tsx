@@ -2,6 +2,7 @@ import { observable, action, computed, set, intercept, toJS } from 'mobx';
 import { I, M, Util, Storage } from 'ts/lib';
 
 const $ = require('jquery');
+const raf = require('raf');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -262,6 +263,10 @@ class BlockStore {
 	};
 
 	setNumbers (rootId: string) {
+		if (!rootId) {
+			return;
+		};
+
 		const root = this.wrapTree(rootId);
 		if (!root) {
 			console.log('[setNumbers] no root');
