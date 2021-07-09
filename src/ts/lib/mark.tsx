@@ -316,6 +316,11 @@ class Mark {
 			item.html(item.find('name').html());
 		});
 
+		obj.find('font').removeAttr('face').each((i: number, item: any) => {
+			item = $(item);
+			item.html(item.find('span').html());
+		})
+
 		obj.find('emoji').removeAttr('class').html(' ');
 		return obj;
 	};
@@ -333,11 +338,11 @@ class Mark {
 		let marks: any[] = [];
 
 		// Fix browser markup bug
-		html.replace(/<\/?(i|b)>/g, (s: string, p: string) => {
+		html.replace(/<\/?(i|b|font)>/g, (s: string, p: string) => {
 			let r = '';
 			if (p == 'i') r = 'italic';
 			if (p == 'b') r = 'bold';
-			p = s.replace(p, r);
+			p = r ? s.replace(p, r) : '';
 			text = text.replace(s, p);
 			return '';
 		});
