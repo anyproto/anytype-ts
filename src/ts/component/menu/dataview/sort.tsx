@@ -30,6 +30,11 @@ class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+		
+		if (!view) {
+			return null;
+		};
+
 		const sortCnt = view.sorts.length;
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
