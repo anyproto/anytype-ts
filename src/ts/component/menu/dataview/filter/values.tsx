@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, DataUtil, Util, translate } from 'ts/lib';
 import { Select, Tag, Icon, IconObject, Input } from 'ts/component';
-import { commonStore, menuStore, dbStore, detailStore } from 'ts/store';
+import { menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -431,18 +431,13 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 	};
 
 	getRelationOptions () {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
+		const relations = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			if (!relation || (!config.debug.ho && relation.isHidden) || (relation.format == I.RelationType.File)) {
-				return false;
-			};
-			return true;
+			return relation && (relation.format != I.RelationType.File);
 		});
 
 		let options: any[] = relations.map((it: I.ViewRelation) => {

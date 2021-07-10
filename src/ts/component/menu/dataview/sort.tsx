@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -108,10 +108,9 @@ class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
+		const relations = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
+			return relation && (relation.format != I.RelationType.File);
 		});
 
 		const options: any[] = relations.map((it: I.ViewRelation) => {

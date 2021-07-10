@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, IconObject, Tag } from 'ts/component';
-import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'ts/store';
+import { Icon, IconObject, Tag } from 'ts/component';
+import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -330,18 +330,13 @@ class MenuFilterList extends React.Component<Props, {}> {
 	};
 
 	getRelationOptions () {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
+		const relations = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			if (!relation || (!config.debug.ho && relation.isHidden) || (relation.format == I.RelationType.File)) {
-				return false;
-			};
-			return true;
+			return relation && (relation.format != I.RelationType.File);
 		});
 
 		let options: any[] = relations.map((it: I.ViewRelation) => {
