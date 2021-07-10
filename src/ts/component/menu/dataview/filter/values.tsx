@@ -434,24 +434,8 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
-		const view = getView();
-		const relations = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && (relation.format != I.RelationType.File);
-		});
 
-		let options: any[] = relations.map((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: relation.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-				name: relation.name, 
-				isHidden: relation.isHidden,
-				format: relation.format,
-			};
-		});
-
-		return options;
+		return DataUtil.getRelationOptions(rootId, blockId, getView());
 	};
 
 	checkClear (v: any) {

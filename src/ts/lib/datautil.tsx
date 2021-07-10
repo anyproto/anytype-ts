@@ -958,6 +958,25 @@ class DataUtil {
 		});
 	};
 
+	getRelationOptions (rootId: string, blockId: string, view: I.View) {
+		const relations = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation && (relation.format != I.RelationType.File);
+		});
+
+		return relations.map((it: I.ViewRelation) => {
+			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				icon: 'relation ' + this.relationClass(relation.format),
+				name: relation.name, 
+				isHidden: relation.isHidden,
+				format: relation.format,
+				maxCount: relation.maxCount,
+			};
+		});
+	};
+
 	relationWidth (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
 		return Number(width || size['format' + format]) || size.default;
@@ -1104,7 +1123,7 @@ class DataUtil {
 		return 0;
 	};
 
-	formatRelationValue (relation: I.Relation, value: any, maxCount: boolean) {
+	formatRelationValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
 				value = String(value || '');

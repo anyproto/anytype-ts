@@ -107,21 +107,8 @@ class MenuSort extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
-		const view = getView();
-		const relations = DataUtil.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && (relation.format != I.RelationType.File);
-		});
 
-		const options: any[] = relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: relation.relationKey, 
-				name: relation.name, 
-			};
-		});
-
-		return options;
+		return DataUtil.getRelationOptions(rootId, blockId, getView());
 	};
 
 	onAdd (e: any) {
