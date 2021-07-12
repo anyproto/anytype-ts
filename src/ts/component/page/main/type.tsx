@@ -196,27 +196,24 @@ class PageMainType extends React.Component<Props, State> {
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
-					{allowedDetails ? (
-						<div className="section layout">
-							<div className="title">Recommended layout</div>
-							<div className="content">
+					<div className="section layout">
+						<div className="title">Recommended layout</div>
+						<div className="content">
+							{allowedDetails ? (
 								<Select 
 									id="recommendedLayout" 
 									value={object.recommendedLayout} 
 									options={DataUtil.menuTurnLayouts()} 
 									arrowClassName="light" onChange={this.onLayout} 
 								/>
-							</div>
+							) : (
+								<React.Fragment>
+									<Icon className={layout.icon} />
+									<div className="name">{layout.name}</div>
+								</React.Fragment>
+							)}
 						</div>
-					) : (
-						<div className="section layout">
-							<div className="title">Layout</div>
-							<div className="content">
-								<Icon className={layout.icon} />
-								<div className="name">{layout.name}</div>
-							</div>
-						</div>
-					)}
+					</div>
 
 					<div className="section relation">
 						<div className="title">{relations.length} relations</div>
