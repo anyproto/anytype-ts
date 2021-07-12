@@ -280,41 +280,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 		this.save();
 	};
 
-	onChange (id: number, k: string, v: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
-
-		let item = view.getFilter(id);
-		if (!item) {
-			return;
-		};
-
-		item = Util.objectCopy(item);
-		item[k] = v;
-
-		// Remove value when we change relation, filter non unique entries
-		if (k == 'relationKey') {
-			const relation = dbStore.getRelation(rootId, blockId, v);
-			const conditions = DataUtil.filterConditionsByType(relation.format);
-
-			item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-			item.value = DataUtil.formatRelationValue(relation, null, false);
-
-			view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-				return (i == id) || 
-				(it.relationKey != v) || 
-				((it.relationKey == v) && (it.condition != item.condition)); 
-			});
-		};
-
-		view.setFilter(id, item);
-
-		this.save();
-		this.forceUpdate();
-	};
-
 	save () {
 		const { param } = this.props;
 		const { data } = param;

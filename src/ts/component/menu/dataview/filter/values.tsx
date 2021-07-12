@@ -24,6 +24,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onFocusText = this.onFocusText.bind(this);
 		this.onFocusDate = this.onFocusDate.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onObject = this.onObject.bind(this);
@@ -162,6 +163,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 							ref={(ref: any) => { this.refValue = ref; }} 
 							value={item.value} 
 							placeholder={translate('commonValue')} 
+							onFocus={this.onFocusText}
 							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
 							onSelect={(e: any) => { this.onSelect(e); }}
 						/>
@@ -312,6 +314,21 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			item = Util.objectCopy(item);
 			item[k] = v;
 
+			// Remove value when we change relation, filter non unique entries
+			if (k == 'relationKey') {
+				const relation = dbStore.getRelation(rootId, blockId, v);
+				const conditions = DataUtil.filterConditionsByType(relation.format);
+
+				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
+				item.value = DataUtil.formatRelationValue(relation, null, false);
+
+				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
+					return (i == v) || 
+					(it.relationKey != v) || 
+					((it.relationKey == v) && (it.condition != item.condition)); 
+				});
+			};
+
 			if (k == 'value') {
 				item[k] = DataUtil.formatRelationValue(relation, item[k], false);
 			};
@@ -373,18 +390,24 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		this.onCalendar(value);
 	};
 
+	onFocusText () {
+		menuStore.close('select');
+	};
+
 	onFocusDate (e: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 		const value = item.value || Util.time();
-		
-		if (menuStore.isOpen('dataviewCalendar')) {
-			menuStore.updateData('dataviewCalendar', { value: value });
-		} else {
-			this.onCalendar(value);
-		};
+
+		menuStore.closeAll([ 'select' ], () => {
+			if (menuStore.isOpen('dataviewCalendar')) {
+				menuStore.updateData('dataviewCalendar', { value: value });
+			} else {
+				this.onCalendar(value);
+			};
+		});
 	};
 
 	onSelect (e: any) {
@@ -419,7 +442,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const item = getView().getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList' ], () => {
+		menuStore.closeAll([ 'dataviewOptionValues', 'dataviewOptionList', 'select' ], () => {
 			menuStore.open('dataviewOptionList', { 
 				element: `#${getId()} #value`,
 				className: 'fromFilter',
@@ -448,7 +471,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const { rootId, blockId } = data;
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
-		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList' ], () => {
+		menuStore.closeAll([ 'dataviewObjectValues', 'dataviewObjectList', 'select' ], () => {
 			menuStore.open('dataviewObjectList', { 
 				element: `#${getId()} #value`,
 				className: 'fromFilter',
