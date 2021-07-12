@@ -74,7 +74,7 @@ class PageMainType extends React.Component<Props, State> {
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
-		const layout = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; });
+		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
