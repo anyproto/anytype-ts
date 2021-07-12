@@ -804,7 +804,7 @@ class DataUtil {
 			{ id: I.ObjectLayout.ObjectType, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
 		].map((it: any) => {
-			it.icon = 'layout-' + it.icon;
+			it.icon = 'layout c-' + it.icon;
 			it.name = translate('layout' + it.id);
 			return it;
 		});

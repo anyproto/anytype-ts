@@ -13,8 +13,8 @@
 		.head { display: flex; margin-bottom: 35px; position: relative; }
 		.head {
 			.side.left { flex-shrink: 0; margin-right: 32px; }
-			.side.center { width: 100%; }
-			.side.right { flex-shrink: 0; text-align: right; position: absolute; right: 0px; top: 0px; z-index: 1; }
+			.side.center { width: 100%; margin-right: 32px; }
+			.side.right { flex-shrink: 0; text-align: right; line-height: 105px; }
 			.side.right {
 				.button { height: 36px; line-height: 34px; white-space: nowrap; margin-right: 10px; }
 				.button:last-child { margin: 0px; }
@@ -74,6 +74,15 @@
 			.item.add {
 				.name { color: $colorDarkGrey; }
 			}
+		}
+
+		.section.layout {
+			.content { line-height: 20px; color: $colorDarkGrey; }
+			.select { border: 0px; padding: 0px 20px 0px 0px; }
+			.select:hover { background: none; }
+
+			.icon { width: 20px; height: 20px; margin-right: 6px; }
+			.name { display: inline-block; vertical-align: middle; }
 		}
 
 		table { width: 100%; border-collapse: collapse; border-bottom: 1px solid #eae9e0; table-layout: fixed; border-top: 1px solid #eae9e0; }
