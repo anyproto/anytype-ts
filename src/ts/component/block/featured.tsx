@@ -193,7 +193,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 		if (readonly || !allowed) {
 			const object = detailStore.get(rootId, rootId, []);
-			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
+			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.Type });
 			return;
 		};
 

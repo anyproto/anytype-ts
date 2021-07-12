@@ -171,7 +171,7 @@ class Controls extends React.Component<Props, State> {
 	onView (e: any, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId, block, getView } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
@@ -182,6 +182,7 @@ class Controls extends React.Component<Props, State> {
 				blockId: block.id,
 				readonly: !allowed,
 				view: item,
+				getView: getView,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});

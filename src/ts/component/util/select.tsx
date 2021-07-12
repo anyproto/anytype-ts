@@ -8,6 +8,7 @@ interface Props {
 	initial?: string;
 	className?: string;
 	arrowClassName?: string;
+	element?: string;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	menuWidth?: number;
@@ -105,11 +106,11 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	show () {
-		const { id, horizontal, menuClassName, menuClassNameWrap, onChange, menuWidth } = this.props;
+		const { id, horizontal, element, menuClassName, menuClassNameWrap, onChange, menuWidth } = this.props;
 		const { value, options } = this.state;
 		
 		menuStore.open('select', { 
-			element: '#select-' + id,
+			element: element || '#select-' + id,
 			horizontal: horizontal,
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,

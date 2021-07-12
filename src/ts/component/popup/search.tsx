@@ -386,7 +386,7 @@ class PopupSearch extends React.Component<Props, State> {
 		
 		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		if (!config.allowDataview) {
-			skipLayouts = skipLayouts.concat(I.ObjectLayout.Human, I.ObjectLayout.Set, I.ObjectLayout.ObjectType, I.ObjectLayout.Relation);
+			skipLayouts = skipLayouts.concat(I.ObjectLayout.Human, I.ObjectLayout.Set, I.ObjectLayout.Type, I.ObjectLayout.Relation);
 		};
 
 		const filters: any[] = [

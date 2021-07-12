@@ -59,7 +59,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 
 						if (action.isObject) {
-							action.object = { ...action, layout: I.ObjectLayout.ObjectType };
+							action.object = { ...action, layout: I.ObjectLayout.Type };
 						};
 
 						return <MenuItemVertical 
@@ -95,15 +95,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { getId } = this.props;
-		const menu = $('#' + getId());
+		const menu = $(`#${getId()}`);
 		
 		this._isMounted = true;
 		this.rebind();
 		this.focus();
 
-		menu.unbind('mouseleave').on('mouseleave', () => {
-			menuStore.clearTimeout();
-		});
+		menu.unbind('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
 
 	componentDidUpdate () {

@@ -40,7 +40,7 @@ class BlockType extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			return (
 				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} onMouseLeave={this.onOut}>
-					<IconObject size={48} iconSize={32} object={{ ...item, layout: I.ObjectLayout.ObjectType }} />
+					<IconObject size={48} iconSize={32} object={{ ...item, layout: I.ObjectLayout.Type }} />
 					<div className="info">
 						<div className="txt">
 							<div className="name">{item.name}</div>

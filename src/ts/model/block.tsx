@@ -145,7 +145,7 @@ class Block implements I.Block {
 	};
 
 	isObjectType (): boolean { 
-		return this.isPage() && (this.layout == I.ObjectLayout.ObjectType);
+		return this.isPage() && (this.layout == I.ObjectLayout.Type);
 	};
 
 	isObjectRelation (): boolean { 

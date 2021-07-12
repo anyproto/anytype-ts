@@ -177,6 +177,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		};
 		if (!config.allowDataview) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Page });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
 		};
 
 		this.setState({ loading: true });

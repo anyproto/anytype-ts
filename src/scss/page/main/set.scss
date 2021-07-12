@@ -17,7 +17,8 @@
 		.head { width: 696px; margin: 0px auto 40px auto; display: flex; }
 		.head {
 			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
-			.side.right { width: calc(100% - 128px); }
+			.side.right { width: calc(100% - 128px); line-height: 96px; }
+			.side.right.big { line-height: 112px; }
 
 			.title { @include text-header1; }
 			.descr { @include text-paragraph; margin: 7px 0px; }

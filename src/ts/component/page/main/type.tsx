@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject, Select } from 'ts/component';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, translate } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -54,6 +54,7 @@ class PageMainType extends React.Component<Props, State> {
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 	};
 
 	render () {
@@ -64,7 +65,7 @@ class PageMainType extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('type'),
@@ -73,6 +74,7 @@ class PageMainType extends React.Component<Props, State> {
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -192,6 +194,25 @@ class PageMainType extends React.Component<Props, State> {
 					<div className="section note dn">
 						<div className="title">Notes</div>
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
+					</div>
+
+					<div className="section layout">
+						<div className="title">Recommended layout</div>
+						<div className="content">
+							{allowedDetails ? (
+								<Select 
+									id="recommendedLayout" 
+									value={object.recommendedLayout} 
+									options={DataUtil.menuTurnLayouts()} 
+									arrowClassName="light" onChange={this.onLayout} 
+								/>
+							) : (
+								<React.Fragment>
+									<Icon className={layout.icon} />
+									<div className="name">{layout.name}</div>
+								</React.Fragment>
+							)}
+						</div>
 					</div>
 
 					<div className="section relation">
@@ -430,6 +451,13 @@ class PageMainType extends React.Component<Props, State> {
 				},
 			}
 		});
+	};
+
+	onLayout (layout: string) {
+		const rootId = this.getRootId();
+
+		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
+		C.BlockSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
 	};
 
 	onFocus (e: any, item: any) {

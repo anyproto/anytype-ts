@@ -91,13 +91,15 @@ class PageMainSet extends React.Component<Props, {}> {
 				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
+							<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
-						<div className="side right">
-							<Editor className="title" id="name" />
-							<Editor className="descr" id="description" />
+						<div className={[ 'side', 'right', (object.iconImage ? 'big' : '') ].join(' ')}>
+							<div className="txt">
+								<Editor className="title" id="name" />
+								<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+							</div>
 						</div>
 					</div>
 					
