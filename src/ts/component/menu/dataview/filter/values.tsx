@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util, translate } from 'ts/lib';
-import { Select, Tag, Icon, IconObject, Input } from 'ts/component';
+import { I, DataUtil, Util, translate, keyboard } from 'ts/lib';
+import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'ts/component';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
@@ -17,7 +17,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	timeoutChange: number = 0;
-	ref: any = null;
+	refValue: any = null;
 	range: any = null;
 
 	constructor (props: any) {
@@ -29,10 +29,11 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		this.onObject = this.onObject.bind(this);
 		this.onTag = this.onTag.bind(this);
 		this.onClear = this.onClear.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
@@ -43,6 +44,8 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			{ id: '1', name: 'Checked' },
 			{ id: '0', name: 'Unchecked' },
 		];
+		const relationOption: any = relationOptions.find((it: any) => { return it.id == item.relationKey; }) || {};
+		const conditionOption: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
 
 		let value = null;
 		let Item = null;
@@ -139,7 +142,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				value = (
 					<div className="item">
 						<Input 
-							ref={(ref: any) => { this.ref = ref; }} 
+							ref={(ref: any) => { this.refValue = ref; }} 
 							value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 							placeholder="dd.mm.yyyy hh:mm:ss"
 							maskOptions={{ mask: '99.99.9999 99:99:99' }}
@@ -156,7 +159,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 				value = (
 					<div className="item">
 						<Input 
-							ref={(ref: any) => { this.ref = ref; }} 
+							ref={(ref: any) => { this.refValue = ref; }} 
 							value={item.value} 
 							placeholder={translate('commonValue')} 
 							onKeyUp={(e: any, v: string) => { this.onChange('value', v, true); }} 
@@ -175,27 +178,20 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		return (
 			<div>
 				<div className="section">
-					<div className="item">
-						<Select 
-							id={[ 'filter', 'relation', item.id ].join('-')} 
-							className="relation" 
-							arrowClassName="light"
-							options={relationOptions}
-							value={item.relationKey} 
-							onChange={(v: string) => { this.onChange('relationKey', v); }} 
-						/>
-					</div>
+					<MenuItemVertical 
+						id="relation" 
+						icon={relationOption.icon}
+						name={relationOption.name} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'relation'); }}
+						arrow={true}
+					/>
 
-					<div className="item">
-						<Select
-							id="condition"
-							className="condition grey" 
-							arrowClassName="light"
-							options={conditionOptions} 
-							value={item.condition} 
-							onChange={(v: string) => { this.onChange('condition', v); }} 
-						/>
-					</div>
+					<MenuItemVertical 
+						id="condition" 
+						name={conditionOption.name} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'condition'); }}
+						arrow={true}
+					/>
 				</div>
 
 				{value ? (
@@ -229,17 +225,17 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 		this.init();
 
-		if (relation && this.ref) {
-			if (this.ref.setValue) {
+		if (relation && this.refValue) {
+			if (this.refValue.setValue) {
 				if (relation.format == I.RelationType.Date) {
-					this.ref.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
+					this.refValue.setValue(item.value === null ? '' : Util.date('d.m.Y H:i:s', item.value));
 				} else {
-					this.ref.setValue(item.value);
+					this.refValue.setValue(item.value);
 				};
 			};
 
-			if (this.range && this.ref.setRange) {
-				this.ref.setRange(this.range);
+			if (this.range && this.refValue.setRange) {
+				this.refValue.setRange(this.range);
 			};
 		};
 	};
@@ -251,6 +247,49 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const item = getView().getFilter(itemId);
 
 		this.checkClear(item.value);
+	};
+
+	onMouseEnter (e: any, id: string) {
+		if (keyboard.isMouseDisabled) {
+			return;
+		};
+
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView, itemId } = data;
+		const item = getView().getFilter(itemId);
+		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
+		const relationOptions = this.getRelationOptions();
+		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
+
+		let options = [];
+		let key = '';
+
+		switch (id) {
+			case 'relation':
+				options = relationOptions;
+				key = 'relationKey';
+				break;
+
+			case 'condition':
+				options = conditionOptions;	
+				key = 'condition';
+				break;
+		};
+
+		menuStore.open('select', {
+			element: `#${getId()} #item-${id}`,
+			offsetX: getSize().width,
+			offsetY: -36,
+			isSub: true,
+			data: {
+				value: item[key],
+				options: options,
+				onSelect: (e: any, el: any) => {
+					this.onChange(key, el.id);
+				}
+			}
+		});
 	};
 
 	onChange (k: string, v: any, timeout?: boolean) {
@@ -321,14 +360,14 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		const { data } = param;
 		const { getView, itemId } = data;
 
-		getView().setFilter(itemId, { value: this.ref.getValue() });
+		getView().setFilter(itemId, { value: this.refValue.getValue() });
 		close();
 	};
 
 	onSubmitDate (e: any) {
 		e.preventDefault();
 
-		const value = Util.parseDate(this.ref.getValue());
+		const value = Util.parseDate(this.refValue.getValue());
 		
 		this.onChange('value', value);
 		this.onCalendar(value);
@@ -362,7 +401,7 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 			element: `#${getId()} #value`,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
-				window.setTimeout(() => { this.ref.focus(); }, 200);
+				window.setTimeout(() => { this.refValue.focus(); }, 200);
 			},
 			data: { 
 				value: value, 

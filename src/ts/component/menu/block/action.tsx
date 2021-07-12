@@ -95,15 +95,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { getId } = this.props;
-		const menu = $('#' + getId());
+		const menu = $(`#${getId()}`);
 		
 		this._isMounted = true;
 		this.rebind();
 		this.focus();
 
-		menu.unbind('mouseleave').on('mouseleave', () => {
-			menuStore.clearTimeout();
-		});
+		menu.unbind('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
 
 	componentDidUpdate () {
