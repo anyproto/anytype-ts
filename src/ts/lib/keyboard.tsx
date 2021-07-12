@@ -7,6 +7,8 @@ const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
 
+const TIMEOUT_PIN = 5 * 60 * 1000;
+
 class Keyboard {
 	
 	history: any = null;
@@ -344,7 +346,7 @@ class Keyboard {
 				this.setPinChecked(false);
 				this.history.push('/auth/pin-check');
 			};
-		}, 5 * 60 * 1000);
+		}, TIMEOUT_PIN);
 	};
 
 	setMatch (match: any) {
