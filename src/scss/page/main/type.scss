@@ -77,9 +77,10 @@
 		}
 
 		.section.layout {
+			.title { margin-bottom: 10px; }
 			.content { line-height: 20px; color: $colorDarkGrey; }
-			.select { border: 0px; padding: 0px 20px 0px 0px; }
-			.select:hover { background: none; }
+			.select { border: 0px; padding: 3px 20px 3px 0px; }
+			.select:hover, .select.active { background: none; }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; }
 			.name { display: inline-block; vertical-align: middle; }
