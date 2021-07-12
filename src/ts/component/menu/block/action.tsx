@@ -59,7 +59,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 
 						if (action.isObject) {
-							action.object = { ...action, layout: I.ObjectLayout.ObjectType };
+							action.object = { ...action, layout: I.ObjectLayout.Type };
 						};
 
 						return <MenuItemVertical 

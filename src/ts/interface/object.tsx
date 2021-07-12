@@ -29,7 +29,7 @@ export enum ObjectLayout {
 	Human		 = 1,
 	Task		 = 2,
 	Set			 = 3,
-	ObjectType	 = 4,
+	Type		 = 4,
 	Relation	 = 5,
 	File		 = 6,
 	Dashboard	 = 7,

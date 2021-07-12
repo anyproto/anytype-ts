@@ -176,7 +176,7 @@ class DataUtil {
 			case I.ObjectLayout.Page:		 c = 'isPage'; break;
 			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
 			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.ObjectType:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Type:	 c = 'isObjectType'; break;
 			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
@@ -448,7 +448,7 @@ class DataUtil {
 				this.history.push('/main/set/' + object.id);
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				this.history.push('/main/type/' + object.id);
 				break;
 
@@ -481,7 +481,7 @@ class DataUtil {
 				action = 'set';
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				action = 'type';
 				break;
 
@@ -801,7 +801,7 @@ class DataUtil {
 			{ id: I.ObjectLayout.Set, icon: 'set' },
 			{ id: I.ObjectLayout.File, icon: 'file' },
 			{ id: I.ObjectLayout.Image, icon: 'image' },
-			{ id: I.ObjectLayout.ObjectType, icon: 'type' },
+			{ id: I.ObjectLayout.Type, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
 		].map((it: any) => {
 			it.icon = 'layout c-' + it.icon;
@@ -1072,7 +1072,7 @@ class DataUtil {
 				ret.withIcon = true;
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				ret.withIcon = true;
 				break;
 
