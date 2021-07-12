@@ -93,6 +93,7 @@
 				right: 14px; bottom: 10px; opacity: 0; z-index: 2; transition: none;
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
+			.icon.more.hover { background-image: url('~img/icon/index/more1.svg'); opacity: 1; }
 		}
 		.item.withIcon {
 			.name { -webkit-line-clamp: 1; }
