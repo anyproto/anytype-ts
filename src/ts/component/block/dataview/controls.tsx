@@ -40,7 +40,8 @@ class Controls extends React.Component<Props, State> {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
 		});
 		const filterCnt = filters.length;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -81,7 +82,7 @@ class Controls extends React.Component<Props, State> {
 					/>
 				))}
 
-				<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
+				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -118,7 +119,7 @@ class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowed ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
+						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 			</div>
@@ -143,7 +144,7 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
+		const allowedRelation = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
 		if (id == 'button-manager') {
@@ -161,7 +162,7 @@ class Controls extends React.Component<Props, State> {
 			offsetY: 10,
 			tabs: tabs,
 			data: {
-				readonly: readonly || !allowed,
+				readonly: readonly || !allowedRelation,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,
