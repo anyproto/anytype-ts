@@ -575,15 +575,6 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
-	pageSetArchived (rootId: string, isArchived: boolean, callBack?: (message: any) => void) {
-		isArchived = Boolean(isArchived);
-
-		const details = [ 
-			{ key: 'isArchived', value: isArchived },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
 		blockStore.update(rootId, { id: rootId, layout: layout });
 
