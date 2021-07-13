@@ -60,7 +60,6 @@ class BlockText extends React.Component<Props, {}> {
 		this.onToggleWrap = this.onToggleWrap.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
@@ -154,7 +153,6 @@ class BlockText extends React.Component<Props, {}> {
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
 					onCompositionStart={this.onCompositionStart}
-					onCompositionUpdate={this.onCompositionUpdate}
 					onCompositionEnd={this.onCompositionEnd}
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				/>
@@ -170,7 +168,7 @@ class BlockText extends React.Component<Props, {}> {
 					{additional}
 				</div>
 				<div className="wrap">
-					<span className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
+					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
 					{editor}
 				</div>
 			</div>
@@ -192,7 +190,10 @@ class BlockText extends React.Component<Props, {}> {
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
-		this.placeholderCheck();
+
+		if (content.text) {
+			this.placeholderHide();
+		};
 	};
 	
 	componentWillUnmount () {
@@ -201,9 +202,6 @@ class BlockText extends React.Component<Props, {}> {
 
 	onCompositionStart (e: any) {
 		this.composition = true;
-	};
-
-	onCompositionUpdate (e: any) {
 	};
 
 	onCompositionEnd (e: any) {
@@ -500,6 +498,7 @@ class BlockText extends React.Component<Props, {}> {
 				});
 			} else {
 				this.setText(this.marks, true, (message: any) => {
+					focus.apply();
 					onKeyDown(e, value, this.marks, range);
 				});
 			};
@@ -996,8 +995,7 @@ class BlockText extends React.Component<Props, {}> {
 	};
 	
 	placeholderCheck () {
-		const value = this.getValue();
-		value.length ? this.placeholderHide() : this.placeholderShow();			
+		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
 	};
 
 	placeholderSet (v: string) {
@@ -1006,7 +1004,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder').text(v);
+		node.find('#placeholder').text(v);
 	};
 	
 	placeholderHide () {
@@ -1015,7 +1013,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder').hide();
+		node.find('#placeholder').hide();
 	};
 	
 	placeholderShow () {
@@ -1024,7 +1022,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder').show();
+		node.find('#placeholder').show();
 	};
 	
 	getRange () {
