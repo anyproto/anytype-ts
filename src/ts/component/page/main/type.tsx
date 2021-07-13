@@ -165,7 +165,7 @@ class PageMainType extends React.Component<Props, State> {
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{templates.length} templates
+								{templates.length} {Util.cntWord(templates.length, 'template', 'templates')}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -216,7 +216,7 @@ class PageMainType extends React.Component<Props, State> {
 					</div>
 
 					<div className="section relation">
-						<div className="title">{relations.length} relations</div>
+						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
@@ -226,7 +226,7 @@ class PageMainType extends React.Component<Props, State> {
 					</div>
 
 					<div className="section set">
-						<div className="title">{total} objects</div>
+						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
 						<div className="content">
 							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
