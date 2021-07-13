@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, MenuItemVertical } from 'ts/component';
-import { I, keyboard, Key, Util, DataUtil } from 'ts/lib';
-import { blockStore, commonStore } from 'ts/store';
+import { MenuItemVertical } from 'ts/component';
+import { I, keyboard, Key, Util, DataUtil, analytics } from 'ts/lib';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -103,7 +102,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 
 		let hasTurnText = true;
 		let hasTurnList = true;
-		let hasTurnObject = true;
 		let hasTurnDiv = true;
 
 		let sections: any[] = [];
@@ -182,13 +180,15 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any, item: any) {
-		const { param } = this.props;
+		const { param, getId, close } = this.props;
 		const { data } = param;
 		const { onSelect, dataset } = data;
 		const { selection } = dataset || {};
 		
-		this.props.close();
+		close();
 		onSelect(item);
+
+		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { style: item.key });
 		
 		if (selection) {
 			selection.clear();

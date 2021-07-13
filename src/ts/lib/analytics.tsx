@@ -8,6 +8,9 @@ const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
+const KEYS = [ 'id', 'action', 'style', 'code', 'type' ];
+const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
+
 class Analytics {
 	
 	isInit: boolean =  false;
@@ -68,6 +71,10 @@ class Analytics {
 		if ((!isProduction && !this.debug()) || !code) {
 			return;
 		};
+
+		if (SKIP_IDS.indexOf(code) >= 0) {
+			return;
+		};
 		
 		data = data || {};
 
@@ -76,9 +83,17 @@ class Analytics {
 			renderTime: Number(data.renderTime) || 0,
 		};
 
+		const converted: any = {};
+		
+		for (let k of KEYS) {
+			if (data[k]) {
+				converted[k] = data[k];
+			};
+		};
+
 		switch (code) {
-			case 'Error':
-				param = data;
+			default:
+				param = Object.assign(param, converted);
 				break;
 
 			case 'BlockCreate':
