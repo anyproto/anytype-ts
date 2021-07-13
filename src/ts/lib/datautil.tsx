@@ -582,11 +582,11 @@ class DataUtil {
 			{ key: 'layout', value: layout },
 		];
 
+		C.BlockSetDetails(rootId, details, callBack);
+
 		if (layout == I.ObjectLayout.Task) {
 			this.pageSetAlign(rootId, I.BlockAlign.Left);	
 		};
-
-		C.BlockSetDetails(rootId, details, callBack);
 	};
 
 	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
