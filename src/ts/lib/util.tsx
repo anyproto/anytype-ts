@@ -158,7 +158,7 @@ class Util {
 		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
-	shorten (s: string, l: number, noEnding?: boolean) {
+	shorten (s: string, l?: number, noEnding?: boolean) {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {

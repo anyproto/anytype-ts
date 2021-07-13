@@ -83,7 +83,7 @@ class CellSelect extends React.Component<Props, State> {
 	};
 
 	getValue () {
-		const { relation, index, getRecord } = this.props;
+		const { relation, index, getRecord, elementMapper } = this.props;
 		const record = getRecord(index);
 
 		let value = record[relation.relationKey] || [];
@@ -95,6 +95,10 @@ class CellSelect extends React.Component<Props, State> {
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
 		value = value.filter((it: any) => { return it && it.id; });
+
+		if (elementMapper) {
+			value = value.map((it: any) => { return elementMapper(relation, it); });
+		};
 
 		return Util.arrayUnique(value);
 	};

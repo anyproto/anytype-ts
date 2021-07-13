@@ -25,7 +25,7 @@ class CellObject extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, getRecord, index, relation, iconSize, placeholder } = this.props;
+		const { rootId, getRecord, index, relation, iconSize, placeholder, elementMapper } = this.props;
 		const record = getRecord(index);
 
 		if (!relation || !record) {
@@ -38,9 +38,9 @@ class CellObject extends React.Component<Props, State> {
 			<div className="wrap">
 				{value.length ? (
 					<React.Fragment>
-						{value.map((id: string) => {
-							return <ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} />;
-						})}
+						{value.map((id: string) => (
+							<ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
+						))}
 					</React.Fragment>
 				) : (
 					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>

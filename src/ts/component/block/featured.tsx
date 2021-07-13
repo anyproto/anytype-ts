@@ -35,6 +35,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
+		this.elementMapper = this.elementMapper.bind(this);
 	};
 
 	render () {
@@ -80,6 +81,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 									readonly={readonly}
 									isInline={true}
 									idPrefix={PREFIX}
+									elementMapper={this.elementMapper}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
 									onMouseLeave={this.onMouseLeave}
 								/>
@@ -271,6 +273,24 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
+
+	elementMapper (relation: any, item: any) {
+		item = Util.objectCopy(item);
+
+		switch (relation.format) {
+			case I.RelationType.File:
+			case I.RelationType.Object:
+				item.name = Util.shorten(item.name);
+				break;
+
+			case I.RelationType.Tag:
+			case I.RelationType.Status:
+				item.text = Util.shorten(item.text);
+				break;
+		};
+
+		return item;
 	};
 	
 };

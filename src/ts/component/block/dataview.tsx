@@ -44,7 +44,6 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
-		const readonly = false; // TMP
 
 		if (!view) {
 			return null;
@@ -74,7 +73,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			<div>
 				<Controls 
 					{...this.props} 
-					readonly={readonly} 
+					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
 					getRecord={this.getRecord}
@@ -87,7 +86,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						{...this.props} 
 						scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
-						readonly={readonly} 
+						readonly={false} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
 						getView={this.getView} 
