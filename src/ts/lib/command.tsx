@@ -976,6 +976,15 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 	dispatcher.request('objectRelationListAvailable', request, callBack);
 };
 
+const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetLayout.Request();
+	
+	request.setContextid(contextId);
+    request.setLayout(layout);
+
+	dispatcher.request('objectSetLayout', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1128,6 +1137,7 @@ export {
 	ObjectRelationUpdate,
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
+	ObjectSetLayout,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
