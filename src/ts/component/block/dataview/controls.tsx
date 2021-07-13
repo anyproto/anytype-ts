@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -26,6 +26,7 @@ class Controls extends React.Component<Props, State> {
 
 		this.onButton = this.onButton.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onViewAdd = this.onViewAdd.bind(this);
 	};
 
 	render () {
@@ -79,6 +80,8 @@ class Controls extends React.Component<Props, State> {
 						index={i} 
 					/>
 				))}
+
+				<Icon id="button-view-add" className="plus" onClick={this.onViewAdd} />
 			</div>
 		));
 		
@@ -168,6 +171,43 @@ class Controls extends React.Component<Props, State> {
 		});
 	};
 
+	onViewAdd () {
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		const relations = Util.objectCopy(view.relations);
+		const filters: I.Filter[] = [];
+
+		for (let relation of relations) {
+			if (relation.isHidden || !relation.isVisible) {
+				continue;
+			};
+
+			filters.push({
+				relationKey: relation.relationKey,
+				operator: I.FilterOperator.And,
+				condition: I.FilterCondition.None,
+				value: null,
+			});
+		};
+
+		menuStore.open('dataviewViewEdit', {
+			element: `#button-view-add`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				view: { 
+					type: I.ViewType.Grid,
+					relations: relations,
+					filters: filters,
+				},
+				onSave: () => {
+					this.forceUpdate();
+				},
+			},
+		});
+	};
+
 	onView (e: any, item: any) {
 		e.stopPropagation();
 
@@ -197,7 +237,7 @@ class Controls extends React.Component<Props, State> {
 		const views = node.find('#views');
 		const sideLeft = node.find('#sideLeft');
 
-		menuStore.close('dataviewViewEdit');
+		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
 		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
