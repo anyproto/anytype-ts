@@ -107,10 +107,12 @@ class Analytics {
 					param.style = this.getDictionary(block.type, block.content.type);
 				};
 				break;
-				
+
+			case 'MenuBlockStyleAction':	
+			case 'BlockListTurnInto':
 			case 'BlockListSetTextStyle':
 			case 'BlockListTurnInto':
-				param.style = this.getDictionary(I.BlockType.Text, data.style);
+				param.style = this.getDictionary(I.BlockType.Text, converted.style);
 				break;
 		};
 

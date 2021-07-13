@@ -188,7 +188,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		close();
 		onSelect(item);
 
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { style: item.key });
+		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { style: item.itemId });
 		
 		if (selection) {
 			selection.clear();
