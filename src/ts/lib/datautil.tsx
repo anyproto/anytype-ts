@@ -578,9 +578,14 @@ class DataUtil {
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
 		blockStore.update(rootId, { id: rootId, layout: layout });
 
-		const details = [
+		const details: any[] = [
 			{ key: 'layout', value: layout },
 		];
+
+		if (layout == I.ObjectLayout.Task) {
+			details.push({ key: 'layoutAlign', value: I.BlockAlign.Left });			
+		};
+
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
