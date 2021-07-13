@@ -517,7 +517,7 @@ class BlockText extends React.Component<Props, {}> {
 				if (range.to) {
 					return;
 				};
-				
+
 				this.marks = Mark.checkRanges(value, this.marks);
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);

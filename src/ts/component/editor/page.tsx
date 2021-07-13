@@ -918,7 +918,11 @@ class EditorPage extends React.Component<Props, {}> {
 			if (block.isText()) {
 				const ids = selection.get(true);
 				if ((pressed == 'backspace') && !range.to) {
-					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+					if (block.isTextList()) {
+						C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+					} else {
+						ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+					};
 				};
 
 				if ((pressed == 'delete') && (range.to == length)) {
