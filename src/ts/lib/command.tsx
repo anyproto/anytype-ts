@@ -977,7 +977,7 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 };
 
 const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Align.Request();
+	const request = new Rpc.Object.SetLayout.Request();
 	
 	request.setContextid(contextId);
     request.setLayout(layout);
