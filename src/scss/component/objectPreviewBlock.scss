@@ -14,9 +14,9 @@
 		.iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: bold; position: relative; }
 		.icon.checkbox { 
-			position: absolute; top: 5px; left: -20px; width: 14px; height: 14px; background-image: url('~img/icon/object/checkbox0.svg'); 
+			position: absolute; top: 5px; left: -20px; width: 14px; height: 14px; background-image: url('~img/icon/object/checkbox0.svg') !important; 
 		}
-		.icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
 		.description { @include text-small; @include text-overflow-nw; }
 		.author { @include text-very-small; color: $colorMediumGrey; }
