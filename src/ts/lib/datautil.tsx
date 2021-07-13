@@ -583,7 +583,7 @@ class DataUtil {
 		];
 
 		if (layout == I.ObjectLayout.Task) {
-			details.push({ key: 'layoutAlign', value: I.BlockAlign.Left });			
+			this.pageSetAlign(rootId, I.BlockAlign.Left);	
 		};
 
 		C.BlockSetDetails(rootId, details, callBack);
