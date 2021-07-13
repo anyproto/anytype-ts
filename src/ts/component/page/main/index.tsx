@@ -381,16 +381,11 @@ class PageMainIndex extends React.Component<Props, State> {
 				if (object.type == Constant.typeId.type) {
 					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
 				};
+
+				this.load();
 			};
 
-			if (item.isBlock) {
-				C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
-			} else {
-				DataUtil.pageSetArchived(object.id, v, (message: any) => {
-					cb(message);
-					this.load();
-				});
-			};
+			C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
 		};
 
 		menuStore.open('select', { 
@@ -571,7 +566,7 @@ class PageMainIndex extends React.Component<Props, State> {
 				};
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
-					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					const object = detailStore.get(rootId, it.content.targetBlockId, []);
 					const { layout, name, _empty_, isArchived } = object;
 
 					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
@@ -587,7 +582,7 @@ class PageMainIndex extends React.Component<Props, State> {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, []);
 					it.isBlock = true;
 					return it;
 				});

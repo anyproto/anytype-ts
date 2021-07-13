@@ -1,4 +1,4 @@
-import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
@@ -224,6 +224,8 @@ class Keyboard {
 		};
 
 		this.restoreSource();
+
+		analytics.event('HistoryBack');
 	};
 
 	forward () {
@@ -238,6 +240,8 @@ class Keyboard {
 		} else {
 			this.history.goForward();
 		};
+
+		analytics.event('HistoryForward');
 	};
 
 	onCommand (cmd: string, arg: any) {

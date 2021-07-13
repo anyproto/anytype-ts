@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, focus, crumbs } from 'ts/lib';
+import { I, C, keyboard, Key, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {
@@ -276,151 +276,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			this.onOver(item);
 		};
 	};
-	
-	onClick (e: any, item: any) {
-		const { param, history } = this.props;
-		const { data } = param;
-		const { blockId, rootId, onSelect } = data;
-		const { root, breadcrumbs } = blockStore;
-		const block = blockStore.getLeaf(rootId, blockId);
-		
-		if (!block || item.arrow) {
-			return;
-		};
-		
-		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
-		const prev = children[children.length - 2];
-		const object = detailStore.get(rootId, rootId, []);
-		
-		let close = true;
-		
-		if (onSelect) {
-			onSelect(item);
-		};
-
-		focus.clear(false);
-		
-		switch (item.id) {
-
-			case 'undo':
-				C.BlockUndo(rootId);
-				close = false;
-				break;
-				
-			case 'redo':
-				C.BlockRedo(rootId);
-				close = false;
-				break;
-				
-			case 'print':
-				keyboard.onPrint();
-				break;
-				
-			case 'export':
-				C.BlockGetPublicWebURL(rootId, (message: any) => {
-					if (message.url) {
-						ipcRenderer.send('urlOpen', message.url);
-					};
-				});
-				break;
-
-			case 'history':
-				history.push('/main/history/' + blockId);
-				break;
-			
-			case 'copy':
-				break;
-
-			case 'search':
-				keyboard.onSearch();
-				break;
-				
-			case 'archivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-
-					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
-
-					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
-						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
-					};
-					
-					if (prev) {
-						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
-						DataUtil.objectOpen(object);
-					} else {
-						history.push('/main/index');
-					};
-				});
-				break;
-
-			case 'unarchivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], false, (message: any) => {
-					if (message.error.code) {
-						return;
-					};
-
-					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
-						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
-					};
-				});
-				break;
-
-			case 'linkRoot':
-				const newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: block.id,
-					}
-				};
-				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
-				break;
-
-			case 'unlinkRoot':
-				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
-					return it.isLink() && (it.content.targetBlockId == rootId);
-				}).map((it: I.Block) => { return it.id; });
-
-				if (favorites.length) {
-					C.BlockUnlink(blockStore.root, favorites);
-				};
-				break;
-
-			case 'remove':
-				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
-					if (block.isPage()) {
-						history.push('/main/index');
-					};
-				});
-				break;
-
-			case 'createPage':
-				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
-					DataUtil.objectOpen({ id: message.targetId });
-				});
-				break;
-
-			case 'createTemplate':
-				C.MakeTemplate(rootId, (message: any) => {
-					DataUtil.objectOpen({ id: message.id, layout: object.layout });
-				});
-				break;
-
-			case 'removePage':
-				C.BlockListDeletePage([ blockId ], (message: any) => {
-					if (block.isPage()) {
-						history.push('/main/index');
-					};
-				});
-				break;
-		};
-		
-		if (close) {
-			this.props.close();
-		};
-	};
 
 	onOver (item: any) {
 		if (!item.arrow) {
@@ -580,6 +435,152 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			menuStore.closeAll(Constant.menuIds.more, () => {
 				menuStore.open(menuId, menuParam);
 			});
+		};
+	};
+	
+	onClick (e: any, item: any) {
+		const { param, getId, history } = this.props;
+		const { data } = param;
+		const { blockId, rootId, onSelect } = data;
+		const { root, breadcrumbs } = blockStore;
+		const block = blockStore.getLeaf(rootId, blockId);
+		
+		if (!block || item.arrow) {
+			return;
+		};
+		
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const prev = children[children.length - 2];
+		const object = detailStore.get(rootId, rootId, []);
+		
+		let close = true;
+		
+		if (onSelect) {
+			onSelect(item);
+		};
+
+		focus.clear(false);
+		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { action: item.id });
+		
+		switch (item.id) {
+
+			case 'undo':
+				C.BlockUndo(rootId);
+				close = false;
+				break;
+				
+			case 'redo':
+				C.BlockRedo(rootId);
+				close = false;
+				break;
+				
+			case 'print':
+				keyboard.onPrint();
+				break;
+				
+			case 'export':
+				C.BlockGetPublicWebURL(rootId, (message: any) => {
+					if (message.url) {
+						ipcRenderer.send('urlOpen', message.url);
+					};
+				});
+				break;
+
+			case 'history':
+				history.push('/main/history/' + blockId);
+				break;
+			
+			case 'copy':
+				break;
+
+			case 'search':
+				keyboard.onSearch();
+				break;
+				
+			case 'archivePage':
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					crumbs.cut(I.CrumbsType.Page, (children.length > 0 ? children.length - 1 : 0));
+
+					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
+						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
+					};
+					
+					if (prev) {
+						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
+						DataUtil.objectOpen(object);
+					} else {
+						history.push('/main/index');
+					};
+				});
+				break;
+
+			case 'unarchivePage':
+				C.BlockListSetPageIsArchived(rootId, [ blockId ], false, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
+						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
+					};
+				});
+				break;
+
+			case 'linkRoot':
+				const newBlock = {
+					type: I.BlockType.Link,
+					content: {
+						targetBlockId: block.id,
+					}
+				};
+				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+				break;
+
+			case 'unlinkRoot':
+				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
+					return it.isLink() && (it.content.targetBlockId == rootId);
+				}).map((it: I.Block) => { return it.id; });
+
+				if (favorites.length) {
+					C.BlockUnlink(blockStore.root, favorites);
+				};
+				break;
+
+			case 'remove':
+				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
+					if (block.isPage()) {
+						history.push('/main/index');
+					};
+				});
+				break;
+
+			case 'createPage':
+				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.targetId });
+				});
+				break;
+
+			case 'createTemplate':
+				C.MakeTemplate(rootId, (message: any) => {
+					DataUtil.objectOpen({ id: message.id, layout: object.layout });
+				});
+				break;
+
+			case 'removePage':
+				C.BlockListDeletePage([ blockId ], (message: any) => {
+					if (block.isPage()) {
+						history.push('/main/index');
+					};
+				});
+				break;
+		};
+		
+		if (close) {
+			this.props.close();
 		};
 	};
 

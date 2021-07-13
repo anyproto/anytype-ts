@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, Mark, Util, DataUtil, focus, keyboard } from 'ts/lib';
+import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics } from 'ts/lib';
 import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -108,10 +108,11 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		
 		const { from, to } = range;
 		const node = $(ReactDOM.findDOMNode(this));
-		const obj = $('#menuBlockContext');
+		const obj = $(`#${getId()}`);
 
 		keyboard.disableContext(true);
 		focus.set(blockId, range);
+		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: type });
 
 		if (type != 'style') {
 			focus.apply();

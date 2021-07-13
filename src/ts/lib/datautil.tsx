@@ -1,4 +1,4 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -549,19 +549,21 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
-	pageSetCover (rootId: string, type: I.CoverType, coverId: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
+	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
 		y = Number(y) || 0;
 		scale = Number(scale) || 0;
 
 		const details = [ 
 			{ key: 'coverType', value: type },
-			{ key: 'coverId', value: coverId },
+			{ key: 'coverId', value: id },
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
+
+		analytics.event('PageSetCover', { type: type, id: id });
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -573,15 +575,6 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
-	pageSetArchived (rootId: string, isArchived: boolean, callBack?: (message: any) => void) {
-		isArchived = Boolean(isArchived);
-
-		const details = [ 
-			{ key: 'isArchived', value: isArchived },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
 		blockStore.update(rootId, { id: rootId, layout: layout });
 
