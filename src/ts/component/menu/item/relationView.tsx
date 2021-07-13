@@ -49,7 +49,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onEdit(e, relationKey); }}
 				>
-					{!canEdit || readonly ? <Icon className="lock" /> : ''}
+					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
 				<div

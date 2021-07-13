@@ -55,7 +55,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readonly={!allowedValue && !item.isReadonlyValue}
+								readonly={!(allowedValue && !item.isReadonlyValue)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
 								canFav={allowedValue && [ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) < 0}
 								isFeatured={section.id == 'featured'}
