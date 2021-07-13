@@ -121,6 +121,7 @@ export interface Cell {
 	onMouseLeave?(e: any): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	cellPosition?: (cellId: string) => void;
+	elementMapper?: (relation: any, item: any) => any;
 };
 
 export interface ContentDataview {

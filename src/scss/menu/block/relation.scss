@@ -103,7 +103,6 @@
 
 			.cell.c-select { padding: 5px 8px; }
 			.cell.c-select {
-				.empty { vertical-align: middle; }
 				.tagItem { margin: 2px 6px 3px 0px; } 
 			}
 
@@ -127,20 +126,15 @@
 			.cell.isEditing.c-number, 
 			.cell.isEditing.c-url, 
 			.cell.isEditing.c-phone, 
-			.cell.isEditing.c-email
+			.cell.isEditing.c-email,
+			.cell.isEditing.c-date,
+			.cell.isEditing.c-object
 			{
 				.cellContent { padding: 5px 8px !important; }
 			}
 
-			.cell.isEditing.c-date {
-				.cellContent { padding: 5px 8px 4px 8px !important; }
-			}
-
 			.cell.c-object {
 				.element { margin-top: 1px; margin-bottom: 1px; }
-			}
-			.cell.isEditing.c-object {
-				.cellContent { padding: 5px 8px 3px 8px !important; }
 			}
 
 			.cell.c-shortText {

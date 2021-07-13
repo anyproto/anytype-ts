@@ -25,7 +25,7 @@ class CellFile extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, relation, index, getRecord, canEdit, iconSize, placeholder } = this.props;
+		const { rootId, block, readonly, relation, index, getRecord, canEdit, iconSize, placeholder, elementMapper } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -34,6 +34,10 @@ class CellFile extends React.Component<Props, State> {
 		let value = this.getValue();
 		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
+		
+		if (elementMapper) {
+			value = value.map((it: any) => { return elementMapper(relation, it); });
+		};
 
 		const Item = (item: any) => (
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
