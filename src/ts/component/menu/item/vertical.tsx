@@ -25,6 +25,9 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		if (withCaption) {
 			cn.push('withCaption');
 		};
+		if (checkbox) {
+			cn.push('withCheckbox');
+		};
 		if (isActive) {
 			cn.push('active');
 		};

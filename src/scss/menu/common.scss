@@ -125,6 +125,10 @@
 			}
 		}
 
+		.item.withCheckbox {
+			.name { width: calc(100% - 46px); }
+		}
+
 		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorLightGrey; }
 		.input { border-radius: 4px; }
 
