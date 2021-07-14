@@ -267,7 +267,7 @@ class Dispatcher {
 
 				case 'blockSetText':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+					block = Util.objectCopy(blockStore.getLeaf(rootId, id));
 					if (!block) {
 						break;
 					};
