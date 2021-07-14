@@ -263,6 +263,7 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				param.data = Object.assign(param.data, {
+					disabled: !value, 
 					options: [
 						{ id: 'go', name: name },
 						{ id: 'copy', name: 'Copy' },

@@ -262,6 +262,10 @@ class CellText extends React.Component<Props, State> {
 			return;
 		};
 
+		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].indexOf(relation.format) >= 0) {
+			menuStore.updateData('button', { disabled: !value });
+		};
+
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
