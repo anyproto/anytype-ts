@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I } from 'ts/lib';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-class MenuButton extends React.Component<Props, {}> {
+const MenuButton = observer(class MenuButton extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	
@@ -15,13 +16,18 @@ class MenuButton extends React.Component<Props, {}> {
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { disabled } = data;
 		const items = this.getItems();
+
 		return (
 			<div className="items">
 				{items.map((item: any, i: number) => (
 					<MenuItemVertical 
 						key={i}
 						{...item} 
+						className={disabled ? 'disabled' : ''}
 						onClick={(e: any) => { this.onSelect(e, item); }} 
 					/>
 				))}
@@ -48,17 +54,17 @@ class MenuButton extends React.Component<Props, {}> {
 	onSelect (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect, noClose } = data;
+		const { disabled, onSelect, noClose } = data;
 
 		if (!noClose) {
 			close();
 		};
 		
-		if (onSelect) {
+		if (!disabled && onSelect) {
 			onSelect(e, item);
 		};
 	};
 
-};
+});
 
 export default MenuButton;

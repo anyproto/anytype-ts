@@ -16,6 +16,8 @@
 				.icon { vertical-align: middle; }
 			}
 
+			.name { @include text-overflow-nw; width: 100%; }
+
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
 			.select:hover, .select.active { background: none; }
 			.select {

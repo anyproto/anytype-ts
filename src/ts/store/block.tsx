@@ -288,7 +288,7 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$('#marker-' + item.id).text(`${n}.`);
+						$(`#marker-${item.id}`).text(`${n}.`);
 					} else {
 						n = 0;
 					};

@@ -187,7 +187,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		e.stopPropagation();
 
 		const { param, getId, getSize } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 
 		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionEdit', { 
@@ -197,6 +197,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				passThrough: true,
 				noFlipY: true,
 				noAnimation: true,
+				classNameWrap: classNameWrap,
 				data: {
 					...data,
 					option: item,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -25,6 +25,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		this.onButton = this.onButton.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onViewAdd = this.onViewAdd.bind(this);
 	};
 
 	render () {
@@ -38,7 +39,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
 		});
 		const filterCnt = filters.length;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -78,6 +80,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						index={i} 
 					/>
 				))}
+
+				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -114,7 +118,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowed ? <Icon className="plus" tooltip="New object" onClick={onRowAdd} /> : ''}
+						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 			</div>
@@ -139,7 +143,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
+		const allowedRelation = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
 		if (id == 'button-manager') {
@@ -157,7 +161,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			offsetY: 10,
 			tabs: tabs,
 			data: {
-				readonly: readonly || !allowed,
+				readonly: readonly || !allowedRelation,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,
@@ -167,10 +171,47 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 
+	onViewAdd () {
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		const relations = Util.objectCopy(view.relations);
+		const filters: I.Filter[] = [];
+
+		for (let relation of relations) {
+			if (relation.isHidden || !relation.isVisible) {
+				continue;
+			};
+
+			filters.push({
+				relationKey: relation.relationKey,
+				operator: I.FilterOperator.And,
+				condition: I.FilterCondition.None,
+				value: null,
+			});
+		};
+
+		menuStore.open('dataviewViewEdit', {
+			element: `#button-view-add`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				view: { 
+					type: I.ViewType.Grid,
+					relations: relations,
+					filters: filters,
+				},
+				onSave: () => {
+					this.forceUpdate();
+				},
+			},
+		});
+	};
+
 	onView (e: any, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block } = this.props;
+		const { rootId, block, getView } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
@@ -181,6 +222,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				blockId: block.id,
 				readonly: !allowed,
 				view: item,
+				getView: getView,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});
@@ -195,7 +237,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const views = node.find('#views');
 		const sideLeft = node.find('#sideLeft');
 
-		menuStore.close('dataviewViewEdit');
+		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
 		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 

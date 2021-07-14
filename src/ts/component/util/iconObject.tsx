@@ -36,7 +36,7 @@ const IDS40 = [
 	I.ObjectLayout.Set, 
 	I.ObjectLayout.File, 
 	I.ObjectLayout.Image, 
-	I.ObjectLayout.ObjectType,
+	I.ObjectLayout.Type,
 ];
 
 const IconSize = {
@@ -59,12 +59,14 @@ const FontSize = {
 	16: 10,
 	18: 10,
 	20: 12,
-	24: 13,
-	40: 24,
+	24: 14,
+	26: 16,
+	32: 18,	
+	40: 28,
 	48: 28,
 	56: 34,
 	64: 44,
-	96: 44,
+	96: 66,
 	128: 72,
 };
 
@@ -160,7 +162,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			cn.push('canEdit');
 		};
 
-		let iconSize = this.iconSize(layout, size);
+		let iconSize = this.iconSize();
 		let icon = null;
 		let icn = [];
 
@@ -186,7 +188,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
@@ -255,7 +257,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const layoutsEmoji = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.ObjectType ];
+		const layoutsEmoji = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.Type ];
 
 		if (onClick) {
 			onClick(e);
@@ -281,7 +283,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const object = this.getObject();
 		const { iconEmoji, iconImage } = object;
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const noUpload = layout == I.ObjectLayout.ObjectType;
+		const noUpload = layout == I.ObjectLayout.Type;
 
 		menuStore.open('smile', { 
 			element: `#${id}`,
@@ -305,8 +307,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		});
 	};
 
-	iconSize (layout: I.ObjectLayout, size: number) {
-		const { iconSize } = this.props;
+	iconSize () {
+		const { size, iconSize } = this.props;
+		const object = this.getObject();
+		const { layout, iconImage, iconEmoji } = object;
 
 		let s = IconSize[size];
 
@@ -324,6 +328,14 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = size;
 		};
 
+		if ((layout == I.ObjectLayout.Set) && iconImage) {
+			s = size;
+		};
+
+		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji) {
+			s = size;
+		};
+
 		if (iconSize) {
 			s = iconSize;
 		};
@@ -333,7 +345,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	fontSize (layout: I.ObjectLayout, size: number) {
 		let s = FontSize[size];
 
-		if ((size == 64) && ([ I.ObjectLayout.ObjectType, I.ObjectLayout.Set ].indexOf(layout) >= 0)) {
+		if ((size == 64) && ([ I.ObjectLayout.Type, I.ObjectLayout.Set ].indexOf(layout) >= 0)) {
 			s = 44;
 		};
 
@@ -341,10 +353,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	userSvg (): string {
-		const { size, color } = this.props;
+		const { color } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const iconSize = this.iconSize(layout, size);
+		const iconSize = this.iconSize();
 		const name = this.iconName();
 
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
@@ -355,10 +367,9 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	typeSvg (): string {
-		const { size } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const iconSize = this.iconSize(layout, size);
+		const iconSize = this.iconSize();
 		const name = this.iconName();
 
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#CBC9BD" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;

@@ -31,7 +31,7 @@ const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Compone
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		let value = Util.objectCopy(data.value || []);
-		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 
         const Handle = SortableHandle(() => (
@@ -41,7 +41,7 @@ const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Compone
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{item.name + (item.fileExt ? `.${item.fileExt}` : '')}</div>
+				<div className="name">{item.name}</div>
 			</React.Fragment>
 		);
 
@@ -52,7 +52,7 @@ const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Compone
         const Item = SortableElement((item: any) => {
 			let content = null;
 			let cn = [ 'item' ];
-			let name = item.name + (item.fileExt ? `.${item.fileExt}` : '');
+			let name = DataUtil.fileName(item);
 
 			switch (item.layout) {
 				case I.ObjectLayout.File:

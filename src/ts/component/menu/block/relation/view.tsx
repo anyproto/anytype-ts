@@ -45,19 +45,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
 						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
-
-						item.isFeatured = section.id == 'featured';
-
-						let canEdit = allowedRelation;
-						let canFav = allowedValue;
-
-						if (item.isReadonlyRelation) {
-							canEdit = false;
-						};
-						if ([ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) >= 0) {
-							canFav = false;
-						};
-
 						return (
 							<Item 
 								key={id} 
@@ -67,9 +54,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onEdit={this.onEdit}
 								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
 								onFav={this.onFav}
-								readonly={!allowedValue && !item.isReadonlyValue}
-								canEdit={canEdit}
-								canFav={canFav}
+								readonly={!(allowedValue && !item.isReadonlyValue)}
+								canEdit={allowedRelation && !item.isReadonlyRelation}
+								canFav={allowedValue && [ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) < 0}
+								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
 								onCellChange={this.onCellChange}
@@ -108,7 +96,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		$('body').addClass('over');
+		$('body').addClass('overMenu');
 
 		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
@@ -122,7 +110,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	componentWillUnmount () {
-		$('body').removeClass('over');
+		$('body').removeClass('overMenu');
 	};
 
 	onScroll () {

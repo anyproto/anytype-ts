@@ -8,17 +8,23 @@ interface Props {
 	rootId: string;
 	id: string;
 	iconSize: number;
+	relation?: any;
+	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
 }
 
 const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, id, iconSize, onClick } = this.props;
-		const object = detailStore.get(rootId, id, []);
+		const { rootId, id, iconSize, relation, elementMapper, onClick } = this.props;
+		let object = detailStore.get(rootId, id, []);
 
 		if (object._empty_) {
 			return null;
+		};
+
+		if (elementMapper) {
+			object = elementMapper(relation, object);
 		};
 
 		return (

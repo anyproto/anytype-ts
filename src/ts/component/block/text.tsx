@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
@@ -59,7 +59,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.onToggleWrap = this.onToggleWrap.bind(this);
 
 		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionUpdate = this.onCompositionUpdate.bind(this);
 		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
@@ -70,7 +69,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let marker: any = null;
-		let placeholder = Constant.placeholder.default;
+		let placeholder = translate('placeholderBlock');
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
 		let additional = null;
@@ -153,7 +152,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					onMouseUp={this.onMouseUp}
 					onInput={this.onInput}
 					onCompositionStart={this.onCompositionStart}
-					onCompositionUpdate={this.onCompositionUpdate}
 					onCompositionEnd={this.onCompositionEnd}
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				/>
@@ -169,7 +167,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					{additional}
 				</div>
 				<div className="wrap">
-					<span className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
+					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
 					{editor}
 				</div>
 			</div>
@@ -191,6 +189,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
+
+		if (content.text) {
+			this.placeholderHide();
+		};
 	};
 	
 	componentWillUnmount () {
@@ -199,9 +201,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 	onCompositionStart (e: any) {
 		this.composition = true;
-	};
-
-	onCompositionUpdate (e: any) {
 	};
 
 	onCompositionEnd (e: any) {
@@ -498,6 +497,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				});
 			} else {
 				this.setText(this.marks, true, (message: any) => {
+					focus.apply();
 					onKeyDown(e, value, this.marks, range);
 				});
 			};
@@ -515,7 +515,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				if (range.to) {
 					return;
 				};
-				
+
 				this.marks = Mark.checkRanges(value, this.marks);
 				DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range);
@@ -994,8 +994,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	placeholderCheck () {
-		const value = this.getValue();
-		value.length ? this.placeholderHide() : this.placeholderShow();			
+		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
 	};
 
 	placeholderSet (v: string) {
@@ -1004,7 +1003,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder').text(v);
+		node.find('#placeholder').text(v);
 	};
 	
 	placeholderHide () {
@@ -1013,7 +1012,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder').hide();
+		node.find('#placeholder').hide();
 	};
 	
 	placeholderShow () {
@@ -1022,7 +1021,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.placeholder').show();
+		node.find('#placeholder').show();
 	};
 	
 	getRange () {

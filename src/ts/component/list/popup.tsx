@@ -27,7 +27,7 @@ const ListPopup = observer(class ListPopup extends React.Component<Props, {}> {
 		const { list } = popupStore;
 		const body = $('body');
 		
-		list.length > 0 ? body.addClass('over') : body.removeClass('over');
+		list.length > 0 ? body.addClass('overPopup') : body.removeClass('overPopup');
 	};
 	
 });

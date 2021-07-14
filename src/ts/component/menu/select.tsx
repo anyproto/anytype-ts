@@ -309,10 +309,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
 
 		content.css({ height: height });
+		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 
-		if (withFilter) {
-			obj.addClass('withFilter');
-		};
 		position();
 	};
 

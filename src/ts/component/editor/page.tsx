@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -231,7 +231,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.forceUpdate();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
-			blockStore.setNumbers(rootId);
+			dispatcher.setNumbers(rootId);
 
 			if (onOpen) {
 				onOpen();
@@ -917,7 +917,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			if (block.isText()) {
 				const ids = selection.get(true);
 				if ((pressed == 'backspace') && !range.to) {
-					ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+					if (block.isTextList()) {
+						C.BlockListSetTextStyle(rootId, [ block.id ], I.TextStyle.Paragraph);
+					} else {
+						ids.length ? this.blockRemove(block) : this.blockMerge(block, -1);
+					};
 				};
 
 				if ((pressed == 'delete') && (range.to == length)) {
@@ -1077,7 +1081,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
-			$('.placeholder.c' + blockId).text(Constant.placeholder.filter);
+			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
 	};
@@ -1104,7 +1108,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
-				$('.placeholder.c' + blockId).text(Constant.placeholder.default);
+				$(`.placeholder.c${blockId}`).text(translate('placeholderBlock'));
 			},
 			data: {
 				blockId: blockId,
@@ -1616,7 +1620,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			controls.css({ top: hh });
 		};
 		if (size.length) {
-			size.css({ top: Util.sizeHeader() + 8 });
+			size.css({ top: hh + 8 });
 		};
 		if (cover.length) {
 			cover.css({ top: hh });

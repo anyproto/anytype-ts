@@ -81,7 +81,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							{!readonly && allowed ? (
 								<div className="row add">
 									<div className="cell add">
-										<div className="btn" onClick={onRowAdd}>
+										<div className="btn" onClick={(e: any) => { onRowAdd(e, 1); }}>
 											<Icon className="plus" />
 											<div className="name">{translate('blockDataviewNew')}</div>
 										</div>

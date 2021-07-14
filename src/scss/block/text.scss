@@ -3,7 +3,6 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.wrap { flex: auto; position: relative; padding: 0px; width: 100%; }
 		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
 
 		.placeholder { display: none; overflow: hidden; }
@@ -68,6 +67,8 @@
 			}
 		}
 	}
+
+	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .wrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget .value.isFocused { background: none; }
 

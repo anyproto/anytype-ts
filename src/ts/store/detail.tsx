@@ -134,6 +134,7 @@ class DetailStore {
 			name: String(object.name || DataUtil.defaultName('page')),
 			type: String(object.type || Constant.typeId.page),
 			layout: Number(object.layout) || I.ObjectLayout.Page,
+			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 		};
 	};

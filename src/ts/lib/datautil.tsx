@@ -1,5 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage } from 'ts/lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore, menuStore } from 'ts/store';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
+import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -176,7 +176,7 @@ class DataUtil {
 			case I.ObjectLayout.Page:		 c = 'isPage'; break;
 			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
 			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.ObjectType:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Type:	 c = 'isObjectType'; break;
 			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
@@ -448,7 +448,7 @@ class DataUtil {
 				this.history.push('/main/set/' + object.id);
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				this.history.push('/main/type/' + object.id);
 				break;
 
@@ -481,7 +481,7 @@ class DataUtil {
 				action = 'set';
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				action = 'type';
 				break;
 
@@ -549,19 +549,21 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 	
-	pageSetCover (rootId: string, type: I.CoverType, coverId: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
+	pageSetCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
 		y = Number(y) || 0;
 		scale = Number(scale) || 0;
 
 		const details = [ 
 			{ key: 'coverType', value: type },
-			{ key: 'coverId', value: coverId },
+			{ key: 'coverId', value: id },
 			{ key: 'coverX', value: x },
 			{ key: 'coverY', value: y },
 			{ key: 'coverScale', value: scale },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
+
+		analytics.event('PageSetCover', { type: type, id: id });
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {
@@ -573,22 +575,9 @@ class DataUtil {
 		C.BlockSetDetails(rootId, details, callBack);
 	};
 
-	pageSetArchived (rootId: string, isArchived: boolean, callBack?: (message: any) => void) {
-		isArchived = Boolean(isArchived);
-
-		const details = [ 
-			{ key: 'isArchived', value: isArchived },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
-	};
-	
 	pageSetLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
 		blockStore.update(rootId, { id: rootId, layout: layout });
-
-		const details = [
-			{ key: 'layout', value: layout },
-		];
-		C.BlockSetDetails(rootId, details, callBack);
+		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
 	pageSetAlign (rootId: string, align: I.BlockAlign, callBack?: (message: any) => void) {
@@ -612,7 +601,7 @@ class DataUtil {
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
-			blockStore.setNumbers(rootId);
+			dispatcher.setNumbers(rootId);
 			
 			if (callBack) {
 				callBack(message);
@@ -806,10 +795,10 @@ class DataUtil {
 			{ id: I.ObjectLayout.Set, icon: 'set' },
 			{ id: I.ObjectLayout.File, icon: 'file' },
 			{ id: I.ObjectLayout.Image, icon: 'image' },
-			{ id: I.ObjectLayout.ObjectType, icon: 'type' },
+			{ id: I.ObjectLayout.Type, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
 		].map((it: any) => {
-			it.icon = 'layout-' + it.icon;
+			it.icon = 'layout c-' + it.icon;
 			it.name = translate('layout' + it.id);
 			return it;
 		});
@@ -963,6 +952,25 @@ class DataUtil {
 		});
 	};
 
+	getRelationOptions (rootId: string, blockId: string, view: I.View) {
+		const relations = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return relation && (relation.format != I.RelationType.File);
+		});
+
+		return relations.map((it: I.ViewRelation) => {
+			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			return { 
+				id: relation.relationKey, 
+				icon: 'relation ' + this.relationClass(relation.format),
+				name: relation.name, 
+				isHidden: relation.isHidden,
+				format: relation.format,
+				maxCount: relation.maxCount,
+			};
+		});
+	};
+
 	relationWidth (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
 		return Number(width || size['format' + format]) || size.default;
@@ -1058,7 +1066,7 @@ class DataUtil {
 				ret.withIcon = true;
 				break;
 
-			case I.ObjectLayout.ObjectType:
+			case I.ObjectLayout.Type:
 				ret.withIcon = true;
 				break;
 
@@ -1109,7 +1117,7 @@ class DataUtil {
 		return 0;
 	};
 
-	formatRelationValue (relation: I.Relation, value: any, maxCount: boolean) {
+	formatRelationValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
 				value = String(value || '');
@@ -1169,6 +1177,10 @@ class DataUtil {
 
 	defaultName (key: string) {
 		return translate(Util.toCamelCase('defaultName-' + key));
+	};
+
+	fileName (object: any) {
+		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
 	};
 
 };

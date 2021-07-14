@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, Select, IconObject, Tag } from 'ts/component';
-import { commonStore, detailStore, dbStore, menuStore, blockStore } from 'ts/store';
+import { Icon, IconObject, Tag } from 'ts/component';
+import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
@@ -279,41 +279,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.save();
 	};
 
-	onChange (id: number, k: string, v: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-		const view = getView();
-
-		let item = view.getFilter(id);
-		if (!item) {
-			return;
-		};
-
-		item = Util.objectCopy(item);
-		item[k] = v;
-
-		// Remove value when we change relation, filter non unique entries
-		if (k == 'relationKey') {
-			const relation = dbStore.getRelation(rootId, blockId, v);
-			const conditions = DataUtil.filterConditionsByType(relation.format);
-
-			item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-			item.value = DataUtil.formatRelationValue(relation, null, false);
-
-			view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-				return (i == id) || 
-				(it.relationKey != v) || 
-				((it.relationKey == v) && (it.condition != item.condition)); 
-			});
-		};
-
-		view.setFilter(id, item);
-
-		this.save();
-		this.forceUpdate();
-	};
-
 	save () {
 		const { param } = this.props;
 		const { data } = param;
@@ -329,32 +294,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	};
 
 	getRelationOptions () {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
-		const view = getView();
-		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			if (!relation || (!config.debug.ho && relation.isHidden) || (relation.format == I.RelationType.File)) {
-				return false;
-			};
-			return true;
-		});
 
-		let options: any[] = relations.map((it: I.ViewRelation) => {
-			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: relation.relationKey, 
-				icon: 'relation ' + DataUtil.relationClass(relation.format),
-				name: relation.name, 
-				isHidden: relation.isHidden,
-				format: relation.format,
-			};
-		});
-
-		return options;
+		return DataUtil.getRelationOptions(rootId, blockId, getView());
 	};
 
 });

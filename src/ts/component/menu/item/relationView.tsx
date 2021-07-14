@@ -20,7 +20,6 @@ interface Props extends I.Relation {
 	optionCommand(code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void): void;
 };
 
-const Constant = require('json/constant.json');
 const PREFIX = 'menuBlockRelationView';
 
 class MenuItemRelationView extends React.Component<Props, {}> {
@@ -50,7 +49,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onEdit(e, relationKey); }}
 				>
-					{!canEdit || readonly ? <Icon className="lock" /> : ''}
+					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
 				<div

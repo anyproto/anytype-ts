@@ -15,6 +15,7 @@
 			.select:hover, .select.active { background: none; }
 			.select.grey { color: $colorMediumGrey; }
 			.select {
+				.icon.relation { display: none; }
 				.icon.arrow { display: none; }
 			}
 

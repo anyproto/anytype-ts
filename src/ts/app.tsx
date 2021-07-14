@@ -83,7 +83,6 @@ import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
 import 'scss/popup/help.scss';
 import 'scss/popup/shortcut.scss';
-import 'scss/popup/feedback.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';

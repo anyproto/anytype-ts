@@ -153,7 +153,7 @@ const MenuBlockRelationList = observer(class MenuBlockRelationList extends React
 		this.resize();
 		this.focus();
 
-		$('body').addClass('over');
+		$('body').addClass('overMenu');
 	};
 
 	componentDidUpdate () {
@@ -170,7 +170,7 @@ const MenuBlockRelationList = observer(class MenuBlockRelationList extends React
 	};
 
 	componentWillUnmount () {
-		$('body').removeClass('over');
+		$('body').removeClass('overMenu');
 	};
 
 	focus () {

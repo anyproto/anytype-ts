@@ -254,10 +254,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { id } = block;
 		const { focused } = focus.state;
 
-		if (focused == id) {
+		if (focused == block.id) {
 			focus.apply();
 		};
 

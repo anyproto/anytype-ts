@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C } from 'ts/lib';
+import { translate, C, keyboard } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -23,6 +23,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 	};
 	
 	render () {
@@ -41,7 +42,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<Textarea ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginPhrase')} />
+						<Textarea ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginPhrase')} onKeyDown={this.onKeyDown} />
 						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
 							<Button text={translate('authLoginBack')} color="grey" onClick={this.onCancel} />
@@ -78,6 +79,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 				history.push('/auth/account-select');
 			};
 		});
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.onSubmit(e);
+		})
 	};
 	
 	onCancel (e: any) {

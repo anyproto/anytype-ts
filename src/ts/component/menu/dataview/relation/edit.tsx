@@ -56,7 +56,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						<MenuItemVertical 
 							id="object-type" 
 							name={objectType ? (objectType.name || DataUtil.defaultName('page')) : 'Select object type'} 
-							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+							object={{ ...objectType, layout: I.ObjectLayout.Type }} 
 							onMouseEnter={this.onObjectType} 
 							arrow={!this.isReadonly()}
 						/>
@@ -225,7 +225,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 				label: 'Your object type library',
 				value: value,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Type ] }
 				],
 				onSelect: (item: any) => {
 					this.objectTypes = [ item.id ];

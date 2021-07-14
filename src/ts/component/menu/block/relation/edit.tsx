@@ -52,7 +52,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
-							object={{ ...objectType, layout: I.ObjectLayout.ObjectType }} 
+							object={{ ...objectType, layout: I.ObjectLayout.Type }} 
 							name={objectType ? objectType.name : 'Select object type'} 
 							onMouseEnter={this.onObjectType} 
 							className={this.isReadonly() ? 'isReadonly' : ''}
@@ -254,7 +254,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			data: {
 				value: value,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.ObjectType ] }
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Type ] }
 				],
 				onSelect: (item: any) => {
 					this.objectTypes = [ item.id ];

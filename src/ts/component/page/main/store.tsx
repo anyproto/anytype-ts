@@ -370,7 +370,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			};
 
 			dbStore.objectTypeAdd(message.objectType);
-			this.onClick(e, { ...message.objectType, layout: I.ObjectLayout.ObjectType });
+			this.onClick(e, { ...message.objectType, layout: I.ObjectLayout.Type });
 		});
 	};
 

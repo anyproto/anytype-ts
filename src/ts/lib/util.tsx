@@ -158,7 +158,7 @@ class Util {
 		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
-	shorten (s: string, l: number, noEnding?: boolean) {
+	shorten (s: string, l?: number, noEnding?: boolean) {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {
@@ -505,14 +505,6 @@ class Util {
 		};
 
 		return String(icon || 'other');
-	};
-	
-	scrollTop (top: number) {
-		$('html, body').stop().animate({ scrollTop: top }, 300, 'swing');	
-	};
-		
-	scrollTopEnd () {
-		this.scrollTop($(document).height() - $(window).height());
 	};
 	
 	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {

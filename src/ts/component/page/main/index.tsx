@@ -231,6 +231,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			});
 		};
 
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
+		};
+
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
@@ -352,7 +356,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (object.isArchived) {
 			link = null;
-			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
+			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
@@ -380,16 +384,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				if (object.type == Constant.typeId.type) {
 					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
 				};
+
+				this.load();
 			};
 
-			if (item.isBlock) {
-				C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
-			} else {
-				DataUtil.pageSetArchived(object.id, v, (message: any) => {
-					cb(message);
-					this.load();
-				});
-			};
+			C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
 		};
 
 		menuStore.open('select', { 
@@ -570,7 +569,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				};
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
-					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					const object = detailStore.get(rootId, it.content.targetBlockId, []);
 					const { layout, name, _empty_, isArchived } = object;
 
 					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
@@ -586,7 +585,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, []);
 					it.isBlock = true;
 					return it;
 				});

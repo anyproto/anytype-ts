@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject, Select } from 'ts/component';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, translate } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -53,6 +53,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 	};
 
 	render () {
@@ -63,7 +64,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('type'),
@@ -72,6 +73,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -162,7 +164,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{templates.length} templates
+								{templates.length} {Util.cntWord(templates.length, 'template', 'templates')}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -193,8 +195,27 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
+					<div className="section layout">
+						<div className="title">Recommended layout</div>
+						<div className="content">
+							{allowedDetails ? (
+								<Select 
+									id="recommendedLayout" 
+									value={object.recommendedLayout} 
+									options={DataUtil.menuTurnLayouts()} 
+									arrowClassName="light" onChange={this.onLayout} 
+								/>
+							) : (
+								<React.Fragment>
+									<Icon className={layout.icon} />
+									<div className="name">{layout.name}</div>
+								</React.Fragment>
+							)}
+						</div>
+					</div>
+
 					<div className="section relation">
-						<div className="title">{relations.length} relations</div>
+						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
@@ -204,7 +225,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					</div>
 
 					<div className="section set">
-						<div className="title">{total} objects</div>
+						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
 						<div className="content">
 							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
@@ -308,7 +329,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			if (!message.error.code) {
 				focus.clear(true);
 
-				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
+				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 				DataUtil.objectOpenPopup(message.record);
 			};
 		});
@@ -429,6 +450,13 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				},
 			}
 		});
+	};
+
+	onLayout (layout: string) {
+		const rootId = this.getRootId();
+
+		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
+		C.BlockSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
 	};
 
 	onFocus (e: any, item: any) {

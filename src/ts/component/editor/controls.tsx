@@ -148,7 +148,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const colors = DataUtil.coverColors();
 		const color = colors[Util.rand(0, colors.length - 1)];
-		
+
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
 	};
