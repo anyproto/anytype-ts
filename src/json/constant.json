@@ -13,7 +13,6 @@
 	},
 
 	"default": {
-		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 12,
 		"codeLang": "javascript"

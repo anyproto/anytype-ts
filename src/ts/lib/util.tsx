@@ -507,14 +507,6 @@ class Util {
 		return String(icon || 'other');
 	};
 	
-	scrollTop (top: number) {
-		$('html, body').stop().animate({ scrollTop: top }, 300, 'swing');	
-	};
-		
-	scrollTopEnd () {
-		this.scrollTop($(document).height() - $(window).height());
-	};
-	
 	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {
 		if (!node.length || keyboard.isResizing) {
 			return;
