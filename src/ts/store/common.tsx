@@ -135,7 +135,16 @@ class CommonStore {
 	};
 
 	configSet (config: any) {
-		this.configObj = config;
+		console.log('[commonStore.configSet]', config);
+
+		const newConfig: any = {};
+		for (let k in config) {
+			if (undefined === this.configObj[k]) {
+				newConfig[k] = config[k];
+			};
+		};
+
+		set(this.configObj, newConfig);
 	};
 	
 };
