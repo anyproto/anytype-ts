@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
-import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage } from 'ts/lib';
+import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
@@ -70,7 +70,7 @@ class BlockText extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		let marker: any = null;
-		let placeholder = Constant.placeholder.default;
+		let placeholder = translate('placeholderBlock');
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
 		let additional = null;

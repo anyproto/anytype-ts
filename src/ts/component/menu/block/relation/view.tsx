@@ -97,7 +97,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		$('body').addClass('over');
+		$('body').addClass('overMenu');
 
 		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
@@ -111,7 +111,7 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		$('body').removeClass('over');
+		$('body').removeClass('overMenu');
 	};
 
 	onScroll () {

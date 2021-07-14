@@ -1082,7 +1082,7 @@ class EditorPage extends React.Component<Props, {}> {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		}, (blockId: string) => {
-			$('.placeholder.c' + blockId).text(Constant.placeholder.filter);
+			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
 	};
@@ -1109,7 +1109,7 @@ class EditorPage extends React.Component<Props, {}> {
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
-				$('.placeholder.c' + blockId).text(Constant.placeholder.default);
+				$(`.placeholder.c${blockId}`).text(translate('placeholderBlock'));
 			},
 			data: {
 				blockId: blockId,

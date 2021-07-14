@@ -13,7 +13,6 @@
 	},
 
 	"default": {
-		"icon": ":page_facing_up:",
 		"lang": "en",
 		"cover": 12,
 		"codeLang": "javascript"
@@ -28,11 +27,6 @@
 		"popup": 60,
 		"header": 2000,
 		"tooltip": 200
-	},
-	
-	"placeholder": {
-		"default": "Type text or / for commands",
-		"filter": "Type to filter"
 	},
 	
 	"extension": {
