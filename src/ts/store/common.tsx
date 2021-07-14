@@ -135,6 +135,8 @@ class CommonStore {
 	};
 
 	configSet (config: any) {
+		console.log('[commonStore.configSet]', config);
+
 		set(this.configObj, config);
 	};
 	
