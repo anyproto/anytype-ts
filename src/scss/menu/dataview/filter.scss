@@ -70,7 +70,7 @@
 			.buttons { position: absolute; right: 8px; top: 4px; }
 
 			.icon.delete { transition: none; }
-			.name { @include text-overflow-nw; }
+			.name { @include text-overflow-nw; width: calc(100% - 46px); }
 
 			.input { width: calc(100% - 20px); }
 
