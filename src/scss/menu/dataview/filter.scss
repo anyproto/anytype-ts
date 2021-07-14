@@ -35,12 +35,12 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 72px); line-height: 20px; height: 40px; }
+			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; }
 		}
 
 		.item:hover, .item.hover {
 			.icon.delete { opacity: 1; }
-			.txt { margin-right: 6px; width: calc(100% - 122px); }
+			.txt { width: calc(100% - 116px); }
 		}
 
 		.item.add { display: block; }
@@ -70,7 +70,7 @@
 			.buttons { position: absolute; right: 8px; top: 4px; }
 
 			.icon.delete { transition: none; }
-			.name { @include text-overflow-nw; width: calc(100% - 46px); }
+			.name { @include text-overflow-nw; width: calc(100% - 40px); }
 
 			.input { width: calc(100% - 20px); }
 
