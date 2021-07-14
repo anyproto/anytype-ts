@@ -249,10 +249,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
-				if (!value) {
-					break;
-				};
-
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
 					width: width,
@@ -272,7 +268,13 @@ class Cell extends React.Component<Props, {}> {
 						{ id: 'copy', name: 'Copy' },
 					],
 					onSelect: (event: any, item: any) => {
+						let value = '';
 						let scheme = '';
+
+						if (this.ref) {
+							value = this.ref.ref.getValue();
+						};
+
 						if (relation.format == I.RelationType.Url) {
 							if (!value.match(/:\/\//)) {
 								scheme = 'http://';
