@@ -106,6 +106,7 @@ class CellText extends React.Component<Props, State> {
 						ref={(ref: any) => { this.ref = ref; }} 
 						id="input" 
 						{...item} 
+						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
 						onSelect={this.onSelect}
 					/>
 				);

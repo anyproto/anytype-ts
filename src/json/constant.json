@@ -30,11 +30,6 @@
 		"tooltip": 200
 	},
 	
-	"placeholder": {
-		"default": "Type text or / for commands",
-		"filter": "Type to filter"
-	},
-	
 	"extension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
