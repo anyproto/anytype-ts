@@ -104,7 +104,7 @@ html.platformWindows {
 .isReadonly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
-.over { overflow: hidden !important; }
+.over, .overMenu, .overPopup { overflow: hidden !important; }
 .empty { color: #cbc9bd; }
 .isDone { color: $colorMediumGrey; }
 .placeholder { 

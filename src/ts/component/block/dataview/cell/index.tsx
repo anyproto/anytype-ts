@@ -138,7 +138,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.onClick();
 			};
 			if (menuId) {
-				$(scrollContainer).addClass('over');
+				$(scrollContainer).addClass('overMenu');
 			};
 			win.trigger('resize');
 		};
@@ -151,7 +151,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.setEditing(false);
 			};
 			if (menuId) {
-				$(scrollContainer).removeClass('over');
+				$(scrollContainer).removeClass('overMenu');
 			};
 		};
 
