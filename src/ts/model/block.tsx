@@ -10,7 +10,6 @@ class Block implements I.Block {
 	childrenIds: string[] = [];
 	align: I.BlockAlign = I.BlockAlign.Left;
 	bgColor: string = '';
-	number: number = 0;
 	fields: any = {};
 	content: any = {};
 	
@@ -23,7 +22,6 @@ class Block implements I.Block {
 		self.type = props.type;
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
-		self.number = Number(props.number) || 0;
 		self.fields = props.fields || {};
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
