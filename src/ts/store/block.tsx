@@ -109,10 +109,24 @@ class BlockStore {
 
     set (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
-		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
-    clear (rootId: string) {
+    add (rootId: string, block: I.Block) {
+		let blocks = this.getBlocks(rootId);
+
+		block = new M.Block(block);
+		blocks.push(block);
+	};
+
+    update (rootId: string, param: any) {
+		let block = this.getLeaf(rootId, param.id);
+		if (!block) {
+			return;
+		};
+		set(block, param);
+	};
+
+	clear (rootId: string) {
 		this.blockMap.delete(rootId);
 		this.treeMap.delete(rootId);
 	};
@@ -123,21 +137,8 @@ class BlockStore {
 		this.restrictionMap = new Map();
 	};
 
-    add (rootId: string, block: I.Block) {
-		let blocks = this.getBlocks(rootId);
-
-		block = new M.Block(block);
-		blocks.push(block);
-
-		this.updateStructure(rootId, block.id, block.childrenIds);
-	};
-
-    update (rootId: string, param: any) {
-		let block = this.getLeaf(rootId, param.id);
-		if (!block) {
-			return;
-		};
-		set(block, param);
+	setStructure (rootId: string, blocks: any[]) {
+		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
     updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
@@ -335,7 +336,7 @@ class BlockStore {
 		for (let [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {
 				const check = map.get(it);
-				if (check) {
+				if (check && (check.parentId != id)) {
 					check.parentId = id;
 					map.set(it, check);
 				};
@@ -359,25 +360,8 @@ class BlockStore {
 		};
 
 		for (let item of list) {
-			let element = map[item.id];
-			if (!element) {
-				continue;
-			};
-
-			let childBlocks = element.childBlocks || [];
-			let childrenIds = item.childrenIds || [];
-
-			for (let id of childrenIds) {
-				const child = map[id];
-				if (!child) {
-					continue;
-				};
-
-				child.parentId = item.id;
-				childBlocks.push(child);
-			};
-
-			map[item.id].childBlocks = Util.arrayUniqueObjects(childBlocks, 'id');
+			map[item.id].childrenIds = this.getChildrenIds(rootId, item.id);
+			map[item.id].childBlocks = this.getChildren(rootId, item.id);
 		};
 
 		return (map[rootId] || {}).childBlocks || [];

@@ -28,7 +28,6 @@ class Block implements I.Block {
 
 		makeObservable(self, {
 			layout: observable,
-			childrenIds: observable,
 			align: observable,
 			bgColor: observable,
 			fields: observable,
