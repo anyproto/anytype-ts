@@ -580,10 +580,6 @@ class PageMainIndex extends React.Component<Props, State> {
 						return false;
 					};
 
-					if ((tab == Tab.Recent) && isArchived) {
-						return true;
-					};
-
 					return !isArchived;
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {
