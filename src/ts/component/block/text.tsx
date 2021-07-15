@@ -37,6 +37,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
 	marks: I.Mark[] = [];
+	text: string = '';
 	clicks: number = 0;
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
@@ -215,6 +216,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const text = String(v || '');
+
+		this.text = text;
 
 		let html = text;
 		if (style == I.TextStyle.Code) {
@@ -809,6 +812,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (content.style == I.TextStyle.Code) {
 			marks = [];
 		};
+
+		if (this.text === value) {
+			return;
+		};
+
+		this.text = value;
 
 		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
 			if (callBack) {
