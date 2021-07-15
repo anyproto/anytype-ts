@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, IconObject, Error } from 'ts/component';
-import { authStore } from 'ts/store';
+import { authStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
 
@@ -83,8 +83,11 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 				Util.checkError(message.error.code);
 			} else
 			if (message.account) {
+				if (message.config) {
+					commonStore.configSet(message.config, false);
+				};
+
 				authStore.accountSet(message.account);
-				
 				DataUtil.onAuth();
 			};
 		});

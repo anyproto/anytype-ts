@@ -121,8 +121,11 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
+						if (message.config) {
+							commonStore.configSet(message.config, false);
+						};
+
 						authStore.accountSet(message.account);
-						
 						DataUtil.onAuth();
 					};
 				});
@@ -142,6 +145,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(error);
 			} else
 			if (message.account) {
+				if (message.config) {
+					commonStore.configSet(message.config, false);
+				};
+
 				const accountId = message.account.id;
 
 				authStore.accountSet(message.account);
@@ -171,6 +178,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
+				if (message.config) {
+					commonStore.configSet(message.config, false);
+				};
+
 				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit(() => {

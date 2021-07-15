@@ -1,4 +1,4 @@
-import { Account, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat, Source } from './common';
+import { Account, AccountConfig, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat, Source } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
@@ -36,6 +36,7 @@ import { ContentRelation, BlockRelation } from './block/relation';
 
 export {
 	Account,
+	AccountConfig,
 	Platform,
 	DragItem,
 	CoverType,

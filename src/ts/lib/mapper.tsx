@@ -13,6 +13,12 @@ const Mapper = {
 				id: obj.getId(),
 			};
 		},
+
+		AccountConfig: (obj: any): I.AccountConfig => {
+			return {
+				allowDataview: obj.getEnabledataview(),
+			};
+		},
 		
 		ObjectInfo: (obj: any): I.PageInfo => {
 			return {
