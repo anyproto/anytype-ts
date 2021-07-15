@@ -134,13 +134,18 @@ class CommonStore {
 		this.linkPreviewObj = param;
 	};
 
-	configSet (config: any) {
+	configSet (config: any, force: boolean) {
 		console.log('[commonStore.configSet]', config);
 
-		const newConfig: any = {};
-		for (let k in config) {
-			if (undefined === this.configObj[k]) {
-				newConfig[k] = config[k];
+		let newConfig: any = {};
+
+		if (force) {
+			newConfig = config;
+		} else {
+			for (let k in config) {
+				if (undefined === this.configObj[k]) {
+					newConfig[k] = config[k];
+				};
 			};
 		};
 

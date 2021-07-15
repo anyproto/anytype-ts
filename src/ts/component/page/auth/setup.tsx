@@ -123,7 +123,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 					} else
 					if (message.account) {
 						if (message.config) {
-							commonStore.configSet(message.config);
+							commonStore.configSet(message.config, false);
 						};
 
 						authStore.accountSet(message.account);
@@ -147,7 +147,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 			} else
 			if (message.account) {
 				if (message.config) {
-					commonStore.configSet(message.config);
+					commonStore.configSet(message.config, false);
 				};
 
 				const accountId = message.account.id;
@@ -180,7 +180,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 			} else
 			if (message.account) {
 				if (message.config) {
-					commonStore.configSet(message.config);
+					commonStore.configSet(message.config, false);
 				};
 
 				authStore.accountSet(message.account);

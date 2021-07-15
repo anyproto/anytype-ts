@@ -85,7 +85,7 @@ class MenuAccount extends React.Component<Props, State> {
 			} else
 			if (message.account) {
 				if (message.config) {
-					commonStore.configSet(message.config);
+					commonStore.configSet(message.config, false);
 				};
 
 				authStore.accountSet(message.account);

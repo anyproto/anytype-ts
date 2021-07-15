@@ -460,7 +460,7 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
-			commonStore.configSet(config); 
+			commonStore.configSet(config, true); 
 			analytics.init();
 		});
 
