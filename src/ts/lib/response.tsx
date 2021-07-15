@@ -78,6 +78,7 @@ const AccountRecover = (response: any) => {
 };
 
 const AccountSelect = (response: any) => {
+	console.log(JSON.stringify(Mapper.From.AccountConfig(response.getConfig()), null, 3));
 	return {
 		account: Mapper.From.Account(response.getAccount()),
 		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
