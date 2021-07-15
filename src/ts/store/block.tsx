@@ -277,6 +277,13 @@ class BlockStore {
 	};
 
     setNumbers (rootId: string) {
+		const container = $('#editor-' + rootId);
+		if (!container.length) {
+			return;
+		};
+
+		console.log('[setNumbers]', rootId);
+
 		const root = this.wrapTree(rootId);
 		if (!root) {
 			return;

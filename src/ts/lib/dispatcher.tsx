@@ -25,6 +25,7 @@ class Dispatcher {
 	service: any = null;
 	stream: any = null;
 	timeoutStream: number = 0;
+	timeoutNumber: any = {};
 
 	constructor () {
 		/// #if USE_ADDON
@@ -578,7 +579,8 @@ class Dispatcher {
 	};
 
 	setNumbers (rootId: string) {
-		raf(() => { blockStore.setNumbers(rootId); });
+		window.clearTimeout(this.timeoutNumber[rootId]);
+		this.timeoutNumber[rootId] = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 10);
 	};
 
 	sort (c1: any, c2: any) {

@@ -80,7 +80,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			<div id="editorWrapper">
 				<Controls key="editorControls" {...this.props} />
 				
-				<div className="editor">
+				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 
