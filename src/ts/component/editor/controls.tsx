@@ -149,7 +149,7 @@ class Controls extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const colors = DataUtil.coverColors();
 		const color = colors[Util.rand(0, colors.length - 1)];
-		
+
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
 	};
@@ -181,13 +181,19 @@ class Controls extends React.Component<Props, {}> {
 	onRelation (e: any) {
 		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const win = $(window);
-		const st = win.scrollTop();
+		const container = $(isPopup ? '#popupPage #innerWrap' : window);
+		const st = container.scrollTop();
+		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+
+		if (isPopup) {
+			const offset = container.offset();
+			rect.x += offset.left;
+			rect.y += offset.top;
+		};
 
 		const param: any = {
-			element: '.editorControls #button-relation',
-			rect: { x: win.width() - 10, y: Util.sizeHeader() + st, width: 1, height: 1 },
-			horizontal: I.MenuDirection.Right,
+			rect: rect,
+			horizontal: I.MenuDirection.Left,
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
@@ -199,6 +205,7 @@ class Controls extends React.Component<Props, {}> {
 				menuStore.closeAll();
 			},
 			data: {
+				isPopup: isPopup,
 				rootId: rootId,
 			},
 		};

@@ -158,7 +158,7 @@ class Util {
 		return haystack.substr(0, start) + needle + haystack.substr(end);
 	};
 	
-	shorten (s: string, l: number, noEnding?: boolean) {
+	shorten (s: string, l?: number, noEnding?: boolean) {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {
@@ -435,9 +435,10 @@ class Util {
 	
 	fileSize (v: number) {
 		v = Number(v) || 0;
-		let g = v / (1024 * 1024 * 1024);
-		let m = v / (1024 * 1024);
-		let k = v / 1024;
+		let unit = 1024;
+		let g = v / (unit * unit * unit);
+		let m = v / (unit * unit);
+		let k = v / unit;
 		if (g > 1) {
 			v = sprintf('%fGB', this.round(g, 2));
 		} else if (m > 1) {
@@ -452,8 +453,8 @@ class Util {
 
 	fileIcon (obj: any): string {
 		const n = obj.name.split('.');
-		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '');
-		const e = String(obj.fileExt || n[n.length - 1] || '');
+		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '').toLowerCase();
+		const e = String(obj.fileExt || n[n.length - 1] || '').toLowerCase();
 
 		let t: string[] = [];
 		let icon = '';
@@ -477,7 +478,7 @@ class Util {
 			icon = 'archive';
 		};
 
-		if ([ 'xls', 'xlsx' ].indexOf(e) >= 0) {
+		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
 			icon = 'table';
 		};
 		
@@ -504,14 +505,6 @@ class Util {
 		};
 
 		return String(icon || 'other');
-	};
-	
-	scrollTop (top: number) {
-		$('html, body').stop().animate({ scrollTop: top }, 300, 'swing');	
-	};
-		
-	scrollTopEnd () {
-		this.scrollTop($(document).height() - $(window).height());
 	};
 	
 	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {

@@ -30,7 +30,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, readOnly } = data;
+		const { view, readonly } = data;
 		const sections = this.getSections();
 		
 		const Section = (item: any) => (
@@ -42,7 +42,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
-							className={readOnly ? 'isReadOnly' : ''}
+							className={readonly ? 'isReadonly' : ''}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
@@ -58,7 +58,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={view.name} 
-							readOnly={readOnly}
+							readonly={readonly}
 							placeholder={translate('menuDataviewViewEditName')}
 							maxLength={Constant.limit.dataview.viewName} 
 							onKeyUp={this.onKeyUp} 
@@ -175,7 +175,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any, v: string) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { view } = data;
 
@@ -189,9 +189,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	save () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, onSave, readOnly } = data;
+		const { rootId, blockId, view, onSave, readonly } = data;
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 
@@ -219,12 +219,13 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeout);
 		this.save();
+		this.props.close();
 	};
 
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, readOnly } = data;
+		const { rootId, blockId, view, readonly } = data;
 		const views = dbStore.getViews(rootId, blockId);
 
 		const types = DataUtil.menuGetViews().map((it: any) => {
@@ -237,7 +238,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			{ id: 'type', name: 'View as', children: types }
 		];
 
-		if (view.id && !readOnly) {
+		if (view.id && !readonly) {
 			sections.push({
 				children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
@@ -274,10 +275,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, view, onSelect, onSave, readOnly } = data;
+		const { rootId, blockId, getData, getView, view, onSelect, onSave, readonly } = data;
 		const current = getView();
 
-		if (readOnly) {
+		if (readonly) {
 			return;
 		};
 

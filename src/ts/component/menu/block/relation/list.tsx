@@ -87,7 +87,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 								menuClassName="fromBlock"
 								scrollContainer={Util.getScrollContainer('menuBlockRelationList')}
 								pageContainer={Util.getPageContainer('menuBlockRelationList')}
-								readOnly={true}
+								readonly={true}
 							/>
 						</div>
 					</div>
@@ -154,7 +154,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		this.resize();
 		this.focus();
 
-		$('body').addClass('over');
+		$('body').addClass('overMenu');
 	};
 
 	componentDidUpdate () {
@@ -171,7 +171,7 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		$('body').removeClass('over');
+		$('body').removeClass('overMenu');
 	};
 
 	focus () {

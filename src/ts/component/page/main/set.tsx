@@ -44,13 +44,13 @@ class PageMainSet extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: Constant.default.nameSet,
+			name: DataUtil.defaultName('set'),
 			description: 'Add a description',
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (object.name == Constant.default.name) {
+		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
 		};
 
@@ -58,7 +58,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
 					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadOnly' ].join(' ')}>
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')}>
 							{object[item.id]}
 						</div>
 					) : (
@@ -91,13 +91,15 @@ class PageMainSet extends React.Component<Props, {}> {
 				<div className="blocks wrapper">
 					<div className="head">
 						<div className="side left">
-							<IconObject id={'icon-' + rootId} size={96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
+							<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
 						</div>
-						<div className="side right">
-							<Editor className="title" id="name" />
-							<Editor className="descr" id="description" />
+						<div className={[ 'side', 'right', (object.iconImage ? 'big' : '') ].join(' ')}>
+							<div className="txt">
+								<Editor className="title" id="name" />
+								<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+							</div>
 						</div>
 					</div>
 					
@@ -125,7 +127,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			this.placeholderCheck(id);
 		};
 
-		if (!focused && !object._empty_ && (object.name == Constant.default.name)) {
+		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('set'))) {
 			focus.set('name', { from: 0, to: 0 });
 		};
 
@@ -180,7 +182,7 @@ class PageMainSet extends React.Component<Props, {}> {
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
@@ -225,7 +227,7 @@ class PageMainSet extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: false,
+				readonly: false,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},

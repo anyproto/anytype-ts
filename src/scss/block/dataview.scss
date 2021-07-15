@@ -17,21 +17,32 @@
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
-		.icon.back, .icon.forward { width: 20px; height: 20px; }
+		.dataviewControls {
+			.side.left { width: calc(100% - 100px); }
+			.side.right { width: 100px; }
 
-		.views { @include text-header3; color: $colorMediumGrey; }
-		.views {
-			.item { 
+			.views { white-space: nowrap; display: inline-block; }
+			.viewItem { 
 				margin-right: 20px; display: inline-block; vertical-align: middle; transition: color 0.2s ease-in-out; cursor: pointer; 
-				white-space: nowrap;
+				white-space: nowrap; @include text-header3; color: $colorMediumGrey;
 			}
-			.item:last-child { margin: 0px; }
-			.item:hover, .item.active { color: $colorBlack; }
+			.viewItem { 
+				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
+			}
+			.viewItem:last-child { margin: 0px; }
+			.viewItem:hover, .viewItem.active { color: $colorBlack; }
 			
-			.item.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
-			.item.btn { line-height: 20px; }
+			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
+			.viewItem.btn { line-height: 20px; }
+
+			.first { display: none; }
+
+			.side.left.small {
+				.views { visibility: hidden; pointer-events: none; }
+				.first { display: inline-block; }
+			}
 		}
-		
+
 		.buttons { display: flex; font-weight: 500; color: $colorMediumGrey; }
 		.buttons {
 			.side { padding: 23px 0px; height: 72px; width: 50%; white-space: nowrap; }

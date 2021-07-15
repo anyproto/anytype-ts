@@ -3,7 +3,8 @@
 .menus {
 	.menu.menuDataviewFilterList { width: 360px; }
 	.menu.menuDataviewFilterList {
-		.content { max-height: 350px; }
+		.content { overflow: visible; max-height: unset; padding: 0px; }
+		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: auto; max-height: 350px; }
 
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
 		.item {
@@ -14,6 +15,8 @@
 			.buttons {
 				.icon { vertical-align: middle; }
 			}
+
+			.name { @include text-overflow-nw; width: 100%; }
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
 			.select:hover, .select.active { background: none; }
@@ -32,7 +35,7 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 72px); line-height: 22px; }
+			.txt { width: calc(100% - 72px); line-height: 20px; height: 40px; }
 		}
 
 		.item:hover, .item.hover {
@@ -43,6 +46,11 @@
 		.item.add { display: block; }
 		.item.add {
 			.icon.dnd { margin-top: 0px; }
+		}
+
+		.bottom { padding: 0px 0px 8px 0px; }
+		.bottom {
+			.line { margin-top: 0px; }
 		}
 	}
 

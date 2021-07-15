@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject, Select } from 'ts/component';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, translate } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -22,6 +22,14 @@ const Constant = require('json/constant.json');
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
+const NO_TEMPLATES = [ 
+	Constant.typeId.page, 
+	Constant.typeId.image, 
+	Constant.typeId.file, 
+	Constant.typeId.video, 
+	Constant.typeId.type, 
+	Constant.typeId.set, 
+];
 
 @observer
 class PageMainType extends React.Component<Props, State> {
@@ -46,6 +54,7 @@ class PageMainType extends React.Component<Props, State> {
 		this.onObjectAdd = this.onObjectAdd.bind(this);
 		this.onSetAdd = this.onSetAdd.bind(this);
 		this.onCreate = this.onCreate.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 	};
 
 	render () {
@@ -56,23 +65,24 @@ class PageMainType extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'recommendedLayout' ]));
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
-			name: Constant.default.nameType,
+			name: DataUtil.defaultName('type'),
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
+		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
-		const showTemplates = type.id != Constant.typeId.page;
+		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
 
-		if (object.name == Constant.default.name) {
+		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
 		};
 
@@ -87,7 +97,7 @@ class PageMainType extends React.Component<Props, State> {
 			return (
 				<div className={[ 'wrap', item.className ].join(' ')}>
 					{!allowedDetails ? (
-						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadOnly' ].join(' ')}>
+						<div id={'editor-' + item.id} className={[ 'editor', 'focusable', 'c' + item.id, 'isReadonly' ].join(' ')}>
 							{object[item.id]}
 						</div>
 					) : (
@@ -114,7 +124,7 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		const Relation = (item: any) => (
-			<div className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
+			<div id={'item-' + item.relationKey} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.relationKey); }}>
 					<Icon className={[ 'relation', DataUtil.relationClass(item.format) ].join(' ')} />
 					<div className="name">{item.name}</div>
@@ -145,7 +155,7 @@ class PageMainType extends React.Component<Props, State> {
 							<Editor className="title" id="name" />
 							<Editor className="descr" id="description" />
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readOnly={true} />
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="side right">
 							<Button id="button-create" text="Create" onClick={this.onCreate} />
@@ -155,7 +165,7 @@ class PageMainType extends React.Component<Props, State> {
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{templates.length} templates
+								{templates.length} {Util.cntWord(templates.length, 'template', 'templates')}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -186,8 +196,27 @@ class PageMainType extends React.Component<Props, State> {
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
+					<div className="section layout">
+						<div className="title">Recommended layout</div>
+						<div className="content">
+							{allowedDetails ? (
+								<Select 
+									id="recommendedLayout" 
+									value={object.recommendedLayout} 
+									options={DataUtil.menuTurnLayouts()} 
+									arrowClassName="light" onChange={this.onLayout} 
+								/>
+							) : (
+								<React.Fragment>
+									<Icon className={layout.icon} />
+									<div className="name">{layout.name}</div>
+								</React.Fragment>
+							)}
+						</div>
+					</div>
+
 					<div className="section relation">
-						<div className="title">{relations.length} relations</div>
+						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
 						<div className="content">
 							{relations.map((item: any, i: number) => (
 								<Relation key={i} {...item} />
@@ -197,7 +226,7 @@ class PageMainType extends React.Component<Props, State> {
 					</div>
 
 					<div className="section set">
-						<div className="title">{total} objects</div>
+						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
 						<div className="content">
 							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
@@ -280,7 +309,7 @@ class PageMainType extends React.Component<Props, State> {
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 
@@ -299,7 +328,9 @@ class PageMainType extends React.Component<Props, State> {
 
 		C.BlockDataviewRecordCreate(rootId, BLOCK_ID_TEMPLATE, { targetObjectType: rootId }, '', (message) => {
 			if (!message.error.code) {
-				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record);
+				focus.clear(true);
+
+				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 				DataUtil.objectOpenPopup(message.record);
 			};
 		});
@@ -371,16 +402,14 @@ class PageMainType extends React.Component<Props, State> {
 	};
 
 	onSetAdd () {
-		const { root } = blockStore;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.BlockCreateSet('', '', rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, I.BlockPosition.Bottom, (message: any) => {
-			if (message.error.code) {
-				return;
+		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+			if (!message.error.code) {
+				focus.clear(true);
+				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
 			};
-
-			DataUtil.objectOpenPopup({ id: message.targetId, layout: I.ObjectLayout.Set });
 		});
 	};
 
@@ -416,12 +445,19 @@ class PageMainType extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				relationKey: relationKey,
-				readOnly: !allowed,
+				readonly: !allowed,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
 			}
 		});
+	};
+
+	onLayout (layout: string) {
+		const rootId = this.getRootId();
+
+		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
+		C.BlockSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
 	};
 
 	onFocus (e: any, item: any) {

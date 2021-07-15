@@ -35,10 +35,11 @@ class BlockFeatured extends React.Component<Props, {}> {
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
+		this.elementMapper = this.elementMapper.bind(this);
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup, readOnly } = this.props;
+		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type) || {};
@@ -53,7 +54,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 					onMouseLeave={this.onMouseLeave}
 				>
-					<div className="name">{type.name || Constant.default.name}</div>
+					<div className="name">{type.name || DataUtil.defaultName('page')}</div>
 				</div>
 
 				{items.map((relationKey: any, i: any) => {
@@ -77,9 +78,10 @@ class BlockFeatured extends React.Component<Props, {}> {
 									scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readOnly={readOnly}
+									readonly={readonly}
 									isInline={true}
 									idPrefix={PREFIX}
+									elementMapper={this.elementMapper}
 									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
 									onMouseLeave={this.onMouseLeave}
 								/>
@@ -151,7 +153,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
-		if (!relation || relation.isReadOnly) {
+		if (!relation || relation.isReadonlyValue) {
 			return;
 		};
 
@@ -187,13 +189,13 @@ class BlockFeatured extends React.Component<Props, {}> {
 	};
 
 	onType (e: any) {
-		const { rootId, block, readOnly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
 
-		if (readOnly || !allowed) {
+		if (readonly || !allowed) {
 			const object = detailStore.get(rootId, rootId, []);
-			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.ObjectType });
+			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.Type });
 			return;
 		};
 
@@ -259,7 +261,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 			},
 			data: {
 				relationKey: '',
-				readOnly: false,
+				readonly: false,
 				rootId: rootId,
 			},
 		};
@@ -271,6 +273,24 @@ class BlockFeatured extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+	};
+
+	elementMapper (relation: any, item: any) {
+		item = Util.objectCopy(item);
+
+		switch (relation.format) {
+			case I.RelationType.File:
+			case I.RelationType.Object:
+				item.name = Util.shorten(item.name);
+				break;
+
+			case I.RelationType.Tag:
+			case I.RelationType.Status:
+				item.text = Util.shorten(item.text);
+				break;
+		};
+
+		return item;
 	};
 	
 };

@@ -189,7 +189,7 @@ class PopupSettings extends React.Component<Props, State> {
 								onFocus={this.onFocusPhrase} 
 								onBlur={this.onBlurPhrase} 
 								placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
-								readOnly={true} 
+								readonly={true} 
 							/>
 						</div>
 						{!this.onConfirmPhrase ? (

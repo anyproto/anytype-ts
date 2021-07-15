@@ -1,4 +1,4 @@
-import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup } from 'ts/lib';
+import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
@@ -6,6 +6,8 @@ const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
+
+const TIMEOUT_PIN = 5 * 60 * 1000;
 
 class Keyboard {
 	
@@ -187,7 +189,7 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		return this.isMainEditor() ? this.match.params.id : blockStore.root;
+		return this.match?.params?.id || blockStore.root;
 	};
 
 	onKeyUp (e: any) {
@@ -222,6 +224,8 @@ class Keyboard {
 		};
 
 		this.restoreSource();
+
+		analytics.event('HistoryBack');
 	};
 
 	forward () {
@@ -236,6 +240,8 @@ class Keyboard {
 		} else {
 			this.history.goForward();
 		};
+
+		analytics.event('HistoryForward');
 	};
 
 	onCommand (cmd: string, arg: any) {
@@ -344,7 +350,7 @@ class Keyboard {
 				this.setPinChecked(false);
 				this.history.push('/auth/pin-check');
 			};
-		}, 5 * 60 * 1000);
+		}, TIMEOUT_PIN);
 	};
 
 	setMatch (match: any) {
@@ -404,7 +410,7 @@ class Keyboard {
 	};
 	
 	isSpecial (k: string): boolean {
-		const keys: string[] = [ Key.backspace, Key.tab, Key.enter ];
+		const keys: string[] = [ Key.escape, Key.backspace, Key.tab, Key.enter ];
 		return this.isArrow(k) || keys.indexOf(k) >= 0;
 	};
 

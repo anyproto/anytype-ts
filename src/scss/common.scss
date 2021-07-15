@@ -101,16 +101,17 @@ html.platformWindows {
 .rel { position: relative; }
 .disabled { opacity: 0.5 !important; cursor: default !important; }
 .dis { cursor: default !important; }
-.isReadOnly { -webkit-user-modify: unset !important; cursor: default !important; }
+.isReadonly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
-.over { overflow: hidden !important; }
+.over, .overMenu, .overPopup { overflow: hidden !important; }
 .empty { color: #cbc9bd; }
 .isDone { color: $colorMediumGrey; }
 .placeholder { 
 	pointer-events: none; color: #cbc9bd; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
 	overflow: hidden;
 }
+::-webkit-input-placeholder { color: #cbc9bd !important; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

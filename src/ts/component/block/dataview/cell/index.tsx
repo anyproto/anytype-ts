@@ -108,13 +108,9 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, readOnly, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
+		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
-
-		if (!relation || readOnly || relation.isReadOnly) {
-			return;
-		};
 
 		if (!this.canEdit()) {
 			return;
@@ -142,7 +138,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.onClick();
 			};
 			if (menuId) {
-				$(scrollContainer).addClass('over');
+				$(scrollContainer).addClass('overMenu');
 			};
 			win.trigger('resize');
 		};
@@ -155,14 +151,14 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.setEditing(false);
 			};
 			if (menuId) {
-				$(scrollContainer).removeClass('over');
+				$(scrollContainer).removeClass('overMenu');
 			};
 		};
 
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
-			offsetY: 1,
+			offsetY: 2,
 			noAnimation: true,
 			passThrough: true,
 			className: menuClassName,
@@ -253,10 +249,6 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone:
-				if (!value) {
-					break;
-				};
-
 				param = Object.assign(param, {
 					type: I.MenuType.Horizontal,
 					width: width,
@@ -271,12 +263,19 @@ class Cell extends React.Component<Props, {}> {
 				};
 
 				param.data = Object.assign(param.data, {
+					disabled: !value, 
 					options: [
 						{ id: 'go', name: name },
 						{ id: 'copy', name: 'Copy' },
 					],
 					onSelect: (event: any, item: any) => {
+						let value = '';
 						let scheme = '';
+
+						if (this.ref) {
+							value = this.ref.ref.getValue();
+						};
+
 						if (relation.format == I.RelationType.Url) {
 							if (!value.match(/:\/\//)) {
 								scheme = 'http://';
@@ -344,10 +343,11 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	canEdit () {
-		const { readOnly, viewType } = this.props;
+		const { readonly, viewType, getRecord, index } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
 
-		if (!relation || readOnly || relation.isReadOnly) {
+		if (!relation || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if (relation.format == I.RelationType.Checkbox) {

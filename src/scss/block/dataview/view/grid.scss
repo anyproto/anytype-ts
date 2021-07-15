@@ -47,8 +47,8 @@
 			.row.add { border: 0px; }
 
 			.row:hover {
-				.cellContent.isName {
-					.name { width: calc(100% - 36px) !important; }
+				.cellContent.isName.canEdit {
+					.name { width: calc(100% - 40px) !important; }
 					.icon.edit { display: block; }
 				}
 			}

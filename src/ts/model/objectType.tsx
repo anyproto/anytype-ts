@@ -1,7 +1,5 @@
-import { I, M, Util } from 'ts/lib';
+import { I, M, Util, DataUtil } from 'ts/lib';
 import { decorate, observable, intercept } from 'mobx';
-
-const Constant = require('json/constant.json');
 
 class ObjectType implements I.ObjectType {
 
@@ -10,7 +8,9 @@ class ObjectType implements I.ObjectType {
 	description: string = '';
 	layout: I.ObjectLayout = I.ObjectLayout.Page;
 	iconEmoji: string = '';
+	isArchived: boolean = false;
 	isHidden: boolean = false;
+	isReadonly: boolean = false;
 	relations: I.Relation[] = [];
 	types: I.SmartBlockType[] = [];
 
@@ -18,11 +18,13 @@ class ObjectType implements I.ObjectType {
 		let self = this;
 
 		self.id = String(props.id || '');
-		self.name = String(props.name || Constant.default.name);
+		self.name = String(props.name || DataUtil.defaultName('page'));
 		self.description = String(props.description || '');
 		self.iconEmoji = String(props.iconEmoji || '');
 		self.layout = props.layout || I.ObjectLayout.Page;
+		self.isArchived = Boolean(props.isArchived);
 		self.isHidden = Boolean(props.isHidden);
+		self.isReadonly = Boolean(props.isReadonly);
 		self.relations = (props.relations || []).map((it: any) => { return new M.Relation(it); });
 		self.types = props.types || [];
 
@@ -32,6 +34,7 @@ class ObjectType implements I.ObjectType {
 			layout: observable,
 			relations: observable,
 			types: observable,
+			isArchived: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });

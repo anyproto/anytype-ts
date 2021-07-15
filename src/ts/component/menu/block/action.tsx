@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate } from 'ts/lib';
+import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
 import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -59,7 +59,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 						};
 
 						if (action.isObject) {
-							action.object = { ...action, layout: I.ObjectLayout.ObjectType };
+							action.object = { ...action, layout: I.ObjectLayout.Type };
 						};
 
 						return <MenuItemVertical 
@@ -95,15 +95,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { getId } = this.props;
-		const menu = $('#' + getId());
+		const menu = $(`#${getId()}`);
 		
 		this._isMounted = true;
 		this.rebind();
 		this.focus();
 
-		menu.unbind('mouseleave').on('mouseleave', () => {
-			menuStore.clearTimeout();
-		});
+		menu.unbind('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
 
 	componentDidUpdate () {
@@ -589,7 +587,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close } = this.props;
+		const { param, close, getId } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -599,6 +597,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		const ids = DataUtil.selectionGet(blockId, false, data);
+		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
 
 		switch (item.itemId) {
 			case 'download':

@@ -57,7 +57,7 @@
 		}
 	}
 
-	.menu.menuBlockRelationView { width: 640px; }
+	.menu.menuBlockRelationView { width: auto; }
 	.menu.menuBlockRelationView {
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; border: 0px; padding: 0px; }
@@ -65,44 +65,45 @@
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
 		.sections { display: flex; flex-direction: column; height: 100%; }
-		.section > .name { @include text-common; padding: 5px 28px; position: relative; color: $colorBlack; }
-		.section > .name {
-			.icon.plus { position: absolute; right: 28px; top: 50%; margin-top: -10px; cursor: pointer; }
-			.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
-		}
+
+		.section { padding: 0px; }
+		.section > .name { @include text-common; padding: 7px 32px; position: relative; color: $colorBlack; margin: 0px; }
 		.section:last-child::after { display: none; }
-		.section::after { margin: 12px 28px 3px 28px; display: none; }
+		.section::after { margin: 16px 32px; }
 
 		#section-featured::after { display: block; }
 
-		.scrollWrap { padding: 30px 0px 16px 0px; height: calc(100% - 54px); overflow-x: hidden; overflow-y: auto; }
-		.item { padding: 0px 20px; margin-bottom: 1px; cursor: default; }
+		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: auto; }
+		.item { padding: 0px 32px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }
 			.icon.lock { margin-right: 6px; }
 
 			.icon.fav {
 				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
-				margin: 0px; opacity: 0;
+				margin: 0px; opacity: 0; position: absolute; right: -38px; top: 0px;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
 
-			.info { padding: 5px 8px; color: $colorDarkGrey; }
+			.info { padding: 5px 0px; color: $colorDarkGrey; }
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
+			.cellContent { min-height: 22px; }
 			.cellContent {
 				.empty { display: block; }
 			}
 
-			.cell { padding: 5px 8px; margin-right: 6px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; }
+			.cell { 
+				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 
+				position: relative; margin-right: 6px;
+			}
 			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
 
-			.cell.c-select { padding: 4px 8px; }
+			.cell.c-select { padding: 5px 8px; }
 			.cell.c-select {
-				.empty { vertical-align: middle; }
-				.tagItem { margin: 3px 6px 3px 0px; } 
+				.tagItem { margin: 2px 6px 3px 0px; } 
 			}
 
 			.cell.isEditing { padding: 0px; }
@@ -110,11 +111,12 @@
 				.cellContent { position: relative; height: auto !important; min-height: 30px; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; }
 				.icon.clear { right: 8px; }
+				.icon.fav { display: none !important; }
 			}
 
 			.cell.isEditing.c-select {
 				.empty { display: inline-block; }
-				.cellContent { padding: 4px 8px; }
+				.cellContent { padding: 5px 8px; }
 			}
 			.cell.isEditing.c-select.isStatus {
 				.over { width: calc(100% - 26px); }
@@ -124,20 +126,15 @@
 			.cell.isEditing.c-number, 
 			.cell.isEditing.c-url, 
 			.cell.isEditing.c-phone, 
-			.cell.isEditing.c-email
+			.cell.isEditing.c-email,
+			.cell.isEditing.c-date,
+			.cell.isEditing.c-object
 			{
 				.cellContent { padding: 5px 8px !important; }
 			}
 
-			.cell.isEditing.c-date {
-				.cellContent { padding: 5px 8px 4px 8px !important; }
-			}
-
 			.cell.c-object {
 				.element { margin-top: 1px; margin-bottom: 1px; }
-			}
-			.cell.isEditing.c-object {
-				.cellContent { padding: 5px 8px 3px 8px !important; }
 			}
 
 			.cell.c-shortText {
@@ -157,13 +154,13 @@
 			}
 		}
 
-		.item:hover {
+		.item.canFav:hover {
 			.icon.fav { opacity: 1; }
 		}
 
-		.item.add { padding: 12px 22px; cursor: pointer; background: none; }
+		.item.add { padding: 7px 32px 8px 32px; cursor: pointer; background: none; }
 		.item.add {
-			.line { margin: 0px; position: absolute; top: 0px; left: 22px; width: calc(100% - 44px); }
+			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
 			.info { width: 100%; }
 		}
 		.item.add:hover { 

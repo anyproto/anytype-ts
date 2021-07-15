@@ -91,7 +91,7 @@ class PopupSearch extends React.Component<Props, State> {
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || Constant.default.name}</div>
+							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 
@@ -191,7 +191,7 @@ class PopupSearch extends React.Component<Props, State> {
 		this.disableFirstKey = Boolean(disableFirstKey);
 		this._isMounted = true;
 
-		this.setCrumbs(rootId);
+		crumbs.addPage(rootId);
 		this.focus = true;
 		this.select = true;
 
@@ -384,9 +384,9 @@ class PopupSearch extends React.Component<Props, State> {
 		const { config } = commonStore;
 		const { filter } = this.state;
 		
-		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image ];
+		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.Video ];
 		if (!config.allowDataview) {
-			skipLayouts = skipLayouts.concat(I.ObjectLayout.Human, I.ObjectLayout.Set, I.ObjectLayout.ObjectType, I.ObjectLayout.Relation);
+			skipLayouts = skipLayouts.concat(I.ObjectLayout.Human, I.ObjectLayout.Set, I.ObjectLayout.Type, I.ObjectLayout.Relation);
 		};
 
 		const filters: any[] = [
@@ -439,7 +439,11 @@ class PopupSearch extends React.Component<Props, State> {
 		});
 
 		return pages.map((it: any) => {
-			return { ...it, isRoot: it.id == root, name: String(it.name || Constant.default.name) }
+			return { 
+				...it, 
+				isRoot: it.id == root, 
+				name: String(it.name || DataUtil.defaultName('page')) 
+			};
 		});
 	};
 
@@ -474,12 +478,6 @@ class PopupSearch extends React.Component<Props, State> {
 		return true;
 	};
 
-	setCrumbs (id: string) {
-		let cr = crumbs.get(I.CrumbsType.Page);
-		cr = crumbs.add(I.CrumbsType.Page, id);
-		crumbs.save(I.CrumbsType.Page, cr);
-	};
-	
 	onClick (e: any, item: any) {
 		if (e.persist) {
 			e.persist();

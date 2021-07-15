@@ -25,21 +25,25 @@ class CellFile extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readOnly, relation, index, getRecord, canEdit, iconSize, placeholder } = this.props;
+		const { rootId, block, readonly, relation, index, getRecord, canEdit, iconSize, placeholder, elementMapper } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
 		};
 
 		let value = this.getValue();
-		value = value.map((it: string) => { return detailStore.get(rootId, it, [ 'fileExt' ]); });
+		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
+		
+		if (elementMapper) {
+			value = value.map((it: any) => { return elementMapper(relation, it); });
+		};
 
 		const Item = (item: any) => (
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
 				<div className="flex">
 					<IconObject object={item} size={iconSize} />
-					<div className="name">{item.name + (item.fileExt ? `.${item.fileExt}` : '')}</div>
+					<div className="name">{DataUtil.fileName(item)}</div>
 				</div>
 			</div>
 		);

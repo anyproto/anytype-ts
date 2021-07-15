@@ -106,6 +106,7 @@ class CellText extends React.Component<Props, State> {
 						ref={(ref: any) => { this.ref = ref; }} 
 						id="input" 
 						{...item} 
+						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
 						onSelect={this.onSelect}
 					/>
 				);
@@ -159,9 +160,7 @@ class CellText extends React.Component<Props, State> {
 					break;
 			};
 
-			if (viewType != I.ViewType.Grid) {
-				value = value || Constant.default.name;
-			};
+			value = value || DataUtil.defaultName('page');
 
 			content = (
 				<React.Fragment>
@@ -261,6 +260,10 @@ class CellText extends React.Component<Props, State> {
 
 		if (relation.format == I.RelationType.LongText) {
 			return;
+		};
+
+		if ([ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email ].indexOf(relation.format) >= 0) {
+			menuStore.updateData('button', { disabled: !value });
 		};
 
 		keyboard.shortcut('enter', e, (pressed: string) => {

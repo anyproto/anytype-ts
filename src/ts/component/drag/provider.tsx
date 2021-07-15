@@ -139,7 +139,7 @@ class DragProvider extends React.Component<Props, {}> {
 			console.log('[dragProvider.onDrop] paths', paths);
 
 			C.ExternalDropFiles(rootId, targetId, position, paths, () => {
-				if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+				if (target && target.isTextToggle() && (position == I.BlockPosition.Inner)) {
 					blockStore.toggle(rootId, targetId, true);
 				};
 			});
@@ -235,6 +235,7 @@ class DragProvider extends React.Component<Props, {}> {
 		const element = blockStore.getMapElement(rootId, targetId);
 
 		if (!target || !element) {
+			console.log('[dragProvider.onDrop] No target or element', target, element);
 			return;
 		};
 
@@ -340,6 +341,15 @@ class DragProvider extends React.Component<Props, {}> {
 				this.position = I.BlockPosition.Right;
 			};
 
+			const recalcPosition = () => {
+				if (ey <= y + height * 0.5) {
+					this.position = I.BlockPosition.Top;
+				} else
+				if (ey >= y + height * 0.5) {
+					this.position = I.BlockPosition.Bottom;
+				};
+			};
+
 			// You can't drop on Icon
 			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
 				this.position = I.BlockPosition.None;
@@ -350,20 +360,21 @@ class DragProvider extends React.Component<Props, {}> {
 				this.position = I.BlockPosition.None;
 			};
 
-			// You cant only drop into Paragraphs and list
+			// You can only drop into Paragraphs and Lists
 			if (
 				(this.position == I.BlockPosition.Inner) &&
 				isText &&
-				[ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0
+				([ I.TextStyle.Paragraph, I.TextStyle.Toggle, I.TextStyle.Checkbox, I.TextStyle.Numbered, I.TextStyle.Bulleted ].indexOf(style) < 0)
 			) {
-				this.position = I.BlockPosition.None;
+				recalcPosition();
 			};
 
+			// You can only drop into text blocks and links
 			if (
 				(this.position == I.BlockPosition.Inner) &&
 				([ I.BlockType.Text, I.BlockType.Link ].indexOf(type) < 0)
 			) {
-				this.position = I.BlockPosition.None;
+				recalcPosition();
 			};
 
 			// You can't drop on Featured

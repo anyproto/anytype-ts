@@ -107,8 +107,8 @@ class PageMainHistory extends React.Component<Props, State> {
 						<div className={cn.join(' ')}>
 							<div className="editor">
 								<div className="blocks">
-									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readOnly={true} /> : ''}
-									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readOnly={true} /> : ''}
+									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
+									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
 									
 									{children.map((block: I.Block, i: number) => {
 										return (
@@ -123,7 +123,7 @@ class PageMainHistory extends React.Component<Props, State> {
 												onMenuAdd={() => {}}
 												onPaste={() => {}}
 												getWrapperWidth={this.getWrapperWidth}
-												readOnly={true}
+												readonly={true}
 											/>
 										)
 									})}

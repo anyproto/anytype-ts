@@ -50,7 +50,7 @@ class MenuText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const length = value.length;
 
-		node.focus();
+		node.get(0).focus({ preventScroll: true });
 		setRange(node.get(0), { start: length, end: length });
 
 		this.resize();

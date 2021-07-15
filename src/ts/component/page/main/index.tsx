@@ -232,6 +232,10 @@ class PageMainIndex extends React.Component<Props, State> {
 			});
 		};
 
+		if (!config.debug.ho) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
+		};
+
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
@@ -353,9 +357,13 @@ class PageMainIndex extends React.Component<Props, State> {
 
 		if (object.isArchived) {
 			link = null;
-			archive = { id: 'unarchive', icon: 'remove', name: 'Restore from archive' };
+			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
+		};
+
+		if (object.isReadonly) {
+			archive = null;
 		};
 
 		if ([ Tab.Favorite ].indexOf(tab) < 0) {
@@ -368,6 +376,22 @@ class PageMainIndex extends React.Component<Props, State> {
 			link,
 		];
 
+		const onArchive = (v: boolean) => {
+			const cb = (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				if (object.type == Constant.typeId.type) {
+					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
+				};
+
+				this.load();
+			};
+
+			C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
+		};
+
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
@@ -379,9 +403,9 @@ class PageMainIndex extends React.Component<Props, State> {
 			},
 			data: {
 				options: options,
-				onMouseEnter: (e: any, item: any) => {
+				onMouseEnter: (e: any, el: any) => {
 					menuStore.closeAll(subIds, () => {
-						if (item.id == 'move') {
+						if (el.id == 'move') {
 							const filters = [
 								{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 							];
@@ -391,7 +415,7 @@ class PageMainIndex extends React.Component<Props, State> {
 							};
 
 							menuStore.open('searchObject', {
-								element: `#menuSelect #item-${item.id}`,
+								element: `#menuSelect #item-${el.id}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
@@ -402,9 +426,7 @@ class PageMainIndex extends React.Component<Props, State> {
 									type: I.NavigationType.Move, 
 									skipId: rootId,
 									position: I.BlockPosition.Bottom,
-									onSelect: (el: any) => {
-										menuContext.close();
-									},
+									onSelect: (el: any) => { menuContext.close(); }
 								}
 							});
 						};
@@ -418,19 +440,11 @@ class PageMainIndex extends React.Component<Props, State> {
 
 					switch (el.id) {
 						case 'archive':
-							if (item.isBlock) {
-								C.BlockListSetPageIsArchived(rootId, [ object.id ], true);
-							} else {
-								DataUtil.pageSetArchived(object.id, true, () => { this.load(); });
-							};
+							onArchive(true);
 							break;
 
 						case 'unarchive':
-							if (item.isBlock) {
-								C.BlockListSetPageIsArchived(rootId, [ object.id ], false);
-							} else {
-								DataUtil.pageSetArchived(object.id, false, () => { this.load(); });
-							};
+							onArchive(false);
 							break;
 
 						case 'link':
@@ -556,7 +570,7 @@ class PageMainIndex extends React.Component<Props, State> {
 				};
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
-					const object = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					const object = detailStore.get(rootId, it.content.targetBlockId, []);
 					const { layout, name, _empty_, isArchived } = object;
 
 					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
@@ -572,7 +586,7 @@ class PageMainIndex extends React.Component<Props, State> {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'isArchived' ]);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, []);
 					it.isBlock = true;
 					return it;
 				});

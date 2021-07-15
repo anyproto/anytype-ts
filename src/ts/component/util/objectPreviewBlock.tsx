@@ -306,10 +306,7 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		const { rootId } = this.props;
-		
 		this._isMounted = false;
-		Action.pageClose(rootId);
 	};
 
 	open () {

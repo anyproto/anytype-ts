@@ -20,6 +20,15 @@ const DebugSync = (limit: number, callBack?: (message: any) => void) => {
 	dispatcher.request('debugSync', request, callBack);
 };
 
+const DebugTree = (blockId: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.Tree.Request();
+
+	request.setBlockid(blockId);
+	request.setPath(path);
+
+	dispatcher.request('debugTree', request, callBack);
+};
+
 const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
 	
@@ -878,10 +887,12 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
 };
 
-const SetCreate = (url: string, callBack?: (message: any) => void) => {
+const SetCreate = (url: string, details: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Set.Create.Request();
 	
 	request.setObjecttypeurl(url);
+	request.setDetails(Encode.encodeStruct(details));
+	request.setTemplateid(templateId);
 
 	dispatcher.request('setCreate', request, callBack);
 };
@@ -965,6 +976,15 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 	dispatcher.request('objectRelationListAvailable', request, callBack);
 };
 
+const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetLayout.Request();
+	
+	request.setContextid(contextId);
+    request.setLayout(layout);
+
+	dispatcher.request('objectSetLayout', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1001,6 +1021,7 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 export {
 	VersionGet,
 	DebugSync,
+	DebugTree,
 
 	ImageGetBlob,
 	ConfigGet,
@@ -1116,6 +1137,7 @@ export {
 	ObjectRelationUpdate,
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
+	ObjectSetLayout,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

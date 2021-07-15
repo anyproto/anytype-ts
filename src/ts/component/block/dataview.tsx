@@ -44,7 +44,6 @@ class BlockDataview extends React.Component<Props, {}> {
 
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
-		const readOnly = false; // TMP
 
 		if (!view) {
 			return null;
@@ -74,7 +73,7 @@ class BlockDataview extends React.Component<Props, {}> {
 			<div>
 				<Controls 
 					{...this.props} 
-					readOnly={readOnly} 
+					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
 					getRecord={this.getRecord}
@@ -87,7 +86,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						{...this.props} 
 						scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
-						readOnly={readOnly} 
+						readonly={false} 
 						getData={this.getData} 
 						getRecord={this.getRecord}
 						getView={this.getView} 
@@ -165,7 +164,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any) {
+	onRowAdd (e: any, dir: number) {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
@@ -174,7 +173,7 @@ class BlockDataview extends React.Component<Props, {}> {
 		const create = (templateId: string) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, {}, templateId, (message: any) => {
 				if (!message.error.code) {
-					dbStore.recordAdd(rootId, block.id, message.record);
+					dbStore.recordAdd(rootId, block.id, message.record, dir);
 				};
 			});
 		};

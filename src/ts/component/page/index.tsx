@@ -106,6 +106,7 @@ class Page extends React.Component<Props, {}> {
 
 		popupStore.closeAll();
 		menuStore.closeAll();
+		Util.linkPreviewHide(true);
 	};
 
 	getMatch () {

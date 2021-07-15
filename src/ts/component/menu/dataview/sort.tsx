@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'ts/component';
-import { I, C } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -30,6 +30,11 @@ class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
+		
+		if (!view) {
+			return null;
+		};
+
 		const sortCnt = view.sorts.length;
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
@@ -47,7 +52,7 @@ class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
-				<div className={[ 'item', (!allowedView ? 'isReadOnly' : '') ].join(' ')}>
+				<div className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
@@ -107,22 +112,8 @@ class MenuSort extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
-		const view = getView();
-		
-		const relations = view.relations.filter((it: I.ViewRelation) => { 
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && !relation.isHidden && (relation.format != I.RelationType.File); 
-		});
 
-		const options: any[] = relations.map((it: I.ViewRelation) => {
-			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return { 
-				id: relation.relationKey, 
-				name: relation.name, 
-			};
-		});
-
-		return options;
+		return DataUtil.getRelationOptions(rootId, blockId, getView());
 	};
 
 	onAdd (e: any) {

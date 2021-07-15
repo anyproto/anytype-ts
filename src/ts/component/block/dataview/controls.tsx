@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, Util } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -11,7 +12,6 @@ interface State {
 	page: number;
 };
 
-const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 @observer
@@ -26,21 +26,22 @@ class Controls extends React.Component<Props, State> {
 
 		this.onButton = this.onButton.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onViewAdd = this.onViewAdd.bind(this);
 	};
 
 	render () {
-		const { getData, rootId, block, getView, readOnly, onRowAdd } = this.props;
+		const { getData, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const { page } = this.state;
-		const limit = Constant.limit.dataview.views;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter((it: any) => {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
 		});
 		const filterCnt = filters.length;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -54,38 +55,54 @@ class Controls extends React.Component<Props, State> {
 					id={'button-' + item.id} 
 					className={cn.join(' ')}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, item.id, item.menu); }}
+					onClick={(e: any) => { this.onButton(e, `button-${item.id}`, item.menu); }}
 				/>
 			);
 		};
 
 		const ViewItem = SortableElement((item: any) => (
-			<div id={'item-' + item.id} className={'item ' + (item.active ? 'active' : '')} onClick={(e: any) => { getData(item.id, 0); }}>
+			<div 
+				id={'view-item-' + item.id} 
+				className={'viewItem ' + (item.active ? 'active' : '')} 
+				onClick={(e: any) => { getData(item.id, 0); }} 
+				onContextMenu={(e: any) => { this.onView(e, item); }}
+			>
 				{item.name}
 			</div>
 		));
 
 		const Views = SortableContainer((item: any) => (
-			<div className="views">
-				{views.slice(page * limit, (page + 1) * limit).map((item: I.View, i: number) => (
-					<ViewItem key={i} {...item} active={item.id == viewId} index={i} />
+			<div id="views" className="views">
+				{views.map((item: I.View, i: number) => (
+					<ViewItem 
+						key={i} 
+						{...item} 
+						active={item.id == viewId} 
+						index={i} 
+					/>
 				))}
 
-				<div id="button-more" className="item btn" onClick={(e: any) => { this.onButton(e, 'more', 'dataviewViewList'); }}>
-					<Icon className="more" tooltip="Views" />
-				</div>
-
-				{/*<div className="item dn">
-					<Icon className={[ 'back', (page == 0 ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(-1); }} />
-					<Icon className={[ 'forward', (page == this.getMaxPage() ? 'disabled' : '') ].join(' ')} onClick={(e: any) => { this.onArrow(1); }} />
-				</div>*/}
+				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
 		return (
 			<div className="dataviewControls">
 				<div className="buttons">
-					<div className="side left">
+					<div id="sideLeft" className="side left">
+						<div className="first">
+							<div 
+								id={'view-item-' + view.id} 
+								className="viewItem active" 
+								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
+								onContextMenu={(e: any) => { this.onView(e, view); }}
+							>
+								{view.name}
+
+								<Icon className="arrow" />
+							</div>
+						</div>
+
 						<Views 
 							axis="x" 
 							lockAxis="x"
@@ -94,19 +111,31 @@ class Controls extends React.Component<Props, State> {
 							distance={10}
 							onSortEnd={this.onSortEnd}
 							helperClass="isDragging"
-							helperContainer={() => { return $('#block-' + block.id + ' .views').get(0); }}
+							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
 						/>
 					</div>
 
-					<div className="side right">
+					<div id="sideRight" className="side right">
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readOnly && allowed ? <Icon className="plus" tooltip="New object" onClick={onRowAdd} /> : ''}
+						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		$(window).unbind('resize.controls');
 	};
 	
 	onButton (e: any, id: string, menu: string) {
@@ -114,30 +143,89 @@ class Controls extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block, readOnly, getData, getView } = this.props;
-		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
+		const { rootId, block, readonly, getData, getView } = this.props;
+		const allowedRelation = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
-		if (id == 'manager') {
+		if (id == 'button-manager') {
 			tabs = [
 				{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
 				{ id: 'filter', name: 'Filters', component: 'dataviewFilterList' },
 				{ id: 'sort', name: 'Sorts', component: 'dataviewSort' },
+				{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 			];
 		};
 
 		menuStore.open(menu, { 
-			element: `#button-${id}`,
+			element: `#${id}`,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 10,
 			tabs: tabs,
 			data: {
-				readOnly: readOnly || !allowed,
+				readonly: readonly || !allowedRelation,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
+				view: getView(),
 			},
+		});
+	};
+
+	onViewAdd () {
+		const { rootId, block, getView } = this.props;
+		const view = getView();
+		const relations = Util.objectCopy(view.relations);
+		const filters: I.Filter[] = [];
+
+		for (let relation of relations) {
+			if (relation.isHidden || !relation.isVisible) {
+				continue;
+			};
+
+			filters.push({
+				relationKey: relation.relationKey,
+				operator: I.FilterOperator.And,
+				condition: I.FilterCondition.None,
+				value: null,
+			});
+		};
+
+		menuStore.open('dataviewViewEdit', {
+			element: `#button-view-add`,
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				view: { 
+					type: I.ViewType.Grid,
+					relations: relations,
+					filters: filters,
+				},
+				onSave: () => {
+					this.forceUpdate();
+				},
+			},
+		});
+	};
+
+	onView (e: any, item: any) {
+		e.stopPropagation();
+
+		const { rootId, block, getView } = this.props;
+		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+
+		menuStore.open('dataviewViewEdit', { 
+			element: $(e.currentTarget),
+			horizontal: I.MenuDirection.Center,
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				readonly: !allowed,
+				view: item,
+				getView: getView,
+				onSave: () => { this.forceUpdate(); },
+			}
 		});
 	};
 
@@ -145,22 +233,13 @@ class Controls extends React.Component<Props, State> {
 		const { oldIndex, newIndex } = result;
 	};
 
-	onArrow (dir: number) {
-		let { page } = this.state;
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const views = node.find('#views');
+		const sideLeft = node.find('#sideLeft');
 
-		page += dir;
-		page = Math.max(0, page);
-		page = Math.min(this.getMaxPage(), page);
-
-		this.setState({ page: page });
-	};
-
-	getMaxPage () {
-		const { rootId, block } = this.props;
-		const views = dbStore.getViews(rootId, block.id);
-		const limit = Constant.limit.dataview.views;
-
-		return Math.ceil(views.length / limit) - 1;
+		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
+		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
 };

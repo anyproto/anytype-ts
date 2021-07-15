@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject } from 'ts/component';
-import { I, M, C, Util, crumbs, Action } from 'ts/lib';
+import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -73,7 +73,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 				<div id="blocks" className={cn.join(' ')}>
 					<div className="side left">
 						{isVideo || isImage ? (
-							<Block {...this.props} key={file.id} rootId={rootId} block={file} readOnly={true} />
+							<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
 						) : (
 							<IconObject object={object} size={96} />
 						)}
@@ -81,17 +81,17 @@ class PageMainMedia extends React.Component<Props, {}> {
 
 					<div className="side right">
 						<div className="head">
-							<div className="title">{object.name}</div>
+							<div className="title">{DataUtil.fileName(object)}</div>
 							<div className="descr">{object.description}</div>
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-							<Button text="Download" className="download blank" onClick={this.onDownload} />
+							<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
 						</div>
 
 						<div className="section">
 							{relations.map((item: any) => (
-								<Block {...this.props} key={item.id} rootId={rootId} block={item} readOnly={true} />
+								<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} />
 							))}
 						</div>
 					</div>
@@ -159,7 +159,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 		};
 
 		if (close) {
-			Action.pageClose(rootId);
+			Action.pageClose(rootId, true);
 		};
 	};
 

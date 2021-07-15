@@ -52,7 +52,7 @@ export interface BlockComponent {
 	dataset?: any;
 	rootId: string;
 	block: I.Block;
-	readOnly?: boolean;
+	readonly?: boolean;
 	isPopup?: boolean;
 	onKeyDown?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
 	onKeyUp?(e: any, text: string, marks: I.Mark[], range: I.TextRange): void;
@@ -75,6 +75,7 @@ export interface Block {
 	fields: any;
 	align?: BlockAlign;
 	bgColor?: string;
+	number?: number;
 	content: any;
 	childrenIds: string[];
 	

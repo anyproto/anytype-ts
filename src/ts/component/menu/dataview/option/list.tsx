@@ -330,15 +330,13 @@ class MenuOptionList extends React.Component<Props, State> {
 		sections[I.OptionScope.Relation] = { id: I.OptionScope.Relation, name: 'Everywhere', children: [] };
 		sections[I.OptionScope.Format] = { id: I.OptionScope.Format, name: 'Suggested', children: [] };
 
-		items = items.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
-
 		if (filterMapper) {
 			items = items.filter(filterMapper);
 		};
 
 		if (data.filter) {
 			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
-			const check = items.filter((it: I.SelectOption) => { return it.text == data.filter; });
+			const check = items.filter((it: I.SelectOption) => { return it.text.toLowerCase() == data.filter.toLowerCase(); });
 
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
 
@@ -346,6 +344,8 @@ class MenuOptionList extends React.Component<Props, State> {
 				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
 			};
 		};
+
+		items = items.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 
 		for (let item of items) {
 			if (!sections[item.scope]) {

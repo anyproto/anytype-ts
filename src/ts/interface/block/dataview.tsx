@@ -72,7 +72,7 @@ export interface ViewRelation {
 export interface ViewComponent {
 	rootId: string;
 	block: I.Block;
-	readOnly: boolean;
+	readonly: boolean;
 	scrollContainer?: string;
 	pageContainer?: string;
 	isPopup?: boolean;
@@ -80,7 +80,7 @@ export interface ViewComponent {
 	getData(viewId: string, offset: number): void;
 	getRecord(index: number): any;
 	getView?(): View;
-	onRowAdd?: (e: any) => void;
+	onRowAdd?: (e: any, dir: number) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
@@ -104,7 +104,7 @@ export interface Cell {
 	relation?: I.Relation;
 	index?: number;
 	viewType: I.ViewType;
-	readOnly?: boolean;
+	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
 	scrollContainer?: string;
@@ -121,6 +121,7 @@ export interface Cell {
 	onMouseLeave?(e: any): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	cellPosition?: (cellId: string) => void;
+	elementMapper?: (relation: any, item: any) => any;
 };
 
 export interface ContentDataview {

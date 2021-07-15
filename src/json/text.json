@@ -363,9 +363,17 @@
 	"layout8": { "en": "Image" },
 	"layout20": { "en": "Database" },
 
+	"defaultNamePage": { "en": "Untitled" },
+	"defaultNameSet": { "en": "New set" },
+	"defaultNameType": { "en": "New type" },
+	"defaultNameRelation": { "en": "New relation" },
+	"defaultNameView": { "en": "New view" },
+
+	"placeholderBlock": { "en": "Type text or / for commands" },
+	"placeholderFilter": { "en": "Type to filter" },
 	"placeholderCellCommon": { "en": "No field" },
 	"placeholderCell0": { "en": "Enter text" },
-	"placeholderCell1": { "en": "Enter text" },	
+	"placeholderCell1": { "en": "Enter name" },	
 	"placeholderCell2": { "en": "Enter number" },	
 	"placeholderCell3": { "en": "Select status" },	
 	"placeholderCell4": { "en": "Enter date" },	
