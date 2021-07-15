@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
+import { MenuItemVertical, Loader } from 'ts/component';
+import { I, C, Key, keyboard, Util, DataUtil, Mark } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -28,7 +28,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	_isMounted: boolean = false;	
 	filter: string = '';
 	index: any = null;
-	cache: any = null;
+	cache: any = {};
 	items: any = [];
 
 	constructor (props: any) {
@@ -38,14 +38,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	render () {
-		const { n } = this.state;
+		const { n, loading } = this.state;
 		const items = this.getItems();
 		const { filter } = commonStore;
 		const { text } = filter;
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -78,31 +74,33 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		return (
 			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => index < items.length}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									scrollToIndex={n}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+				{loading ? <Loader /> : (
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={({ index }) => index < items.length}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={registerChild}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+										scrollToIndex={n}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				)}
 			</div>
 		);
 	};
@@ -152,7 +150,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	getItems () {
 		return [
-			{ id: 'add', name: 'Create new page', icon: 'plus', skipFilter: true }
+			{ id: 'add', name: 'Create new object', icon: 'plus', skipFilter: true }
 		].concat(this.items);
 	};
 	
@@ -316,7 +314,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
+		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });

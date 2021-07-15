@@ -282,8 +282,6 @@ class BlockStore {
 			return;
 		};
 
-		console.log('[setNumbers]', rootId);
-
 		const root = this.wrapTree(rootId);
 		if (!root) {
 			return;
