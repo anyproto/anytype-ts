@@ -122,8 +122,11 @@ class PageAuthSetup extends React.Component<Props, State> {
 						this.setError(message.error.description);
 					} else
 					if (message.account) {
+						if (message.config) {
+							commonStore.configSet(message.config, false);
+						};
+
 						authStore.accountSet(message.account);
-						
 						DataUtil.onAuth();
 					};
 				});
@@ -143,6 +146,10 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(error);
 			} else
 			if (message.account) {
+				if (message.config) {
+					commonStore.configSet(message.config, false);
+				};
+
 				const accountId = message.account.id;
 
 				authStore.accountSet(message.account);
@@ -172,6 +179,10 @@ class PageAuthSetup extends React.Component<Props, State> {
 				this.setError(message.error.description);
 			} else
 			if (message.account) {
+				if (message.config) {
+					commonStore.configSet(message.config, false);
+				};
+
 				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit(() => {

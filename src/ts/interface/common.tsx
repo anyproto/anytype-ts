@@ -2,6 +2,10 @@ export interface Account {
 	id: string;
 };
 
+export interface AccountConfig {
+	allowDataview: boolean;
+};
+
 export enum Platform {
 	Windows = 'Windows',
 	Mac = 'Mac',
