@@ -156,7 +156,7 @@ class BlockStore {
 		for (let [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {
 				const check = map.get(it);
-				if (check) {
+				if (check && (check.parentId != id)) {
 					check.parentId = id;
 					map.set(it, check);
 				};

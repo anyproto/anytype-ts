@@ -1,15 +1,15 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, Util} from 'ts/lib';
+import { I, C, focus, translate } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	block: any;
 	index?: any;
+	readonly?: boolean;
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
@@ -20,15 +20,29 @@ interface Props extends RouteComponentProps<any> {
 const ListChildren = observer(class ListChildren extends React.Component<Props, {}> {
 	
 	refObj: any = {};
+
+	constructor (props: any) {
+		super(props);
+		
+		this.onEmptyToggle = this.onEmptyToggle.bind(this);
+	};
 	
 	render () {
-		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index } = this.props;
+		const { onMouseMove, onMouseLeave, onResizeStart, rootId, block, index, readonly } = this.props;
 		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const children = blockStore.getChildren(rootId, block.id);
 		const length = childrenIds.length;
 
 		if (!length) {
-			return null;
+			if (block.isTextToggle() && !readonly) {
+				return (
+					<div className="emptyToggle" onClick={this.onEmptyToggle}>
+						{translate('blockTextToggleEmpty')}
+					</div>
+				);
+			} else {
+				return null;
+			};
 		};
 		
 		const cn = [ 'children', (block.isTextToggle() ? 'canToggle' : '') ];
@@ -66,12 +80,28 @@ const ListChildren = observer(class ListChildren extends React.Component<Props, 
 					return (
 						<React.Fragment key={item.id}>
 							{(i > 0) && isRow ? <ColResize index={i} /> : ''}
-							<Block {...this.props} block={item} css={css} className={cn.join(' ')} index={index + '-' + i} />
+							<Block 
+								key={'block-' + item.id} 
+								{...this.props} 
+								block={item} 
+								css={css} 
+								className={cn.join(' ')} 
+								index={index + '-' + i} 
+							/>
 						</React.Fragment>
 					);
 				})}
 			</div>
 		);
+	};
+
+	onEmptyToggle (e: any) {
+		const { rootId, block } = this.props;
+
+		C.BlockCreate({ type: I.BlockType.Text }, rootId, block.id, I.BlockPosition.Inner, (message: any) => {
+			focus.set(message.blockId, { from: 0, to: 0 });
+			focus.apply();
+		});
 	};
 	
 });

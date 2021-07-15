@@ -44,7 +44,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onToggle = this.onToggle.bind(this);
-		this.onEmptyToggle = this.onEmptyToggle.bind(this);
 		this.onEmptyColumn = this.onEmptyColumn.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onMenuDown = this.onMenuDown.bind(this);
@@ -94,13 +93,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			case I.BlockType.Text:
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
-				};
-
-				if (block.isTextToggle() && !readonly) {
-					const childrenIds = blockStore.getChildrenIds(rootId, id);
-					if (!childrenIds.length) {
-						empty = <div className="emptyToggle" onClick={this.onEmptyToggle}>{translate('blockTextToggleEmpty')}</div>;
-					};
 				};
 
 				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} />;
@@ -237,7 +229,13 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					{rowDropTargets}
 					{empty}
 
-					<ListChildren {...this.props} onMouseMove={this.onMouseMove} onMouseLeave={this.onMouseLeave} onResizeStart={this.onResizeStart} />
+					<ListChildren 
+						key={'block-children-' + id} 
+						{...this.props} 
+						onMouseMove={this.onMouseMove} 
+						onMouseLeave={this.onMouseLeave} 
+						onResizeStart={this.onResizeStart} 
+					/>
 					
 					{block.isLayoutColumn() ? (
 						<div className="columnEmpty" onClick={this.onEmptyColumn} />
@@ -286,19 +284,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		blockStore.toggle(rootId, block.id, !node.hasClass('isToggled'));
 		focus.apply();
-	};
-	
-	onEmptyToggle (e: any) {
-		const { rootId, block } = this.props;
-		const { id } = block;
-		const param = {
-			type: I.BlockType.Text
-		};
-		
-		C.BlockCreate(param, rootId, id, I.BlockPosition.Inner, (message: any) => {
-			focus.set(message.blockId, { from: 0, to: 0 });
-			focus.apply();
-		});
 	};
 	
 	onDragStart (e: any) {

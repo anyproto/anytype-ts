@@ -102,7 +102,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							};
 							return (
 								<Block 
-									key={block.id} 
+									key={'block-' + block.id} 
 									{...this.props}
 									index={i}
 									block={block}
