@@ -210,7 +210,7 @@ function createWindow () {
 		if (a.length && (a[0] == 11)) {
 			param.trafficLightPosition = { x: 20, y: 36 };
 		} else {
-			param.trafficLightPosition = { x: 20, y: 21 };
+			param.trafficLightPosition = { x: 20, y: 10 };
 		};
 	};
 

@@ -1,4 +1,4 @@
-import { observable, action, computed, set, makeObservable } from 'mobx';
+import { observable, action, computed, set, remove, makeObservable } from 'mobx';
 import { I, Util, analytics } from 'ts/lib';
 
 const Constant = require('json/constant.json');
