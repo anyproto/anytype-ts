@@ -195,6 +195,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				};
 			}));
 			this.items = this.items.filter(filterMapper);
+			this.items.sort(DataUtil.sortByName);
 
 			this.setState({ loading: false });
 		});
