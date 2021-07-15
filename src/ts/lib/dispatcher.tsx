@@ -7,8 +7,9 @@ const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
 const { remote } = window.require('electron');
-
 const Constant = require('json/constant.json');
+const raf = require('raf');
+
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
@@ -24,7 +25,6 @@ class Dispatcher {
 	service: any = null;
 	stream: any = null;
 	timeoutStream: number = 0;
-	timeoutNumbers: number = 0;
 
 	constructor () {
 		/// #if USE_ADDON
@@ -616,7 +616,7 @@ class Dispatcher {
 	};
 
 	setNumbers (rootId: string) {
-		window.setTimeout(() => { blockStore.setNumbers(rootId); }, 50);
+		raf(() => { blockStore.setNumbers(rootId); });
 	};
 
 	sort (c1: any, c2: any) {

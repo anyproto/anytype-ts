@@ -69,6 +69,7 @@ const WalletConvert = (response: any) => {
 const AccountCreate = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
+		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
 	};
 };
 
@@ -79,6 +80,7 @@ const AccountRecover = (response: any) => {
 const AccountSelect = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
+		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
 	};
 };
 

@@ -2,6 +2,7 @@ import { observable, action, computed, set, intercept, toJS } from 'mobx';
 import { I, M, Util, Storage } from 'ts/lib';
 
 const $ = require('jquery');
+const raf = require('raf');
 
 class BlockStore {
 	@observable public rootId: string = '';
@@ -267,9 +268,29 @@ class BlockStore {
 			return;
 		};
 
-		const cb = (n: number, list: any[]) => {
+		const unwrap = (list: any) => {
 			list = list || [];
 
+			let ret = [] as any[];
+			for (let item of list) {
+				for (let i = 0; i < item.childBlocks.length; i++) {
+					let child = item.childBlocks[i];
+					if (child.isLayoutDiv()) {
+						item.childBlocks.splice(i, 1);
+						i--;
+						item.childBlocks = item.childBlocks.concat(unwrap(child.childBlocks));
+					};
+				};
+
+				ret.push(item);
+			};
+			return ret;
+		};
+
+		const cb = (list: any[]) => {
+			list = list || [];
+
+			let n = 0;
 			for (let item of list) {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
@@ -280,11 +301,11 @@ class BlockStore {
 					};
 				};
 
-				cb(item.isLayoutDiv() ? n : 0, item.childBlocks);
+				cb(item.childBlocks);
 			};
 		};
 
-		cb(0, root.childBlocks);
+		cb(unwrap([ root ]));
 	};
 
 	getStructure (list: I.Block[]) {

@@ -171,12 +171,7 @@ class BlockType extends React.Component<Props, State> {
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			const items = this.getItems();
-			
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
 			this.setHover(item, false);
-
-			this.bind();
 		};
 	};
 
