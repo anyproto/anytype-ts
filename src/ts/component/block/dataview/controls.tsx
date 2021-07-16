@@ -144,7 +144,7 @@ class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const allowedRelation = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
+		const allowedRelation = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
 		let tabs = [];
 		if (id == 'button-manager') {
