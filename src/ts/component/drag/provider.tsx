@@ -232,14 +232,11 @@ class DragProvider extends React.Component<Props, {}> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const target = blockStore.getLeaf(rootId, targetId);
-		const element = blockStore.getMapElement(rootId, targetId);
 
-		if (!target || !element) {
-			console.log('[dragProvider.onDrop] No target or element', target, element);
+		if (!target) {
+			console.log('[dragProvider.onDrop] No target', target);
 			return;
 		};
-
-		const parent = blockStore.getLeaf(rootId, element.parentId);
 
 		let targetContextId = rootId;
 		let contextId = rootId;
@@ -255,6 +252,8 @@ class DragProvider extends React.Component<Props, {}> {
 			};
 		};
 
+		const element = blockStore.getMapElement(rootId, targetId);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 			targetId = parent.id;
 		};

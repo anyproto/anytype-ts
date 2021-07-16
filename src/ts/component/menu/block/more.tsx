@@ -207,6 +207,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
+
+			/*
+			if (block.isObjectSet()) {
+				sections.unshift({ children: [ undo, redo ] });
+			};
+			*/
+
 		} else
 		if (block.isPage()) {
 			if (object.type == Constant.typeId.template) {	

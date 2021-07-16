@@ -108,7 +108,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand } = this.props;
+		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
@@ -126,6 +126,10 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const value = record[relation.relationKey] || '';
 
+		if (cellPosition) {
+			cellPosition(cellId);
+		};
+
 		let menuId = '';
 		let setOn = () => {
 			if (!this.ref) {
@@ -140,6 +144,7 @@ class Cell extends React.Component<Props, {}> {
 			if (menuId) {
 				$(scrollContainer).addClass('overMenu');
 			};
+
 			win.trigger('resize');
 		};
 

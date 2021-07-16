@@ -30,8 +30,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { view, readonly } = data;
+		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -42,7 +43,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
-							className={readonly ? 'isReadonly' : ''}
+							className={!allowedView ? 'isReadonly' : ''}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
@@ -58,7 +59,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
 							value={view.name} 
-							readonly={readonly}
+							readonly={!allowedView}
 							placeholder={translate('menuDataviewViewEditName')}
 							maxLength={Constant.limit.dataview.viewName} 
 							onKeyUp={this.onKeyUp} 
@@ -189,9 +190,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	save () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, onSave, readonly } = data;
+		const { rootId, blockId, view, onSave } = data;
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
-		if (readonly) {
+		if (!allowedView) {
 			return;
 		};
 
