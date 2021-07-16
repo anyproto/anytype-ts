@@ -31,9 +31,9 @@
 
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 	
-	.editorControls { position: absolute; width: inherit; height: 98px; left: 50%; top: 0px; z-index: 1; line-height: 16px; transform: translateX(-50%); }
+	.editorControls { position: absolute; width: inherit; height: 98px; left: 50%; top: 0px; z-index: 1; line-height: 16px; opacity: 0; transform: translateX(-50%); }
 	.editorControls {
-		.controlButtons { position: absolute; bottom: 0px; opacity: 0; width: 100%; }
+		.controlButtons { position: absolute; bottom: 0px; width: 100%; }
 		
 		.btn { 
 			background: #fff; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -56,9 +56,7 @@
 			.icon.relation { background-image: url('~img/icon/add/relation1.svg');  }
 		}
 	}
-	.editorControls:hover, .editorControls.hover {
-		.controlButtons { opacity: 1; }
-	}
+	.editorControls:hover, .editorControls.hover { opacity: 1; }
 
 	.editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 }
