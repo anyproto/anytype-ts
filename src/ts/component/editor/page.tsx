@@ -1580,7 +1580,7 @@ class EditorPage extends React.Component<Props, {}> {
 		};
 
 		if (create) {
-			this.blockCreate(last ? last.id : '', I.BlockPosition.Bottom, { type: I.BlockType.Text });
+			this.blockCreate('', I.BlockPosition.Bottom, { type: I.BlockType.Text });
 		} else {
 			this.focus(last.id, length, length, false);
 		};
