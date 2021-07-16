@@ -119,11 +119,16 @@ class MenuRelationList extends React.Component<Props, {}> {
 	};
 
 	onAdd (e: any) {
-		const { param, getId, close } = this.props;
+		const { param, getId, close, id } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const menuIdEdit = 'dataviewRelationEdit';
+
+		const onAdd = () => {
+			menuStore.closeAll([ id, menuIdEdit ]); 
+		};
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
@@ -131,14 +136,12 @@ class MenuRelationList extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Center,
 			data: {
 				...data,
-				menuIdEdit: 'dataviewRelationEdit',
+				menuIdEdit: menuIdEdit,
 				filter: '',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+				onAdd: onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), (message: any) => { 
-						close();
-						menuStore.close('relationSuggest'); 
-					});
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), onAdd);
 				},
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
