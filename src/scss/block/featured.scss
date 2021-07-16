@@ -24,8 +24,14 @@
 			.iconObject { display: none; }
 			.name { vertical-align: baseline; line-height: inherit; display: inline; word-break: break-word; white-space: normal; }
 
-			.empty { vertical-align: top; display: inline; }
+			.empty { vertical-align: top; }
 			.flex { display: inline; }
+		}
+
+		.cell.canEdit {
+			.cellContent {
+				.empty { display: inline; }
+			}
 		}
 
 		.cellContent.c-file { padding: 5px 3px; }

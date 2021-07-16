@@ -1110,6 +1110,26 @@ class DataUtil {
 		return 0;
 	};
 
+	checkRelationValue (relation: any, value: any): boolean {
+		value = this.formatRelationValue(relation, value, false);
+
+		let ret = false;
+		switch (relation.format) {
+			default:
+				ret = value ? true : false;
+				break;
+
+			case I.RelationType.Status:
+			case I.RelationType.File:
+			case I.RelationType.Tag:
+			case I.RelationType.Object:
+			case I.RelationType.Relations:
+				ret = value.length ? true : false;
+				break;
+		};
+		return ret;
+	};
+
 	formatRelationValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default:
