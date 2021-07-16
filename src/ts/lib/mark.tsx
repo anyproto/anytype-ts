@@ -421,7 +421,7 @@ class Mark {
 		// Markdown
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
-			const rm = new RegExp('([^\\*_]+|^)(' + k + ')([^' + k + ']+)(' + k + ')(\\s|$)', 'ig');
+			const rm = new RegExp('([^\\*_]+|^)(' + k + ')([^' + k + ']+)(' + k + ')(\\s|$)', 'gi');
 
 			html.replace(rm, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
 				p1 = String(p1 || '');
@@ -438,7 +438,7 @@ class Mark {
 				for (let i in marks) {
 					let m = marks[i];
 					if (m.range.from >= from) {
-						m.range.from -= p2.length;
+						m.range.from -= p2.length + p4.length;
 						m.range.to -= p2.length + p4.length;
 					};
 				};
