@@ -20,12 +20,14 @@
 			.side.right { width: calc(100% - 128px); line-height: 96px; }
 			.side.right.big { line-height: 112px; }
 
-			.title { @include text-header1; }
-			.descr { @include text-paragraph; margin: 7px 0px; }
+			.side.right {
+				.txt { width: 100%; }
+				.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; }
+				.wrap { position: relative; }
 
-			.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; }
-
-			.wrap { position: relative; }
+				.title { @include text-header1; }
+				.descr { @include text-paragraph; margin: 7px 0px; }
+			}
 		}
 	}
 }
