@@ -64,8 +64,11 @@
 			.cellContent { padding: 5px 8px 4px 8px !important; }
 		}
 
-		.cell.c-object {
+		.cell.c-object, .cell.c-file {
 			.wrap { column-count: 3; }
+		}
+
+		.cell.c-object {
 			.element { margin-top: 1px; margin-bottom: 1px; background: none !important; }
 		}
 		.cell.isEditing.c-object {
