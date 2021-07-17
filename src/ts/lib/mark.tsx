@@ -16,6 +16,33 @@ enum Overlap {
 };
 
 class Mark {
+
+	regexpMarkdown: any[] = [];
+
+	constructor () {
+		const Markdown = [
+			{ key: '`', type: I.MarkType.Code },
+			{ key: '**', type: I.MarkType.Bold },
+			{ key: '__', type: I.MarkType.Bold },
+			{ key: '*', type: I.MarkType.Italic },
+			{ key: '_', type: I.MarkType.Italic },
+			{ key: '~~', type: I.MarkType.Strike },
+		];
+
+		for (let item of Markdown) {
+			const k = Util.filterFix(item.key);
+			this.regexpMarkdown.push({ 
+				key: item.key, 
+				type: item.type,
+				reg: new RegExp('([^\\*_]+)(' + k + ')([^`\\*_~]+)(' + k + ')(\\s)'),
+			});
+			this.regexpMarkdown.push({ 
+				key: item.key, 
+				type: item.type,
+				reg: new RegExp('(^)(' + k + ')([^`\\*_~]+)(' + k + ')($)'),
+			});
+		};
+	};
 	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if (mark.range.from == mark.range.to) {
@@ -407,23 +434,11 @@ class Mark {
 	};
 
 	fromMarkdown (html: string, marks: I.Mark[]) {
-		const Markdown = [
-			{ key: '`', type: I.MarkType.Code },
-			{ key: '**', type: I.MarkType.Bold },
-			{ key: '__', type: I.MarkType.Bold },
-			{ key: '*', type: I.MarkType.Italic },
-			{ key: '_', type: I.MarkType.Italic },
-			{ key: '~~', type: I.MarkType.Strike },
-		];
-
 		let text = html;
 
 		// Markdown
-		for (let item of Markdown) {
-			const k = Util.filterFix(item.key);
-			const rm = new RegExp('([^\\*_]+|^)(' + k + ')([^' + k + ']+)(' + k + ')(\\s|$)', 'gi');
-
-			html.replace(rm, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
+		for (let item of this.regexpMarkdown) {
+			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
 				p1 = String(p1 || '');
 				p2 = String(p2 || '');
 				p3 = String(p3 || '');
