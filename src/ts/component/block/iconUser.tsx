@@ -19,11 +19,12 @@ class BlockIconUser extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
 		
 		return (
 			<IconObject 
 				getObject={() => { return detailStore.get(rootId, rootId, []); }} 
+				className={readonly ? 'isReadonly' : ''}
 				onClick={this.onClick} 
 				size={128} 
 			/>
@@ -31,7 +32,12 @@ class BlockIconUser extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { rootId } = this.props;
+		const { rootId, readonly } = this.props;
+
+		if (readonly) {
+			return;
+		};
+
 		const object = detailStore.get(rootId, rootId, []);
 		const options = [
 			{ id: 'upload', name: 'Change' },
