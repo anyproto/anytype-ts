@@ -10,7 +10,6 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {};
 
 interface State {
-	n: number;
 	loading: boolean;
 };
 
@@ -25,7 +24,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
-		n: 0,
 	};
 
 	_isMounted: boolean = false;	
@@ -36,6 +34,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	refFilter: any = null;
 	refList: any = null;
 	top: number = 0;
+	n: number;
 
 	constructor (props: any) {
 		super(props);
@@ -50,7 +49,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const { n } = this.state;
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -127,7 +125,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
-										scrollToIndex={n}
 										onScroll={this.onScroll}
 									/>
 								)}
@@ -148,7 +145,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { n } = this.state;
 		const items = this.getItems();
 		const { param } = this.props;
 		const { data } = param;
@@ -172,7 +168,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		};
 		this.resize();
 		this.focus();
-		this.setActive(items[n]);
+		this.setActive(items[this.n]);
 	};
 	
 	componentWillUnmount () {
@@ -230,8 +226,16 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
+	
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+
+		this.props.setHover(items[this.n], false);
+
+		if (scroll) {
+			this.refList.scrollToRow(this.n);
+		};
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -291,31 +295,27 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		let { n } = this.state;
-		
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[n];
+		const item = items[this.n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
 				};
-				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
 				};
-				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
