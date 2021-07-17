@@ -65,6 +65,7 @@
 		}
 
 		.cell.c-object {
+			.wrap { column-count: 3; }
 			.element { margin-top: 1px; margin-bottom: 1px; background: none !important; }
 		}
 		.cell.isEditing.c-object {
