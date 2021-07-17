@@ -437,16 +437,13 @@ class Mark {
 
 		// Markdown
 		for (let item of this.regexpMarkdown) {
+			html = text;
 			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
 				p1 = String(p1 || '');
 				p2 = String(p2 || '');
 				p3 = String(p3 || '');
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
-
-				if (p2 != p4) {
-					return;
-				};
 
 				let offset = Number(text.indexOf(s)) || 0;
 				let from = offset + p1.length;
