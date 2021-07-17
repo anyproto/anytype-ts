@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical, Icon } from 'ts/component';
 import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
@@ -32,7 +33,9 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	cache: any = null;
 	offset: number = 0;
 	items: any[] = [];
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
+	top: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -40,6 +43,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -97,7 +101,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter objects..." 
 					value={filter}
 					onChange={this.onFilterChange} 
@@ -114,7 +118,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={registerChild}
+										ref={(ref: any) => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -124,6 +128,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
 										scrollToIndex={n}
+										onScroll={this.onScroll}
 									/>
 								)}
 							</AutoSizer>
@@ -162,6 +167,9 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
 		this.resize();
 		this.focus();
 		this.setActive(items[n]);
@@ -182,20 +190,25 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};
 
 	rebind () {
 		this.unbind();
-
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 	getItems () {
