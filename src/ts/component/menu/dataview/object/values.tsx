@@ -88,7 +88,6 @@ class MenuObjectValues extends React.Component<Props> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-		this.onAdd();
 	};
 
 	componentDidUpdate () {

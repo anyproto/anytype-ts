@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Filter, MenuItemVertical, Icon } from 'ts/component';
+import { Filter, MenuItemVertical, Icon, Loader } from 'ts/component';
 import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -28,7 +27,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;	
 	filter: string = '';
-	cache: any = null;
+	cache: any = {};
 	offset: number = 0;
 	items: any[] = [];
 	refFilter: any = null;
@@ -47,13 +46,10 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	
 	render () {
 		const { param } = this.props;
+		const { loading } = this.state;
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -105,33 +101,35 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 					onChange={this.onFilterChange} 
 				/>
 
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={(ref: any) => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										onScroll={this.onScroll}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
+				{loading ? <Loader /> : (
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={this.onScroll}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				)}
 			</div>
 		);
 	};
