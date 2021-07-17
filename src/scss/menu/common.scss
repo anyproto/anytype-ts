@@ -168,6 +168,7 @@
 		.item.active::before { opacity: 0; }
 		.item.active { background: #fef3c5; color: #e89d00; }
 		.item.active {
+			.name { width: 100%; }
 			.icon.chk { display: none; }
 		}
 	}
