@@ -27,14 +27,13 @@ class Mark {
 			{ key: '*', type: I.MarkType.Italic },
 			{ key: '_', type: I.MarkType.Italic },
 			{ key: '~~', type: I.MarkType.Strike },
-			{ key: ':', type: I.MarkType.Emoji },
 		];
 
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
-				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^`\\*_~:]+)(' + k + ')(\\s|$)'),
+				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^`\\*_~]+)(' + k + ')(\\s|$)', 'gi'),
 			});
 		};
 	};
@@ -430,7 +429,7 @@ class Mark {
 
 	fromMarkdown (html: string, marks: I.Mark[]) {
 		let text = html;
-		let test = /[`\*_~:]{1}/.test(text);
+		let test = /[`\*_~]{1}/.test(text);
 
 		if (!test) {
 			return { marks, text };
@@ -446,21 +445,9 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				let offset = Number(text.indexOf(s)) || 0;
-				let from = offset + p1.length;
+				let from = (Number(text.indexOf(s)) || 0) + p1.length;
 				let to = from + p3.length;
-				let param = '';
-				let t = p1 + p3 + ' ';
-
-				if (item.type == I.MarkType.Emoji) {
-					param = SmileUtil.nativeById(p3, Storage.get('skin'));
-					if (!param) {
-						return;
-					};
-
-					to = from + 1;
-					t = p1 + '  ';
-				};
+				let replace = p1 + p3 + ' ';
 
 				// Marks should be moved by replacement lengths
 				for (let i in marks) {
@@ -471,8 +458,8 @@ class Mark {
 					};
 				};
 
-				marks.push({ type: item.type, range: { from: from, to: to }, param: param });
-				text = text.replace(s, t);
+				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
+				text = text.replace(s, replace);
 				return s;
 			});
 		};
