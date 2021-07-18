@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util, SmileUtil, Storage } from 'ts/lib';
 
 const $ = require('jquery');
 const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
@@ -32,14 +32,8 @@ class Mark {
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
 			this.regexpMarkdown.push({ 
-				key: item.key, 
 				type: item.type,
-				reg: new RegExp('([^\\*_]+)(' + k + ')([^`\\*_~]+)(' + k + ')(\\s)'),
-			});
-			this.regexpMarkdown.push({ 
-				key: item.key, 
-				type: item.type,
-				reg: new RegExp('(^)(' + k + ')([^`\\*_~]+)(' + k + ')($)'),
+				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^`\\*_~]+)(' + k + ')(\\s|$)', 'gi'),
 			});
 		};
 	};
@@ -435,9 +429,15 @@ class Mark {
 
 	fromMarkdown (html: string, marks: I.Mark[]) {
 		let text = html;
+		let test = /[`\*_~]{1}/.test(text);
+
+		if (!test) {
+			return { marks, text };
+		};
 
 		// Markdown
 		for (let item of this.regexpMarkdown) {
+			html = text;
 			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
 				p1 = String(p1 || '');
 				p2 = String(p2 || '');
@@ -445,21 +445,21 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				let offset = Number(text.indexOf(s)) || 0;
-				let from = offset + p1.length;
+				let from = (Number(text.indexOf(s)) || 0) + p1.length;
 				let to = from + p3.length;
+				let replace = p1 + p3 + ' ';
 
 				// Marks should be moved by replacement lengths
 				for (let i in marks) {
 					let m = marks[i];
 					if (m.range.from >= from) {
-						m.range.from -= p2.length + p4.length;
-						m.range.to -= p2.length + p4.length;
+						m.range.from -= p2.length * 2;
+						m.range.to -= p2.length * 2;
 					};
 				};
 
 				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
-				text = text.replace(s, p1 + p3 + ' ');
+				text = text.replace(s, replace);
 				return s;
 			});
 		};
