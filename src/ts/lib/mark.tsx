@@ -30,10 +30,11 @@ class Mark {
 		];
 
 		for (let item of Markdown) {
+			const non = Util.filterFix(item.key.substr(0, 1));
 			const k = Util.filterFix(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
-				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^`\\*_~]+)(' + k + ')(\\s|$)', 'gi'),
+				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
 			});
 		};
 	};
@@ -453,8 +454,8 @@ class Mark {
 				for (let i in marks) {
 					let m = marks[i];
 					if (m.range.from >= from) {
-						m.range.from -= p2.length * 2;
-						m.range.to -= p2.length * 2;
+						m.range.from = Math.max(0, m.range.from - p2.length * 2);
+						m.range.to = Math.max(0, m.range.to - p2.length * 2);
 					};
 				};
 
