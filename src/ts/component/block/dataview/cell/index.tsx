@@ -111,6 +111,7 @@ class Cell extends React.Component<Props, {}> {
 		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
+		const { config } = commonStore;
 
 		if (!this.canEdit()) {
 			return;
@@ -320,8 +321,10 @@ class Cell extends React.Component<Props, {}> {
 				window.setTimeout(() => {
 					menuStore.open(menuId, param);
 
-					//$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
-					//win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					if (!config.debug.ui) {
+						win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					};
 				}, Constant.delay.menu);
 			};
 		} else {

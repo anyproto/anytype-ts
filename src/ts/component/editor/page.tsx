@@ -1353,7 +1353,7 @@ class EditorPage extends React.Component<Props, {}> {
 				to = message.caretPosition;
 			};
 			
-			this.focus(id, from, to, false);
+			this.focus(id, from, to, true);
 		});
 	};
 

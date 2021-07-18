@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon } from 'ts/component';
+import { Filter, MenuItemVertical, Icon, Loader } from 'ts/component';
 import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -9,7 +9,6 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {};
 
 interface State {
-	n: number;
 	loading: boolean;
 };
 
@@ -24,15 +23,17 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
-		n: 0,
 	};
 
 	_isMounted: boolean = false;	
 	filter: string = '';
-	cache: any = null;
+	cache: any = {};
 	offset: number = 0;
 	items: any[] = [];
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
+	top: number = 0;
+	n: number;
 
 	constructor (props: any) {
 		super(props);
@@ -40,18 +41,15 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
 		const { param } = this.props;
+		const { loading } = this.state;
 		const { data } = param;
 		const { filter } = data;
-		const { n } = this.state;
 		const items = this.getItems();
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -97,39 +95,41 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter objects..." 
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>
 
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={registerChild}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										scrollToIndex={n}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
+				{loading ? <Loader /> : (
+					<div className="items">
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={this.onScroll}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -143,7 +143,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { n } = this.state;
 		const items = this.getItems();
 		const { param } = this.props;
 		const { data } = param;
@@ -162,9 +161,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
 		this.resize();
 		this.focus();
-		this.setActive(items[n]);
+		this.setActive(items[this.n]);
 	};
 	
 	componentWillUnmount () {
@@ -182,20 +184,25 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};
 
 	rebind () {
 		this.unbind();
-
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 	getItems () {
@@ -217,8 +224,16 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
+	
+		if (item) {
+			this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+
+		this.props.setHover(items[this.n], false);
+
+		if (scroll) {
+			this.refList.scrollToRow(this.n);
+		};
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -278,31 +293,27 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		let { n } = this.state;
-		
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[n];
+		const item = items[this.n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
 				};
-				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
 				};
-				this.setState({ n: n });
 				this.setActive(null, true);
 				break;
 				
