@@ -1,4 +1,4 @@
-import { I, Util } from 'ts/lib';
+import { I, Util, SmileUtil, Storage } from 'ts/lib';
 
 const $ = require('jquery');
 const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
@@ -27,13 +27,14 @@ class Mark {
 			{ key: '*', type: I.MarkType.Italic },
 			{ key: '_', type: I.MarkType.Italic },
 			{ key: '~~', type: I.MarkType.Strike },
+			{ key: ':', type: I.MarkType.Emoji },
 		];
 
 		for (let item of Markdown) {
 			const k = Util.filterFix(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
-				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^`\\*_~]+)(' + k + ')(\\s|$)'),
+				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^`\\*_~:]+)(' + k + ')(\\s|$)'),
 			});
 		};
 	};
@@ -429,7 +430,7 @@ class Mark {
 
 	fromMarkdown (html: string, marks: I.Mark[]) {
 		let text = html;
-		let test = /[`\*_~]{1}/.test(text);
+		let test = /[`\*_~:]{1}/.test(text);
 
 		if (!test) {
 			return { marks, text };
@@ -448,6 +449,18 @@ class Mark {
 				let offset = Number(text.indexOf(s)) || 0;
 				let from = offset + p1.length;
 				let to = from + p3.length;
+				let param = '';
+				let t = p1 + p3 + ' ';
+
+				if (item.type == I.MarkType.Emoji) {
+					param = SmileUtil.nativeById(p3, Storage.get('skin'));
+					if (!param) {
+						return;
+					};
+
+					to = from + 1;
+					t = p1 + '  ';
+				};
 
 				// Marks should be moved by replacement lengths
 				for (let i in marks) {
@@ -458,8 +471,8 @@ class Mark {
 					};
 				};
 
-				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
-				text = text.replace(s, p1 + p3 + ' ');
+				marks.push({ type: item.type, range: { from: from, to: to }, param: param });
+				text = text.replace(s, t);
 				return s;
 			});
 		};
