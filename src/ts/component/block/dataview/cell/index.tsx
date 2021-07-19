@@ -205,7 +205,7 @@ class Cell extends React.Component<Props, {}> {
 					value: value || [],
 				});
 
-				menuId = 'dataviewMedia';
+				menuId = 'dataviewFileValues';
 				break;
 
 			case I.RelationType.Status:
