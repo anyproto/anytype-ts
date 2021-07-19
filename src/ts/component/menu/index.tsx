@@ -45,6 +45,8 @@ import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
 import MenuDataviewObjectList from './dataview/object/list';
 import MenuDataviewObjectValues from './dataview/object/values';
+import MenuDataviewFileList from './dataview/file/list';
+import MenuDataviewFileValues from './dataview/file/values';
 import MenuDataviewFilterList from './dataview/filter/list';
 import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
@@ -55,7 +57,6 @@ import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewOptionValues from './dataview/option/values';
 import MenuDataviewDate from './dataview/date';
-import MenuDataviewMedia from './dataview/media';
 import MenuDataviewText from './dataview/text';
 
 interface Props extends I.Menu {
@@ -113,6 +114,8 @@ const Components: any = {
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
 	dataviewObjectList:		 MenuDataviewObjectList,
 	dataviewObjectValues:	 MenuDataviewObjectValues,
+	dataviewFileList:		 MenuDataviewFileList,
+	dataviewFileValues:		 MenuDataviewFileValues,
 	dataviewOptionList:		 MenuDataviewOptionList,
 	dataviewOptionEdit:		 MenuDataviewOptionEdit,
 	dataviewOptionValues:	 MenuDataviewOptionValues,
@@ -123,7 +126,6 @@ const Components: any = {
 	dataviewViewEdit:		 MenuDataviewViewEdit,
 	dataviewCalendar:		 MenuDataviewCalendar,
 	dataviewDate:			 MenuDataviewDate,
-	dataviewMedia:			 MenuDataviewMedia,
 	dataviewText:			 MenuDataviewText,
 };
 

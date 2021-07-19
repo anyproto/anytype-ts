@@ -13,7 +13,7 @@ const $ = require('jquery');
 const { dialog } = window.require('electron').remote;
 
 @observer
-class MenuDataviewMedia extends React.Component<Props, {}> {
+class MenuDataviewFileValues extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -230,4 +230,4 @@ class MenuDataviewMedia extends React.Component<Props, {}> {
 
 };
 
-export default MenuDataviewMedia;
+export default MenuDataviewFileValues;
