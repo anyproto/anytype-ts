@@ -634,6 +634,7 @@ class Util {
 		return [...s].length;
 	};
 	
+	// Fix emoji lengths for GO
 	rangeFixOut (text: string, range: I.TextRange): I.TextRange {
 		range = this.objectCopy(range);
 		range.from = this.lengthFixOut(text, range.from);
