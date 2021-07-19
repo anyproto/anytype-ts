@@ -134,23 +134,28 @@ class MenuDataviewFileValues extends React.Component<Props, {}> {
     };
 
 	onAdd (e: any) {
-		const { getId, close, param } = this.props;
+		const { getId, getSize, close, param } = this.props;
+		const { data } = param;
 		const { classNameWrap } = param;
 
-		menuStore.open('searchObject', {
-			element: `#${getId()} #item-add`,
+		menuStore.open('dataviewFileList', {
+			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
-			offsetY: -36,
+			offsetY: -getSize().height,
 			classNameWrap: classNameWrap,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
 			data: {
+				...data,
 				noClose: true,
 				placeholderFocus: 'Find a file...',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
-				onSelect: (item: any) => {
-					this.add(item.id);
+				onChange: (value: string[]) => {
+					this.save(value);
 				}
 			}
 		});
