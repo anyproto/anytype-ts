@@ -215,7 +215,11 @@ class BlockText extends React.Component<Props, {}> {
 		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
-		const text = String(v || '');
+		
+		let text = String(v || '');
+		if (text === '\n') {
+			text = '';
+		};
 
 		let html = text;
 		if (style == I.TextStyle.Code) {

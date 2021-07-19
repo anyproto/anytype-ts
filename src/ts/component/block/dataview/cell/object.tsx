@@ -27,15 +27,21 @@ class CellObject extends React.Component<Props, State> {
 	render () {
 		const { rootId, getRecord, index, relation, iconSize, placeholder, elementMapper } = this.props;
 		const record = getRecord(index);
+		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
 			return null;
 		};
 
 		const value = this.getValue();
+		const length = value.length;
+
+		if (length >= 3) {
+			cn.push('column3'); 
+		};
 
 		return (
-			<div className="wrap">
+			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
 						{value.map((id: string) => (
