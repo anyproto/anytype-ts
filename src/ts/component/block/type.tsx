@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
 import { dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -225,7 +225,7 @@ class BlockType extends React.Component<Props, State> {
 			style: I.TextStyle.Paragraph,
 		};
 
-		const create = (templateId: string) => {
+		const create = (template: any) => {
 			const onTemplate = () => {
 				C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
 					focus.set(message.blockId, { from: 0, to: 0 });
@@ -233,11 +233,17 @@ class BlockType extends React.Component<Props, State> {
 				});
 			};
 
-			if (templateId) {
-				C.ApplyTemplate(rootId, templateId, onTemplate);
+			if (template) {
+				C.ApplyTemplate(rootId, template.id, onTemplate);
 			} else {
 				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
 			};
+
+			analytics.event('ObjectCreate', {
+				objectType: item.id,
+				layout: template?.layout,
+				template: (template && template.isBundledTemplate ? template.id : 'custom'),
+			});
 		};
 
 		const showMenu = () => {
@@ -253,7 +259,7 @@ class BlockType extends React.Component<Props, State> {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
-				create(message.records.length ? message.records[0].id : '');
+				create(message.records.length ? message.records[0] : '');
 			};
 		});
 	};
