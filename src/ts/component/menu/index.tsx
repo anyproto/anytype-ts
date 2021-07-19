@@ -331,7 +331,7 @@ class Menu extends React.Component<Props, State> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, rect, type, vertical, horizontal, offsetX, offsetY, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
+		const { element, rect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY } = param;
 		const platform = Util.getPlatform();
 
 		raf(() => {
@@ -348,6 +348,8 @@ class Menu extends React.Component<Props, State> {
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
 			const isFixed = menu.css('position') == 'fixed';
+			const offsetX = Number('function' == typeof(param.offsetX) ? param.offsetX() : param.offsetX) || 0;
+			const offsetY = Number('function' == typeof(param.offsetY) ? param.offsetY() : param.offsetY) || 0;
 
 			let ew = 0;
 			let eh = 0;

@@ -152,14 +152,14 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	onAdd () {
-		const { param, getId, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
-			element: `#${getId()} #item-add`,
+			element: `#${getId()}`,
 			width: 0,
 			offsetX: param.width,
-			offsetY: -36,
+			offsetY: () => { return -getSize().height; },
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,

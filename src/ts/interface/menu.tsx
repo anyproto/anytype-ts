@@ -16,8 +16,8 @@ export interface MenuParam {
 	horizontal?: MenuDirection;
 	fixedX?: number;
 	fixedY?: number;
-	offsetX?: number;
-	offsetY?: number;
+	offsetX?: any;
+	offsetY?: any;
 	width?: number;
 	height?: number;
 	tabs?: MenuTab[];

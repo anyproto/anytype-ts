@@ -142,7 +142,7 @@ class MenuDataviewFileValues extends React.Component<Props, {}> {
 			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
-			offsetY: -getSize().height,
+			offsetY: () => { return -getSize().height; },
 			classNameWrap: classNameWrap,
 			passThrough: true,
 			noFlipY: true,
