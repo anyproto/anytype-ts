@@ -227,6 +227,7 @@ class MenuDataviewFileValues extends React.Component<Props, {}> {
 
 						onChange(value);
 						menuStore.updateData(id, { value: value });
+						menuStore.updateData('dataviewFileList', { value: value });
 					};
 				},
 			}
