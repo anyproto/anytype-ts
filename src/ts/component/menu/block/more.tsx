@@ -574,6 +574,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'createTemplate':
 				C.MakeTemplate(rootId, (message: any) => {
 					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
+
+					analytics.event('TemplateCreate', { objectType: object.type });
 				});
 				break;
 
