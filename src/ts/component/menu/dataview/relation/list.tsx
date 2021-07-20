@@ -127,7 +127,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const menuIdEdit = 'dataviewRelationEdit';
 
 		const onAdd = () => {
-			menuStore.closeAll([ id, menuIdEdit ]); 
+			menuStore.closeAll([ id, menuIdEdit, 'dataviewRelationSuggest' ]); 
 		};
 
 		menuStore.open('relationSuggest', { 
