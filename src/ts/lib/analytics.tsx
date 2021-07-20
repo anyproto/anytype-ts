@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Storage, Mapper, Util } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { I, M, Mapper, Util } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('electron').remote;
@@ -8,7 +8,7 @@ const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
-const KEYS = [ 'id', 'action', 'style', 'code', 'type' ];
+const KEYS = [ 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template' ];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
 
 class Analytics {
@@ -86,8 +86,15 @@ class Analytics {
 		const converted: any = {};
 		
 		for (let k of KEYS) {
-			if (data[k]) {
+			if (undefined !== data[k]) {
 				converted[k] = data[k];
+			};
+		};
+
+		if (converted.objectType) {
+			const type = dbStore.getObjectType(converted.objectType);
+			if (!type.id.match(/^_/)) {
+				converted.objectType = 'custom';
 			};
 		};
 

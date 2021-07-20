@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate } from 'ts/lib';
+import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -661,9 +661,15 @@ class MenuBlockAdd extends React.Component<Props, State> {
 						details.layout = type.layout;
 					};
 
-					const create = (templateId: string) => {
-						DataUtil.pageCreate(rootId, blockId, details, position, templateId, (message: any) => {
+					const create = (template: any) => {
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, (message: any) => {
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+
+							analytics.event('ObjectCreate', {
+								objectType: item.objectTypeId,
+								layout: template?.layout,
+								template: (template && template.templateIsBundled ? template.id : 'custom'),
+							});
 						});
 					};
 
@@ -680,7 +686,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 						if (message.records.length > 1) {
 							showMenu();
 						} else {
-							create(message.records.length ? message.records[0].id : '');
+							create(message.records.length ? message.records[0] : '');
 						};
 					});
 				} else 
