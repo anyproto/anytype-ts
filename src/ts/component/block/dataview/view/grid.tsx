@@ -14,7 +14,7 @@ interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const PADDING = 30;
+const PADDING = 46;
 const HEIGHT = 48;
 
 @observer
@@ -169,7 +169,7 @@ class ViewGrid extends React.Component<Props, {}> {
 			vw += PADDING;
 		};
 
-		scroll.css({ width: ww, marginLeft: -margin, paddingLeft: margin });
+		scroll.css({ width: ww - 4, marginLeft: -margin - 2, paddingLeft: margin });
 		wrap.css({ width: vw, paddingRight: pr });
 		grid.css({ height: length * HEIGHT + 4, maxHeight: length * HEIGHT + 4 });
 		
@@ -270,7 +270,6 @@ class ViewGrid extends React.Component<Props, {}> {
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, getData, getView } = this.props;
 		const view = getView();
-		const relations = DataUtil.viewGetRelations(rootId, block.id, view);
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,
@@ -282,17 +281,6 @@ class ViewGrid extends React.Component<Props, {}> {
 				getView: getView,
 				rootId: rootId,
 				blockId: block.id,
-				/*
-				menuIdEdit: 'dataviewRelationEdit',
-				filter: '',
-				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), (message: any) => { menuStore.close('relationSuggest'); });
-				},
-				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
-					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
-				},
-				*/
 			}
 		});
 	};

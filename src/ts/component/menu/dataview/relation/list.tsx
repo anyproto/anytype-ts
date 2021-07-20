@@ -15,6 +15,8 @@ const Constant = require('json/constant.json');
 @observer
 class MenuRelationList extends React.Component<Props, {}> {
 	
+	top: number = 0;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -80,7 +82,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<div className="scrollWrap">
+					<div id="scrollWrap" className="scrollWrap">
 						{relations.map((item: any, i: number) => {
 							return <Item key={item.relationKey} {...item} index={i} />;
 						})}
@@ -109,8 +111,21 @@ class MenuRelationList extends React.Component<Props, {}> {
 			/>
 		);
 	};
+
+	componentDidMount() {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
+		scroll.unbind('scroll').on('scroll', (e: any) => {
+			this.top = scroll.scrollTop();
+		});
+	};
 	
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
+		scroll.scrollTop(this.top);
 		this.props.position();
 	};
 
@@ -127,7 +142,7 @@ class MenuRelationList extends React.Component<Props, {}> {
 		const menuIdEdit = 'dataviewRelationEdit';
 
 		const onAdd = () => {
-			menuStore.closeAll([ id, menuIdEdit ]); 
+			menuStore.closeAll([ id, menuIdEdit, 'dataviewRelationSuggest' ]); 
 		};
 
 		menuStore.open('relationSuggest', { 

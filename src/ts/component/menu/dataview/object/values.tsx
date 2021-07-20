@@ -10,7 +10,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 @observer
 class MenuObjectValues extends React.Component<Props> {
@@ -152,14 +151,14 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	onAdd () {
-		const { param, getId, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
-			element: `#${getId()} #item-add`,
+			element: `#${getId()}`,
 			width: 0,
 			offsetX: param.width,
-			offsetY: -36,
+			offsetY: () => { return -getSize().height; },
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
@@ -173,7 +172,7 @@ class MenuObjectValues extends React.Component<Props> {
 	};
 
 	onRemove (e: any, item: any) {
-		const { param } = this.props;
+		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		
@@ -182,9 +181,10 @@ class MenuObjectValues extends React.Component<Props> {
 		value = Util.arrayUnique(value);
 
 		this.n = -1;
-		this.props.param.data.value = value;
 
 		onChange(value);
+		menuStore.updateData(id, { value: value });
+		menuStore.updateData('dataviewObjectList', { value: value });
 	};
 	
 	onSortEnd (result: any) {

@@ -348,6 +348,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 			});
 		} else 
 		if (addCommand) {
+			close(); 
 			addCommand(rootId, blockId, item);
 		};
 	};
