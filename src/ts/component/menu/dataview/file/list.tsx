@@ -18,8 +18,7 @@ const HEIGHT = 28;
 const LIMIT = 20;
 const MENU_ID = 'dataviewFileValues';
 
-@observer
-class MenuDataviewObjectList extends React.Component<Props, State> {
+const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -375,6 +374,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		position();
 	};
 
-};
+});
 
-export default MenuDataviewObjectList;
+export default MenuDataviewFileList;
