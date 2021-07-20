@@ -1,3 +1,10 @@
+import * as I from 'ts/interface';
+import * as M from 'ts/model';
+import * as C from './command';
+import * as Response from './response';
+import * as Docs from 'ts/docs';
+import Mapper from './mapper';
+
 import { dispatcher } from './dispatcher';
 import { keyboard, Key } from './keyboard';
 import Storage from './storage';
@@ -11,12 +18,6 @@ import { scrollOnMove } from './scrollOnMove';
 import { analytics } from './analytics';
 import { crumbs } from './crumbs';
 import { history } from './history';
-import * as I from 'ts/interface';
-import * as M from 'ts/model';
-import * as C from './command';
-import * as Response from './response';
-import * as Docs from 'ts/docs';
-import Mapper from './mapper';
 import Action from './action';
 
 const Constant = require('json/constant.json');

@@ -43,6 +43,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type) || {};
 		const bullet = <div className="bullet" />;
+		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
@@ -58,10 +59,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
+					const relation = dbStore.getRelation(rootId, rootId, relationKey);
+					const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
+					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
+					const record = detailStore.get(rootId, rootId, [ relationKey ]);
+					const check = DataUtil.checkRelationValue(relation, record[relationKey]);
+
+					if (!check && !canEdit) {
+						return null;
+					};
+
 					return (
 						<React.Fragment key={i}>
 							{bullet}
-							<span id={id} onClick={(e: any) => { 
+							<span id={id} className={cn.join(' ')} onClick={(e: any) => { 
 								e.persist(); 
 								this.onRelation(e, relationKey); 
 							}}>
@@ -71,13 +82,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
+									getRecord={() => { return record; }}
 									viewType={I.ViewType.Grid}
 									index={0}
 									scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
 									pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 									iconSize={iconSize}
-									readonly={readonly}
+									readonly={!canEdit}
 									isInline={true}
 									idPrefix={PREFIX}
 									elementMapper={this.elementMapper}

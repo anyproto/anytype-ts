@@ -248,7 +248,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		].concat(data.filters || []);
 
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'name', type: I.SortType.Asc },
 		].concat(data.sorts || []);
 
 		if (!config.debug.ho) {

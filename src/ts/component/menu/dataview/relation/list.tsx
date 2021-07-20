@@ -14,6 +14,8 @@ const Constant = require('json/constant.json');
 
 const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, {}> {
 	
+	top: number = 0;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -79,7 +81,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<div className="scrollWrap">
+					<div id="scrollWrap" className="scrollWrap">
 						{relations.map((item: any, i: number) => {
 							return <Item key={item.relationKey} {...item} index={i} />;
 						})}
@@ -108,8 +110,21 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			/>
 		);
 	};
+
+	componentDidMount() {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
+		scroll.unbind('scroll').on('scroll', (e: any) => {
+			this.top = scroll.scrollTop();
+		});
+	};
 	
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
+		scroll.scrollTop(this.top);
 		this.props.position();
 	};
 
@@ -118,11 +133,16 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onAdd (e: any) {
-		const { param, getId, close } = this.props;
+		const { param, getId, close, id } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const menuIdEdit = 'dataviewRelationEdit';
+
+		const onAdd = () => {
+			menuStore.closeAll([ id, menuIdEdit, 'dataviewRelationSuggest' ]); 
+		};
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
@@ -130,14 +150,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			vertical: I.MenuDirection.Center,
 			data: {
 				...data,
-				menuIdEdit: 'dataviewRelationEdit',
+				menuIdEdit: menuIdEdit,
 				filter: '',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
+				onAdd: onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), (message: any) => { 
-						close();
-						menuStore.close('relationSuggest'); 
-					});
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), onAdd);
 				},
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);

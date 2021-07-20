@@ -10,7 +10,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const MenuObjectValues = observer(class MenuObjectValues extends React.Component<Props> {
 	
@@ -87,7 +86,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	componentDidMount () {
 		this._isMounted = true;
 		this.rebind();
-		this.onAdd();
 	};
 
 	componentDidUpdate () {
@@ -152,14 +150,14 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	onAdd () {
-		const { param, getId, close } = this.props;
+		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
-			element: `#${getId()} #item-add`,
+			element: `#${getId()}`,
 			width: 0,
 			offsetX: param.width,
-			offsetY: -36,
+			offsetY: () => { return -getSize().height; },
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
@@ -173,7 +171,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	onRemove (e: any, item: any) {
-		const { param } = this.props;
+		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		
@@ -182,9 +180,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		value = Util.arrayUnique(value);
 
 		this.n = -1;
-		this.props.param.data.value = value;
 
 		onChange(value);
+		menuStore.updateData(id, { value: value });
+		menuStore.updateData('dataviewObjectList', { value: value });
 	};
 	
 	onSortEnd (result: any) {

@@ -12,7 +12,7 @@ interface Props extends I.Menu {}
 const $ = require('jquery');
 const { dialog } = window.require('electron').remote;
 
-const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Component<Props, {}> {
+const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -133,23 +133,28 @@ const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Compone
     };
 
 	onAdd (e: any) {
-		const { getId, close, param } = this.props;
+		const { getId, getSize, close, param } = this.props;
+		const { data } = param;
 		const { classNameWrap } = param;
 
-		menuStore.open('searchObject', {
-			element: `#${getId()} #item-add`,
+		menuStore.open('dataviewFileList', {
+			element: `#${getId()}`,
 			className: 'single',
 			offsetX: param.width,
-			offsetY: -36,
+			offsetY: () => { return -getSize().height; },
 			classNameWrap: classNameWrap,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
 			data: {
+				...data,
 				noClose: true,
 				placeholderFocus: 'Find a file...',
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
 				],
-				onSelect: (item: any) => {
-					this.add(item.id);
+				onChange: (value: string[]) => {
+					this.save(value);
 				}
 			}
 		});
@@ -221,6 +226,7 @@ const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Compone
 
 						onChange(value);
 						menuStore.updateData(id, { value: value });
+						menuStore.updateData('dataviewFileList', { value: value });
 					};
 				},
 			}
@@ -229,4 +235,4 @@ const MenuDataviewMedia = observer(class MenuDataviewMedia extends React.Compone
 
 });
 
-export default MenuDataviewMedia;
+export default MenuDataviewFileValues;

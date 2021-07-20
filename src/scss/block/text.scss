@@ -20,6 +20,7 @@
 		emoji { display: inline; user-select: all; }
 		emoji * { user-select: all; }
 		emoji {
+			smile img { vertical-align: top; }
 			name { display: none; }
 		}
 

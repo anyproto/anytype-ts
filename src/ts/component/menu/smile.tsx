@@ -61,7 +61,13 @@ class MenuSmile extends React.Component<Props, State> {
 		const Item = (item: any) => {
 			const str = `:${item.smile}::skin-${item.skin}:`;
 			return (
-				<div id={'item-' + item.id} className="item" onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}>
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+					onMouseLeave={(e: any) => { this.onMouseLeave(e); }} 
+					onMouseDown={(e: any) => { this.onMouseDown(item.id, item.smile, item.skin); }}
+				>
 					<div className="iconObject c32" data-code={str}>
 						<IconEmoji className="c32" size={28} icon={str} />
 					</div>
@@ -330,6 +336,14 @@ class MenuSmile extends React.Component<Props, State> {
 		if (onSelect) {
 			onSelect(SmileUtil.nativeById(id, this.skin));
 		};
+	};
+
+	onMouseEnter (e: any, item: any) {
+		Util.tooltipShow(item.smile, $(e.currentTarget), I.MenuDirection.Top);
+	};
+
+	onMouseLeave (e: any) {
+		Util.tooltipHide(false);
 	};
 	
 	onMouseDown (n: number, id: string, skin: number) {

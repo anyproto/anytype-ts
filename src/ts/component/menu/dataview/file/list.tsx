@@ -6,19 +6,20 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 20;
-const MENU_ID = 'dataviewObjectValues';
+const MENU_ID = 'dataviewFileValues';
 
-const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<Props, State> {
+@observer
+class MenuDataviewObjectList extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -205,19 +206,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { canAdd } = data;
 		const value = this.getValue();
 		
 		let ret = Util.objectCopy(this.items);
-
 		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
-
-		if (data.filter && canAdd) {
-			ret.unshift({ id: 'add', name: `Create object named "${data.filter}"` });
-		};
-
 		return ret;
 	};
 	
@@ -240,17 +232,15 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { types, filter } = data;
-		const filters = [];
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.File, I.ObjectLayout.Image ] }
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-
-		if (types && types.length) {
-			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
 		};
 
 		this.setState({ loading: true });
@@ -339,8 +329,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	onClick (e: any, item: any) {
 		const { param, close, position } = this.props;
 		const { data } = param;
-		const { onChange, maxCount, filter } = data;
-		const relation = data.relation.get();
+		const { onChange, maxCount } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -350,47 +339,19 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			return;
 		};
 
-		const cb = (id: string) => {
-			if (!id) {
-				return;
-			};
+		let value = this.getValue();
+		value.push(item.id);
+		value = Util.arrayUnique(value);
 
-			let value = this.getValue();
-			value.push(id);
-			value = Util.arrayUnique(value);
-
-			if (maxCount) {
-				value = value.slice(value.length - maxCount, value.length);
-			};
-
-			data.value = value;
-
-			menuStore.updateData(MENU_ID, { value: value });
-			onChange(value);
-			position();
+		if (maxCount) {
+			value = value.slice(value.length - maxCount, value.length);
 		};
 
-		if (item.id == 'add') {
-			const details: any = {
-				name: filter,
-			};
+		data.value = value;
 
-			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-			if (typeId) {
-				const type = dbStore.getObjectType(typeId);
-				if (type) {
-					details.type = type.id;
-					details.layout = type.layout;
-				};
-			};
-
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, '', (message: any) => {
-				cb(message.targetId);
-				close();
-			});
-		} else {
-			cb(item.id);
-		};
+		menuStore.updateData(MENU_ID, { value: value });
+		onChange(value);
+		position();
 	};
 
 	getValue (): any[] {
@@ -407,13 +368,13 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
+		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();
 	};
 
-});
+};
 
 export default MenuDataviewObjectList;

@@ -416,8 +416,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			};
 			
 			const pages = message.records;
-			pages.sort(DataUtil.sortByName);
-
 			this.setState({ pages: pages, loading: false });
 		});
 	};

@@ -143,7 +143,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		};
 
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const allowedRelation = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ])
 
 		let tabs = [];
 		if (id == 'button-manager') {
@@ -161,7 +160,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			offsetY: 10,
 			tabs: tabs,
 			data: {
-				readonly: readonly || !allowedRelation,
+				readonly: readonly,
 				rootId: rootId,
 				blockId: block.id, 
 				getData: getData,

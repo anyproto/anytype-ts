@@ -201,7 +201,7 @@ class DbStore {
     recordsSet (rootId: string, blockId: string, list: any[]) {
 		list = list.map((obj: any) => {
 			obj = observable(obj);
-			intercept(obj as any, (change: any) => { return Util.intercept(self, change); });
+			intercept(obj as any, (change: any) => { return Util.intercept(obj, change); });
 			return obj;
 		});
 
@@ -216,7 +216,7 @@ class DbStore {
 		const data = this.getData(rootId, blockId);
 		obj = observable(obj);
 
-		intercept(obj as any, (change: any) => { return Util.intercept(self, change); });
+		intercept(obj as any, (change: any) => { return Util.intercept(obj, change); });
 
 		dir > 0 ? data.push(obj) : data.unshift(obj);
 	};

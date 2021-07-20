@@ -38,6 +38,12 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 			value = value.map((it: any) => { return elementMapper(relation, it); });
 		};
 
+		const cn = [ 'wrap' ];
+		const length = value.length;
+		if (length >= 3) {
+			cn.push('column3'); 
+		};
+
 		const Item = (item: any) => (
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
 				<div className="flex">
@@ -48,7 +54,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 		);
 
 		return (
-			<div className="wrap">
+			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
 						{value.map((item: any, i: number) => (

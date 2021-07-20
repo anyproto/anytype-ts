@@ -72,14 +72,6 @@ class ListTemplate extends React.Component<Props, {}> {
 		this.setActive();
 	};
 
-	componentWillUnmount () {
-		const { items } = this.props;
-
-		for (let item of items) {
-			Action.pageClose(item.id, false);
-		};
-	};
-
 	getMaxPage () {
 		const { items, canAdd } = this.props;
 		const length = items.length + (canAdd ? 1 : 0);
