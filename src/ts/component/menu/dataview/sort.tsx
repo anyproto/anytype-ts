@@ -74,13 +74,20 @@ class MenuSort extends React.Component<Props, {}> {
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					{view.sorts.map((item: any, i: number) => (
-						<Item key={i} {...item} id={i} index={i} />
-					))}
-					{!view.sorts.length ? (
-						<div className="item empty">No sorts applied to this view</div>
+					<div className="scrollWrap">
+						{view.sorts.map((item: any, i: number) => (
+							<Item key={i} {...item} id={i} index={i} />
+						))}
+						{!view.sorts.length ? (
+							<div className="item empty">No sorts applied to this view</div>
+						) : ''}
+					</div>
+					{allowedView ? (
+						<div className="bottom">
+							<div className="line" />
+							<ItemAdd index={view.sorts.length + 1} disabled={true} /> 
+						</div>
 					) : ''}
-					{allowedView ? <ItemAdd index={view.sorts.length + 1} disabled={true} /> : ''}
 				</div>
 			);
 		});
