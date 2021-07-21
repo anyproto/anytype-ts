@@ -24,6 +24,7 @@ const Icons: number[] = [
 class PageAuthSetup extends React.Component<Props, State> {
 
 	i: number = 0;
+	t: number = 0;
 	state = {
 		icon: '',
 		index: 0,
@@ -75,7 +76,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 		this.setClock();
 		this.i = window.setInterval(() => { this.setClock(); }, 1000);
 
-		window.setTimeout(() => { label.show(); }, 5000);
+		this.t = window.setTimeout(() => { label.show(); }, 5000);
 		
 		switch (match.params.id) {
 			case 'init': 
@@ -208,7 +209,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 	
 	clear () {
-		clearInterval(this.i);
+		window.clearInterval(this.i);
+		window.clearTimeout(this.t);
 	};
 
 };
