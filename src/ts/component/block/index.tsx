@@ -30,7 +30,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const SNAP = 0.02;
+const SNAP = 0.01;
 
 @observer
 class Block extends React.Component<Props, {}> {
@@ -478,6 +478,7 @@ class Block extends React.Component<Props, {}> {
 		const { rootId, block, getWrapperWidth } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const snaps = [ 0.25, 0.5, 0.75 ];
 		
 		const prevBlockId = childrenIds[index - 1];
 		const prevBlock = blockStore.getLeaf(rootId, prevBlockId);
@@ -499,13 +500,12 @@ class Block extends React.Component<Props, {}> {
 		x = x / (sum * width);
 		
 		// Snap
-		if (x > 0.5 - SNAP && x < 0.5) {
-			x = 0.5;
+		for (let s of snaps) {
+			if ((x >= s - SNAP) && (x <= s + SNAP)) {
+				x = s;
+			};
 		};
-		if (x < 0.5 + SNAP && x > 0.5) {
-			x = 0.5;
-		};
-		
+
 		return { sum: sum, percent: x };
 	};
 	
