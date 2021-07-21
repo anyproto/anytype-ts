@@ -11,6 +11,8 @@ interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const { dialog } = window.require('electron').remote;
+const { ipcRenderer } = window.require('electron');
+const Constant = require('json/constant.json');
 
 @observer
 class MenuDataviewFileValues extends React.Component<Props, {}> {
@@ -217,17 +219,37 @@ class MenuDataviewFileValues extends React.Component<Props, {}> {
 			data: {
 				value: '',
 				options: [
+					{ id: 'download', icon: 'download', name: 'Download' },
 					{ id: 'remove', icon: 'remove', name: 'Delete' },
 				],
 				onSelect: (event: any, el: any) => {
-					if (el.id == 'remove') {
-						let value = Util.objectCopy(data.value || []);
-						value = value.filter((it: any) => { return it != item.id; });
-						value = Util.arrayUnique(value);
 
-						onChange(value);
-						menuStore.updateData(id, { value: value });
-						menuStore.updateData('dataviewFileList', { value: value });
+					switch (el.id) {
+						case 'download':
+							let url = '';
+							switch (item.layout) {
+								case I.ObjectLayout.File:
+									url = commonStore.fileUrl(item.id);
+									break;
+
+								case I.ObjectLayout.Image:
+									url = commonStore.imageUrl(item.id, Constant.size.image);
+									break;
+							};
+							if (url) {
+								ipcRenderer.send('download', url);
+							};
+							break;
+
+						case 'remove':
+							let value = Util.objectCopy(data.value || []);
+							value = value.filter((it: any) => { return it != item.id; });
+							value = Util.arrayUnique(value);
+
+							onChange(value);
+							menuStore.updateData(id, { value: value });
+							menuStore.updateData('dataviewFileList', { value: value });
+							break;
 					};
 				},
 			}
