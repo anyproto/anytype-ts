@@ -458,7 +458,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
-		const object = detailStore.get(rootId, rootId, []);
+		const object = detailStore.get(rootId, rootId);
 		
 		let close = true;
 		
@@ -568,6 +568,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'createPage':
 				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
 					DataUtil.objectOpen({ id: message.targetId });
+
+					analytics.event('ObjectCreate', {
+						objectType: object.targetObjectType,
+						layout: object.layout,
+						template: (object.templateIsBundled ? object.id : 'custom'),
+					});
 				});
 				break;
 
