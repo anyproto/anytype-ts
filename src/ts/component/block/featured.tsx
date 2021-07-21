@@ -68,8 +68,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 					const record = detailStore.get(rootId, rootId, [ relationKey ]);
 					const check = DataUtil.checkRelationValue(relation, record[relationKey]);
 
-					console.log(canEdit);
-
 					if (!check && !canEdit) {
 						return null;
 					};
