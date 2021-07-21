@@ -976,6 +976,24 @@ const ObjectRelationListAvailable = (contextId: string, callBack?: (message: any
 	dispatcher.request('objectRelationListAvailable', request, callBack);
 };
 
+const ObjectFeaturedRelationAdd = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.FeaturedRelation.Add.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationsList(keys);
+
+	dispatcher.request('objectFeaturedRelationAdd', request, callBack);
+};
+
+const ObjectFeaturedRelationRemove = (contextId: string, keys: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.FeaturedRelation.Remove.Request();
+	
+	request.setContextid(contextId);
+	request.setRelationsList(keys);
+
+	dispatcher.request('objectFeaturedRelationRemove', request, callBack);
+};
+
 const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetLayout.Request();
 	
@@ -1138,6 +1156,8 @@ export {
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
 	ObjectSetLayout,
+	ObjectFeaturedRelationAdd,
+	ObjectFeaturedRelationRemove,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
