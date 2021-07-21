@@ -570,6 +570,10 @@ class PageMainIndex extends React.Component<Props, State> {
 				};
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
+					if (!it.content.targetBlockId) {
+						return false;
+					};
+
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
 					const { layout, name, _empty_, isArchived } = object;
 
@@ -579,7 +583,6 @@ class PageMainIndex extends React.Component<Props, State> {
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-
 					return !isArchived;
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {
