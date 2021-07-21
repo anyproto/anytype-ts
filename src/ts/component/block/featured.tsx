@@ -48,15 +48,17 @@ class BlockFeatured extends React.Component<Props, {}> {
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				<div 
-					id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
-					className="cellContent type"
-					onClick={this.onType}
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
-					onMouseLeave={this.onMouseLeave}
-				>
-					<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
-				</div>
+				{type ? (
+					<div 
+						id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
+						className="cellContent type"
+						onClick={this.onType}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+						onMouseLeave={this.onMouseLeave}
+					>
+						<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
+					</div>
+				): ''}
 
 				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
