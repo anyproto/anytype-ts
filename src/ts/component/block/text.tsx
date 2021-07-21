@@ -458,7 +458,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const k = e.key.toLowerCase();	
 		const range = this.getRange();
-		const isSpaceBefore = range ? (!range.from || (value[range.from - 1] == ' ') || (value[range.from - 1] == '\n')) : false;
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.ctrlKey();
 		
@@ -554,14 +553,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			this.onSmile();
 		});
 
-		keyboard.shortcut('@, shift+@', e, (pressed: string) => {
-			if (!isSpaceBefore || menuOpenMention || !block.canHaveMarks()) {
-				return;
-			};
-
-			this.onMention();
-		});
-
 		if (ret) {
 			return;
 		};
@@ -605,6 +596,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			focus.apply();
 		};
 		let symbolBefore = range ? value[range.from - 1] : '';
+		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
 		let reg = null;
 		
 		if (menuOpenAdd) {
@@ -639,7 +631,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if ((symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode()) {
 			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 		};
-		
+
+		// Open mention menu
+		if ((symbolBefore == '@') && isSpaceBefore && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode()) {
+			this.onMention();
+		};
+
 		// Make div
 		if (value == '---') {
 			C.BlockCreate({ type: I.BlockType.Div }, rootId, id, I.BlockPosition.Replace, cb);
@@ -728,13 +725,13 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const el = $('#block-' + block.id);
 
 		let value = this.getValue();
+		value = Util.stringCut(value, range.from - 1, range.from);
 
 		this.preventSaveOnBlur = true;
-		commonStore.filterSet(range.from, '');
+		commonStore.filterSet(range.from - 1, '');
 
 		raf(() => {
 			let rect = Util.selectionRect();
-
 			if (!rect.x && !rect.y && !rect.width && !rect.height) {
 				rect = null;
 			};
