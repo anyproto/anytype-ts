@@ -66,8 +66,10 @@ class DragProvider extends React.Component<Props, {}> {
 			return;
 		};
 
+		const node = $(ReactDOM.findDOMNode(this));
+
 		this.init = true;
-		this.objects = $('.dropTarget');
+		this.objects = node.find('.dropTarget');
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 
