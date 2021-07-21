@@ -42,7 +42,7 @@ class BlockFeatured extends React.Component<Props, {}> {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		const items = this.getItems();
-		const type: any = dbStore.getObjectType(object.type) || {};
+		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
