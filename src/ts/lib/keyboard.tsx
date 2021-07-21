@@ -257,6 +257,23 @@ class Keyboard {
 			case 'print':
 				this.onPrint();
 				break;
+
+			case 'id':
+				const { account } = authStore;
+				if (!account) {
+					break;
+				};
+
+				popupStore.open('confirm', {
+					data: {
+						title: 'Anytype ID',
+						text: account.id,
+						textConfirm: 'Ok',
+						canConfirm: true,
+						canCancel: false,
+					}
+				});
+				break;
 		};
 	};
 
