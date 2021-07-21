@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 
@@ -169,10 +169,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 
-		const create = (templateId: string) => {
-			C.BlockDataviewRecordCreate(rootId, block.id, {}, templateId, (message: any) => {
+		const create = (template: any) => {
+			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
 				if (!message.error.code) {
 					dbStore.recordAdd(rootId, block.id, message.record, dir);
+				};
+
+				if (template) {
+					analytics.event('ObjectCreate', {
+						objectType: template.targetObjectType,
+						layout: template.layout,
+						template: (template.templateIsBundled ? template.id : 'custom'),
+					});
 				};
 			});
 		};
@@ -222,7 +230,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
-				create(message.records.length ? message.records[0].id : '');
+				create(message.records.length ? message.records[0] : '');
 			};
 		});
 	};

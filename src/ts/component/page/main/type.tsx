@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject, Select } from 'ts/component';
-import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, translate } from 'ts/lib';
+import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, analytics } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
@@ -338,6 +338,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 				dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 				DataUtil.objectOpenPopup(message.record);
+
+				analytics.event('TemplateCreate', { objectType: rootId });
 			};
 		});
 	};
@@ -383,9 +385,17 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			layout: object.recommendedLayout,
 		};
 
-		const create = (templateId: string) => {
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, templateId, (message: any) => {
+		const create = (template: any) => {
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, (message: any) => {
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+
+				console.log(template);
+
+				analytics.event('ObjectCreate', {
+					objectType: rootId,
+					layout: template?.layout,
+					template: (template && template.templateIsBundled ? template.id : 'custom'),
+				});
 			});
 		};
 
@@ -402,7 +412,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
-				create(message.records.length ? message.records[0].id : '');
+				create(message.records.length ? message.records[0] : '');
 			};
 		});
 	};

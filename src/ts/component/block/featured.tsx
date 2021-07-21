@@ -54,7 +54,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
 					onMouseLeave={this.onMouseLeave}
 				>
-					<div className="name">{type.name || DataUtil.defaultName('page')}</div>
+					<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
 				</div>
 
 				{items.map((relationKey: any, i: any) => {
