@@ -68,6 +68,8 @@ class BlockFeatured extends React.Component<Props, {}> {
 					const record = detailStore.get(rootId, rootId, [ relationKey ]);
 					const check = DataUtil.checkRelationValue(relation, record[relationKey]);
 
+					console.log(canEdit);
+
 					if (!check && !canEdit) {
 						return null;
 					};
@@ -245,8 +247,12 @@ class BlockFeatured extends React.Component<Props, {}> {
 			return;
 		};
 
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, readonly } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+
+		if (readonly) {
+			return;
+		};
 
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);

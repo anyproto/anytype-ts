@@ -110,23 +110,21 @@ class PageMainHistory extends React.Component<Props, State> {
 									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
 									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
 									
-									{children.map((block: I.Block, i: number) => {
-										return (
-											<Block 
-												key={block.id} 
-												{...this.props}
-												rootId={rootId}
-												index={i}
-												block={block}
-												onKeyDown={() => {}}
-												onKeyUp={() => {}} 
-												onMenuAdd={() => {}}
-												onPaste={() => {}}
-												getWrapperWidth={this.getWrapperWidth}
-												readonly={true}
-											/>
-										)
-									})}
+									{children.map((block: I.Block, i: number) => (
+										<Block 
+											key={block.id} 
+											{...this.props}
+											rootId={rootId}
+											index={i}
+											block={block}
+											onKeyDown={() => {}}
+											onKeyUp={() => {}} 
+											onMenuAdd={() => {}}
+											onPaste={() => {}}
+											getWrapperWidth={this.getWrapperWidth}
+											readonly={true}
+										/>
+									))}
 								</div>
 							</div>
 						</div>
