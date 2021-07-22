@@ -1,10 +1,10 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, C, DataUtil } from 'ts/lib';
+import { Frame, Cover, Title, Label, Error, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Storage, translate, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { Util } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {};
 interface State {
@@ -13,6 +13,7 @@ interface State {
 	error: string;
 };
 
+const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
@@ -23,6 +24,7 @@ const Icons: number[] = [
 class PageAuthSetup extends React.Component<Props, State> {
 
 	i: number = 0;
+	t: number = 0;
 	state = {
 		icon: '',
 		index: 0,
@@ -57,6 +59,7 @@ class PageAuthSetup extends React.Component<Props, State> {
 				<Frame>
 					<IconObject size={64} object={{ iconEmoji: icon }} />
 					<Title text={title} />
+					<Label id="label" text="Migration in progress. It can take up to 5 minutes..." />
 					<Error text={error} />
 					{error ? <Button text={translate('authSetupBack')} onClick={() => { history.goBack(); }} /> : ''}
 				</Frame>
@@ -66,10 +69,14 @@ class PageAuthSetup extends React.Component<Props, State> {
 
 	componentDidMount () {
 		const { match } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const label = node.find('#label');
 		
 		this.clear();
 		this.setClock();
 		this.i = window.setInterval(() => { this.setClock(); }, 1000);
+
+		this.t = window.setTimeout(() => { label.show(); }, 5000);
 		
 		switch (match.params.id) {
 			case 'init': 
@@ -202,7 +209,8 @@ class PageAuthSetup extends React.Component<Props, State> {
 	};
 	
 	clear () {
-		clearInterval(this.i);
+		window.clearInterval(this.i);
+		window.clearTimeout(this.t);
 	};
 
 };

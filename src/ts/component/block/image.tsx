@@ -71,7 +71,7 @@ class BlockImage extends React.Component<Props, {}> {
 				
 			case I.FileState.Done:
 				element = (
-					<div className="wrap resizable" style={css}>
+					<div id="wrap" className="wrap resizable" style={css}>
 						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
@@ -188,7 +188,7 @@ class BlockImage extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('.wrap');
+		const wrap = node.find('#wrap');
 		
 		if (!wrap.length) {
 			return;
@@ -209,15 +209,15 @@ class BlockImage extends React.Component<Props, {}> {
 		const { id } = block;
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('.wrap');
+		const wrap = node.find('#wrap');
 		
 		if (!wrap.length) {
 			return;
 		};
 		
 		const win = $(window);
-		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
-		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		const ox = wrap.offset().left;
+		const w = this.getWidth(checkMax, e.pageX - ox + 20);
 		
 		win.unbind('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
@@ -237,7 +237,7 @@ class BlockImage extends React.Component<Props, {}> {
 
 	onError () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('.wrap');
+		const wrap = node.find('#wrap');
 
 		wrap.addClass('broken');
 	};

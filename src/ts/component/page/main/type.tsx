@@ -390,8 +390,6 @@ class PageMainType extends React.Component<Props, State> {
 			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, (message: any) => {
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
-				console.log(template);
-
 				analytics.event('ObjectCreate', {
 					objectType: rootId,
 					layout: template?.layout,

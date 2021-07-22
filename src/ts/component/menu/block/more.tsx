@@ -292,7 +292,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onTurnObject, onAlign } = data;
+		const { rootId, blockId, onMenuSelect } = data;
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		
@@ -339,8 +339,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						C.BlockListConvertChildrenToPages(rootId, [ blockId ], item.id);
 						close();
 
-						if (onTurnObject) {
-							onTurnObject(item);
+						if (onMenuSelect) {
+							onMenuSelect(item);
 						};
 					}
 				});
@@ -364,6 +364,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {
 						close();
+
+						if (onMenuSelect) {
+							onMenuSelect(item);
+						};
 					}
 				});
 				break;
@@ -386,6 +390,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {
 						close();
+
+						if (onMenuSelect) {
+							onMenuSelect(item);
+						};
 					}
 				});
 				break;
@@ -398,8 +406,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						C.BlockListSetAlign(rootId, [ blockId ], align);
 						close();
 
-						if (onAlign) {
-							onAlign(item);
+						if (onMenuSelect) {
+							onMenuSelect(item);
 						};
 					}
 				});
@@ -420,6 +428,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);
 						close();
+
+						if (onMenuSelect) {
+							onMenuSelect(item);
+						};
 					}
 				});
 				break;
@@ -433,6 +445,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					onSelect: (e: any, item: any) => {
 						DataUtil.pageSetLayout(rootId, item.id);
 						close();
+
+						if (onMenuSelect) {
+							onMenuSelect(item);
+						};
 					}
 				});
 				break;
@@ -458,7 +474,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
 		const prev = children[children.length - 2];
-		const object = detailStore.get(rootId, rootId, []);
+		const object = detailStore.get(rootId, rootId);
 		
 		let close = true;
 		
@@ -568,6 +584,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'createPage':
 				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
 					DataUtil.objectOpen({ id: message.targetId });
+
+					analytics.event('ObjectCreate', {
+						objectType: object.targetObjectType,
+						layout: object.layout,
+						template: (object.templateIsBundled ? object.id : 'custom'),
+					});
 				});
 				break;
 

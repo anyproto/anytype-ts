@@ -470,7 +470,7 @@ class Util {
 			icon = 'video';
 		};
 			
-		if ([ 'csv', 'json', 'txt', 'doc', 'docx' ].indexOf(e) >= 0) {
+		if ([ 'csv', 'json', 'txt', 'doc', 'docx', 'md' ].indexOf(e) >= 0) {
 			icon = 'text';
 		};
 			
