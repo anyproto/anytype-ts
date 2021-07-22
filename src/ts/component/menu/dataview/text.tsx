@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { setRange } from 'selection-ranges';
 
@@ -19,6 +19,7 @@ class MenuText extends React.Component<Props, {}> {
 		super(props);
 
 		this.onInput = this.onInput.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 	};
 	
@@ -33,6 +34,7 @@ class MenuText extends React.Component<Props, {}> {
 				ref={(ref: any) => { this.ref = ref; }} 
 				contentEditable={true}
 				suppressContentEditableWarning={true}
+				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onInput={this.onInput}
 			>
@@ -64,11 +66,16 @@ class MenuText extends React.Component<Props, {}> {
 		this.resize();
 	};
 
+	onFocus () {
+		keyboard.setFocus(true);
+	};
+
 	onBlur (e: any) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
+		keyboard.setFocus(false);
 		onChange(this.getValue());
 		close();
 	};
