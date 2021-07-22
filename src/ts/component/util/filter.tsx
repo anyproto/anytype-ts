@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Input, Icon } from 'ts/component';
-import { translate } from 'ts/lib';
+import { I, translate } from 'ts/lib';
 
 interface Props {
 	className?: string;
@@ -77,6 +77,10 @@ class Filter extends React.Component<Props, {}> {
 
 	blur () {
 		this.ref.blur();
+	};
+
+	setRange (range: I.TextRange) {
+		this.ref.setRange(range);
 	};
 
 	onFocus (e: any) {

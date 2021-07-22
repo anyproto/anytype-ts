@@ -121,7 +121,7 @@ class BlockType extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		const { onKeyDown, isPopup } = this.props;
+		const { onKeyDown, isPopup, block } = this.props;
 		const items = this.getItems();
 
 		keyboard.disableMouse(true);
@@ -138,7 +138,8 @@ class BlockType extends React.Component<Props, State> {
 				};
 			} else
 			if (this.n == -1) {
-				this.ref.focus();
+				const value = this.ref.getValue();
+				this.ref.setRange({ from: value.length, to: value.length });
 			} else {
 				this.setHover(items[this.n], true);
 			};
@@ -166,7 +167,9 @@ class BlockType extends React.Component<Props, State> {
 	
 	onFocus () {
 		const { block } = this.props;
-		focus.set(block.id, { from: 0, to: 0 });
+		const value = this.ref ? this.ref.getValue() : '';
+
+		focus.set(block.id, { from: value.length, to: value.length });
 	};
 
 	onOver (e: any, item: any) {
