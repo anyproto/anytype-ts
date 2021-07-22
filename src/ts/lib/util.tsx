@@ -481,8 +481,12 @@ class Util {
 		if ([ 'xls', 'xlsx', 'sqlite' ].indexOf(e) >= 0) {
 			icon = 'table';
 		};
+
+		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
+			icon = 'presentation';
+		};
 		
-		if (t.length) {
+		if (!icon && t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
 			};
