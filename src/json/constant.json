@@ -91,15 +91,28 @@
 	],
 
 	"systemRelationKeys": [ 
+		"id",
 		"name", 
 		"description", 
+		"iconEmoji",
+		"iconImage",
 		"creator", 
-		"type", 
-		"lastOpenedDate",
 		"createdDate", 
+		"type", 
+		"layout",
+		"layoutAlign",
+		"lastOpenedDate",
 		"lastModifiedBy", 
 		"lastModifiedDate", 
-		"addedDate"
+		"addedDate",
+		"coverId",
+		"coverScale",
+		"coverType",
+		"coverX",
+		"coverY",
+		"featuredRelations",
+		"isHidden",
+		"isArchived"
 	],
 
 	"relationKey": {
