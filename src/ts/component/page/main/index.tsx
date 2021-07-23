@@ -28,9 +28,9 @@ enum Tab {
 }
 
 const Tabs = [
-	{ id: Tab.Favorite, name: 'Favorites' },
-	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Inbox' },
+	{ id: Tab.Recent, name: 'Recent' },
+	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
@@ -43,7 +43,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	timeoutFilter: number = 0;
 
 	state = {
-		tab: Tab.Favorite,
+		tab: Tab.Draft,
 		filter: '',
 		pages: [],
 	};
@@ -582,6 +582,9 @@ class PageMainIndex extends React.Component<Props, State> {
 					};
 					if (reg && name && !name.match(reg)) {
 						return false;
+					};
+					if (tab == Tab.Recent) {
+						return true;
 					};
 					return !isArchived;
 				}).map((it: any) => {
