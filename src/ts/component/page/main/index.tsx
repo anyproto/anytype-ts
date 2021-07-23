@@ -235,7 +235,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
+		C.ObjectSearch(filters, sorts, [ ...Constant.defaultRelationKeys, 'lastOpenedDate' ], filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
