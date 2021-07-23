@@ -65,8 +65,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
+		const node = $(ReactDOM.findDOMNode(this));
+
 		this.init = true;
-		this.objects = $('.dropTarget');
+		this.objects = node.find('.dropTarget');
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 
@@ -249,12 +251,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				console.log('[dragProvider.onDrop] Contexts are equal');
 				return;
 			};
-		};
-
-		const element = blockStore.getMapElement(rootId, targetId);
-		const parent = blockStore.getLeaf(rootId, element.parentId);
-		if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
-			targetId = parent.id;
+		} else {
+			const element = blockStore.getMapElement(rootId, targetId);
+			const parent = blockStore.getLeaf(rootId, element.parentId);
+			if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+				targetId = parent.id;
+			};	
 		};
 
 		if (selection) {

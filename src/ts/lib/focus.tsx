@@ -82,7 +82,7 @@ class Focus {
 		el.focus({ preventScroll: true });
 
 		if (node.hasClass('input')) {
-			el.setSelectionRange(range.from, range.to);
+			window.setTimeout(() => { el.setSelectionRange(range.from, range.to); });
 		} else
 		if (node.attr('contenteditable')) {
 			keyboard.setFocus(true);

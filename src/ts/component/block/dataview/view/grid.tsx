@@ -280,6 +280,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 				getView: getView,
 				rootId: rootId,
 				blockId: block.id,
+				onAdd: () => { menuStore.closeAll(Constant.menuIds.cellAdd); }
 			}
 		});
 	};

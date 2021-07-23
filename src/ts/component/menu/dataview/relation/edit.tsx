@@ -42,6 +42,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		const type = this.objectTypes.length ? this.objectTypes[0] : '';
 		const objectType = dbStore.getObjectType(type);
 		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 
 		let ccn = [ 'item' ];
 		if (relation) {
@@ -129,7 +130,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{!this.isReadonly() ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>

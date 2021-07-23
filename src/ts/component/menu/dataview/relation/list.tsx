@@ -133,21 +133,18 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onAdd (e: any) {
-		const { param, getId, close, id } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, onAdd } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		const menuIdEdit = 'dataviewRelationEdit';
-
-		const onAdd = () => {
-			menuStore.closeAll([ id, menuIdEdit, 'dataviewRelationSuggest' ]); 
-		};
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
 			offsetX: 256,
 			vertical: I.MenuDirection.Center,
+			noAnimation: true,
 			data: {
 				...data,
 				menuIdEdit: menuIdEdit,
@@ -176,6 +173,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		menuStore.open('dataviewRelationEdit', { 
 			element: `#${getId()} #item-${id}`,
 			horizontal: I.MenuDirection.Center,
+			noAnimation: true,
 			data: {
 				...data,
 				relationKey: id,

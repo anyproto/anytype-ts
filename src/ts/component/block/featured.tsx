@@ -41,21 +41,23 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 		const items = this.getItems();
-		const type: any = dbStore.getObjectType(object.type) || {};
+		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				<div 
-					id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
-					className="cellContent type"
-					onClick={this.onType}
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
-					onMouseLeave={this.onMouseLeave}
-				>
-					<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
-				</div>
+				{type ? (
+					<div 
+						id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
+						className="cellContent type"
+						onClick={this.onType}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+						onMouseLeave={this.onMouseLeave}
+					>
+						<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
+					</div>
+				): ''}
 
 				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX, relationKey, 0);
@@ -242,8 +244,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, readonly } = this.props;
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
+
+		if (readonly) {
+			return;
+		};
 
 		if (relation.format == I.RelationType.Checkbox) {
 			const object = detailStore.get(rootId, rootId, [ relationKey ]);

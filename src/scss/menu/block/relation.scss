@@ -143,6 +143,10 @@
 				.name { width: 100%; }
 			}
 
+			.cell.c-object, .cell.c-file {
+				.column3 { column-count: 3; }
+			}
+
 			.cell.c-longText {
 				.name, span { -webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; word-wrap: break-word; }
 			}

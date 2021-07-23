@@ -238,7 +238,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { dataMapper } = data;
+		const { type, dataMapper } = data;
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
@@ -256,6 +256,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 		if (!config.allowDataview) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
+		};
+		if (type == I.NavigationType.Move) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 
 		this.setState({ loading: true });

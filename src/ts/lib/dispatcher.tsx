@@ -641,7 +641,7 @@ class Dispatcher {
 		};
 
 		const object = detailStore.get(rootId, rootId, []);
-		
+
 		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
 
 		if ((object.type == Constant.typeId.page) && (childrenIds.length == 1)) {

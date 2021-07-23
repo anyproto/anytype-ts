@@ -56,7 +56,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
-								canFav={allowedValue && [ Constant.relationKey.name, Constant.relationKey.description ].indexOf(item.relationKey) < 0}
+								canFav={allowedValue}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
@@ -186,20 +186,14 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ], true);
+		const featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
+		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
-		let featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
-		let idx = featured.findIndex((it: string) => { return it == relationKey; });
-
-		if (idx >= 0) {
-			featured = featured.filter((it: any) => { return it != relationKey; });
+		if (idx < 0) {
+			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ]);
 		} else {
-			featured.push(relationKey);
+			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ]);
 		};
-
-		const details = [ 
-			{ key: Constant.relationKey.featured, value: featured },
-		];
-		C.BlockSetDetails(rootId, details);
 	};
 
 	onAdd (e: any) {

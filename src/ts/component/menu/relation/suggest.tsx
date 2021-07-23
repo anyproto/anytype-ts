@@ -333,6 +333,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				offsetX: obj.outerWidth(),
 				offsetY: -76,
 				subIds: [ 'relationType' ],
+				noAnimation: true,
 				classNameWrap: classNameWrap,
 				data: {
 					...data,

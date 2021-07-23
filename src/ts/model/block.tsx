@@ -42,7 +42,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isImage() || this.isVideo());
+		return !this.isSystem() && (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo());
 	};
 
 	canHaveColor (): boolean {
@@ -94,7 +94,7 @@ class Block implements I.Block {
 	};
 	
 	isFocusable (): boolean {
-		return !this.isSystem() && !this.isFeatured() && !this.isTextDescription();
+		return !this.isSystem() && !this.isFeatured();
 	};
 	
 	isSelectable (): boolean {
@@ -209,16 +209,20 @@ class Block implements I.Block {
 		return this.type == I.BlockType.File;
 	};
 
-	isBookmark (): boolean {
-		return this.type == I.BlockType.Bookmark;
+	isFileFile (): boolean {
+		return this.isFile() && (this.content.type == I.FileType.File);
 	};
-	
-	isImage (): boolean {
+
+	isFileImage (): boolean {
 		return this.isFile() && (this.content.type == I.FileType.Image);
 	};
 	
-	isVideo (): boolean {
+	isFileVideo (): boolean {
 		return this.isFile() && (this.content.type == I.FileType.Video);
+	};
+
+	isBookmark (): boolean {
+		return this.type == I.BlockType.Bookmark;
 	};
 	
 	isDiv (): boolean {

@@ -84,6 +84,7 @@
 		.item.withCaption {
 			.clickable { width: calc(100% - 46px); }
 		}
+		.item.empty { padding: 13px 16px; }
 
 		.item:hover, .item.hover {
 			.clickable { margin-right: 6px; width: calc(100% - 30px); }

@@ -1102,8 +1102,12 @@ class DataUtil {
 	sortByName (c1: any, c2: any) {
 		const n1 = String(c1.name || '').toLowerCase();
 		const n2 = String(c2.name || '').toLowerCase();
+		const dn = translate('defaultNamePage').toLowerCase();
+
 		if (!n1 && n2) return 1;
 		if (n1 && !n2) return -1;
+		if ((n1 == dn) && (n2 != dn)) return 1;
+		if ((n1 != dn) && (n2 == dn)) return -1;
 		if (n1 > n2) return 1;
 		if (n1 < n2) return -1;
 		return 0;

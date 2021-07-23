@@ -28,9 +28,9 @@ enum Tab {
 }
 
 const Tabs = [
-	{ id: Tab.Favorite, name: 'Favorites' },
-	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Draft, name: 'Inbox' },
+	{ id: Tab.Recent, name: 'Recent' },
+	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
@@ -42,7 +42,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	timeoutFilter: number = 0;
 
 	state = {
-		tab: Tab.Favorite,
+		tab: Tab.Draft,
 		filter: '',
 		pages: [],
 	};
@@ -209,7 +209,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { config } = commonStore;
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive }
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive },
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
+				value: [
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			},
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
@@ -221,14 +229,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
-			filters.push({ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
-				value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			});
 		};
 
 		if (!config.debug.ho) {
@@ -569,6 +569,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				};
 
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
+					if (!it.content.targetBlockId) {
+						return false;
+					};
+
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
 					const { layout, name, _empty_, isArchived } = object;
 
@@ -578,7 +582,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-
+					if (tab == Tab.Recent) {
+						return true;
+					};
 					return !isArchived;
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {

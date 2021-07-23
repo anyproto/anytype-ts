@@ -175,8 +175,11 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuParam.subIds = Constant.menuIds.more;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					onTurnObject: close,
-					onAlign: () => {
+					onSelect: () => {
+						focus.clear(true);
+						close();
+					},
+					onMenuSelect: () => {
 						focus.clear(true);
 						close();
 					},

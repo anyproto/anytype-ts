@@ -488,6 +488,10 @@ function menuInit () {
 			label: 'Help',
 			submenu: [
 				{
+					label: 'Anytype ID',
+					click: () => { send('commandGlobal', 'id'); }
+				},
+				{
 					label: 'Status',
 					click: () => { send('popup', 'help', { data: { document: 'status' } }); }
 				},

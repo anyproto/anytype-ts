@@ -676,7 +676,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		};
 
 		// Select all
-		if ((range.from == 0) && (range.to == length)) {
+		if (block.isText() && (range.from == 0) && (range.to == length)) {
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 				e.preventDefault();
 				this.onSelectAll();

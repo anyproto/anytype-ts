@@ -18,9 +18,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, 
 		const { param } = this.props;
 		const { data } = param;
 		const { title, text, textConfirm, textCancel, icon } = data;
-
-		let canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
-		let canCancel = undefined === data.canCancel ? true : data.canCancel;
+		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
+		const canCancel = undefined === data.canCancel ? true : data.canCancel;
 		
 		return (
 			<React.Fragment>

@@ -389,8 +389,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, (message: any) => {
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
-				console.log(template);
-
 				analytics.event('ObjectCreate', {
 					objectType: rootId,
 					layout: template?.layout,

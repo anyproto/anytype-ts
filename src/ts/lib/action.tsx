@@ -42,7 +42,7 @@ class Action {
 			return;
 		};
 		
-		const url = block.isImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
+		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
 		ipcRenderer.send('download', url);
 	};
 

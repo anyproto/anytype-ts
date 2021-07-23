@@ -182,13 +182,14 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { option, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
 		const idx = relation.selectDict.findIndex((it: any) => { return it.id == option.id; });
+		const value = this.ref.getValue();
 
-		option.text = this.ref.getValue();
-		option.color = this.color;
-
-		if (!option.text) {
+		if (!value) {
 			return;
 		};
+
+		option.text = value;
+		option.color = this.color;
 
 		relation.selectDict[idx] = option;
 		optionCommand('update', rootId, blockId, relation.relationKey, record.id, relation.selectDict[idx]);
