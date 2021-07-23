@@ -99,6 +99,8 @@
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 		}
 
+		.item.empty { cursor: default; }
+
 		.item.withDescription { padding: 8px 14px; height: 56px; }
 		.item.withDescription {
 			.icon, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
