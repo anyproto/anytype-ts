@@ -7,6 +7,8 @@
 		.side.right { padding-top: 25px; }
 	}
 
+	.blocks > .empty { width: 100%; text-align: center; color: $colorDarkGrey; @include text-header3; }
+
 	.blocks.horizontal { width: 704px; flex-direction: column; }
 	.blocks.horizontal {
 		.block.blockMedia { max-height: 396px; }
