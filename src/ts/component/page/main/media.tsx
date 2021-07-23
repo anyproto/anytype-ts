@@ -38,17 +38,15 @@ class PageMainMedia extends React.Component<Props, {}> {
 		const blocks = blockStore.getBlocks(rootId);
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });
 
-		if (this.loading || !file) {
+		if (this.loading) {
 			return <Loader />;
 		};
 
-		file.align = I.BlockAlign.Center;
-
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
-		const isVideo = file.content.type == I.FileType.Video;
-		const isImage = file.content.type == I.FileType.Image;
 
-		let cn = [ 'blocks' ];
+		const isVideo = file?.isFileVideo();
+		const isImage = file?.isFileImage();
+		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage) {
 			if (isVideo || (object.widthInPixels > object.heightInPixels)) {
@@ -66,35 +64,47 @@ class PageMainMedia extends React.Component<Props, {}> {
 			cn.push('vertical');
 		};
 
+		if (file) {
+			file.align = I.BlockAlign.Center;
+		};
+
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
 				<div id="blocks" className={cn.join(' ')}>
-					<div className="side left">
-						{isVideo || isImage ? (
-							<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
-						) : (
-							<IconObject object={object} size={96} />
-						)}
-					</div>
+					{file ? (
+						<React.Fragment>
+							<div className="side left">
+								{isVideo || isImage ? (
+									<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
+								) : (
+									<IconObject object={object} size={96} />
+								)}
+							</div>
 
-					<div className="side right">
-						<div className="head">
-							<div className="title">{DataUtil.fileName(object)}</div>
-							<div className="descr">{object.description}</div>
+							<div className="side right">
+								<div className="head">
+									<div className="title">{DataUtil.fileName(object)}</div>
+									<div className="descr">{object.description}</div>
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-							<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+									<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+								</div>
+
+								<div className="section">
+									{relations.map((item: any) => (
+										<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} />
+									))}
+								</div>
+							</div>
+						</React.Fragment>
+					) : (
+						<div id="empty" className="empty">
+							File not found
 						</div>
-
-						<div className="section">
-							{relations.map((item: any) => (
-								<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} />
-							))}
-						</div>
-					</div>
+					)}
 				</div>
 
 				<Footer {...this.props} rootId={rootId} />
@@ -213,11 +223,16 @@ class PageMainMedia extends React.Component<Props, {}> {
 		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const blocks = node.find('#blocks');
+		const empty = node.find('#empty');
 		const container = isPopup ? $('#popupPage #innerWrap') : $(window);
 		const wh = container.height();
 
 		if (blocks.hasClass('vertical')) {
 			blocks.css({ height: wh });
+		};
+
+		if (empty.length) {
+			empty.css({ lineHeight: (wh - 60) + 'px' });
 		};
 	};
 

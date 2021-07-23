@@ -334,6 +334,7 @@ class MenuRelationSuggest extends React.Component<Props, State> {
 				offsetX: obj.outerWidth(),
 				offsetY: -76,
 				subIds: [ 'relationType' ],
+				noAnimation: true,
 				classNameWrap: classNameWrap,
 				data: {
 					...data,

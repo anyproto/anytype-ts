@@ -50,6 +50,7 @@
 			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest", "relationType"
 		],
+		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
 		"context": [
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],

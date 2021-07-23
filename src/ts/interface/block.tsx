@@ -134,8 +134,9 @@ export interface Block {
 	isDivDot?(): boolean;
 
 	isFile?(): boolean;
-	isImage?(): boolean;
-	isVideo?(): boolean;
+	isFileFile?(): boolean;
+	isFileImage?(): boolean;
+	isFileVideo?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

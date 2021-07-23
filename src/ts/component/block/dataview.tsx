@@ -103,8 +103,11 @@ class BlockDataview extends React.Component<Props, {}> {
 	componentDidMount () {
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(rootId, block.id);
+		const views = dbStore.getViews(rootId, block.id);
 
-		this.getData(viewId, 0);
+		if (views.length) {
+			this.getData(viewId || views[0].id, 0);
+		};
 		this.resize();
 
 		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
