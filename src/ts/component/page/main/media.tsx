@@ -64,6 +64,10 @@ class PageMainMedia extends React.Component<Props, {}> {
 			cn.push('vertical');
 		};
 
+		if (file) {
+			file.align = I.BlockAlign.Center;
+		};
+
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
@@ -73,7 +77,7 @@ class PageMainMedia extends React.Component<Props, {}> {
 						<React.Fragment>
 							<div className="side left">
 								{isVideo || isImage ? (
-									<Block {...this.props} key={file.id} rootId={rootId} block={{ ...file, align: I.BlockAlign.Center }} readonly={true} />
+									<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
 								) : (
 									<IconObject object={object} size={96} />
 								)}
