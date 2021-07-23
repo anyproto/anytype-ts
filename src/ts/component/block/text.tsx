@@ -631,7 +631,7 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open mention menu
-		if ((symbolBefore == '@') && isSpaceBefore && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode()) {
+		if ((symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode()) {
 			this.onMention();
 		};
 
