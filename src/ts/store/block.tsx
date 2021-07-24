@@ -378,8 +378,10 @@ class BlockStore {
 
 		for (let [ id, item ] of map.entries()) {
 			ret[id] = this.getLeaf(rootId, id);
-			ret[id].parentId = String(item.parentId || '');
-			ret[id].childBlocks = this.getChildren(rootId, id);
+			if (ret[id]) {
+				ret[id].parentId = String(item.parentId || '');
+				ret[id].childBlocks = this.getChildren(rootId, id);
+			};
 		};
 
 		return ret[rootId];
