@@ -41,6 +41,7 @@
 			.iconObject { display: inline; margin: 0px; }
 			.iconObject * { position: static; vertical-align: middle; margin: 0px; }
 			.name { display: none; }
+			.empty { @include text-common; padding: 0px 4px; }
 		}
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
