@@ -108,6 +108,9 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 
 		for (let id of blockIds) {
 			const block = blockStore.getLeaf(rootId, id);
+			if (!block) {
+				continue;
+			};
 			if (!block.canTurnText())		 hasTurnText = false;
 			if (!block.canTurnList())		 hasTurnList = false;
 			if (!block.isDiv())				 hasTurnDiv = false;
