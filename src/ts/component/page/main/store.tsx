@@ -129,7 +129,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				Mid = () => (
 					<div className="mid">
 						<Title text="Type every object" />
-						<Label text="Our beautifully-designed templates come with hundreds" />
+						<Label text="Anytype includes many popular types of objects for you to get started" />
 
 						<Button text="Create a new type" onClick={(e: any) => { this.onCreateType(e); }} />
 					</div>
@@ -187,7 +187,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				Mid = () => (
 					<div className="mid">
 						<Title text="All objects are connected" />
-						<Label text="Our beautifully-designed templates come with hundreds" />
+						<Label text="Use relations to build connections between objects" />
 
 						<Button text="Create a new type" />
 					</div>

@@ -74,8 +74,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		this.clear();
 		this.setClock();
 		this.i = window.setInterval(() => { this.setClock(); }, 1000);
-
-		this.t = window.setTimeout(() => { label.show(); }, 5000);
+		this.t = window.setTimeout(() => { label.show(); }, 10000);
 		
 		switch (match.params.id) {
 			case 'init': 
