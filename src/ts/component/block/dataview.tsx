@@ -224,7 +224,7 @@ class BlockDataview extends React.Component<Props, {}> {
 						});
 					},
 					onSelect: (item: any) => {
-						create(item.id);
+						create(item);
 					},
 				}
 			});
