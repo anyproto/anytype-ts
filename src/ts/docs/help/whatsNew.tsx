@@ -5,6 +5,13 @@ const sc = 'bgColor bgColor-grey textColor textColor-red nw'
 export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
+
+	{ style: I.TextStyle.Title, text: `Updates for 27 July, 2021` },
+
+	{ text: `Several small bugfixes` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
 	{ style: I.TextStyle.Title, text: `Updates for 22 July, 2021` },
 	{ text: `You can expect longer sign in up to several minutes. It is related to data structure optimisations that app needs to migrate on.` },
 	{ style: I.TextStyle.Header2, text: `New features & enhancements` },
