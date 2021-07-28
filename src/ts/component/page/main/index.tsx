@@ -152,7 +152,7 @@ class PageMainIndex extends React.Component<Props, State> {
 		this.onScroll();
 		this.onTab(Storage.get('indexTab') || Tab.Favorite);
 
-		win.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
+		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
 	};
 	
 	componentDidUpdate () {
@@ -167,7 +167,7 @@ class PageMainIndex extends React.Component<Props, State> {
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('scroll');
+		$(window).unbind('scroll.page');
 		menuStore.closeAll(Constant.menuIds.index);
 	};
 
