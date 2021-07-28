@@ -208,7 +208,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { param } = this.props;
 		const { data } = param;
 		const { canAdd } = data;
-		const value = this.getValue();
+		const value = DataUtil.getRelationArrayValue(data.value);
 		
 		let ret = Util.objectCopy(this.items);
 
@@ -355,7 +355,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = this.getValue();
+			let value = DataUtil.getRelationArrayValue(data.value);
 			value.push(id);
 			value = Util.arrayUnique(value);
 
@@ -391,17 +391,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		} else {
 			cb(item.id);
 		};
-	};
-
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = data.value || [];
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		return Util.objectCopy(value);
 	};
 
 	resize () {

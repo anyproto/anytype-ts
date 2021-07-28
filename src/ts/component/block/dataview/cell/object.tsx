@@ -3,6 +3,7 @@ import { I, Util, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 import ItemObject from './item/object';
+import { data } from 'jquery';
 
 interface Props extends I.Cell {}
 interface State { 
@@ -32,7 +33,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return null;
 		};
 
-		const value = this.getValue();
+		const value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
 		const length = value.length;
 
 		if (length >= 3) {
@@ -87,17 +88,6 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	onSort (value: any[]) {
 		const { onChange } = this.props;
 		onChange(value.map((it: any) => { return it.id; }));
-	};
-
-	getValue () {
-		const { relation, index, getRecord } = this.props;
-		const record = getRecord(index);
-
-		let value = record[relation.relationKey] || [];
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		return Util.objectCopy(Util.arrayUnique(value));
 	};
 
 });

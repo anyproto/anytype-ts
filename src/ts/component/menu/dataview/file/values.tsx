@@ -32,7 +32,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { rootId, blockId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
-		let value = Util.objectCopy(data.value || []);
+		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 

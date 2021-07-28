@@ -935,7 +935,7 @@ class DataUtil {
 			return 0;
 		});
 
-		return relations.map((relation: any) => {
+		let ret = relations.map((relation: any) => {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
 			
 			if ([ Constant.relationKey.name ].indexOf(relation.relationKey) >= 0) {
@@ -948,13 +948,23 @@ class DataUtil {
 				width: this.relationWidth(vr.width, relation.format),
 			});
 		});
+
+		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		const relations = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		let forceKeys = [ 'done' ];
+		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
 		});
+
+		for (let key of forceKeys) {
+			const relation = dbStore.getRelation(rootId, blockId, key);
+			if (relation) {
+				relations.push(relation);
+			};
+		};
 
 		return relations.map((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
@@ -967,6 +977,15 @@ class DataUtil {
 				maxCount: relation.maxCount,
 			};
 		});
+	};
+
+	getRelationArrayValue (value: any): string[] {
+		value = Util.objectCopy(value || []);
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
+		};
+		value = value.filter((it: string) => { return it; });
+		return Util.arrayUnique(value);
 	};
 
 	relationWidth (width: number, format: I.RelationType): number {

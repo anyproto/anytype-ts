@@ -30,7 +30,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 			return null;
 		};
 
-		let value = this.getValue();
+		let value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
 		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 		
@@ -87,17 +87,6 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 		if (canEdit && (v != isEditing)) {
 			this.setState({ isEditing: v });
 		};
-	};
-
-	getValue () {
-		const { relation, index, getRecord } = this.props;
-		const record = getRecord(index);
-
-		let value = record[relation.relationKey];
-		if (!value || ('object' != typeof(value))) {
-			value = [];
-		};
-		return Util.objectCopy(value);
 	};
 
 	onClick (e: any, item: any) {

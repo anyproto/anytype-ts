@@ -8,6 +8,7 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const HEIGHT = 28;
 const LIMIT = 10;
@@ -130,9 +131,13 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		const active = items.find((it: any) => { return it.id == value });
+		let active = items.find((it: any) => { return it.id == value });
+		if (!active) {
+			active = items[0];
+		};
+
 		if (active && !active.isInitial) {
-			window.setTimeout(() => { this.setActive(active, true); }, 210);
+			window.setTimeout(() => { this.setActive(active, true); }, Constant.delay.menu);
 		};
 
 		this.focus();

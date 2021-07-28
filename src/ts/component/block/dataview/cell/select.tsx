@@ -24,15 +24,23 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, block, relation, getRecord, index, placeholder } = this.props;
+		const { rootId, block, relation, getRecord, index, placeholder, elementMapper } = this.props;
 		const record = getRecord(index);
+		const canClear = relation.format == I.RelationType.Status;
 
 		if (!relation || !record) {
 			return null;
 		};
 
-		const value = this.getValue();
-		const canClear = relation.format == I.RelationType.Status;
+		let value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
+		value = value.map((id: string) => { 
+			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
+		});
+		value = value.filter((it: any) => { return it && it.id; });
+
+		if (elementMapper) {
+			value = value.map((it: any) => { return elementMapper(relation, it); });
+		};
 
 		return (
 			<div className="wrap">
@@ -79,27 +87,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (canEdit && (v != isEditing)) {
 			this.setState({ isEditing: v });
 		};
-	};
-
-	getValue () {
-		const { relation, index, getRecord, elementMapper } = this.props;
-		const record = getRecord(index);
-
-		let value = record[relation.relationKey] || [];
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		value = Util.objectCopy(value);
-		value = value.map((id: string) => { 
-			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-		});
-		value = value.filter((it: any) => { return it && it.id; });
-
-		if (elementMapper) {
-			value = value.map((it: any) => { return elementMapper(relation, it); });
-		};
-
-		return Util.arrayUnique(value);
 	};
 
 	onClear (e: any) {
