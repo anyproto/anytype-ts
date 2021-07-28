@@ -948,10 +948,18 @@ class DataUtil {
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		const relations = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
+		let forceKeys = [ 'done' ];
+		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
 		});
+
+		for (let key of forceKeys) {
+			const relation = dbStore.getRelation(rootId, blockId, key);
+			if (relation) {
+				relations.push(relation);
+			};
+		};
 
 		return relations.map((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
