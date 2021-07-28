@@ -930,7 +930,7 @@ class DataUtil {
 			return 0;
 		});
 
-		return relations.map((relation: any) => {
+		let ret = relations.map((relation: any) => {
 			const vr = view.relations.find((it: I.Relation) => { return it.relationKey == relation.relationKey; }) || {};
 			
 			if ([ Constant.relationKey.name ].indexOf(relation.relationKey) >= 0) {
@@ -943,6 +943,8 @@ class DataUtil {
 				width: this.relationWidth(vr.width, relation.format),
 			});
 		});
+
+		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
