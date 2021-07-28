@@ -50,7 +50,6 @@ class Keyboard {
 	};
 
 	onScroll (e: any) {
-		console.log(e);
 		Util.tooltipHide(false);
 	};
 

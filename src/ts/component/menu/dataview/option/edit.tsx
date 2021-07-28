@@ -156,13 +156,10 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { option, rootId, blockId, record, onChange, optionCommand } = data;
 		const relation = data.relation.get();
+		const value = DataUtil.getRelationArrayValue(data.value);
 
 		relation.selectDict = relation.selectDict.filter((it: any) => { return it.id != option.id; });
 		optionCommand('delete', rootId, blockId, relation.relationKey, record.id, option);
-
-		let value = Util.objectCopy(data.value || []);
-		value = value.filter((it: any) => { return it != option.id; });
-		value = Util.arrayUnique(value);
 
 		this.props.param.data.value = value;
 

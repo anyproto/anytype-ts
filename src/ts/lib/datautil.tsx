@@ -966,6 +966,15 @@ class DataUtil {
 		});
 	};
 
+	getRelationArrayValue (value: any): string[] {
+		value = Util.objectCopy(value || []);
+		if ('object' != typeof(value)) {
+			value = value ? [ value ] : [];
+		};
+		value = value.filter((it: string) => { return it; });
+		return Util.arrayUnique(value);
+	};
+
 	relationWidth (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
 		return Number(width || size['format' + format]) || size.default;
