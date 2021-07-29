@@ -36,8 +36,6 @@ import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
-import MenuObjectTypeEdit from './type/edit';
-
 import MenuRelationSuggest from './relation/suggest';
 import MenuRelationType from './relation/type';
 
@@ -104,8 +102,6 @@ const Components: any = {
 	blockRelationEdit:		 MenuBlockRelationEdit,
 	blockRelationList:		 MenuBlockRelationList,
 	blockRelationView:		 MenuBlockRelationView,
-
-	objectTypeEdit:			 MenuObjectTypeEdit,
 
 	relationSuggest:		 MenuRelationSuggest,
 	relationType:			 MenuRelationType,
