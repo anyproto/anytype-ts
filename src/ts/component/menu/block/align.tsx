@@ -6,6 +6,7 @@ import { blockStore } from 'ts/store';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class MenuBlockAlign extends React.Component<Props, {}> {
 	
@@ -35,7 +36,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.unbind();
-		this.setActive();
+		window.setTimeout(() => { this.props.setActive(); }, Constant.delay.menu);
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -55,14 +56,6 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
-	};
-	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
-		};
-		this.props.setHover(items[this.n], scroll);
 	};
 	
 	getItems () {
@@ -88,6 +81,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -99,7 +93,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -108,7 +102,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 			
 			case Key.tab:
@@ -128,7 +122,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
