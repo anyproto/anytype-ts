@@ -229,7 +229,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		return ret;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		const { n } = this.state;
 

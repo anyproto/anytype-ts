@@ -133,7 +133,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });

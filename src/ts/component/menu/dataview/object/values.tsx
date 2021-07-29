@@ -127,7 +127,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		DataUtil.objectOpenEvent(e, item);
 	};
 
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		this.props.setHover((item ? item : items[this.n]), scroll);
 	};

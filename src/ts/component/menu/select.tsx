@@ -115,7 +115,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, setActive } = this.props;
 		const { data } = param;
 		const { value, noKeys } = data;
 		const items = this.getItems();
@@ -137,7 +137,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 
 		if (active && !active.isInitial) {
-			window.setTimeout(() => { this.setActive(active, true); }, Constant.delay.menu);
+			window.setTimeout(() => { setActive(active, true); }, Constant.delay.menu);
 		};
 
 		this.focus();
@@ -189,14 +189,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		return items || [];
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -206,6 +198,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -218,7 +211,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -227,7 +220,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 			
 			case Key.tab:
@@ -256,7 +249,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	};
 
 	onOver (e: any, item: any) {
-		const { param } = this.props;
+		const { param, setActive } = this.props;
 		const { data } = param;
 		const { canSelectInitial, onMouseEnter } = data;
 
@@ -265,7 +258,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			setActive(item, false);
 		};
 
 		if (onMouseEnter) {

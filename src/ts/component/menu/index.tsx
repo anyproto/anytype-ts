@@ -145,6 +145,7 @@ class Menu extends React.Component<Props, State> {
 		
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
+		this.setActive = this.setActive.bind(this);
 		this.setHover = this.setHover.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
@@ -213,6 +214,7 @@ class Menu extends React.Component<Props, State> {
 						<Component 
 							ref={(ref: any) => { this.ref = ref; }}
 							{...this.props} 
+							setActive={this.setActive}
 							setHover={this.setHover} 
 							getId={this.getId} 
 							getSize={this.getSize}
@@ -503,6 +505,14 @@ class Menu extends React.Component<Props, State> {
 		if (isSub) {
 			$('#menu-polygon').hide();
 		};
+	};
+
+	setActive (item?: any, scroll?: boolean) {
+		const items = this.ref.getItems();
+		if (item) {
+			this.ref.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+		this.setHover(items[this.ref.n], scroll);
 	};
 	
 	setHover (item?: any, scroll?: boolean) {

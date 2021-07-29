@@ -329,7 +329,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return items;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id; });

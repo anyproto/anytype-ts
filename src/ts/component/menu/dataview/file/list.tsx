@@ -214,7 +214,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		return ret;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 	
 		if (item) {

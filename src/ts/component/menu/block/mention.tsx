@@ -154,7 +154,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		].concat(this.items);
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		const { n } = this.state;
 		this.props.setHover((item ? item : items[n]), scroll);

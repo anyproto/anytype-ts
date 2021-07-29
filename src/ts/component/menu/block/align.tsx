@@ -57,7 +57,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		if (item) {
 			this.n = items.findIndex((it: any) => { return it.id == item.id });

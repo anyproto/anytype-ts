@@ -322,7 +322,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = (item?: any) => {
+	setActive (item?: any) {
 		const items = this.getItems(false);
 		if (item) {
 			this.state.n = items.findIndex((it: any) => { return it.id == item.id; });

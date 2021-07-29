@@ -204,7 +204,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		obj.unbind('click');
 	};
 
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems(false);
 		const { n } = this.state;
 		this.props.setHover((item ? item : items[n]), scroll);

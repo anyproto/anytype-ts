@@ -221,7 +221,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		return ret;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 	
 		if (item) {

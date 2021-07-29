@@ -225,7 +225,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return this.items;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
+	setActive (item?: any, scroll?: boolean) {
 		const items = this.getItems();
 		const { n } = this.state;
 		this.props.setHover((item ? item : items[n]), scroll);
