@@ -329,14 +329,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return items;
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -361,6 +353,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -371,7 +364,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -379,7 +372,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.right:
@@ -413,7 +406,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close, getId } = this.props;
+		const { param, close, getId, setActive } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -425,15 +418,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content } = block;
 		const { color, bgColor } = content;
-		const items = this.getItems();
 		
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		if (config.allowDataview) {
 			types = types.filter((it: string) => { return it != Constant.typeId.page; });
 		};
 		
-		this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		this.setActive(item, false);
+		setActive(item, false);
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.action);

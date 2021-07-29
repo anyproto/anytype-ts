@@ -663,6 +663,7 @@ class DataUtil {
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
 			};
+			objectTypes.sort(this.sortByName);
 
 			for (let type of objectTypes) {
 				ret.push({ 
@@ -696,10 +697,10 @@ class DataUtil {
 
 		if (config.allowDataview) {
 			let objectTypes = dbStore.objectTypes;
-			
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 			};
+			objectTypes.sort(this.sortByName);
 
 			let i = 0;
 			for (let type of objectTypes) {
@@ -961,7 +962,7 @@ class DataUtil {
 
 		for (let key of forceKeys) {
 			const relation = dbStore.getRelation(rootId, blockId, key);
-			if (relation) {
+			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
 				relations.push(relation);
 			};
 		};
