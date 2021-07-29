@@ -18,7 +18,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	_isMounted: boolean = false;	
 	n: number = 0;
 	cache: any = null;
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -75,7 +76,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			<React.Fragment>
 				{withFilter ?
 					<Filter 
-						ref={(ref: any) => { this.ref = ref; }} 
+						ref={(ref: any) => { this.refFilter = ref; }} 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -94,7 +95,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={registerChild}
+										ref={(ref: any) => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -171,8 +172,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};

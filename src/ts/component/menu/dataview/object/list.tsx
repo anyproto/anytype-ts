@@ -143,7 +143,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	componentDidUpdate () {
 		const items = this.getItems();
-		const { param } = this.props;
+		const { param, setActive } = this.props;
 		const { data } = param;
 		const { filter } = data;
 
@@ -165,7 +165,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 		this.resize();
 		this.focus();
-		this.setActive(items[this.n]);
+
+		setActive(items[this.n], false);
 	};
 	
 	componentWillUnmount () {
@@ -221,20 +222,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		return ret;
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-	
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-
-		this.props.setHover(items[this.n], false);
-
-		if (scroll) {
-			this.refList.scrollToRow(this.n);
-		};
-	};
-
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { config } = commonStore;
 		const { param } = this.props;
@@ -292,6 +279,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -304,7 +292,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -313,7 +301,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
@@ -332,7 +320,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
