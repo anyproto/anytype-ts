@@ -89,8 +89,8 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 	componentDidUpdate () {
-		this.setActive(null, true);
-		window.setTimeout(() => { this.props.position(); });
+		this.props.setActive(null, true);
+		this.props.position();
 	};
 
 	componentWillUnmount () {
@@ -132,18 +132,9 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		return value;
 	};
 
-
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 
@@ -237,6 +228,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -248,7 +240,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -256,7 +248,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.right:

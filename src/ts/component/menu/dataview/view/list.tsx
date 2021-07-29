@@ -88,7 +88,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 
 	componentDidUpdate () {
-		this.setActive(null, true);
+		this.props.setActive(null, true);
 		this.props.position();
 	};
 
@@ -128,17 +128,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		return value;
 	};
 
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 
@@ -220,6 +212,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -231,7 +224,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -239,7 +232,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.right:

@@ -51,7 +51,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 
 		this.n = items.findIndex((it: any) => { return it.id == active; });
 		this.unbind();
-		this.setActive();
+		this.props.setActive();
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -80,14 +80,6 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		return block ? block.content.style : 0;
-	};
-	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
-		};
-		this.props.setHover(items[this.n], scroll);
 	};
 	
 	getSections () {
@@ -138,6 +130,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -149,7 +142,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, item);
+				setActive(null, item);
 				break;
 				
 			case Key.down:
@@ -157,7 +150,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, item);
+				setActive(null, item);
 				break;
 				
 			case Key.tab:
@@ -177,7 +170,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	

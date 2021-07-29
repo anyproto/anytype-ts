@@ -47,9 +47,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	};
 
 	componentDidUpdate () {
-		const items = this.getItems();
-
-		this.setActive(items[this.n]);
+		this.props.setActive();
 		this.props.position();
 	};
 	
@@ -156,14 +154,6 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		return options;
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -174,6 +164,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		const k = e.key.toLowerCase();
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const items = this.getItems();
 		const l = items.length;
 		const item = items[this.n];
@@ -185,7 +176,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -194,7 +185,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
@@ -255,7 +246,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 			this.onOver(e, item);
 		};
 	};

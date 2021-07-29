@@ -18,6 +18,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -83,28 +84,23 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.unbind();
-		this.setActive();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this.unbind();
 		menuStore.closeAll(Constant.menuIds.more);
 	};
+
+	rebind () {
+		this.unbind();
+
+		const win = $(window);
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
-	};
-	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
-		};
-		this.props.setHover(items[this.n], scroll);
 	};
 	
 	onKeyDown (e: any) {
@@ -113,6 +109,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -124,7 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -132,17 +129,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
 			case Key.enter:
 			case Key.space:
+			case Key.right:
 				if (item) {
-					this.onClick(e, item);
+					item.arrow ? this.onOver(item) : this.onClick(e, item);
 				};
 				break;
-			
+
 			case Key.escape:
 				this.props.close();
 				break;
@@ -279,7 +277,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 			this.onOver(item);
 		};
 	};
@@ -307,6 +305,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {
+				rebind: this.rebind,
 				rootId: rootId,
 				blockId: blockId,
 				blockIds: [ blockId ],

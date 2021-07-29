@@ -89,7 +89,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	componentDidUpdate () {
-		this.setActive(null, true);
+		this.props.setActive(null, true);
 		this.props.position();
 	};
 
@@ -127,14 +127,9 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		DataUtil.objectOpenEvent(e, item);
 	};
 
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		this.props.setHover((item ? item : items[this.n]), scroll);
-	};
-
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 
@@ -199,6 +194,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		
 		keyboard.disableMouse(true);
 		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -210,7 +206,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -218,7 +214,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.right:

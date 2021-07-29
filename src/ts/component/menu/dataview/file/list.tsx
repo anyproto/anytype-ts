@@ -165,7 +165,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		};
 		this.resize();
 		this.focus();
-		this.setActive(items[this.n]);
+		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -214,20 +214,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		return ret;
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-	
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-
-		this.props.setHover(items[this.n], false);
-
-		if (scroll) {
-			this.refList.scrollToRow(this.n);
-		};
-	};
-
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { config } = commonStore;
 		const { param } = this.props;
@@ -283,6 +269,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
@@ -295,7 +282,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				if (this.n < 0) {
 					this.n = l - 1;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
@@ -304,7 +291,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				if (this.n > l - 1) {
 					this.n = 0;
 				};
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
@@ -323,7 +310,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
