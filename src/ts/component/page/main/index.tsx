@@ -317,6 +317,8 @@ class PageMainIndex extends React.Component<Props, State> {
 	
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', (message: any) => {
+			this.load();
+
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
