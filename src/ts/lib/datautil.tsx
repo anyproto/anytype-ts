@@ -1199,6 +1199,14 @@ class DataUtil {
 		return value;
 	};
 
+	convertRelationValueToString (value: any) {
+		if (('object' == typeof(value)) && value.hasOwnProperty('length')) {
+			return String(value.length ? value[0] : '');
+		} else {
+			return String(value || '');
+		};
+	};
+
 	checkTemplateCnt (typeIds: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },

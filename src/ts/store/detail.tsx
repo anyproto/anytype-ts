@@ -132,8 +132,9 @@ class DetailStore {
 			...object,
 			id: id,
 			name: String(object.name || DataUtil.defaultName('page')),
-			type: String(object.type || ''),
+			type: DataUtil.convertRelationValueToString(object.type),
 			layout: Number(object.layout) || I.ObjectLayout.Page,
+			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 		};
