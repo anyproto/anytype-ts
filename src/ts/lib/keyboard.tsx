@@ -39,13 +39,18 @@ class Keyboard {
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
+		win.on('scroll.common', (e: any) => { this.onScroll(e); });
 
 		ipcRenderer.removeAllListeners('commandGlobal');
 		ipcRenderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 	
 	unbind () {
-		$(window).unbind('keyup.common keydown.common mousedown.common');
+		$(window).unbind('keyup.common keydown.common mousedown.common scroll.common');
+	};
+
+	onScroll (e: any) {
+		Util.tooltipHide(false);
 	};
 
 	onMouseDown (e: any) {

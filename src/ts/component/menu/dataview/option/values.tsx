@@ -124,7 +124,7 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 		const relation = data.relation.get();
 
-		let value = this.getValue();
+		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.map((id: string) => { 
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
@@ -133,17 +133,6 @@ class MenuOptionValues extends React.Component<Props> {
 		return value;
 	};
 
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = Util.objectCopy(data.value || []);
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		value = value.filter((it: string) => { return it; });
-		return Util.arrayUnique(value);
-	};
 
 	setActive = (item?: any, scroll?: boolean) => {
 		const items = this.getItems();
@@ -215,7 +204,7 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 		const { onChange } = data;
 		
-		let value = this.getValue();
+		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.filter((it: any) => { return it != item.id; });
 		value = Util.arrayUnique(value);
 
@@ -231,8 +220,7 @@ class MenuOptionValues extends React.Component<Props> {
 		const { data } = param;
 		const { onChange } = data;
 
-		let value = this.getValue();
-
+		let value = DataUtil.getRelationArrayValue(data.value);
 		value = arrayMove(value, oldIndex - 1, newIndex - 1);
 		value = Util.arrayUnique(value);
 

@@ -206,7 +206,9 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	getItems () {
-		const value = this.getValue();
+		const { param } = this.props;
+		const { data } = param;
+		const value = DataUtil.getRelationArrayValue(data.value);
 		
 		let ret = Util.objectCopy(this.items);
 		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
@@ -339,7 +341,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 			return;
 		};
 
-		let value = this.getValue();
+		let value = DataUtil.getRelationArrayValue(data.value);
 		value.push(item.id);
 		value = Util.arrayUnique(value);
 
@@ -352,17 +354,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		menuStore.updateData(MENU_ID, { value: value });
 		onChange(value);
 		position();
-	};
-
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = data.value || [];
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		return Util.objectCopy(value);
 	};
 
 	resize () {

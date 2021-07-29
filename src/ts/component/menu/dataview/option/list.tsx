@@ -224,7 +224,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { onChange, maxCount } = data;
 
-		let value = this.getValue();
+		let value = DataUtil.getRelationArrayValue(data.value);
 		value.push(id);
 		value = Util.arrayUnique(value);
 
@@ -240,17 +240,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		menuStore.updateData(MENU_ID, { value: value });
 
 		onChange(value);
-	};
-
-	getValue (): any[] {
-		const { param } = this.props;
-		const { data } = param;
-
-		let value = data.value || [];
-		if ('object' != typeof(value)) {
-			value = value ? [ value ] : [];
-		};
-		return Util.objectCopy(value);
 	};
 
 	onOptionAdd () {
@@ -320,7 +309,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { canAdd, filterMapper } = data;
 		const relation = data.relation.get();
-		const value = this.getValue();
+		const value = DataUtil.getRelationArrayValue(data.value);
 
 		let items = Util.objectCopy(relation.selectDict || []);
 		let sections: any = {};
