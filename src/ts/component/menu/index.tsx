@@ -238,6 +238,7 @@ class Menu extends React.Component<Props, State> {
 		this.position();
 		this.animate();
 		this.unbind();
+		this.setActive();
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -508,6 +509,10 @@ class Menu extends React.Component<Props, State> {
 	};
 
 	setActive (item?: any, scroll?: boolean) {
+		if (!this.ref || !this.ref.getItems) {
+			return;
+		};
+
 		const items = this.ref.getItems();
 		if (item) {
 			this.ref.n = items.findIndex((it: any) => { return it.id == item.id; });

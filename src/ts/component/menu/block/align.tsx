@@ -36,7 +36,6 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.unbind();
-		window.setTimeout(() => { this.props.setActive(); }, Constant.delay.menu);
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
