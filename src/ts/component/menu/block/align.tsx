@@ -6,7 +6,6 @@ import { blockStore } from 'ts/store';
 interface Props extends I.Menu {};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 class MenuBlockAlign extends React.Component<Props, {}> {
 	
@@ -19,6 +18,9 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
 		const items = this.getItems();
 		return (
 			<div>
@@ -28,6 +30,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 						{...action} 
 						onClick={(e: any) => { this.onClick(e, action); }} 
 						onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+						checkbox={action.id == value}
 					/>
 				))}
 			</div>
@@ -75,48 +78,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const { setActive } = this.props;
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-			case Key.right:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-			
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-			
-			case Key.left:	
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 	
 	onOver (e: any, item: any) {

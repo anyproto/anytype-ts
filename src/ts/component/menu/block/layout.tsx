@@ -77,47 +77,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 	};
 
 	onKeyDown (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const { setActive } = this.props;
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-			case Key.right:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					item.arrow ? this.onOver(e, item) : this.onClick(e, item);
-				};
-				break;
-			
-			case Key.left:	
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	getSections () {
@@ -182,6 +142,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const object = detailStore.get(rootId, rootId);
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -202,6 +163,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: object.layoutAlign,
 					onSelect: (align: I.BlockAlign) => {
 						DataUtil.pageSetAlign(rootId, align);
 						close();

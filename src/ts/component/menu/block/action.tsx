@@ -415,7 +415,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { content } = block;
+		const { content, align } = block;
 		const { color, bgColor } = content;
 		
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
@@ -554,6 +554,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: align,
 					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
