@@ -590,7 +590,7 @@ class Menu extends React.Component<Props, State> {
 			return;
 		};
 
-		const el = menu.find('#item-' + item.id).addClass('hover');
+		const el = menu.find(`#item-${item.itemId || item.id}`).addClass('hover');
 		if (el.length && scroll) {
 			const content = node.find('.content');
 			const st = content.scrollTop();

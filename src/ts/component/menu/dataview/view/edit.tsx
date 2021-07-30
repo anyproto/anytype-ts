@@ -45,6 +45,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							icon={action.icon || action.id}
 							className={!allowedView ? 'isReadonly' : ''}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
+							onMouseEnter={(e: any) => { this.onOver(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -196,7 +197,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		if (view.id && !readonly) {
 			sections.push({
-				children: [
+				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
 					(views.length > 1 ? { id: 'remove', icon: 'remove', name: 'Remove view' } : null),
 				]

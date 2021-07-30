@@ -824,7 +824,7 @@ class DataUtil {
 		};
 
 		ret = ret.map((it: any) => {
-			it.name = translate('viewnName' + it.id);
+			it.name = translate('viewName' + it.id);
 			return it;
 		});
 		return ret;
