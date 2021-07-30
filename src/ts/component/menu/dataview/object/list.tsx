@@ -32,7 +32,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	refFilter: any = null;
 	refList: any = null;
 	top: number = 0;
-	n: number;
+	n: number = -1;
 
 	constructor (props: any) {
 		super(props);
@@ -150,6 +150,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (filter != this.filter) {
 			this.offset = 0;
 			this.filter = filter;
+			this.n = -1;
 			this.load(true);
 			return;
 		};

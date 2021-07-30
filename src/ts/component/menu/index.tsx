@@ -572,7 +572,7 @@ class Menu extends React.Component<Props, State> {
 			if (this.ref.recalcIndex) {
 				idx = this.ref.recalcIndex();
 			};
-			this.ref.refList.scrollToRow(idx + 1);
+			this.ref.refList.scrollToRow(idx);
 		};
 	};
 	
