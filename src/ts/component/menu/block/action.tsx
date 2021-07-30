@@ -94,21 +94,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { getId, setActive } = this.props;
+		const { getId } = this.props;
 		const menu = $(`#${getId()}`);
 		
 		this._isMounted = true;
 		this.rebind();
 		this.focus();
 
-		setActive();
 		menu.unbind('mouseleave').on('mouseleave', () => { menuStore.clearTimeout(); });
 	};
 
 	componentDidUpdate () {
 		this.rebind();
-
-		this.props.setActive();
 		this.props.position();
 	};
 	
@@ -151,6 +148,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		this.unbind();
+		window.setTimeout(() => { this.props.setActive(); });
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -347,51 +345,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 		};
 		
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const { setActive } = this.props;
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.right:
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-			
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					item.arrow ? this.onOver(e, item) : this.onClick(e, item);					
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 	
 	onMouseEnter (e: any, item: any) {
