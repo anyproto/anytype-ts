@@ -10,23 +10,18 @@ import { observable } from 'mobx';
 
 interface Props extends I.Menu {}
 
-interface State {
-	n: number;
-}
-
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
 const LIMIT = 40;
 
-const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, State> {
+const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
 	cache: any = {};
-	state = {
-		n: 0,
-	};
+	n: number = -1;
 	
 	constructor (props: any) {
 		super(props);
@@ -40,7 +35,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { data } = param;
 		const { filter } = data;
 		const relation = data.relation.get();
-		const { n } = this.state;
 		const value = data.value || [];
 		const items = this.getItems(true);
 
@@ -94,7 +88,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter or create options..." 
 					value={filter}
 					onChange={this.onFilterChange} 
@@ -112,7 +106,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={registerChild}
+											ref={(ref: any) => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -121,7 +115,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
-											scrollToIndex={n}
 										/>
 									)}
 								</AutoSizer>
@@ -155,12 +148,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	componentDidUpdate () {
-		const { n } = this.state;
-		const items = this.getItems(false);
-
+		this.props.setActive();
 		this.props.position();
 		this.resize();
-		this.setActive(items[n]);
 	};
 
 	componentWillUnmount () {
@@ -178,8 +168,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};
@@ -202,12 +192,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		win.unbind('keydown.menu');
 		obj.unbind('click');
-	};
-
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems(false);
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
 	};
 
 	onFilterChange (v: string) {
@@ -258,7 +242,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				return;
 			};
 
-			this.ref.setValue('');
+			this.refFilter.setValue('');
 			this.onFilterChange('');
 			this.onValueAdd(message.option.id);
 
@@ -364,32 +348,29 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		let { n } = this.state;
-		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems(false);
 		const l = items.length;
-		const item = items[n];
+		const item = items[this.n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:

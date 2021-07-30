@@ -10,7 +10,6 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-	n: number;
 	filter: string;
 }
 
@@ -22,7 +21,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	state = {
 		loading: false,
-		n: 0,
 		filter: '',
 	};
 
@@ -31,7 +29,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	index: any = null;
 	cache: any = {};
 	items: any = [];
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
+	n: number = -1;
 	timeoutFilter: number = 0;
 
 	constructor (props: any) {
@@ -41,7 +41,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	render () {
-		const { n, loading, filter } = this.state;
+		const { loading, filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { value, placeholder, label, isBig, noFilter, noIcon } = data;
@@ -113,7 +113,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			<div className={cn.join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.ref = ref; }} 
+						ref={(ref: any) => { this.refFilter = ref; }} 
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
@@ -144,7 +144,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 									<AutoSizer className="scrollArea">
 										{({ width, height }) => (
 											<List
-												ref={registerChild}
+												ref={(ref: any) => { this.refList = ref; }}
 												width={width}
 												height={height}
 												deferredMeasurmentCache={this.cache}
@@ -153,7 +153,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 												rowRenderer={rowRenderer}
 												onRowsRendered={onRowsRendered}
 												overscanRowCount={10}
-												scrollToIndex={n}
 											/>
 										)}
 									</AutoSizer>
@@ -175,14 +174,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	componentDidUpdate () {
-		const { n, filter } = this.state;
+		const { filter } = this.state;
 		const items = this.getItems();
 		const rowHeight = this.getHeight();
 
 		if (this.filter != filter) {
 			this.load(true);
 			this.filter = filter;
-			this.setState({ n: 0 });
+			this.n = -1;
 			return;
 		};
 
@@ -194,7 +193,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		this.resize();
 		this.focus();
-		this.setActive(items[n]);
+		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -215,8 +214,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	focus () {
 		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
+			if (this.refFilter) {
+				this.refFilter.focus();
 			};
 		}, 15);
 	};
@@ -225,12 +224,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return this.items;
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
-	};
-
 	load (clear: boolean, callBack?: (message: any) => void) {
 		if (!this._isMounted) {
 			return;
@@ -330,32 +323,29 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		let { n } = this.state;
-		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[n];
+		const item = items[this.n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
@@ -379,7 +369,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { onOver } = data;
 
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 
 		if (onOver) {
@@ -444,7 +434,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ filter: this.ref.getValue() });
+			this.setState({ filter: this.refFilter.getValue() });
 		}, force ? 0 : 500);
 	};
 

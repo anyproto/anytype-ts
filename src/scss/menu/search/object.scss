@@ -16,7 +16,7 @@
 
 		.filter { flex-shrink: 0; }
 
-		.empty { height: 100%; line-height: 283px; padding: 16px; text-align: center; }
+		.empty { height: 100%; line-height: 284px; padding: 16px; text-align: center;  }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
 			span { @include text-overflow-nw; max-width: 100%; display: block; }
@@ -24,7 +24,7 @@
 		}
 
 		.wrap.withFilter {
-			.empty { height: calc(100% - 44px); }
+			.empty { height: calc(100% - 44px); line-height: 240px; }
 			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
 		}
 	}

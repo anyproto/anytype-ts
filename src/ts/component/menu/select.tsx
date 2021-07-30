@@ -32,13 +32,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { data } = param;
 		const { filter, value, noFilter } = data;
 		const items = this.getItems();
-		const idx = items.findIndex((it: I.Option) => { return it.id == value; });
 		const withFilter = !noFilter && (items.length > LIMIT);
-
-		let scrollTo = idx + 1; 
-		if (idx > LIMIT) {
-			scrollTo = Math.min(idx + LIMIT - 3, items.length - 1);
-		};
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -104,7 +98,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
-										scrollToIndex={scrollTo}
 									/>
 								)}
 							</AutoSizer>
@@ -300,9 +293,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const length = Math.max(items.length, 1);
 		const withFilter = !noFilter && (length > LIMIT);
 
-		let offset = withFilter ? 50 : 8;
+		let offset = withFilter ? 50 : 0;
 		if (length <= LIMIT) {
-			offset += 8;
+			offset += 16;
 		};
 
 		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));

@@ -516,7 +516,7 @@ class Menu extends React.Component<Props, State> {
 		this.setHover(items[this.ref.n], scroll);
 
 		if (this.ref.refList && scroll) {
-			this.ref.refList.scrollToRow(this.ref.n);
+			this.ref.refList.scrollToRow(this.ref.n + 1);
 		};
 	};
 	
