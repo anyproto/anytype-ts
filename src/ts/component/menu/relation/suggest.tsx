@@ -9,7 +9,6 @@ import 'react-virtualized/styles.css';
 interface Props extends I.Menu {}
 
 interface State {
-	n: number;
 	loading: boolean;
 }
 
@@ -21,15 +20,15 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	state = {
 		loading: false,
-		n: 0,
 	};
 
 	_isMounted: boolean = false;	
 	filter: string = '';
 	cache: any = null;
-	offset: number = 0;
 	items: any[] = [];
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
+	n: number = -1;
 
 	constructor (props: any) {
 		super(props);
@@ -43,7 +42,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const { n } = this.state;
 		const items = this.getItems();
 
 		if (!this.cache) {
@@ -98,7 +96,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter objects..." 
 					value={filter}
 					onChange={this.onFilterChange} 
@@ -115,7 +113,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={registerChild}
+										ref={(ref: any) => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -124,7 +122,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={LIMIT}
-										scrollToIndex={n}
 									/>
 								)}
 							</AutoSizer>
@@ -144,16 +141,15 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	componentDidUpdate () {
-		const { n } = this.state;
 		const items = this.getItems();
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
 
 		if (filter != this.filter) {
-			this.offset = 0;
-			this.filter = filter;
 			this.load();
+			this.filter = filter;
+			this.n = -1;
 			return;
 		};
 
@@ -165,7 +161,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		this.resize();
 		this.focus();
-		this.setActive(items[n]);
+		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -183,8 +179,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};
@@ -205,7 +201,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { data } = param;
 		const skipIds = data.skipIds || [];
 
-		let ret = [];
+		let ret: any[] = [];
 		let name = 'Create from scratch';
 
 		ret = ret.concat(this.items);
@@ -224,19 +220,16 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			ret = ret.filter((it: I.Relation) => { return !it.isHidden; });
 		};
 
-		ret.unshift({ id: 'add', relationKey: 'add', name: name });
+		ret = ret.map((it: any) => {
+			it.id = it.relationKey;
+			return it;
+		});
+
+		ret.unshift({ id: 'add', name: name });
 
 		return ret;
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		const { n } = this.state;
-
-		item = item || items[n] || {};
-		this.props.setHover({ id: item.relationKey }, scroll);
-	};
-
 	load () {
 		const { param } = this.props;
 		const { data } = param;
@@ -264,32 +257,29 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		let { n } = this.state;
-		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[n];
+		const item = items[this.n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
@@ -308,7 +298,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
@@ -356,8 +346,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const offset = 60;
+		const height = Math.max(HEIGHT * 1 + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
