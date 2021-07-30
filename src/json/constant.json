@@ -48,7 +48,7 @@
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
-			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest", "relationType"
+			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
 		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
 		"context": [
@@ -67,7 +67,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"relationType", "searchObject", "select", "dataviewDate"
+			"searchObject", "select", "dataviewDate"
 		],
 		"layout": [
 			"blockAlign"

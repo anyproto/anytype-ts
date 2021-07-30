@@ -52,6 +52,11 @@
 	"relationName100": { "en": "Object" },
 	"relationName101": { "en": "Relations" },
 
+	"viewName0": { "en": "Grid" },
+	"viewName1": { "en": "List" },
+	"viewName2": { "en": "Gallery" },
+	"viewName3": { "en": "Kanban" },
+
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
 	"progress2": { "en": "Export in progress" },

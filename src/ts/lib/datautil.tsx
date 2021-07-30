@@ -813,16 +813,41 @@ class DataUtil {
 		const { config } = commonStore;
 		
 		let ret = [
-			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Grid },
 		];
 		if (config.debug.ho) {
 			ret = ret.concat([
-				{ id: I.ViewType.Gallery, name: 'Gallery' },
-				{ id: I.ViewType.List, name: 'List' },
-				{ id: I.ViewType.Board, name: 'Kanban' },
+				{ id: I.ViewType.Gallery },
+				{ id: I.ViewType.List },
+				{ id: I.ViewType.Board },
 			]);
 		};
+
+		ret = ret.map((it: any) => {
+			it.name = translate('viewnName' + it.id);
+			return it;
+		});
 		return ret;
+	};
+
+	menuGetRelationTypes () {
+		return [
+			{ id: I.RelationType.LongText },
+			{ id: I.RelationType.Number },
+			{ id: I.RelationType.Status },
+			{ id: I.RelationType.Tag },
+			{ id: I.RelationType.Date },
+			{ id: I.RelationType.File },
+			{ id: I.RelationType.Checkbox },
+			{ id: I.RelationType.Url },
+			{ id: I.RelationType.Email },
+			{ id: I.RelationType.Phone },
+			{ id: I.RelationType.Object },
+		].map((it: any) => {
+			it.name = translate('relationName' + it.id);
+			it.icon = 'relation ' + this.relationClass(it.id);
+			return it;
+		});
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {

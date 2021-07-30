@@ -196,15 +196,17 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.menuOpen('relationType', { 
+		this.menuOpen('select', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
+				...data,
 				value: this.format,
-				onSelect: (item: any) => {
-					this.format = item.format;
+				options: DataUtil.menuGetRelationTypes(),
+				noFilter: true,
+				onSelect: (e: any, item: any) => {
+					this.format = item.id;
 					this.forceUpdate();
 				},
-				...data
 			}
 		});
 	};
