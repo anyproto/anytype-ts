@@ -10,7 +10,6 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-	n: number;
 }
 
 const $ = require('jquery');
@@ -22,7 +21,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	state = {
 		loading: false,
-		n: 0,
 	};
 
 	_isMounted: boolean = false;	
@@ -30,6 +28,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	index: any = null;
 	cache: any = {};
 	items: any = [];
+	n: number = -1;
+	refList: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -38,7 +38,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	render () {
-		const { n, loading } = this.state;
+		const { loading } = this.state;
 		const items = this.getItems();
 		const { filter } = commonStore;
 		const { text } = filter;
@@ -85,7 +85,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={registerChild}
+										ref={(ref: any) => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -94,7 +94,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
-										scrollToIndex={n}
 									/>
 								)}
 							</AutoSizer>
@@ -114,13 +113,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
-		const { n } = this.state;
 		const items = this.getItems();
 
 		if (this.filter != filter.text) {
 			this.load(true);
 			this.filter = filter.text;
-			this.setState({ n: 0 });
+			this.n = -1;
 			return;
 		};
 
@@ -131,7 +129,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		});
 
 		this.resize();
-		this.setActive(items[n]);
+		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -154,12 +152,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		].concat(this.items);
 	};
 	
-	setActive (item?: any, scroll?: boolean) {
-		const items = this.getItems();
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
-	};
-
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { filter } = commonStore;
 		const { config } = commonStore;
@@ -219,32 +211,29 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		let { n } = this.state;
-		
+		const { setActive } = this.props;
 		const k = e.key.toLowerCase();
 		const items = this.getItems();
 		const l = items.length;
-		const item = items[n];
+		const item = items[this.n];
 
 		switch (k) {
 			case Key.up:
 				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
+				this.n--;
+				if (this.n < 0) {
+					this.n = l - 1;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.down:
 				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
+				this.n++;
+				if (this.n > l - 1) {
+					this.n = 0;
 				};
-				this.setState({ n: n });
-				this.setActive(null, true);
+				setActive(null, true);
 				break;
 				
 			case Key.tab:
@@ -263,7 +252,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
@@ -316,7 +305,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const offset = 16;
+		const height = Math.max(HEIGHT * 1 + offset, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
