@@ -32,6 +32,10 @@
 			.caption { opacity: 0; }
 			.icon.delete { opacity: 1; }
 		}
+
+		.item.add {
+			.clickable { width: 100%; display: block; }
+		}
 	}
 
 	.menu.menuDataviewObjectValues.fromFilter {

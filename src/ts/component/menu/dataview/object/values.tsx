@@ -33,34 +33,45 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 		const Item = SortableElement((item: any) => {
 			const type: any = dbStore.getObjectType(item.type) || {};
+			const cn = [ 'item' ];
+			
+			if (item.id == 'add') {
+				cn.push('add');
+			} else {	
+				cn.push('withCaption');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
 
 			return (
 				<div 
 					id={'item-' + item.id} 
-					className={[ 'item', 'withCaption', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
+					className={cn.join(' ')} 
 					onMouseEnter={(e: any) => { this.onOver(e, item); }}
 				>
-					<Handle />
-					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-						<IconObject object={item} />
-						<div className="name">{item.name}</div>
-					</span>
-					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+					{item.id == 'add' ? (
+						<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+							<Icon className="plus" />
+							<div className="name">Add</div>
+						</span>
+					) : (
+						<React.Fragment>
+							<Handle />
+							<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</span>
+							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+						</React.Fragment>
+					)}
 				</div>
 			);
 		});
 
-		const ItemAdd = SortableElement((item: any) => (
-			<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, { id: 'add' }); }} onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">Add</div>
-			</div>
-		));
-		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<ItemAdd index={0} disabled={true} />
 					{items.map((item: any, i: number) => (
 						<Item key={i + 1} {...item} index={i + 1} />
 					))}
@@ -113,18 +124,24 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { data } = param;
 		const { rootId } = data;
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value: any[] = DataUtil.getRelationArrayValue(data.value);
 		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 		
 		if (!config.debug.ho) {
 			value = value.filter((it: any) => { return !it.isHidden; });
 		};
+
+		value.unshift({ id: 'add' });
 		return value;
 	};
 
 	onClick (e: any, item: any) {
-		DataUtil.objectOpenEvent(e, item);
+		if (item.id == 'add') {
+			this.onAdd();
+		} else {
+			DataUtil.objectOpenEvent(e, item);
+		};
 	};
 
 	onOver (e: any, item: any) {
