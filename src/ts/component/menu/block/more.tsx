@@ -104,47 +104,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const { setActive } = this.props;
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-			case Key.right:
-				if (item) {
-					item.arrow ? this.onOver(item) : this.onClick(e, item);
-				};
-				break;
-
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	getSections () {
@@ -278,11 +238,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
-			this.onOver(item);
+			this.onOver(e, item);
 		};
 	};
 
-	onOver (item: any) {
+	onOver (e: any, item: any) {
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.more);
 			return;
