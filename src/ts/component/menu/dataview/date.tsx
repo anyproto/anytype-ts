@@ -155,51 +155,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	};
 	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-
-		const k = e.key.toLowerCase();
-		keyboard.disableMouse(true);
-		
-		const { setActive } = this.props;
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {
