@@ -133,7 +133,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		menuStore.closeAll(Constant.menuIds.action);
 		
 		this.isFocused = true;
-		this.props.setHover();
+		this.props.setActive();
 	};
 	
 	onFilterBlur (e: any) {

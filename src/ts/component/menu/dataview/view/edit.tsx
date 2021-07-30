@@ -160,7 +160,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 	onNameFocus (e: any) {
 		this.isFocused = true;
-		this.props.setHover();
+		this.props.setActive();
 	};
 	
 	onNameBlur (e: any) {

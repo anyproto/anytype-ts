@@ -39,7 +39,7 @@ export interface Menu {
 	id: string;
 	param: MenuParam;
 	setActive?(item?: any, scroll?: boolean): void;
-	setHover?(id?: any, scroll?: boolean): void;
+	onKeyDown?(e: any): void;
 	getId?(): string;
 	getSize?(): any;
 	position? (): void;

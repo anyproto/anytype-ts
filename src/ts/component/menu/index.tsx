@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util } from 'ts/lib';
+import { I, keyboard, Key, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
 import { menuStore, popupStore } from 'ts/store';
 
@@ -142,7 +142,7 @@ class Menu extends React.Component<Props, State> {
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
 		this.setActive = this.setActive.bind(this);
-		this.setHover = this.setHover.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -211,7 +211,7 @@ class Menu extends React.Component<Props, State> {
 							ref={(ref: any) => { this.ref = ref; }}
 							{...this.props} 
 							setActive={this.setActive}
-							setHover={this.setHover} 
+							onKeyDown={this.onKeyDown}
 							getId={this.getId} 
 							getSize={this.getSize}
 							position={this.position} 
@@ -501,6 +501,59 @@ class Menu extends React.Component<Props, State> {
 		
 		if (isSub) {
 			$('#menu-polygon').hide();
+		};
+	};
+
+	onKeyDown (e: any) {
+		if (!this.ref || !this.ref.getItems) {
+			return;
+		};
+
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		const k = e.key.toLowerCase();
+		const items = this.ref.getItems();
+		const l = items.length;
+		const item = items[this.ref.n];
+
+		switch (k) {
+			case Key.up:
+				e.preventDefault();
+				this.ref.n--;
+				if (this.ref.n < 0) {
+					this.ref.n = l - 1;
+				};
+				this.setActive(null, true);
+				break;
+				
+			case Key.down:
+				e.preventDefault();
+				this.ref.n++;
+				if (this.ref.n > l - 1) {
+					this.ref.n = 0;
+				};
+				this.setActive(null, true);
+				break;
+				
+			case Key.tab:
+			case Key.enter:
+				e.preventDefault();
+				if (item) {
+					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+				};
+				break;
+
+			case Key.right:
+				e.preventDefault();
+				if (item && item.arrow) {
+					this.ref.onOver(e, item);
+				};
+				break;
+				
+			case Key.escape:
+				this.close();
+				break;
 		};
 	};
 
