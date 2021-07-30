@@ -32,7 +32,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	refFilter: any = null;
 	refList: any = null;
 	top: number = 0;
-	n: number;
+	n: number = -1;
 
 	constructor (props: any) {
 		super(props);
@@ -148,6 +148,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { filter } = data;
 
 		if (filter != this.filter) {
+			this.n = -1;
 			this.offset = 0;
 			this.filter = filter;
 			this.load(true);
@@ -165,6 +166,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		};
 		this.resize();
 		this.focus();
+
 		this.props.setActive();
 	};
 	
@@ -262,50 +264,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-
-		const { setActive } = this.props;
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {
