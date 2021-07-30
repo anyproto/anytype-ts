@@ -198,6 +198,12 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		this.props.param.data.filter = v;
 	};
 
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
+	};
+
 	onClick (e: any, item: any) {
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
@@ -341,50 +347,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-
-		const { setActive } = this.props;
-		const k = e.key.toLowerCase();
-		const items = this.getItems(false);
-		const l = items.length;
-		const item = items[this.n];
-
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	resize () {
