@@ -383,10 +383,8 @@ class PageMainType extends React.Component<Props, State> {
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
 		const details: any = {
 			type: rootId,
-			layout: object.recommendedLayout,
 		};
 
 		const create = (template: any) => {
