@@ -6,7 +6,17 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 27 July, 2021` },
+	{ style: I.TextStyle.Title, text: `Updates for 10 August, 2021` },
+	{ text: `Some features are being tested by a smaller group while we verify their stability, and so may not be available to everyone. If you want to try Types before they were released for everyone: <a href="https://community.anytype.io/d/604-onboarding-for-the-new-anytype/2">click here for more info</a>.` },
+	{ style: I.TextStyle.Header2, text: `Fixes & tech` },
+	{ style: I.TextStyle.Bulleted, text: `Fix of higher memory consumption. Thanks, <a href="https://community.anytype.io/d/619-anytype-swallows-ram">Srinath, lucasmmarino</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Column width snap to now has more positions: 0.25, 0.5, 0.75 Thanks for starting a discussion, <a href="https://community.anytype.io/d/340-column-width-snap-to">jmsinnz</a>. Analyzing the previous rows is a rather resource-intensive in terms of performance.` },
+	{ style: I.TextStyle.Bulleted, text: `Cursor jumped back when pasting text. Thanks, <a href="https://community.anytype.io/d/276-cursor-jumps-back-when-pasting-text">bgray</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Object titles & descriptions could be truncated. Thanks, <a href="https://community.anytype.io/d/428-object-titles-descriptions-truncated">irdinamaztura, Kite, quietwalker, Inkqb, Tanzeel098, roncz, lynxlove, trellick</a>.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 27 June, 2021` },
 
 	{ text: `Several small bugfixes` },
 
