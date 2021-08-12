@@ -3,15 +3,14 @@ import { Tag, Icon } from 'ts/component';
 import { I, Util, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {};
+interface Props extends I.Cell {}
 interface State { 
 	isEditing: boolean; 
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class CellSelect extends React.Component<Props, State> {
+const CellSelect = observer(class CellSelect extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	state = {
@@ -103,6 +102,6 @@ class CellSelect extends React.Component<Props, State> {
 		};
 	};
 
-};
+});
 
 export default CellSelect;

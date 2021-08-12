@@ -5,12 +5,11 @@ import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } 
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-	n: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -20,18 +19,19 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
-@observer
-class MenuBlockAdd extends React.Component<Props, State> {
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, State> {
 	
 	_isMounted = false;
+		state = {
+		loading: false,
+	};
+
 	emptyLength: number = 0;
 	timeout: number = 0;
 	cache: any = {};
 	relations: any[] = [];
-	state = {
-		loading: false,
-		n: 0,
-	};
+	refList: any = null;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -49,7 +49,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		const items = this.getItems(true);
 		const block = blockStore.getLeaf(rootId, blockId);
 		const idPrefix = 'menuBlockAdd';
-		const idx = this.recalcIndex();
 
 		const rowRenderer = (param: any) => {
 			const { index } = param;
@@ -189,7 +188,7 @@ class MenuBlockAdd extends React.Component<Props, State> {
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={registerChild}
+											ref={(ref: any) => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -198,7 +197,6 @@ class MenuBlockAdd extends React.Component<Props, State> {
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
-											scrollToIndex={idx}
 										/>
 									)}
 								</AutoSizer>
@@ -212,13 +210,11 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		const { getId } = this.props;
-		const { n } = this.state;
 		const items = this.getItems(false);
 		
 		this._isMounted = true;
 		this.rebind();
 		this.checkFilter();
-		this.setActive(items[n]);
 		this.resize();
 		this.load();
 
@@ -228,16 +224,14 @@ class MenuBlockAdd extends React.Component<Props, State> {
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
-		const menu = $('#' + getId());
-		menu.unbind('mouseleave').on('mouseleave', () => {
-			window.clearTimeout(this.timeout);
-		});
+		$(`#${getId()}`).unbind('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
+
+		this.props.setActive();
 	};
 	
 	componentDidUpdate () {
 		const { filter } = commonStore;
 		const items = this.getItems(false);
-		const { n } = this.state;
 
 		if (!items.length && !this.emptyLength) {
 			this.emptyLength = filter.text.length;
@@ -249,8 +243,9 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		};
 
 		this.checkFilter();
-		this.setActive(items[n]);
 		this.resize();
+
+		this.props.setActive();
 	};
 
 	load () {
@@ -323,63 +318,8 @@ class MenuBlockAdd extends React.Component<Props, State> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = (item?: any) => {
-		const items = this.getItems(false);
-		if (item) {
-			this.state.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover((item ? item : items[this.state.n]), false);
-	};
-	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-		
-		let { n } = this.state;
-
-		const k = e.key.toLowerCase();
-		const items = this.getItems(false);
-		const l = items.length;
-		const item = items[n];
-
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
-				};
-				this.setState({ n: n });
-				this.setActive(items[n]);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
-				};
-				this.setState({ n: n });
-				this.setActive(items[n]);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				
-				if (item) {
-					item.arrow ? this.onOver(e, item) : this.onClick(e, item);					
-				};
-				break;
-			
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 	
 	getSections () {
@@ -459,13 +399,12 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item);
 			this.onOver(e, item);
 		};
 	};
 	
 	onOver (e: any, item: any) {
-		this.setActive(item);
-
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.add);
 			return;
@@ -767,15 +706,13 @@ class MenuBlockAdd extends React.Component<Props, State> {
 	};
 
 	recalcIndex () {
-		const { n } = this.state;
 		const itemsWithSection = this.getItems(true);
 		const itemsWithoutSection = itemsWithSection.filter((it: any) => { return !it.isSection; });
-		const active: any = itemsWithoutSection[n] || {};
-		const idx = itemsWithSection.findIndex((it: any) => { return it.id == active.id; });
+		const active: any = itemsWithoutSection[this.n] || {};
 
-		return idx;
+		return itemsWithSection.findIndex((it: any) => { return it.id == active.id; });
 	};
 
-};
+});
 
 export default MenuBlockAdd;

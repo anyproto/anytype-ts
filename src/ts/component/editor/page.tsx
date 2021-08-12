@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup: boolean;
 	onOpen?(): void;
-};
+}
 
 const { ipcRenderer } = window.require('electron');
 const { app } = window.require('electron').remote;
@@ -29,8 +29,7 @@ const userPath = app.getPath('userData');
 const THROTTLE = 20;
 const BUTTON_OFFSET = 10;
 
-@observer
-class EditorPage extends React.Component<Props, {}> {
+const EditorPage = observer(class EditorPage extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	id: string = '';
@@ -81,7 +80,7 @@ class EditorPage extends React.Component<Props, {}> {
 			<div id="editorWrapper">
 				<Controls key="editorControls" {...this.props} />
 				
-				<div className="editor">
+				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
 						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
 
@@ -103,7 +102,7 @@ class EditorPage extends React.Component<Props, {}> {
 							};
 							return (
 								<Block 
-									key={block.id} 
+									key={'block-' + block.id} 
 									{...this.props}
 									index={i}
 									block={block}
@@ -1672,6 +1671,6 @@ class EditorPage extends React.Component<Props, {}> {
 		return w;
 	};
 
-};
+});
 
 export default EditorPage;

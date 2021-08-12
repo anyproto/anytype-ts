@@ -1,4 +1,4 @@
-import { observable, action, set, intercept, decorate } from 'mobx';
+import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, DataUtil } from 'ts/lib';
 
 const Constant = require('json/constant.json');
@@ -10,10 +10,17 @@ interface Detail {
 
 class DetailStore {
 
-	public map: Map<string, Map<string, Detail[]>> = new Map();
+    public map: Map<string, Map<string, Detail[]>> = new Map();
 
-	@action
-	set (rootId: string, details: any[]) {
+    constructor() {
+        makeObservable(this, {
+            set: action,
+            update: action,
+            delete: action
+        });
+    };
+
+    set (rootId: string, details: any[]) {
 		let map = this.map.get(rootId);
 
 		if (!map) {
@@ -24,7 +31,7 @@ class DetailStore {
 			const list: Detail[] = [];
 			for (let k in item.details) {
 				const el = { relationKey: k, value: item.details[k] };
-				decorate(el, { value: observable });
+				makeObservable(el, { value: observable });
 
 				intercept(el as any, (change: any) => { 
 					return (change.newValue === el[change.name] ? null : change); 
@@ -38,8 +45,7 @@ class DetailStore {
 		this.map.set(rootId, map);
 	};
 
-	@action
-	update (rootId: string, item: any, clear: boolean) {
+    update (rootId: string, item: any, clear: boolean) {
 		if (!item.id || !item.details) {
 			return;
 		};
@@ -68,7 +74,7 @@ class DetailStore {
 				set(el, { value: item.details[k] });
 			} else {
 				el = { relationKey: k, value: item.details[k] };
-				decorate(el, { value: observable });
+				makeObservable(el, { value: observable });
 
 				intercept(el as any, (change: any) => { 
 					return (change.newValue === el[change.name] ? null : change); 
@@ -86,8 +92,7 @@ class DetailStore {
 		};
 	};
 
-	@action 
-	delete (rootId: string, id: string, keys: string[]) {
+    delete (rootId: string, id: string, keys: string[]) {
 		const map = this.map.get(rootId);
 		if (!map) {
 			return;
@@ -102,7 +107,7 @@ class DetailStore {
 		map.set(id, list);
 	};
 
-	get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+    get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let map = this.map.get(rootId) || new Map();
 		let list = map.get(id) || [];
 
@@ -127,21 +132,21 @@ class DetailStore {
 			...object,
 			id: id,
 			name: String(object.name || DataUtil.defaultName('page')),
-			type: String(object.type || ''),
+			type: DataUtil.convertRelationValueToString(object.type),
+			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
 			layout: Number(object.layout) || I.ObjectLayout.Page,
-			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
+			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 		};
 	};
 
-	clear (rootId: string) {
+    clear (rootId: string) {
 		this.map.delete(rootId);
 	};
 
-	clearAll () {
+    clearAll () {
 		this.map = new Map();
 	};
-
 };
 
 export let detailStore: DetailStore = new DetailStore();

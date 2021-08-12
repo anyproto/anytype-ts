@@ -15,13 +15,12 @@ interface Props {
 	onSortStart?(param: any): void;
 	onSortEnd?(result: any): void;
 	helperContainer?(): any;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class ListIndex extends React.Component<Props, {}> {
+const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	
 	timeout: number = 0;
 
@@ -149,6 +148,6 @@ class ListIndex extends React.Component<Props, {}> {
 		}, 100);
 	};
 	
-};
+});
 
 export default ListIndex;

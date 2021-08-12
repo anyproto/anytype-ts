@@ -5,16 +5,15 @@ import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
 import { dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 interface State {
 	filter: string;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class BlockType extends React.Component<Props, State> {
+const BlockType = observer(class BlockType extends React.Component<Props, State> {
 
 	ref: any = null;
 	n: number = -1;
@@ -166,6 +165,10 @@ class BlockType extends React.Component<Props, State> {
 	};
 	
 	onFocus () {
+		if (this.n >= 0) {
+			return;
+		};
+
 		const { block } = this.props;
 		const value = this.ref ? this.ref.getValue() : '';
 
@@ -182,9 +185,6 @@ class BlockType extends React.Component<Props, State> {
 		if (!keyboard.isMouseDisabled) {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.find('.item.hover').removeClass('hover');
-
-			this.n = -1;
-			this.unbind();
 		};
 	};
 
@@ -201,6 +201,7 @@ class BlockType extends React.Component<Props, State> {
 		el.addClass('hover');
 
 		this.ref.blur();
+		focus.clear(true);
 
 		if (scroll) {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
@@ -278,6 +279,6 @@ class BlockType extends React.Component<Props, State> {
 		this.setState({ filter: this.ref.getValue() });
 	};
 	
-};
+});
 
 export default BlockType;

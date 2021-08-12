@@ -6,16 +6,15 @@ import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {}
 
 interface State {
 	page: number;
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class Controls extends React.Component<Props, State> {
+const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	state = {
 		page: 0,
@@ -241,6 +240,6 @@ class Controls extends React.Component<Props, State> {
 		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
-};
+});
 
 export default Controls;

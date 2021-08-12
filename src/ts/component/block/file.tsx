@@ -4,12 +4,11 @@ import { I, C, Util, focus, translate } from 'ts/lib';
 import { commonStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 const { ipcRenderer } = window.require('electron');
 
-@observer
-class BlockFile extends React.Component<Props, {}> {
+const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -154,6 +153,6 @@ class BlockFile extends React.Component<Props, {}> {
 		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	
-};
+});
 
 export default BlockFile;

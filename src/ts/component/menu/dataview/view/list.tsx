@@ -6,12 +6,11 @@ import { I, Util, keyboard, Key } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuViewList extends React.Component<Props> {
+const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	n: number = 0;
@@ -89,7 +88,7 @@ class MenuViewList extends React.Component<Props> {
 	};
 
 	componentDidUpdate () {
-		this.setActive(null, true);
+		this.props.setActive(null, true);
 		this.props.position();
 	};
 
@@ -129,17 +128,9 @@ class MenuViewList extends React.Component<Props> {
 		return value;
 	};
 
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 
@@ -212,57 +203,9 @@ class MenuViewList extends React.Component<Props> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.right:
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-			
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					this.onClick(e, item);					
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 	
-};
+});
 
 export default MenuViewList;

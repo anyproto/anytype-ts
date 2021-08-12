@@ -7,13 +7,12 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
 	history: any; 
-};
+}
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
-class MenuBlockRelationEdit extends React.Component<Props, {}> {
+const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<Props, {}> {
 
 	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
@@ -132,7 +131,7 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name="Delete" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -227,13 +226,15 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.menuOpen('relationType', { 
+		this.menuOpen('select', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
 				value: this.format,
-				onSelect: (item: any) => {
-					this.format = item.format;
+				options: DataUtil.menuGetRelationTypes(),
+				noFilter: true,
+				onSelect: (e: any, item: any) => {
+					this.format = item.id;
 					this.forceUpdate();
 				},
 			}
@@ -392,6 +393,6 @@ class MenuBlockRelationEdit extends React.Component<Props, {}> {
 		return dbStore.getRelation(rootId, rootId, relationKey);
 	};
 
-};
+});
 
 export default MenuBlockRelationEdit;

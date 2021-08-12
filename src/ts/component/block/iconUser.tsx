@@ -4,13 +4,12 @@ import { I, C, DataUtil } from 'ts/lib';
 import { menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 const Constant = require('json/constant.json');
 const { dialog } = window.require('electron').remote;
 
-@observer
-class BlockIconUser extends React.Component<Props, {}> {
+const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -87,6 +86,6 @@ class BlockIconUser extends React.Component<Props, {}> {
 		});
 	};
 	
-};
+});
 
 export default BlockIconUser;

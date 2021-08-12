@@ -45,6 +45,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							icon={action.icon || action.id}
 							className={!allowedView ? 'isReadonly' : ''}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
+							onMouseEnter={(e: any) => { this.onOver(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -79,7 +80,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.unbind();
-		this.setActive();
 		this.focus();
 		
 		const win = $(window);
@@ -107,14 +107,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-	
 	onKeyDown (e: any) {
 		const k = e.key.toLowerCase();
 
@@ -126,49 +118,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			this.n = -1;
 		};
 
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-			
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-			
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onNameFocus (e: any) {
 		this.isFocused = true;
-		this.props.setHover();
+		this.props.setActive();
 	};
 	
 	onNameBlur (e: any) {
@@ -242,7 +197,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		if (view.id && !readonly) {
 			sections.push({
-				children: [
+				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
 					(views.length > 1 ? { id: 'remove', icon: 'remove', name: 'Remove view' } : null),
 				]
@@ -270,7 +225,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 

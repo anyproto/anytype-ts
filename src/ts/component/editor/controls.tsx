@@ -10,14 +10,13 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup: boolean;
 	dataset?: any;
-};
+}
 
 const { dialog } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
-class Controls extends React.Component<Props, {}> {
+const Controls = observer(class Controls extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 
@@ -261,6 +260,6 @@ class Controls extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default Controls;

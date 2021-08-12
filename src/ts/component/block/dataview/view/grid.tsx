@@ -10,15 +10,14 @@ import arrayMove from 'array-move';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 
-interface Props extends I.ViewComponent {};
+interface Props extends I.ViewComponent {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const PADDING = 46;
 const HEIGHT = 48;
 
-@observer
-class ViewGrid extends React.Component<Props, {}> {
+const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super (props);
@@ -298,6 +297,6 @@ class ViewGrid extends React.Component<Props, {}> {
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
 	};
 	
-};
+});
 
 export default ViewGrid;

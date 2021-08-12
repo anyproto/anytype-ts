@@ -8,12 +8,12 @@ import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	isPopup: boolean;
-};
+}
 
 interface State {
 	versions: I.HistoryVersion[];
 	loading: boolean;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -21,8 +21,7 @@ const Constant = require('json/constant.json');
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
 
-@observer
-class PageMainHistory extends React.Component<Props, State> {
+const PageMainHistory = observer(class PageMainHistory extends React.Component<Props, State> {
 
 	state = {
 		versions: [] as I.HistoryVersion[],
@@ -397,6 +396,6 @@ class PageMainHistory extends React.Component<Props, State> {
 		return Constant.size.editor;
 	};
 
-};
+});
 
 export default PageMainHistory;

@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -13,13 +13,13 @@ const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 10;
 
-@observer
-class MenuSelect extends React.Component<Props, {}> {
+const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;	
 	n: number = 0;
 	cache: any = null;
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -32,13 +32,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		const { data } = param;
 		const { filter, value, noFilter } = data;
 		const items = this.getItems();
-		const idx = items.findIndex((it: I.Option) => { return it.id == value; });
 		const withFilter = !noFilter && (items.length > LIMIT);
-
-		let scrollTo = idx + 1; 
-		if (idx > LIMIT) {
-			scrollTo = Math.min(idx + LIMIT - 3, items.length - 1);
-		};
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -76,7 +70,7 @@ class MenuSelect extends React.Component<Props, {}> {
 			<React.Fragment>
 				{withFilter ?
 					<Filter 
-						ref={(ref: any) => { this.ref = ref; }} 
+						ref={(ref: any) => { this.refFilter = ref; }} 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -95,7 +89,7 @@ class MenuSelect extends React.Component<Props, {}> {
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={registerChild}
+										ref={(ref: any) => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -104,7 +98,6 @@ class MenuSelect extends React.Component<Props, {}> {
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
-										scrollToIndex={scrollTo}
 									/>
 								)}
 							</AutoSizer>
@@ -116,7 +109,7 @@ class MenuSelect extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
+		const { param, setActive } = this.props;
 		const { data } = param;
 		const { value, noKeys } = data;
 		const items = this.getItems();
@@ -138,7 +131,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		};
 
 		if (active && !active.isInitial) {
-			window.setTimeout(() => { this.setActive(active, true); }, Constant.delay.menu);
+			window.setTimeout(() => { setActive(active, true); }, Constant.delay.menu);
 		};
 
 		this.focus();
@@ -172,8 +165,8 @@ class MenuSelect extends React.Component<Props, {}> {
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};
@@ -190,74 +183,12 @@ class MenuSelect extends React.Component<Props, {}> {
 		return items || [];
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-	
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-			
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				e.preventDefault();
-				if (item) {
-					item.arrow ? this.onOver(e, item) : this.onClick(e, item);
-				};
-				break;
-
-			case Key.right:
-				e.preventDefault();
-
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-
-			case Key.left:	
-			case Key.escape:
-				e.preventDefault();
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {
-		const { param } = this.props;
+		const { param, setActive } = this.props;
 		const { data } = param;
 		const { canSelectInitial, onMouseEnter } = data;
 
@@ -266,7 +197,7 @@ class MenuSelect extends React.Component<Props, {}> {
 		};
 
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			setActive(item, false);
 		};
 
 		if (onMouseEnter) {
@@ -307,9 +238,9 @@ class MenuSelect extends React.Component<Props, {}> {
 		const length = Math.max(items.length, 1);
 		const withFilter = !noFilter && (length > LIMIT);
 
-		let offset = withFilter ? 50 : 8;
+		let offset = withFilter ? 50 : 0;
 		if (length <= LIMIT) {
-			offset += 8;
+			offset += 16;
 		};
 
 		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
@@ -320,6 +251,6 @@ class MenuSelect extends React.Component<Props, {}> {
 		position();
 	};
 
-};
+});
 
 export default MenuSelect;

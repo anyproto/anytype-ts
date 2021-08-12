@@ -6,7 +6,7 @@
         "module": "commonjs",
         "target": "es6",
         "jsx": "react",
-        "experimentalDecorators": true,
+        "experimentalDecorators": false,
         "allowSyntheticDefaultImports": true,
         "allowJs": true
     }

@@ -25,6 +25,7 @@ class Dispatcher {
 	service: any = null;
 	stream: any = null;
 	timeoutStream: number = 0;
+	timeoutNumber: any = {};
 
 	constructor () {
 		/// #if USE_ADDON
@@ -140,49 +141,11 @@ class Dispatcher {
 			};
 		};
 
-		let globalParentIds: any = {};
-		let globalChildrenIds: any = {};
 		let blocks: any[] = [];
 		let id: string = '';
 		let self = this;
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
-
-		for (let message of messages) {
-			let type = this.eventType(message.getValueCase());
-			let fn = 'get' + Util.ucFirst(type);
-			let data = message[fn] ? message[fn]() : {};
-			let childrenIds: string[] = [];
-
-			switch (type) {
-				case 'blockSetChildrenIds':
-					id = data.getId();
-					childrenIds = data.getChildrenidsList() || [];
-
-					for (let childId of childrenIds) {
-						globalParentIds[childId] = id;
-					};
-					if (childrenIds.length) {
-						globalChildrenIds[id] = childrenIds;
-					};
-					break;
-
-				case 'blockAdd':
-					blocks = data.getBlocksList() || [];
-					for (let block of blocks) {
-						id = block.getId();
-						childrenIds = block.getChildrenidsList() || [];
-
-						for (let childId of childrenIds) {
-							globalParentIds[childId] = id;
-						};
-						if (childrenIds.length) {
-							globalChildrenIds[id] = childrenIds;
-						};
-					};
-					break;
-			};
-		};
 
 		for (let message of messages) {
 			let block: any = null;
@@ -224,8 +187,8 @@ class Dispatcher {
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
 						block = Mapper.From.Block(block);
-						block.parentId = String(globalParentIds[block.id] || '');
 						blockStore.add(rootId, block);
+						blockStore.updateStructure(rootId, block.id, block.childrenIds);
 					};
 					break;
 
@@ -267,7 +230,7 @@ class Dispatcher {
 
 				case 'blockSetText':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
+					block = Util.objectCopy(blockStore.getLeaf(rootId, id));
 					if (!block) {
 						break;
 					};
@@ -616,7 +579,8 @@ class Dispatcher {
 	};
 
 	setNumbers (rootId: string) {
-		raf(() => { blockStore.setNumbers(rootId); });
+		window.clearTimeout(this.timeoutNumber[rootId]);
+		this.timeoutNumber[rootId] = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 10);
 	};
 
 	sort (c1: any, c2: any) {
@@ -651,15 +615,20 @@ class Dispatcher {
 			root.layout = object.layout;
 		};
 
+		const structure: any[] = [];
+
 		blocks = blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
 				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
+			structure.push({ id: it.id, childrenIds: it.childrenIds });
+
 			return new M.Block(it);
 		});
 
 		blockStore.set(rootId, blocks);
+		blockStore.setStructure(rootId, structure);
 
 		this.blockTypeCheck(rootId);
 	};

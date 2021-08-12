@@ -5,13 +5,12 @@ import { translate, C, keyboard } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 interface State {
 	error: string;
-};
+}
 
-@observer
-class PageAuthLogin extends React.Component<Props, State> {
+const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props, State> {
 
 	phraseRef: any;
 
@@ -92,6 +91,6 @@ class PageAuthLogin extends React.Component<Props, State> {
 		this.props.history.push('/auth/select');
 	};
 	
-};
+});
 
 export default PageAuthLogin;

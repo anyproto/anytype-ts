@@ -1,8 +1,7 @@
-import { observable, action, computed, set } from 'mobx';
+import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
 
 const Constant = require('json/constant.json');
-const $ = require('jquery');
 
 interface LinkPreview {
 	url: string;
@@ -26,111 +25,124 @@ interface Cover {
 };
 
 class CommonStore {
-	@observable public coverObj: Cover = { id: '', type: 0, image: '' };
-	@observable public coverImg: string = '';
-	@observable public progressObj: I.Progress = null;
-	@observable public filterObj: Filter = { from: 0, text: '' };
-	@observable public gatewayUrl: string = '';
-	@observable public linkPreviewObj: LinkPreview = null;
-	@observable public configObj:any = {};
-	public cellId: string = '';
-	
-	@computed
-	get config(): any {
+
+    public coverObj: Cover = { id: '', type: 0, image: '' };
+    public coverImg: string = '';
+    public progressObj: I.Progress = null;
+    public filterObj: Filter = { from: 0, text: '' };
+    public gatewayUrl: string = '';
+    public linkPreviewObj: LinkPreview = null;
+    public configObj:any = {};
+    public cellId: string = '';
+
+    constructor() {
+        makeObservable(this, {
+            coverObj: observable,
+            coverImg: observable,
+            progressObj: observable,
+            filterObj: observable,
+            gatewayUrl: observable,
+            linkPreviewObj: observable,
+            configObj: observable,
+            config: computed,
+            progress: computed,
+            linkPreview: computed,
+            filter: computed,
+            cover: computed,
+            coverImage: computed,
+            gateway: computed,
+            coverSet: action,
+            coverSetUploadedImage: action,
+            gatewaySet: action,
+            progressSet: action,
+            progressClear: action,
+            filterSetFrom: action,
+            filterSetText: action,
+            filterSet: action,
+            linkPreviewSet: action
+        });
+    };
+
+    get config(): any {
 		return { ...this.configObj, debug: this.configObj.debug || {} };
 	};
 
-	@computed
-	get progress(): I.Progress {
+    get progress(): I.Progress {
 		return this.progressObj;
 	};
-	
-	@computed
-	get linkPreview(): LinkPreview {
+
+    get linkPreview(): LinkPreview {
 		return this.linkPreviewObj;
 	};
-	
-	@computed
-	get filter(): Filter {
+
+    get filter(): Filter {
 		return this.filterObj;
 	};
-	
-	@computed
-	get cover(): Cover {
+
+    get cover(): Cover {
 		return this.coverObj;
 	};
 
-	@computed
-	get coverImage(): Cover {
+    get coverImage(): Cover {
 		return this.coverImg || Storage.get('coverImg');
 	};
-	
-	@computed
-	get gateway(): string {
+
+    get gateway(): string {
 		return String(this.gatewayUrl || Storage.get('gateway') || '');
 	};
-	
-	@action
-	coverSet (id: string, image: string, type: I.CoverType) {
+
+    coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id: id, image: image, type: type };
 		Storage.set('cover', this.coverObj);
 	};
 
-	@action
-	coverSetUploadedImage (image: string) {
+    coverSetUploadedImage (image: string) {
 		this.coverImg = image;
 		Storage.set('coverImg', this.coverImg);
 	};
 
-	coverSetDefault () {
+    coverSetDefault () {
 		this.coverSet('c' + Constant.default.cover, '', I.CoverType.Image);
 	};
-	
-	@action
-	gatewaySet (v: string) {
+
+    gatewaySet (v: string) {
 		this.gatewayUrl = v;
 		Storage.set('gateway', v);
 	};
-	
-	fileUrl (hash: string) {
+
+    fileUrl (hash: string) {
 		hash = String(hash || '');
 		return this.gateway + '/file/' + hash;
 	};
-	
-	imageUrl (hash: string, width: number) {
+
+    imageUrl (hash: string, width: number) {
 		hash = String(hash || '');
 		width = Number(width) || 0;
 		return this.gateway + '/image/' + hash + '?width=' + width;
 	};
-	
-	@action
-	progressSet (v: I.Progress) {
+
+    progressSet (v: I.Progress) {
 		this.progressObj = v;
 	};
-	
-	@action
-	progressClear () {
+
+    progressClear () {
 		this.progressObj = null;
 	};
-	
-	@action
-	filterSetFrom (from: number) {
+
+    filterSetFrom (from: number) {
 		this.filterObj.from = from;
 	};
 
-	@action
-	filterSetText (text: string) {
+    filterSetText (text: string) {
 		this.filterObj.text = Util.filterFix(text);
 	};
 
-	@action
-	filterSet (from: number, text: string) {
+    filterSet (from: number, text: string) {
 		this.filterSetFrom(from);
 		this.filterSetText(text);
 	};
 
-	@action
-	linkPreviewSet (param: LinkPreview) {
+    linkPreviewSet (param: LinkPreview) {
 		this.linkPreviewObj = param;
 	};
 
@@ -151,7 +163,7 @@ class CommonStore {
 
 		set(this.configObj, newConfig);
 	};
-	
+
 };
 
 export let commonStore: CommonStore = new CommonStore();

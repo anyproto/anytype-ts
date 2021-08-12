@@ -1,5 +1,5 @@
 import { I, M, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class Relation implements I.Relation {
 
@@ -32,7 +32,7 @@ class Relation implements I.Relation {
 		self.scope = props.scope || I.RelationScope.Object;
 		self.selectDict = (props.selectDict || []).map((it: any) => { return new M.SelectOption(it); });
 
-		decorate(self, {
+		makeObservable(self, {
 			name: observable,
 			format: observable,
 			objectTypes: observable,

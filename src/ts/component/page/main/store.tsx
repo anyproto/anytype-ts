@@ -8,12 +8,12 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 
 interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
-};
+}
 
 interface State {
 	tab: string;
 	loading: boolean;
-};
+}
 
 enum Tab {
 	None = '',
@@ -21,8 +21,6 @@ enum Tab {
 	Template = 'template',
 	Relation = 'relation',
 }
-
-const Constant = require('json/constant.json');
 
 const Tabs = [
 	{ 
@@ -52,8 +50,7 @@ const Tabs = [
 
 const BLOCK_ID = 'dataview';
 
-@observer
-class PageMainStore extends React.Component<Props, State> {
+const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
 	state = {
 		tab: '',
@@ -271,7 +268,7 @@ class PageMainStore extends React.Component<Props, State> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.onTab(Storage.get('storeTab') || Tab.Type);
+		this.onTab(Storage.get('tabStore') || Tabs[0].id);
 	};
 
 	componentDidUpdate () {
@@ -331,7 +328,7 @@ class PageMainStore extends React.Component<Props, State> {
 			return;
 		};
 
-		Storage.set('storeTab', id);
+		Storage.set('tabStore', id);
 
 		this.state.tab = id;
 		this.setState({ tab: id, loading: true });
@@ -444,6 +441,6 @@ class PageMainStore extends React.Component<Props, State> {
 		return ret;
 	};
 
-};
+});
 
 export default PageMainStore;

@@ -4,13 +4,12 @@ import { Cover } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const { dialog } = window.require('electron').remote;
 const Constant = require('json/constant.json');
 
-@observer
-class MenuBlockCover extends React.Component<Props, {}> {
+const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -204,6 +203,6 @@ class MenuBlockCover extends React.Component<Props, {}> {
 
 		return sections;
 	};
-};
+});
 
 export default MenuBlockCover;

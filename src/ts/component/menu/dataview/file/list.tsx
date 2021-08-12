@@ -18,8 +18,7 @@ const HEIGHT = 28;
 const LIMIT = 20;
 const MENU_ID = 'dataviewFileValues';
 
-@observer
-class MenuDataviewObjectList extends React.Component<Props, State> {
+const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
@@ -33,7 +32,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	refFilter: any = null;
 	refList: any = null;
 	top: number = 0;
-	n: number;
+	n: number = -1;
 
 	constructor (props: any) {
 		super(props);
@@ -149,6 +148,7 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		const { filter } = data;
 
 		if (filter != this.filter) {
+			this.n = -1;
 			this.offset = 0;
 			this.filter = filter;
 			this.load(true);
@@ -166,7 +166,8 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		};
 		this.resize();
 		this.focus();
-		this.setActive(items[this.n]);
+
+		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -215,20 +216,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		return ret;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-	
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-
-		this.props.setHover(items[this.n], false);
-
-		if (scroll) {
-			this.refList.scrollToRow(this.n);
-		};
-	};
-
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { config } = commonStore;
 		const { param } = this.props;
@@ -277,54 +264,12 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
@@ -366,6 +311,6 @@ class MenuDataviewObjectList extends React.Component<Props, State> {
 		position();
 	};
 
-};
+});
 
-export default MenuDataviewObjectList;
+export default MenuDataviewFileList;

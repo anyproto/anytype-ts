@@ -29,7 +29,7 @@ interface Props {
 	onCheckbox?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
-};
+}
 
 const IDS40 = [ 
 	I.ObjectLayout.Page, 
@@ -130,8 +130,7 @@ const Color = {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class IconObject extends React.Component<Props, {}> {
+const IconObject = observer(class IconObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		size: 20,
@@ -412,6 +411,6 @@ class IconObject extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default IconObject;

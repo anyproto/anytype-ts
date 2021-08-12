@@ -570,7 +570,7 @@ class DataUtil {
 		done = Boolean(done);
 
 		const details = [ 
-			{ key: 'done', value: done },
+			{ key: Constant.relationKey.done, value: done },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 	};
@@ -590,9 +590,14 @@ class DataUtil {
 		};
 		
 		if (update) {
-			block.content.text = String(text || '');
-			block.content.marks = marks || [];
-			blockStore.update(rootId, block);
+			blockStore.update(rootId, { 
+				...block, 
+				content: { 
+					...block.content, 
+					text: String(text || ''), 
+					marks: marks || [],
+				},
+			});
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
@@ -658,6 +663,7 @@ class DataUtil {
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
 			};
+			objectTypes.sort(this.sortByName);
 
 			for (let type of objectTypes) {
 				ret.push({ 
@@ -691,10 +697,10 @@ class DataUtil {
 
 		if (config.allowDataview) {
 			let objectTypes = dbStore.objectTypes;
-			
 			if (!config.debug.ho) {
 				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
 			};
+			objectTypes.sort(this.sortByName);
 
 			let i = 0;
 			for (let type of objectTypes) {
@@ -807,16 +813,41 @@ class DataUtil {
 		const { config } = commonStore;
 		
 		let ret = [
-			{ id: I.ViewType.Grid, name: 'Grid' },
+			{ id: I.ViewType.Grid },
 		];
 		if (config.debug.ho) {
 			ret = ret.concat([
-				{ id: I.ViewType.Gallery, name: 'Gallery' },
-				{ id: I.ViewType.List, name: 'List' },
-				{ id: I.ViewType.Board, name: 'Kanban' },
+				{ id: I.ViewType.Gallery },
+				{ id: I.ViewType.List },
+				{ id: I.ViewType.Board },
 			]);
 		};
+
+		ret = ret.map((it: any) => {
+			it.name = translate('viewName' + it.id);
+			return it;
+		});
 		return ret;
+	};
+
+	menuGetRelationTypes () {
+		return [
+			{ id: I.RelationType.LongText },
+			{ id: I.RelationType.Number },
+			{ id: I.RelationType.Status },
+			{ id: I.RelationType.Tag },
+			{ id: I.RelationType.Date },
+			{ id: I.RelationType.File },
+			{ id: I.RelationType.Checkbox },
+			{ id: I.RelationType.Url },
+			{ id: I.RelationType.Email },
+			{ id: I.RelationType.Phone },
+			{ id: I.RelationType.Object },
+		].map((it: any) => {
+			it.name = translate('relationName' + it.id);
+			it.icon = 'relation ' + this.relationClass(it.id);
+			return it;
+		});
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
@@ -948,7 +979,7 @@ class DataUtil {
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		let forceKeys = [ 'done' ];
+		let forceKeys = [ Constant.relationKey.done ];
 		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
@@ -956,18 +987,24 @@ class DataUtil {
 
 		for (let key of forceKeys) {
 			const relation = dbStore.getRelation(rootId, blockId, key);
-			if (relation) {
+			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
 				relations.push(relation);
 			};
 		};
 
 		return relations.map((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			
+			let isHidden = relation.isHidden;
+			if (forceKeys.indexOf(relation.relationKey) >= 0) {
+				isHidden = false;
+			};
+
 			return { 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
 				name: relation.name, 
-				isHidden: relation.isHidden,
+				isHidden: isHidden,
 				format: relation.format,
 				maxCount: relation.maxCount,
 			};
@@ -1191,6 +1228,14 @@ class DataUtil {
 				break;
 		};
 		return value;
+	};
+
+	convertRelationValueToString (value: any) {
+		if (('object' == typeof(value)) && value.hasOwnProperty('length')) {
+			return String(value.length ? value[0] : '');
+		} else {
+			return String(value || '');
+		};
 	};
 
 	checkTemplateCnt (typeIds: string[], limit: number, callBack?: (message: any) => void) {

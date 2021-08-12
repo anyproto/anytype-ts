@@ -130,7 +130,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name="Delete relation" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon="remove" name="Delete" onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -196,15 +196,17 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			return;
 		};
 
-		this.menuOpen('relationType', { 
+		this.menuOpen('select', { 
 			element: `#${getId()} #item-relation-type`,
 			data: {
+				...data,
 				value: this.format,
-				onSelect: (item: any) => {
-					this.format = item.format;
+				options: DataUtil.menuGetRelationTypes(),
+				noFilter: true,
+				onSelect: (e: any, item: any) => {
+					this.format = item.id;
 					this.forceUpdate();
 				},
-				...data
 			}
 		});
 	};

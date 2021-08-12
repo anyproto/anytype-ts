@@ -10,15 +10,14 @@ import { getRange } from 'selection-ranges';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
 
-@observer
-class PageMainSet extends React.Component<Props, {}> {
+const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	id: string = '';
@@ -336,6 +335,6 @@ class PageMainSet extends React.Component<Props, {}> {
 		return rootId ? rootId : match.params.id;
 	};
 
-};
+});
 
 export default PageMainSet;

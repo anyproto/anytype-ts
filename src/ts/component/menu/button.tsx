@@ -5,8 +5,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
-@observer
-class MenuButton extends React.Component<Props, {}> {
+const MenuButton = observer(class MenuButton extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	
@@ -66,6 +65,6 @@ class MenuButton extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default MenuButton;

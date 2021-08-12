@@ -1,21 +1,32 @@
-import { observable, action, computed, set } from 'mobx';
+import { observable, action, computed, set, remove, makeObservable } from 'mobx';
 import { I, Util, analytics } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 class MenuStore {
-	@observable public menuList: I.Menu[] = [];
 
-	timeout: number = 0;
-	
-	@computed
-	get list(): I.Menu[] {
+    public menuList: I.Menu[] = [];
+
+    timeout: number = 0;
+
+    constructor () {
+        makeObservable(this, {
+            menuList: observable,
+            list: computed,
+            open: action,
+            update: action,
+            updateData: action,
+            close: action,
+            closeAll: action
+        });
+    }
+
+    get list(): I.Menu[] {
 		return this.menuList;
 	};
-	
-	@action
-	open (id: string, param: I.MenuParam) {
+
+    open (id: string, param: I.MenuParam) {
 		if (!id) {
 			return;
 		};
@@ -41,16 +52,14 @@ class MenuStore {
 		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 
-	@action
-	update (id: string, param: any) {
+    update (id: string, param: any) {
 		const item = this.get(id);
 		if (item) {
 			set(item, { param: Object.assign(item.param, param) });
 		};
 	};
 
-	@action
-	updateData (id: string, data: any) {
+    updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
@@ -58,11 +67,11 @@ class MenuStore {
 		};
 	};
 
-	get (id: string): I.Menu {
+    get (id: string): I.Menu {
 		return this.menuList.find((item: I.Menu) => { return item.id == id; });
 	};
 
-	isOpen (id?: string, key?: string): boolean {
+    isOpen (id?: string, key?: string): boolean {
 		if (!id) {
 			return this.menuList.length > 0;
 		};
@@ -75,7 +84,7 @@ class MenuStore {
 		return key ? (item.param.menuKey == key) : true;
 	};
 
-	isOpenList (ids: string[]) {
+    isOpenList (ids: string[]) {
 		for (let id of ids) {
 			if (this.isOpen(id)) {
 				return true;
@@ -83,9 +92,8 @@ class MenuStore {
 		};
 		return false;
 	};
-	
-	@action
-	close (id: string, callBack?: () => void) {
+
+    close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 
 		if (!item) {
@@ -123,9 +131,8 @@ class MenuStore {
 			};
 		}, t);
 	};
-	
-	@action
-	closeAll (ids?: string[], callBack?: () => void) {
+
+    closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.menuList;
 
 		for (let item of items) {
@@ -139,10 +146,10 @@ class MenuStore {
 		};
 	};
 
-	clearTimeout () {
+    clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};
-	
+
 };
 
 export let menuStore: MenuStore = new MenuStore();

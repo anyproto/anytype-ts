@@ -5,12 +5,11 @@ import { I, C, Key, keyboard, Util, DataUtil } from 'ts/lib';
 import { menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuDataviewDate extends React.Component<Props, {}> {
+const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	n: number = 0;
@@ -48,9 +47,7 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		const items = this.getItems();
-
-		this.setActive(items[this.n]);
+		this.props.setActive();
 		this.props.position();
 	};
 	
@@ -157,59 +154,8 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 		return options;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-
-		const k = e.key.toLowerCase();
-		keyboard.disableMouse(true);
-		
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {
@@ -256,11 +202,11 @@ class MenuDataviewDate extends React.Component<Props, {}> {
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 			this.onOver(e, item);
 		};
 	};
 
-};
+});
 
 export default MenuDataviewDate;

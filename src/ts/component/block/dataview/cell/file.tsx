@@ -4,15 +4,14 @@ import { I, DataUtil, Util, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { detailStore } from 'ts/store';
 
-interface Props extends I.Cell {};
+interface Props extends I.Cell {}
 interface State { 
 	isEditing: boolean; 
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class CellFile extends React.Component<Props, State> {
+const CellFile = observer(class CellFile extends React.Component<Props, State> {
 
 	state = {
 		isEditing: false,
@@ -99,6 +98,6 @@ class CellFile extends React.Component<Props, State> {
 		};
 	};
 
-};
+});
 
 export default CellFile;

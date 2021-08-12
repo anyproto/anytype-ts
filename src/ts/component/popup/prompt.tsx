@@ -5,10 +5,9 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
 	history: any;
-};
+}
 
-@observer
-class PopupPrompt extends React.Component<Props, {}> {
+const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}> {
 	
 	refValue: any = null;
 	
@@ -59,6 +58,6 @@ class PopupPrompt extends React.Component<Props, {}> {
 		this.props.close();
 	};
 	
-};
+});
 
 export default PopupPrompt;

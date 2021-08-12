@@ -18,6 +18,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 	};
 
@@ -83,70 +84,27 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.unbind();
-		this.setActive();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
 		this.unbind();
 		menuStore.closeAll(Constant.menuIds.more);
 	};
+
+	rebind () {
+		this.unbind();
+
+		const win = $(window);
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-	
 	onKeyDown (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-			
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	getSections () {
@@ -279,12 +237,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
-			this.onOver(item);
+			this.props.setActive(item, false);
+			this.onOver(e, item);
 		};
 	};
 
-	onOver (item: any) {
+	onOver (e: any, item: any) {
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.more);
 			return;
@@ -307,6 +265,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			className: param.className,
 			classNameWrap: param.classNameWrap,
 			data: {
+				rebind: this.rebind,
 				rootId: rootId,
 				blockId: blockId,
 				blockIds: [ blockId ],

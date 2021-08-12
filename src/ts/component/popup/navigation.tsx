@@ -9,7 +9,7 @@ import 'react-virtualized/styles.css';
 
 interface Props extends I.Popup {
 	history: any;
-};
+}
 
 interface State {
 	pageId: string;
@@ -18,7 +18,7 @@ interface State {
 	pagesIn: I.PageInfo[];
 	pagesOut: I.PageInfo[];
 	n: number;
-};
+}
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -29,10 +29,9 @@ enum Panel {
 	Left = 1, 
 	Center = 2, 
 	Right = 3,
-};
+}
 
-@observer
-class PopupNavigation extends React.Component<Props, State> {
+const PopupNavigation = observer(class PopupNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
@@ -627,6 +626,6 @@ class PopupNavigation extends React.Component<Props, State> {
 		};
 	};
 	
-};
+});
 
 export default PopupNavigation;

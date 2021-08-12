@@ -6,14 +6,13 @@ import { menuStore, dbStore, detailStore } from 'ts/store';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const TIMEOUT = 500;
 
-@observer
-class MenuDataviewFilterValues extends React.Component<Props, {}> {
+const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	timeoutChange: number = 0;
@@ -518,6 +517,6 @@ class MenuDataviewFilterValues extends React.Component<Props, {}> {
 		this.onChange('value', null);
 	};
 
-};
+});
 
 export default MenuDataviewFilterValues;

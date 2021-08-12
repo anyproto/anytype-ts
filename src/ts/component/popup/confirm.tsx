@@ -3,10 +3,9 @@ import { Title, Icon, Label, Button } from 'ts/component';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {};
+interface Props extends I.Popup {}
 
-@observer
-class PopupConfirm extends React.Component<Props, {}> {
+const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, {}> {
 
 	constructor(props: any) {
 		super(props);
@@ -62,6 +61,6 @@ class PopupConfirm extends React.Component<Props, {}> {
 		};
 	};
 	
-};
+});
 
 export default PopupConfirm;

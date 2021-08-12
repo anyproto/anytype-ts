@@ -16,7 +16,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	isFocused: boolean = false;
-	n: number = 0;
+	n: number = -1;
 	ref: any = null;
 	state = {
 		filter: '',
@@ -105,11 +105,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const items = this.getItems();
-
 		this.rebind();
-
-		this.props.setHover(items[this.n]);
 		this.props.position();
 	};
 	
@@ -134,7 +130,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		menuStore.closeAll(Constant.menuIds.action);
 		
 		this.isFocused = true;
-		this.props.setHover();
+		this.props.setActive();
 	};
 	
 	onFilterBlur (e: any) {
@@ -152,6 +148,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		this.unbind();
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -329,14 +326,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return items;
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		};
-		this.props.setHover(items[this.n], scroll);
-	};
-	
 	onKeyDown (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -354,52 +343,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 			} else {
 				return;
 			};
+		} else {
+			if ((k == Key.up) && !this.n) {
+				this.ref.focus();
+				this.n = -1;
+				return;
+			};
 		};
 		
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.right:
-				if (item) {
-					this.onOver(e, item);
-				};
-				break;
-			
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					item.arrow ? this.onOver(e, item) : this.onClick(e, item);					
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 	
 	onMouseEnter (e: any, item: any) {
@@ -413,7 +365,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close, getId } = this.props;
+		const { param, close, getId, setActive } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId, dataset } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -423,17 +375,16 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { content } = block;
+		const { content, align } = block;
 		const { color, bgColor } = content;
-		const items = this.getItems();
 		
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		let types = [ Constant.typeId.page ]; 
+
 		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+			types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		};
 		
-		this.n = items.findIndex((it: any) => { return it.id == item.id; });
-		this.setActive(item, false);
+		setActive(item, false);
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.action);
@@ -493,8 +444,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 				];
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				if (config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] });
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -514,10 +465,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
@@ -564,6 +511,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: align,
 					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);

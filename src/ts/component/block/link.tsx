@@ -6,10 +6,9 @@ import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
-@observer
-class BlockLink extends React.Component<Props, {}> {
+const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -124,6 +123,6 @@ class BlockLink extends React.Component<Props, {}> {
 		DataUtil.pageSetDone(targetBlockId, !object.done);
 	};
 	
-};
+});
 
 export default BlockLink;

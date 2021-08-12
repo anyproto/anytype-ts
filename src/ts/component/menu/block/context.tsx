@@ -5,13 +5,12 @@ import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics } from 'ts/lib';
 import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class MenuBlockContext extends React.Component<Props, {}> {
+const MenuBlockContext = observer(class MenuBlockContext extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -227,6 +226,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						};
 
 						marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 					},
 				});
@@ -244,6 +244,7 @@ class MenuBlockContext extends React.Component<Props, {}> {
 						};
 
 						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
+						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 					},
 				});
@@ -271,6 +272,6 @@ class MenuBlockContext extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default MenuBlockContext;

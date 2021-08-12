@@ -1,5 +1,5 @@
 import { I, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class Block implements I.Block {
 	
@@ -26,9 +26,8 @@ class Block implements I.Block {
 		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
 
-		decorate(self, {
+		makeObservable(self, {
 			layout: observable,
-			childrenIds: observable,
 			align: observable,
 			bgColor: observable,
 			fields: observable,

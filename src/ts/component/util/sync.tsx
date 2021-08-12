@@ -9,12 +9,11 @@ interface Props {
 	className?: string;
 	rootId: string;
 	onClick: (e: any) => void;
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class Sync extends React.Component<Props, {}> {
+const Sync = observer(class Sync extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		className: '',
@@ -59,6 +58,6 @@ class Sync extends React.Component<Props, {}> {
 		Util.tooltipHide(false);
 	};
 	
-};
+});
 
 export default Sync;

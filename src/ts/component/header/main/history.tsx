@@ -7,10 +7,9 @@ import { detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	version: I.HistoryVersion;
-};
+}
 
-@observer
-class HeaderMainHistory extends React.Component<Props, {}> {
+const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -59,6 +58,6 @@ class HeaderMainHistory extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default HeaderMainHistory;

@@ -11,7 +11,7 @@ import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
-};
+}
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -28,16 +28,16 @@ const langs = [
 ];
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
-};
+}
 
-@observer
-class BlockText extends React.Component<Props, {}> {
+const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refLang: any = null;
 	timeoutContext: number = 0;
 	timeoutClick: number = 0;
 	marks: I.Mark[] = [];
+	text: string = '';
 	clicks: number = 0;
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
@@ -220,6 +220,8 @@ class BlockText extends React.Component<Props, {}> {
 		if (text === '\n') {
 			text = '';
 		};
+
+		this.text = text;
 
 		let html = text;
 		if (style == I.TextStyle.Code) {
@@ -500,7 +502,7 @@ class BlockText extends React.Component<Props, {}> {
 					focus.apply();
 				});
 			} else {
-				this.setText(this.marks, true, (message: any) => {
+				this.setText(this.marks, true, () => {
 					focus.apply();
 					onKeyDown(e, value, this.marks, range);
 				});
@@ -596,6 +598,10 @@ class BlockText extends React.Component<Props, {}> {
 		let symbolBefore = range ? value[range.from - 1] : '';
 		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
 		let reg = null;
+
+		const canOpenMenuAdd = (symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canParseMarkdown = !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -626,12 +632,12 @@ class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode()) {
+		if (canOpenMenuAdd) {
 			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 		};
 
 		// Open mention menu
-		if ((symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode()) {
+		if (canOpenMentionMenu) {
 			this.onMention();
 		};
 
@@ -659,33 +665,35 @@ class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 
-		// Parse markdown commands
-		for (let k in Markdown) {
-			reg = new RegExp(`^(${k} )`);
-			const style = Markdown[k];
+		if (canParseMarkdown) {
+			// Parse markdown commands
+			for (let k in Markdown) {
+				reg = new RegExp(`^(${k} )`);
+				const style = Markdown[k];
 
-			if (value.match(reg) && (content.style != style)) {
-				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+				if (value.match(reg) && (content.style != style)) {
+					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
-				const newBlock: any = { 
-					type: I.BlockType.Text, 
-					fields: {},
-					content: { 
-						...content, 
-						checked: false,
-						text: value, 
-						style: style,
-					},
+					const newBlock: any = { 
+						type: I.BlockType.Text, 
+						fields: {},
+						content: { 
+							...content, 
+							checked: false,
+							text: value, 
+							style: style,
+						},
+					};
+					
+					if (style == I.TextStyle.Code) {
+						newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
+						newBlock.content.marks = [];
+					};
+
+					C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+					cmdParsed = true;
+					break;
 				};
-				
-				if (style == I.TextStyle.Code) {
-					newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
-					newBlock.content.marks = [];
-				};
-
-				C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
-				cmdParsed = true;
-				break;
 			};
 		};
 		
@@ -803,7 +811,7 @@ class BlockText extends React.Component<Props, {}> {
 		});
 	};
 	
-	setText (marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
+	setText (marks: I.Mark[], update: boolean, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
@@ -812,9 +820,18 @@ class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 
+		if ((this.text === value) && !update) {
+			if (callBack) {
+				callBack();
+			};
+			return;
+		};
+
+		this.text = value;
+
 		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
 			if (callBack) {
-				callBack(message);
+				callBack();
 			};
 		});
 	};
@@ -1041,6 +1058,6 @@ class BlockText extends React.Component<Props, {}> {
 		return range ? { from: range.start, to: range.end } : null;
 	};
 	
-};
+});
 
 export default BlockText;

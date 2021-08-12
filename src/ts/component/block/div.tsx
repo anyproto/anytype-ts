@@ -2,10 +2,9 @@ import * as React from 'react';
 import { I, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
-@observer
-class BlockDiv extends React.Component<Props, {}> {
+const BlockDiv = observer(class BlockDiv extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -79,6 +78,6 @@ class BlockDiv extends React.Component<Props, {}> {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
-};
+});
 
 export default BlockDiv;

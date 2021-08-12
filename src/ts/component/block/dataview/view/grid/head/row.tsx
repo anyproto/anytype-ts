@@ -11,12 +11,11 @@ interface Props extends I.ViewComponent {
 	onCellAdd(e: any): void;
 	onSortEnd(result: any): void;
 	onResizeStart(e: any, key: string): void;
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class HeadRow extends React.Component<Props, {}> {
+const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, readonly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
@@ -56,6 +55,6 @@ class HeadRow extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default HeadRow;

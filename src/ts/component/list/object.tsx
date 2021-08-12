@@ -7,12 +7,11 @@ import { observer } from 'mobx-react';
 interface Props {
 	rootId: string;
 	blockId: string;
-};
+}
 
 const Constant = require('json/constant.json');
 
-@observer
-class ListObject extends React.Component<Props, {}> {
+const ListObject = observer(class ListObject extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 	};
@@ -119,6 +118,6 @@ class ListObject extends React.Component<Props, {}> {
 		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, Constant.limit.dataview.records, callBack);
 	};
 
-};
+});
 
 export default ListObject;

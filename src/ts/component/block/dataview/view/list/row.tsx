@@ -5,10 +5,9 @@ import { Cell } from 'ts/component';
 
 interface Props extends I.ViewComponent {
 	index: number;
-};
+}
 
-@observer
-class Row extends React.Component<Props, {}> {
+const Row = observer(class Row extends React.Component<Props, {}> {
 
 	render () {
 		const { index, getView, onCellClick, onRef } = this.props;
@@ -37,6 +36,6 @@ class Row extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default Row;

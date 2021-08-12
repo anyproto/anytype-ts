@@ -5,13 +5,12 @@ import { I, C, translate, focus } from 'ts/lib';
 import { commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class BlockImage extends React.Component<Props, {}> {
+const BlockImage = observer(class BlockImage extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	
@@ -280,6 +279,6 @@ class BlockImage extends React.Component<Props, {}> {
 		return Math.min(1, Math.max(0, w / ew));
 	};
 	
-};
+});
 
 export default BlockImage;

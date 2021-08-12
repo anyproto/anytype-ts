@@ -11,7 +11,7 @@ interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 	rootId: string;
 	isPopup: boolean;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -19,8 +19,7 @@ const Constant = require('json/constant.json');
 const OFFSET = 100;
 const THROTTLE = 20;
 
-@observer
-class DragProvider extends React.Component<Props, {}> {
+const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
 	refLayer: any = null;
 	type: string = '';
@@ -494,6 +493,6 @@ class DragProvider extends React.Component<Props, {}> {
 		this.objectData.clear();
 	};
 
-};
+});
 
 export default DragProvider;

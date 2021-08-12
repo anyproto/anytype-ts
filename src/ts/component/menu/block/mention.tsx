@@ -1,36 +1,35 @@
 import * as React from 'react';
-import { MenuItemVertical } from 'ts/component';
-import { I, C, Key, keyboard, Util, SmileUtil, DataUtil, Mark } from 'ts/lib';
+import { MenuItemVertical, Loader } from 'ts/component';
+import { I, C, Key, keyboard, Util, DataUtil, Mark } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-	n: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 10;
 
-@observer
-class MenuBlockMention extends React.Component<Props, State> {
+const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
 
 	state = {
 		loading: false,
-		n: 0,
 	};
 
 	_isMounted: boolean = false;	
 	filter: string = '';
 	index: any = null;
-	cache: any = null;
+	cache: any = {};
 	items: any = [];
+	n: number = -1;
+	refList: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -39,14 +38,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { n } = this.state;
+		const { loading } = this.state;
 		const items = this.getItems();
 		const { filter } = commonStore;
 		const { text } = filter;
-
-		if (!this.cache) {
-			return null;
-		};
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -79,31 +74,32 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 		return (
 			<div className="items">
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => index < items.length}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<List
-									ref={registerChild}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={10}
-									scrollToIndex={n}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
+				{loading ? <Loader /> : (
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={({ index }) => index < items.length}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<List
+										ref={(ref: any) => { this.refList = ref; }}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={10}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
+				)}
 			</div>
 		);
 	};
@@ -117,13 +113,12 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
-		const { n } = this.state;
 		const items = this.getItems();
 
 		if (this.filter != filter.text) {
 			this.load(true);
 			this.filter = filter.text;
-			this.setState({ n: 0 });
+			this.n = -1;
 			return;
 		};
 
@@ -134,7 +129,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 		});
 
 		this.resize();
-		this.setActive(items[n]);
+		this.props.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -153,16 +148,10 @@ class MenuBlockMention extends React.Component<Props, State> {
 
 	getItems () {
 		return [
-			{ id: 'add', name: 'Create new page', icon: 'plus', skipFilter: true }
+			{ id: 'add', name: 'Create new object', icon: 'plus', skipFilter: true }
 		].concat(this.items);
 	};
 	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
-	};
-
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { filter } = commonStore;
 		const { config } = commonStore;
@@ -198,6 +187,7 @@ class MenuBlockMention extends React.Component<Props, State> {
 				};
 			}));
 			this.items = this.items.filter(filterMapper);
+			this.items.sort(DataUtil.sortByName);
 
 			this.setState({ loading: false });
 		});
@@ -214,58 +204,12 @@ class MenuBlockMention extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-
-		let { n } = this.state;
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[n];
-
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
-				};
-				this.setState({ n: n });
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
-				};
-				this.setState({ n: n });
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
@@ -317,13 +261,14 @@ class MenuBlockMention extends React.Component<Props, State> {
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const obj = $(`#${getId()} .content`);
+		const offset = 16;
+		const height = Math.max(HEIGHT * 1 + offset, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
 	};
 	
-};
+});
 
 export default MenuBlockMention;

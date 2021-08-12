@@ -11,10 +11,9 @@ interface Props {
 	relation?: any;
 	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
-};
+}
 
-@observer
-class ItemObject extends React.Component<Props, {}> {
+const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, id, iconSize, relation, elementMapper, onClick } = this.props;
@@ -41,6 +40,6 @@ class ItemObject extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default ItemObject;

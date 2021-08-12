@@ -14,14 +14,13 @@ interface Props extends I.ViewComponent {
 	columnId: number;
 	list: any[];
 	onAdd (column: number): void;
-};
+}
 
 const getItemStyle = (snapshot: any, style: any) => {
 	return style;
 };
 
-@observer
-class Column extends React.Component<Props, {}> {
+const Column = observer(class Column extends React.Component<Props, {}> {
 
 	render () {
 		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
@@ -94,6 +93,6 @@ class Column extends React.Component<Props, {}> {
 		);
 	};
 
-};
+});
 
 export default Column;

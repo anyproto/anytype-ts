@@ -7,13 +7,12 @@ import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-@observer
-class MenuRelationList extends React.Component<Props, {}> {
+const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, {}> {
 	
 	top: number = 0;
 
@@ -214,6 +213,6 @@ class MenuRelationList extends React.Component<Props, {}> {
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 	
-};
+});
 
 export default MenuRelationList;

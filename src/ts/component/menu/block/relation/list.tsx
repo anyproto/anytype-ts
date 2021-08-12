@@ -6,20 +6,19 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
 	n: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 28;
 const LIMIT = 40;
 
-@observer
-class MenuBlockRelationList extends React.Component<Props, State> {
+const MenuBlockRelationList = observer(class MenuBlockRelationList extends React.Component<Props, State> {
 
 	items: any[] = [];
 	cache: any = {};
@@ -290,6 +289,6 @@ class MenuBlockRelationList extends React.Component<Props, State> {
 		this.props.param.data.filter = this.ref.getValue();
 	};
 
-};
+});
 
 export default MenuBlockRelationList;

@@ -1,5 +1,5 @@
 import { I, Util } from 'ts/lib';
-import { decorate, observable, intercept } from 'mobx';
+import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockStructure implements I.BlockStructure {
 	
@@ -12,7 +12,7 @@ class BlockStructure implements I.BlockStructure {
 		self.parentId = String(props.parentId || '');
 		self.childrenIds = props.childrenIds || [];
 
-		decorate(self, {
+		makeObservable(self, {
 			parentId: observable,
 			childrenIds: observable,
 		});

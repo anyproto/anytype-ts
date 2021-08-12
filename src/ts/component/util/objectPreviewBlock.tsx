@@ -8,16 +8,15 @@ interface Props {
 	rootId: string;
 	className?: string;
 	onClick? (e: any): void;
-};
+}
 interface State {
 	loading: boolean;
-};
+}
 
 const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
-@observer
-class ObjectPreviewBlock extends React.Component<Props, State> {
+const ObjectPreviewBlock = observer(class ObjectPreviewBlock extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
@@ -339,6 +338,6 @@ class ObjectPreviewBlock extends React.Component<Props, State> {
 		return n;
 	};
 
-};
+});
 
 export default ObjectPreviewBlock;

@@ -37,6 +37,7 @@
 
 			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; }
 		}
+		.item.empty { padding: 13px 16px; }
 
 		.item:hover, .item.hover {
 			.icon.delete { opacity: 1; }

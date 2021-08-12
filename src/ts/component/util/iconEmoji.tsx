@@ -19,14 +19,13 @@ interface Props {
 	menuId?: string;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
-};
+}
 
 const Constant = require('json/constant.json');
 const IconSrc = {
 };
 
-@observer
-class IconEmoji extends React.Component<Props, {}> {
+const IconEmoji = observer(class IconEmoji extends React.Component<Props, {}> {
 	
 	public static defaultProps = {
 		offsetX: 0,
@@ -41,6 +40,8 @@ class IconEmoji extends React.Component<Props, {}> {
 		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
 		
 		let cn = [ 'iconEmoji' ];
+		let css = { lineHeight: size + 'px' };
+
 		if (className) {
 			cn.push(className);
 		};
@@ -86,12 +87,12 @@ class IconEmoji extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')}>
+			<div id={id} style={css} className={cn.join(' ')}>
 				{element}
 			</div>
 		);
 	};
 
-};
+});
 
 export default IconEmoji;

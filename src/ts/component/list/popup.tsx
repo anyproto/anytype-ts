@@ -5,12 +5,11 @@ import { observer } from 'mobx-react';
 import { I } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
 const $ = require('jquery');
 
-@observer
-class ListPopup extends React.Component<Props, {}> {
+const ListPopup = observer(class ListPopup extends React.Component<Props, {}> {
 
 	render () {
 		const { list } = popupStore;
@@ -31,6 +30,6 @@ class ListPopup extends React.Component<Props, {}> {
 		list.length > 0 ? body.addClass('overPopup') : body.removeClass('overPopup');
 	};
 	
-};
+});
 
 export default ListPopup;

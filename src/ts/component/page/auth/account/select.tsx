@@ -5,16 +5,15 @@ import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, translate } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 
 interface State {
 	error: string;
-};
+}
 
 const { ipcRenderer } = window.require('electron');
 
-@observer
-class PageAccountSelect extends React.Component<Props, State> {
+const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
 
 	state = {
 		error: ''
@@ -103,6 +102,6 @@ class PageAccountSelect extends React.Component<Props, State> {
 		this.props.history.push('/auth/register/add');
 	};
 	
-};
+});
 
 export default PageAccountSelect;

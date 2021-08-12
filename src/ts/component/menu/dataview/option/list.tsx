@@ -8,26 +8,20 @@ import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
-interface Props extends I.Menu {};
-
-interface State {
-	n: number;
-};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const MENU_ID = 'dataviewOptionValues';
 const HEIGHT = 28;
 const LIMIT = 40;
 
-@observer
-class MenuOptionList extends React.Component<Props, State> {
+const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
-	ref: any = null;
+	refFilter: any = null;
+	refList: any = null;
 	cache: any = {};
-	state = {
-		n: 0,
-	};
+	n: number = -1;
 	
 	constructor (props: any) {
 		super(props);
@@ -41,7 +35,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		const { data } = param;
 		const { filter } = data;
 		const relation = data.relation.get();
-		const { n } = this.state;
 		const value = data.value || [];
 		const items = this.getItems(true);
 
@@ -95,7 +88,7 @@ class MenuOptionList extends React.Component<Props, State> {
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter or create options..." 
 					value={filter}
 					onChange={this.onFilterChange} 
@@ -113,7 +106,7 @@ class MenuOptionList extends React.Component<Props, State> {
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={registerChild}
+											ref={(ref: any) => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -122,7 +115,6 @@ class MenuOptionList extends React.Component<Props, State> {
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
-											scrollToIndex={n}
 										/>
 									)}
 								</AutoSizer>
@@ -156,12 +148,9 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		const { n } = this.state;
-		const items = this.getItems(false);
-
+		this.props.setActive();
 		this.props.position();
 		this.resize();
-		this.setActive(items[n]);
 	};
 
 	componentWillUnmount () {
@@ -179,8 +168,8 @@ class MenuOptionList extends React.Component<Props, State> {
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
 			};
 		}, 15);
 	};
@@ -205,14 +194,14 @@ class MenuOptionList extends React.Component<Props, State> {
 		obj.unbind('click');
 	};
 
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems(false);
-		const { n } = this.state;
-		this.props.setHover((item ? item : items[n]), scroll);
-	};
-
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -259,7 +248,7 @@ class MenuOptionList extends React.Component<Props, State> {
 				return;
 			};
 
-			this.ref.setValue('');
+			this.refFilter.setValue('');
 			this.onFilterChange('');
 			this.onValueAdd(message.option.id);
 
@@ -358,53 +347,7 @@ class MenuOptionList extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		e.stopPropagation();
-		keyboard.disableMouse(true);
-
-		let { n } = this.state;
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems(false);
-		const l = items.length;
-		const item = items[n];
-
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				n--;
-				if (n < 0) {
-					n = l - 1;
-				};
-				this.setState({ n: n });
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				n++;
-				if (n > l - 1) {
-					n = 0;
-				};
-				this.setState({ n: n });
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 
 	resize () {
@@ -418,6 +361,6 @@ class MenuOptionList extends React.Component<Props, State> {
 		position();
 	};
 	
-};
+});
 
 export default MenuOptionList;

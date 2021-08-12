@@ -10,15 +10,14 @@ interface Props {
 	className?: string;
 	rootId: string;
 	isPopup: boolean;
-};
+}
 
 const $ = require('jquery');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
 
-@observer
-class SelectionProvider extends React.Component<Props, {}> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props, {}> {
 
 	_isMounted = false;
 	x: number = 0;
@@ -609,6 +608,6 @@ class SelectionProvider extends React.Component<Props, {}> {
 		return !((y1 + h1 < y2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (x1 > x2 + w2));
 	};
 	
-};
+});
 
 export default SelectionProvider;

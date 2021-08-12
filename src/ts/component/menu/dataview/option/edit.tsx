@@ -5,12 +5,11 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { menuStore } from 'ts/store';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuOptionEdit extends React.Component<Props, {}> {
+const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props, {}> {
 	
 	ref: any = null;
 	color: string = null;
@@ -199,6 +198,6 @@ class MenuOptionEdit extends React.Component<Props, {}> {
 		menuStore.updateData('dataviewOptionValues', nd);
 	};
 	
-};
+});
 
 export default MenuOptionEdit;

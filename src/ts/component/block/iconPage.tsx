@@ -4,10 +4,9 @@ import { I, DataUtil } from 'ts/lib';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
-@observer
-class BlockIconPage extends React.Component<Props, {}> {
+const BlockIconPage = observer(class BlockIconPage extends React.Component<Props, {}> {
 
 	constructor (props: any) {
 		super(props);
@@ -43,6 +42,6 @@ class BlockIconPage extends React.Component<Props, {}> {
 		DataUtil.pageSetIcon(rootId, '', hash);
 	};
 	
-};
+});
 
 export default BlockIconPage;

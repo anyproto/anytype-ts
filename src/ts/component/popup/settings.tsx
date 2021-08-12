@@ -6,14 +6,14 @@ import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {};
+interface Props extends I.Popup, RouteComponentProps<any> {}
 
 interface State {
 	page: string;
 	loading: boolean;
 	error: string;
 	entropy: string;
-};
+}
 
 const { dialog } = window.require('electron').remote;
 const { ipcRenderer } = window.require('electron');
@@ -22,8 +22,7 @@ const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 const QRCode = require('qrcode.react');
 
-@observer
-class PopupSettings extends React.Component<Props, State> {
+const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
 
 	phraseRef: any = null;
 	state = {
@@ -554,6 +553,6 @@ class PopupSettings extends React.Component<Props, State> {
 		$(window).unbind('resize.settings').on('resize.settings', () => { this.props.position(); });
 	};
 
-};
+});
 
 export default PopupSettings;

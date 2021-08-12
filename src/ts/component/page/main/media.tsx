@@ -9,15 +9,14 @@ import { commonStore, blockStore, detailStore } from 'ts/store';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
-};
+}
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 
 const MAX_HEIGHT = 396;
 
-@observer
-class PageMainMedia extends React.Component<Props, {}> {
+const PageMainMedia = observer(class PageMainMedia extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	id: string = '';
@@ -236,6 +235,6 @@ class PageMainMedia extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default PageMainMedia;

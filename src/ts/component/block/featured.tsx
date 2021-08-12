@@ -6,15 +6,14 @@ import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.BlockComponent {
 	iconSize?: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const PREFIX = 'blockFeatured';
 
-@observer
-class BlockFeatured extends React.Component<Props, {}> {
+const BlockFeatured = observer(class BlockFeatured extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	cellRefs: Map<string, any> = new Map();
@@ -310,6 +309,6 @@ class BlockFeatured extends React.Component<Props, {}> {
 		return item;
 	};
 	
-};
+});
 
 export default BlockFeatured;

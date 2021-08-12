@@ -6,12 +6,12 @@ import { Storage, translate, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {}
 interface State {
 	icon: string;
 	index: number;
 	error: string;
-};
+}
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
@@ -20,8 +20,7 @@ const Icons: number[] = [
 	12, 1230, 1, 130, 2, 230, 3, 330, 4, 430, 5, 530, 6, 630, 7, 730, 8, 830, 9, 930, 10, 1030, 11, 1130
 ];
 
-@observer
-class PageAuthSetup extends React.Component<Props, State> {
+const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props, State> {
 
 	i: number = 0;
 	t: number = 0;
@@ -212,6 +211,6 @@ class PageAuthSetup extends React.Component<Props, State> {
 		window.clearTimeout(this.t);
 	};
 
-};
+});
 
 export default PageAuthSetup;

@@ -8,13 +8,12 @@ import arrayMove from 'array-move';
 import { translate, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
-class MenuFilterList extends React.Component<Props, {}> {
+const MenuFilterList = observer(class MenuFilterList extends React.Component<Props, {}> {
 	
 	constructor (props: any) {
 		super(props);
@@ -302,6 +301,6 @@ class MenuFilterList extends React.Component<Props, {}> {
 		return DataUtil.getRelationOptions(rootId, blockId, getView());
 	};
 
-};
+});
 
 export default MenuFilterList;

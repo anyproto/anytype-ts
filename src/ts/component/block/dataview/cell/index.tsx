@@ -29,6 +29,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	ref: any = null;
+	timeout: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -112,20 +113,20 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
+		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
 
 		if (!this.canEdit()) {
 			return;
 		};
 
-		$('.cell.isEditing').removeClass('isEditing');
-
 		const win = $(window);
-		const cellId = DataUtil.cellId(idPrefix, relation.relationKey, index);
-		const cell = $(`#${cellId}`).addClass('isEditing');
-		const element = cell.find('.cellContent');
-		const width = Math.max(element.outerWidth(), Constant.size.dataview.cell.edit);
+		const cell = $(`#${cellId}`);
+		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.edit);
 		const height = cell.outerHeight();
 		const value = record[relation.relationKey] || '';
+
+		$('.cell.isEditing').removeClass('isEditing');
+		cell.addClass('isEditing');
 
 		if (cellPosition) {
 			cellPosition(cellId);
@@ -314,11 +315,12 @@ class Cell extends React.Component<Props, {}> {
 
 		if (menuId) {
 			menuStore.closeAll(Constant.menuIds.cell);
+			window.clearTimeout(this.timeout);
 
 			if (commonStore.cellId != cellId) {
 				commonStore.cellId = cellId;
 
-				window.setTimeout(() => {
+				this.timeout = window.setTimeout(() => {
 					menuStore.open(menuId, param);
 
 					$(pageContainer).unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });

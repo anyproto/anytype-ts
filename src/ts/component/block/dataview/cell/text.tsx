@@ -4,19 +4,18 @@ import { Icon, Input, IconObject } from 'ts/component';
 import { commonStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {};
+interface Props extends I.Cell {}
 
 interface State { 
 	isEditing: boolean; 
-};
+}
 
 const $ = require('jquery');
 const raf = require('raf');
 const Constant = require('json/constant.json');
 const MENU_ID = 'dataviewCalendar';
 
-@observer
-class CellText extends React.Component<Props, State> {
+const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	state = {
@@ -175,7 +174,7 @@ class CellText extends React.Component<Props, State> {
 						object={record} 
 					/>
 					<Name name={value} />
-					<Icon className="edit" onClick={(e: any) => { 
+					<Icon className="edit" onMouseDown={(e: any) => { 
 						e.stopPropagation(); 
 						onParentClick(e);
 					}} />
@@ -347,9 +346,9 @@ class CellText extends React.Component<Props, State> {
 		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
 
-		onCellChange(record.id, 'done', !record.done);
+		onCellChange(record.id, Constant.relationKey.done, !record.done);
 	};
 
-};
+});
 
 export default CellText;

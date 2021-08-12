@@ -7,14 +7,13 @@ import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const PREFIX = 'menuBlockRelationView';
 
-@observer
-class MenuBlockRelationView extends React.Component<Props, {}> {
+const MenuBlockRelationView = observer(class MenuBlockRelationView extends React.Component<Props, {}> {
 
 	cellRefs: Map<string, any> = new Map();
 
@@ -328,6 +327,6 @@ class MenuBlockRelationView extends React.Component<Props, {}> {
 		position();
 	};
 
-};
+});
 
 export default MenuBlockRelationView;

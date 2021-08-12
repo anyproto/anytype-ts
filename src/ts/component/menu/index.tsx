@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, Util } from 'ts/lib';
+import { I, keyboard, Key, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
 import { menuStore, popupStore } from 'ts/store';
 
@@ -36,10 +36,7 @@ import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
-import MenuObjectTypeEdit from './type/edit';
-
 import MenuRelationSuggest from './relation/suggest';
-import MenuRelationType from './relation/type';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -105,10 +102,7 @@ const Components: any = {
 	blockRelationList:		 MenuBlockRelationList,
 	blockRelationView:		 MenuBlockRelationView,
 
-	objectTypeEdit:			 MenuObjectTypeEdit,
-
 	relationSuggest:		 MenuRelationSuggest,
-	relationType:			 MenuRelationType,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -145,7 +139,8 @@ class Menu extends React.Component<Props, State> {
 		
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
-		this.setHover = this.setHover.bind(this);
+		this.setActive = this.setActive.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -213,7 +208,8 @@ class Menu extends React.Component<Props, State> {
 						<Component 
 							ref={(ref: any) => { this.ref = ref; }}
 							{...this.props} 
-							setHover={this.setHover} 
+							setActive={this.setActive}
+							onKeyDown={this.onKeyDown}
 							getId={this.getId} 
 							getSize={this.getSize}
 							position={this.position} 
@@ -236,6 +232,7 @@ class Menu extends React.Component<Props, State> {
 		this.position();
 		this.animate();
 		this.unbind();
+		this.setActive();
 		
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -504,6 +501,81 @@ class Menu extends React.Component<Props, State> {
 			$('#menu-polygon').hide();
 		};
 	};
+
+	onKeyDown (e: any) {
+		if (!this.ref || !this.ref.getItems) {
+			return;
+		};
+
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		const k = e.key.toLowerCase();
+		const items = this.ref.getItems();
+		const l = items.length;
+		const item = items[this.ref.n];
+
+		switch (k) {
+			case Key.up:
+				e.preventDefault();
+				this.ref.n--;
+				if (this.ref.n < 0) {
+					this.ref.n = l - 1;
+				};
+				this.setActive(null, true);
+				break;
+				
+			case Key.down:
+				e.preventDefault();
+				this.ref.n++;
+				if (this.ref.n > l - 1) {
+					this.ref.n = 0;
+				};
+				this.setActive(null, true);
+				break;
+				
+			case Key.tab:
+			case Key.enter:
+				e.preventDefault();
+				if (item) {
+					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+				};
+				break;
+
+			case Key.right:
+				e.preventDefault();
+				if (item && item.arrow) {
+					this.ref.onOver(e, item);
+				};
+				break;
+				
+			case Key.left:
+			case Key.escape:
+				this.close();
+				break;
+		};
+	};
+
+	setActive (item?: any, scroll?: boolean) {
+		if (!this.ref || !this.ref.getItems) {
+			return;
+		};
+
+		const items = this.ref.getItems();
+		if (item) {
+			this.ref.n = items.findIndex((it: any) => { return it.id == item.id; });
+		};
+
+		this.setHover(items[this.ref.n], scroll);
+
+		if (this.ref.refList && scroll) {
+			let idx = this.ref.n;
+			if (this.ref.recalcIndex) {
+				idx = this.ref.recalcIndex();
+			};
+			this.ref.refList.scrollToRow(idx);
+		};
+	};
 	
 	setHover (item?: any, scroll?: boolean) {
 		if (!this._isMounted) {
@@ -519,8 +591,18 @@ class Menu extends React.Component<Props, State> {
 			return;
 		};
 
-		const el = menu.find('#item-' + item.id).addClass('hover');
-		if (el.length && scroll) {
+		let el = menu.find(`#item-${item.itemId}`);
+		if (!el.length) {
+			el = menu.find(`#item-${item.id}`);
+		};
+
+		if (!el.length) {
+			return;
+		};
+
+		el.addClass('hover');
+
+		if (scroll) {
 			const content = node.find('.content');
 			const st = content.scrollTop();
 			const pt = el.position().top;

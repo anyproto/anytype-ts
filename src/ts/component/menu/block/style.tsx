@@ -4,12 +4,11 @@ import { I, keyboard, Key, Util, DataUtil, analytics } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 
-@observer
-class MenuBlockStyle extends React.Component<Props, {}> {
+const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Props, {}> {
 	
 	n: number = 0;
 	
@@ -52,7 +51,7 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 
 		this.n = items.findIndex((it: any) => { return it.id == active; });
 		this.unbind();
-		this.setActive();
+		this.props.setActive();
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -81,14 +80,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		return block ? block.content.style : 0;
-	};
-	
-	setActive = (item?: any, scroll?: boolean) => {
-		const items = this.getItems();
-		if (item) {
-			this.n = items.findIndex((it: any) => { return it.id == item.id });
-		};
-		this.props.setHover(items[this.n], scroll);
 	};
 	
 	getSections () {
@@ -134,51 +125,12 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		keyboard.disableMouse(true);
-		
-		const k = e.key.toLowerCase();
-		const items = this.getItems();
-		const l = items.length;
-		const item = items[this.n];
-		
-		switch (k) {
-			case Key.up:
-				this.n--;
-				if (this.n < 0) {
-					this.n = l - 1;
-				};
-				this.setActive(null, item);
-				break;
-				
-			case Key.down:
-				this.n++;
-				if (this.n > l - 1) {
-					this.n = 0;
-				};
-				this.setActive(null, item);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-			case Key.space:
-				if (item) {
-					this.onClick(e, item);
-				};
-				break;
-			
-			case Key.left:	
-			case Key.escape:
-				this.props.close();
-				break;
-		};
+		this.props.onKeyDown(e);
 	};
 	
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
-			this.setActive(item, false);
+			this.props.setActive(item, false);
 		};
 	};
 	
@@ -198,6 +150,6 @@ class MenuBlockStyle extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default MenuBlockStyle;

@@ -5,15 +5,14 @@ import { observer } from 'mobx-react';
 import ItemObject from './item/object';
 import { data } from 'jquery';
 
-interface Props extends I.Cell {};
+interface Props extends I.Cell {}
 interface State { 
 	isEditing: boolean; 
-};
+}
 
 const $ = require('jquery');
 
-@observer
-class CellObject extends React.Component<Props, State> {
+const CellObject = observer(class CellObject extends React.Component<Props, State> {
 
 	state = {
 		isEditing: false,
@@ -91,6 +90,6 @@ class CellObject extends React.Component<Props, State> {
 		onChange(value.map((it: any) => { return it.id; }));
 	};
 
-};
+});
 
 export default CellObject;

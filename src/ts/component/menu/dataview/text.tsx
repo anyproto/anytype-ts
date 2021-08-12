@@ -4,13 +4,12 @@ import { I, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { setRange } from 'selection-ranges';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const raf = require('raf');
 
-@observer
-class MenuText extends React.Component<Props, {}> {
+const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
 	ref: any = null;
@@ -112,6 +111,6 @@ class MenuText extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default MenuText;

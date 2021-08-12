@@ -74,6 +74,8 @@ class Storage {
 		this.delete('scroll');
 		this.delete('toggle');
 		this.delete('crumbs');
+		this.delete('tabIndex');
+		this.delete('tabStore');
 	};
 	
 };

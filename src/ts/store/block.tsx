@@ -1,123 +1,124 @@
-import { observable, action, computed, set, intercept, toJS } from 'mobx';
+import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, Util, Storage } from 'ts/lib';
 
 const $ = require('jquery');
 const raf = require('raf');
 
 class BlockStore {
-	@observable public rootId: string = '';
-	@observable public profileId: string = '';
-	@observable public breadcrumbsId: string = '';
-	@observable public recentId: string = '';
-	@observable public storeIdType: string = '';
-	@observable public storeIdTemplate: string = '';
-	@observable public storeIdRelation: string = '';
 
-	public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
-	public blockMap: Map<string, I.Block[]> = new Map();
-	public restrictionMap: Map<string, Map<string, any>> = new Map();
+    public rootId: string = '';
+    public profileId: string = '';
+    public breadcrumbsId: string = '';
+    public recentId: string = '';
+    public storeIdType: string = '';
+    public storeIdTemplate: string = '';
+    public storeIdRelation: string = '';
 
-	@computed
-	get root (): string {
+    public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
+    public blockMap: Map<string, I.Block[]> = new Map();
+    public restrictionMap: Map<string, Map<string, any>> = new Map();
+
+    constructor() {
+        makeObservable(this, {
+            rootId: observable,
+            profileId: observable,
+            breadcrumbsId: observable,
+            recentId: observable,
+            storeIdType: observable,
+            storeIdTemplate: observable,
+            storeIdRelation: observable,
+            root: computed,
+            profile: computed,
+            breadcrumbs: computed,
+            recent: computed,
+            storeType: computed,
+            storeTemplate: computed,
+            storeRelation: computed,
+            rootSet: action,
+            profileSet: action,
+            storeSetType: action,
+            storeSetTemplate: action,
+            storeSetRelation: action,
+            breadcrumbsSet: action,
+            recentSet: action,
+            set: action,
+            clear: action,
+            clearAll: action,
+            add: action,
+            update: action,
+            updateStructure: action,
+            delete: action
+        });
+    }
+
+    get root (): string {
 		return this.rootId;
 	};
 
-	@computed
-	get profile (): string {
+    get profile (): string {
 		return this.profileId;
 	};
 
-	@computed
-	get breadcrumbs (): string {
+    get breadcrumbs (): string {
 		return this.breadcrumbsId;
 	};
 
-	@computed
-	get recent (): string {
+    get recent (): string {
 		return this.recentId;
 	};
 
-	@computed
-	get storeType (): string {
+    get storeType (): string {
 		return this.storeIdType;
 	};
 
-	@computed
-	get storeTemplate (): string {
+    get storeTemplate (): string {
 		return this.storeIdTemplate;
 	};
 
-	@computed
-	get storeRelation (): string {
+    get storeRelation (): string {
 		return this.storeIdRelation;
 	};
 
-	@action
-	rootSet (id: string) {
+    rootSet (id: string) {
 		this.rootId = String(id || '');
 	};
 
-	@action
 	profileSet (id: string) {
 		this.profileId = String(id || '');
 	};
 
-	@action
-	storeSetType (id: string) {
+    storeSetType (id: string) {
 		this.storeIdType = String(id || '');
 	};
 
-	@action
-	storeSetTemplate (id: string) {
+    storeSetTemplate (id: string) {
 		this.storeIdTemplate = String(id || '');
 	};
 
-	@action
-	storeSetRelation (id: string) {
+    storeSetRelation (id: string) {
 		this.storeIdRelation = String(id || '');
 	};
 
-	@action
-	breadcrumbsSet (id: string) {
+    breadcrumbsSet (id: string) {
 		this.breadcrumbsId = String(id || '');
 	};
 
-	@action
-	recentSet (id: string) {
+    recentSet (id: string) {
 		this.recentId = String(id || '');
 	};
 
-	@action
-	set (rootId: string, blocks: I.Block[]) {
+    set (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
-		this.treeMap.set(rootId, this.getStructure(blocks));
 	};
 
-	@action
-	clear (rootId: string) {
-		this.blockMap.delete(rootId);
-		this.treeMap.delete(rootId);
-	};
-
-	@action
-	clearAll () {
-		this.blockMap = new Map();
-		this.treeMap = new Map();
-		this.restrictionMap = new Map();
-	};
-
-	@action
-	add (rootId: string, block: I.Block) {
+    add (rootId: string, block: I.Block) {
 		let blocks = this.getBlocks(rootId);
 
 		block = new M.Block(block);
 		blocks.push(block);
-
-		this.updateStructure(rootId, block.id, block.childrenIds);
 	};
 
-	@action
-	update (rootId: string, param: any) {
+    update (rootId: string, param: any) {
 		let block = this.getLeaf(rootId, param.id);
 		if (!block) {
 			return;
@@ -125,8 +126,22 @@ class BlockStore {
 		set(block, param);
 	};
 
-	@action
-	updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
+	clear (rootId: string) {
+		this.blockMap.delete(rootId);
+		this.treeMap.delete(rootId);
+	};
+
+    clearAll () {
+		this.blockMap = new Map();
+		this.treeMap = new Map();
+		this.restrictionMap = new Map();
+	};
+
+	setStructure (rootId: string, blocks: any[]) {
+		this.treeMap.set(rootId, this.getStructure(blocks));
+	};
+
+    updateStructure (rootId: string, blockId: string, childrenIds: string[]) {
 		let map = this.getMap(rootId);
 		let element = this.getMapElement(rootId, blockId);
 
@@ -142,7 +157,7 @@ class BlockStore {
 		for (let [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {
 				const check = map.get(it);
-				if (check) {
+				if (check && (check.parentId != id)) {
 					check.parentId = id;
 					map.set(it, check);
 				};
@@ -150,8 +165,7 @@ class BlockStore {
 		};
 	};
 
-	@action
-	delete (rootId: string, blockId: string) {
+    delete (rootId: string, blockId: string) {
 		let blocks = this.getBlocks(rootId);
 		let map = this.getMap(rootId);
 
@@ -159,7 +173,7 @@ class BlockStore {
 		map.delete(blockId);
 	};
 
-	restrictionsSet (rootId: string, restrictions: any) {
+    restrictionsSet (rootId: string, restrictions: any) {
 		let map = this.restrictionMap.get(rootId);
 
 		if (!map) {
@@ -175,21 +189,21 @@ class BlockStore {
 		this.restrictionMap.set(rootId, map);
 	};
 
-	getMap (rootId: string) {
+    getMap (rootId: string) {
 		return this.treeMap.get(rootId) || new Map();
 	};
 
-	getMapElement (rootId: string, blockId: string) {
+    getMapElement (rootId: string, blockId: string) {
 		const map = this.getMap(rootId);
 		return map.get(blockId);
 	};
 
-	getLeaf (rootId: string, id: string): any {
+    getLeaf (rootId: string, id: string): any {
 		let blocks = this.getBlocks(rootId);
 		return blocks.find((it: any) => { return it.id == id; });
 	};
 
-	getBlocks (rootId: string, filter?: (it: any) => boolean) {
+    getBlocks (rootId: string, filter?: (it: any) => boolean) {
 		let blocks = this.blockMap.get(rootId) || [];
 
 		if (!filter) {
@@ -204,12 +218,12 @@ class BlockStore {
 		});
 	};
 
-	getChildrenIds (rootId: string, blockId: string): string[] {
+    getChildrenIds (rootId: string, blockId: string): string[] {
 		const element = this.getMapElement(rootId, blockId);
 		return element ? (element.childrenIds || []) : [];
 	};
 
-	getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
+    getChildren (rootId: string, id: string, filter?: (it: any) => boolean) {
 		let blocks = this.getBlocks(rootId);
 		let childrenIds = this.getChildrenIds(rootId, id);
 		
@@ -227,8 +241,8 @@ class BlockStore {
 		return childBlocks;
 	};
 
-	// If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
-	getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
+    // If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
+    getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
 			list = this.unwrapTree([ this.wrapTree(rootId) ]);
 		};
@@ -246,12 +260,12 @@ class BlockStore {
 		};
 	};
 
-	getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
+    getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
 		const list = this.unwrapTree([ this.wrapTree(rootId) ]).filter(check);
 		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 
-	getHighestParent (rootId: string, blockId: string): I.Block {
+    getHighestParent (rootId: string, blockId: string): I.Block {
 		const block = blockStore.getLeaf(rootId, blockId);
 		const parent = blockStore.getLeaf(rootId, block.parentId);
 
@@ -262,7 +276,12 @@ class BlockStore {
 		};
 	};
 
-	setNumbers (rootId: string) {
+    setNumbers (rootId: string) {
+		const container = $('#editor-' + rootId);
+		if (!container.length) {
+			return;
+		};
+
 		const root = this.wrapTree(rootId);
 		if (!root) {
 			return;
@@ -308,7 +327,7 @@ class BlockStore {
 		cb(unwrap([ root ]));
 	};
 
-	getStructure (list: I.Block[]) {
+    getStructure (list: I.Block[]) {
 		let map: Map<string, I.BlockStructure> = new Map();
 
 		list = Util.objectCopy(list || []);
@@ -322,7 +341,7 @@ class BlockStore {
 		for (let [ id, item ] of map.entries()) {
 			(item.childrenIds || []).map((it: string) => {
 				const check = map.get(it);
-				if (check) {
+				if (check && (check.parentId != id)) {
 					check.parentId = id;
 					map.set(it, check);
 				};
@@ -336,7 +355,7 @@ class BlockStore {
 		return map;
 	};
 
-	getTree (rootId: string, list: I.Block[]): I.Block[] {
+    getTree (rootId: string, list: I.Block[]): I.Block[] {
 		list = Util.objectCopy(list || []);
 
 		let map: any = {};
@@ -346,46 +365,29 @@ class BlockStore {
 		};
 
 		for (let item of list) {
-			let element = map[item.id];
-			if (!element) {
-				continue;
-			};
-
-			let childBlocks = element.childBlocks || [];
-			let childrenIds = item.childrenIds || [];
-
-			for (let id of childrenIds) {
-				const child = map[id];
-				if (!child) {
-					continue;
-				};
-
-				child.parentId = item.id;
-				childBlocks.push(child);
-			};
-
-			map[item.id].childBlocks = Util.arrayUniqueObjects(childBlocks, 'id');
+			map[item.id].childrenIds = this.getChildrenIds(rootId, item.id);
+			map[item.id].childBlocks = this.getChildren(rootId, item.id);
 		};
 
 		return (map[rootId] || {}).childBlocks || [];
 	};
 
-	wrapTree (rootId: string) {
+    wrapTree (rootId: string) {
 		let map = this.getMap(rootId);
 		let ret: any = {};
+
 		for (let [ id, item ] of map.entries()) {
 			ret[id] = this.getLeaf(rootId, id);
-			if (!ret[id]) {
-				continue;
+			if (ret[id]) {
+				ret[id].parentId = String(item.parentId || '');
+				ret[id].childBlocks = this.getChildren(rootId, id);
 			};
-
-			ret[id].parentId = String(item.parentId || '');
-			ret[id].childBlocks = this.getChildren(rootId, id);
 		};
+
 		return ret[rootId];
 	};
 
-	unwrapTree (tree: any[]): any[] {
+    unwrapTree (tree: any[]): any[] {
 		tree = tree || [];
 
 		let ret = [] as I.Block[];
@@ -405,7 +407,7 @@ class BlockStore {
 		return ret;
 	};
 
-	getRestrictions (rootId: string, blockId: string) {
+    getRestrictions (rootId: string, blockId: string) {
 		const map = this.restrictionMap.get(rootId);
 		if (!map) {
 			return [];
@@ -414,7 +416,7 @@ class BlockStore {
 		return map.get(blockId) || [];
 	};
 
-	isAllowed (rootId: string, blockId: string, flags: any[]): boolean {
+    isAllowed (rootId: string, blockId: string, flags: any[]): boolean {
 		if (!rootId || !blockId) {
 			return false;
 		};
@@ -428,7 +430,7 @@ class BlockStore {
 		return true;
 	};
 
-	toggle (rootId: string, blockId: string, v: boolean) {
+    toggle (rootId: string, blockId: string, v: boolean) {
 		const element = $(`#block-${blockId}`);
 
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');

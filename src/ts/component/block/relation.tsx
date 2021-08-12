@@ -4,13 +4,12 @@ import { I, C, DataUtil, Util, focus } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'ts/store';
 
-interface Props extends I.BlockComponent {};
+interface Props extends I.BlockComponent {}
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-@observer
-class BlockRelation extends React.Component<Props, {}> {
+const BlockRelation = observer(class BlockRelation extends React.Component<Props, {}> {
 
 	refCell: any = null;
 
@@ -167,6 +166,6 @@ class BlockRelation extends React.Component<Props, {}> {
 		};
 	};
 
-};
+});
 
 export default BlockRelation;

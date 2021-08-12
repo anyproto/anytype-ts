@@ -9,7 +9,7 @@ import 'react-virtualized/styles.css';
 
 interface Props extends I.Popup {
 	history: any;
-};
+}
 
 interface State {
 	pageId: string;
@@ -17,14 +17,13 @@ interface State {
 	filter: string;
 	pages: any[];
 	n: number;
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT = 32;
 
-@observer
-class PopupSearch extends React.Component<Props, State> {
+const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
@@ -522,6 +521,6 @@ class PopupSearch extends React.Component<Props, State> {
 		};
 	};
 
-};
+});
 
 export default PopupSearch;

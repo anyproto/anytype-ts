@@ -10,11 +10,11 @@ import { getRange } from 'selection-ranges';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
-};
+}
 
 interface State {
 	templates: any[];
-};
+}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -31,8 +31,7 @@ const NO_TEMPLATES = [
 	Constant.typeId.set, 
 ];
 
-@observer
-class PageMainType extends React.Component<Props, State> {
+const PageMainType = observer(class PageMainType extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
@@ -578,6 +577,6 @@ class PageMainType extends React.Component<Props, State> {
 		return rootId ? rootId : match.params.id;
 	};
 
-};
+});
 
 export default PageMainType;

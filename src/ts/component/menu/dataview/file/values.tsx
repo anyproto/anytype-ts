@@ -7,15 +7,14 @@ import { observer } from 'mobx-react';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import arrayMove from 'array-move';
 
-interface Props extends I.Menu {};
+interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const { dialog } = window.require('electron').remote;
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 
-@observer
-class MenuDataviewFileValues extends React.Component<Props, {}> {
+const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -256,6 +255,6 @@ class MenuDataviewFileValues extends React.Component<Props, {}> {
 		});
 	};
 
-};
+});
 
 export default MenuDataviewFileValues;
