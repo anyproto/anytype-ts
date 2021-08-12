@@ -7,10 +7,12 @@ import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
 
+import Controls from 'ts/component/editor/controls';
+
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -39,6 +41,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
+		const check = DataUtil.checkDetails(rootId);
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
 		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
@@ -47,6 +50,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			description: 'Add a description',
 		};
 
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
 		if (object.name == DataUtil.defaultName('page')) {
@@ -84,14 +88,20 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		};
 
 		return (
-			<div>
+			<div className={[ 'setWrapper', check.className ].join(' ')}>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
+				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
+
 				<div className="blocks wrapper">
+					<Controls key="editorControls" {...this.props} rootId={rootId} />
+
 					<div className="head">
-						<div className="side left">
-							<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
-						</div>
+						{check.withIcon ? (
+							<div className="side left">
+								<IconObject id={'icon-' + rootId} size={object.iconImage ? 112 : 96} object={object} canEdit={allowedDetails} onSelect={this.onSelect} onUpload={this.onUpload} />
+							</div>
+						) : ''}
 						<div className={[ 'side', 'right', (object.iconImage ? 'big' : '') ].join(' ')}>
 							<div className="txt">
 								<Editor className="title" id="name" />
@@ -131,6 +141,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
+
+		this.resize();
 	};
 
 	componentWillUnmount () {
@@ -168,6 +180,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
 			};
+
+			this.resize();
 		});
 	};
 
@@ -333,6 +347,38 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	resize () {
+		if (this.loading || !this._isMounted) {
+			return;
+		};
+		
+		const { isPopup } = this.props;
+		const rootId = this.getRootId();
+		const check = DataUtil.checkDetails(rootId);
+		const node = $(ReactDOM.findDOMNode(this));
+		const cover = node.find('.block.blockCover');
+		const controls = node.find('.editorControls');
+		const wrapper = node.find('.blocks.wrapper');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const header = obj.find('#header');
+		const hh = header.height();
+
+		if (cover.length) {
+			cover.css({ top: hh });
+		};
+
+		if (controls.length) {	
+			controls.css({ top: hh, height: 128 - hh });
+			wrapper.css({ paddingTop: 128 - hh + 10 });
+		};
+
+		if (check.withCover) {
+			wrapper.css({ paddingTop: 330 });
+		};
+
+		node.css({ paddingTop: hh });
 	};
 
 });
