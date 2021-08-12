@@ -148,7 +148,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		this.unbind();
-		window.setTimeout(() => { this.props.setActive(); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 		
 		const win = $(window);
 		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -159,7 +159,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
-		const { config } = commonStore;
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;

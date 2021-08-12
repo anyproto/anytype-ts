@@ -565,6 +565,7 @@ class Menu extends React.Component<Props, State> {
 		if (item) {
 			this.ref.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
+
 		this.setHover(items[this.ref.n], scroll);
 
 		if (this.ref.refList && scroll) {

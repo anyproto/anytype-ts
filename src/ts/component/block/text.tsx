@@ -814,7 +814,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			marks = [];
 		};
 
-		if (this.text === value) {
+		if ((this.text === value) && !update) {
 			if (callBack) {
 				callBack();
 			};
