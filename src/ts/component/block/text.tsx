@@ -598,6 +598,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let symbolBefore = range ? value[range.from - 1] : '';
 		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
 		let reg = null;
+
+		const canOpenMenuAdd = (symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canParseMarkdown = !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -628,12 +632,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		// Open add menu
-		if ((symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode()) {
+		if (canOpenMenuAdd) {
 			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
 		};
 
 		// Open mention menu
-		if ((symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode()) {
+		if (canOpenMentionMenu) {
 			this.onMention();
 		};
 
@@ -661,33 +665,35 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 
-		// Parse markdown commands
-		for (let k in Markdown) {
-			reg = new RegExp(`^(${k} )`);
-			const style = Markdown[k];
+		if (canParseMarkdown) {
+			// Parse markdown commands
+			for (let k in Markdown) {
+				reg = new RegExp(`^(${k} )`);
+				const style = Markdown[k];
 
-			if (value.match(reg) && (content.style != style)) {
-				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+				if (value.match(reg) && (content.style != style)) {
+					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
-				const newBlock: any = { 
-					type: I.BlockType.Text, 
-					fields: {},
-					content: { 
-						...content, 
-						checked: false,
-						text: value, 
-						style: style,
-					},
+					const newBlock: any = { 
+						type: I.BlockType.Text, 
+						fields: {},
+						content: { 
+							...content, 
+							checked: false,
+							text: value, 
+							style: style,
+						},
+					};
+					
+					if (style == I.TextStyle.Code) {
+						newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
+						newBlock.content.marks = [];
+					};
+
+					C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
+					cmdParsed = true;
+					break;
 				};
-				
-				if (style == I.TextStyle.Code) {
-					newBlock.fields = { lang: (Storage.get('codeLang') || Constant.default.codeLang) };
-					newBlock.content.marks = [];
-				};
-
-				C.BlockCreate(newBlock, rootId, id, I.BlockPosition.Replace, cb);
-				cmdParsed = true;
-				break;
 			};
 		};
 		
