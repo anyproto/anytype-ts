@@ -39,7 +39,9 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props, {}> {
 	render () {
 		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
 		
-		let cn = [ 'iconEmoji', 'c' + size ];
+		let cn = [ 'iconEmoji' ];
+		let css = { lineHeight: size + 'px' };
+
 		if (className) {
 			cn.push(className);
 		};
@@ -85,7 +87,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')}>
+			<div id={id} style={css} className={cn.join(' ')}>
 				{element}
 			</div>
 		);

@@ -24,56 +24,8 @@
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 
 	.iconEmoji {
-		.emoji-mart-emoji { height: 100%; display: inline-block; vertical-align: middle; }
-		.emoji-mart-emoji {
-			span { height: 100%; display: inline-block; vertical-align: middle; }
-		}
-		
 		.icon.home-big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
 	}
-
-	.iconEmoji.c18 { width: 18px; height: 18px; line-height: 18px; }
-
-	.iconEmoji.c20 { width: 20px; height: 20px; line-height: 20px; }
-	.iconEmoji.c20 {
-		.emoji-mart-emoji { margin: -3px 0px 0px 2px; }
-	}
-
-	.iconEmoji.c24 { width: 24px; height: 24px; line-height: 24px; }
-	.iconEmoji.c24 {
-		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	}
-
-	.iconEmoji.c26 { width: 26px; height: 26px; line-height: 26px; }
-	.iconEmoji.c26 {
-		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	}
-
-	.iconEmoji.c28 { width: 28px; height: 28px; line-height: 28px; }
-	.iconEmoji.c28 {
-		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	}
-
-	.iconEmoji.c32 { width: 32px; height: 32px; line-height: 32px; }
-	.iconEmoji.c32 {
-		.emoji-mart-emoji { margin: -2px 0px 0px 2px; }
-	}
-
-	.iconEmoji.c48 { display: block; width: 48px; height: 48px; line-height: 48px; }
-	.iconEmoji.c48 {
-		.emoji-mart-emoji { margin: -3px 0px 0px 1px; font-size: 24px; height: 28px; line-height: 1em; }
-		.emoji-mart-emoji { span { height: 28px; line-height: 32px; } }
-	}
-
-	.iconEmoji.c64 { display: block; width: 64px; height: 64px; line-height: 64px; }
-	.iconEmoji.c64 {
-		.emoji-mart-emoji { margin: -1px 0px 0px 0px; font-size: 36px; height: 1em; line-height: 1em; }
-		.emoji-mart-emoji { span { height: 36px; line-height: 36px; } }
-	}
-
-	.iconEmoji.canEdit { cursor: pointer; transition: background-color 0.05s ease-in-out; }
-	.iconEmoji.canEdit.c48:hover, .iconEmoji.canEdit.c64:hover { background-color: #ebe9e0; }
-	.iconEmoji.canEdit.c48.active, .iconEmoji.canEdit.c64.active { background-color: #ebe9e0; }
 }
 .iconObject.c16 { width: 16px; height: 16px; }
 .iconObject.c18 { width: 18px; height: 18px; }
