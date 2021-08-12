@@ -430,10 +430,21 @@ class Mark {
 
 	fromMarkdown (html: string, marks: I.Mark[]) {
 		let text = html;
-		let test = /[`\*_~]{1}/.test(text);
+		let test = /[`\*_~\[]{1}/.test(text);
 
 		if (!test) {
 			return { marks, text };
+		};
+
+		// Marks should be moved by replacement lengths
+		let move = (from: number, offset: number) => {
+			for (let i in marks) {
+				let m = marks[i];
+				if (m.range.from >= from) {
+					m.range.from = Math.max(0, m.range.from - offset);
+					m.range.to = Math.max(0, m.range.to - offset);
+				};
+			};
 		};
 
 		// Markdown
@@ -450,20 +461,27 @@ class Mark {
 				let to = from + p3.length;
 				let replace = p1 + p3 + ' ';
 
-				// Marks should be moved by replacement lengths
-				for (let i in marks) {
-					let m = marks[i];
-					if (m.range.from >= from) {
-						m.range.from = Math.max(0, m.range.from - p2.length * 2);
-						m.range.to = Math.max(0, m.range.to - p2.length * 2);
-					};
-				};
-
+				move(from, p2.length * 2);
 				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
 				text = text.replace(s, replace);
 				return s;
 			});
 		};
+
+		// Links
+		html = text;
+		html.replace(/\[([^\]]+)\]\(([^\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
+			p1 = String(p1 || '');
+			p2 = String(p2 || '');
+
+			let from = (Number(text.indexOf(s)) || 0);
+			let to = from + p1.length;
+
+			move(from, p2.length + 4);
+			marks.push({ type: I.MarkType.Link, range: { from: from, to: to }, param: p2 });
+			text = text.replace(s, p1 + ' ');
+			return s;
+		});
 
 		marks = this.checkRanges(text, marks);
 		return { marks, text };
