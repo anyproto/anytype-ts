@@ -226,6 +226,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 					},
 				});
@@ -243,6 +244,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						};
 
 						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
+						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 					},
 				});
