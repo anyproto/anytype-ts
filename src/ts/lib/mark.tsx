@@ -470,7 +470,7 @@ class Mark {
 
 		// Links
 		html = text;
-		html.replace(/\[([^\]]+)\]\(([^\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
+		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '');
 			p2 = String(p2 || '');
 
