@@ -22,8 +22,6 @@ enum Tab {
 	Relation = 'relation',
 }
 
-const Constant = require('json/constant.json');
-
 const Tabs = [
 	{ 
 		id: Tab.Type, name: 'Types', active: 'library',
@@ -270,7 +268,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.onTab(Storage.get('storeTab') || Tab.Type);
+		this.onTab(Storage.get('tabStore') || Tabs[0].id);
 	};
 
 	componentDidUpdate () {
@@ -330,7 +328,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			return;
 		};
 
-		Storage.set('storeTab', id);
+		Storage.set('tabStore', id);
 
 		this.state.tab = id;
 		this.setState({ tab: id, loading: true });

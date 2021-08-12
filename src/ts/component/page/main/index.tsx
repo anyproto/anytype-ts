@@ -149,7 +149,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		crumbs.delete(I.CrumbsType.Page);
 
 		this.onScroll();
-		this.onTab(Storage.get('indexTab') || Tab.Favorite);
+		this.onTab(Storage.get('tabIndex') || Tabs[0].id);
 
 		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
 	};
@@ -197,7 +197,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.state.tab = id;
 		this.setState({ tab: id, pages: [] });
 
-		Storage.set('indexTab', id);
+		Storage.set('tabIndex', id);
 
 		if ([ Tab.Archive, Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
