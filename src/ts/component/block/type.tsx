@@ -165,6 +165,10 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 	
 	onFocus () {
+		if (this.n >= 0) {
+			return;
+		};
+
 		const { block } = this.props;
 		const value = this.ref ? this.ref.getValue() : '';
 
@@ -200,6 +204,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		el.addClass('hover');
 
 		this.ref.blur();
+		focus.clear(true);
 
 		if (scroll) {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
