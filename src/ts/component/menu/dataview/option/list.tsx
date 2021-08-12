@@ -248,7 +248,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				return;
 			};
 
-			this.refFilter.setValue('');
+			if (this.refFilter) {
+				this.refFilter.setValue('');
+			};
 			this.onFilterChange('');
 			this.onValueAdd(message.option.id);
 
