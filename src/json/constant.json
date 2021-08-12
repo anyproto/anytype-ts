@@ -120,7 +120,8 @@
 		"name": "name",
 		"description": "description",
 		"featured": "featuredRelations",
-		"type": "type"
+		"type": "type",
+		"done": "done"
 	},
 
 	"typeId": {

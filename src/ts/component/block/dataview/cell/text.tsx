@@ -346,7 +346,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
 
-		onCellChange(record.id, 'done', !record.done);
+		onCellChange(record.id, Constant.relationKey.done, !record.done);
 	};
 
 });

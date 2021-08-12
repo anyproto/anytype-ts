@@ -570,7 +570,7 @@ class DataUtil {
 		done = Boolean(done);
 
 		const details = [ 
-			{ key: 'done', value: done },
+			{ key: Constant.relationKey.done, value: done },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 	};
@@ -979,7 +979,7 @@ class DataUtil {
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		let forceKeys = [ 'done' ];
+		let forceKeys = [ Constant.relationKey.done ];
 		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
@@ -994,11 +994,17 @@ class DataUtil {
 
 		return relations.map((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			
+			let isHidden = relation.isHidden;
+			if (forceKeys.indexOf(relation.relationKey) >= 0) {
+				isHidden = false;
+			};
+
 			return { 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
 				name: relation.name, 
-				isHidden: relation.isHidden,
+				isHidden: isHidden,
 				format: relation.format,
 				maxCount: relation.maxCount,
 			};
