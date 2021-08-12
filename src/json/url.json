@@ -1,7 +1,6 @@
 {
-	"community": "https://community.anytype.io/",
+	"community": "https://community.anytype.io/knowledgebase/category/knowledge-base",
 	"telegram": "https://t.me/anytype",
 	"twitter": "https://twitter.com/AnytypeLabs",
-	"feedback": "https://anytype.io/send-feedback",
-	"feedbackForm": "https://anytype.typeform.com/to/qVKKgQ6P#anytypeid=%s&osversion=%s&appversion=%s&os=%s"
+	"feedback": "https://community.anytype.io/composer"
 }

@@ -26,9 +26,8 @@ class MenuHelp extends React.Component<Props, {}> {
 			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
 			{ id: 'help', name: 'Status', document: 'status' },
 			{ id: 'shortcut', name: 'Shortcuts' },
-			//{ id: 'intercom', name: 'Help & feedback' },
 			{ id: 'feedback', name: 'Give feedback' },
-			{ id: 'community', name: 'Join community forum' },
+			{ id: 'community', name: 'Help' },
 		];
 
 		return (
@@ -41,8 +40,6 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any, item: any) {
-		const { account } = authStore;
-
 		this.props.close();
 
 		switch (item.id) {
@@ -57,15 +54,13 @@ class MenuHelp extends React.Component<Props, {}> {
 				break;
 
 			case 'feedback':
-				ipcRenderer.send('urlOpen', Util.sprintf(Url.feedbackForm, account.id, systemVersion, version, Util.getPlatform()));
+				ipcRenderer.send('urlOpen', Url.feedback);
 				break;
 
 			case 'community':
 				ipcRenderer.send('urlOpen', Url.community);
 				break;
 
-			case 'intercom':
-				break;
 		};
 	};
 
