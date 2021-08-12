@@ -83,8 +83,8 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; max-height: 60px; width: 100%; word-break: break-word;
-				-webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; display: -webkit-box;
+				@include text-common; width: 100%; word-break: break-word; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; 
+				display: -webkit-box;
 			}
 			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
 			
