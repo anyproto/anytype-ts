@@ -622,7 +622,10 @@ function checkUpdate (auto) {
 		return;
 	};
 
-	autoUpdater.checkForUpdatesAndNotify();
+	autoUpdater.checkForUpdatesAndNotify().catch((err) => {
+		Util.log('info', 'checkForUpdatesAndNotify error: ' + err);
+	});
+
 	clearTimeout(timeoutUpdate);
 	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
 	autoUpdate = auto;
