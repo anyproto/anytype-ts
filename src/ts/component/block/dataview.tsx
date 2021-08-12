@@ -249,8 +249,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		console.log(ref.ref);
-
 		if ((relation.relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
 			DataUtil.objectOpenPopup(record);
 		} else {
