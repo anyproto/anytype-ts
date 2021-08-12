@@ -16,7 +16,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	isFocused: boolean = false;
-	n: number = 0;
+	n: number = -1;
 	ref: any = null;
 	state = {
 		filter: '',
@@ -341,6 +341,12 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if ([ Key.enter, Key.space, Key.tab ].indexOf(k) >= 0) {
 				this.ref.blur();
 			} else {
+				return;
+			};
+		} else {
+			if ((k == Key.up) && !this.n) {
+				this.ref.focus();
+				this.n = -1;
 				return;
 			};
 		};
