@@ -210,9 +210,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	setValue (v: string) {
 		const { block } = this.props;
-		const { content } = block;
 		const fields = block.fields || {};
-		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
@@ -224,7 +222,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.text = text;
 
 		let html = text;
-		if (style == I.TextStyle.Code) {
+		if (block.isTextCode()) {
 			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
 
@@ -245,7 +243,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 
-		if (!block.isTextCode() && (html != text) && marks.length) {
+		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			raf(() => {
 				this.renderLinks();
 				this.renderMentions();
@@ -271,7 +269,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (!items.length) {
 			return;
 		};
-		
+
 		items.unbind('click.link mouseenter.link');
 			
 		items.on('mouseenter.link', function (e: any) {
