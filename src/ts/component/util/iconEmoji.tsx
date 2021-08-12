@@ -39,7 +39,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props, {}> {
 	render () {
 		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
 		
-		let cn = [ 'iconEmoji' ];
+		let cn = [ 'iconEmoji', 'c' + size ];
 		if (className) {
 			cn.push(className);
 		};
