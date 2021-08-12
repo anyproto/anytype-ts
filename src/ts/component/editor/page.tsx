@@ -1296,7 +1296,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						if (item.id == 'cancel') {
 							const to = range.from + url.length;
 							const value = Util.stringInsert(block.content.text, url, range.from, range.from);
-							const marks = Util.objectCopy(block.content.marks);
+							const marks = Util.objectCopy(block.content.marks || []);
 
 							marks.push({
 								type: I.MarkType.Link,

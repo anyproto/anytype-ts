@@ -846,7 +846,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	onBlur (e: any) {
-		this.placeholderHide();
+		const { block } = this.props;
+
+		if (!block.isTextTitle() && !block.isTextDescription()) {
+			this.placeholderHide();
+		};
+
 		focus.clearRange(true);
 		keyboard.setFocus(false);
 
@@ -1020,7 +1025,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('#placeholder').hide();
 	};
