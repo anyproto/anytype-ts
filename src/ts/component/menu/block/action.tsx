@@ -159,6 +159,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
+		const { config } = commonStore;
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
@@ -371,9 +372,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { content, align } = block;
 		const { color, bgColor } = content;
 		
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		let types = [ Constant.typeId.page ]; 
+
 		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
+			types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		};
 		
 		setActive(item, false);
@@ -436,8 +438,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 				];
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				if (config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] });
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -457,10 +459,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
