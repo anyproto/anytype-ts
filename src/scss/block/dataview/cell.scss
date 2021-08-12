@@ -78,6 +78,16 @@
 	.icon.user { margin-right: 5px; }
 }
 
+.cell.isEditing.c-shortText, 
+.cell.isEditing.c-longText, 
+.cell.isEditing.c-number, 
+.cell.isEditing.c-url, 
+.cell.isEditing.c-phone, 
+.cell.isEditing.c-email, 
+.cell.isEditing.c-date {
+	.cellContent { cursor: text !important; }
+}
+
 .cellContent.canEdit.c-shortText, 
 .cellContent.canEdit.c-longText, 
 .cellContent.canEdit.c-number, 

@@ -55,7 +55,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 				<div
 					id={id} 
 					className={[ 'cell', DataUtil.relationClass(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
-					onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
+					onMouseDown={(e: any) => { onCellClick(e, relationKey, 0); }}
 				>
 					<Cell 
 						ref={(ref: any) => { onRef(id, ref); }} 

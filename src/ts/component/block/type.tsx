@@ -185,9 +185,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		if (!keyboard.isMouseDisabled) {
 			const node = $(ReactDOM.findDOMNode(this));
 			node.find('.item.hover').removeClass('hover');
-
-			this.n = -1;
-			this.unbind();
 		};
 	};
 
