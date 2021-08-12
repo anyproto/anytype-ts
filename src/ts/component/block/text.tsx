@@ -502,7 +502,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					focus.apply();
 				});
 			} else {
-				this.setText(this.marks, true, (message: any) => {
+				this.setText(this.marks, true, () => {
 					focus.apply();
 					onKeyDown(e, value, this.marks, range);
 				});
@@ -805,7 +805,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 	};
 	
-	setText (marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
+	setText (marks: I.Mark[], update: boolean, callBack?: () => void) {
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const value = this.getValue();
@@ -815,6 +815,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		if (this.text === value) {
+			if (callBack) {
+				callBack();
+			};
 			return;
 		};
 
@@ -822,7 +825,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		DataUtil.blockSetText(rootId, block, value, marks, update, (message: any) => {
 			if (callBack) {
-				callBack(message);
+				callBack();
 			};
 		});
 	};
