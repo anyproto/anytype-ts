@@ -315,14 +315,14 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			value = value ? Util.parseDate(value) : null;
 		} else 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
-			this.setState({ isEditing: false });
+			//this.setState({ isEditing: false });
 			return;
 		};
 
 		if (onChange) {
 			onChange(value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
-					this.setState({ isEditing: false });
+					//this.setState({ isEditing: false });
 				};
 			});
 		};
