@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .pageMainSet {
-	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 128px 0px 80px 0px; user-select: none; }
+	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 74px 0px 80px 0px; user-select: none; }
 	.wrapper {
 
 		.block {
@@ -13,10 +13,12 @@
 			.cellContent { padding: 2.5px 6px; }
 		}
 
-		.head { width: 696px; margin: 0px auto 40px auto; display: flex; }
+		.editorControls { width: 704px; }
+
+		.head { width: 704px; margin: 0px auto 40px auto; display: flex; }
 		.head {
-			.side.left { width: 96px; flex-shrink: 0; margin-right: 32px; }
-			.side.right { width: calc(100% - 128px); line-height: 96px; }
+			.side.left { flex-shrink: 0; margin-right: 32px; }
+			.side.right { width: 100%; line-height: 96px; }
 			.side.right.big { line-height: 112px; }
 
 			.side.right {
@@ -28,6 +30,23 @@
 				.descr { @include text-paragraph; margin: 7px 0px; }
 			}
 		}
+
+		.head.withIcon {
+			.side.left { width: 96px; }
+			.side.right { width: calc(100% - 128px); }
+		}
+	}
+
+	.setWrapper.withIcon, .setWrapper.withIconAndCover {
+		.head {
+			.side.left { width: 96px; }
+			.side.right { width: calc(100% - 128px); }
+		}
+	}
+
+	.setWrapper.withCover, .setWrapper.withIconAndCover {
+		.wrapper { padding-top: 322px; }
+		.editorControls { display: none; }
 	}
 }
 

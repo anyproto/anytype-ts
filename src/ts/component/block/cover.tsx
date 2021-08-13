@@ -68,7 +68,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji', 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -99,7 +99,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			elements = (
 				<React.Fragment>
 					<div className="controlButtons">
-						{!root.isObjectTask() ? (
+						{!object.iconEmoji && !object.iconImage && !root.isObjectTask() ? (
 							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 								<Icon className="icon" />
 								<div className="txt">{translate('editorControlIcon')}</div>
@@ -111,7 +111,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							<div className="txt">{translate('editorControlCover')}</div>
 						</div>
 
-						{allowedLayout ? (
+						{!root.isObjectSet() && allowedLayout ? (
 							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
 								<Icon className="layout" />
 								<div className="txt">{translate('editorControlLayout')}</div>
@@ -433,7 +433,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.y = e.pageY - this.rect.y - this.y;
 		this.onDragMove(e);
 
-		selection.preventSelect(true);
+		if (selection) {
+			selection.preventSelect(true);
+		};
+
 		node.addClass('isDragging');
 		
 		win.unbind('mousemove.cover mouseup.cover');
@@ -461,7 +464,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		selection.preventSelect(false);
+		if (selection) {
+			selection.preventSelect(true);
+		};
+
 		win.unbind('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		

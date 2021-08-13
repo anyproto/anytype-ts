@@ -205,10 +205,6 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-				} else {
-					cn.push('withLetter');
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 

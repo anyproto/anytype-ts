@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
-	isPopup: boolean;
+	isPopup?: boolean;
 	dataset?: any;
 }
 
@@ -40,7 +40,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
-		if (!allowedDetails) {
+		if (!root || !allowedDetails) {
 			return null;
 		};
 
@@ -64,7 +64,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						<div className="txt">{translate('editorControlCover')}</div>
 					</div>
 
-					{allowedLayout ? (
+					{!root.isObjectSet() && allowedLayout ? (
 						<div id="button-layout" className="btn" onClick={this.onLayout}>
 							<Icon className="layout" />
 							<div className="txt">{translate('editorControlLayout')}</div>
