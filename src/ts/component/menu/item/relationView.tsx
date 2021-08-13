@@ -55,7 +55,6 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 				<div
 					id={id} 
 					className={[ 'cell', DataUtil.relationClass(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
-					onMouseDown={(e: any) => { onCellClick(e, relationKey, 0); }}
 				>
 					<Cell 
 						ref={(ref: any) => { onRef(id, ref); }} 
@@ -72,6 +71,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						scrollContainer={Util.getScrollContainer('menuBlockRelationView')}
 						pageContainer={Util.getPageContainer('menuBlockRelationView')}
 						readonly={readonly}
+						onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
 						onCellChange={onCellChange}
 						optionCommand={optionCommand}
 					/>
