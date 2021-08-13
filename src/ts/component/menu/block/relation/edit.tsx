@@ -230,6 +230,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
+				filter: '',
 				value: this.format,
 				options: DataUtil.menuGetRelationTypes(),
 				noFilter: true,
