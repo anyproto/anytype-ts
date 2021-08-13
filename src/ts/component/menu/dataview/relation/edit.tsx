@@ -200,6 +200,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
+				filter: '',
 				value: this.format,
 				options: DataUtil.menuGetRelationTypes(),
 				noFilter: true,

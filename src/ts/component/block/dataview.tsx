@@ -242,7 +242,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 		const id = DataUtil.cellId('dataviewCell', relationKey, index);
-		const cell = $(`#${id}`);
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
 

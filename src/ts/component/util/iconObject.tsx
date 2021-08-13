@@ -242,7 +242,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		return (
-			<div id={this.props.id} className={cn.join(' ')} onClick={this.onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div 
+				id={this.props.id} 
+				className={cn.join(' ')} 
+				onMouseDown={this.onClick} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 				{icon}
 			</div>
 		);
