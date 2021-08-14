@@ -49,9 +49,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		const items = this.getItems();
 		const active = this.getActive();
 
-		this.n = items.findIndex((it: any) => { return it.id == active; });
-		this.props.setActive();
-		
+		this.n = items.findIndex((it: any) => { return it.itemId == active; });
 		this.rebind();
 	};
 	
