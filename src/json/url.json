@@ -2,5 +2,6 @@
 	"community": "https://community.anytype.io/knowledgebase/category/knowledge-base",
 	"telegram": "https://t.me/anytype",
 	"twitter": "https://twitter.com/AnytypeLabs",
-	"feedback": "https://community.anytype.io/composer"
+	"feedback": "https://community.anytype.io/composer",
+	"unsplash": "https://api.unsplash.com/photos/random?count=%d"
 }

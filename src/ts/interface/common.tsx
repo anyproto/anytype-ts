@@ -23,6 +23,7 @@ export enum CoverType {
 	Color	 = 2,
 	Gradient = 3,
 	Image	 = 4, 
+	Source	 = 5,
 };
 
 export enum CrumbsType {

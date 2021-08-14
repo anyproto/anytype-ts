@@ -1,15 +1,19 @@
 import * as React from 'react';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, C, DataUtil, Util, translate } from 'ts/lib';
 import { Cover } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {}
 
+const $ = require('jquery');
 const { dialog } = window.require('electron').remote;
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, {}> {
+
+	items: any[] = [];
 
 	constructor (props: any) {
 		super(props);
@@ -57,6 +61,35 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.load();
+	};
+
+	load () {
+		$.ajax({
+			url: Util.sprintf(Url.unsplash, 24),
+			headers: {
+				'Authorization': 'Client-ID ' + Constant.unsplash,
+			},
+			type: 'GET',
+			contentType: 'application/json',
+			success: (data: any) => {
+				console.log(data);
+
+				for (let item of data) {
+					this.items.push({
+						id: item.id,
+						type: I.CoverType.Source,
+						src: item.urls.thumb,
+						full: item.urls.full,
+					});
+				};
+
+				this.forceUpdate();
+			}
+		});
 	};
 
 	onUpload (e: any) {
@@ -116,13 +149,28 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	onSelect (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, onSelect } = data;
+		const { rootId, onSelect, onUpload, onUploadStart } = data;
 		const object = detailStore.get(rootId, rootId, [ 'coverId' ], true);
 
 		if (!object.coverId) {
 			this.props.close();
 		};
 
+		if (item.type == I.CoverType.Source) {
+			if (onUploadStart) {
+				onUploadStart();
+			};
+
+			C.UploadFile(item.full, '', I.FileType.Image, true, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				if (onUpload) {
+					onUpload(message.hash);
+				};
+			});
+		} else
 		if (onSelect) {
 			onSelect(item);
 		};
@@ -192,6 +240,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				{ type: I.CoverType.Gradient, id: 'blue' },
 				{ type: I.CoverType.Gradient, id: 'teal' },
 			] as any[] },
+
+			{ name: 'Unsplash', children: this.items },
 		];
 
 		sections = sections.map((s: any) => {
