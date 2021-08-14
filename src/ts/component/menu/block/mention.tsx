@@ -139,7 +139,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -201,10 +201,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			return false;
 		};
 		return true;
-	};
-
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {

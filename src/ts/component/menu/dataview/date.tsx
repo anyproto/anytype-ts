@@ -57,14 +57,8 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -154,10 +148,6 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		return options;
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;

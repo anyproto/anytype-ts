@@ -165,16 +165,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this._isMounted = false;
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
 	};
 
 	focus () {
@@ -187,8 +179,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	rebind () {
 		this.unbind();
-
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -247,10 +238,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
-	};
-
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {

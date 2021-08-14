@@ -171,16 +171,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	};
 	
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this._isMounted = false;
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
 	};
 
 	focus () {
@@ -193,7 +185,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -261,10 +253,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
-	};
-
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {

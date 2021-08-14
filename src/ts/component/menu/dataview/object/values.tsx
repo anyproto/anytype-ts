@@ -111,7 +111,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -201,10 +201,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		onChange(value);
 	};
 
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-	
 });
 
 export default MenuObjectValues;

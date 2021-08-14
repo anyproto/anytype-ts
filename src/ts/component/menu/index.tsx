@@ -278,7 +278,8 @@ class Menu extends React.Component<Props, State> {
 
 	componentWillUnmount () {
 		const { param } = this.props;
-		const { isSub } = param;
+		const { isSub, data } = param;
+		const { rebind } = data;
 		const el = this.getElement();
 
 		this._isMounted = false;
@@ -291,6 +292,10 @@ class Menu extends React.Component<Props, State> {
 		if (isSub) {
 			$('#menu-polygon').hide();
 			window.clearTimeout(this.timeoutPoly);
+		};
+
+		if (rebind) {
+			rebind();
 		};
 	};
 	

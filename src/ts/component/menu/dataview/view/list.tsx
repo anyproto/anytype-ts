@@ -101,7 +101,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
@@ -202,10 +202,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { oldIndex, newIndex } = result;
 	};
 
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-	
 });
 
 export default MenuViewList;

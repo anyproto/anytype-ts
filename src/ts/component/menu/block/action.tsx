@@ -143,15 +143,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+
 		window.setTimeout(() => { this.props.setActive(); }, 15);
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	unbind () {

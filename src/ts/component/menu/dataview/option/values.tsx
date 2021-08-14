@@ -34,35 +34,36 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 			<Icon className="dnd" />
 		));
 
-		const Item = SortableElement((item: any) => {
-			return (
-				<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
-					<Handle />
-					<div className="clickable" onClick={(e: any) => { this.onEdit(e, item); }}>
-						<Tag {...item} className={DataUtil.tagClass(relation.format)} />
-					</div>
-					<div className="buttons">
-						<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
-						<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
-					</div>
+		const Item = SortableElement((item: any) => (
+			<div id={'item-' + item.id} className="item" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<Handle />
+				<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
 				</div>
-			);
-		});
+				<div className="buttons">
+					<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
+					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+				</div>
+			</div>
+		));
 
 		const ItemAdd = SortableElement((item: any) => (
-			<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, { id: 'add' }); }} onClick={this.onAdd}>
+			<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, { id: 'add' }); }} onClick={(e: any) => { this.onClick(e, item); }}>
 				<Icon className="plus" />
-				<div className="name">Add</div>
+				<div className="name">Add new option</div>
 			</div>
 		));
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<ItemAdd index={0} disabled={true} />
-					{items.map((item: any, i: number) => (
-						<Item key={i + 1} {...item} index={i + 1} />
-					))}
+					{items.map((item: any, i: number) => {
+						if (item.id == 'add') {
+							return <ItemAdd key={item.id} index={i} disabled={true} />;
+						} else {
+							return <Item key={item.id} {...item} index={i} />;
+						};
+					})}
 				</div>
 			);
 		});
@@ -100,13 +101,10 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 	rebind () {
 		const { getId } = this.props;
-		const win = $(window);
-		const obj = $(`#${getId()}`);
 
 		this.unbind();
-
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		obj.on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
 	};
 	
 	unbind () {
@@ -123,11 +121,12 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		const { data } = param;
 		const relation = data.relation.get();
 
-		let value = DataUtil.getRelationArrayValue(data.value);
+		let value: any[] = DataUtil.getRelationArrayValue(data.value);
 		value = value.map((id: string) => { 
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
 
+		value.unshift({ id: 'add' });
 		value = value.filter((it: any) => { return it && it.id; });
 		return value;
 	};
@@ -187,6 +186,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 	onClick (e: any, item: any) {
+		item.id == 'add' ? this.onAdd(e) : this.onEdit(e, item);
 	};
 
 	onRemove (e: any, item: any) {
@@ -218,10 +218,6 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		onChange(value);
 	};
 
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-	
 });
 
 export default MenuOptionValues;

@@ -293,33 +293,17 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
-
 		menuStore.closeAll(Constant.menuIds.add);
 	};
 	
 	rebind () {
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
-	};
-	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 	
 	getSections () {

@@ -94,19 +94,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 	rebind () {
 		this.unbind();
-
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;

@@ -45,21 +45,11 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 	};
 	
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
 	};
 	
 	unbind () {
@@ -73,10 +63,6 @@ class MenuBlockBackground extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		return block ? block.bgColor : 0;
-	};
-	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 	
 	getItems () {

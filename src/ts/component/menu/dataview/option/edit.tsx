@@ -90,16 +90,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this.unbind();
 		window.clearTimeout(this.timeout);
-		
-		if (rebind) {
-			rebind();
-		};
 	};
 
 	focus () {

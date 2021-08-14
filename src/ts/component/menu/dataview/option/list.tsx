@@ -154,16 +154,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this._isMounted = false;
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
 	};
 
 	focus () {
@@ -176,22 +168,17 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	rebind () {
 		const { getId } = this.props;
-		const win = $(window);
-		const obj = $(`#${getId()}`);
 
 		this.unbind();
-
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		obj.on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
 	};
 	
 	unbind () {
 		const { getId } = this.props;
-		const win = $(window);
-		const obj = $(`#${getId()}`);
 
-		win.unbind('keydown.menu');
-		obj.unbind('click');
+		$(window).unbind('keydown.menu');
+		$(`#${getId()}`).unbind('click');
 	};
 
 	onFilterChange (v: string) {
@@ -346,10 +333,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		};
 
 		return ret;
-	};
-
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 
 	resize () {
