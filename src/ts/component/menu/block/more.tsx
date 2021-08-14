@@ -156,16 +156,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			sections = [
 				{ children: [ archive ] },
 				{ children: [ linkRoot, link ] },
-				{ children: [ search ] },
 				{ children: [ print ] },
 			];
 
-			/*
 			if (block.isObjectSet()) {
 				sections.unshift({ children: [ undo, redo ] });
+			} else {
+				sections.splice(1, 0, { children: [ search ] });
 			};
-			*/
-
 		} else
 		if (block.isPage()) {
 			if (object.type == Constant.typeId.template) {	

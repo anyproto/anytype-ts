@@ -162,7 +162,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			noFlipY: true,
 			noAnimation: true,
 			classNameWrap: classNameWrap,
-			onClose: () => { close(); },
 			data: {
 				...data,
 				rebind: this.rebind,
