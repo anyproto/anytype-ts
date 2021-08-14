@@ -24,7 +24,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render () {
@@ -55,7 +54,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="filter isName" onSubmit={this.onSubmit}>
+				<form className="filter isName">
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
@@ -101,7 +100,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
@@ -113,11 +112,24 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const k = e.key.toLowerCase();
 
 		if (this.isFocused) {
+			if (k == Key.enter) {
+				window.clearTimeout(this.timeout);
+				this.save();
+				this.props.close();
+				return;
+			} else
 			if (k != Key.down) {
 				return;
+			} else {
+				this.ref.blur();
+				this.n = -1;
 			};
-			this.ref.blur();
-			this.n = -1;
+		} else {
+			if ((k == Key.up) && !this.n) {
+				this.n = -1;
+				this.ref.focus();
+				return;
+			};
 		};
 
 		this.props.onKeyDown(e);
@@ -171,14 +183,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				close();
 			});
 		};
-	};
-
-	onSubmit (e: any) {
-		e.preventDefault();
-
-		window.clearTimeout(this.timeout);
-		this.save();
-		this.props.close();
 	};
 
 	getSections () {
