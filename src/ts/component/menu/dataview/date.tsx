@@ -14,6 +14,12 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	_isMounted: boolean = false;
 	n: number = 0;
 
+	constructor (props: any) {
+		super(props);
+
+		this.rebind = this.rebind.bind(this);
+	};
+
 	render () {
 		const sections = this.getSections();
 
@@ -177,6 +183,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			passThrough: true,
 			classNameWrap: classNameWrap,
 			data: {
+				rebind: this.rebind,
 				value: value.id,
 				options: options,
 				onSelect: (e: any, el: any) => {

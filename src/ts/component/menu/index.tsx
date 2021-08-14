@@ -559,6 +559,7 @@ class Menu extends React.Component<Props, State> {
 				
 			case Key.left:
 			case Key.escape:
+				e.preventDefault();
 				this.close();
 				break;
 		};
