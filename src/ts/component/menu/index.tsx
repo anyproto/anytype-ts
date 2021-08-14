@@ -294,6 +294,9 @@ class Menu extends React.Component<Props, State> {
 			window.clearTimeout(this.timeoutPoly);
 		};
 
+		if (this.ref && this.ref.unbind) {
+			this.ref.unbind();
+		};
 		if (rebind) {
 			rebind();
 		};

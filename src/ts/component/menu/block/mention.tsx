@@ -134,12 +134,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {

@@ -172,7 +172,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	focus () {
@@ -186,6 +185,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {

@@ -96,7 +96,6 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	rebind () {
@@ -105,6 +104,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -153,7 +153,6 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				noFlipY: true,
 				noAnimation: true,
 				classNameWrap: classNameWrap,
-				onClose: () => { close(); },
 				data: {
 					...data,
 					rebind: this.rebind,
@@ -179,6 +178,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
+					rebind: this.rebind,
 					option: item,
 				}
 			});
@@ -186,6 +186,8 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 	onClick (e: any, item: any) {
+		e.stopPropagation();
+
 		item.id == 'add' ? this.onAdd(e) : this.onEdit(e, item);
 	};
 

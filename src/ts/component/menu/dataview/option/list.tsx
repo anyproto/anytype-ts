@@ -155,7 +155,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	focus () {
@@ -172,8 +171,9 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
-	
+
 	unbind () {
 		const { getId } = this.props;
 

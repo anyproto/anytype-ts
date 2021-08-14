@@ -52,12 +52,13 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		this.n = items.findIndex((it: any) => { return it.id == active; });
 		this.props.setActive();
 		
-		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		this.rebind();
 	};
 	
-	componentWillUnmount () {
+	rebind () {
 		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {

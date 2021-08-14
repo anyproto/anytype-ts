@@ -79,11 +79,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		this.unbind();
+		this.rebind();
 		this.focus();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 
 	componentDidUpdate () {
@@ -91,7 +88,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		this.unbind();
 		window.clearTimeout(this.timeout);
 	};
 
@@ -101,6 +97,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				this.ref.focus();
 			};
 		}, 15);
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {

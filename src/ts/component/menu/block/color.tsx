@@ -44,12 +44,13 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		this.rebind();
 	};
 	
-	componentWillUnmount () {
+	rebind () {
 		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {

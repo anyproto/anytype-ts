@@ -48,6 +48,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
 					value={option.text}
+					onKeyDown={(e: any, v: string) => { this.onKeyDown(e, v); }}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 					onBlur={this.onBlur}
 				/>
@@ -90,7 +91,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 
 	componentWillUnmount () {
-		this.unbind();
 		window.clearTimeout(this.timeout);
 	};
 
@@ -104,32 +104,26 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 
 	rebind () {
 		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
 	};
 
-	onKeyUp (e: any, v: string) {
-		e.preventDefault();
-
-		const { close } = this.props;
-
-		let ret = false;
-
+	onKeyDown (e: any, v: string) {
 		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+
 			this.save();
-			close();
+			this.props.close();
 		});
+	};
 
-		if (ret) {
-			return;
-		};
-
+	onKeyUp (e: any, v: string) {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => {
-			this.save();
-		}, 500);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
 	onBlur () {

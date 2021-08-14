@@ -165,7 +165,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	componentWillUnmount () {
-		this.unbind();
 		this.menuClose();
 	};
 

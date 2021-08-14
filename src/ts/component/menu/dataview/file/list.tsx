@@ -172,7 +172,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	focus () {
@@ -186,6 +185,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {

@@ -111,7 +111,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 
 		keyboard.setFocus(false);
 		menuStore.closeAll(Constant.menuIds.action);
@@ -145,7 +144,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
