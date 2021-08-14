@@ -48,9 +48,9 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		));
 
 		const ItemAdd = SortableElement((item: any) => (
-			<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, { id: 'add' }); }} onClick={(e: any) => { this.onClick(e, item); }}>
+			<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}>
 				<Icon className="plus" />
-				<div className="name">Add new option</div>
+				<div className="name">Add options</div>
 			</div>
 		));
 		
@@ -59,7 +59,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				<div className="items">
 					{items.map((item: any, i: number) => {
 						if (item.id == 'add') {
-							return <ItemAdd key={item.id} index={i} disabled={true} />;
+							return <ItemAdd key={item.id} {...item} index={i} disabled={true} />;
 						} else {
 							return <Item key={item.id} {...item} index={i} />;
 						};

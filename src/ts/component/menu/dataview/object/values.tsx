@@ -32,7 +32,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const type: any = dbStore.getObjectType(item.type) || {};
 			const cn = [ 'item' ];
 			
 			if (item.id == 'add') {
@@ -53,7 +52,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					{item.id == 'add' ? (
 						<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 							<Icon className="plus" />
-							<div className="name">Add</div>
+							<div className="name">Add object</div>
 						</span>
 					) : (
 						<React.Fragment>
