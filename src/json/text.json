@@ -60,6 +60,7 @@
 	"progress0": { "en": "Copying files %s/%s" },
 	"progress1": { "en": "Import in progress" },
 	"progress2": { "en": "Export in progress" },
+	"progress3": { "en": "Download in progress" },
 
 	"headerHistoryCurrent": { "en": "Current version" },
 	"headerHistoryRestore": { "en": "Restore version" },

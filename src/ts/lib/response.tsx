@@ -45,6 +45,12 @@ const UploadFile = (response: any) => {
 	};
 };
 
+const DownloadFile = (response: any) => {
+	return {
+		path: response.getLocalpath(),
+	};
+};
+
 const ProcessCancel = (response: any) => {
 	return {};
 };
@@ -475,6 +481,7 @@ export {
 	Export,
 	Shutdown,
 	UploadFile,
+	DownloadFile,
 	ProcessCancel,
 	LinkPreview,
 

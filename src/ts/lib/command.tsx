@@ -90,6 +90,15 @@ const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, c
 	dispatcher.request('uploadFile', request, callBack);
 };
 
+const DownloadFile = (hash: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.DownloadFile.Request();
+	
+	request.setHash(hash);
+	request.setPath(path);
+
+	dispatcher.request('downloadFile', request, callBack);
+};
+
 const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Process.Cancel.Request();
 	
@@ -1046,6 +1055,7 @@ export {
 	Shutdown,
 	LinkPreview,
 	UploadFile,
+	DownloadFile,
 	ProcessCancel,
 	Export,
 	ExportTemplates,

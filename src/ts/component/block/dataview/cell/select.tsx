@@ -51,7 +51,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 								return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
 							})}
 						</span>
-						{canClear ? <Icon className="clear" onClick={this.onClear} /> : ''}
+						{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (
 					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>
