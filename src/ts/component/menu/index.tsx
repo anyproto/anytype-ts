@@ -522,6 +522,47 @@ class Menu extends React.Component<Props, State> {
 		const l = items.length;
 		const item = items[this.ref.n];
 
+		let ret = false;
+
+		if (this.ref.refFilter) {
+			if (this.ref.refFilter.isFocused) {
+				keyboard.shortcut('arrowdown', e, (pressed: string) => {
+					this.ref.n = 0;
+					this.ref.refFilter.blur();
+					this.setActive(null, true);
+
+					ret = true;
+				});
+
+				keyboard.shortcut('enter, tab', e, (pressed: string) => {
+					this.ref.refFilter.blur();
+					ret = true;
+				});
+
+				keyboard.shortcut('arrowup', e, (pressed: string) => {
+					this.ref.n = l - 1;
+					this.ref.refFilter.blur();
+					this.setActive(null, true);
+
+					ret = true;
+				});
+			} else {
+				keyboard.shortcut('arrowup', e, (pressed: string) => {
+					if (!this.ref.n) {
+						this.ref.n = -1;
+						this.ref.refFilter.focus();
+						this.setActive(null, true);
+
+						ret = true;
+					};
+				});
+			};
+		};
+
+		if (ret) {
+			return;
+		};
+
 		keyboard.shortcut('arrowup', e, (pressed: string) => {
 			e.preventDefault();
 			this.ref.n--;
@@ -577,7 +618,7 @@ class Menu extends React.Component<Props, State> {
 			if (this.ref.recalcIndex) {
 				idx = this.ref.recalcIndex();
 			};
-			this.ref.refList.scrollToRow(idx);
+			this.ref.refList.scrollToRow(Math.max(0, idx));
 		};
 	};
 	

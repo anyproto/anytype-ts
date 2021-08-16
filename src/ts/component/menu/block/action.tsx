@@ -15,9 +15,8 @@ const Constant = require('json/constant.json');
 class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
-	isFocused: boolean = false;
 	n: number = -1;
-	ref: any = null;
+	refFilter: any = null;
 	state = {
 		filter: '',
 	};
@@ -30,7 +29,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		
 		this.onFilterFocus = this.onFilterFocus.bind(this);
-		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
@@ -77,11 +75,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter actions..." 
 					value={filter}
 					onFocus={this.onFilterFocus} 
-					onBlur={this.onFilterBlur} 
 					onChange={this.onFilterChange} 
 				/>
 				
@@ -119,21 +116,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 	focus () {
 		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
+			if (this.refFilter) {
+				this.refFilter.focus();
 			};
 		}, 15);
 	};
 	
 	onFilterFocus (e: any) {
 		menuStore.closeAll(Constant.menuIds.action);
-		
-		this.isFocused = true;
 		this.props.setActive();
-	};
-	
-	onFilterBlur (e: any) {
-		this.isFocused = false;
 	};
 	
 	onFilterChange (v: string) {
@@ -143,7 +134,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
@@ -317,34 +308,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 		
 		return items;
-	};
-	
-	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const k = e.key.toLowerCase();
-
-		if (this.isFocused) {
-			if (k == Key.down) {
-				this.ref.blur();
-				this.n = -1;
-			} else 
-			if ([ Key.enter, Key.space, Key.tab ].indexOf(k) >= 0) {
-				this.ref.blur();
-			} else {
-				return;
-			};
-		} else {
-			if ((k == Key.up) && !this.n) {
-				this.ref.focus();
-				this.n = -1;
-				return;
-			};
-		};
-		
-		this.props.onKeyDown(e);
 	};
 	
 	onMouseEnter (e: any, item: any) {
