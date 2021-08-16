@@ -26,6 +26,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
@@ -59,8 +60,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
-						<div className="clickable">
+					<div id={'item-' + item.id} className="item" style={param.style}>
+						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 							<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
 						</div>
 						<div className="buttons">
@@ -192,6 +193,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	onClick (e: any, item: any) {
+		e.stopPropagation();
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
 
@@ -248,13 +250,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
 		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionEdit', { 
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: 288,
+				offsetX: getSize().width,
 				vertical: I.MenuDirection.Center,
 				passThrough: true,
 				noFlipY: true,
@@ -262,12 +264,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
+					rebind: this.rebind,
 					option: item,
 				}
 			});
 		});
 	};
-	
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;

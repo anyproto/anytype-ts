@@ -41,7 +41,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 					<Tag {...item} className={DataUtil.tagClass(relation.format)} />
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
+					<Icon className="more" onClick={(e: any) => { this.onEdit(e, item); }} />
 					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			</div>
@@ -140,14 +140,14 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	onAdd (e: any) {
 		e.stopPropagation();
 
-		const { param, getId, close } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.close('dataviewOptionEdit', () => {
+		menuStore.closeAll([ 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
 			menuStore.open('dataviewOptionList', {
 				element: `#${getId()} #item-add`,
 				width: 0,
-				offsetX: param.width,
+				offsetX: getSize().width,
 				offsetY: -64,
 				passThrough: true,
 				noFlipY: true,
@@ -167,7 +167,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.close('dataviewOptionEdit', () => {
+		menuStore.closeAll([ 'dataviewOptionList', 'dataviewOptionEdit' ], () => {
 			menuStore.open('dataviewOptionEdit', { 
 				element: `#${getId()} #item-${item.id}`,
 				offsetX: getSize().width,
@@ -186,8 +186,6 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		e.stopPropagation();
-
 		item.id == 'add' ? this.onAdd(e) : this.onEdit(e, item);
 	};
 
