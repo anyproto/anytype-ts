@@ -565,10 +565,17 @@ class Menu extends React.Component<Props, State> {
 
 		keyboard.shortcut('arrowup', e, (pressed: string) => {
 			e.preventDefault();
+			
 			this.ref.n--;
 			if (this.ref.n < 0) {
-				this.ref.n = l - 1;
+				if ((this.ref.n == -1) && this.ref.refFilter) {
+					this.ref.n = -1;
+					this.ref.refFilter.focus();
+				} else {
+					this.ref.n = l - 1;
+				};
 			};
+
 			this.setActive(null, true);
 		});
 
