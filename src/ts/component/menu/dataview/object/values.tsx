@@ -32,7 +32,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const type: any = dbStore.getObjectType(item.type) || {};
 			const cn = [ 'item' ];
 			
 			if (item.id == 'add') {
@@ -53,7 +52,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					{item.id == 'add' ? (
 						<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 							<Icon className="plus" />
-							<div className="name">Add</div>
+							<div className="name">Add object</div>
 						</span>
 					) : (
 						<React.Fragment>
@@ -106,12 +105,12 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -163,7 +162,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			noFlipY: true,
 			noAnimation: true,
 			classNameWrap: classNameWrap,
-			onClose: () => { close(); },
 			data: {
 				...data,
 				rebind: this.rebind,
@@ -201,10 +199,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		onChange(value);
 	};
 
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-	
 });
 
 export default MenuObjectValues;

@@ -165,16 +165,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
-		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
-
 		this.menuClose();
 	};
 

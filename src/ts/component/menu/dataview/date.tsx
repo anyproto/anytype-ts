@@ -14,6 +14,12 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	_isMounted: boolean = false;
 	n: number = 0;
 
+	constructor (props: any) {
+		super(props);
+
+		this.rebind = this.rebind.bind(this);
+	};
+
 	render () {
 		const sections = this.getSections();
 
@@ -53,18 +59,12 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -154,10 +154,6 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 		return options;
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;
@@ -187,6 +183,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			passThrough: true,
 			classNameWrap: classNameWrap,
 			data: {
+				rebind: this.rebind,
 				value: value.id,
 				options: options,
 				onSelect: (e: any, el: any) => {

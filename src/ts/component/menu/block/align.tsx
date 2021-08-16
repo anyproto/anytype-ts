@@ -38,22 +38,13 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		this.rebind();
 	};
 	
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
+	rebind () {
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -75,10 +66,6 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 		};
 
 		return DataUtil.menuGetAlign(hasQuote);
-	};
-	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 	
 	onOver (e: any, item: any) {

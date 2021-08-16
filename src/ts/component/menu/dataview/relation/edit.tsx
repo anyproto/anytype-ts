@@ -164,14 +164,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
-		if (rebind) {
-			rebind();
-		};
-
 		this.menuClose();
 	};
 

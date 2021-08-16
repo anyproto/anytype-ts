@@ -225,8 +225,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		});
 		
 		$(`#${getId()}`).unbind('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
-
-		this.props.setActive();
 	};
 	
 	componentDidUpdate () {
@@ -246,6 +244,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		this.resize();
 
 		this.props.setActive();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		menuStore.closeAll(Constant.menuIds.add);
 	};
 
 	load () {
@@ -291,35 +294,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 		filter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 	};
 	
-	componentWillUnmount () {
-		this._isMounted = false;
-		
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
-		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
-
-		menuStore.closeAll(Constant.menuIds.add);
-	};
-	
 	rebind () {
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
-	};
-	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 	
 	getSections () {

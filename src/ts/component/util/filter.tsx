@@ -26,6 +26,7 @@ class Filter extends React.Component<Props, {}> {
 		placeholder: translate('commonFilterClick'),
 	};
 	
+	isFocused: boolean = false;
 	ref: any = null;
 
 	constructor (props: any) {
@@ -86,6 +87,8 @@ class Filter extends React.Component<Props, {}> {
 	onFocus (e: any) {
 		const { placeholderFocus, onFocus } = this.props;
 
+		this.isFocused = true;
+
 		if (placeholderFocus) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('.input');
@@ -100,6 +103,8 @@ class Filter extends React.Component<Props, {}> {
 	
 	onBlur (e: any) {
 		const { placeholderFocus, placeholder, onBlur } = this.props;
+
+		this.isFocused = false;
 
 		if (placeholderFocus) {
 			const node = $(ReactDOM.findDOMNode(this));

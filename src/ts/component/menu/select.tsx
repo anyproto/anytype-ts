@@ -145,18 +145,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 	
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -183,10 +177,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		return items || [];
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	onOver (e: any, item: any) {
 		const { param, setActive } = this.props;
 		const { data } = param;

@@ -94,14 +94,13 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
-
 		menuStore.closeAll([ 'dataviewViewEdit' ]);
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -202,10 +201,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { oldIndex, newIndex } = result;
 	};
 
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-	
 });
 
 export default MenuViewList;

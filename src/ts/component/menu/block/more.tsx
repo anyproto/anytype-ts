@@ -13,7 +13,7 @@ const Constant = require('json/constant.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -88,25 +88,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
-		this.unbind();
 		menuStore.closeAll(Constant.menuIds.more);
 	};
 
 	rebind () {
 		this.unbind();
-
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
@@ -162,16 +156,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			sections = [
 				{ children: [ archive ] },
 				{ children: [ linkRoot, link ] },
-				{ children: [ search ] },
 				{ children: [ print ] },
 			];
 
-			/*
 			if (block.isObjectSet()) {
 				sections.unshift({ children: [ undo, redo ] });
+			} else {
+				sections.splice(1, 0, { children: [ search ] });
 			};
-			*/
-
 		} else
 		if (block.isPage()) {
 			if (object.type == Constant.typeId.template) {	
