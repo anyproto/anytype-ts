@@ -21,7 +21,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -308,7 +308,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
 
 			if (canAdd && !check.length) {
-				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
+				const name = (relation.format == I.RelationType.Status) ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
+				ret.unshift({ id: 'add', name: name });
 			};
 		};
 
