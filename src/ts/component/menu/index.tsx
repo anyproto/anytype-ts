@@ -33,7 +33,6 @@ import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
 
 import MenuBlockRelationEdit from './block/relation/edit';
-import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
 import MenuRelationSuggest from './relation/suggest';
@@ -99,7 +98,6 @@ const Components: any = {
 	blockLayout:			 MenuBlockLayout,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
-	blockRelationList:		 MenuBlockRelationList,
 	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,

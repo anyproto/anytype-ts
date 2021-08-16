@@ -55,7 +55,7 @@
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
 		"add": [
-			"searchObject", "blockRelationList", "blockRelationEdit"
+			"searchObject", "blockRelationEdit"
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
