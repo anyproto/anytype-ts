@@ -13,7 +13,7 @@ const Constant = require('json/constant.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
