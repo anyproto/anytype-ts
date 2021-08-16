@@ -518,51 +518,46 @@ class Menu extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		const k = e.key.toLowerCase();
 		const items = this.ref.getItems();
 		const l = items.length;
 		const item = items[this.ref.n];
 
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.ref.n--;
-				if (this.ref.n < 0) {
-					this.ref.n = l - 1;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.ref.n++;
-				if (this.ref.n > l - 1) {
-					this.ref.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
-				e.preventDefault();
-				if (item) {
-					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
-				};
-				break;
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			e.preventDefault();
+			this.ref.n--;
+			if (this.ref.n < 0) {
+				this.ref.n = l - 1;
+			};
+			this.setActive(null, true);
+		});
 
-			case Key.right:
-				e.preventDefault();
-				if (item && item.arrow) {
-					this.ref.onOver(e, item);
-				};
-				break;
-				
-			case Key.left:
-			case Key.escape:
-				e.preventDefault();
-				this.close();
-				break;
-		};
+		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+			this.ref.n++;
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+			this.setActive(null, true);
+		});
+
+		keyboard.shortcut('arrowright', e, (pressed: string) => {
+			e.preventDefault();
+			if (item && item.arrow) {
+				this.ref.onOver(e, item);
+			};
+		});
+
+		keyboard.shortcut('tab, enter', e, (pressed: string) => {
+			e.preventDefault();
+			if (item) {
+				item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+			};
+		});
+
+		keyboard.shortcut('arrowleft, escape', e, (pressed: string) => {
+			e.preventDefault();
+			this.close();
+		});
 	};
 
 	setActive (item?: any, scroll?: boolean) {
