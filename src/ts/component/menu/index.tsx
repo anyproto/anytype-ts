@@ -509,7 +509,7 @@ class Menu extends React.Component<Props, State> {
 	};
 
 	onKeyDown (e: any) {
-		if (!this.ref) {
+		if (!this.ref || !this.ref.getItems) {
 			return;
 		};
 
@@ -519,27 +519,32 @@ class Menu extends React.Component<Props, State> {
 		const items = this.ref.getItems();
 		const l = items.length;
 		const item = items[this.ref.n];
+		const refInput = this.ref.refFilter || this.ref.refName;
 
 		let ret = false;
 
-		if (this.ref.refFilter) {
-			if (this.ref.refFilter.isFocused) {
+		if (refInput) {
+			if (refInput.isFocused) {
+				keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+					ret = true;
+				});
+
 				keyboard.shortcut('arrowdown', e, (pressed: string) => {
 					this.ref.n = 0;
-					this.ref.refFilter.blur();
+					refInput.blur();
 					this.setActive(null, true);
 
 					ret = true;
 				});
 
 				keyboard.shortcut('enter, tab', e, (pressed: string) => {
-					this.ref.refFilter.blur();
+					refInput.blur();
 					ret = true;
 				});
 
 				keyboard.shortcut('arrowup', e, (pressed: string) => {
 					this.ref.n = l - 1;
-					this.ref.refFilter.blur();
+					refInput.blur();
 					this.setActive(null, true);
 
 					ret = true;
@@ -548,7 +553,7 @@ class Menu extends React.Component<Props, State> {
 				keyboard.shortcut('arrowup', e, (pressed: string) => {
 					if (!this.ref.n) {
 						this.ref.n = -1;
-						this.ref.refFilter.focus();
+						refInput.focus();
 						this.setActive(null, true);
 
 						ret = true;
@@ -566,46 +571,37 @@ class Menu extends React.Component<Props, State> {
 			this.close();
 		});
 
-		if (this.ref.getItems) {
-			keyboard.shortcut('arrowup', e, (pressed: string) => {
-				e.preventDefault();
-				
-				this.ref.n--;
-				if (this.ref.n < 0) {
-					if ((this.ref.n == -1) && this.ref.refFilter) {
-						this.ref.n = -1;
-						this.ref.refFilter.focus();
-					} else {
-						this.ref.n = l - 1;
-					};
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			e.preventDefault();
+			
+			this.ref.n--;
+			if (this.ref.n < 0) {
+				if ((this.ref.n == -1) && refInput) {
+					this.ref.n = -1;
+					refInput.focus();
+				} else {
+					this.ref.n = l - 1;
 				};
+			};
 
-				this.setActive(null, true);
-			});
+			this.setActive(null, true);
+		});
 
-			keyboard.shortcut('arrowdown', e, (pressed: string) => {
-				e.preventDefault();
-				this.ref.n++;
-				if (this.ref.n > l - 1) {
-					this.ref.n = 0;
-				};
-				this.setActive(null, true);
-			});
+		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+			this.ref.n++;
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+			this.setActive(null, true);
+		});
 
-			keyboard.shortcut('arrowright', e, (pressed: string) => {
-				e.preventDefault();
-				if (item && item.arrow) {
-					this.ref.onOver(e, item);
-				};
-			});
-
-			keyboard.shortcut('tab, enter', e, (pressed: string) => {
-				e.preventDefault();
-				if (item) {
-					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
-				};
-			});
-		};
+		keyboard.shortcut('tab, enter, arrowright', e, (pressed: string) => {
+			e.preventDefault();
+			if (item) {
+				item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+			};
+		});
 
 		if (this.ref.onSortEnd) {
 			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
@@ -634,6 +630,11 @@ class Menu extends React.Component<Props, State> {
 	setActive (item?: any, scroll?: boolean) {
 		if (!this.ref || !this.ref.getItems) {
 			return;
+		};
+
+		const refInput = this.ref.refFilter || this.ref.refName;
+		if ((this.ref.n == -1) && refInput) {
+			refInput.focus();
 		};
 
 		const items = this.ref.getItems();
