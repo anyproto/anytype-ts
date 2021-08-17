@@ -525,17 +525,12 @@ class Menu extends React.Component<Props, State> {
 		let ret = false;
 
 		if (this.ref.refFilter) {
-			if (this.ref.refFilter.isFocused) {
+			if (this.ref.refFilter.isFocused && (this.ref.n < 0)) {
 				keyboard.shortcut('arrowdown', e, (pressed: string) => {
 					this.ref.n = 0;
 					this.ref.refFilter.blur();
 					this.setActive(null, true);
 
-					ret = true;
-				});
-
-				keyboard.shortcut('enter, tab', e, (pressed: string) => {
-					this.ref.refFilter.blur();
 					ret = true;
 				});
 
