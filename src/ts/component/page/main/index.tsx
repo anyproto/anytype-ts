@@ -404,7 +404,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			},
 			data: {
 				options: options,
-				onMouseEnter: (e: any, el: any) => {
+				onOver: (e: any, el: any) => {
 					menuStore.closeAll(subIds, () => {
 						if (el.id == 'move') {
 							const filters = [
@@ -415,12 +415,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
 							};
 
+							console.log(menuContext);
+
 							menuStore.open('searchObject', {
 								element: `#menuSelect #item-${el.id}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+
 								data: {
+									rebind: menuContext.ref.rebind,
 									rootId: rootId,
 									blockId: item.id,
 									blockIds: [ item.id ],
