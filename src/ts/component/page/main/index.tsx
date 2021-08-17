@@ -415,8 +415,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
 							};
 
-							console.log(menuContext);
-
 							menuStore.open('searchObject', {
 								element: `#menuSelect #item-${el.id}`,
 								offsetX: menuContext.getSize().width,
