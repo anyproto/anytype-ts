@@ -37,9 +37,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		};
 
   		const simulation = d3.forceSimulation(nodes)
-		.force('link', d3.forceLink(links).id(d => d.id).distance(200))
+		.force('link', d3.forceLink(links).id(d => d.id).distance(30))
 		.force('charge', d3.forceManyBody())
-		.force('center', d3.forceCenter(width / 2, height / 2));
+		.force('center', d3.forceCenter(width / 2, height / 2))
+		.force('collision', d3.forceCollide(nodes).radius(d => this.radius(d)));
 
 		const svg = d3.create('svg')
 		.attr('viewBox', [ 0, 0, width, height ]);
@@ -94,7 +95,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		const img = el.append('circle')
 		.attr('r', d => this.radius(d))
 		.style('fill', (d: any) => { return `url(#${d.id})`; });
-		
+
 		simulation.on('tick', () => {
 			link
 			.attr('x1', d => d.source.x)
@@ -115,7 +116,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	radius (d: any) {
-		return Math.max(5, Math.min(20, (this.weights[d.id].source + this.weights[d.id].target) / 2));
+		const r = Math.max(5, Math.min(30, (this.weights[d.id].source + this.weights[d.id].target) / 2));
+		return r;
 	};
 
 	drag (simulation: any) {
@@ -137,8 +139,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			if (!e.active) {
 				simulation.alphaTarget(0);
 			};
-			d.fx = null;
-			d.fy = null;
+			//d.fx = null;
+			//d.fy = null;
 		};
 
 		return d3.drag()
