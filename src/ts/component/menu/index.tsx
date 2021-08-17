@@ -524,7 +524,7 @@ class Menu extends React.Component<Props, State> {
 		let ret = false;
 
 		if (refInput) {
-			if (refInput.isFocused) {
+			if (refInput.isFocused && (this.ref.n < 0)) {
 				keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 					ret = true;
 				});
@@ -534,11 +534,6 @@ class Menu extends React.Component<Props, State> {
 					refInput.blur();
 					this.setActive(null, true);
 
-					ret = true;
-				});
-
-				keyboard.shortcut('enter, tab', e, (pressed: string) => {
-					refInput.blur();
 					ret = true;
 				});
 

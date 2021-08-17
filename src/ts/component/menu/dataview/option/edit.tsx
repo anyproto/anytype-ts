@@ -20,7 +20,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		super(props);
 
 		this.onRemove = this.onRemove.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 	};
 
 	render () {
@@ -71,7 +70,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					value={option.text}
 					onKeyDown={(e: any, v: string) => { this.onKeyDown(e, v); }}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
-					onBlur={this.onBlur}
 				/>
 
 				{sections.map((item: any, i: number) => (
@@ -153,13 +151,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
-	onBlur () {
-		window.clearTimeout(this.timeout);
-		this.save();
-	};
 
 	onClick (e: any, item: any) {
-		console.log(item);
 		if (item.isBgColor) {
 			this.color = item.value;
 			this.save();
