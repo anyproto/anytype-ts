@@ -202,6 +202,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.rebind();
 	};
 
+	componentDidUpdate () {
+		this.props.setActive();
+	};
+
 	componentWillUnmount () {
 		this.unbind();
 		menuStore.closeAll(Constant.menuIds.cell);

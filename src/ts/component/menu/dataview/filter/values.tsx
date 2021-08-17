@@ -183,7 +183,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			<div>
 				<div className="section">
 					{items.map((item: any, i: number) => (
-						<MenuItemVertical key={i} {...item} onOver={(e: any) => { this.onOver(e, item); }} />
+						<MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
 					))}
 				</div>
 
