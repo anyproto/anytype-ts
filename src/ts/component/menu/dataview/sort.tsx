@@ -20,7 +20,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		super(props);
 		
 		this.onAdd = this.onAdd.bind(this);
-		this.onDelete = this.onDelete.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -58,7 +58,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 						<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 						<Select id={[ 'filter', 'type', item.id ].join('-')} className="grey" options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
 					</div>
-					{allowedView ? <Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} /> : ''}
+					{allowedView ? <Icon className="delete" onClick={(e: any) => { this.onRemove(e, item.id); }} /> : ''}
 				</div>
 			);
 		});
@@ -162,7 +162,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		this.forceUpdate();
 	};
 	
-	onDelete (e: any, id: number) {
+	onRemove (e: any, id: number) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;

@@ -614,17 +614,33 @@ class Menu extends React.Component<Props, State> {
 				this.onSortMove(1);
 			});
 		};
+
+		if (this.ref.onRemove) {
+			keyboard.shortcut('backspace', e, (pressed: string) => {
+				e.preventDefault();
+
+				this.ref.n--;
+				this.checkIndex();
+				this.ref.onRemove(e, item);
+				this.setActive(null, true);
+			});
+		};
 	};
 
 	onSortMove (dir: number) {
 		const n = this.ref.n;
-		const items = this.ref.getItems();
 
 		this.ref.n = n + dir;
-		this.ref.n = Math.max(0, this.ref.n);
-		this.ref.n = Math.min(items.length - 1, this.ref.n);
+		this.checkIndex();
 
 		this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
+	};
+
+	checkIndex () {
+		const items = this.ref.getItems();
+
+		this.ref.n = Math.max(0, this.ref.n);
+		this.ref.n = Math.min(items.length - 1, this.ref.n);
 	};
 
 	setActive (item?: any, scroll?: boolean) {
