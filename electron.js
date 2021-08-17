@@ -208,9 +208,9 @@ function createWindow () {
 
 		const a = systemVersion.split('.');
 		if (a.length && (a[0] == 11)) {
-			param.trafficLightPosition = { x: 20, y: 36 };
+			param.trafficLightPosition = { x: 20, y: 26 };
 		} else {
-			param.trafficLightPosition = { x: 20, y: 21 };
+			param.trafficLightPosition = { x: 20, y: 10 };
 		};
 	};
 
