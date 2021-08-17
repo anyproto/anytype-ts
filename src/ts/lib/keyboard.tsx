@@ -129,12 +129,15 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
+				popupStore.open('graph', {});
+				/*
 				popupStore.open('navigation', { 
 					data: { 
 						type: I.NavigationType.Go, 
 						rootId: rootId,
 					}, 
 				});
+				*/
 			});
 
 			// Go to dashboard

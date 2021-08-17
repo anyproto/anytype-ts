@@ -29,8 +29,10 @@ const Shutdown = () => {
 	return {};
 };
 
-const Export = () => {
-	return {};
+const Export = (response: any) => {
+	return {
+		path: response.getPath(),
+	};
 };
 
 const LinkPreview = (response: any) => {

@@ -64,6 +64,10 @@ export interface LinkPreview {
 export enum ExportFormat {
 	Markdown = 0,
 	Protobuf = 1,
+	Json	 = 2,
+	Dot		 = 3,
+	Svg		 = 4,
+	GraphJson = 5,
 };
 
 export enum Source {

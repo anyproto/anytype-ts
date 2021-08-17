@@ -2,6 +2,6 @@
 
 .popups {
 	.popup.popupGraph {
-		.innerWrap { width: calc(100% - 32px); height: calc(100% - 48px); }
+		.innerWrap { width: calc(100% - 32px); height: calc(100% - 48px); overflow: hidden; }
 	}
 }
