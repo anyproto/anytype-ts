@@ -24,8 +24,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	height: number = 0;
 	edges: any[] = [];
 	nodes: any[] = [];
+	weights: any = {};
 
 	link: any = null;
+	node: any = null;
 
 	forceProps: any = {
 		center: {
@@ -49,6 +51,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			distance: 30,
 			iterations: 1
 		},
+
+		orphans: true,
+		markers: true,
 	};
 
 	render () {
@@ -177,6 +182,24 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 							}} />
 						</div>
 					</div>
+
+					<div className="section">
+						<div className="name">Flags</div>
+						<div className="item">
+							<Checkbox value={this.forceProps.orphans} onChange={(e: any, v: any) => {
+								this.forceProps.orphans = v;
+								this.updateDisplay();
+							}} />
+							Show orphans
+						</div>
+						<div className="item">
+							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
+								this.forceProps.markers = v;
+								this.updateDisplay();
+							}} />
+							Show markers
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -220,10 +243,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		const zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', onZoom);
 
 		let group: any = null;
-		let weights: any = {};
-
 		for (let item of this.nodes) {
-			weights[item.id] = {
+			this.weights[item.id] = {
 				source: this.edges.filter((it: any) => { return it.source == item.id; }).length,
 				target: this.edges.filter((it: any) => { return it.target == item.id; }).length,
 			};
@@ -241,9 +262,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.typeName = type ? type.name : translate('defaultNamePage');
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
-			d.radius = Math.max(5, Math.min(10, weights[d.id].source));
+			d.radius = Math.max(5, Math.min(10, this.weights[d.id].source));
+			d.isRoot = d.id == root;
 
-			if (d.id == root) {
+			if (d.isRoot) {
 				d.radius = 15;
 			};
 			return d;
@@ -269,8 +291,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			};
 		}));
 
-		svg.append('svg:defs')
-		.selectAll('pattern')
+		let defs = svg.append('svg:defs');
+		
+		defs.selectAll('pattern')
 		.data(this.nodes)
 		.join('svg:pattern')
 		.attr('id', d => d.id)
@@ -335,6 +358,30 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			return src;
 		});
 
+		defs
+		.selectAll('marker')
+		.data(this.edges)
+        .join('svg:marker')
+		.attr('id', (d: any) => { 
+			return `marker${d.source.id + d.target.id}`; 
+		})
+		.attr('viewBox', [ 0, 0, 5, 5 ])
+		.attr('refX', d => d.target.radius + 5)
+		.attr('refY', 2.5)
+		.attr('orient', 'auto')
+		.attr('markerWidth', 5)
+		.attr('markerHeight', 5)
+		.attr('markerUnits', 'userSpaceOnUse')
+        .append('svg:path')
+        .attr('d', 'M 0 0 L 5 2.5 L 0 5 z')
+        .attr('fill', (d: any) => {
+			let r = BG0;
+			if (!d.type) {
+				r = '#4287f5';
+			};
+			return r;
+		});
+
 		const tooltip = d3.select("#graph")
   		.append('div')
 		.attr('class', 'tooltip');
@@ -371,7 +418,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			tooltip.style('display', 'none');
 		});
 
-		const el = group.append('g')
+		this.node = group.append('g')
 		.selectAll('g')
 		.data(this.nodes)
 		.join('g')
@@ -429,7 +476,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			};
   		};
 
-		const bg = el.append('circle')
+		const bg = this.node.append('circle')
 		.attr('stroke', BG0)
 		.attr('stroke-opacity', 1)
 		.attr('stroke-width', 0.5)
@@ -437,17 +484,17 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('id', 'bg')
 		.attr('r', d => d.radius);
 
-		const img = el.append('circle')
+		const img = this.node.append('circle')
 		.attr('r', d => d.radius)
 		.style('fill', (d: any) => { return `url(#${d.id})`; });
 
-		const text = el.append('text')
+		const text = this.node.append('text')
 		.attr('class', 'graphLabel')
 		.attr('fill', '#929082')
         .style('text-anchor', 'middle')
         .text(d => Util.shorten(d.name, 10));
 
-		const rn = this.nodes.find((d: any) => { return d.id == root; });
+		const rn = this.nodes.find((d: any) => { return d.isRoot; });
 
 		this.simulation.on('tick', () => {
 			rn.x = this.width / 2;
@@ -469,10 +516,11 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			text
 			.attr('x', d => d.x)
-			.attr('y', d => d.y + d.radius + 3);
+			.attr('y', d => d.y + d.radius + 4);
 		});
 
 		node.find('#graph').append(svg.node());
+		this.updateDisplay();
 	};
 
 	initForces () {
@@ -487,7 +535,18 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 	updateDisplay () {
 		this.link
-        .attr('opacity', this.forceProps.link.enabled ? 1 : 0);
+        .attr('opacity', this.forceProps.link.enabled ? 1 : 0)
+		.attr('marker-end', d => { 
+			return this.forceProps.markers ? `url(#marker${d.source.id + d.target.id})` : null; 
+		});
+
+		this.node.
+		attr('opacity', (d: any) => {
+			if (this.forceProps.orphans) {
+				return 1;
+			};
+			return (this.weights[d.id].target || this.weights[d.id].source) ? 1 : 0;
+		});
 	};
 
 	updateForces() {
