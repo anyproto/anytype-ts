@@ -129,7 +129,11 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
-				popupStore.open('graph', {});
+				popupStore.open('graph', {
+					data: { 
+						rootId: rootId,
+					}, 
+				});
 				/*
 				popupStore.open('navigation', { 
 					data: { 
