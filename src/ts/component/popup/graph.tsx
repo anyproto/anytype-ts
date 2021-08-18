@@ -27,7 +27,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	componentDidMount () {
-		const node = $(ReactDOM.findDOMNode(this));
 		const fp = path.join(userPath, 'tmp');
 
 		C.Export(fp, [], I.ExportFormat.GraphJson, false, (message: any) => {
@@ -139,16 +138,25 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('xlink:href', (d: any) => {
 			let src = '';
 
-			if (d.iconEmoji) {
-				const data = SmileUtil.data(d.iconEmoji);
-				if (data) {
-					src = SmileUtil.srcFromColons(data.colons, data.skin);
-				};
-				src = src.replace(/^.\//, '');
+			switch (d.layout) {
+				case I.ObjectLayout.Task:
+					src = 'img/icon/task.svg';
+					break;
+
+				default:
+					if (d.iconImage) {
+						src = commonStore.imageUrl(d.iconImage, d.radius * 2);
+					} else
+					if (d.iconEmoji) {
+						const data = SmileUtil.data(d.iconEmoji);
+						if (data) {
+							src = SmileUtil.srcFromColons(data.colons, data.skin);
+						};
+						src = src.replace(/^.\//, '');
+					};
+					break;
 			};
-			if (d.iconImage) {
-				src = commonStore.imageUrl(d.iconImage, d.radius * 2);
-			};
+
 			if (!src) {
 				src = 'img/icon/page.svg';
 			};
@@ -160,7 +168,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('class', 'tooltip');
 
 		const link = group.append('g')
-		.attr('stroke', '#eae9e0')
+		.attr('stroke', BG0)
 		.attr('stroke-opacity', 1)
 		.attr('stroke-width', 0.5)
 		.selectAll('line')
@@ -189,7 +197,30 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d3.select(this).select('#bg').style('fill', BG0);
 			tooltip.style('display', 'none');
 		})
-		.call(this.drag(simulation));
+		.call(d3.drag()
+			.on('start', (e: any, d: any) => {
+				if (!e.active) {
+					simulation.alphaTarget(0.3).restart();
+				};
+				d.fx = d.x;
+				d.fy = d.y;
+
+				tooltip.style('display', 'none');
+			})
+			.on('drag', (e: any, d: any) => {
+				d.fx = e.x;
+				d.fy = e.y;
+
+				tooltip.style('display', 'none');
+			})
+			.on('end', (e: any, d: any) => {
+				if (!e.active) {
+					simulation.alphaTarget(0);
+				};
+				//d.fx = null;
+				//d.fy = null;
+			})
+		);
 
 		function onZoom ({ transform }) {
 			if (group) {
@@ -198,6 +229,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
   		};
 
 		const bg = el.append('circle')
+		.attr('stroke', BG0)
+		.attr('stroke-opacity', 1)
+		.attr('stroke-width', 0.5)
 		.style('fill', BG0)
 		.attr('id', 'bg')
 		.attr('r', d => d.radius);
@@ -225,35 +259,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		node.find('#graph').append(svg.node());
 	};
 
-	drag (simulation: any) {
-  
-		function onDragStart (e: any, d: any) {
-			if (!e.active) {
-				simulation.alphaTarget(0.3).restart();
-			};
-			d.fx = d.x;
-			d.fy = d.y;
-		};
-		
-		function onDragMove (e: any, d: any) {
-			d.fx = e.x;
-			d.fy = e.y;
-		};
-		
-		function onDragEnd (e: any, d: any) {
-			if (!e.active) {
-				simulation.alphaTarget(0);
-			};
-			//d.fx = null;
-			//d.fy = null;
-		};
-
-		return d3.drag()
-		.on('start', onDragStart)
-		.on('drag', onDragMove)
-		.on('end', onDragEnd);
-	};
-	
 });
 
 export default PopupGraph;
