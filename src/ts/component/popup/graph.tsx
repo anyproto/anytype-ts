@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
-import { commonStore, blockStore } from 'ts/store';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -68,6 +68,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		};
 
 		nodes = nodes.map((d: any) => {
+			const type = dbStore.getObjectType(d.type);
+
+			d.type = type ? type.name : translate('defaultNamePage');
 			d.name = d.name || translate('defaultNamePage');
 			d.radius = Math.max(5, Math.min(10, weights[d.id].source));
 			if (d.id == root) {
@@ -186,7 +189,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.on('mouseenter', function (e: any, d: any) {
 			d3.select(this).select('#bg').style('fill', BG1);
 			
-			tooltip.style('display', 'block').text(Util.shorten(d.name, 24));
+			tooltip.style('display', 'block').
+			html(`<b>Name:</b> ${Util.shorten(d.name, 24)}<br/><b>Type</b>: ${d.type}`);
 		})
 		.on('mousemove', (e: any) => {
 			tooltip.
