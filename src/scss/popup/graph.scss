@@ -3,5 +3,29 @@
 .popups {
 	.popup.popupGraph {
 		.innerWrap { width: calc(100% - 32px); height: calc(100% - 48px); overflow: hidden; }
+		.content { height: 100%; }
+		.graphLabel { font-size: 3px; font-family: 'Inter'; }
+
+		.sides { display: flex; height: 100%; }
+		.side { height: 100%; }
+		.side.left { width: calc(100% - 300px); }
+		.side.right { width: 300px; background: rgba(134, 125, 66, 0.08); padding: 20px; }
+
+		.section { margin-bottom: 24px; }
+		.section {
+			.item { margin-bottom: 10px; }
+
+			.name { @include text-header3; margin-bottom: 12px; line-height: 24px; }
+			.label { @include text-common; margin-bottom: 6px; }
+
+			.icon.checkbox { vertical-align: top; margin-right: 6px; }
+		}
+
+		.input-drag { height: 12px; }
+		.input-drag {
+			.icon { border-color: $colorBlack; background: $colorBlack; }
+			.fill { background: $colorBlack; }
+			.back { background: $colorLightGrey; }
+		}
 	}
 }
