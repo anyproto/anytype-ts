@@ -1003,6 +1003,16 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request('objectSetLayout', request, callBack);
 };
 
+const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Graph.Request();
+	
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+    request.setLimit(limit);
+	request.setObjecttypefilterList(types);
+
+	dispatcher.request('objectGraph', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1156,6 +1166,7 @@ export {
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
 	ObjectSetLayout,
+	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 

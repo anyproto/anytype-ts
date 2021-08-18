@@ -389,7 +389,7 @@
 	"placeholderCell11": { "en": "Select tags" },
 	"placeholderCell100": { "en": "Select objects" },
 
-	"edgeType0": { "en": "Relation" },
-	"edgeType1": { "en": "Link" }
+	"edgeType0": { "en": "Link" },
+	"edgeType1": { "en": "Relation" }
 
 }

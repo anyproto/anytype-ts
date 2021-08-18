@@ -73,3 +73,8 @@ export enum ExportFormat {
 export enum Source {
 	Popup = 0,
 };
+
+export enum EdgeType {
+	Link		 = 0,
+	Relation	 = 1,
+};

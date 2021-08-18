@@ -131,7 +131,8 @@
 		"type": "_otobjectType",
 		"image": "_otimage",
 		"file": "_otfile",
-		"video": "_otvideo"
+		"video": "_otvideo",
+		"relation": "_otrelation"
 	},
 
 	"blockId": {

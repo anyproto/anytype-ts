@@ -2,17 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
 import { Label, Drag, Checkbox } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, dbStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
 interface Props extends I.Popup {};
 
-const fs = window.require('fs');
-const { app } = window.require('electron').remote;
 const $ = require('jquery');
-const path = window.require('path');
-const userPath = app.getPath('userData');
+const Constant = require('json/constant.json');
 
 const BG0 = '#f3f2ec';
 const BG1 = '#f0efe9';
@@ -210,23 +207,39 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	componentDidMount () {
-		const fp = path.join(userPath, 'tmp');
+		const filters: any[] = [
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
+				value: [ 
+					Constant.typeId.relation,
+					Constant.typeId.template,
+					Constant.typeId.type,
+					Constant.typeId.file,
+					Constant.typeId.image,
+					Constant.typeId.video,
+				] 
+			},
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
+				value: [
+					'_anytype_profile',
+					blockStore.profile,
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			},
+		];
 
-		C.Export(fp, [], I.ExportFormat.GraphJson, false, (message: any) => {
+		C.ObjectGraph(filters, 0, [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			let content = fs.readFileSync(path.join(message.path, 'export.json'), 'UTF-8');
-			let data = { edges: [], nodes: [] };
+			this.edges = message.edges.map(d => Object.create(d)).filter(d => { return d.source !== d.target; });
+			this.nodes = message.nodes.map(d => Object.create(d));
 
-			try { data = JSON.parse(content); } catch (e) {};
-
-			this.edges = data.edges.map(d => Object.create(d));
-			this.nodes = data.nodes.map(d => Object.create(d));
 			this.init();
-
-			Util.deleteFolderRecursive(message.path);
 		});
 	};
 
@@ -245,7 +258,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
-		this.transform = d3.zoomIdentity.translate(-this.width, -this.height).scale(3);
+		this.transform = d3.zoomIdentity.translate(-this.width, -this.height).scale(3.5);
 		this.zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', param => this.onZoom(param));
 
 		for (let item of this.nodes) {
@@ -348,6 +361,18 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					src = 'img/icon/task.svg';
 					break;
 
+				case I.ObjectLayout.File:
+					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
+					break;
+
+				case I.ObjectLayout.Image:
+					if (d.id) {
+						src = commonStore.imageUrl(d.id, d.radius * 2);
+					} else {
+						src = `img/icon/file/${Util.fileIcon(d)}.svg`;
+					};
+					break;
+
 				default:
 					if (d.iconImage) {
 						src = commonStore.imageUrl(d.iconImage, d.radius * 2);
@@ -387,7 +412,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .attr('d', 'M 0 0 L 3 1.5 L 0 3 z')
         .attr('fill', (d: any) => {
 			let r = BG0;
-			if (!d.type) {
+			if (d.type == I.EdgeType.Relation) {
 				r = '#4287f5';
 			};
 			return r;
@@ -405,7 +430,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.join('line')
 		.attr('stroke', (d: any) => {
 			let r = BG0;
-			if (!d.type) {
+			if (d.type == I.EdgeType.Relation) {
 				r = '#4287f5';
 			};
 			return r;
@@ -413,11 +438,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.on('mouseenter', function (e: any, d: any) {
 			d3.select(this).style('stroke-width', 1.5);
 
+			const text = [ `<b>Type</b>: ${d.typeName}` ];
+			if (d.name) {
+				text.unshift(`<b>Name:</b> ${Util.shorten(d.name, 24)}`);
+			};
+
 			tooltip.style('display', 'block').
-			html([ 
-				`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
-				`<b>Type</b>: ${d.typeName}`,
-			].join('<br/>'));
+			html(text.join('<br/>'));
 		})
 		.on('mousemove', (e: any) => {
 			tooltip.

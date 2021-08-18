@@ -324,6 +324,30 @@ const Mapper = {
             };
         },
 
+		GraphEdge: (obj: any) => {
+            return {
+				type: obj.getType(),
+				source: obj.getSource(),
+				target: obj.getTarget(),
+				name: obj.getName(),
+				description: obj.getDescription(),
+				iconImage: obj.getIconimage(),
+				iconEmoji: obj.getIconemoji(),
+            };
+        },
+
+		GraphNode: (obj: any) => {
+            return {
+                id: obj.getId(),
+				type: obj.getType(),
+				name: obj.getName(),
+				layout: obj.getLayout(),
+				description: obj.getDescription(),
+				iconImage: obj.getIconimage(),
+				iconEmoji: obj.getIconemoji(),
+            };
+        },
+
     },
 
 	//------------------------------------------------------------

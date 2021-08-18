@@ -426,9 +426,14 @@ const SetCreate = (response: any) => {
 
 const ObjectSearch = (response: any) => {
 	return {
-		records: (response.getRecordsList() || []).map((it: any) => {
-			return Decode.decodeStruct(it);
-		}),
+		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+	};
+};
+
+const ObjectGraph = (response: any) => {
+	return {
+		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
+		nodes: (response.getNodesList() || []).map(Mapper.From.GraphNode),
 	};
 };
 
@@ -574,6 +579,7 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
