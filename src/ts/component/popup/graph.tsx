@@ -71,8 +71,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			const type = dbStore.getObjectType(d.type);
 
 			d.type = type ? type.name : translate('defaultNamePage');
+			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
 			d.radius = Math.max(5, Math.min(10, weights[d.id].source));
+
 			if (d.id == root) {
 				d.radius = 15;
 			};
@@ -94,10 +96,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		group = svg.append('g')
 		.attr('transform', transform)
-		.call(d3.drag().on('drag', (d: any) => {
+		.call(d3.drag().on('drag', (e: any, d: any) => {
 			d3.select(this)
-			.attr('cx', d.x = d3.event.x)
-			.attr('cy', d.y = d3.event.y);
+			.attr('cx', d.x = e.x)
+			.attr('cy', d.y = e.y);
 		}));
 
 		svg.append('svg:defs')
@@ -190,7 +192,11 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d3.select(this).select('#bg').style('fill', BG1);
 			
 			tooltip.style('display', 'block').
-			html(`<b>Name:</b> ${Util.shorten(d.name, 24)}<br/><b>Type</b>: ${d.type}`);
+			html([ 
+				`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
+				`<b>Type</b>: ${d.type}`,
+				`<b>Layout</b>: ${translate('layout' + d.layout)}`,
+			].join('<br/>'));
 		})
 		.on('mousemove', (e: any) => {
 			tooltip.
