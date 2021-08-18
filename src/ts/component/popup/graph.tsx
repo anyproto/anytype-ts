@@ -258,7 +258,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
-		this.transform = d3.zoomIdentity.translate(-this.width, -this.height).scale(3.5);
+		this.transform = d3.zoomIdentity.translate(-this.width, -this.height).scale(3);
 		this.zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', param => this.onZoom(param));
 
 		for (let item of this.nodes) {
@@ -286,6 +286,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			if (d.isRoot) {
 				d.radius = 15;
 			};
+
 			if (rootId && (d.id == rootId)) {
 				d.fx = this.width / 2;
 				d.fy = this.height / 2;
