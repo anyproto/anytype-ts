@@ -39,6 +39,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			try { data = JSON.parse(content); } catch (e) {};
 
+			console.log(data);
+
 			this.init(data);
 			Util.deleteFolderRecursive(message.path);
 		});
@@ -67,10 +69,16 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			};
 		};
 
+		edges = edges.map((d: any) => {
+			d.type = Number(d.type) || 0;
+			d.typeName = translate('edgeType' + d.type);
+			return d;
+		});
+
 		nodes = nodes.map((d: any) => {
 			const type = dbStore.getObjectType(d.type);
 
-			d.type = type ? type.name : translate('defaultNamePage');
+			d.typeName = type ? type.name : translate('defaultNamePage');
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
 			d.radius = Math.max(5, Math.min(10, weights[d.id].source));
@@ -173,12 +181,36 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('class', 'tooltip');
 
 		const link = group.append('g')
-		.attr('stroke', BG0)
 		.attr('stroke-opacity', 1)
 		.attr('stroke-width', 0.5)
 		.selectAll('line')
 		.data(edges)
-		.join('line');
+		.join('line')
+		.attr('stroke', (d: any) => {
+			let r = BG0;
+			if (!d.type) {
+				r = '#4287f5';
+			};
+			return r;
+		})
+		.on('mouseenter', function (e: any, d: any) {
+			d3.select(this).style('stroke-width', 1.5);
+
+			tooltip.style('display', 'block').
+			html([ 
+				`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
+				`<b>Type</b>: ${d.typeName}`,
+			].join('<br/>'));
+		})
+		.on('mousemove', (e: any) => {
+			tooltip.
+			style('top', (e.pageY + 10) + 'px').
+			style('left', (e.pageX + 10) + 'px');
+		})
+		.on('mouseleave', function (e: any, d: any) {
+			d3.select(this).style('stroke-width', 0.5);
+			tooltip.style('display', 'none');
+		});
 
 		const el = group.append('g')
 		.selectAll('g')
@@ -194,7 +226,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			tooltip.style('display', 'block').
 			html([ 
 				`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
-				`<b>Type</b>: ${d.type}`,
+				`<b>Type</b>: ${d.typeName}`,
 				`<b>Layout</b>: ${translate('layout' + d.layout)}`,
 			].join('<br/>'));
 		})
