@@ -55,8 +55,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = obj.width();
 		const height = obj.height();
-		const transform = d3.zoomIdentity;
+		const transform = d3.zoomIdentity.translate(0, 0).scale(2);
+		const zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', onZoom);
 
+		let group: any = null;
 		let weights: any = {};
 
 		for (let item of nodes) {
@@ -85,9 +87,11 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('viewBox', [ 0, 0, width, height ])
 		.attr('width', width)
     	.attr('height', height)
-		.call(d3.zoom().scaleExtent([1 / 2, 8]).on('zoom', zoom));
+		.call(zoom)
+		.call(zoom.transform, transform);
 
-		const group = svg.append('g')
+		group = svg.append('g')
+		.attr('transform', transform)
 		.call(d3.drag().on('drag', (d: any) => {
 			d3.select(this)
 			.attr('cx', d.x = d3.event.x)
@@ -187,8 +191,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		})
 		.call(this.drag(simulation));
 
-		function zoom ({ transform }) {
-			group.attr('transform', transform);
+		function onZoom ({ transform }) {
+			if (group) {
+				group.attr('transform', transform);
+			};
   		};
 
 		const bg = el.append('circle')
@@ -221,7 +227,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 	drag (simulation: any) {
   
-		function dragStart (e: any, d: any) {
+		function onDragStart (e: any, d: any) {
 			if (!e.active) {
 				simulation.alphaTarget(0.3).restart();
 			};
@@ -229,12 +235,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.fy = d.y;
 		};
 		
-		function dragMove (e: any, d: any) {
+		function onDragMove (e: any, d: any) {
 			d.fx = e.x;
 			d.fy = e.y;
 		};
 		
-		function dragEnd (e: any, d: any) {
+		function onDragEnd (e: any, d: any) {
 			if (!e.active) {
 				simulation.alphaTarget(0);
 			};
@@ -243,9 +249,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		};
 
 		return d3.drag()
-		.on('start', dragStart)
-		.on('drag', dragMove)
-		.on('end', dragEnd);
+		.on('start', onDragStart)
+		.on('drag', onDragMove)
+		.on('end', onDragEnd);
 	};
 	
 });
