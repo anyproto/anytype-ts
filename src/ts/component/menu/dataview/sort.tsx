@@ -14,7 +14,7 @@ const Constant = require('json/constant.json');
 
 const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 	
-	items: I.Sort[] = [];
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -34,7 +34,8 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 			return null;
 		};
 
-		const sortCnt = view.sorts.length;
+		const items = this.getItems();
+		const sortCnt = items.length;
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
@@ -51,7 +52,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
-				<div className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
+				<div id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
@@ -74,7 +75,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 			return (
 				<div className="items">
 					<div className="scrollWrap">
-						{view.sorts.map((item: any, i: number) => (
+						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} id={i} index={i} />
 						))}
 						{!view.sorts.length ? (
@@ -105,13 +106,46 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 			/>
 		);
 	};
+
+	componentDidMount() {
+		this.rebind();
+	};
 	
 	componentDidUpdate () {
+		this.props.setActive();
 		this.props.position();
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		menuStore.closeAll(Constant.menuIds.cell);
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { getView } = data;
+		const view = getView();
+
+		if (!view) {
+			return [];
+		};
+		
+		let n = 0;
+		return view.sorts.map((it: any) => {
+			it.id = n++;
+			return it;
+		});
 	};
 
 	getRelationOptions () {
@@ -162,13 +196,13 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		this.forceUpdate();
 	};
 	
-	onRemove (e: any, id: number) {
+	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
 
-		view.sorts = view.sorts.filter((item: any, i: number) => { return i != id; });
+		view.sorts = view.sorts.filter((item: any, i: number) => { return i != item.id; });
 		this.save();
 
 		menuStore.close('select');

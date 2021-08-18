@@ -591,12 +591,14 @@ class Menu extends React.Component<Props, State> {
 			this.setActive(null, true);
 		});
 
-		keyboard.shortcut('tab, enter, arrowright', e, (pressed: string) => {
-			e.preventDefault();
-			if (item) {
-				item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
-			};
-		});
+		if (this.ref.onClick) {	
+			keyboard.shortcut('tab, enter, arrowright', e, (pressed: string) => {
+				e.preventDefault();
+				if (item) {
+					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+				};
+			});
+		};
 
 		if (this.ref.onSortEnd) {
 			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
