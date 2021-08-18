@@ -142,7 +142,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		};
 		
 		let n = 0;
-		return view.sorts.map((it: any) => {
+		return Util.objectCopy(view.sorts || []).map((it: any) => {
 			it.id = n++;
 			return it;
 		});
