@@ -420,6 +420,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			isSub: true,
 			className: param.className,
 			data: {
+				rebind: this.rebind,
 				rootId: rootId,
 				skipId: rootId,
 				blockId: blockId,
