@@ -54,7 +54,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = obj.width();
 		const height = obj.height();
-		const transform = d3.zoomIdentity.translate(0, 0).scale(2);
+		const transform = d3.zoomIdentity.translate(-width / 2, -height / 2).scale(2);
 		const zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', onZoom);
 
 		let group: any = null;
@@ -244,7 +244,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('r', d => d.radius)
 		.style('fill', (d: any) => { return `url(#${d.id})`; });
 
+		const rn = nodes.find((d: any) => { return d.id == root; });
+
 		simulation.on('tick', () => {
+			rn.x = width / 2;
+          	rn.y = height / 2;
+
 			link
 			.attr('x1', d => d.source.x)
 			.attr('y1', d => d.source.y)
