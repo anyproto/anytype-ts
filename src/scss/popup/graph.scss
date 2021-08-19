@@ -4,12 +4,11 @@
 	.popup.popupGraph {
 		.innerWrap { width: calc(100% - 32px); height: calc(100% - 48px); overflow: hidden; }
 		.content { height: 100%; }
-		.graphLabel { font-size: 3px; font-family: 'Inter'; }
 
 		.sides { display: flex; height: 100%; }
 		.side { height: 100%; }
 		.side.left { width: calc(100% - 300px); }
-		.side.right { width: 300px; background: rgba(134, 125, 66, 0.08); padding: 20px; }
+		.side.right { width: 300px; background: rgba(134, 125, 66, 0.08); padding: 20px; overflow: auto; }
 
 		.section { margin-bottom: 24px; }
 		.section {

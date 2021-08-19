@@ -15,6 +15,8 @@ const BG = '#f3f2ec';
 
 const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> {
 
+	canvas: any = null;
+	ctx: any = null;
 	simulation: any = null;
 	width: number = 0;
 	height: number = 0;
@@ -28,6 +30,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	group: any = null;
 	link: any = null;
 	node: any = null;
+	tooltip: any = null;
 
 	forceProps: any = {
 		center: {
@@ -42,12 +45,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		},
 		collide: {
 			enabled: true,
-			strength: 0.7,
+			strength: 0.1,
 			iterations: 1,
 			radius: 1.5
 		},
 		link: {
 			enabled: true,
+			strength: 0.1,
 			distance: 20,
 			iterations: 1
 		},
@@ -225,7 +229,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 							<Checkbox value={this.forceProps.link.enabled} onChange={(e: any, v: any) => {
 								this.forceProps.link.enabled = v;
 								this.updateForces();
-								this.updateDisplay();
 							}} />
 							Link
 						</div>
@@ -235,6 +238,15 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 							<Drag value={this.forceProps.link.distance / 100} onMove={(v: number) => { 
 								this.forceProps.link.distance = v * 100;
 								this.updateLabel('link-distance', `Distance: ${Math.ceil(v * 100)}`);
+								this.updateForces();
+							}} />
+						</div>
+
+						<div className="item">
+							<Label id="link-strength" text={`Strength: ${this.forceProps.link.strength}`} />
+							<Drag value={this.forceProps.link.strength} onMove={(v: number) => { 
+								this.forceProps.link.strength = v; 
+								this.updateLabel('link-strength', `Strength: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
 							}} />
 						</div>
@@ -254,14 +266,14 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						<div className="item">
 							<Checkbox value={this.forceProps.orphans} onChange={(e: any, v: any) => {
 								this.forceProps.orphans = v;
-								this.updateDisplay();
+								this.draw();
 							}} />
 							Show orphans
 						</div>
 						<div className="item">
 							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
 								this.forceProps.markers = v;
-								this.updateDisplay();
+								this.draw();
 							}} />
 							Show markers
 						</div>
@@ -323,8 +335,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
-		this.transform = d3.zoomIdentity.translate(-this.width, -this.height).scale(3);
-		this.zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', param => this.onZoom(param));
+		this.transform = d3.zoomIdentity;
+		this.zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', e => this.onZoom(e));
 
 		for (let item of this.nodes) {
 			this.weights[item.id] = {
@@ -336,21 +348,30 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		this.edges = this.edges.map((d: any) => {
 			d.type = Number(d.type) || 0;
 			d.typeName = translate('edgeType' + d.type);
+
+			d.bg = BG;
+			if (d.type == I.EdgeType.Relation) {
+				d.bg = '#4287f5';
+			};
 			return d;
 		});
 
 		this.nodes = this.nodes.map((d: any) => {
 			const type = dbStore.getObjectType(d.type);
-			if (!type) {
-				//console.error('Missing type', 'id:', d.id, 'type:', d.type);
-				d.bg = '#f55522';
-			};
 
+			d.bg = BG;
 			d.typeName = type ? type.name : translate('defaultNamePage');
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
 			d.radius = Math.max(5, Math.min(10, this.weights[d.id].source));
 			d.isRoot = d.id == root;
+
+			d.img = new Image();
+			d.img.src = this.imageSrc(d);
+
+			if (!type) {
+				d.bg = '#f55522';
+			};
 
 			if (rootId && (d.id == rootId)) {
 				d.fx = this.width / 2;
@@ -361,222 +382,52 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			return d;
 		});
 
+		this.canvas = d3.select('#graph').append('canvas')
+		.attr('width', this.width + 'px')
+		.attr('height', this.height + 'px')
+		.node();
+
+		this.ctx = this.canvas.getContext('2d');
   		this.simulation = d3.forceSimulation(this.nodes);
 		this.initForces();
 
-		this.svg = d3.select("#graph").append('svg')
-		.attr('viewBox', [ 0, 0, this.width, this.height ])
-		.attr('width', this.width)
-    	.attr('height', this.height)
-		.call(this.zoom)
-		.call(this.zoom.transform, this.transform);
+		d3.select(this.canvas)
+        .call(d3.drag().
+			subject((e: any, d: any) => this.dragSubject(e, d)).
+			on('start', (e: any, d: any) => this.onDragStart(e, d)).
+			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
+			on('end', (e: any, d: any) => this.onDragEnd(e, d))
+		)
+        .call(this.zoom)
+		.on('click', (e: any) => {
+			const p = d3.pointer(e);
+  			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
 
-		this.group = this.svg.append('g')
-		.attr('transform', this.transform)
-		.call(d3.drag().on('drag', (e: any, d: any) => {
 			if (d) {
-				d3.select(this)
-				.attr('cx', d.x = e.x)
-				.attr('cy', d.y = e.y);
+				DataUtil.objectOpen(d);
 			};
-		}));
-
-		let defs = this.svg.append('svg:defs');
-		
-		// Icons
-		defs.selectAll('pattern')
-		.data(this.nodes)
-		.join('svg:pattern')
-		.attr('id', d => d.id)
-		.attr('patternUnits', 'objectBoundingBox')
-		.attr('width', '1')
-		.attr('height', '1')
-		.append('svg:image')
-		.attr('preserveAspectRatio', 'xMidYMid slice')
-		.attr('width', (d: any) => {
-			let r = d.radius;
-			if (d.iconImage) {
-				r *= 2;
-			};
-			return r;
-		})
-		.attr('height', (d: any) => {
-			let r = d.radius;
-			if (d.iconImage) {
-				r *= 2;
-			};
-			return r;
-		})
-		.attr('x', (d: any) => {
-			let r = d.radius / 2;
-			if (d.iconImage) {
-				r = 0;
-			};
-			return r;
-		})
-		.attr('y', (d: any) => {
-			let r = d.radius / 2;
-			if (d.iconImage) {
-				r = 0;
-			};
-			return r;
-		})
-		.attr('xlink:href', d => this.imageSrc(d));
-		
-
-		// Markers
-		defs
-		.selectAll('marker')
-		.data(this.edges)
-        .join('svg:marker')
-		.attr('id', (d: any) => { 
-			return `marker${d.source.id + d.target.id}`; 
-		})
-		.attr('viewBox', [ 0, 0, 3, 3 ])
-		.attr('refX', d => d.target.radius + 3)
-		.attr('refY', 1.5)
-		.attr('orient', 'auto')
-		.attr('markerWidth', 3)
-		.attr('markerHeight', 3)
-		.attr('markerUnits', 'userSpaceOnUse')
-        .append('svg:path')
-        .attr('d', 'M 0 0 L 3 1.5 L 0 3 z')
-        .attr('fill', (d: any) => {
-			let r = BG;
-			if (d.type == I.EdgeType.Relation) {
-				r = '#4287f5';
-			};
-			return r;
-		});
-
-		const tooltip = d3.select("#graph")
-  		.append('div')
-		.attr('class', 'tooltip');
-
-		this.link = this.group.append('g')
-		.attr('stroke-opacity', this.forceProps.link.enabled ? 1 : 0)
-		.attr('stroke-width', 0.5)
-		.selectAll('line')
-		.data(this.edges)
-		.join('line')
-		.attr('stroke', (d: any) => {
-			let r = BG;
-			if (d.type == I.EdgeType.Relation) {
-				r = '#4287f5';
-			};
-			return r;
-		})
-		.on('mouseenter', function (e: any, d: any) {
-			d3.select(this).style('stroke-width', 1);
-
-			const text = [ `<b>Type</b>: ${d.typeName}` ];
-			if (d.name) {
-				text.unshift(`<b>Name:</b> ${Util.shorten(d.name, 24)}`);
-			};
-
-			tooltip.style('display', 'block').
-			html(text.join('<br/>'));
 		})
 		.on('mousemove', (e: any) => {
-			tooltip.
-			style('top', (e.pageY + 10) + 'px').
-			style('left', (e.pageX + 10) + 'px');
-		})
-		.on('mouseleave', function (e: any, d: any) {
-			d3.select(this).style('stroke-width', 0.5);
-			tooltip.style('display', 'none');
+			const p = d3.pointer(e);
+  			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
+
+			if (d) {
+				this.tooltip.
+				style('display', 'block').
+				style('left', (e.x + 10) + 'px').
+				style('top', (e.y + 10) + 'px').
+				html([ 
+					`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
+					`<b>Type</b>: ${d.typeName}`,
+					`<b>Layout</b>: ${translate('layout' + d.layout)}`,
+				].join('<br/>'));
+			} else {
+				this.tooltip.style('display', 'none');
+			};
 		});
 
-		this.node = this.group.append('g')
-		.selectAll('g')
-		.data(this.nodes)
-		.join('g')
-		.style('cursor', 'pointer')
-		.on('click', (e: any, d: any) => {
-			DataUtil.objectOpenPopup(d);
-		})
-		.on('mouseenter', function (e: any, d: any) {
-			tooltip.style('display', 'block').
-			html([ 
-				`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
-				`<b>Type</b>: ${d.typeName}`,
-				`<b>Layout</b>: ${translate('layout' + d.layout)}`,
-			].join('<br/>'));
-		})
-		.on('mousemove', (e: any) => {
-			tooltip.
-			style('top', (e.pageY + 10) + 'px').
-			style('left', (e.pageX + 10) + 'px');
-		})
-		.on('mouseleave', function (e: any, d: any) {
-			tooltip.style('display', 'none');
-		})
-		.call(d3.drag()
-			.on('start', (e: any, d: any) => {
-				if (!e.active) {
-					this.simulation.alphaTarget(0.3).restart();
-				};
-				d.fx = d.x;
-				d.fy = d.y;
-
-				tooltip.style('display', 'none');
-			})
-			.on('drag', (e: any, d: any) => {
-				d.fx = e.x;
-				d.fy = e.y;
-
-				tooltip.style('display', 'none');
-			})
-			.on('end', (e: any, d: any) => {
-				if (!e.active) {
-					this.simulation.alphaTarget(0);
-				};
-				//d.fx = null;
-				//d.fy = null;
-			})
-		);
-
-		const bg = this.node.append('circle')
-		.attr('stroke', BG)
-		.attr('stroke-width', 0.5)
-		.style('fill', (d: any) => {
-			return d.bg ? d.bg : BG;
-		})
-		.attr('id', 'bg')
-		.attr('r', d => d.radius);
-
-		const img = this.node.append('circle')
-		.attr('r', d => d.radius)
-		.style('fill', (d: any) => { return `url(#${d.id})`; });
-
-		const text = this.node.append('text')
-		.attr('class', 'graphLabel')
-		.attr('fill', '#929082')
-        .style('text-anchor', 'middle')
-        .text(d => Util.shorten(d.name, 10));
-
-		this.simulation.on('tick', () => {
-			this.link
-			.attr('x1', d => d.source.x)
-			.attr('y1', d => d.source.y)
-			.attr('x2', d => d.target.x)
-			.attr('y2', d => d.target.y);
-
-			bg
-			.attr('cx', d => d.x)
-			.attr('cy', d => d.y);
-
-			img
-			.attr('cx', d => d.x)
-			.attr('cy', d => d.y);
-
-			text
-			.attr('x', d => d.x)
-			.attr('y', d => d.y + d.radius + 4);
-		});
-
-		node.find('#graph').append(this.svg.node());
-		this.updateDisplay();
+		this.tooltip = d3.select('#graph').append('div').attr('class', 'tooltip');
+		this.simulation.on('tick', () => { this.draw(); });
 	};
 
 	initForces () {
@@ -613,6 +464,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		this.simulation.force('link')
 		.id(d => d.id)
 		.distance(this.forceProps.link.distance)
+		.strength(this.forceProps.link.strength * this.forceProps.link.enabled)
 		.iterations(this.forceProps.link.iterations)
 		.links(this.forceProps.link.enabled ? this.edges : []);
 
@@ -627,27 +479,120 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		this.simulation.alpha(1).restart();
 	};
 
-	updateDisplay () {
-		this.link
-        .attr('opacity', this.forceProps.link.enabled ? 1 : 0)
-		.attr('marker-end', d => { 
-			return this.forceProps.markers ? `url(#marker${d.source.id + d.target.id})` : null; 
-		});
+	dragSubject (e: any, d: any) {
+    	let i = 0;
+    	let x = this.transform.invertX(e.x);
+    	let y = this.transform.invertY(e.y);
+    	let dx = 0;
+    	let dy = 0;
 
-		this.node.
-		attr('opacity', (d: any) => {
-			if (this.forceProps.orphans) {
-				return 1;
+		for (i = this.nodes.length - 1; i >= 0; --i) {
+			let node = this.nodes[i];
+			dx = x - node.x;
+			dy = y - node.y;
+
+			if (dx * dx + dy * dy < 25) {
+				node.x = this.transform.applyX(node.x);
+				node.y = this.transform.applyY(node.y);
+				return node;
 			};
-			return (this.weights[d.id].target || this.weights[d.id].source) ? 1 : 0;
-		});
+		};
 	};
 
-	onZoom ({ transform }) {
-		if (this.group) {
-			this.group.attr('transform', transform);
+	onDragStart (e: any, d: any) {
+		if (!e.active) {
+			this.simulation.alphaTarget(0.3).restart();
 		};
+
+		e.subject.fx = this.transform.invertX(e.x);
+    	e.subject.fy = this.transform.invertY(e.y);
+
+		this.tooltip.style('display', 'none');
+		this.draw();
+	};
+
+	onDragMove (e: any, d: any) {
+		e.subject.fx = this.transform.invertX(e.x);
+    	e.subject.fy = this.transform.invertY(e.y);
+
+		this.tooltip.style('display', 'none');
+	};
+			
+	onDragEnd (e: any, d: any) {
+		if (!e.active) {
+			this.simulation.alphaTarget(0);
+		};
+		//d.fx = null;
+		//d.fy = null;
+	};
+
+	onZoom (e: any) {
+		this.transform = e.transform;
+		this.draw();
   	};
+
+	draw () {
+		this.ctx.save();
+
+		this.ctx.clearRect(0, 0, this.width, this.height);
+		this.ctx.translate(this.transform.x, this.transform.y);
+		this.ctx.scale(this.transform.k, this.transform.k);
+
+		if (this.forceProps.link.enabled) {
+			this.edges.forEach(d => this.drawLink(d));
+		};
+		this.nodes.forEach(d => this.drawNode(d));
+
+		this.ctx.restore();
+	};
+
+	drawLink (d: any) {
+		this.ctx.beginPath();
+		this.ctx.moveTo(d.source.x, d.source.y);
+		this.ctx.lineTo(d.target.x, d.target.y);
+		this.ctx.lineWidth = 0.5;
+		this.ctx.strokeStyle = d.bg;
+		this.ctx.stroke();
+	};
+
+	drawNode (d: any) {
+		if (!this.forceProps.orphans && !this.weights[d.id].target && !this.weights[d.id].source) {
+			return;
+		};
+
+		this.ctx.beginPath();
+		this.ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+		this.ctx.fillStyle = d.bg;
+		this.ctx.fill();
+
+		let x = d.x - d.radius / 2;
+		let y = d.y - d.radius / 2;
+		let w = d.radius;
+
+		if (d.iconImage) {
+			x = d.x - d.radius;
+			y = d.y - d.radius;
+			w = d.radius * 2;
+		};
+
+		this.ctx.save();
+		this.ctx.beginPath();
+		this.ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+		this.ctx.closePath();
+		this.ctx.fill();
+
+		this.ctx.clip();
+		this.ctx.drawImage(d.img, 0, 0, d.img.width, d.img.width, x, y, w, w);
+		this.ctx.restore();
+
+		this.ctx.font = '3px Inter';
+		this.ctx.fillStyle = '#929082';
+		this.ctx.textAlign = 'center';
+  		this.ctx.fillText(Util.shorten(d.name, 10), d.x, d.y + d.radius + 4);
+	};
+
+	arrowData (d: any) {
+	};
 
 	imageSrc (d: any) {
 		let src = '';
