@@ -47,7 +47,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			enabled: true,
 			strength: 0.1,
 			iterations: 1,
-			radius: 1.5
+			radius: 0.5
 		},
 		link: {
 			enabled: true,
@@ -62,7 +62,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		},
 		forceY: {
 			enabled: false,
-			strength: 0.3,
+			strength: 0.1,
 			y: 0.5
 		},
 
@@ -404,8 +404,11 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
   			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
 
 			if (d) {
-				DataUtil.objectOpen(d);
+				DataUtil.objectOpenPopup(d);
 			};
+		})
+		.on('mousedown', (e: any) => {
+			this.tooltip.style('display', 'none');
 		})
 		.on('mousemove', (e: any) => {
 			const p = d3.pointer(e);
@@ -458,7 +461,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.simulation.force('collide')
 		.strength(this.forceProps.collide.strength * this.forceProps.collide.enabled)
-		.radius(d => d.radius * this.forceProps.collide.radius)
+		.radius(10 * this.forceProps.collide.radius)
 		.iterations(this.forceProps.collide.iterations);
 
 		this.simulation.force('link')
@@ -516,12 +519,14 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
     	e.subject.fy = this.transform.invertY(e.y);
 
 		this.tooltip.style('display', 'none');
+		this.draw();
 	};
 			
 	onDragEnd (e: any, d: any) {
 		if (!e.active) {
 			this.simulation.alphaTarget(0);
 		};
+		this.draw();
 		//d.fx = null;
 		//d.fy = null;
 	};
