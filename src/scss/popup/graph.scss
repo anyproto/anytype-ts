@@ -13,7 +13,7 @@
 
 		.section { margin-bottom: 24px; }
 		.section {
-			.item { margin-bottom: 10px; }
+			.item { margin-bottom: 10px; line-height: 24px; }
 
 			.name { @include text-header3; margin-bottom: 12px; line-height: 24px; }
 			.label { @include text-common; margin-bottom: 6px; }

@@ -38,8 +38,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		charge: {
 			enabled: true,
 			strength: -30,
-			distanceMin: 1,
-			distanceMax: 250
+			distanceMin: 20,
+			distanceMax: 200
 		},
 		collide: {
 			enabled: true,
@@ -49,12 +49,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		},
 		link: {
 			enabled: true,
-			distance: 30,
+			distance: 20,
 			iterations: 1
 		},
 
-		orphans: true,
-		markers: true,
+		orphans: false,
+		markers: false,
 	};
 
 	render () {
@@ -283,13 +283,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.radius = Math.max(5, Math.min(10, this.weights[d.id].source));
 			d.isRoot = d.id == root;
 
-			if (d.isRoot) {
-				d.radius = 15;
-			};
-
 			if (rootId && (d.id == rootId)) {
 				d.fx = this.width / 2;
 				d.fy = this.height / 2;
+				d.radius = 15;
 			};
 			return d;
 		});
@@ -354,45 +351,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			};
 			return r;
 		})
-		.attr('xlink:href', (d: any) => {
-			let src = '';
-
-			switch (d.layout) {
-				case I.ObjectLayout.Task:
-					src = 'img/icon/task.svg';
-					break;
-
-				case I.ObjectLayout.File:
-					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
-					break;
-
-				case I.ObjectLayout.Image:
-					if (d.id) {
-						src = commonStore.imageUrl(d.id, d.radius * 2);
-					} else {
-						src = `img/icon/file/${Util.fileIcon(d)}.svg`;
-					};
-					break;
-
-				default:
-					if (d.iconImage) {
-						src = commonStore.imageUrl(d.iconImage, d.radius * 2);
-					} else
-					if (d.iconEmoji) {
-						const data = SmileUtil.data(d.iconEmoji);
-						if (data) {
-							src = SmileUtil.srcFromColons(data.colons, data.skin);
-						};
-						src = src.replace(/^.\//, '');
-					};
-					break;
-			};
-
-			if (!src) {
-				src = 'img/icon/page.svg';
-			};
-			return src;
-		});
+		.attr('xlink:href', d => this.imageSrc(d));
 
 		// Markers
 		defs
@@ -437,7 +396,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			return r;
 		})
 		.on('mouseenter', function (e: any, d: any) {
-			d3.select(this).style('stroke-width', 1.5);
+			d3.select(this).style('stroke-width', 1);
 
 			const text = [ `<b>Type</b>: ${d.typeName}` ];
 			if (d.name) {
@@ -610,6 +569,46 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			this.group.attr('transform', transform);
 		};
   	};
+
+	imageSrc (d: any) {
+		let src = '';
+
+		switch (d.layout) {
+			case I.ObjectLayout.Task:
+				src = 'img/icon/task.svg';
+				break;
+
+			case I.ObjectLayout.File:
+				src = `img/icon/file/${Util.fileIcon(d)}.svg`;
+				break;
+
+			case I.ObjectLayout.Image:
+				if (d.id) {
+					src = commonStore.imageUrl(d.id, d.radius * 2);
+				} else {
+					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
+				};
+				break;
+
+			default:
+				if (d.iconImage) {
+					src = commonStore.imageUrl(d.iconImage, d.radius * 2);
+				} else
+				if (d.iconEmoji) {
+					const data = SmileUtil.data(d.iconEmoji);
+					if (data) {
+						src = SmileUtil.srcFromColons(data.colons, data.skin);
+					};
+					src = src.replace(/^.\//, '');
+				};
+				break;
+		};
+
+		if (!src) {
+			src = 'img/icon/page.svg';
+		};
+		return src;
+	};
 
 });
 
