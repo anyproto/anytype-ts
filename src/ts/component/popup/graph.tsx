@@ -11,8 +11,7 @@ interface Props extends I.Popup {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const BG0 = '#f3f2ec';
-const BG1 = '#f0efe9';
+const BG = '#f3f2ec';
 
 const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> {
 
@@ -51,6 +50,16 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			enabled: true,
 			distance: 20,
 			iterations: 1
+		},
+		forceX: {
+			enabled: false,
+			strength: 0.1,
+			x: 0.5
+		},
+		forceY: {
+			enabled: false,
+			strength: 0.3,
+			y: 0.5
 		},
 
 		orphans: false,
@@ -150,6 +159,62 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 							<Drag value={this.forceProps.collide.iterations / 10} onMove={(v: number) => { 
 								this.forceProps.collide.iterations = v * 10;
 								this.updateLabel('collide-iterations', `Iterations: ${Math.ceil(v * 10)}`);
+								this.updateForces();
+							}} />
+						</div>
+					</div>
+
+					<div className="section">
+						<div className="name">
+							<Checkbox value={this.forceProps.forceX.enabled} onChange={(e: any, v: any) => {
+								this.forceProps.forceX.enabled = v;
+								this.updateForces();
+							}} />
+							Force X
+						</div>
+
+						<div className="item">
+							<Label id="forceX-strengh" text={`Strength: ${this.forceProps.forceX.strength}`} />
+							<Drag value={this.forceProps.forceX.strength} onMove={(v: number) => { 
+								this.forceProps.forceX.strengh = v;
+								this.updateLabel('forceX-strengh', `Strength: ${Math.ceil(v * 1000) / 1000}`);
+								this.updateForces();
+							}} />
+						</div>
+
+						<div className="item">
+							<Label id="forceX-x" text={`X: ${this.forceProps.forceX.x}`} />
+							<Drag value={this.forceProps.forceX.x} onMove={(v: number) => { 
+								this.forceProps.forceX.x = v;
+								this.updateLabel('forceX-x', `X: ${Math.ceil(v * 1000) / 1000}`);
+								this.updateForces();
+							}} />
+						</div>
+					</div>
+
+					<div className="section">
+						<div className="name">
+							<Checkbox value={this.forceProps.forceY.enabled} onChange={(e: any, v: any) => {
+								this.forceProps.forceY.enabled = v;
+								this.updateForces();
+							}} />
+							Force Y
+						</div>
+
+						<div className="item">
+							<Label id="forceY-strengh" text={`Strength: ${this.forceProps.forceY.strength}`} />
+							<Drag value={this.forceProps.forceY.strength} onMove={(v: number) => { 
+								this.forceProps.forceY.strengh = v;
+								this.updateLabel('forceY-strengh', `Strength: ${Math.ceil(v * 1000) / 1000}`);
+								this.updateForces();
+							}} />
+						</div>
+
+						<div className="item">
+							<Label id="forceY-x" text={`Y: ${this.forceProps.forceY.y}`} />
+							<Drag value={this.forceProps.forceY.y} onMove={(v: number) => { 
+								this.forceProps.forceY.y = v;
+								this.updateLabel('forceY-y', `Y: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
 							}} />
 						</div>
@@ -276,6 +341,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.nodes = this.nodes.map((d: any) => {
 			const type = dbStore.getObjectType(d.type);
+			if (!type) {
+				//console.error('Missing type', 'id:', d.id, 'type:', d.type);
+				d.bg = '#f55522';
+			};
 
 			d.typeName = type ? type.name : translate('defaultNamePage');
 			d.layout = Number(d.layout) || 0;
@@ -287,6 +356,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 				d.fx = this.width / 2;
 				d.fy = this.height / 2;
 				d.radius = 15;
+				d.bg = '#ffb522';
 			};
 			return d;
 		});
@@ -352,6 +422,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			return r;
 		})
 		.attr('xlink:href', d => this.imageSrc(d));
+		
 
 		// Markers
 		defs
@@ -371,7 +442,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .append('svg:path')
         .attr('d', 'M 0 0 L 3 1.5 L 0 3 z')
         .attr('fill', (d: any) => {
-			let r = BG0;
+			let r = BG;
 			if (d.type == I.EdgeType.Relation) {
 				r = '#4287f5';
 			};
@@ -389,7 +460,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.data(this.edges)
 		.join('line')
 		.attr('stroke', (d: any) => {
-			let r = BG0;
+			let r = BG;
 			if (d.type == I.EdgeType.Relation) {
 				r = '#4287f5';
 			};
@@ -425,8 +496,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			DataUtil.objectOpenPopup(d);
 		})
 		.on('mouseenter', function (e: any, d: any) {
-			d3.select(this).select('#bg').style('fill', BG1);
-			
 			tooltip.style('display', 'block').
 			html([ 
 				`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
@@ -440,7 +509,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			style('left', (e.pageX + 10) + 'px');
 		})
 		.on('mouseleave', function (e: any, d: any) {
-			d3.select(this).select('#bg').style('fill', BG0);
 			tooltip.style('display', 'none');
 		})
 		.call(d3.drag()
@@ -469,10 +537,11 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		);
 
 		const bg = this.node.append('circle')
-		.attr('stroke', BG0)
-		.attr('stroke-opacity', 1)
+		.attr('stroke', BG)
 		.attr('stroke-width', 0.5)
-		.style('fill', BG0)
+		.style('fill', (d: any) => {
+			return d.bg ? d.bg : BG;
+		})
 		.attr('id', 'bg')
 		.attr('r', d => d.radius);
 
@@ -516,24 +585,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .force('charge', d3.forceManyBody())
         .force('collide', d3.forceCollide(this.nodes))
         .force('center', d3.forceCenter())
+		.force('forceX', d3.forceX())
+        .force('forceY', d3.forceY());
 
     	this.updateForces();
-	};
-
-	updateDisplay () {
-		this.link
-        .attr('opacity', this.forceProps.link.enabled ? 1 : 0)
-		.attr('marker-end', d => { 
-			return this.forceProps.markers ? `url(#marker${d.source.id + d.target.id})` : null; 
-		});
-
-		this.node.
-		attr('opacity', (d: any) => {
-			if (this.forceProps.orphans) {
-				return 1;
-			};
-			return (this.weights[d.id].target || this.weights[d.id].source) ? 1 : 0;
-		});
 	};
 
 	updateForces() {
@@ -561,7 +616,31 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.iterations(this.forceProps.link.iterations)
 		.links(this.forceProps.link.enabled ? this.edges : []);
 
+		this.simulation.force('forceX')
+        .strength(this.forceProps.forceX.strength * this.forceProps.forceX.enabled)
+        .x(this.width * this.forceProps.forceX.x);
+
+    	this.simulation.force('forceY')
+        .strength(this.forceProps.forceY.strength * this.forceProps.forceY.enabled)
+        .y(this.height * this.forceProps.forceY.y);
+
 		this.simulation.alpha(1).restart();
+	};
+
+	updateDisplay () {
+		this.link
+        .attr('opacity', this.forceProps.link.enabled ? 1 : 0)
+		.attr('marker-end', d => { 
+			return this.forceProps.markers ? `url(#marker${d.source.id + d.target.id})` : null; 
+		});
+
+		this.node.
+		attr('opacity', (d: any) => {
+			if (this.forceProps.orphans) {
+				return 1;
+			};
+			return (this.weights[d.id].target || this.weights[d.id].source) ? 1 : 0;
+		});
 	};
 
 	onZoom ({ transform }) {
