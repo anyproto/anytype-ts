@@ -747,7 +747,7 @@ class Util {
 			case 'popup':
 				return '#popupPage #innerWrap';
 			
-			case 'menuBlockRelationList':
+			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
 				return `#${type} .content`;
 		};
@@ -762,7 +762,7 @@ class Util {
 			case 'popup':
 				return '#popupPage';
 
-			case 'menuBlockRelationList':
+			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
 				return '#' + type;
 		};
