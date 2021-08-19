@@ -214,7 +214,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
-		
+
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		this.save();
 	};

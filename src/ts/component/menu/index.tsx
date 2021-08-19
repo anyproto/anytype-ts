@@ -516,9 +516,6 @@ class Menu extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		const items = this.ref.getItems();
-		const l = items.length;
-		const item = items[this.ref.n];
 		const refInput = this.ref.refFilter || this.ref.refName;
 
 		let ret = false;
@@ -538,7 +535,11 @@ class Menu extends React.Component<Props, State> {
 				});
 
 				keyboard.shortcut('arrowup', e, (pressed: string) => {
-					this.ref.n = l - 1;
+					if (!this.ref.getItems) {
+						return;
+					};
+
+					this.ref.n = this.ref.getItems().length - 1;
 					refInput.blur();
 					this.setActive(null, true);
 
@@ -565,6 +566,14 @@ class Menu extends React.Component<Props, State> {
 			e.preventDefault();
 			this.close();
 		});
+
+		if (!this.ref.getItems) {
+			return;
+		};
+
+		const items = this.ref.getItems();
+		const l = items.length;
+		const item = items[this.ref.n];
 
 		keyboard.shortcut('arrowup', e, (pressed: string) => {
 			e.preventDefault();

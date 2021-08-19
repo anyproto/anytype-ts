@@ -53,7 +53,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			};
 
 			return (
-				<div id={'item-' + item.relationKey} className={cn.join(' ')}>
+				<div id={'item-' + item.relationKey} className={cn.join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}>
 					{allowedView ? <Handle /> : ''}
 					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
@@ -176,6 +176,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				},
 			}
 		});
+	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
 	};
 	
 	onClick (e: any, item: any) {
