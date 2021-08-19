@@ -370,7 +370,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.img.src = this.imageSrc(d);
 
 			if (!type) {
-				d.bg = '#f55522';
+				//d.bg = '#f55522';
 			};
 
 			if (rootId && (d.id == rootId)) {
@@ -399,6 +399,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
         .call(this.zoom)
+		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width / 2, -this.height / 2).scale(3))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
   			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
