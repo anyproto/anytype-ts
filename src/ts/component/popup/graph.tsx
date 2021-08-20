@@ -26,6 +26,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	images: any = {};
 	tooltip: any = null;
 	subject: any = null;
+	isDragging: boolean = false;
 
 	forceProps: any = {
 		center: {
@@ -406,7 +407,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject(() => { return this.subject; }).
+			subject(() => { console.log(this.subject); return this.subject; }).
 			on('start', (e: any, d: any) => this.onDragStart(e, d)).
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
@@ -460,18 +461,23 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	onDragStart (e: any, d: any) {
+		this.isDragging = true;
+
 		const p = d3.pointer(e);
-		this.worker.postMessage({ id: 'onDragStart', active: e.active, x: p[0], y: p[1] });
+		this.worker.postMessage({ id: 'onDragStart', subject: this.subject, active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e);
-		this.worker.postMessage({ id: 'onDragMove', active: e.active, x: p[0], y: p[1] });
+		this.worker.postMessage({ id: 'onDragMove', subject: this.subject, active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 			
 	onDragEnd (e: any, d: any) {
+		this.isDragging = false;
+		this.subject = null;
+
 		this.worker.postMessage({ id: 'onDragEnd', active: e.active});
 	};
 
@@ -488,7 +494,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			case 'onMouseMove':
 				const d = data.node;
-				this.subject = d;
+				if (!this.isDragging) {
+					this.subject = d;
+				};
 
 				if (d) {
 					this.tooltip.

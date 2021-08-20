@@ -175,27 +175,27 @@ onZoom = (data) => {
 	draw();
 };
 
-onDragStart = ({ active, x, y }) => {
+onDragStart = ({ subject, active, x, y }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 25);
-	if (d) {
-		d.fx = transform.invertX(x) - d.radius;
-		d.fy = transform.invertY(y) - d.radius;
+	if (subject) {
+		const d = nodes.find((it) => { return it.id == subject.id; })
+		d.fx = transform.invertX(x);
+		d.fy = transform.invertY(y);
 	};
 };
 
-onDragMove = ({ active, x, y }) => {
+onDragMove = ({ subject, active, x, y }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 25);
-	if (d) {
-		d.fx = transform.invertX(x) - d.radius;
-		d.fy = transform.invertY(y) - d.radius;
+	if (subject) {
+		const d = nodes.find((it) => { return it.id == subject.id; })
+		d.fx = transform.invertX(x);
+		d.fy = transform.invertY(y);
 	};
 };
 
