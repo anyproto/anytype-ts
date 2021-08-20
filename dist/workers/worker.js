@@ -3,6 +3,8 @@ let width = 0;
 let height = 0;
 let density = 0;
 let transform = null;
+let nodes = [];
+let edges = [];
 let forceProps = {};
 let images = {};
 
@@ -13,14 +15,19 @@ addEventListener('message', ({ data }) => {
 			width = data.width;
 			height = data.height;
 			density = data.density;
+			transform = data.transform;
 
 			ctx.canvas.width = width * density;
 			ctx.canvas.height = height * density;
 			ctx.scale(density, density);
+
+			draw();
 			break;
 
 		case 'draw':
-			requestAnimationFrame(() => { draw(data); });
+			nodes = data.nodes || [];
+			edges = data.edges || [];
+			transform = data.transform;
 			break;
 
 		case 'image':
@@ -31,12 +38,11 @@ addEventListener('message', ({ data }) => {
 
 		case 'forceProps':
 			forceProps = data.forceProps;
-			console.log(forceProps);
 			break;
 	};
 });
 
-draw = ({ nodes, edges, transform }) => {
+draw = () => {
 	ctx.save();
 
 	ctx.clearRect(0, 0, width, height);
@@ -52,6 +58,8 @@ draw = ({ nodes, edges, transform }) => {
 		drawNode(d);
 	});
 	ctx.restore();
+
+	requestAnimationFrame(() => { draw(); });
 };
 
 drawLink = (d) => {

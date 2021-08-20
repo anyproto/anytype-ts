@@ -407,6 +407,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			width: this.width,
 			height: this.height,
 			density: density,
+			transform: this.transform
 		}, [ transfer ]);
 
 		this.nodes.map((d: any) => {
@@ -417,7 +418,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			const img = new Image();
 
 			img.onload = () => {
-				createImageBitmap(img).then((res: any) => {
+				createImageBitmap(img, { resizeWidth: 50, resizeQuality: 'medium' }).then((res: any) => {
 					this.images[d.src] = true;
 
 					this.worker.postMessage({
