@@ -44,7 +44,7 @@ init = (data) => {
 		draw(); 
 	});
 	simulation.on('end', () => {
-		updateForces();
+		simulation.alpha(1).restart();
 	});
 };
 
@@ -184,15 +184,34 @@ onZoom = (data) => {
 	draw();
 };
 
-onDragStart = ({ x, y }) => {
-	console.log('WORKER.onDragStart');
-
-	if (!e.active) {
+onDragStart = ({ active, x, y }) => {
+	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	e.subject.fx = transform.invertX(x);
-	e.subject.fy = transform.invertY(y);
+	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	if (d) {
+		d.fx = transform.invertX(x);
+		d.fy = transform.invertY(y);
+	};
+};
+
+onDragMove = ({ active, x, y }) => {
+	if (!active) {
+		simulation.alphaTarget(0.3).restart();
+	};
+
+	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	if (d) {
+		d.fx = transform.invertX(x);
+		d.fy = transform.invertY(y);
+	};
+};
+
+onDragEnd = ({ active }) => {
+	if (!active) {
+		simulation.alphaTarget(0);
+	};
 };
 
 onClick = ({ x, y }) => {

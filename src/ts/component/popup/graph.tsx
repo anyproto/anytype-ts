@@ -21,16 +21,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	height: number = 0;
 	edges: any[] = [];
 	nodes: any[] = [];
-	weights: any = {};
-	transform: any = null;
 	zoom: any = null;
 	worker: any = null;
 	images: any = {};
-
-	svg: any = null;
-	group: any = null;
-	link: any = null;
-	node: any = null;
 	tooltip: any = null;
 
 	forceProps: any = {
@@ -341,15 +334,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
-		this.transform = d3.zoomIdentity;
 		this.zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', e => this.onZoom(e));
-
-		for (let item of this.nodes) {
-			this.weights[item.id] = {
-				source: this.edges.filter((it: any) => { return it.source == item.id; }).length,
-				target: this.edges.filter((it: any) => { return it.target == item.id; }).length,
-			};
-		};
 
 		this.edges = this.edges.map((d: any) => {
 			d.type = Number(d.type) || 0;
@@ -364,14 +349,16 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.nodes = this.nodes.map((d: any) => {
 			const type = dbStore.getObjectType(d.type);
+			const sourceCnt = this.edges.filter((it: any) => { return it.source == d.id; }).length;
+			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
 			d.bg = BG;
 			d.typeName = type ? type.name : translate('defaultNamePage');
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
-			d.radius = Math.max(5, Math.min(10, this.weights[d.id].source));
+			d.radius = Math.max(5, Math.min(10, sourceCnt));
 			d.isRoot = d.id == root;
-			d.isOrphan = !this.weights[d.id].target && !this.weights[d.id].source;
+			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
 
 			if (!type) {
@@ -418,7 +405,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject((e: any, d: any) => this.dragSubject(e, d)).
+			subject(this.dragSubject).
 			on('start', (e: any, d: any) => this.onDragStart(e, d)).
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
@@ -426,7 +413,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width, -this.height).scale(3))
 		.on('click', (e: any) => {
-			this.worker.postMessage({ id: 'onClick', x: e.x, y: e.y })
+			this.worker.postMessage({ id: 'onClick', x: e.x, y: e.y });
 		})
 		.on('mousedown', (e: any) => {
 			this.tooltip.style('display', 'none');
@@ -469,52 +456,22 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		};
 	};
 
-	dragSubject (e: any, d: any) {
-    	let i = 0;
-    	let x = this.transform.invertX(e.x);
-    	let y = this.transform.invertY(e.y);
-    	let dx = 0;
-    	let dy = 0;
-
-		for (i = this.nodes.length - 1; i >= 0; --i) {
-			let node = this.nodes[i];
-			dx = x - node.x;
-			dy = y - node.y;
-
-			if (dx * dx + dy * dy < 25) {
-				node.x = this.transform.applyX(node.x);
-				node.y = this.transform.applyY(node.y);
-				return node;
-			};
-		};
+	dragSubject () {
+		return null;
 	};
 
 	onDragStart (e: any, d: any) {
-		console.log('onDragStart');
-
-		this.worker.postMessage({ id: 'onDragStart', x: e.x, y: e.y});
+		this.worker.postMessage({ id: 'onDragStart', active: e.active, x: e.x, y: e.y});
 		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
-		console.log('onDragMove');
-		/*
-		e.subject.fx = this.transform.invertX(e.x);
-    	e.subject.fy = this.transform.invertY(e.y);
-
+		this.worker.postMessage({ id: 'onDragMove', active: e.active, x: e.x, y: e.y});
 		this.tooltip.style('display', 'none');
-		*/
 	};
 			
 	onDragEnd (e: any, d: any) {
-		console.log('onDragEnd');
-		/*
-		console.log('onDragEnd');
-
-		if (!e.active) {
-			this.simulation.alphaTarget(0);
-		};
-		*/
+		this.worker.postMessage({ id: 'onDragEnd', active: e.active});
 	};
 
 	onZoom ({ transform }) {
@@ -530,7 +487,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			case 'onMouseMove':
 				const d = data.node;
-
 				if (d) {
 					this.tooltip.
 					style('display', 'block').
