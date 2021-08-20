@@ -180,10 +180,10 @@ onDragStart = ({ active, x, y }) => {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	const d = simulation.find(transform.invertX(x), transform.invertY(y), 25);
 	if (d) {
-		d.fx = transform.invertX(x);
-		d.fy = transform.invertY(y);
+		d.fx = transform.invertX(x) - d.radius;
+		d.fy = transform.invertY(y) - d.radius;
 	};
 };
 
@@ -192,10 +192,10 @@ onDragMove = ({ active, x, y }) => {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	const d = simulation.find(transform.invertX(x), transform.invertY(y), 25);
 	if (d) {
-		d.fx = transform.invertX(x);
-		d.fy = transform.invertY(y);
+		d.fx = transform.invertX(x) - d.radius;
+		d.fy = transform.invertY(y) - d.radius;
 	};
 };
 

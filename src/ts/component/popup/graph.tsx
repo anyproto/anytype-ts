@@ -25,6 +25,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	worker: any = null;
 	images: any = {};
 	tooltip: any = null;
+	subject: any = null;
 
 	forceProps: any = {
 		center: {
@@ -405,7 +406,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject(() => null).
+			subject(() => { return this.subject; }).
 			on('start', (e: any, d: any) => this.onDragStart(e, d)).
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
@@ -413,7 +414,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width, -this.height).scale(3))
 		.on('click', (e: any) => {
-			this.worker.postMessage({ id: 'onClick', x: e.x, y: e.y });
+			const p = d3.pointer(e);
+			this.worker.postMessage({ id: 'onClick', x: p[0], y: p[1] });
 		})
 		.on('mousedown', (e: any) => {
 			this.tooltip.style('display', 'none');
@@ -437,7 +439,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					return;
 				};
 
-				createImageBitmap(img, { resizeWidth: 50, resizeQuality: 'medium' }).then((res: any) => {
+				createImageBitmap(img, { resizeWidth: 160, resizeQuality: 'high' }).then((res: any) => {
 					if (this.images[d.src]) {
 						return;
 					};
@@ -458,12 +460,14 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	onDragStart (e: any, d: any) {
-		this.worker.postMessage({ id: 'onDragStart', active: e.active, x: e.x, y: e.y});
+		const p = d3.pointer(e);
+		this.worker.postMessage({ id: 'onDragStart', active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
-		this.worker.postMessage({ id: 'onDragMove', active: e.active, x: e.x, y: e.y});
+		const p = d3.pointer(e);
+		this.worker.postMessage({ id: 'onDragMove', active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 			
@@ -484,6 +488,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			case 'onMouseMove':
 				const d = data.node;
+				this.subject = d;
+
 				if (d) {
 					this.tooltip.
 					style('display', 'block').
@@ -516,7 +522,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			case I.ObjectLayout.Image:
 				if (d.id) {
-					src = commonStore.imageUrl(d.id, 50);
+					src = commonStore.imageUrl(d.id, 160);
 				} else {
 					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
 				};
@@ -524,7 +530,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			default:
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 50);
+					src = commonStore.imageUrl(d.iconImage, 160);
 				} else
 				if (d.iconEmoji) {
 					const data = SmileUtil.data(d.iconEmoji);
