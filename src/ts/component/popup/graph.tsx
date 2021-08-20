@@ -47,7 +47,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		},
 		link: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.5,
 			distance: 50,
 			iterations: 1
 		},
@@ -407,7 +407,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject(() => { console.log(this.subject); return this.subject; }).
+			subject(() => { return this.subject; }).
 			on('start', (e: any, d: any) => this.onDragStart(e, d)).
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
