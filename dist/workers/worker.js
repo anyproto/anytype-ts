@@ -179,12 +179,6 @@ onDragStart = ({ subject, active, x, y }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
-
-	if (subject) {
-		const d = nodes.find((it) => { return it.id == subject.id; })
-		d.fx = transform.invertX(x);
-		d.fy = transform.invertY(y);
-	};
 };
 
 onDragMove = ({ subject, active, x, y }) => {
