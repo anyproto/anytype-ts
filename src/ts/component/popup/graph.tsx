@@ -16,7 +16,6 @@ const BG = '#f3f2ec';
 const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> {
 
 	canvas: any = null;
-	ctx: any = null;
 	simulation: any = null;
 	width: number = 0;
 	height: number = 0;
@@ -25,6 +24,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	weights: any = {};
 	transform: any = null;
 	zoom: any = null;
+	worker: any = null;
+	images: any = {};
 
 	svg: any = null;
 	group: any = null;
@@ -44,7 +45,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			distanceMax: 200
 		},
 		collide: {
-			enabled: false,
+			enabled: true,
 			strength: 0.1,
 			iterations: 1,
 			radius: 0.5
@@ -266,14 +267,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						<div className="item">
 							<Checkbox value={this.forceProps.orphans} onChange={(e: any, v: any) => {
 								this.forceProps.orphans = v;
-								this.draw();
+								this.updateProps();
 							}} />
 							Show orphans
 						</div>
 						<div className="item">
 							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
 								this.forceProps.markers = v;
-								this.draw();
 							}} />
 							Show markers
 						</div>
@@ -313,11 +313,15 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 				return;
 			};
 
-			this.edges = message.edges.map(d => Object.create(d)).filter(d => { return d.source !== d.target; });
-			this.nodes = message.nodes.map(d => Object.create(d));
+			this.edges = message.edges.filter(d => { return d.source !== d.target; });
+			this.nodes = message.nodes;
 
 			this.init();
 		});
+	};
+
+	componentWillUnmount () {
+		this.worker.terminate();
 	};
 
 	updateLabel (id: string, text: string) {
@@ -366,9 +370,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.name = d.name || translate('defaultNamePage');
 			d.radius = Math.max(5, Math.min(10, this.weights[d.id].source));
 			d.isRoot = d.id == root;
-
-			d.img = new Image();
-			d.img.src = this.imageSrc(d);
+			d.isOrphan = !this.weights[d.id].target && !this.weights[d.id].source;
+			d.src = this.imageSrc(d);
 
 			if (!type) {
 				//d.bg = '#f55522';
@@ -388,10 +391,45 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.attr('height', (this.height * density) + 'px')
 		.node();
 
-		this.ctx = this.canvas.getContext('2d');
-		this.ctx.scale(density, density);
-  		this.simulation = d3.forceSimulation(this.nodes);
+		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
+
+		this.simulation = d3.forceSimulation(this.nodes);
 		this.initForces();
+
+		this.worker = new Worker('workers/worker.js');
+		this.worker.onerror = (e: any) => {
+			console.log(e);
+		};
+
+		this.worker.postMessage({ 
+			id: 'init',
+			canvas: transfer, 
+			width: this.width,
+			height: this.height,
+			density: density,
+		}, [ transfer ]);
+
+		this.nodes.map((d: any) => {
+			if (this.images[d.src]) {
+				return;
+			};
+
+			const img = new Image();
+
+			img.onload = () => {
+				createImageBitmap(img).then((res: any) => {
+					this.images[d.src] = true;
+
+					this.worker.postMessage({
+						id: 'image',
+						src: d.src,
+						bitmap: res,
+					});
+				});
+			};
+			img.crossOrigin = '';
+			img.src = d.src;
+		});
 
 		d3.select(this.canvas)
         .call(d3.drag().
@@ -433,7 +471,15 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		});
 
 		this.tooltip = d3.select('#graph').append('div').attr('class', 'tooltip');
-		this.simulation.on('tick', () => { this.draw(); });
+
+		this.simulation.on('tick', () => { 
+			this.worker.postMessage({ 
+				id: 'draw', 
+				nodes: this.nodes, 
+				edges: this.forceProps.link.enabled ? this.edges : [],
+				transform: this.transform,
+			}); 
+		});
 	};
 
 	initForces () {
@@ -446,6 +492,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .force('forceY', d3.forceY());
 
     	this.updateForces();
+	};
+
+	updateProps () {
+		this.worker.postMessage({ 
+			id: 'forceProps', 
+			forceProps: this.forceProps,
+		});
 	};
 
 	updateForces() {
@@ -533,73 +586,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 	onZoom (e: any) {
 		this.transform = e.transform;
-		this.draw();
   	};
-
-	draw () {
-		this.ctx.save();
-
-		this.ctx.clearRect(0, 0, this.width, this.height);
-		this.ctx.translate(this.transform.x, this.transform.y);
-		this.ctx.scale(this.transform.k, this.transform.k);
-
-		if (this.forceProps.link.enabled) {
-			this.edges.forEach(d => this.drawLink(d));
-		};
-		this.nodes.forEach(d => this.drawNode(d));
-
-		this.ctx.restore();
-	};
-
-	drawLink (d: any) {
-		this.ctx.beginPath();
-		this.ctx.moveTo(d.source.x, d.source.y);
-		this.ctx.lineTo(d.target.x, d.target.y);
-		this.ctx.lineWidth = 0.5;
-		this.ctx.strokeStyle = d.bg;
-		this.ctx.stroke();
-	};
-
-	drawNode (d: any) {
-		if (!this.forceProps.orphans && !this.weights[d.id].target && !this.weights[d.id].source) {
-			return;
-		};
-
-		this.ctx.beginPath();
-		this.ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-		this.ctx.fillStyle = d.bg;
-		this.ctx.fill();
-
-		let x = d.x - d.radius / 2;
-		let y = d.y - d.radius / 2;
-		let w = d.radius;
-
-		this.ctx.save();
-
-		if (d.iconImage) {
-			x = d.x - d.radius;
-			y = d.y - d.radius;
-			w = d.radius * 2;
-
-			this.ctx.beginPath();
-			this.ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-			this.ctx.closePath();
-			this.ctx.fill();
-
-			this.ctx.clip();
-		};
-
-		this.ctx.drawImage(d.img, 0, 0, d.img.width, d.img.width, x, y, w, w);
-		this.ctx.restore();
-
-		this.ctx.font = '3px Inter';
-		this.ctx.fillStyle = '#929082';
-		this.ctx.textAlign = 'center';
-  		this.ctx.fillText(Util.shorten(d.name, 10), d.x, d.y + d.radius + 4);
-	};
-
-	arrowData (d: any) {
-	};
 
 	imageSrc (d: any) {
 		let src = '';
