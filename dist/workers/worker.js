@@ -182,8 +182,8 @@ onDragStart = ({ subject, active, x, y }) => {
 
 	if (subject) {
 		const d = nodes.find((it) => { return it.id == subject.id; })
-		d.fx = transform.invertX(x - d.radius / transform.k);
-		d.fy = transform.invertY(y - d.radius / transform.k);
+		d.fx = transform.invertX(x);
+		d.fy = transform.invertY(y);
 	};
 };
 
@@ -194,8 +194,8 @@ onDragMove = ({ subject, active, x, y }) => {
 
 	if (subject) {
 		const d = nodes.find((it) => { return it.id == subject.id; })
-		d.fx = transform.invertX(x - d.radius / transform.k);
-		d.fy = transform.invertY(y - d.radius / transform.k);
+		d.fx = transform.invertX(x);
+		d.fy = transform.invertY(y);
 	};
 };
 
