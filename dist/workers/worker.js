@@ -179,6 +179,8 @@ onDragStart = ({ subject, active, x, y }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
+
+	//onDragMove({ subject, active, x, y });
 };
 
 onDragMove = ({ subject, active, x, y }) => {
@@ -186,10 +188,16 @@ onDragMove = ({ subject, active, x, y }) => {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	if (subject) {
-		const d = nodes.find((it) => { return it.id == subject.id; })
-		d.fx = transform.invertX(x);
-		d.fy = transform.invertY(y);
+	if (!subject) {
+		return;
+	};
+
+	const d = nodes.find((it) => { return it.id == subject.id; });
+	if (d) {
+		d.fx = transform.invertX(x) - d.radius / 2;
+		d.fy = transform.invertY(y) - d.radius / 2;
+
+		draw();
 	};
 };
 
