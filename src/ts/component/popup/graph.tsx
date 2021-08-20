@@ -33,13 +33,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		},
 		charge: {
 			enabled: true,
-			strength: -30,
+			strength: -50,
 			distanceMin: 20,
-			distanceMax: 200
+			distanceMax: 300
 		},
 		collide: {
 			enabled: true,
-			strength: 0.1,
+			strength: 0.7,
 			iterations: 1,
 			radius: 0.5
 		},

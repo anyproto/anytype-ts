@@ -40,12 +40,8 @@ init = (data) => {
 	simulation = d3.forceSimulation(nodes);
 
 	initForces();
-	simulation.on('tick', () => { 
-		draw(); 
-	});
-	simulation.on('end', () => {
-		simulation.alpha(1).restart();
-	});
+	simulation.on('tick', () => { draw(); });
+	simulation.on('end', () => { simulation.alphaTarget(1); });
 };
 
 image = ({ src, bitmap }) => {
