@@ -267,13 +267,14 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						<div className="item">
 							<Checkbox value={this.forceProps.orphans} onChange={(e: any, v: any) => {
 								this.forceProps.orphans = v;
-								this.updateProps();
+								this.updateForces();
 							}} />
 							Show orphans
 						</div>
 						<div className="item">
 							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
 								this.forceProps.markers = v;
+								this.updateForces();
 							}} />
 							Show markers
 						</div>
@@ -291,9 +292,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					Constant.typeId.relation,
 					Constant.typeId.template,
 					Constant.typeId.type,
-					Constant.typeId.file,
-					Constant.typeId.image,
-					Constant.typeId.video,
+					//Constant.typeId.file,
+					//Constant.typeId.image,
+					//Constant.typeId.video,
 				] 
 			},
 			{ 
@@ -386,6 +387,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			return d;
 		});
 
+		this.tooltip = d3.select('#graph').append('div').attr('class', 'tooltip');
+
 		this.canvas = d3.select('#graph').append('canvas')
 		.attr('width', (this.width * density) + 'px')
 		.attr('height', (this.height * density) + 'px')
@@ -393,13 +396,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
 
-		this.simulation = d3.forceSimulation(this.nodes);
-		this.initForces();
-
 		this.worker = new Worker('workers/worker.js');
 		this.worker.onerror = (e: any) => {
 			console.log(e);
 		};
+
+		this.worker.addEventListener('message', (data) => { this.onMessage(data); });
 
 		this.worker.postMessage({ 
 			id: 'init',
@@ -407,30 +409,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			width: this.width,
 			height: this.height,
 			density: density,
-			transform: this.transform
+			nodes: this.nodes,
+			edges: this.edges,
+			forceProps: this.forceProps,
 		}, [ transfer ]);
 
-		this.nodes.map((d: any) => {
-			if (this.images[d.src]) {
-				return;
-			};
-
-			const img = new Image();
-
-			img.onload = () => {
-				createImageBitmap(img, { resizeWidth: 50, resizeQuality: 'medium' }).then((res: any) => {
-					this.images[d.src] = true;
-
-					this.worker.postMessage({
-						id: 'image',
-						src: d.src,
-						bitmap: res,
-					});
-				});
-			};
-			img.crossOrigin = '';
-			img.src = d.src;
-		});
+		this.initImages();
 
 		d3.select(this.canvas)
         .call(d3.drag().
@@ -442,101 +426,47 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
         .call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width, -this.height).scale(3))
 		.on('click', (e: any) => {
-			const p = d3.pointer(e);
-  			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
-
-			if (d) {
-				DataUtil.objectOpenPopup(d);
-			};
+			this.worker.postMessage({ id: 'onClick', x: e.x, y: e.y })
 		})
 		.on('mousedown', (e: any) => {
 			this.tooltip.style('display', 'none');
 		})
 		.on('mousemove', (e: any) => {
-			const p = d3.pointer(e);
-  			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
+			this.worker.postMessage({ id: 'onMouseMove', x: e.x, y: e.y })
+		});
+	};
 
-			if (d) {
-				this.tooltip.
-				style('display', 'block').
-				style('left', (e.x + 10) + 'px').
-				style('top', (e.y + 10) + 'px').
-				html([ 
-					`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
-					`<b>Type</b>: ${d.typeName}`,
-					`<b>Layout</b>: ${translate('layout' + d.layout)}`,
-				].join('<br/>'));
-			} else {
-				this.tooltip.style('display', 'none');
+	initImages () {
+		this.nodes.map((d: any) => {
+			if (this.images[d.src]) {
+				return;
 			};
-		});
 
-		this.tooltip = d3.select('#graph').append('div').attr('class', 'tooltip');
+			const img = new Image();
 
-		this.simulation.on('tick', () => { 
-			this.worker.postMessage({ 
-				id: 'draw', 
-				nodes: this.nodes, 
-				edges: this.forceProps.link.enabled ? this.edges : [],
-				transform: this.transform,
-			}); 
-		});
-	};
+			img.onload = () => {
+				if (this.images[d.src]) {
+					return;
+				};
 
-	initForces () {
-    	this.simulation
-        .force('link', d3.forceLink())
-        .force('charge', d3.forceManyBody())
-        .force('collide', d3.forceCollide(this.nodes))
-        .force('center', d3.forceCenter())
-		.force('forceX', d3.forceX())
-        .force('forceY', d3.forceY());
+				createImageBitmap(img, { resizeWidth: 50, resizeQuality: 'medium' }).then((res: any) => {
+					if (this.images[d.src]) {
+						return;
+					};
 
-    	this.updateForces();
-	};
-
-	updateProps () {
-		this.worker.postMessage({ 
-			id: 'forceProps', 
-			forceProps: this.forceProps,
+					this.images[d.src] = true;
+					this.worker.postMessage({ id: 'image', src: d.src, bitmap: res });
+				});
+			};
+			img.crossOrigin = '';
+			img.src = d.src;
 		});
 	};
 
-	updateForces() {
-		if (!this.simulation) {
-			return;
+	updateForces () {
+		if (this.worker) {
+			this.worker.postMessage({ id: 'updateProps', forceProps: this.forceProps });
 		};
-
-		this.simulation.force('center')
-		.x(this.width * this.forceProps.center.x)
-		.y(this.height * this.forceProps.center.y);
-
-		this.simulation.force('charge')
-		.strength(this.forceProps.charge.strength * this.forceProps.charge.enabled)
-		.distanceMin(this.forceProps.charge.distanceMin)
-		.distanceMax(this.forceProps.charge.distanceMax);
-
-		this.simulation.force('collide')
-		.strength(this.forceProps.collide.strength * this.forceProps.collide.enabled)
-		.radius(10 * this.forceProps.collide.radius)
-		.iterations(this.forceProps.collide.iterations);
-
-		this.simulation.force('link')
-		.id(d => d.id)
-		.distance(this.forceProps.link.distance)
-		.strength(this.forceProps.link.strength * this.forceProps.link.enabled)
-		.iterations(this.forceProps.link.iterations)
-		.links(this.forceProps.link.enabled ? this.edges : []);
-
-		this.simulation.force('forceX')
-        .strength(this.forceProps.forceX.strength * this.forceProps.forceX.enabled)
-        .x(this.width * this.forceProps.forceX.x);
-
-    	this.simulation.force('forceY')
-        .strength(this.forceProps.forceY.strength * this.forceProps.forceY.enabled)
-        .y(this.height * this.forceProps.forceY.y);
-
-		this.simulation.alpha(1).restart();
 	};
 
 	dragSubject (e: any, d: any) {
@@ -560,34 +490,64 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	onDragStart (e: any, d: any) {
-		if (!e.active) {
-			this.simulation.alphaTarget(0.3).restart();
-		};
+		console.log('onDragStart');
 
-		e.subject.fx = this.transform.invertX(e.x);
-    	e.subject.fy = this.transform.invertY(e.y);
-
+		this.worker.postMessage({ id: 'onDragStart', x: e.x, y: e.y});
 		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
+		console.log('onDragMove');
+		/*
 		e.subject.fx = this.transform.invertX(e.x);
     	e.subject.fy = this.transform.invertY(e.y);
 
 		this.tooltip.style('display', 'none');
+		*/
 	};
 			
 	onDragEnd (e: any, d: any) {
+		console.log('onDragEnd');
+		/*
+		console.log('onDragEnd');
+
 		if (!e.active) {
 			this.simulation.alphaTarget(0);
 		};
-		//d.fx = null;
-		//d.fy = null;
+		*/
 	};
 
-	onZoom (e: any) {
-		this.transform = e.transform;
+	onZoom ({ transform }) {
+		this.worker.postMessage({ id: 'onZoom', transform: transform });
   	};
+
+	onMessage ({ data }) {
+		switch (data.id) {
+
+			case 'onClick':
+				DataUtil.objectOpenPopup(data.node);
+				break;
+
+			case 'onMouseMove':
+				const d = data.node;
+
+				if (d) {
+					this.tooltip.
+					style('display', 'block').
+					style('left', (data.x + 10) + 'px').
+					style('top', (data.y + 10) + 'px').
+					html([ 
+						`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
+						`<b>Type</b>: ${d.typeName}`,
+						`<b>Layout</b>: ${translate('layout' + d.layout)}`,
+					].join('<br/>'));
+				} else {
+					this.tooltip.style('display', 'none');
+				};
+				break;
+
+		};
+	};
 
 	imageSrc (d: any) {
 		let src = '';
@@ -603,7 +563,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			case I.ObjectLayout.Image:
 				if (d.id) {
-					src = commonStore.imageUrl(d.id, d.radius * 2);
+					src = commonStore.imageUrl(d.id, 50);
 				} else {
 					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
 				};
@@ -611,7 +571,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			default:
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, d.radius * 2);
+					src = commonStore.imageUrl(d.iconImage, 50);
 				} else
 				if (d.iconEmoji) {
 					const data = SmileUtil.data(d.iconEmoji);
