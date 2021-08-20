@@ -118,11 +118,6 @@ draw = () => {
 	ctx.restore();
 };
 
-redraw = () => {
-	draw();
-	requestAnimationFrame(draw);
-};
-
 drawLink = (d) => {
 	ctx.beginPath();
 	ctx.moveTo(d.source.x, d.source.y);

@@ -46,7 +46,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		link: {
 			enabled: true,
 			strength: 0.1,
-			distance: 20,
+			distance: 50,
 			iterations: 1
 		},
 		forceX: {
@@ -285,9 +285,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					Constant.typeId.relation,
 					Constant.typeId.template,
 					Constant.typeId.type,
-					//Constant.typeId.file,
-					//Constant.typeId.image,
-					//Constant.typeId.video,
+					Constant.typeId.file,
+					Constant.typeId.image,
+					Constant.typeId.video,
 				] 
 			},
 			{ 
@@ -405,7 +405,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject(this.dragSubject).
+			subject(() => null).
 			on('start', (e: any, d: any) => this.onDragStart(e, d)).
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
@@ -419,7 +419,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			this.tooltip.style('display', 'none');
 		})
 		.on('mousemove', (e: any) => {
-			this.worker.postMessage({ id: 'onMouseMove', x: e.x, y: e.y })
+			const p = d3.pointer(e);
+			this.worker.postMessage({ id: 'onMouseMove', x: p[0], y: p[1] })
 		});
 	};
 
@@ -456,10 +457,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		};
 	};
 
-	dragSubject () {
-		return null;
-	};
-
 	onDragStart (e: any, d: any) {
 		this.worker.postMessage({ id: 'onDragStart', active: e.active, x: e.x, y: e.y});
 		this.tooltip.style('display', 'none');
@@ -490,8 +487,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 				if (d) {
 					this.tooltip.
 					style('display', 'block').
-					style('left', (data.x + 10) + 'px').
-					style('top', (data.y + 10) + 'px').
+					style('left', (data.x + 30) + 'px').
+					style('top', (data.y + 30) + 'px').
 					html([ 
 						`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
 						`<b>Type</b>: ${d.typeName}`,
