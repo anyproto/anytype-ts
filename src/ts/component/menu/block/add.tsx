@@ -101,8 +101,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								scrollContainer={Util.getScrollContainer('menuBlockRelationList')}
-								pageContainer={Util.getPageContainer('menuBlockRelationList')}
+								scrollContainer={Util.getScrollContainer('menuBlockAdd')}
+								pageContainer={Util.getPageContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
 								placeholder={translate('placeholderCellCommon')}
@@ -420,6 +420,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			isSub: true,
 			className: param.className,
 			data: {
+				rebind: this.rebind,
 				rootId: rootId,
 				skipId: rootId,
 				blockId: blockId,

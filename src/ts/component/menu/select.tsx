@@ -24,6 +24,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
@@ -180,7 +181,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	onOver (e: any, item: any) {
 		const { param, setActive } = this.props;
 		const { data } = param;
-		const { canSelectInitial, onMouseEnter } = data;
+		const { canSelectInitial, onOver } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
@@ -190,8 +191,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			setActive(item, false);
 		};
 
-		if (onMouseEnter) {
-			onMouseEnter(e, item);
+		if (onOver) {
+			onOver(e, item);
 		};
 	};
 	

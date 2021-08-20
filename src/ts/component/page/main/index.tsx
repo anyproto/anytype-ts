@@ -404,7 +404,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			},
 			data: {
 				options: options,
-				onMouseEnter: (e: any, el: any) => {
+				onOver: (e: any, el: any) => {
 					menuStore.closeAll(subIds, () => {
 						if (el.id == 'move') {
 							const filters = [
@@ -420,7 +420,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+
 								data: {
+									rebind: menuContext.ref.rebind,
 									rootId: rootId,
 									blockId: item.id,
 									blockIds: [ item.id ],

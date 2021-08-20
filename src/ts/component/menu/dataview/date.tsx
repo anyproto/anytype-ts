@@ -68,11 +68,7 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 	};
 	
 	unbind () {
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-
-		win.unbind('keydown.menu');
-		node.find('.items').unbind('scroll.menu');
+		$(window).unbind('keydown.menu');
 	};
 
 	getSections () {
