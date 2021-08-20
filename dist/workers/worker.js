@@ -180,7 +180,7 @@ onDragStart = ({ subject, active, x, y }) => {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	//onDragMove({ subject, active, x, y });
+	onDragMove({ subject, active, x, y });
 };
 
 onDragMove = ({ subject, active, x, y }) => {
