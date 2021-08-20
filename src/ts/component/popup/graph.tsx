@@ -44,7 +44,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			distanceMax: 200
 		},
 		collide: {
-			enabled: true,
+			enabled: false,
 			strength: 0.1,
 			iterations: 1,
 			radius: 0.5
@@ -332,6 +332,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		const { root } = blockStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#graphWrapper');
+		const density = window.devicePixelRatio;
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
@@ -383,11 +384,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		});
 
 		this.canvas = d3.select('#graph').append('canvas')
-		.attr('width', this.width + 'px')
-		.attr('height', this.height + 'px')
+		.attr('width', (this.width * density) + 'px')
+		.attr('height', (this.height * density) + 'px')
 		.node();
 
 		this.ctx = this.canvas.getContext('2d');
+		this.ctx.scale(density, density);
   		this.simulation = d3.forceSimulation(this.nodes);
 		this.initForces();
 
@@ -399,7 +401,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width / 2, -this.height / 2).scale(3))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width, -this.height).scale(3))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
   			const d = this.simulation.find(this.transform.invertX(p[0]), this.transform.invertY(p[1]), 10);
@@ -512,7 +514,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
     	e.subject.fy = this.transform.invertY(e.y);
 
 		this.tooltip.style('display', 'none');
-		this.draw();
 	};
 
 	onDragMove (e: any, d: any) {
@@ -520,14 +521,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
     	e.subject.fy = this.transform.invertY(e.y);
 
 		this.tooltip.style('display', 'none');
-		this.draw();
 	};
 			
 	onDragEnd (e: any, d: any) {
 		if (!e.active) {
 			this.simulation.alphaTarget(0);
 		};
-		this.draw();
 		//d.fx = null;
 		//d.fy = null;
 	};
@@ -575,19 +574,21 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		let y = d.y - d.radius / 2;
 		let w = d.radius;
 
+		this.ctx.save();
+
 		if (d.iconImage) {
 			x = d.x - d.radius;
 			y = d.y - d.radius;
 			w = d.radius * 2;
+
+			this.ctx.beginPath();
+			this.ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+			this.ctx.closePath();
+			this.ctx.fill();
+
+			this.ctx.clip();
 		};
 
-		this.ctx.save();
-		this.ctx.beginPath();
-		this.ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-		this.ctx.closePath();
-		this.ctx.fill();
-
-		this.ctx.clip();
 		this.ctx.drawImage(d.img, 0, 0, d.img.width, d.img.width, x, y, w, w);
 		this.ctx.restore();
 

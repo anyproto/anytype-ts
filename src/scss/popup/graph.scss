@@ -10,6 +10,9 @@
 		.side.left { width: calc(100% - 300px); }
 		.side.right { width: 300px; background: rgba(134, 125, 66, 0.08); padding: 20px; overflow: auto; }
 
+		#graph { width: 100%; height: 100%; }
+		canvas { width: 100%; height: 100%; }
+
 		.section { margin-bottom: 24px; }
 		.section {
 			.item { margin-bottom: 10px; line-height: 24px; }
