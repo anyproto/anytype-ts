@@ -13,6 +13,12 @@
 		#graph { width: 100%; height: 100%; }
 		canvas { width: 100%; height: 100%; }
 
+		.filter { padding: 0px; background: #fff; border-radius: 3px; border: 1px solid $colorLightGrey; }
+		.filter {
+			.inner { height: auto; padding: 0px 4px; }
+			.line { display: none; }
+		}
+
 		.section { margin-bottom: 24px; }
 		.section {
 			.item { margin-bottom: 10px; line-height: 24px; }

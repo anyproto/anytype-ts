@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
-import { Label, Drag, Checkbox } from 'ts/component';
-import { commonStore, blockStore, dbStore, authStore } from 'ts/store';
+import { Label, Drag, Checkbox, Filter } from 'ts/component';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -64,6 +64,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		orphans: false,
 		markers: false,
+		filter: '',
 	};
 
 	render () {
@@ -73,6 +74,16 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					<div id="graph" />
 				</div>
 				<div className="side right">
+					<div className="section">
+						<div className="name">Filter</div>
+						<div className="item">
+							<Filter onChange={(v: string) => {
+								this.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
+								this.updateForces();
+							}} />
+						</div>
+					</div>
+
 					<div className="section">
 						<div className="name">Center</div>
 						<div className="item">

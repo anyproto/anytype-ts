@@ -128,9 +128,14 @@ drawLink = (d) => {
 };
 
 drawNode = (d) => {
+	let bg = d.bg;
+	if (forceProps.filter && d.name.match(forceProps.filter)) {
+		bg = '#e3f7d0';
+	};
+
 	ctx.beginPath();
 	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-	ctx.fillStyle = d.bg;
+	ctx.fillStyle = bg;
 	ctx.fill();
 
 	ctx.font = '3px Helvetica';
