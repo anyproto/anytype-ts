@@ -122,7 +122,7 @@ draw = () => {
 
 	edges.forEach(d => drawBend(d, 0.1, 3, 2, false, forceProps.markers));
 	nodes.forEach(d => {
-		if (!forceProps.orphans && d.isOrphan) {
+		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
 			return;
 		};
 
@@ -308,23 +308,26 @@ drawNode = (d) => {
 	let bg = Color.node.common;
 	let color = '#929082';
 	let stroke = '#fff';
+	let width = 0;
 
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
 		bg = Color.node.filter;
 		color = '#000';
 		stroke = '#000';
+		width = 0.5;
 	};
 
 	if (d.isRoot) {
 		bg = Color.node.focused;
 		color = '#000';
+		width = 0;
 	};
 
 	ctx.beginPath();
 	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 	ctx.fillStyle = bg;
 	ctx.strokeStyle = stroke;
-	ctx.StrokeWidth = 0.5;
+	ctx.strokeWidth = width;
 	ctx.stroke();
 	ctx.fill();
 

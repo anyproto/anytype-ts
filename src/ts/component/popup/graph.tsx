@@ -369,7 +369,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
-			d.shortName = Util.shorten(d.name, 10);
+			d.shortName = Util.shorten(d.name, 16);
 			d.radius = Math.max(5, Math.min(10, sourceCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
