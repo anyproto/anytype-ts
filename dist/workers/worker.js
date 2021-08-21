@@ -130,10 +130,14 @@ drawLink = (d) => {
 drawNode = (d) => {
 	let bg = '#f3f2ec';
 	let color = '#929082';
+	let stroke = '#fff';
 
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
 		bg = '#e3f7d0';
+		color = '#000';
+		stroke = '#000';
 	};
+
 	if (d.isRoot) {
 		bg = '#fef3c5';
 		color = '#000';
@@ -142,6 +146,9 @@ drawNode = (d) => {
 	ctx.beginPath();
 	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 	ctx.fillStyle = bg;
+	ctx.strokeStyle = stroke;
+	ctx.StrokeWidth = 0.5;
+	ctx.stroke();
 	ctx.fill();
 
 	ctx.font = '3px Helvetica';
