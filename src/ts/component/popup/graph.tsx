@@ -37,19 +37,19 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			enabled: true,
 			strength: -50,
 			distanceMin: 20,
-			distanceMax: 300
+			distanceMax: 200
 		},
 		collide: {
 			enabled: true,
-			strength: 0.7,
+			strength: 0.5,
 			iterations: 1,
 			radius: 0.5
 		},
 		link: {
 			enabled: true,
-			strength: 0.5,
-			distance: 50,
-			iterations: 1
+			strength: 0.1,
+			distance: 60,
+			iterations: 3
 		},
 		forceX: {
 			enabled: false,
@@ -361,28 +361,20 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		});
 
 		this.nodes = this.nodes.map((d: any) => {
-			const type = dbStore.getObjectType(d.type);
 			const sourceCnt = this.edges.filter((it: any) => { return it.source == d.id; }).length;
 			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
-			d.bg = BG;
-			d.typeName = type ? type.name : translate('defaultNamePage');
 			d.layout = Number(d.layout) || 0;
-			d.name = d.name || translate('defaultNamePage');
+			d.name = Util.shorten(d.name || translate('defaultNamePage'), 10);
 			d.radius = Math.max(5, Math.min(10, sourceCnt));
-			d.isRoot = d.id == root;
+			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
 
-			if (!type) {
-				//d.bg = '#f55522';
-			};
-
-			if (rootId && (d.id == rootId)) {
+			if (d.isRoot) {
 				d.fx = this.width / 2;
 				d.fy = this.height / 2;
 				d.radius = 15;
-				d.bg = '#ffb522';
 			};
 			return d;
 		});
@@ -510,13 +502,15 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 				};
 
 				if (d) {
+					const type = dbStore.getObjectType(d.type);
+
 					this.tooltip.
 					style('display', 'block').
 					style('left', (data.x + 30) + 'px').
 					style('top', (data.y + 30) + 'px').
 					html([ 
 						`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
-						`<b>Type</b>: ${d.typeName}`,
+						`<b>Type</b>: ${type ? type.name : translate('defaultNamePage')}`,
 						`<b>Layout</b>: ${translate('layout' + d.layout)}`,
 					].join('<br/>'));
 				} else {

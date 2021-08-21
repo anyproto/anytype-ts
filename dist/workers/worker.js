@@ -128,9 +128,15 @@ drawLink = (d) => {
 };
 
 drawNode = (d) => {
-	let bg = d.bg;
+	let bg = '#f3f2ec';
+	let color = '#929082';
+
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
 		bg = '#e3f7d0';
+	};
+	if (d.isRoot) {
+		bg = '#fef3c5';
+		color = '#000';
 	};
 
 	ctx.beginPath();
@@ -139,9 +145,9 @@ drawNode = (d) => {
 	ctx.fill();
 
 	ctx.font = '3px Helvetica';
-	ctx.fillStyle = '#929082';
+	ctx.fillStyle = color;
 	ctx.textAlign = 'center';
-	ctx.fillText(shorten(d.name, 10), d.x, d.y + d.radius + 4);
+	ctx.fillText(d.name, d.x, d.y + d.radius + 4);
 
 	if (!images[d.src]) {
 		return;
@@ -222,13 +228,4 @@ onClick = ({ x, y }) => {
 onMouseMove = ({ x, y }) => {
 	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
 	this.postMessage({ id: 'onMouseMove', node: d, x: x, y: y });
-};
-
-shorten = (s, l) => {
-	s = String(s || '');
-	l = Number(l) || 16;
-	if (s.length > l) {
-		s = s.substr(0, l) + '...';
-	};
-	return s;
 };
