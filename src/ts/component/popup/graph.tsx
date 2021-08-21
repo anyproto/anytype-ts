@@ -11,8 +11,6 @@ interface Props extends I.Popup {};
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const BG = '#f3f2ec';
-
 const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> {
 
 	canvas: any = null;
@@ -62,8 +60,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			y: 0.5
 		},
 
-		orphans: false,
-		markers: false,
+		orphans: true,
+		markers: true,
+		labels: true,
 		filter: '',
 	};
 
@@ -79,7 +78,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						<div className="item">
 							<Filter onChange={(v: string) => {
 								this.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
-								this.updateForces();
+								this.updateProps();
 							}} />
 						</div>
 					</div>
@@ -273,16 +272,23 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						<div className="item">
 							<Checkbox value={this.forceProps.orphans} onChange={(e: any, v: any) => {
 								this.forceProps.orphans = v;
-								this.updateForces();
+								this.updateProps();
 							}} />
 							Show orphans
 						</div>
 						<div className="item">
 							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
 								this.forceProps.markers = v;
-								this.updateForces();
+								this.updateProps();
 							}} />
 							Show markers
+						</div>
+						<div className="item">
+							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
+								this.forceProps.labels = v;
+								this.updateProps();
+							}} />
+							Show labels
 						</div>
 					</div>
 				</div>
@@ -325,10 +331,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 			this.init();
 		});
+
+		$(window).unbind('resize.graph').on('resize.graph', () => { this.resize(); });
 	};
 
 	componentWillUnmount () {
 		this.worker.terminate();
+		$(window).unbind('resize.graph');
 	};
 
 	updateLabel (id: string, text: string) {
@@ -340,23 +349,17 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const { root } = blockStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#graphWrapper');
 		const density = window.devicePixelRatio;
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
-		this.zoom = d3.zoom().scaleExtent([ 1, 8 ]).on('zoom', e => this.onZoom(e));
+		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 
 		this.edges = this.edges.map((d: any) => {
 			d.type = Number(d.type) || 0;
 			d.typeName = translate('edgeType' + d.type);
-
-			d.bg = BG;
-			if (d.type == I.EdgeType.Relation) {
-				d.bg = '#4287f5';
-			};
 			return d;
 		});
 
@@ -365,7 +368,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
 			d.layout = Number(d.layout) || 0;
-			d.name = Util.shorten(d.name || translate('defaultNamePage'), 10);
+			d.name = d.name || translate('defaultNamePage');
+			d.shortName = Util.shorten(d.name, 10);
 			d.radius = Math.max(5, Math.min(10, sourceCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
@@ -395,7 +399,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 		this.worker.addEventListener('message', (data) => { this.onMessage(data); });
 
-		this.worker.postMessage({ 
+		this.send('init', { 
 			id: 'init',
 			canvas: transfer, 
 			width: this.width,
@@ -419,14 +423,14 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width, -this.height).scale(3))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
-			this.worker.postMessage({ id: 'onClick', x: p[0], y: p[1] });
+			this.send('onClick', { x: p[0], y: p[1] });
 		})
 		.on('mousedown', (e: any) => {
 			this.tooltip.style('display', 'none');
 		})
 		.on('mousemove', (e: any) => {
 			const p = d3.pointer(e);
-			this.worker.postMessage({ id: 'onMouseMove', x: p[0], y: p[1] })
+			this.send('onMouseMove', { x: p[0], y: p[1] });
 		});
 	};
 
@@ -449,7 +453,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					};
 
 					this.images[d.src] = true;
-					this.worker.postMessage({ id: 'image', src: d.src, bitmap: res });
+					this.send('image', { src: d.src, bitmap: res });
 				});
 			};
 			img.crossOrigin = '';
@@ -457,35 +461,37 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		});
 	};
 
+	updateProps () {
+		this.send('updateProps', { forceProps: this.forceProps } );
+	};
+
 	updateForces () {
-		if (this.worker) {
-			this.worker.postMessage({ id: 'updateProps', forceProps: this.forceProps });
-		};
+		this.updateProps();
+		this.send('updateForces', {});
 	};
 
 	onDragStart (e: any, d: any) {
 		this.isDragging = true;
 
 		const p = d3.pointer(e);
-		this.worker.postMessage({ id: 'onDragStart', subject: this.subject, active: e.active, x: p[0], y: p[1] });
+		this.send('onDragStart', { subject: this.subject, active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e);
-		this.worker.postMessage({ id: 'onDragMove', subject: this.subject, active: e.active, x: p[0], y: p[1] });
+		this.send('onDragMove', { subject: this.subject, active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 			
 	onDragEnd (e: any, d: any) {
 		this.isDragging = false;
 		this.subject = null;
-
-		this.worker.postMessage({ id: 'onDragEnd', active: e.active});
+		this.send('onDragEnd', { active: e.active });
 	};
 
 	onZoom ({ transform }) {
-		this.worker.postMessage({ id: 'onZoom', transform: transform });
+		this.send('onZoom', { transform: transform });
   	};
 
 	onMessage ({ data }) {
@@ -509,7 +515,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 					style('left', (data.x + 30) + 'px').
 					style('top', (data.y + 30) + 'px').
 					html([ 
-						`<b>Name:</b> ${Util.shorten(d.name, 24)}`,
+						`<b>Name:</b> ${Util.shorten(d.name, 52)}`,
 						`<b>Type</b>: ${type ? type.name : translate('defaultNamePage')}`,
 						`<b>Layout</b>: ${translate('layout' + d.layout)}`,
 					].join('<br/>'));
@@ -559,6 +565,22 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			src = 'img/icon/page.svg';
 		};
 		return src;
+	};
+
+	send (id: string, param: any, transfer?: any[]) {
+		if (this.worker) {
+			this.worker.postMessage({ id: id, ...param }, transfer);
+		};
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrapper = node.find('#graphWrapper');
+
+		this.width = wrapper.width();
+		this.height = wrapper.height();
+
+		this.send('resize', { width: this.width, height: this.height });
 	};
 
 });
