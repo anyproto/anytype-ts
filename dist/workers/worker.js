@@ -37,19 +37,13 @@ addEventListener('message', ({ data }) => {
 init = (data) => {
 	canvas = data.canvas;
 	ctx = canvas.getContext('2d');
-	width = data.width;
-	height = data.height;
-	density = data.density;
 	forceProps = data.forceProps;
 	nodes = data.nodes;
 	edges = data.edges;
 
+	resize(data);
+
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
-
-	ctx.canvas.width = width * density;
-	ctx.canvas.height = height * density;
-	ctx.scale(density, density);
-
 	simulation = d3.forceSimulation(nodes);
 
 	initForces();
@@ -120,7 +114,7 @@ draw = () => {
 	ctx.translate(transform.x, transform.y);
 	ctx.scale(transform.k, transform.k);
 
-	edges.forEach(d => drawBend(d, 0.1, 3, 2, false, forceProps.markers));
+	edges.forEach(d => drawBend(d, 0.05, 3, 2, false, forceProps.markers));
 	nodes.forEach(d => {
 		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
 			return;
@@ -229,7 +223,7 @@ drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
         eArrow = false;
         aa1 = a1;
         aa2 = a2;
-    }
+    };
 
     // draw arc
     ctx.beginPath();
@@ -295,7 +289,6 @@ drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
 		ctx.translate(mx, my);
 		ctx.rotate(angle);
 
-		ctx.font = '3px Helvetica';
 		ctx.fillStyle = bg;
 		ctx.textAlign = 'center';
 		ctx.fillText(d.name, 0, dy - 1.5);
@@ -307,7 +300,7 @@ drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
 drawNode = (d) => {
 	let bg = Color.node.common;
 	let color = '#929082';
-	let stroke = '#fff';
+	let stroke = '';
 	let width = 0;
 
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
@@ -326,13 +319,16 @@ drawNode = (d) => {
 	ctx.beginPath();
 	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 	ctx.fillStyle = bg;
-	ctx.strokeStyle = stroke;
-	ctx.strokeWidth = width;
-	ctx.stroke();
+
+	if (stroke) {
+		ctx.lineWidth = width;
+		ctx.strokeStyle = stroke;
+		ctx.stroke();
+	};
+	
 	ctx.fill();
 
 	if (forceProps.labels) {
-		ctx.font = '3px Helvetica';
 		ctx.fillStyle = color;
 		ctx.textAlign = 'center';
 		ctx.fillText(d.shortName, d.x, d.y + d.radius + 4);
@@ -420,8 +416,15 @@ onMouseMove = ({ x, y }) => {
 resize = (data) => {
 	width = data.width;
 	height = data.height;
-	canvas.width = width;
-	canvas.height = height;
+	density = data.density;
 
+	ctx.canvas.width = width * density;
+	ctx.canvas.height = height * density;
+	ctx.scale(density, density);
+	ctx.font = '3px Helvetica';
+};
+
+onResize = (data) => {
+	resize(data);
 	draw();
 };

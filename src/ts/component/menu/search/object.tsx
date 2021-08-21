@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, Label } from 'ts/component';
-import { I, C, Key, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
+import { commonStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -236,7 +236,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false }
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			},
 		].concat(data.filters || []);
 
 		const sorts = [

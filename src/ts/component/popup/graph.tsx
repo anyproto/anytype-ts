@@ -60,7 +60,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			y: 0.5
 		},
 
-		orphans: true,
+		orphans: false,
 		markers: true,
 		labels: true,
 		filter: '',
@@ -303,7 +303,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 				value: [ 
 					Constant.typeId.relation,
 					Constant.typeId.template,
-					Constant.typeId.type,
 					Constant.typeId.file,
 					Constant.typeId.image,
 					Constant.typeId.video,
@@ -576,11 +575,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	resize () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#graphWrapper');
+		const density = window.devicePixelRatio;
 
 		this.width = wrapper.width();
 		this.height = wrapper.height();
 
-		this.send('resize', { width: this.width, height: this.height });
+		this.send('onResize', { width: this.width, height: this.height, density: density });
 	};
 
 });
