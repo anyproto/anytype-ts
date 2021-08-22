@@ -46,7 +46,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		link: {
 			enabled: true,
 			strength: 0.1,
-			distance: 60,
+			distance: 20,
 			iterations: 3
 		},
 		forceX: {
@@ -303,6 +303,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 				value: [ 
 					Constant.typeId.relation,
 					Constant.typeId.template,
+					Constant.typeId.type,
 					Constant.typeId.file,
 					Constant.typeId.image,
 					Constant.typeId.video,
@@ -492,6 +493,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	onZoom ({ transform }) {
+		this.forceProps.labels = transform.k > 2;
+		this.updateProps();
 		this.send('onZoom', { transform: transform });
   	};
 

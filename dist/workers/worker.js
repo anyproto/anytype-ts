@@ -27,6 +27,7 @@ let Color = {
 		common: '#f3f2ec',
 		filter: '#e3f7d0',
 		focused: '#fef3c5',
+		over: '#d6f5f3',
 	},
 };
 
@@ -85,7 +86,7 @@ image = ({ src, bitmap }) => {
 
 updateProps = (data) => {
 	forceProps = data.forceProps;
-	draw();
+	redraw();
 };
 
 initForces = () => {
@@ -149,6 +150,10 @@ draw = () => {
 		drawNode(d);
 	});
 	ctx.restore();
+};
+
+redraw = () => {
+	requestAnimationFrame(draw);
 };
 
 drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
@@ -342,6 +347,10 @@ drawNode = (d) => {
 		width = 0;
 	};
 
+	if (d.isOver) {
+		bg = Color.node.over;
+	};
+
 	ctx.beginPath();
 	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 	ctx.fillStyle = bg;
@@ -397,7 +406,7 @@ onZoom = (data) => {
 	transform.y = y;
 	transform.k = k;
 
-	draw();
+	redraw();
 };
 
 onDragStart = ({ subject, active, x, y }) => {
@@ -420,7 +429,7 @@ onDragMove = ({ subject, active, x, y }) => {
 		d.fx = transform.invertX(x) - d.radius / 2;
 		d.fy = transform.invertY(y) - d.radius / 2;
 
-		draw();
+		redraw();
 	};
 };
 
@@ -438,7 +447,17 @@ onClick = ({ x, y }) => {
 };
 
 onMouseMove = ({ x, y }) => {
+	const active = nodes.find(d => d.isOver);
+	if (active) {
+		active.isOver = false;
+	};
+
 	const d = simulation.find(transform.invertX(x), transform.invertY(y), 10);
+	if (d) {
+		d.isOver = true;
+	};
+
+	redraw();
 	this.postMessage({ id: 'onMouseMove', node: d, x: x, y: y });
 };
 
@@ -455,5 +474,5 @@ resize = (data) => {
 
 onResize = (data) => {
 	resize(data);
-	draw();
+	redraw();
 };
