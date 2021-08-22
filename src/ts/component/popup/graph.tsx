@@ -335,7 +335,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	componentWillUnmount () {
-		this.worker.terminate();
+		if (this.worker) {
+			this.worker.terminate();
+		};
 		$(window).unbind('resize.graph');
 	};
 

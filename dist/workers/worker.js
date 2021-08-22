@@ -5,8 +5,10 @@ importScripts('d3/d3-dispatch.min.js');
 importScripts('d3/d3-timer.min.js');
 importScripts('d3/d3-force.min.js');
 
+let offscreen = null;
 let canvas = null;
 let ctx = null;
+let octx = null;
 let width = 0;
 let height = 0;
 let density = 0;
@@ -41,10 +43,35 @@ init = (data) => {
 	nodes = data.nodes;
 	edges = data.edges;
 
+	offscreen = new OffscreenCanvas(500, 80);
+	octx = offscreen.getContext('2d');
+
 	resize(data);
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
 	simulation = d3.forceSimulation(nodes);
+
+	nodes = nodes.map((d) => {
+		let color = '#929082';
+		if (forceProps.filter && d.name.match(forceProps.filter)) {
+			color = '#000';
+		};
+		if (d.isRoot) {
+			color = '#000';
+			width = 0;
+		};
+
+		octx.save();
+		octx.clearRect(0, 0, 500, 80);
+		octx.font = '40px Arial';
+		octx.fillStyle = color;
+		octx.textAlign = 'center';
+		octx.fillText(d.shortName, 250, 40);
+		octx.restore();
+
+		d.textBitmap = offscreen.transferToImageBitmap();
+		return d;
+	});
 
 	initForces();
 	simulation.on('tick', () => { draw(); });
@@ -328,10 +355,13 @@ drawNode = (d) => {
 	
 	ctx.fill();
 
-	if (forceProps.labels) {
+	if (forceProps.labels && d.textBitmap) {
+		/*
 		ctx.fillStyle = color;
 		ctx.textAlign = 'center';
 		ctx.fillText(d.shortName, d.x, d.y + d.radius + 4);
+		*/
+		ctx.drawImage(d.textBitmap, 0, 0, 500, 80, d.x - 14, d.y + d.radius + 1, 28, 5);
 	};
 
 	if (!images[d.src]) {
