@@ -58,7 +58,6 @@ init = (data) => {
 		};
 		if (d.isRoot) {
 			color = '#000';
-			width = 0;
 		};
 
 		octx.save();
