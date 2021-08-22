@@ -310,7 +310,7 @@ drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
 			angle = Math.atan2(y2 - y1, x2 - x1);
 			dy = -b1;
 		};
-
+		
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(angle);

@@ -518,7 +518,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (!menuOpenAdd && !menuOpenMention) {
-				if (range.to) {
+				if (!range || !range.to) {
 					return;
 				};
 
@@ -539,6 +539,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('delete', e, (pressed: string) => {
+			if (!range) {
+				return;
+			};
 			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
 				ret = true;
 			};
