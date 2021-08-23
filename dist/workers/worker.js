@@ -44,7 +44,7 @@ init = (data) => {
 	nodes = data.nodes;
 	edges = data.edges;
 
-	offscreen = new OffscreenCanvas(500, 80);
+	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
 	resize(data);
@@ -62,11 +62,11 @@ init = (data) => {
 		};
 
 		octx.save();
-		octx.clearRect(0, 0, 500, 80);
-		octx.font = '40px Arial';
+		octx.clearRect(0, 0, 250, 40);
+		octx.font = '20px Arial';
 		octx.fillStyle = color;
 		octx.textAlign = 'center';
-		octx.fillText(d.shortName, 250, 40);
+		octx.fillText(d.shortName, 125, 20);
 		octx.restore();
 
 		d.textBitmap = offscreen.transferToImageBitmap();
@@ -330,20 +330,17 @@ drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
 
 drawNode = (d) => {
 	let bg = Color.node.common;
-	let color = '#929082';
 	let stroke = '';
 	let width = 0;
 
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
 		bg = Color.node.filter;
-		color = '#000';
 		stroke = '#000';
 		width = 0.5;
 	};
 
 	if (d.isRoot) {
 		bg = Color.node.focused;
-		color = '#000';
 		width = 0;
 	};
 
@@ -363,8 +360,8 @@ drawNode = (d) => {
 	
 	ctx.fill();
 
-	if (forceProps.labels && d.textBitmap && (transform.k > 2.5)) {
-		ctx.drawImage(d.textBitmap, 0, 0, 500, 80, d.x - 14, d.y + d.radius + 1, 28, 5);
+	if (forceProps.labels && d.textBitmap && (transform.k > 2)) {
+		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - 14, d.y + d.radius + 1, 28, 5);
 	};
 
 	if (!images[d.src]) {
