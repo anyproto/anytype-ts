@@ -3,6 +3,7 @@ importScripts('d3/d3-zoom.min.js');
 importScripts('d3/d3-drag.min.js');
 importScripts('d3/d3-dispatch.min.js');
 importScripts('d3/d3-timer.min.js');
+importScripts('d3/d3-selection.min.js');
 importScripts('d3/d3-force.min.js');
 
 let offscreen = null;
@@ -407,27 +408,30 @@ onZoom = (data) => {
 	redraw();
 };
 
-onDragStart = ({ subject, active, x, y }) => {
+onDragStart = ({ subjectId, active, x, y }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
 };
 
-onDragMove = ({ subject, active, x, y }) => {
+onDragMove = ({ subjectId, active, x, y }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
 
-	if (!subject) {
+	if (!subjectId) {
 		return;
 	};
 
-	const d = nodes.find((it) => { return it.id == subject.id; });
+	const d = nodes.find((it) => { return it.id == subjectId; });
 	if (d) {
+
+		console.log(x, y, transform);
+
 		d.fx = transform.invertX(x) - d.radius / 2;
 		d.fy = transform.invertY(y) - d.radius / 2;
 
-		console.log('x', x, 'y', y, 'fx', d.fx, 'fy', d.fy);
+		console.log(d.fx, d.fy);
 
 		redraw();
 	};
