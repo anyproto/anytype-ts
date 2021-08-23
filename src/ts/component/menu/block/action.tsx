@@ -143,7 +143,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
-		const { config } = commonStore;
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;

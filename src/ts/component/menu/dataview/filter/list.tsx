@@ -5,7 +5,7 @@ import { Icon, IconObject, Tag } from 'ts/component';
 import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate, Util } from 'ts/lib';
+import { translate, Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {}
@@ -15,12 +15,14 @@ const $ = require('jquery');
 
 const MenuFilterList = observer(class MenuFilterList extends React.Component<Props, {}> {
 	
+	n: number = 0;
+
 	constructor (props: any) {
 		super(props);
 		
 		this.save = this.save.bind(this);
 		this.onAdd = this.onAdd.bind(this);
-		this.onDelete = this.onDelete.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
@@ -36,14 +38,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		};
 
 		const filterCnt = view.filters.length;
-		const filters = Util.objectCopy(view.filters || []).map((it: any) => {
-			return { 
-				...it, 
-				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
-			};
-		}).filter((it: any) => { return it.relation ? true : false; });
+		const items = this.getItems();
 
-		for (let filter of view.filters) {
+		for (let filter of items) {
 			const { relationKey, condition, value } = filter;
 		};
 
@@ -128,11 +125,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			};
 
 			return (
-				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
+				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
-					<div className="txt" onClick={(e: any) => { this.onMore(e, item.id); }}>
+					<div className="txt" onClick={(e: any) => { this.onClick(e, item); }}>
 						<div className="name">{relation.name}</div>
 						<div className="flex">
 							<div className="condition grey">
@@ -148,8 +145,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 
 					{allowedView ? (
 						<div className="buttons">
-							<Icon className="more" onClick={(e: any) => { this.onMore(e, item.id); }} />
-							<Icon className="delete" onClick={(e: any) => { this.onDelete(e, item.id); }} />
+							<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
+							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 						</div>
 					) : ''}
 				</form>
@@ -167,10 +164,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			return (
 				<div className="items">
 					<div className="scrollWrap">
-						{filters.map((item: any, i: number) => (
+						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} id={i} index={i} />
 						))}
-						{!filters.length ? (
+						{!items.length ? (
 							<div className="item empty">
 								<div className="inner">No filters applied to this view</div>
 							</div>
@@ -179,7 +176,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 					{allowedView ? (
 						<div className="bottom">
 							<div className="line" />
-							<ItemAdd index={view.filters.length + 1} disabled={true} /> 
+							<ItemAdd index={items.length + 1} disabled={true} /> 
 						</div>
 					) : ''}
 				</div>
@@ -202,16 +199,31 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	};
 	
 	componentDidMount () {
-		const { getId } = this.props;
-		const obj = $(`#${getId()} .content`);
+		this.rebind();
+	};
 
-		obj.unbind('click').on('click', () => {
-			menuStore.closeAll(Constant.menuIds.cell);
-		});
+	componentDidUpdate () {
+		this.props.setActive();
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		menuStore.closeAll(Constant.menuIds.cell);
+	};
+
+	rebind () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()} .content`);
+
+		obj.unbind('click').on('click', () => { menuStore.closeAll(Constant.menuIds.cell); });
+
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
 	};
 
 	onAdd (e: any) {
@@ -241,29 +253,35 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.save();
 	};
 
-	onDelete (e: any, id: number) {
+	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
 
-		view.filters = view.filters.filter((it: any, i: number) => { return i != id; });
+		view.filters = view.filters.filter((it: any, i: number) => { return i != item.id; });
 		this.save();
 
 		menuStore.close('select');
 	};
 
-	onMore (e: any, id: number) {
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
+	};
+
+	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
 
 		menuStore.open('dataviewFilterValues', {
-			element: `#${getId()} #item-${id}`,
+			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
 			data: {
 				...data,
 				save: this.save,
-				itemId: id,
+				itemId: item.id,
 			}
 		});
 	};
@@ -291,6 +309,26 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			};
 			window.setTimeout(() => { this.forceUpdate(); }, 50);
 		});
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+
+		if (!view) {
+			return [];
+		};
+
+		let n = 0;
+		return Util.objectCopy(view.filters || []).map((it: any) => {
+			return { 
+				...it, 
+				id: n++,
+				relation: dbStore.getRelation(rootId, blockId, it.relationKey),
+			};
+		}).filter((it: any) => { return it.relation; });
 	};
 
 	getRelationOptions () {

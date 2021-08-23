@@ -47,7 +47,7 @@
 
 	"menuIds": {
 		"cell": [ 
-			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
+			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
 		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
@@ -55,7 +55,7 @@
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
 		"add": [
-			"searchObject", "blockRelationList", "blockRelationEdit"
+			"searchObject", "blockRelationEdit"
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"

@@ -83,9 +83,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		this.focus();
+		this.props.position();
+		this.props.setActive();
 	};
-	
+
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
 	};
