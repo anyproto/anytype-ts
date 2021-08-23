@@ -376,12 +376,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
-
-			if (d.isRoot) {
-				d.fx = this.width / 2;
-				d.fy = this.height / 2;
-				d.radius = 15;
-			};
 			return d;
 		});
 
@@ -531,6 +525,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 	imageSrc (d: any) {
 		let src = '';
+
+		if (d.id == blockStore.root) {
+			return 'img/icon/home.svg';
+		};
 
 		switch (d.layout) {
 			case I.ObjectLayout.Task:

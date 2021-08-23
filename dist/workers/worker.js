@@ -53,6 +53,12 @@ init = (data) => {
 	simulation = d3.forceSimulation(nodes);
 
 	nodes = nodes.map((d) => {
+		if (d.isRoot) {
+			d.fx = width / 2;
+			d.fy = height / 2;
+			d.radius = 10;
+		};
+
 		let color = '#929082';
 		if (forceProps.filter && d.name.match(forceProps.filter)) {
 			color = '#000';
@@ -420,6 +426,8 @@ onDragMove = ({ subject, active, x, y }) => {
 	if (d) {
 		d.fx = transform.invertX(x) - d.radius / 2;
 		d.fy = transform.invertY(y) - d.radius / 2;
+
+		console.log('x', x, 'y', y, 'fx', d.fx, 'fy', d.fy);
 
 		redraw();
 	};
