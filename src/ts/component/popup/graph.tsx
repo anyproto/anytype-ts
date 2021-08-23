@@ -468,16 +468,12 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 	onDragStart (e: any, d: any) {
 		this.isDragging = true;
-
-		const p = d3.pointer(e);
-		this.send('onDragStart', { subjectId: this.subject.id, active: e.active, x: p[0], y: p[1] });
+		this.send('onDragStart', { active: e.active });
 		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
-		const p = d3.pointer(e);
-		console.log(e.x, e.y, p);
-
+		const p = d3.pointer(e, d3.select(this.canvas));
 		this.send('onDragMove', { subjectId: this.subject.id, active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};

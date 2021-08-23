@@ -408,7 +408,7 @@ onZoom = (data) => {
 	redraw();
 };
 
-onDragStart = ({ subjectId, active, x, y }) => {
+onDragStart = ({ active }) => {
 	if (!active) {
 		simulation.alphaTarget(0.3).restart();
 	};
@@ -425,14 +425,8 @@ onDragMove = ({ subjectId, active, x, y }) => {
 
 	const d = nodes.find((it) => { return it.id == subjectId; });
 	if (d) {
-
-		console.log(x, y, transform);
-
 		d.fx = transform.invertX(x) - d.radius / 2;
 		d.fy = transform.invertY(y) - d.radius / 2;
-
-		console.log(d.fx, d.fy);
-
 		redraw();
 	};
 };
