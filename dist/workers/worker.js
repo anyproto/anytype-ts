@@ -64,12 +64,9 @@ init = (data) => {
 		octx.save();
 		octx.clearRect(0, 0, 500, 80);
 		octx.font = '40px Arial';
-		octx.strokeStyle = '#fff';
-		octx.lineWidth = 0.5;
 		octx.fillStyle = color;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 250, 40);
-		octx.strokeText(d.shortName, 250, 40);
 		octx.restore();
 
 		d.textBitmap = offscreen.transferToImageBitmap();
@@ -307,7 +304,7 @@ drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
     ctx.fill();
 
 	// draw name
-	if (d.name && forceProps.labels) {
+	if (d.name && forceProps.labels && (transform.k > 2.5)) {
 		let angle = 0;
 		let dy = 0;
 
@@ -366,12 +363,7 @@ drawNode = (d) => {
 	
 	ctx.fill();
 
-	if (forceProps.labels && d.textBitmap) {
-		/*
-		ctx.fillStyle = color;
-		ctx.textAlign = 'center';
-		ctx.fillText(d.shortName, d.x, d.y + d.radius + 4);
-		*/
+	if (forceProps.labels && d.textBitmap && (transform.k > 2.5)) {
 		ctx.drawImage(d.textBitmap, 0, 0, 500, 80, d.x - 14, d.y + d.radius + 1, 28, 5);
 	};
 

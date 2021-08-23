@@ -1,5 +1,5 @@
 import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
-import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -68,6 +68,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
+		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
@@ -129,20 +130,24 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
-				popupStore.open('graph', {
-					data: { 
-						rootId: rootId,
-					}, 
-				});
-				/*
 				popupStore.open('navigation', { 
 					data: { 
 						type: I.NavigationType.Go, 
 						rootId: rootId,
 					}, 
 				});
-				*/
 			});
+
+			// Graph
+			if (config.sudo) {
+				this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+					popupStore.open('graph', {
+						data: { 
+							rootId: rootId,
+						}, 
+					});
+				});
+			};
 
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {

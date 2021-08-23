@@ -493,8 +493,6 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	onZoom ({ transform }) {
-		this.forceProps.labels = transform.k > 2;
-		this.updateProps();
 		this.send('onZoom', { transform: transform });
   	};
 
