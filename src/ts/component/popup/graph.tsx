@@ -376,6 +376,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
+
+			// Clear icon props to fix image size
+			if (d.layout == I.ObjectLayout.Task) {
+				d.iconImage = '';
+				d.iconEmoji = '';
+			};
+
 			return d;
 		});
 
