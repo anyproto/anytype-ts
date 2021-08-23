@@ -131,6 +131,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.Checkbox:
 				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
+
+			case I.TextStyle.Latex:
+				additional = <div id="img" />;
+				break;
 		};
 
 		let editor = null;
@@ -217,6 +221,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
+		const img = node.find('#img');
 		
 		let text = String(v || '');
 		if (text === '\n') {
@@ -243,8 +248,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		} else 
 		if (block.isTextLatex()) { 
 			const math = document.createElement('div');
-			ReactDOM.render(<BlockMath math={'\\int_0^\\infty x^2 dx \\inta'} errorColor={'#cc0000'} />, math, () => {
-				value.get(0).innerHTML = math.innerHTML;
+
+			ReactDOM.render(<BlockMath math={html} errorColor={'#cc0000'} />, math, () => {
+				img.get(0).innerHTML = math.innerHTML;
 			});
 		} else {
 			html = Mark.toHtml(html, this.marks);

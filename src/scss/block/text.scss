@@ -147,6 +147,11 @@
 		white-space: nowrap; overflow-x: auto;
 	}
 
+	.block.blockText.latex > .wrapContent > .selectable > .dropTarget .flex { display: block; }
+	.block.blockText.latex > .wrapContent > .selectable > .dropTarget {
+		.katex-display { margin: 0px; }
+	}
+
 	.block.blockText.paragraph > .wrapContent.bgColor > .selectable > .dropTarget, 
 	.block.blockText.header1 > .wrapContent.bgColor > .selectable > .dropTarget,
 	.block.blockText.header2 > .wrapContent.bgColor > .selectable > .dropTarget,
