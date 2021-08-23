@@ -587,7 +587,11 @@ function menuInit () {
 						setConfig({ allowDataview: !config.allowDataview });
 						win.reload();
 					}
-				}
+				},
+				{
+					label: 'Graph',
+					click: () => { send('popup', 'graph', {}); }
+				},
 			]
 		});
 	};
