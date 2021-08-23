@@ -476,7 +476,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e);
-		this.send('onDragMove', { subject: this.subject, active: e.active, x: p[0], y: p[1] });
+		this.send('onDragMove', { e: e, subject: this.subject, active: e.active, x: p[0], y: p[1] });
 		this.tooltip.style('display', 'none');
 	};
 			
