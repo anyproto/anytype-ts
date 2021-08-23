@@ -153,4 +153,5 @@ export interface Block {
 	isTextCheckbox?(): boolean;
 	isTextCode?(): boolean;
 	isTextQuote?(): boolean;
+	isTextLatex?(): boolean;
 };

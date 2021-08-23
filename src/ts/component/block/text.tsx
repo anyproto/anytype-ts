@@ -7,11 +7,13 @@ import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
+import { InlineMath, BlockMath } from 'react-katex';
 import 'prismjs/themes/prism.css';
+import 'katex/dist/katex.min.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
-}
+};
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -28,7 +30,7 @@ const langs = [
 ];
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
-}
+};
 
 const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
@@ -224,7 +226,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.text = text;
 
 		let html = text;
-		if (style == I.TextStyle.Code) {
+		if (block.isTextCode()) {
 			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
 
@@ -238,6 +240,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			html = Prism.highlight(html, grammar, lang);
+		} else 
+		if (block.isTextLatex()) { 
+			const math = document.createElement('div');
+			ReactDOM.render(<BlockMath math={'\\int_0^\\infty x^2 dx \\inta'} errorColor={'#cc0000'} />, math, () => {
+				value.get(0).innerHTML = math.innerHTML;
+			});
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
@@ -245,7 +253,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 
-		if (!block.isTextCode() && (html != text) && marks.length) {
+		if (!block.isTextCode() && !block.isTextLatex() && (html != text) && marks.length) {
 			raf(() => {
 				this.renderLinks();
 				this.renderMentions();

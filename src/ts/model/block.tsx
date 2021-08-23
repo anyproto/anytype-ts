@@ -296,6 +296,10 @@ class Block implements I.Block {
 	isTextQuote (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
 	};
+
+	isTextLatex (): boolean {
+		return this.isText() && (this.content.style == I.TextStyle.Latex);
+	};
 	
 	getLength (): number {
 		return this.isText() ? String(this.content.text || '').length : 0;

@@ -646,6 +646,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+			{ type: I.BlockType.Text, id: I.TextStyle.Latex, icon: 'latex', lang: 'Latex' },
 		];
 		return ret.map(this.menuMapperBlock);
 	};

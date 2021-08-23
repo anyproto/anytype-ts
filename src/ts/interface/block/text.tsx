@@ -14,6 +14,7 @@ export enum TextStyle {
 	Numbered	 = 10,
 	Toggle		 = 11,
 	Description	 = 12,
+	Latex		 = 13,
 };
 
 export enum MarkType {
