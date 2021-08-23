@@ -64,9 +64,12 @@ init = (data) => {
 		octx.save();
 		octx.clearRect(0, 0, 500, 80);
 		octx.font = '40px Arial';
+		octx.strokeStyle = '#fff';
+		octx.lineWidth = 0.5;
 		octx.fillStyle = color;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 250, 40);
+		octx.strokeText(d.shortName, 250, 40);
 		octx.restore();
 
 		d.textBitmap = offscreen.transferToImageBitmap();
@@ -74,7 +77,7 @@ init = (data) => {
 	});
 
 	initForces();
-	simulation.on('tick', () => { draw(); });
+	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
 };
 
