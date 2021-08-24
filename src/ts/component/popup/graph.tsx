@@ -499,6 +499,10 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		switch (data.id) {
 
 			case 'onClick':
+				if (data.node.id == blockStore.root) {
+					break;
+				};
+
 				DataUtil.objectOpenPopup(data.node);
 				break;
 
