@@ -245,6 +245,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId, blockId, onMenuSelect } = data;
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!block) {
+			return;
+		};
 		
 		let filters = [];
 		let menuId = '';
@@ -353,6 +358,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: block.align,
 					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, [ blockId ], align);
 						close();
