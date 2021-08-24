@@ -27,7 +27,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
@@ -269,20 +268,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				}
 			});
 		});
-	};
-
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const relation = data.relation.get();
-
-		relation.selectDict = arrayMove(relation.selectDict, oldIndex, newIndex);
-		data.relation.set(relation);
-		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
-
-		menuStore.updateData(this.props.id, { relation: observable.box(relation) });
 	};
 
 	getItems (withSections: boolean): I.SelectOption[] {

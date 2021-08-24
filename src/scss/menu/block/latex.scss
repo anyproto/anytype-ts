@@ -1,0 +1,21 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuBlockLatex { width: 360px; }
+	.menu.menuBlockLatex {
+		.content { transition: none; padding: 0px; }
+		.items { height: 100%; }
+
+		.item { line-height: 42px; display: flex; }
+		.item {
+			.math { 
+				width: 40px; height: 40px; overflow: hidden; text-align: center; line-height: 38px; border: 1px solid $colorLightGrey; border-radius: 2px;
+				display: inline-block; margin-right: 8px; flex-shrink: 0;
+			}
+			.math {
+				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
+			}
+			.name { @include text-overflow-nw; width: calc(100% - 48px); }
+		}
+	}
+}

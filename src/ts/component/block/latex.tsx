@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { Textarea } from 'ts/component';
 import { observer } from 'mobx-react';
-
+import { menuStore } from 'ts/store';
 import 'katex/dist/katex.min.css';
 
 const katex = require('katex');
+require('katex/dist/contrib/mhchem.min.js');
 
 interface Props extends I.BlockComponent {};
 interface State {
 	value: string;
-}
+};
 
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, State> {
 
@@ -22,6 +23,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	constructor (props: any) {
 		super(props);
+
+		this.onKeyUp = this.onKeyUp.bind(this);
 	};
 
 	render () {
@@ -32,6 +35,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		try {
 			content = katex.renderToString(value, {
+				macros: {
+					'\\f': '#1f(#2)',
+				},
 				throwOnError: false
 			});
 		} catch (e) {
@@ -44,8 +50,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				<Textarea 
 					placeholder="Enter text in format LaTeX" 
 					value={value}
-					rows={1}
-					onKeyUp={(e: any, v: string) => { this.setState({ value: v }); }} 
+					onKeyUp={this.onKeyUp} 
 				/>
 			</div>
 		);
@@ -57,6 +62,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	onKeyUp (e: any, v: string) {
+		const { block } = this.props;
+
+		keyboard.shortcut('\\', e, (pressed: any) => {
+			menuStore.open('blockLatex', {
+				element: `#block-${block.id}`
+			});
+		});
+
+		this.setState({ value: v });
 	};
 	
 });
