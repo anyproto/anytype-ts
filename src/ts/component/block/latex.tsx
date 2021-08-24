@@ -1,29 +1,49 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
+import { Textarea } from 'ts/component';
 import { observer } from 'mobx-react';
-import { InlineMath, BlockMath } from 'react-katex';
 
 import 'katex/dist/katex.min.css';
 
-interface Props extends I.BlockComponent {}
+const katex = require('katex');
 
-const BlockLatex = observer(class BlockLatex extends React.Component<Props, {}> {
+interface Props extends I.BlockComponent {};
+interface State {
+	value: string;
+}
+
+const BlockLatex = observer(class BlockLatex extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 
+	state = {
+		value: '',
+	};
+
 	constructor (props: any) {
 		super(props);
-		
 	};
 
 	render () {
 		const { rootId, block, readonly } = this.props;
 
+		let { value } = this.state;
 
+		console.log('VALUE', value);
 
+		let content = '';
+
+		try {
+			content = katex.renderToString(value);
+		} catch (e) {
+			console.log(e);
+		};
+
+		console.log(content);
 		return (
 			<div>
-				<BlockMath math={'\\int_0^\\infty x^2 dx'} errorColor={'#cc0000'} />
+				<div className="value" dangerouslySetInnerHTML={{ __html: content }} />
+				<Textarea onKeyUp={(e: any, v: string) => { this.setState({ value: v }); }} />
 			</div>
 		);
 	};

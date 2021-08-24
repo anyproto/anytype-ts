@@ -64,8 +64,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			return null;
 		};
 
-		console.log(block);
-
 		const { style, checked } = content;
 
 		let canSelect = true;

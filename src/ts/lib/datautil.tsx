@@ -70,21 +70,10 @@ class DataUtil {
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:		 
-				c.push('blockText ' + this.textClass(style)); 
-				break;
-
-			case I.BlockType.Layout:	 
-				c.push('blockLayout c' + style); 
-				break;
-
-			case I.BlockType.IconPage:	 
-				c.push('blockIconPage'); 
-				break;
-
-			case I.BlockType.IconUser:	 
-				c.push('blockIconUser'); 
-				break;
+			case I.BlockType.Text:	 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
+			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
+			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
 				
 			case I.BlockType.File:
 				if (state == I.FileState.Done) {
@@ -106,37 +95,15 @@ class DataUtil {
 				};
 				break;
 				
-			case I.BlockType.Bookmark:
-				c.push('blockBookmark');
-				break;
-			
-			case I.BlockType.Dataview:
-				c.push('blockDataview');
-				break;
-				
-			case I.BlockType.Div:
-				c.push('blockDiv c' + style);
-				break;
-				
-			case I.BlockType.Link:
-				c.push('blockLink');
-				break;
-				
-			case I.BlockType.Cover:
-				c.push('blockCover');
-				break;
-
-			case I.BlockType.Relation:
-				c.push('blockRelation');
-				break;
-
-			case I.BlockType.Featured:
-				c.push('blockFeatured');
-				break;
-
-			case I.BlockType.Type:
-				c.push('blockType');
-				break;
+			case I.BlockType.Bookmark:	 c.push('blockBookmark'); break;
+			case I.BlockType.Dataview:	 c.push('blockDataview'); break;
+			case I.BlockType.Div:		 c.push('blockDiv c' + style); break;
+			case I.BlockType.Link:		 c.push('blockLink'); break;
+			case I.BlockType.Cover:		 c.push('blockCover'); break;
+			case I.BlockType.Relation:	 c.push('blockRelation'); break;
+			case I.BlockType.Featured:	 c.push('blockFeatured'); break;
+			case I.BlockType.Type:		 c.push('blockType'); break;
+			case I.BlockType.Latex:		 c.push('blockLatex'); break;
 		};
 
 		return c.join(' ');
