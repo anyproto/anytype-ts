@@ -1,7 +1,13 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockLatex { padding: 6px 0px; }
 	.block.blockLatex { 
-		.value { text-align: center; }
+		.value { text-align: center; font-size: 34px; padding: 20px; border: 1px solid rgba(134, 125, 66, 0.08); border-radius: 4px; }
+
+		.textarea { 
+			border: 1px solid rgba(134, 125, 66, 0.08); border-radius: 4px; background: none; text-align: center; font-family: 'Inter'; 
+			padding: 60px; @include text-common;
+		}
 	}
 }

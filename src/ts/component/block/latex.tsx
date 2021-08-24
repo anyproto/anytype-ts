@@ -31,15 +31,22 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		let content = '';
 
 		try {
-			content = katex.renderToString(value);
+			content = katex.renderToString(value, {
+				throwOnError: false
+			});
 		} catch (e) {
-			console.log(JSON.stringify(e, null, 3));
+			console.log(e.message);
 		};
 
 		return (
 			<div>
 				<div className="value" dangerouslySetInnerHTML={{ __html: content }} />
-				<Textarea onKeyUp={(e: any, v: string) => { this.setState({ value: v }); }} />
+				<Textarea 
+					placeholder="Enter text in format LaTeX" 
+					value={value}
+					rows={1}
+					onKeyUp={(e: any, v: string) => { this.setState({ value: v }); }} 
+				/>
 			</div>
 		);
 	};
