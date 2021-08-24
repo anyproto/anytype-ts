@@ -131,10 +131,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			case I.TextStyle.Checkbox:
 				marker = { type: I.TextStyle.Checkbox, className: 'check', active: checked, onClick: this.onCheckbox };
 				break;
-
-			case I.TextStyle.Latex:
-				additional = <div id="img" />;
-				break;
 		};
 
 		let editor = null;
@@ -245,13 +241,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			html = Prism.highlight(html, grammar, lang);
-		} else 
-		if (block.isTextLatex()) { 
-			const math = document.createElement('div');
-
-			ReactDOM.render(<BlockMath math={html} errorColor={'#cc0000'} />, math, () => {
-				img.get(0).innerHTML = math.innerHTML;
-			});
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
@@ -259,7 +248,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 
-		if (!block.isTextCode() && !block.isTextLatex() && (html != text) && marks.length) {
+		if (!block.isTextCode() && (html != text) && marks.length) {
 			raf(() => {
 				this.renderLinks();
 				this.renderMentions();

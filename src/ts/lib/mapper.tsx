@@ -73,6 +73,7 @@ const Mapper = {
 			if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
 			if (v == V.RELATION)			 t = I.BlockType.Relation;
 			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
+			if (v == V.LATEX)				 t = I.BlockType.Latex;
 			return t;
 		},
 
@@ -162,6 +163,12 @@ const Mapper = {
 			if (type == I.BlockType.Relation) {
 				item.content = {
 					key: content.getKey(),
+				};
+			};
+
+			if (type == I.BlockType.Latex) {
+				item.content = {
+					text: content.getText(),
 				};
 			};
 	
@@ -449,6 +456,14 @@ const Mapper = {
 				content.setKey(obj.content.key);
 	
 				block.setRelation(content);
+			};
+
+			if (obj.type == I.BlockType.Latex) {
+				content = new Model.Block.Content.Latex();
+	
+				content.setText(obj.content.text);
+	
+				block.setLatex(content);
 			};
 
 			return block;

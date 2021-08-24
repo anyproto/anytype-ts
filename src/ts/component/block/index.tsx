@@ -20,6 +20,7 @@ import BlockDiv from './div';
 import BlockRelation from './relation';
 import BlockFeatured from './featured';
 import BlockType from './type';
+import BlockLatex from './latex';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -62,6 +63,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		if (!id) {
 			return null;
 		};
+
+		console.log(block);
 
 		const { style, checked } = content;
 
@@ -164,6 +167,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			case I.BlockType.Type:
 				canSelect = false;
 				blockComponent = <BlockType {...this.props} />;
+				break;
+
+			case I.BlockType.Latex:
+				blockComponent = <BlockLatex {...this.props} />;
 				break;
 		};
 		

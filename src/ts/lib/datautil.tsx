@@ -158,7 +158,6 @@ class DataUtil {
 			case I.TextStyle.Checkbox:		 c = 'checkbox'; break;
 			case I.TextStyle.Title:			 c = 'title'; break;
 			case I.TextStyle.Description:	 c = 'description'; break;
-			case I.TextStyle.Latex:			 c = 'latex'; break;
 		};
 		return c;
 	};
@@ -640,7 +639,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Text, id: I.TextStyle.Latex, icon: 'latex', lang: 'Latex' },
+			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		];
 		return ret.map(this.menuMapperBlock);
 	};
