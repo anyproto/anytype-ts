@@ -28,18 +28,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { rootId, block, readonly } = this.props;
 
 		let { value } = this.state;
-
-		console.log('VALUE', value);
-
 		let content = '';
 
 		try {
 			content = katex.renderToString(value);
 		} catch (e) {
-			console.log(e);
+			console.log(JSON.stringify(e, null, 3));
 		};
 
-		console.log(content);
 		return (
 			<div>
 				<div className="value" dangerouslySetInnerHTML={{ __html: content }} />
