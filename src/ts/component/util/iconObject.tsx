@@ -112,8 +112,6 @@ Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg'
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
-const ObjectType = require('img/icon/object/default.svg');
-
 const Color = {
 	grey:	 '#dfddd0',
 	black:	 '#2c2b27',
@@ -128,7 +126,6 @@ const Color = {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const IconObject = observer(class IconObject extends React.Component<Props, {}> {
 
