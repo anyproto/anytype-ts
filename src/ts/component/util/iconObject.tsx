@@ -331,7 +331,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = size;
 		};
 
-		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji) {
+		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji && (size >= 40)) {
 			s = size;
 		};
 
