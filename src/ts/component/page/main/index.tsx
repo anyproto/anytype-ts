@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -591,19 +591,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 					return !isArchived;
 				}).map((it: any) => {
-					if (tab == Tab.Recent) {
-						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
-					};
-
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, []);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId);
 					it.isBlock = true;
 					return it;
 				});
 
 				if (tab == Tab.Recent) {
 					list.sort((c1: any, c2: any) => {
-						if (c1._order > c2._order) return -1;
-						if (c2._order < c1._order) return 1;
+						if (c1._object_.lastModifiedDate > c2._object_.lastModifiedDate) return -1;
+						if (c2._object_.lastModifiedDate < c1._object_.lastModifiedDate) return 1;
 						return 0;
 					});
 				};
