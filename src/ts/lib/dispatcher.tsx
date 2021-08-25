@@ -628,6 +628,8 @@ class Dispatcher {
 
 		blockStore.set(rootId, blocks);
 		blockStore.setStructure(rootId, structure);
+		blockStore.setNumbers(rootId); 
+		blockStore.updateMarkup(rootId);
 
 		this.blockTypeCheck(rootId);
 	};
