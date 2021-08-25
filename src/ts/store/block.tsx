@@ -442,7 +442,9 @@ class BlockStore {
 	updateMarkup (rootId: string) {
 		let blocks = Util.objectCopy(this.getBlocks(rootId, (it: I.Block) => { return it.isText(); }));
 		for (let block of blocks) {
-			let { text, marks } = block.content;
+			let text = block.content.text;
+			let marks = block.content.marks || [];
+
 			if (!marks.length) {
 				continue;
 			};
