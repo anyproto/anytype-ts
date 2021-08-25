@@ -323,7 +323,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = 28;
 		};
 
-		if (layout == I.ObjectLayout.Human) {
+		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
 			s = size;
 		};
 

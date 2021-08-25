@@ -236,7 +236,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			let to = from + name.length + 1;
 			let marks = Util.objectCopy(data.marks || []);
 
-			marks = Mark.adjust(marks, from, name.length + 1);
+			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: id, 
