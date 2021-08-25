@@ -575,6 +575,7 @@ class Dispatcher {
 			};
 		};
 		
+		blockStore.updateMarkup(rootId);
 		this.setNumbers(rootId);
 	};
 
