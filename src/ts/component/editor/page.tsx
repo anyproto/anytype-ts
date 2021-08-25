@@ -1021,11 +1021,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// If block is closed toggle - find next block on the same level
 		if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-			const element = blockStore.getMapElement(rootId, block.parentId);
-			if (element) {
-				const idx = element.childrenIds.indexOf(block.id);
-				next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
-			};
+			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.parentId != block.id && it.isFocusable(); });
 		} else {
 			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		};
