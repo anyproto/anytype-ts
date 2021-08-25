@@ -26,6 +26,7 @@ class Dispatcher {
 	stream: any = null;
 	timeoutStream: number = 0;
 	timeoutEvent: any = {};
+	reconnects: number = 0;
 
 	constructor () {
 		/// #if USE_ADDON
@@ -71,8 +72,17 @@ class Dispatcher {
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
 
+			let t = 1000;
+			if (this.reconnects == 10) {
+				t = 30000;
+				this.reconnects = 0;
+			};
+
 			window.clearTimeout(this.timeoutStream);
-			this.timeoutStream = window.setTimeout(() => { this.listenEvents(); }, 1000);
+			this.timeoutStream = window.setTimeout(() => { 
+				this.listenEvents(); 
+				this.reconnects++;
+			}, t);
 		});
 	};
 
