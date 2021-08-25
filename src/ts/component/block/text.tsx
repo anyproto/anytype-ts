@@ -312,7 +312,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const { rootId, block } = this.props;
 		const size = this.emojiParam(block.content.style);
-		
+
 		items.each((i: number, item: any) => {
 			item = $(item);
 			
@@ -344,7 +344,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (icon) {
 				ReactDOM.render(icon, smile.get(0), () => {
 					if (smile.html()) {
-						smile.after('<img src="./img/space.svg" class="space" />');
 						item.addClass('withImage');
 					};
 				});
