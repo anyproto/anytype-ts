@@ -463,17 +463,20 @@ class BlockStore {
 					const d = old.length - object.name.length;
 
 					text = Util.stringInsert(text, object.name, mark.range.from, mark.range.to);
-					mark.range.to -= d;
 
-					for (let i = 0; i < marks.length; ++i) {
-						let m = marks[i];
-						if ((n == i) || (m.range.to <= from)) {
-							continue;
+					if (d != 0) {
+						mark.range.to -= d;
+
+						for (let i = 0; i < marks.length; ++i) {
+							let m = marks[i];
+							if ((n == i) || (m.range.to <= from)) {
+								continue;
+							};
+							if (m.range.from >= to) {
+								marks[i].range.from -= d;
+							};
+							marks[i].range.to -= d;
 						};
-						if (m.range.from >= to) {
-							marks[i].range.from -= d;
-						};
-						marks[i].range.to -= d;
 					};
 				};
 			};

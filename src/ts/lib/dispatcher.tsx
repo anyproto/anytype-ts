@@ -25,7 +25,7 @@ class Dispatcher {
 	service: any = null;
 	stream: any = null;
 	timeoutStream: number = 0;
-	timeoutNumber: any = {};
+	timeoutEvent: any = {};
 
 	constructor () {
 		/// #if USE_ADDON
@@ -575,13 +575,11 @@ class Dispatcher {
 			};
 		};
 		
-		blockStore.updateMarkup(rootId);
-		this.setNumbers(rootId);
-	};
-
-	setNumbers (rootId: string) {
-		window.clearTimeout(this.timeoutNumber[rootId]);
-		this.timeoutNumber[rootId] = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 10);
+		window.clearTimeout(this.timeoutEvent[rootId]);
+		this.timeoutEvent[rootId] = window.setTimeout(() => { 
+			blockStore.setNumbers(rootId); 
+			blockStore.updateMarkup(rootId);
+		}, 10);
 	};
 
 	sort (c1: any, c2: any) {
