@@ -28,6 +28,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		super(props);
 
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onChange = this.onChange.bind(this);
 	};
 
 	render () {
@@ -56,6 +57,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					placeholder="Enter text in format LaTeX" 
 					value={value}
 					onKeyUp={this.onKeyUp} 
+					onChange={this.onChange}
 				/>
 			</div>
 		);
@@ -99,6 +101,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				commonStore.filterSetText(part);
 			};
 		};
+		this.setState({ value: v });
+	};
+
+	onChange (e: any, v: string) {
 		this.setState({ value: v });
 	};
 	

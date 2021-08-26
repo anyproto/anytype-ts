@@ -49,7 +49,13 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item withDescription" style={param.style} onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}>
+					<div 
+						id={'item-' + item.id} 
+						className="item withDescription" 
+						style={param.style} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}
+						onClick={(e: any) => { this.onClick(e, item) }}
+					>
 						<div className="math">
 							<BlockMath math={item.name} />
 						</div>
