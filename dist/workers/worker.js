@@ -148,7 +148,16 @@ draw = () => {
 	ctx.translate(transform.x, transform.y);
 	ctx.scale(transform.k, transform.k);
 
-	edges.forEach(d => drawBend(d, 0.05, 3, 2, false, forceProps.markers));
+	edges.forEach(d => {
+		if (!forceProps.links && (d.type == 0)) {
+			return;
+		};
+		if (!forceProps.relations && (d.type == 1)) {
+			return;
+		};
+
+		drawBend(d, 0.05, 3, 2, false, forceProps.markers)
+	});
 	nodes.forEach(d => {
 		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
 			return;

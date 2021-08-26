@@ -63,6 +63,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		orphans: false,
 		markers: true,
 		labels: true,
+		relations: true,
+		links: true,
 		filter: '',
 	};
 
@@ -284,11 +286,25 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 							Show markers
 						</div>
 						<div className="item">
-							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
+							<Checkbox value={this.forceProps.labels} onChange={(e: any, v: any) => {
 								this.forceProps.labels = v;
 								this.updateProps();
 							}} />
 							Show labels
+						</div>
+						<div className="item">
+							<Checkbox value={this.forceProps.links} onChange={(e: any, v: any) => {
+								this.forceProps.links = v;
+								this.updateProps();
+							}} />
+							Show links
+						</div>
+						<div className="item">
+							<Checkbox value={this.forceProps.relations} onChange={(e: any, v: any) => {
+								this.forceProps.relations = v;
+								this.updateProps();
+							}} />
+							Show relations
 						</div>
 					</div>
 				</div>
