@@ -231,8 +231,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.forceUpdate();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
-			dispatcher.setNumbers(rootId);
-
 			if (onOpen) {
 				onOpen();
 			};
