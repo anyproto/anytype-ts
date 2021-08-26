@@ -71,22 +71,23 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onKeyUp (e: any, v: string) {
 		const { filter } = commonStore;
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 
-		const win = $(window);
+		const k = e.key.toLowerCase();
 		const node = $(ReactDOM.findDOMNode(this));
 		const el: any = node.find('#input').get(0);
 		const start = el.selectionStart;
-		const end = el.selectionEnd;
 		const symbolBefore = v[start - 1];
 		const menuOpen = menuStore.isOpen('blockLatex');
 
-		if (symbolBefore == '\\') {
-			commonStore.filterSet(start - 1, '');
+		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
+			commonStore.filterSet(start, '');
 
 			menuStore.open('blockLatex', {
 				element: `#block-${block.id} #input`,
 				data: {
+					rootId: rootId,
+					blockId: block.id,
 				}
 			});
 		};

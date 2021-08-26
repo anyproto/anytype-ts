@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, keyboard, DataUtil } from 'ts/lib';
+import { I, keyboard, DataUtil, Util } from 'ts/lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import { BlockMath } from 'react-katex';
@@ -173,6 +173,15 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 	onClick (e: any, item: any) {
 		e.stopPropagation();
+
+		const { filter } = commonStore;
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const el = $(`#block-${blockId} #input`);
+
+		el.val(Util.stringInsert(el.val(), item.name, filter.from - 1, filter.from + filter.text.length));
+		close();
 	};
 
 	getSections () {
