@@ -6,16 +6,18 @@
 		.content { transition: none; padding: 0px; }
 		.items { height: 100%; }
 
-		.item { line-height: 42px; display: flex; }
-		.item {
+		.item.withDescription {
 			.math { 
 				width: 40px; height: 40px; overflow: hidden; text-align: center; line-height: 38px; border: 1px solid $colorLightGrey; border-radius: 2px;
-				display: inline-block; margin-right: 8px; flex-shrink: 0;
+				display: inline-block; margin-right: 8px; flex-shrink: 0; position: absolute; left: 14px; top: 8px;
 			}
 			.math {
 				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
 			}
-			.name { @include text-overflow-nw; width: calc(100% - 48px); }
+			.info { height: 40px; line-height: 40px; padding-left: 48px; }
+			.name { @include text-overflow-nw; }
 		}
+
+		.item.empty { padding: 12px 14px; }
 	}
 }

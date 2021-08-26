@@ -390,6 +390,9 @@
 	"placeholderCell8": { "en": "Enter e-mail" },	
 	"placeholderCell9": { "en": "Enter phone" },
 	"placeholderCell11": { "en": "Select tags" },
-	"placeholderCell100": { "en": "Select objects" }
+	"placeholderCell100": { "en": "Select objects" },
+
+	"edgeType0": { "en": "Link" },
+	"edgeType1": { "en": "Relation" }
 
 }

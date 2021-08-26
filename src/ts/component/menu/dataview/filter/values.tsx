@@ -379,7 +379,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		let value = Util.objectCopy(item.value);
+		let value = DataUtil.getRelationArrayValue(item.value);
 		value = value.filter((it: any) => { return it != element.id; });
 		value = Util.arrayUnique(value);
 

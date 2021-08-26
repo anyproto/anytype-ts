@@ -315,7 +315,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const { rootId, block } = this.props;
 		const size = this.emojiParam(block.content.style);
-		
+
 		items.each((i: number, item: any) => {
 			item = $(item);
 			
@@ -347,7 +347,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (icon) {
 				ReactDOM.render(icon, smile.get(0), () => {
 					if (smile.html()) {
-						smile.after('<img src="./img/space.svg" class="space" />');
 						item.addClass('withImage');
 					};
 				});
@@ -521,7 +520,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (!menuOpenAdd && !menuOpenMention) {
-				if (range.to) {
+				if (!range || !range.to) {
 					return;
 				};
 
@@ -542,6 +541,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		});
 
 		keyboard.shortcut('delete', e, (pressed: string) => {
+			if (!range) {
+				return;
+			};
 			if (range.to && ((range.from != range.to) || (range.to != value.length))) {
 				ret = true;
 			};
@@ -587,6 +589,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			'"':			 I.TextStyle.Quote,
 			'```':			 I.TextStyle.Code,
 		};
+		const Length: any = {};
+		Length[I.TextStyle.Bulleted] = 1;
+		Length[I.TextStyle.Checkbox] = 2;
+		Length[I.TextStyle.Numbered] = 2;
+		Length[I.TextStyle.Header1] = 1;
+		Length[I.TextStyle.Header2] = 2;
+		Length[I.TextStyle.Header3] = 3;
+		Length[I.TextStyle.Toggle] = 1;
+		Length[I.TextStyle.Quote] = 1;
+		Length[I.TextStyle.Code] = 3;
 
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
@@ -676,12 +688,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 				if (value.match(reg) && (content.style != style)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+					this.marks = Mark.adjust(this.getMarksFromHtml().marks, 0, -(Length[style] + 1));
 
 					const newBlock: any = { 
 						type: I.BlockType.Text, 
 						fields: {},
 						content: { 
 							...content, 
+							marks: this.marks,
 							checked: false,
 							text: value, 
 							style: style,

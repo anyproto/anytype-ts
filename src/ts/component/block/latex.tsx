@@ -1,21 +1,24 @@
 import * as React from 'react';
-import { I, keyboard } from 'ts/lib';
+import * as ReactDOM from 'react-dom';
+import { I, keyboard, Util } from 'ts/lib';
 import { Textarea } from 'ts/component';
 import { observer } from 'mobx-react';
-import { menuStore } from 'ts/store';
+import { menuStore, commonStore } from 'ts/store';
 import 'katex/dist/katex.min.css';
-
-const katex = require('katex');
-require('katex/dist/contrib/mhchem.min.js');
 
 interface Props extends I.BlockComponent {};
 interface State {
 	value: string;
 };
 
+const $ = require('jquery');
+const katex = require('katex');
+require('katex/dist/contrib/mhchem.min.js');
+
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
+	ref: any = null;
 
 	state = {
 		value: '',
@@ -48,6 +51,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			<div>
 				<div className="value" dangerouslySetInnerHTML={{ __html: content }} />
 				<Textarea 
+					id="input"
+					ref={(ref: any) => { this.ref = ref; }}
 					placeholder="Enter text in format LaTeX" 
 					value={value}
 					onKeyUp={this.onKeyUp} 
@@ -65,14 +70,34 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onKeyUp (e: any, v: string) {
+		const { filter } = commonStore;
 		const { block } = this.props;
 
-		keyboard.shortcut('\\', e, (pressed: any) => {
-			menuStore.open('blockLatex', {
-				element: `#block-${block.id}`
-			});
-		});
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const el: any = node.find('#input').get(0);
+		const start = el.selectionStart;
+		const end = el.selectionEnd;
+		const symbolBefore = v[start - 1];
+		const menuOpen = menuStore.isOpen('blockLatex');
 
+		if (symbolBefore == '\\') {
+			commonStore.filterSet(start - 1, '');
+
+			menuStore.open('blockLatex', {
+				element: `#block-${block.id} #input`,
+				data: {
+				}
+			});
+		};
+
+		if (menuOpen) {
+			const d = start - filter.from;
+			if (d >= 0) {
+				const part = v.substr(filter.from, d).replace(/^\\/, '');
+				commonStore.filterSetText(part);
+			};
+		};
 		this.setState({ value: v });
 	};
 	

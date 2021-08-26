@@ -21,6 +21,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	constructor(props: any) {
 		super(props);
 		
+		this.onSubmit = this.onSubmit.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
@@ -54,7 +55,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="filter isName">
+				<form className="filter isName" onSubmit={this.onSubmit}>
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
@@ -155,6 +156,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		};
 
 		view.name = v;
+	};
+
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		this.save();
 	};
 
 	save () {

@@ -15,6 +15,7 @@ const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const os = window.require('os');
+const path = window.require('path');
 const sprintf = require('sprintf-kit')({
 	d: require('sprintf-kit/modifiers/d'),
 	s: require('sprintf-kit/modifiers/s'),
@@ -787,6 +788,22 @@ class Util {
 			s = 52;
 		};
 		return s;
+	};
+
+	deleteFolderRecursive (p: string) {
+		if (!fs.existsSync(p) ) {
+			return;
+		};
+
+		fs.readdirSync(p).forEach((file: any) => {
+			const cp = path.join(p, file);
+			if (fs.lstatSync(cp).isDirectory()) {
+				this.deleteFolderRecursive(cp);
+			} else {
+				fs.unlinkSync(cp);
+			};
+		});
+		fs.rmdirSync(p);
 	};
 
 };

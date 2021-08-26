@@ -868,8 +868,9 @@ class DataUtil {
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
 			s.children = s.children.map((it: any, i: number) => {
-				it.itemId = it.id || i;
-				it.id = s.id + '-' + it.id;
+				it.id = it.id || i;
+				it.itemId = it.id;
+				it.id = [ s.id, it.id ].join('-');
 				it.color = it.color || s.color || '';
 				return it;
 			});

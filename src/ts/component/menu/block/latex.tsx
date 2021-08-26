@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { I, keyboard } from 'ts/lib';
+import { I, keyboard, DataUtil } from 'ts/lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import 'react-virtualized/styles.css';
 import { observer } from 'mobx-react';
 import { BlockMath } from 'react-katex';
+import { commonStore } from 'ts/store';
+
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {}
 
-const sections = require('json/latex.json');
+const Sections = require('json/latex.json');
 const $ = require('jquery');
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 48;
+const HEIGHT_ITEM = 56;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
@@ -20,6 +22,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	refList: any = null;
 	cache: any = {};
 	n: number = 0;
+	filter: string = '';
 	
 	constructor (props: any) {
 		super(props);
@@ -30,7 +33,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter } = data;
+		const { filter } = commonStore;
 		const items = this.getItems(true);
 
 		if (!this.cache) {
@@ -39,18 +42,21 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			const symbol = String(item.name || '').replace(/\\\\/g, '\\');
 			
 			let content = null;
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item" style={param.style}>
+					<div id={'item-' + item.id} className="item withDescription" style={param.style} onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}>
 						<div className="math">
-							<BlockMath math={item.symbol} />
+							<BlockMath math={item.name} />
 						</div>
-						<div className="name">
-							{item.symbol}
+						<div className="info">
+							<div className="txt">
+								<div className="name">{symbol}</div>
+							</div>
 						</div>
 					</div>
 				);
@@ -126,6 +132,13 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	};
 
 	componentDidUpdate () {
+		const { filter } = commonStore;
+
+		if (filter.text != this.filter) {
+			this.n = 0;
+			this.filter = filter.text;
+		};
+
 		this.props.setActive();
 		this.props.position();
 		this.resize();
@@ -151,11 +164,38 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		};
 	};
 
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item);
+			this.onOver(e, item);
+		};
+	};
+
 	onClick (e: any, item: any) {
 		e.stopPropagation();
 	};
 
+	getSections () {
+		const { filter } = commonStore;
+
+		let sections = DataUtil.menuSectionsMap(Sections).map((it: any) => {
+			it.children = it.children.map((c: any) => {
+				c.name = c.symbol;
+				delete(c.symbol);
+				return c;
+			});
+			return it;
+		});
+
+		if (filter.text) {
+			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+		};
+		return sections;
+	};
+
 	getItems (withSections: boolean) {
+		const sections = this.getSections();
+
 		let items: any[] = [];
 		for (let section of sections) {
 			if (withSections) {
@@ -163,10 +203,16 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 			};
 			items = items.concat(section.children);
 		};
-		for (let i = 0; i < items.length; i++) {
-			items[i].id = i;
-		};
+
 		return items;
+	};
+
+	recalcIndex () {
+		const itemsWithSection = this.getItems(true);
+		const itemsWithoutSection = itemsWithSection.filter((it: any) => { return !it.isSection; });
+		const active: any = itemsWithoutSection[this.n] || {};
+
+		return itemsWithSection.findIndex((it: any) => { return it.id == active.id; });
 	};
 
 	resize () {
@@ -174,7 +220,12 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = Math.max(HEIGHT_ITEM + offset, Math.min(280, items.length * HEIGHT_ITEM + offset));
+		
+		let height = Math.max(HEIGHT_ITEM + offset, Math.min(280, items.length * HEIGHT_ITEM + offset));
+
+		if (!items.length) {
+			height = 44;
+		};
 
 		obj.css({ height: height });
 		position();
