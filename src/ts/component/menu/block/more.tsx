@@ -104,8 +104,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, objectId } = data;
+		const { blockId, rootId } = data;
 		const { config } = commonStore;
+		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -147,7 +148,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (!allowedDetails) {
+		if (!allowedDetails || (object.id == profile)) {
 			archive = null;
 		};
 
