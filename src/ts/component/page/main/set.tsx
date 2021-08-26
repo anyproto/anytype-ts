@@ -141,7 +141,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
-
 		this.resize();
 	};
 
@@ -354,6 +353,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			return;
 		};
 		
+		const win = $(window);
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
@@ -376,6 +376,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 
 		if (check.withCover) {
 			wrapper.css({ paddingTop: 330 });
+		};
+
+		if (!isPopup) {
+			obj.css({ minHeight: win.height() });
 		};
 
 		node.css({ paddingTop: hh });
