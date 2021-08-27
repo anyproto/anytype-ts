@@ -45,13 +45,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, block, readonly } = this.props;
+		const { readonly } = this.props;
 		const { isEditing } = this.state;
-		const { text } = block.content;
 
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
-				<div id="select" className="select" onClick={(e: any) => { this.onMenu(e, 'select'); }}>
+				<div id="select" className="select" onClick={(e: any) => { this.onMenu(e, 'select'); this.onEdit(e); }}>
 					<div className="name">Template formula</div>
 					<Icon className="arrow light" />
 				</div>
@@ -60,20 +59,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				<div id="empty" className="empty" onClick={this.onEdit}>
 					Here your equation will be rendered with <Icon className="tex" />. Click to edit
 				</div>
-				{isEditing ? (
-					<div 
-						id="input"
-						contentEditable={!readonly}
-						suppressContentEditableWarning={true}
-						ref={(ref: any) => { this.ref = ref; }}
-						placeholder="Enter text in format LaTeX" 
-						onSelect={this.onSelect}
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onKeyUp={this.onKeyUp} 
-						onChange={this.onChange}
-					/>
-				) : ''}
+				<div 
+					id="input"
+					contentEditable={!readonly}
+					suppressContentEditableWarning={true}
+					ref={(ref: any) => { this.ref = ref; }}
+					placeholder="Enter text in format LaTeX" 
+					onSelect={this.onSelect}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onKeyUp={this.onKeyUp} 
+					onChange={this.onChange}
+				/>
 			</div>
 		);
 	};
@@ -88,10 +85,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	componentDidUpdate () {
-		const { block } = this.props;
 		const { isEditing } = this.state;
-
-		this.setValue(block.content.text);
 
 		if (isEditing) {
 			const node = $(ReactDOM.findDOMNode(this));
@@ -215,7 +209,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onEdit (e: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readonly } = this.props;
+
+		if (readonly) {
+			return;
+		};
 
 		e.stopPropagation();
 		this.setState({ isEditing: true });
@@ -227,7 +225,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					...block.content, 
 					text: this.getValue(),
 				},
-			}, rootId, block.id);
+			}, rootId, block.id, () => {
+				this.setState({ isEditing: false });
+			});
 		});
 	};
 

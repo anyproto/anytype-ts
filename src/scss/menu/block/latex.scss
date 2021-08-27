@@ -3,21 +3,22 @@
 .menus {
 	.menu.menuBlockLatex {
 		.content { transition: none; padding: 0px; }
-		.items { height: 100%; padding: 0px 12px; }
+		.items { height: 100%; padding: 0px 14px; }
 
-		.item { border: 1px solid #EAE9E0; border-radius: 4px; margin-bottom: 2px; height: 70px; }
+		.item { padding: 0px; text-align: center; }
 		.item {
-			.math { 
-				overflow: hidden; text-align: center; line-height: 38px; 
-				display: inline-block; margin-right: 8px; flex-shrink: 0; position: absolute; left: 14px; top: 8px;
-			}
+			.inner { border: 1px solid $colorLightGrey; border-radius: 4px; margin-bottom: 2px; height: 70px; padding: 6px; }
+
+			.math { overflow: hidden; text-align: center; line-height: 40px; height: 40px; display: block; }
 			.math {
 				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
 			}
 			.info { height: 40px; line-height: 40px; padding-left: 48px; }
-			.name { @include text-overflow-nw; }
+			.name { @include text-overflow-nw; @include text-small; display: block; }
 		}
 
 		.item.empty { padding: 12px 14px; }
+
+		.sectionName { padding: 5px 0px; }
 	}
 }
