@@ -3,17 +3,23 @@
 .blocks {
 	.block.blockLatex { padding: 2px 0px; }
 	.block.blockLatex { 
-		.wrap { display: flex; }
+		.wrap { padding: 8px; }
 
 		.wrap.isEditing { box-shadow: 0px 0px 0px 1px #dfddd0; }
 		.wrap.isEditing {
-			#value { width: 50%; }
-			#input { width: 50%; }
+			.empty { margin: 10px 0px 18px 0px; }
 		}
 
-		#value { text-align: center; font-size: 34px; line-height: 34px; padding: 16px; width: 100%; }
-		#input { background: #f3f2ec; text-align: center; font-family: 'Inter'; padding: 16px; @include text-common; }
+		.empty { text-align: center; }
+
+		#value { text-align: center; font-size: 20px; line-height: 20px; padding: 16px; width: 100%; }
+		#value:empty { display: none; }
+		#input { 
+			background: #f3f2ec; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
+			-webkit-user-modify: read-write-plaintext-only;
+		}
 
 		.katex-display { margin: 0px; }
+		.katex { white-space: normal; line-height: 1.5em; }
 	}
 }

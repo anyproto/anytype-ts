@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, keyboard, Util } from 'ts/lib';
+import { I, keyboard, Util, C } from 'ts/lib';
+import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore } from 'ts/store';
 import { getRange, setRange } from 'selection-ranges';
@@ -40,15 +41,20 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.onEdit = this.onEdit.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onSelect = this.onSelect.bind(this)
 	};
 
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { isEditing } = this.state;
+		const { text } = block.content;
 
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
 				<div id="value" />
+				<div id="empty" className="empty">
+					Here your equation will be rendered with <Icon className="tex" />. Click to edit
+				</div>
 				{isEditing ? (
 					<div 
 						id="input"
@@ -56,6 +62,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 						suppressContentEditableWarning={true}
 						ref={(ref: any) => { this.ref = ref; }}
 						placeholder="Enter text in format LaTeX" 
+						onSelect={this.onSelect}
 						onFocus={this.onFocus}
 						onBlur={this.onBlur}
 						onKeyUp={this.onKeyUp} 
@@ -67,16 +74,25 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 	
 	componentDidMount () {
+		const { block } = this.props;
+
 		this._isMounted = true;
+		this.setValue(block.content.text);
 	};
 
 	componentDidUpdate () {
+		const { block } = this.props;
 		const { isEditing } = this.state;
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
+
+		this.setValue(block.content.text);
 
 		if (isEditing) {
-			input.get(0).focus();
+			const node = $(ReactDOM.findDOMNode(this));
+			const input = node.find('#input');
+
+			window.setTimeout(() => {
+				input.get(0).focus();
+			}, 15);
 		};
 	};
 	
@@ -115,7 +131,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 						const value = this.getValue();
 						setRange(el, { start: value.length, end: value.length });
 					},
-				}
+				},
 			});
 		};
 
@@ -131,7 +147,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onChange (e: any) {
-		this.setState({ value: this.getValue() });
+		this.setValue(this.getValue());
 	};
 
 	onFocus () {
@@ -150,12 +166,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 
-		let html = value;
-		let grammar = Prism.languages.latex;
-
-		html = Prism.highlight(html, grammar, 'latex');
-
-		input.get(0).innerHTML = html;
+		if (input.length) {
+			input.get(0).innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
+		};
 		this.setContent(value);
 	};
 
@@ -177,21 +190,46 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
+		const empty = node.find('#empty');
 
-		val.get(0).innerHTML = katex.renderToString(value, { 
-			displayMode: true, 
-			throwOnError: false,
-			output: 'html',
-		});
+		value.length ? empty.hide() : empty.show();
+
+		if (val.length) {
+
+			val.get(0).innerHTML = value ? katex.renderToString(value, { 
+				displayMode: true, 
+				throwOnError: false,
+				output: 'html',
+			}) : '';
+		};
 	};
 
 	onEdit (e: any) {
+		const { rootId, block } = this.props;
+
 		e.stopPropagation();
 		this.setState({ isEditing: true });
 
 		$(window).unbind('click.latex').on('click.latex', (e: any) => {	
-			this.setState({ isEditing: false });
-		})
+			C.BlockCreate({ 
+				...block, 
+				id: '',
+				content: { 
+					...block.content, 
+					text: this.getValue(),
+				},
+			}, rootId, block.id, I.BlockPosition.Replace);
+		});
+	};
+
+	onSelect (e: any) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		
+		selection.preventSelect(true);
+		$(window).unbind('mouseup.latex').on('mouseup.latex', (e: any) => {	
+			selection.preventSelect(false);
+		});
 	};
 	
 });
