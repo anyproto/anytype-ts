@@ -31,6 +31,7 @@ export interface MenuParam {
 	noDimmer?: boolean;
 	noFlipX?: boolean;
 	noFlipY?: boolean;
+	commonFilter?: boolean;
 	onClose?(): void;
 	onOpen?(component?: any): void;
 };

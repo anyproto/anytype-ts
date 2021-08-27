@@ -1099,6 +1099,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
+			commonFilter: true,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');

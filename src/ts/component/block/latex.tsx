@@ -1,18 +1,25 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { I, keyboard, Util } from 'ts/lib';
-import { Textarea } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore } from 'ts/store';
-import 'katex/dist/katex.min.css';
+import { getRange } from 'selection-ranges';
+import * as Prism from 'prismjs';
 
-interface Props extends I.BlockComponent {};
+import 'katex/dist/katex.min.css';
+import 'prismjs/themes/prism.css';
+
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 interface State {
 	value: string;
+	isEditing: boolean;
 };
 
 const $ = require('jquery');
 const katex = require('katex');
+
+require(`prismjs/components/prism-latex.js`);
 require('katex/dist/contrib/mhchem.min.js');
 
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, State> {
@@ -22,6 +29,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	state = {
 		value: '',
+		isEditing: false,
 	};
 
 	constructor (props: any) {
@@ -29,36 +37,31 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onEdit = this.onEdit.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 	};
 
 	render () {
 		const { rootId, block, readonly } = this.props;
-
-		let { value } = this.state;
-		let content = '';
-
-		try {
-			content = katex.renderToString(value, {
-				macros: {
-					'\\f': '#1f(#2)',
-				},
-				throwOnError: false
-			});
-		} catch (e) {
-			console.log(e.message);
-		};
+		const { isEditing } = this.state;
 
 		return (
-			<div>
-				<div className="value" dangerouslySetInnerHTML={{ __html: content }} />
-				<Textarea 
-					id="input"
-					ref={(ref: any) => { this.ref = ref; }}
-					placeholder="Enter text in format LaTeX" 
-					value={value}
-					onKeyUp={this.onKeyUp} 
-					onChange={this.onChange}
-				/>
+			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
+				<div id="value" />
+				{isEditing ? (
+					<div 
+						id="input"
+						contentEditable={!readonly}
+						suppressContentEditableWarning={true}
+						ref={(ref: any) => { this.ref = ref; }}
+						placeholder="Enter text in format LaTeX" 
+						onFocus={this.onFocus}
+						onBlur={this.onBlur}
+						onKeyUp={this.onKeyUp} 
+						onChange={this.onChange}
+					/>
+				) : ''}
 			</div>
 		);
 	};
@@ -66,46 +69,117 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	componentDidMount () {
 		this._isMounted = true;
 	};
+
+	componentDidUpdate () {
+		const { isEditing } = this.state;
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		if (isEditing) {
+			input.get(0).focus();
+		};
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
-	onKeyUp (e: any, v: string) {
+	onKeyUp (e: any) {
 		const { filter } = commonStore;
 		const { rootId, block } = this.props;
 
+		const value = this.getValue();
 		const k = e.key.toLowerCase();
 		const node = $(ReactDOM.findDOMNode(this));
-		const el: any = node.find('#input').get(0);
-		const start = el.selectionStart;
-		const symbolBefore = v[start - 1];
+		const input = node.find('#input');
+		const el: any = input.get(0);
+		const range = getRange(el);
+		const symbolBefore = value[range.start - 1];
 		const menuOpen = menuStore.isOpen('blockLatex');
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
-			commonStore.filterSet(start, '');
+			commonStore.filterSet(range.start, '');
 
 			menuStore.open('blockLatex', {
 				element: `#block-${block.id} #input`,
+				commonFilter: true,
+				onClose: () => {
+					commonStore.filterSet(0, '');
+				},
 				data: {
 					rootId: rootId,
 					blockId: block.id,
+					onSelect: (from: number, to: number, item: any) => {
+						this.setValue(Util.stringInsert(this.getValue(), item.name, from, to));
+					},
 				}
 			});
 		};
 
 		if (menuOpen) {
-			const d = start - filter.from;
+			const d = range.start - filter.from;
 			if (d >= 0) {
-				const part = v.substr(filter.from, d).replace(/^\\/, '');
+				const part = value.substr(filter.from, d).replace(/^\\/, '');
 				commonStore.filterSetText(part);
 			};
 		};
-		this.setState({ value: v });
+
+		this.setContent(value);
 	};
 
-	onChange (e: any, v: string) {
-		this.setState({ value: v });
+	onChange (e: any) {
+		this.setState({ value: this.getValue() });
+	};
+
+	onFocus () {
+		keyboard.setFocus(true);
+	};
+
+	onBlur () {
+		keyboard.setFocus(false);
+	};
+
+	setValue (value: string) {
+		if (!this._isMounted) {
+			return '';
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		let html = value;
+		let grammar = Prism.languages.latex;
+
+		html = Prism.highlight(html, grammar, 'latex');
+
+		input.get(0).innerHTML = html;
+		this.setContent(value);
+	};
+
+	getValue (): string {
+		if (!this._isMounted) {
+			return '';
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		return String(input.get(0).innerText || '');
+	};
+
+	setContent (value: string) {
+		if (!this._isMounted) {
+			return '';
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const val = node.find('#value');
+
+		val.get(0).innerHTML = katex.renderToString(value, { throwOnError: false });
+	};
+
+	onEdit (e: any) {
+		this.setState({ isEditing: true });
 	};
 	
 });

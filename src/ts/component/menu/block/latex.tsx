@@ -183,10 +183,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { filter } = commonStore;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
-		const el = $(`#block-${blockId} #input`);
-
-		el.val(Util.stringInsert(el.val(), item.name, filter.from - 1, filter.from + filter.text.length));
+		const { onSelect } = data;
+		
+		onSelect(filter.from - 1, filter.from + filter.text.length, item);
 		close();
 	};
 
