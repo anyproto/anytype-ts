@@ -183,7 +183,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onEdit (e: any) {
+		const { isPopup } = this.props;
+
 		this.setState({ isEditing: true });
+
+		$(Util.getPageContainer(isPopup ? 'popup' : 'page')).unbind('click.latex').on('click.latex', () => {	
+			this.setState({ isEditing: false });
+		})
 	};
 	
 });

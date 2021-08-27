@@ -3,13 +3,17 @@
 .blocks {
 	.block.blockLatex { padding: 2px 0px; }
 	.block.blockLatex { 
-		.wrap { display: flex; border: 1px solid #dfddd0; }
+		.wrap { display: flex; }
+
+		.wrap.isEditing { box-shadow: 0px 0px 0px 1px #dfddd0; }
 		.wrap.isEditing {
 			#value { width: 50%; }
 			#input { width: 50%; }
 		}
 
-		#value { text-align: center; font-size: 34px; line-height: 34px; padding: 32px; width: 100%; }
+		#value { text-align: center; font-size: 34px; line-height: 34px; padding: 16px; width: 100%; }
 		#input { background: #f3f2ec; text-align: center; font-family: 'Inter'; padding: 16px; @include text-common; }
+
+		.katex-display { margin: 0px; }
 	}
 }
