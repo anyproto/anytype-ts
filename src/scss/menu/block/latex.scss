@@ -1,14 +1,14 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockLatex { width: 360px; }
 	.menu.menuBlockLatex {
 		.content { transition: none; padding: 0px; }
-		.items { height: 100%; }
+		.items { height: 100%; padding: 0px 12px; }
 
-		.item.withDescription {
+		.item { border: 1px solid #EAE9E0; border-radius: 4px; margin-bottom: 2px; height: 70px; }
+		.item {
 			.math { 
-				width: 40px; height: 40px; overflow: hidden; text-align: center; line-height: 38px; border: 1px solid $colorLightGrey; border-radius: 2px;
+				overflow: hidden; text-align: center; line-height: 38px; 
 				display: inline-block; margin-right: 8px; flex-shrink: 0; position: absolute; left: 14px; top: 8px;
 			}
 			.math {

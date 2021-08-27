@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, keyboard, Util, C } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { Icon, Select } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore } from 'ts/store';
 import { getRange, setRange } from 'selection-ranges';
@@ -13,7 +13,6 @@ import 'prismjs/themes/prism.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 interface State {
-	value: string;
 	isEditing: boolean;
 };
 
@@ -27,9 +26,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	_isMounted: boolean = false;
 	ref: any = null;
+	range: any = { start: 0, end: 0 };
 
 	state = {
-		value: '',
 		isEditing: false,
 	};
 
@@ -41,7 +40,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.onEdit = this.onEdit.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onSelect = this.onSelect.bind(this)
+		this.onSelect = this.onSelect.bind(this);
+		this.onMenu = this.onMenu.bind(this);
 	};
 
 	render () {
@@ -50,9 +50,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { text } = block.content;
 
 		return (
-			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} onClick={this.onEdit}>
-				<div id="value" />
-				<div id="empty" className="empty">
+			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
+				<div id="select" className="select" onClick={(e: any) => { this.onMenu(e, 'select'); }}>
+					<div className="name">Template formula</div>
+					<Icon className="arrow light" />
+				</div>
+
+				<div id="value" onClick={this.onEdit} />
+				<div id="empty" className="empty" onClick={this.onEdit}>
 					Here your equation will be rendered with <Icon className="tex" />. Click to edit
 				</div>
 				{isEditing ? (
@@ -75,8 +80,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	
 	componentDidMount () {
 		const { block } = this.props;
+		const length = block.content.text.length;
 
 		this._isMounted = true;
+		this.range = { start: length, end: length };
 		this.setValue(block.content.text);
 	};
 
@@ -90,9 +97,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('#input');
 
-			window.setTimeout(() => {
-				input.get(0).focus();
-			}, 15);
+			setRange(input.get(0), this.range);
 		};
 	};
 	
@@ -102,8 +107,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onKeyUp (e: any) {
 		const { filter } = commonStore;
-		const { rootId, block } = this.props;
-
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
 		const node = $(ReactDOM.findDOMNode(this));
@@ -115,24 +118,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
 			commonStore.filterSet(range.start, '');
-
-			menuStore.open('blockLatex', {
-				element: `#block-${block.id} #input`,
-				commonFilter: true,
-				onClose: () => {
-					commonStore.filterSet(0, '');
-				},
-				data: {
-					rootId: rootId,
-					blockId: block.id,
-					onSelect: (from: number, to: number, item: any) => {
-						this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
-
-						const value = this.getValue();
-						setRange(el, { start: value.length, end: value.length });
-					},
-				},
-			});
+			this.onMenu(e, 'input');
 		};
 
 		if (menuOpen) {
@@ -156,6 +142,31 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onBlur () {
 		keyboard.setFocus(false);
+	};
+
+	onMenu (e: any, element: string) {
+		const { rootId, block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const el: any = input.get(0);
+
+		menuStore.open('blockLatex', {
+			element: `#block-${block.id} #${element}`,
+			commonFilter: true,
+			onClose: () => {
+				commonStore.filterSet(0, '');
+			},
+			data: {
+				rootId: rootId,
+				blockId: block.id,
+				onSelect: (from: number, to: number, item: any) => {
+					this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+
+					const value = this.getValue();
+					setRange(el, { start: value.length, end: value.length });
+				},
+			},
+		});
 	};
 
 	setValue (value: string) {
@@ -195,7 +206,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		value.length ? empty.hide() : empty.show();
 
 		if (val.length) {
-
 			val.get(0).innerHTML = value ? katex.renderToString(value, { 
 				displayMode: true, 
 				throwOnError: false,
@@ -211,20 +221,23 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setState({ isEditing: true });
 
 		$(window).unbind('click.latex').on('click.latex', (e: any) => {	
-			C.BlockCreate({ 
+			C.BlockUpdateContent({ 
 				...block, 
-				id: '',
 				content: { 
 					...block.content, 
 					text: this.getValue(),
 				},
-			}, rootId, block.id, I.BlockPosition.Replace);
+			}, rootId, block.id);
 		});
 	};
 
 	onSelect (e: any) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		this.range = getRange(input.get(0));
 		
 		selection.preventSelect(true);
 		$(window).unbind('mouseup.latex').on('mouseup.latex', (e: any) => {	

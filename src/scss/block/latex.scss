@@ -4,13 +4,18 @@
 	.block.blockLatex { padding: 2px 0px; }
 	.block.blockLatex { 
 		.wrap { padding: 8px; }
-
 		.wrap.isEditing { box-shadow: 0px 0px 0px 1px #dfddd0; }
 		.wrap.isEditing {
-			.empty { margin: 10px 0px 18px 0px; }
+			.empty { padding-bottom: 18px; }
 		}
 
-		.empty { text-align: center; }
+		.empty { text-align: center; padding: 10px 0px 0px 0px; }
+
+		.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
+		.select {
+			.name { overflow: visible; }
+		}
+		.select:hover, .select.active { background: none; }
 
 		#value { text-align: center; font-size: 20px; line-height: 20px; padding: 16px; width: 100%; }
 		#value:empty { display: none; }

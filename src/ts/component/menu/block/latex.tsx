@@ -14,7 +14,7 @@ const $ = require('jquery');
 const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 56;
+const HEIGHT_ITEM = 74;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
@@ -60,17 +60,13 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 				content = (
 					<div 
 						id={'item-' + item.id} 
-						className="item withDescription" 
+						className="item" 
 						style={param.style} 
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}
 						onClick={(e: any) => { this.onClick(e, item) }}
 					>
+						<div className="name">{name}</div>
 						<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-						<div className="info">
-							<div className="txt">
-								<div className="name">{name}</div>
-							</div>
-						</div>
 					</div>
 				);
 			};

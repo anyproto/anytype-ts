@@ -257,6 +257,16 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
+const BlockUpdateContent = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.UpdateContent.Request();
+	
+	request.setBlock(Mapper.To.Block(block));
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+
+	dispatcher.request('blockUpdateContent', request, callBack);
+};
+
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
@@ -1098,6 +1108,7 @@ export {
 	BlockCreate,
 	BlockCreatePage,
 	BlockCreateSet,
+	BlockUpdateContent,
 
 	BlockSetTextText,
 	BlockSetTextChecked,
