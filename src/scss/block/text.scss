@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
+		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; padding-bottom: 1px; }
 
 		.placeholder { display: none; overflow: hidden; }
 
@@ -97,7 +97,7 @@
 	.block.blockText.description { padding: 0px 0px 6px 0px; @include text-description; }
 
 	.block.blockText.header1 { padding: 22px 0px 0px 0px; }
-	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { @include text-header1; padding: 4px 0px 2px 0px; }
+	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 4px 0px 2px 0px; }
 	.block.blockText.header1 > .wrapContent > .selectable > .dropTarget mention .space { width: 6px; height: 32px; }
 	
 	.block.blockText.header2 { padding: 14px 0px 0px 0px; }
