@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { I, keyboard, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore } from 'ts/store';
-import { getRange } from 'selection-ranges';
+import { getRange, setRange } from 'selection-ranges';
 import * as Prism from 'prismjs';
 
 import 'katex/dist/katex.min.css';
@@ -111,6 +111,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					blockId: block.id,
 					onSelect: (from: number, to: number, item: any) => {
 						this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+
+						const value = this.getValue();
+						setRange(el, { start: value.length, end: value.length });
 					},
 				}
 			});
