@@ -35,7 +35,7 @@
             {
                 "symbol": "&",
                 "rendered": "$\\begin{matrix} a & b\\cr c & d \\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\``c & d``\\end{matrix}`"
             },
             {
                 "symbol": "\\\\&",
@@ -190,7 +190,7 @@
             {
                 "symbol": "\\\\\\\\",
                 "rendered": "$\\begin{matrix} a & b\\\\ c & d\\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "^",
@@ -255,32 +255,32 @@
             {
                 "symbol": "{align}",
                 "rendered": "$$\\begin{align}a&=b+c\\\\d+e&=f\\end{align}$$",
-                "comment": "`\\begin{align}`<br>&nbsp;&nbsp;&nbsp;`a&=b+c \\\\`<br>&nbsp;&nbsp;&nbsp;`d+e&=f`<br>`\\end{align}`"
+                "comment": "`\\begin{align}``a&=b+c \\\\``d+e&=f`<br>`\\end{align}`"
             },
             {
                 "symbol": "{align\\*}",
                 "rendered": "$$\\begin{align*}a&=b+c\\\\d+e&=f\\end{align*}$$",
-                "comment": "`\\begin{align*}`<br>&nbsp;&nbsp;&nbsp;`a&=b+c \\\\`<br>&nbsp;&nbsp;&nbsp;`d+e&=f`<br>`\\end{align*}`"
+                "comment": "`\\begin{align*}``a&=b+c \\\\``d+e&=f`<br>`\\end{align*}`"
             },
             {
                 "symbol": "{aligned}",
                 "rendered": "$\\begin{aligned}a&=b+c\\\\d+e&=f\\end{aligned}$",
-                "comment": "`\\begin{aligned}`<br>&nbsp;&nbsp;&nbsp;`a&=b+c \\\\`<br>&nbsp;&nbsp;&nbsp;`d+e&=f`<br>`\\end{aligned}`"
+                "comment": "`\\begin{aligned}``a&=b+c \\\\``d+e&=f`<br>`\\end{aligned}`"
             },
             {
                 "symbol": "{alignat}",
                 "rendered": "$$\\begin{alignat}{2}10&x+&3&y=2\\\\3&x+&13&y=4\\end{alignat}$$",
-                "comment": "`\\begin{alignat}{2}`<br>&nbsp;&nbsp;&nbsp;`10&x+ &3&y = 2 \\\\`<br>&nbsp;&nbsp;&nbsp;` 3&x+&13&y = 4`<br>`\\end{alignat}`"
+                "comment": "`\\begin{alignat}{2}``10&x+ &3&y = 2 \\\\`` 3&x+&13&y = 4`<br>`\\end{alignat}`"
             },
             {
                 "symbol": "{alignat\\*}",
                 "rendered": "$$\\begin{alignat*}{2}10&x+&3&y=2\\\\3&x+&13&y=4\\end{alignat*}$$",
-                "comment": "`\\begin{alignat*}{2}`<br>&nbsp;&nbsp;&nbsp;`10&x+ &3&y = 2 \\\\`<br>&nbsp;&nbsp;&nbsp;` 3&x+&13&y = 4`<br>`\\end{alignat*}`"
+                "comment": "`\\begin{alignat*}{2}``10&x+ &3&y = 2 \\\\`` 3&x+&13&y = 4`<br>`\\end{alignat*}`"
             },
             {
                 "symbol": "{alignedat}",
                 "rendered": "$\\begin{alignedat}{2}10&x+&3&y=2\\\\3&x+&13&y=4\\end{alignedat}$",
-                "comment": "`\\begin{alignedat}{2}`<br>&nbsp;&nbsp;&nbsp;`10&x+ &3&y = 2 \\\\`<br>&nbsp;&nbsp;&nbsp;` 3&x+&13&y = 4`<br>`\\end{alignedat}`"
+                "comment": "`\\begin{alignedat}{2}``10&x+ &3&y = 2 \\\\`` 3&x+&13&y = 4`<br>`\\end{alignedat}`"
             },
             {
                 "symbol": "\\allowbreak",
@@ -385,12 +385,12 @@
             {
                 "symbol": "{array}",
                 "rendered": "$\\begin{array}{cc}a&b\\\\c&d\\end{array}$",
-                "comment": "`\\begin{array}{cc}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{array}`"
+                "comment": "`\\begin{array}{cc}``a & b \\\\``c & d`<br>`\\end{array}`"
             },
             {
                 "symbol": "\\arraystretch",
                 "rendered": "$\\def\\arraystretch{1.5}\\begin{array}{cc}a&b\\\\c&d\\end{array}$",
-                "comment": "`\\def\\arraystretch{1.5}`<br>`\\begin{array}{cc}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{array}`"
+                "comment": "`\\def\\arraystretch{1.5}`<br>`\\begin{array}{cc}``a & b \\\\``c & d`<br>`\\end{array}`"
             },
             {
                 "symbol": "\\ast",
@@ -470,7 +470,7 @@
             {
                 "symbol": "\\begin",
                 "rendered": "$\\begin{matrix} a & b\\\\ c & d\\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "\\begingroup",
@@ -690,22 +690,22 @@
             {
                 "symbol": "{Bmatrix}",
                 "rendered": "$\\begin{Bmatrix}a&b\\\\c&d\\end{Bmatrix}$",
-                "comment": "`\\begin{Bmatrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{Bmatrix}`"
+                "comment": "`\\begin{Bmatrix}``a & b \\\\``c & d`<br>`\\end{Bmatrix}`"
             },
             {
                 "symbol": "{Bmatrix*}",
                 "rendered": "$\\begin{Bmatrix*}[r]0&-1\\\\-1&0\\end{Bmatrix*}$",
-                "comment": "`\\begin{Bmatrix*}[r]`<br>&nbsp;&nbsp;&nbsp;`0 & -1 \\\\`<br>&nbsp;&nbsp;&nbsp;`-1 & 0`<br>`\\end{Bmatrix*}`"
+                "comment": "`\\begin{Bmatrix*}[r]``0 & -1 \\\\``-1 & 0`<br>`\\end{Bmatrix*}`"
             },
             {
                 "symbol": "{bmatrix}",
                 "rendered": "$\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}$",
-                "comment": "`\\begin{bmatrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{bmatrix}`"
+                "comment": "`\\begin{bmatrix}``a & b \\\\``c & d`<br>`\\end{bmatrix}`"
             },
             {
                 "symbol": "{bmatrix*}",
                 "rendered": "$\\begin{bmatrix*}[r]0&-1\\\\-1&0\\end{bmatrix*}$",
-                "comment": "`\\begin{bmatrix*}[r]`<br>&nbsp;&nbsp;&nbsp;`0 & -1 \\\\`<br>&nbsp;&nbsp;&nbsp;`-1 & 0`<br>`\\end{bmatrix*}`"
+                "comment": "`\\begin{bmatrix*}[r]``0 & -1 \\\\``-1 & 0`<br>`\\end{bmatrix*}`"
             },
             {
                 "symbol": "\\bmod",
@@ -840,12 +840,12 @@
             {
                 "symbol": "{cases}",
                 "rendered": "$\\begin{cases}a&\\text{if }b\\\\c&\\text{if }d\\end{cases}$",
-                "comment": "`\\begin{cases}`<br>&nbsp;&nbsp;&nbsp;`a &\\text{if } b  \\\\`<br>&nbsp;&nbsp;&nbsp;`c &\\text{if } d`<br>`\\end{cases}`"
+                "comment": "`\\begin{cases}``a &\\text{if } b  \\\\``c &\\text{if } d`<br>`\\end{cases}`"
             },
             {
                 "symbol": "{CD}",
                 "rendered": "$$\\begin{CD}A @>a>> B \\\\@VbVV @AAcA\\\\C @= D\\end{CD}$$",
-                "comment": "`\\begin{CD}`<br>&nbsp;&nbsp;&nbsp;`A  @>a>>  B  \\\\`<br>`@VbVV    @AAcA \\\\`<br>&nbsp;&nbsp;&nbsp;`C  @=     D`<br>`\\end{CD}`"
+                "comment": "`\\begin{CD}``A  @>a>>  B  \\\\`<br>`@VbVV    @AAcA \\\\``C  @=     D`<br>`\\end{CD}`"
             },
             {
                 "symbol": "\\cdot",
@@ -1125,7 +1125,7 @@
             {
                 "symbol": "\\cr",
                 "rendered": "$\\begin{matrix} a & b\\cr c & d \\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\cr`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\cr``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "\\csc",
@@ -1224,7 +1224,7 @@
             },
             {
                 "symbol": "$\\begin{darray}{cc}a&b\\\\c&d\\end{darray}$",
-                "rendered": "`\\begin{darray}{cc}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{darray}`",
+                "rendered": "`\\begin{darray}{cc}``a & b \\\\``c & d`<br>`\\end{darray}`",
                 "comment": ""
             },
             {
@@ -1255,7 +1255,7 @@
             {
                 "symbol": "{dcases}",
                 "rendered": "$\\begin{dcases}a&\\text{if }b\\\\c&\\text{if }d\\end{dcases}$",
-                "comment": "`\\begin{dcases}`<br>&nbsp;&nbsp;&nbsp;`a &\\text{if } b  \\\\`<br>&nbsp;&nbsp;&nbsp;`c &\\text{if } d`<br>`\\end{dcases}`"
+                "comment": "`\\begin{dcases}``a &\\text{if } b  \\\\``c &\\text{if } d`<br>`\\end{dcases}`"
             },
             {
                 "symbol": "\\ddag",
@@ -1465,7 +1465,7 @@
             {
                 "symbol": "{drcases}",
                 "rendered": "$\\begin{drcases}a&\\text{if }b\\\\c&\\text{if }d\\end{drcases}$",
-                "comment": "`\\begin{drcases}`<br>&nbsp;&nbsp;&nbsp;`a &\\text{if } b  \\\\`<br>&nbsp;&nbsp;&nbsp;`c &\\text{if } d`<br>`\\end{drcases}`"
+                "comment": "`\\begin{drcases}``a &\\text{if } b  \\\\``c &\\text{if } d`<br>`\\end{drcases}`"
             }
         ]
     },
@@ -1495,7 +1495,7 @@
             {
                 "symbol": "\\end",
                 "rendered": "$\\begin{matrix} a & b\\\\ c & d\\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "\\endgroup",
@@ -1535,12 +1535,12 @@
             {
                 "symbol": "{equation}",
                 "rendered": "$$\\begin{equation}a = b + c\\end{equation}$$",
-                "comment": "`\\begin{equation}`<br>&nbsp;&nbsp;&nbsp;`a = b + c`<br>`\\end{equation}`"
+                "comment": "`\\begin{equation}``a = b + c`<br>`\\end{equation}`"
             },
             {
                 "symbol": "{equation*}",
                 "rendered": "$$\\begin{equation*}a = b + c\\end{equation*}$$",
-                "comment": "`\\begin{equation*}`<br>&nbsp;&nbsp;&nbsp;`a = b + c`<br>`\\end{equation*}`"
+                "comment": "`\\begin{equation*}``a = b + c`<br>`\\end{equation*}`"
             },
             {
                 "symbol": "\\Eqqcolon",
@@ -1700,12 +1700,12 @@
             {
                 "symbol": "{gather}",
                 "rendered": "$$\\begin{gather}a=b\\\\e=b+c\\end{gather}$$",
-                "comment": "`\\begin{gather}`<br>&nbsp;&nbsp;&nbsp;`a=b \\\\ `<br>&nbsp;&nbsp;&nbsp;`e=b+c`<br>`\\end{gather}`"
+                "comment": "`\\begin{gather}``a=b \\\\ ``e=b+c`<br>`\\end{gather}`"
             },
             {
                 "symbol": "{gathered}",
                 "rendered": "$\\begin{gathered}a=b\\\\e=b+c\\end{gathered}$",
-                "comment": "`\\begin{gathered}`<br>&nbsp;&nbsp;&nbsp;`a=b \\\\ `<br>&nbsp;&nbsp;&nbsp;`e=b+c`<br>`\\end{gathered}`"
+                "comment": "`\\begin{gathered}``a=b \\\\ ``e=b+c`<br>`\\end{gathered}`"
             },
             {
                 "symbol": "\\gcd",
@@ -1880,7 +1880,7 @@
             {
                 "symbol": "\\hdashline",
                 "rendered": "$\\begin{matrix}a&b\\\\ \\hdashline c &d\\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`\\hdashline`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\``\\hdashline``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "\\hearts",
@@ -1895,7 +1895,7 @@
             {
                 "symbol": "\\hline",
                 "rendered": "$\\begin{matrix}a&b\\\\ \\hline c &d\\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\ \\hline`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\ \\hline``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "\\hom",
@@ -2740,12 +2740,12 @@
             {
                 "symbol": "{matrix}",
                 "rendered": "$\\begin{matrix}a&b\\\\c&d\\end{matrix}$",
-                "comment": "`\\begin{matrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{matrix}`"
+                "comment": "`\\begin{matrix}``a & b \\\\``c & d`<br>`\\end{matrix}`"
             },
             {
                 "symbol": "{matrix*}",
                 "rendered": "$\\begin{matrix*}[r]0&-1\\\\-1&0\\end{matrix*}$",
-                "comment": "`\\begin{matrix*}[r]`<br>&nbsp;&nbsp;&nbsp;`0 & -1 \\\\`<br>&nbsp;&nbsp;&nbsp;`-1 & 0`<br>`\\end{matrix*}`"
+                "comment": "`\\begin{matrix*}[r]``0 & -1 \\\\``-1 & 0`<br>`\\end{matrix*}`"
             },
             {
                 "symbol": "\\max",
@@ -3400,12 +3400,12 @@
             {
                 "symbol": "{pmatrix}",
                 "rendered": "$\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$",
-                "comment": "`\\begin{pmatrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{pmatrix}`"
+                "comment": "`\\begin{pmatrix}``a & b \\\\``c & d`<br>`\\end{pmatrix}`"
             },
             {
                 "symbol": "{pmatrix*}",
                 "rendered": "$\\begin{pmatrix*}[r]0&-1\\\\-1&0\\end{pmatrix*}$",
-                "comment": "`\\begin{pmatrix*}[r]`<br>&nbsp;&nbsp;&nbsp;`0 & -1 \\\\`<br>&nbsp;&nbsp;&nbsp;`-1 & 0`<br>`\\end{pmatrix*}`"
+                "comment": "`\\begin{pmatrix*}[r]``0 & -1 \\\\``-1 & 0`<br>`\\end{pmatrix*}`"
             },
             {
                 "symbol": "\\pmb",
@@ -3590,7 +3590,7 @@
             {
                 "symbol": "{rcases}",
                 "rendered": "$\\begin{rcases}a&\\text{if }b\\\\c&\\text{if }d\\end{rcases}$",
-                "comment": "`\\begin{rcases}`<br>&nbsp;&nbsp;&nbsp;`a &\\text{if } b  \\\\`<br>&nbsp;&nbsp;&nbsp;`c &\\text{if } d`<br>`\\end{rcases}`"
+                "comment": "`\\begin{rcases}``a &\\text{if } b  \\\\``c &\\text{if } d`<br>`\\end{rcases}`"
             },
             {
                 "symbol": "\\rceil",
@@ -3915,7 +3915,7 @@
             {
                 "symbol": "{smallmatrix}",
                 "rendered": "$\\begin{smallmatrix} a & b \\\\ c & d \\end{smallmatrix}$",
-                "comment": "`\\begin{smallmatrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{smallmatrix}`"
+                "comment": "`\\begin{smallmatrix}``a & b \\\\``c & d`<br>`\\end{smallmatrix}`"
             },
             {
                 "symbol": "\\smallsetminus",
@@ -3965,7 +3965,7 @@
             {
                 "symbol": "{split}",
                 "rendered": "$$\\begin{equation}\\begin{split}a &=b+c\\\\&=e+f\\end{split}\\end{equation}$$",
-                "comment": "`\\begin{equation}`<br>`\\begin{split}`<br>&nbsp;&nbsp;&nbsp;`a &=b+c\\\\`<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`&=e+f`<br>`\\end{split}`<br>`\\end{equation}`"
+                "comment": "`\\begin{equation}`<br>`\\begin{split}``a &=b+c\\\\`&nbsp;&nbsp;&nbsp;`&=e+f`<br>`\\end{split}`<br>`\\end{equation}`"
             },
             {
                 "symbol": "\\sqcap",
@@ -4905,22 +4905,22 @@
             {
                 "symbol": "{Vmatrix}",
                 "rendered": "$\\begin{Vmatrix}a&b\\\\c&d\\end{Vmatrix}$",
-                "comment": "`\\begin{Vmatrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{Vmatrix}`"
+                "comment": "`\\begin{Vmatrix}``a & b \\\\``c & d`<br>`\\end{Vmatrix}`"
             },
             {
                 "symbol": "{Vmatrix*}",
                 "rendered": "$\\begin{Vmatrix*}[r]0&-1\\\\-1&0\\end{Vmatrix*}$",
-                "comment": "`\\begin{Vmatrix*}[r]`<br>&nbsp;&nbsp;&nbsp;`0 & -1 \\\\`<br>&nbsp;&nbsp;&nbsp;`-1 & 0`<br>`\\end{Vmatrix*}`"
+                "comment": "`\\begin{Vmatrix*}[r]``0 & -1 \\\\``-1 & 0`<br>`\\end{Vmatrix*}`"
             },
             {
                 "symbol": "{vmatrix}",
                 "rendered": "$\\begin{vmatrix}a&b\\\\c&d\\end{vmatrix}$",
-                "comment": "`\\begin{vmatrix}`<br>&nbsp;&nbsp;&nbsp;`a & b \\\\`<br>&nbsp;&nbsp;&nbsp;`c & d`<br>`\\end{vmatrix}`"
+                "comment": "`\\begin{vmatrix}``a & b \\\\``c & d`<br>`\\end{vmatrix}`"
             },
             {
                 "symbol": "{vmatrix*}",
                 "rendered": "$\\begin{vmatrix*}[r]0&-1\\\\-1&0\\end{vmatrix*}$",
-                "comment": "`\\begin{vmatrix*}[r]`<br>&nbsp;&nbsp;&nbsp;`0 & -1 \\\\`<br>&nbsp;&nbsp;&nbsp;`-1 & 0`<br>`\\end{vmatrix*}`"
+                "comment": "`\\begin{vmatrix*}[r]``0 & -1 \\\\``-1 & 0`<br>`\\end{vmatrix*}`"
             },
             {
                 "symbol": "\\vphantom",

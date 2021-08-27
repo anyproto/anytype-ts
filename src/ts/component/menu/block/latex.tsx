@@ -2,15 +2,17 @@ import * as React from 'react';
 import { I, keyboard, DataUtil, Util } from 'ts/lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
-import { BlockMath } from 'react-katex';
 import { commonStore } from 'ts/store';
 
+import 'katex/dist/katex.min.css';
 import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {}
 
 const Sections = require('json/latex.json');
 const $ = require('jquery');
+const katex = require('katex');
+
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
 const LIMIT = 40;
@@ -42,12 +44,19 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			const symbol = String(item.name || '').replace(/\\\\/g, '\\');
 			
 			let content = null;
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
+				const name = String(item.name || '').replace(/\\\\/g, '\\');
+
+				const math = katex.renderToString(item.comment || item.name, {
+					displayMode: true, 
+					throwOnError: false,
+					output: 'html',
+				});
+
 				content = (
 					<div 
 						id={'item-' + item.id} 
@@ -56,12 +65,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}
 						onClick={(e: any) => { this.onClick(e, item) }}
 					>
-						<div className="math">
-							<BlockMath math={item.name} />
-						</div>
+						<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
 						<div className="info">
 							<div className="txt">
-								<div className="name">{symbol}</div>
+								<div className="name">{name}</div>
 							</div>
 						</div>
 					</div>
@@ -194,7 +201,8 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 		let sections = DataUtil.menuSectionsMap(Sections).map((it: any) => {
 			it.children = it.children.map((c: any) => {
-				c.name = c.symbol;
+				c.name = String(c.symbol || '');
+				c.comment = String(c.comment || '').replace(/`/g, '');
 				delete(c.symbol);
 				return c;
 			});

@@ -110,7 +110,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					rootId: rootId,
 					blockId: block.id,
 					onSelect: (from: number, to: number, item: any) => {
-						this.setValue(Util.stringInsert(this.getValue(), item.name, from, to));
+						this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
 					},
 				}
 			});
@@ -175,7 +175,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
 
-		val.get(0).innerHTML = katex.renderToString(value, { throwOnError: false });
+		val.get(0).innerHTML = katex.renderToString(value, { 
+			displayMode: true, 
+			throwOnError: false,
+			output: 'html',
+		});
 	};
 
 	onEdit (e: any) {
