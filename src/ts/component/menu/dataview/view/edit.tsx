@@ -147,7 +147,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any, v: string) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
 

@@ -17,6 +17,8 @@
 				.name { @include text-overflow-nw; max-width: 200px; display: inline; line-height: 24px; }
 			}
 
+			.cellContent.c-checkbox.canEdit { cursor: pointer !important; } 
+
 			.cellContent.c-shortText, 
 			.cellContent.c-longText,
 			.cellContent.c-url,
@@ -36,7 +38,7 @@
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
 			}
 
-			.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }
+			.icon.checkbox { width: 20px; height: 20px; vertical-align: top; }
         }
     }
 }
