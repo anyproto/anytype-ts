@@ -44,22 +44,13 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		this.rebind();
 	};
 	
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
+	rebind () {
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -73,10 +64,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		const block = blockStore.getLeaf(rootId, blockId);
 		
 		return block ? block.content.color : 0;
-	};
-	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 	
 	getItems () {

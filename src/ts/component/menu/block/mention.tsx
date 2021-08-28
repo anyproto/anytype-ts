@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader } from 'ts/component';
-import { I, C, Key, keyboard, Util, DataUtil, Mark } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, keyboard, Util, DataUtil, Mark } from 'ts/lib';
+import { commonStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -134,12 +134,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -156,7 +156,15 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { filter } = commonStore;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
-		const filters = [];
+		const filters: any[] = [
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			},
+		];
 		const sorts = [
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
@@ -203,10 +211,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		return true;
 	};
 
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -232,7 +236,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			let to = from + name.length + 1;
 			let marks = Util.objectCopy(data.marks || []);
 
-			marks = Mark.adjust(marks, from, name.length + 1);
+			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: id, 

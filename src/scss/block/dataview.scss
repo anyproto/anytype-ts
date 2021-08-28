@@ -21,10 +21,10 @@
 			.side.left { width: calc(100% - 100px); }
 			.side.right { width: 100px; }
 
-			.views { white-space: nowrap; display: inline-block; }
+			.views { white-space: nowrap; display: inline-block; line-height: 20px; }
 			.viewItem { 
-				margin-right: 20px; display: inline-block; vertical-align: middle; transition: color 0.2s ease-in-out; cursor: pointer; 
-				white-space: nowrap; @include text-header3; color: $colorMediumGrey;
+				margin-right: 20px; display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; 
+				white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 120px; color: $colorMediumGrey; line-height: 20px; 
 			}
 			.viewItem { 
 				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
@@ -39,17 +39,17 @@
 
 			.side.left.small {
 				.views { visibility: hidden; pointer-events: none; }
-				.first { display: inline-block; }
+				.first { display: inline-block; line-height: 20px; }
 			}
 		}
 
 		.buttons { display: flex; font-weight: 500; color: $colorMediumGrey; }
 		.buttons {
-			.side { padding: 23px 0px; height: 72px; width: 50%; white-space: nowrap; }
+			.side { padding: 26px 0px; height: 72px; width: 50%; white-space: nowrap; }
 			.side.left { padding-left: 14px; }
 			.side.right { line-height: 26px; text-align: right; }
 
-			.icon { vertical-align: middle; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
+			.icon { vertical-align: top; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
 			.icon:last-child { margin: 0px; }
 
 			.icon.search { background-image: url('~img/icon/dataview/button/search0.svg'); }

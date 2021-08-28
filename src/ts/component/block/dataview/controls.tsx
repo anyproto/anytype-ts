@@ -171,7 +171,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	onViewAdd () {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getData } = this.props;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
@@ -195,6 +195,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			data: {
 				rootId: rootId,
 				blockId: block.id,
+				getData: getData,
+				getView: getView,
 				view: { 
 					type: I.ViewType.Grid,
 					relations: relations,

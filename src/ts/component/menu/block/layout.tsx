@@ -54,30 +54,17 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
-		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		this.rebind();
 	};
 	
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
+	rebind () {
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
-	};
-
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 
 	getSections () {

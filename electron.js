@@ -587,7 +587,11 @@ function menuInit () {
 						setConfig({ allowDataview: !config.allowDataview });
 						win.reload();
 					}
-				}
+				},
+				{
+					label: 'Graph',
+					click: () => { send('popup', 'graph', {}); }
+				},
 			]
 		});
 	};
@@ -622,7 +626,10 @@ function checkUpdate (auto) {
 		return;
 	};
 
-	autoUpdater.checkForUpdatesAndNotify();
+	autoUpdater.checkForUpdatesAndNotify().catch((err) => {
+		Util.log('info', 'checkForUpdatesAndNotify error: ' + err);
+	});
+
 	clearTimeout(timeoutUpdate);
 	timeoutUpdate = setTimeout(() => { checkUpdate(true); }, TIMEOUT_UPDATE);
 	autoUpdate = auto;

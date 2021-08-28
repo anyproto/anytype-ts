@@ -24,6 +24,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
@@ -145,18 +146,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		this.unbind();
 	};
 	
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -183,14 +178,10 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		return items || [];
 	};
 	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
-	};
-
 	onOver (e: any, item: any) {
 		const { param, setActive } = this.props;
 		const { data } = param;
-		const { canSelectInitial, onMouseEnter } = data;
+		const { canSelectInitial, onOver } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
@@ -200,8 +191,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			setActive(item, false);
 		};
 
-		if (onMouseEnter) {
-			onMouseEnter(e, item);
+		if (onOver) {
+			onOver(e, item);
 		};
 	};
 	

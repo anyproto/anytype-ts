@@ -101,10 +101,15 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		const { isPopup } = this.props;
+
 		this._isMounted = false;
 		this.unbind();
 
-		popupStore.closeAll();
+		if (!isPopup) {
+			popupStore.closeAll();
+		};
+
 		menuStore.closeAll();
 		Util.linkPreviewHide(true);
 	};

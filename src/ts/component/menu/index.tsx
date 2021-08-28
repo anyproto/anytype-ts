@@ -33,7 +33,6 @@ import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
 
 import MenuBlockRelationEdit from './block/relation/edit';
-import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
 import MenuRelationSuggest from './relation/suggest';
@@ -99,7 +98,6 @@ const Components: any = {
 	blockLayout:			 MenuBlockLayout,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
-	blockRelationList:		 MenuBlockRelationList,
 	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,
@@ -278,7 +276,8 @@ class Menu extends React.Component<Props, State> {
 
 	componentWillUnmount () {
 		const { param } = this.props;
-		const { isSub } = param;
+		const { isSub, data } = param;
+		const { rebind } = data;
 		const el = this.getElement();
 
 		this._isMounted = false;
@@ -291,6 +290,13 @@ class Menu extends React.Component<Props, State> {
 		if (isSub) {
 			$('#menu-polygon').hide();
 			window.clearTimeout(this.timeoutPoly);
+		};
+
+		if (this.ref && this.ref.unbind) {
+			this.ref.unbind();
+		};
+		if (rebind) {
+			rebind();
 		};
 	};
 	
@@ -510,55 +516,147 @@ class Menu extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		const k = e.key.toLowerCase();
+		const refInput = this.ref.refFilter || this.ref.refName;
+
+		let ret = false;
+
+		if (refInput) {
+			if (refInput.isFocused && (this.ref.n < 0)) {
+				keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+					ret = true;
+				});
+
+				keyboard.shortcut('arrowdown', e, (pressed: string) => {
+					this.ref.n = 0;
+					refInput.blur();
+					this.setActive(null, true);
+
+					ret = true;
+				});
+
+				keyboard.shortcut('arrowup', e, (pressed: string) => {
+					if (!this.ref.getItems) {
+						return;
+					};
+
+					this.ref.n = this.ref.getItems().length - 1;
+					refInput.blur();
+					this.setActive(null, true);
+
+					ret = true;
+				});
+			} else {
+				keyboard.shortcut('arrowup', e, (pressed: string) => {
+					if (!this.ref.n) {
+						this.ref.n = -1;
+						refInput.focus();
+						this.setActive(null, true);
+
+						ret = true;
+					};
+				});
+			};
+		};
+
+		if (ret) {
+			return;
+		};
+
+		keyboard.shortcut('arrowleft, escape', e, (pressed: string) => {
+			e.preventDefault();
+			this.close();
+		});
+
+		if (!this.ref.getItems) {
+			return;
+		};
+
 		const items = this.ref.getItems();
 		const l = items.length;
 		const item = items[this.ref.n];
 
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.ref.n--;
-				if (this.ref.n < 0) {
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			e.preventDefault();
+			
+			this.ref.n--;
+			if (this.ref.n < 0) {
+				if ((this.ref.n == -1) && refInput) {
+					this.ref.n = -1;
+					refInput.focus();
+				} else {
 					this.ref.n = l - 1;
 				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.ref.n++;
-				if (this.ref.n > l - 1) {
-					this.ref.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
+			};
+
+			this.setActive(null, true);
+		});
+
+		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+			this.ref.n++;
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+			this.setActive(null, true);
+		});
+
+		if (this.ref.onClick) {	
+			keyboard.shortcut('tab, enter, arrowright', e, (pressed: string) => {
 				e.preventDefault();
 				if (item) {
 					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 				};
-				break;
-
-			case Key.right:
-				e.preventDefault();
-				if (item && item.arrow) {
-					this.ref.onOver(e, item);
-				};
-				break;
-				
-			case Key.left:
-			case Key.escape:
-				this.close();
-				break;
+			});
 		};
+
+		if (this.ref.onSortEnd) {
+			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
+				e.preventDefault();
+				this.onSortMove(-1);
+			});
+
+			keyboard.shortcut('shift+arrowdown', e, (pressed: string) => {
+				e.preventDefault();
+				this.onSortMove(1);
+			});
+		};
+
+		if (this.ref.onRemove) {
+			keyboard.shortcut('backspace', e, (pressed: string) => {
+				e.preventDefault();
+
+				this.ref.n--;
+				this.checkIndex();
+				this.ref.onRemove(e, item);
+				this.setActive(null, true);
+			});
+		};
+	};
+
+	onSortMove (dir: number) {
+		const n = this.ref.n;
+
+		this.ref.n = n + dir;
+		this.checkIndex();
+
+		this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
+	};
+
+	checkIndex () {
+		const items = this.ref.getItems();
+
+		this.ref.n = Math.max(0, this.ref.n);
+		this.ref.n = Math.min(items.length - 1, this.ref.n);
 	};
 
 	setActive (item?: any, scroll?: boolean) {
 		if (!this.ref || !this.ref.getItems) {
 			return;
+		};
+
+		const refInput = this.ref.refFilter || this.ref.refName;
+		if ((this.ref.n == -1) && refInput) {
+			refInput.focus();
 		};
 
 		const items = this.ref.getItems();
@@ -573,7 +671,7 @@ class Menu extends React.Component<Props, State> {
 			if (this.ref.recalcIndex) {
 				idx = this.ref.recalcIndex();
 			};
-			this.ref.refList.scrollToRow(idx);
+			this.ref.refList.scrollToRow(Math.max(0, idx));
 		};
 	};
 	
@@ -603,14 +701,18 @@ class Menu extends React.Component<Props, State> {
 		el.addClass('hover');
 
 		if (scroll) {
-			const content = node.find('.content');
-			const st = content.scrollTop();
+			let scrollWrap = node.find('.scrollWrap');
+			if (!scrollWrap.length) {
+				scrollWrap = node.find('.content');
+			};
+
+			const st = scrollWrap.scrollTop();
 			const pt = el.position().top;
 			const eh = el.outerHeight();
-			const ch = content.height();
+			const ch = scrollWrap.height();
 			const top = Math.max(0, st + pt + eh - BORDER - ch);
 			
-			content.stop(true, true).animate({ scrollTop: top }, 100);
+			scrollWrap.stop(true, true).animate({ scrollTop: top }, 100);
 		};
 	};
 

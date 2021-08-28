@@ -15,6 +15,7 @@
 	"dist/anytypeHelper.exe",
 	"dist/anytypeHelper",
 	"dist/*.node",
+	"dist/workers/**/*",
 	"!node_modules/**/*",
 	"node_modules/google-protobuf",
 	"node_modules/grpc-web",

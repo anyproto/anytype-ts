@@ -164,14 +164,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
-		if (rebind) {
-			rebind();
-		};
-
 		this.menuClose();
 	};
 
@@ -200,6 +192,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 			element: `#${getId()} #item-relation-type`,
 			data: {
 				...data,
+				filter: '',
 				value: this.format,
 				options: DataUtil.menuGetRelationTypes(),
 				noFilter: true,

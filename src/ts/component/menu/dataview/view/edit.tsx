@@ -21,10 +21,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	constructor(props: any) {
 		super(props);
 		
+		this.onSubmit = this.onSubmit.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
 	};
 
 	render () {
@@ -79,19 +79,16 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		this.unbind();
+		this.rebind();
 		this.focus();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 
 	componentDidUpdate () {
-		this.focus();
+		this.props.position();
+		this.props.setActive();
 	};
-	
+
 	componentWillUnmount () {
-		this.unbind();
 		window.clearTimeout(this.timeout);
 	};
 
@@ -102,6 +99,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			};
 		}, 15);
 	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
+	};
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
@@ -111,11 +114,24 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const k = e.key.toLowerCase();
 
 		if (this.isFocused) {
+			if (k == Key.enter) {
+				window.clearTimeout(this.timeout);
+				this.save();
+				this.props.close();
+				return;
+			} else
 			if (k != Key.down) {
 				return;
+			} else {
+				this.ref.blur();
+				this.n = -1;
 			};
-			this.ref.blur();
-			this.n = -1;
+		} else {
+			if ((k == Key.up) && !this.n) {
+				this.n = -1;
+				this.ref.focus();
+				return;
+			};
 		};
 
 		this.props.onKeyDown(e);
@@ -140,6 +156,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		};
 
 		view.name = v;
+	};
+
+	onSubmit (e: any) {
+		e.preventDefault();
+
+		this.save();
 	};
 
 	save () {
@@ -169,14 +191,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				close();
 			});
 		};
-	};
-
-	onSubmit (e: any) {
-		e.preventDefault();
-
-		window.clearTimeout(this.timeout);
-		this.save();
-		this.props.close();
 	};
 
 	getSections () {

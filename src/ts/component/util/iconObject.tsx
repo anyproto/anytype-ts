@@ -112,8 +112,6 @@ Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg'
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
-const ObjectType = require('img/icon/object/default.svg');
-
 const Color = {
 	grey:	 '#dfddd0',
 	black:	 '#2c2b27',
@@ -128,7 +126,6 @@ const Color = {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const IconObject = observer(class IconObject extends React.Component<Props, {}> {
 
@@ -205,10 +202,6 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-				} else {
-					cn.push('withLetter');
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -242,7 +235,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		return (
-			<div id={this.props.id} className={cn.join(' ')} onClick={this.onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div 
+				id={this.props.id} 
+				className={cn.join(' ')} 
+				onMouseDown={this.onClick} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 				{icon}
 			</div>
 		);
@@ -324,7 +323,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = 28;
 		};
 
-		if (layout == I.ObjectLayout.Human) {
+		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
 			s = size;
 		};
 
@@ -332,7 +331,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = size;
 		};
 
-		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji) {
+		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji && (size >= 40)) {
 			s = size;
 		};
 

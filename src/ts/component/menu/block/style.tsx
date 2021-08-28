@@ -49,24 +49,14 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		const items = this.getItems();
 		const active = this.getActive();
 
-		this.n = items.findIndex((it: any) => { return it.id == active; });
-		this.unbind();
-		this.props.setActive();
-		
-		const win = $(window);
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		this.n = items.findIndex((it: any) => { return it.itemId == active; });
+		this.rebind();
 	};
 	
-	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
+	rebind () {
 		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -122,10 +112,6 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 			items = items.concat(section.children);
 		};
 		return items;
-	};
-	
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 	
 	onOver (e: any, item: any) {

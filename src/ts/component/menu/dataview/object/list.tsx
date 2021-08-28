@@ -171,16 +171,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 	};
 	
 	componentWillUnmount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rebind } = data;
-
 		this._isMounted = false;
-		this.unbind();
-		
-		if (rebind) {
-			rebind();
-		};
 	};
 
 	focus () {
@@ -193,7 +184,8 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
 	unbind () {
@@ -270,10 +262,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
-	};
-
-	onKeyDown (e: any) {
-		this.props.onKeyDown(e);
 	};
 
 	onOver (e: any, item: any) {

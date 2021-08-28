@@ -174,7 +174,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	rebind () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const blocks = node.find('#blocks');
 		const img = node.find('img.media');
 		const wrap = node.find('.block.blockMedia .wrapContent');
 
