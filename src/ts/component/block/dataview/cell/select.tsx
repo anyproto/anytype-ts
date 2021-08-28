@@ -27,6 +27,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		const { rootId, block, relation, getRecord, index, placeholder, elementMapper } = this.props;
 		const record = getRecord(index);
 		const canClear = relation.format == I.RelationType.Status;
+		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
 			return null;
@@ -41,9 +42,12 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (elementMapper) {
 			value = value.map((it: any) => { return elementMapper(relation, it); });
 		};
+		if (!value.length) {
+			cn.push('isEmpty');
+		};
 
 		return (
-			<div className="wrap">
+			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
 						<span className="over">

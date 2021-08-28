@@ -39,6 +39,9 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		if (length >= 3) {
 			cn.push('column3'); 
 		};
+		if (!value.length) {
+			cn.push('isEmpty');
+		};
 
 		return (
 			<div className={cn.join(' ')}>
