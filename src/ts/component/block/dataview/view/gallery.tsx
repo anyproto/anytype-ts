@@ -93,12 +93,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		);
 	};
 
-	componentDidMount () {
-	};
-
-	componentDidUpdate () {
-	};
-
 	onResize ({ width }) {
 		const size = Constant.size.dataview.gallery;
 
