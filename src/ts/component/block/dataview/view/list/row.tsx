@@ -5,18 +5,19 @@ import { Cell } from 'ts/component';
 
 interface Props extends I.ViewComponent {
 	index: number;
+	style?: any;
 }
 
 const Row = observer(class Row extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, onCellClick, onRef } = this.props;
+		const { index, getView, onCellClick, onRef, style } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
 
 		return (
-			<div className="row">
+			<div className="row" style={style}>
 				{relations.map((relation: any, i: number) => {
 					const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 					return (

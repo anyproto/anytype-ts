@@ -2,28 +2,38 @@
 
 .blocks {
 	.block.blockDataview {
-        .viewItem.viewList { padding: 20px 0px 0px 0px; }
+        .viewItem.viewList { padding: 0px 14px; }
 		.viewItem.viewList {
-		    .row { width: 100%; display: inline-block; margin-bottom: 8px; }
+			.listItem { height: 24px; margin-bottom: 8px; }
+		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; }
 			.row:last-child { margin: 0px; }
 
-			.cellContent { display: inline; vertical-align: top; margin-right: 8px; line-height: 24px; cursor: default !important; }
+			.cellContent { display: inline-block; vertical-align: top; line-height: 24px; cursor: default !important; }
 			.cellContent:last-child { margin: 0px; }
-			.cellContent:empty { display: none; }
+			.cellContent:empty, .cellContent.isEmpty { display: none; }
 
             .cellContent.c-shortText { @include text-paragraph; }
 			.cellContent.c-shortText {
 				.name { @include text-overflow-nw; max-width: 200px; display: inline; line-height: 24px; }
 			}
 
-			.cellContent.c-file {
-				.inputWithFile { display: none; }
+			.cellContent.c-shortText, 
+			.cellContent.c-longText,
+			.cellContent.c-url,
+			.cellContent.c-email,
+			.cellContent.c-phone,
+			.cellContent.c-date,
+			.cellContent.c-number {
+				.name { margin-right: 8px; }
 			}
 
-			.cellContent.c-select, .cellContent.c-object { line-height: 24px; vertical-align: middle; }
-			.cellContent.c-select, .cellContent.c-object {
-				.wrap { display: inline; line-height: 24px; vertical-align: middle; }
-				.tagItem, .item { margin-bottom: 0px; }
+			.cellContent.c-select, .cellContent.c-object { line-height: 24px; vertical-align: middle; margin: 0px; }
+			.cellContent.c-select, .cellContent.c-object, .cellContent.c-file {
+				.wrap { display: inline-block; line-height: 24px; vertical-align: middle; margin-right: 8px; }
+				.wrap.isEmpty { display: none; }
+				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 80px; vertical-align: top; }
+				.tagItem { margin-top: 2px; }
+				.tagItem:last-child, .element:last-child { margin-right: 0px; }
 			}
 
 			.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }

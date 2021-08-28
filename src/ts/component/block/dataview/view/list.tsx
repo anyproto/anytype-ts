@@ -1,45 +1,60 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { Pager, Cell } from 'ts/component';
 import { dbStore } from 'ts/store';
+import { AutoSizer, WindowScroller, List } from 'react-virtualized';
 
 import Row from './list/row';
 
 interface Props extends I.ViewComponent {}
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
+const HEIGHT = 32;
 
 const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, getData, getView } = this.props;
+		const { rootId, block, getData, getView, isPopup } = this.props;
 		const view = getView();
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
-		let pager = null;
-		if (total && data.length) {
-			pager = (
-				<Pager 
-					offset={offset} 
-					limit={Constant.limit.dataview.records} 
-					total={total} 
-					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-				/>
-			);
-		};
-
 		return (
 			<div className="wrap">
 				<div className="viewItem viewList">
-					{data.map((item: any, i: number) => (
-						<Row key={'list-row-' + i} {...this.props} index={i}  />
-					))}
+					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+						{({ height, isScrolling, registerChild, scrollTop }) => {
+							return (
+								<AutoSizer disableHeight>
+									{({ width }) => {
+										return (
+											<div ref={registerChild}>
+												<List
+													autoHeight
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													isScrolling={isScrolling}
+													rowCount={data.length}
+													rowHeight={HEIGHT}
+													rowRenderer={({ key, index, style }) => (
+														<div className="listItem" key={key} style={style}>
+															<Row 
+																key={'grid-row-' + view.id + index} 
+																{...this.props}
+																index={index}
+															/>
+														</div>
+													)}
+													scrollTop={scrollTop}
+												/>
+											</div>
+										);
+									}}
+								</AutoSizer>
+							);
+						}}
+					</WindowScroller>
 				</div>
-
-				{pager}
 			</div>
 		);
 	};
