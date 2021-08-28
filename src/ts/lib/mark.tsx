@@ -463,15 +463,13 @@ class Mark {
 			// Remove inner links and adjust other marks to new range
 			for (let i = 0; i < marks.length; ++i) {
 				let mark = marks[i];
-
-				if (mark.type == I.MarkType.Link) {
-					marks.splice(i, 1);
-					i--;
-					continue;
-				};
-
 				if ((mark.range.from >= from) && (mark.range.to <= from + p1.length + p2.length + 4)) {
-					innerIdx.push(i);
+					if (mark.type == I.MarkType.Link) {
+						marks.splice(i, 1);
+						i--;
+					} else {
+						innerIdx.push(i);
+					};
 				};
 			};
 
