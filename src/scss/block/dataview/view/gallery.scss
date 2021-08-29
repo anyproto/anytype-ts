@@ -2,12 +2,14 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
+		.viewItem.viewGallery { padding: 16px 0px; }
 		.viewItem.viewGallery {
-			.card { 
-				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
-				display: inline-block; vertical-align: top;
+			.card { width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; display: inline-block; vertical-align: top; cursor: pointer; }
+
+			.card {
+				.cover { position: static; height: 160px; border-radius: 12px 12px 0px 0px; background-position: center center; }
 			}
+			.card > .inner { padding: 16px; }
 		}
 	}
 }
