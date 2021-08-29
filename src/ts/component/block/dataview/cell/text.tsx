@@ -147,6 +147,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			let size = iconSize;
+			let is = undefined;
 
 			switch (viewType) {
 				case I.ViewType.List:
@@ -155,7 +156,10 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 				case I.ViewType.Gallery:
 				case I.ViewType.Board:
-					size = (record.layout == I.ObjectLayout.Task) ? 24 : 48;
+					size = 48;
+					if (record.layout == I.ObjectLayout.Task) {
+						is = 24;
+					};
 					break;
 			};
 
@@ -169,6 +173,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 						onUpload={this.onIconUpload}
 						onCheckbox={this.onCheckbox}
 						size={size} 
+						iconSize={is}
 						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 

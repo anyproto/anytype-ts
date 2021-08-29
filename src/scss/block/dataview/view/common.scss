@@ -6,7 +6,7 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: pointer; }
+				.cellContent { cursor: pointer; margin-bottom: 6px; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 
 				.cellContent.c-date { color: $colorVeryDarkGrey; }
@@ -14,7 +14,7 @@
 				.cellContent.c-shortText { @include text-paragraph; }
 				.cellContent.c-shortText {
 					.iconObject { margin: 0px 10px 0px 0px; }
-					.name { height: 24px; width: 100% !important; }
+					.name { width: 100% !important; }
 				}
 
 				.cellContent.c-select {

@@ -20,9 +20,10 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
 		const picture = this.getPicture();
+		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
 
 		return (
-			<div className="card" style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(record); }}>
+			<div className={cn.join(' ')} style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(record); }}>
 				{picture ? <Cover src={picture} /> : ''}
 				<div className="inner">
 					{viewRelations.map((relation: any, i: number) => {
