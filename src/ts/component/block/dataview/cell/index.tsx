@@ -39,19 +39,24 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { relationKey, index, onClick, onMouseEnter, onMouseLeave, idPrefix } = this.props;
+		const { relationKey, index, onClick, onMouseEnter, onMouseLeave, idPrefix, getRecord } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
+
 		if (!relation) {
 			return null;
 		};
 
 		const canEdit = this.canEdit();
+		const check = DataUtil.checkRelationValue (relation, record[relation.relationKey]);
+
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
 			DataUtil.relationClass(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == Constant.relationKey.name ? 'isName' : ''),
+			(!check ? 'isEmpty' :  ''),
 		];
 
 		let CellComponent: React.ReactType<Props>;

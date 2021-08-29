@@ -44,9 +44,6 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 		if (length >= 3) {
 			cn.push('column3'); 
 		};
-		if (!value.length) {
-			cn.push('isEmpty');
-		};
 
 		const Item = (item: any) => (
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>

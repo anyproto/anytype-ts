@@ -712,7 +712,7 @@ class Menu extends React.Component<Props, State> {
 			const ch = scrollWrap.height();
 			const top = Math.max(0, st + pt + eh - BORDER - ch);
 			
-			scrollWrap.stop(true, true).animate({ scrollTop: top }, 100);
+			scrollWrap.scrollTop(top);
 		};
 	};
 

@@ -114,7 +114,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	componentDidUpdate () {
-		this.props.setActive();
+		this.props.setActive(null, true);
 		this.props.position();
 	};
 
