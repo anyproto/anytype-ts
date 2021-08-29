@@ -18,6 +18,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	cache: any = {};
 	cellPositioner: any = null;
 	ref: any = null;
+	width: number = 0;
 
 	constructor(props: Props) {
 		super(props);
@@ -43,6 +44,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	render () {
 		const { rootId, block, getData, getView, isPopup } = this.props;
 		const view = getView();
+		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
@@ -93,17 +95,31 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		);
 	};
 
-	onResize ({ width }) {
-		const size = Constant.size.dataview.gallery;
+	componentDidUpdate () {
+		this.reset();
+	};
 
+	reset () {
+		this.cache.clearAll();
+		this.resetPositioner();
+		this.ref.clearCellPositions();
+	};
+
+	resetPositioner () {
+		const size = Constant.size.dataview.gallery.card;
 		this.cellPositioner.reset({
-			columnCount: Math.floor(width / (size.card + SPACE)),
-			columnWidth: size.card,
+			columnCount: Math.floor(this.width / (size + SPACE)),
+			columnWidth: size,
 			spacer: SPACE,
     	});
+	};
+
+	onResize ({ width }) {
+		this.width = width;
+		this.resetPositioner();
 		this.ref.recomputeCellPositions();
 	};
-	
+
 });
 
 export default ViewGallery;
