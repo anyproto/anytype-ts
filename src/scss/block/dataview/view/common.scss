@@ -6,7 +6,7 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: default !important; }
+				.cellContent { cursor: pointer; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 
 				.cellContent.c-date { color: $colorVeryDarkGrey; }

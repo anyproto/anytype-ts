@@ -48,6 +48,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
+		for (let item of data) {
+			for (let k in item) {
+			};
+		};
+
 		return (
 			<div className="wrap">
 				<div className="viewItem viewGallery">
@@ -72,7 +77,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 													cellMeasurerCache={this.cache}
 													cellPositioner={this.cellPositioner}
 													cellRenderer={({ key, index, parent, style }) => (
-														<CellMeasurer cache={this.cache} index={index} key={key} parent={parent}>
+														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
 															<Card 
 																key={'gallery-card-' + view.id + index} 
 																{...this.props} 
