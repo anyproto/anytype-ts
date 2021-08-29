@@ -155,7 +155,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 				case I.ViewType.Gallery:
 				case I.ViewType.Board:
-					size = 48;
+					size = (record.layout == I.ObjectLayout.Task) ? 24 : 48;
 					break;
 			};
 

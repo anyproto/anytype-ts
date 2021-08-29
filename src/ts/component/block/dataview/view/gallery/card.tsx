@@ -45,16 +45,14 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	};
 
 	getPicture () {
-		const { rootId, block, index, getView, getRecord } = this.props;
-		const view = getView();
-		const viewRelations = view.relations.filter((it: any) => { return it.isVisible; });
+		const { rootId, block, index, getRecord } = this.props;
 		const record = getRecord(index);
+		const relations = dbStore.getRelations(rootId, block.id);
 
 		let file = '';
-		for (let vr of viewRelations) {
-			const relation = dbStore.getRelation(rootId, block.id, vr.relationKey);
+		for (let relation of relations) {
 			if (!relation.isHidden && (relation.format == I.RelationType.File)) {
-				file = vr.relationKey;
+				file = relation.relationKey;
 			};
 		};
 
