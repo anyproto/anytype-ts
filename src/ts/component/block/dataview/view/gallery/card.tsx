@@ -14,7 +14,7 @@ const Constant = require('json/constant.json');
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, getRecord, onCellClick, onRef, style } = this.props;
+		const { index, getView, getRecord, onRef, style } = this.props;
 		const view = getView();
 		const viewRelations = view.relations.filter((it: any) => { return it.isVisible; });
 		const idPrefix = 'dataviewCell';
@@ -45,20 +45,13 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	};
 
 	getPicture () {
-		const { rootId, block, index, getRecord } = this.props;
+		const { rootId, index, getView, getRecord } = this.props;
+		const view = getView();
 		const record = getRecord(index);
-		const relations = dbStore.getRelations(rootId, block.id);
-
-		let file = '';
-		for (let relation of relations) {
-			if (!relation.isHidden && (relation.format == I.RelationType.File)) {
-				file = relation.relationKey;
-			};
-		};
 
 		let picture = '';
-		if (file) {
-			const value = DataUtil.getRelationArrayValue(record[file]);
+		if (view.coverRelationKey) {
+			const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
 			for (let id of value) {
 				const f = detailStore.get(rootId, id, []);
 				if (f && (f.type == Constant.typeId.image)) {

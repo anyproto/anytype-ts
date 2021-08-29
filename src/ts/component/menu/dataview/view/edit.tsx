@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -15,25 +15,23 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	isFocused: boolean = false;
 	timeout: number = 0;
 
-	type: I.ViewType = I.ViewType.Grid;
-	name: string = '';
-
 	constructor(props: any) {
 		super(props);
 		
-		this.onSubmit = this.onSubmit.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, setHover } = this.props;
 		const { data } = param;
 		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
-		
+		const fileOptions = this.getFileOptions();
+		const fileOption = fileOptions.find((it: any) => { return it.id == view.coverRelationKey; });
+
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -55,7 +53,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="filter isName" onSubmit={this.onSubmit}>
+				<form className="filter isName">
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
@@ -69,7 +67,22 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						/>
 					</div>
 					<div className="line" />
-				</form>
+				</form>	
+
+				{view.type == I.ViewType.Gallery ? (
+					<React.Fragment>
+						<div className="sectionName">Cover relation</div>
+						<MenuItemVertical 
+							id="coverRelationKey"
+							icon={fileOption ? fileOption.icon : undefined}
+							name={fileOption ? fileOption.name : 'Select relation'}
+							onMouseEnter={(e: any) => { setHover({ id: 'coverRelationKey' }); }}
+							onMouseLeave={(e: any) => { setHover(); }}
+							onClick={(e: any) => { this.onCoverRelation(e); }} 
+							arrow={true}
+						/>
+					</React.Fragment>
+				): ''}
 
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />
@@ -158,12 +171,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		view.name = v;
 	};
 
-	onSubmit (e: any) {
-		e.preventDefault();
-
-		this.save();
-	};
-
 	save () {
 		const { param, close } = this.props;
 		const { data } = param;
@@ -185,6 +192,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, cb);
 		} else 
 		if (view.name) {
+			console.log('CREATE');
+			console.trace();
+
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
 				cb();
@@ -289,6 +299,47 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (onSelect) {
 			onSelect();
 		};
+	};
+
+	onCoverRelation (e: any) {
+		const { param, close, getId, getSize } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		menuStore.open('select', { 
+			element: `#${getId()} #item-coverRelationKey`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			data: {
+				value: view.coverRelationKey,
+				options: this.getFileOptions(),
+				onSelect: (e, item) => {
+					view.coverRelationKey = item.id;
+
+					this.forceUpdate();
+					this.save();
+				},
+			}
+		});
+	};
+
+	getFileOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+			return !it.isHidden && (it.format == I.RelationType.File);
+		}).map((it: any) => {
+			return { 
+				id: it.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(it.format),
+				name: it.name, 
+			};
+		});
+
+		options.unshift({ id: '', icon: '', name: 'Select relation', isInitial: true });
+		return options;
 	};
 	
 };

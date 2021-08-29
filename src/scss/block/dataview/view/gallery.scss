@@ -6,10 +6,9 @@
 		.viewItem.viewGallery {
 			.card { 
 				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; display: inline-block; cursor: pointer; 
-				overflow: hidden;
 			}
 			.card {
-				.cover { position: static; height: 160px; background-position: center center; }
+				.cover { position: static; height: 160px; background-position: center center; border-radius: 12px 12px 0px 0px; }
 			}
 			.card > .inner { padding: 16px; }
 		}

@@ -150,7 +150,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onAdd (e: any) {
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, onAdd } = data;
 		const view = getView();
@@ -159,7 +159,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
-			offsetX: 256,
+			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {
