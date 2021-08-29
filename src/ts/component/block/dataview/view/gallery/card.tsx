@@ -47,10 +47,10 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	getPicture () {
 		const { rootId, index, getView, getRecord } = this.props;
 		const view = getView();
-		const record = getRecord(index);
 
 		let picture = '';
 		if (view.coverRelationKey) {
+			const record = getRecord(index);
 			const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
 			for (let id of value) {
 				const f = detailStore.get(rootId, id, []);
