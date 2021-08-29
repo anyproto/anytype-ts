@@ -4,7 +4,8 @@
 	.block.blockDataview {
         .viewItem.viewList { padding: 0px 14px; }
 		.viewItem.viewList {
-			.listItem { height: 24px; margin-bottom: 8px; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
+
 		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; }
 			.row:last-child { margin: 0px; }
 
