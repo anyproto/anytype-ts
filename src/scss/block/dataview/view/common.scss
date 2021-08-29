@@ -13,7 +13,7 @@
 
 				.cellContent.c-shortText { @include text-paragraph; }
 				.cellContent.c-shortText {
-					.iconObject { margin-bottom: 10px; }
+					.iconObject { margin: 0px 10px 10px 0px; }
 					.name { height: 24px; width: 100% !important; }
 				}
 
