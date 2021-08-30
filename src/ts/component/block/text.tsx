@@ -519,7 +519,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (!menuOpenAdd && !menuOpenMention) {
-				if (!range || !range.to) {
+				if (!range) {
 					return;
 				};
 
