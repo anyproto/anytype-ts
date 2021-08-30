@@ -14,9 +14,11 @@ const Constant = require('json/constant.json');
 const Card = observer(class Card extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, getRecord, onRef, style } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style } = this.props;
 		const view = getView();
-		const viewRelations = view.relations.filter((it: any) => { return it.isVisible; });
+		const relations = view.relations.filter((it: any) => { 
+			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+		});
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
 		const picture = this.getPicture();
@@ -26,7 +28,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			<div className={cn.join(' ')} style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(record); }}>
 				{picture ? <Cover src={picture} /> : ''}
 				<div className="inner">
-					{viewRelations.map((relation: any, i: number) => {
+					{relations.map((relation: any, i: number) => {
 						const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 						return (
 							<Cell 

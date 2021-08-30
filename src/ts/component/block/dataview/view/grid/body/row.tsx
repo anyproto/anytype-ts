@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { dbStore } from 'ts/store';
 
 import Cell from './cell';
 
@@ -17,9 +18,11 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, getRecord, style } = this.props;
+		const { rootId, block, index, getView, getRecord, style } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const relations = view.relations.filter((it: any) => { 
+			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+		});
 		const record = getRecord(index);
 		const cn = [ 'row' ];
 
