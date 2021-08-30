@@ -98,7 +98,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 								onMouseDown={() => { keyboard.disableBlur(true); }}
 								onClick={(e: any) => { 
 									e.stopPropagation();
-									this.setValue(Util.timestamp(y, item.m, item.d), true, true); 
+									this.setValue(Util.timestamp(item.y, item.m, item.d), true, true); 
 								}}
 							>
 								{item.d}
@@ -176,7 +176,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 			nm = 1;
 			ny = y + 1;
 		};
-		
+
 		let days = [];
 		for (let i = 1; i <= wdf; ++i) {
 			days.push({ d: Constant.monthDays[pm] - (wdf - i), m: pm, y: py });

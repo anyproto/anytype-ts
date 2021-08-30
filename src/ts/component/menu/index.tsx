@@ -623,7 +623,7 @@ class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref.onRemove && !refInput.isFocused) {
+		if (this.ref.onRemove && refInput && !refInput.isFocused) {
 			keyboard.shortcut('backspace', e, (pressed: string) => {
 				e.preventDefault();
 
