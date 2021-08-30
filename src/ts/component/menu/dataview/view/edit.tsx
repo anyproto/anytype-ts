@@ -192,9 +192,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, cb);
 		} else 
 		if (view.name) {
-			console.log('CREATE');
-			console.trace();
-
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
 				cb();
@@ -338,7 +335,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			};
 		});
 
-		options.unshift({ id: '', icon: '', name: 'Select relation', isInitial: true });
+		options.unshift({ id: '', icon: '', name: 'Select relation' });
 		return options;
 	};
 	
