@@ -53,7 +53,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="filter isName">
+				<div className="filter isName">
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
@@ -67,7 +67,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						/>
 					</div>
 					<div className="line" />
-				</form>	
+				</div>	
 
 				{view.type == I.ViewType.Gallery ? (
 					<React.Fragment>
