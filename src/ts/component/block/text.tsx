@@ -41,6 +41,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	clicks: number = 0;
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
+	preventMenu: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -613,9 +614,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
 		let reg = null;
 
-		const canOpenMenuAdd = (symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canParseMarkdown = !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+
+		this.preventMenu = false;
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -888,6 +891,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onPaste (e: any) {
 		e.persist();
 		e.preventDefault();
+
+		this.preventMenu = true;
 
 		this.setText(this.marks, true);
 		this.props.onPaste(e);
