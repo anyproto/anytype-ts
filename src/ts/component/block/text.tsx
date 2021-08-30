@@ -228,7 +228,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
 
-			if (!grammar) {
+			if (!grammar && (lang != 'plain')) {
 				lang = Constant.default.codeLang;
 				grammar = Prism.languages[lang];
 			};
@@ -237,7 +237,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				this.refLang.setValue(lang);
 			};
 
-			html = Prism.highlight(html, grammar, lang);
+			if (grammar) {
+				html = Prism.highlight(html, grammar, lang);
+			};
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
