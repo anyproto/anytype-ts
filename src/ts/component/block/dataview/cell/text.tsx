@@ -311,6 +311,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let record = getRecord(index);
 
 		keyboard.setFocus(false);
+		this.range = null;
 
 		if (keyboard.isBlurDisabled) {
 			return;
