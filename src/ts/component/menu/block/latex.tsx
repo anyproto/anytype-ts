@@ -14,7 +14,8 @@ const $ = require('jquery');
 const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 72;
+const HEIGHT_ITEM_BIG = 72;
+const HEIGHT_ITEM_SMALL = 48;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
@@ -35,6 +36,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	render () {
 		const { param } = this.props;
 		const { data } = param;
+		const { isTemplate } = data;
 		const { filter } = commonStore;
 		const items = this.getItems(true);
 
@@ -65,10 +67,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}
 						onClick={(e: any) => { this.onClick(e, item) }}
 					>
-						<div className="inner">
-							<div className="name">{name}</div>
-							<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-						</div>
+						{isTemplate ? (
+							<div className="inner">
+								<div className="name">{name}</div>
+								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+							</div>
+						) : (
+							<div className="inner">
+								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+								<div className="name">{name}</div>
+							</div>
+						)}
 					</div>
 				);
 			};
@@ -107,7 +116,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 										rowCount={items.length}
 										rowHeight={({ index }) => {
 											const item = items[index];
-											return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+											return this.getItemHeight(item);
 										}}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
@@ -196,8 +205,15 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 	getSections () {
 		const { filter } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { isTemplate } = data;
 
-		let sections = DataUtil.menuSectionsMap(Sections).map((it: any) => {
+		let sections = DataUtil.menuSectionsMap(Sections);
+
+		sections = sections.filter((it: any) => { return (it.id == 'templates') == isTemplate; });
+
+		sections = sections.map((it: any) => {
 			it.children = it.children.map((c: any) => {
 				c.name = String(c.symbol || '');
 				c.comment = String(c.comment || '').replace(/`/g, '');
@@ -225,6 +241,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		};
 
 		return items;
+	};
+
+	getItemHeight (item: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { isTemplate } = data;
+
+		if (item.isSection) {
+			return HEIGHT_SECTION;
+		};
+		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 	};
 
 	recalcIndex () {

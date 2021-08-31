@@ -8,17 +8,21 @@
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
 			#input { display: block; }
+			.select { display: inline-block; }
 		}
 
-		.empty { text-align: center; padding: 10px 0px 0px 0px; }
+		.empty { text-align: center; }
 
-		.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
+		.select { 
+			border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; display: none; 
+			margin-bottom: 10px; 
+		}
 		.select {
 			.name { overflow: visible; }
 		}
 		.select:hover, .select.active { background: none; }
 
-		#value { text-align: center; font-size: 20px; line-height: 20px; padding: 16px; width: 100%; }
+		#value { text-align: center; font-size: 20px; line-height: 20px; padding: 16px; width: 100%; overflow: auto; }
 		#value:empty { display: none; }
 		#input { 
 			background: #f3f2ec; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 

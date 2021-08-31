@@ -1,4 +1,15 @@
 [
+	{
+		"id": "templates",
+        "name": "Templates",
+        "children": [
+			{
+                "symbol": "#",
+                "rendered": "$\\def\\bar#1{#1^2} \\bar{y}$",
+                "comment": "`\\def\\bar#1{#1^2} \\bar{y}`"
+            }
+		]
+	},
     {
         "name": "Symbols",
         "children": [

@@ -50,7 +50,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
-				<div id="select" className="select" onClick={(e: any) => { this.onMenu(e, 'select'); this.onEdit(e); }}>
+				<div id="select" className="select" onClick={(e: any) => { this.onMenu(e, 'select', true); this.onEdit(e); }}>
 					<div className="name">Template formula</div>
 					<Icon className="arrow light" />
 				</div>
@@ -112,7 +112,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
 			commonStore.filterSet(range.start, '');
-			this.onMenu(e, 'input');
+			this.onMenu(e, 'input', false);
 		};
 
 		if (menuOpen) {
@@ -138,7 +138,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		keyboard.setFocus(false);
 	};
 
-	onMenu (e: any, element: string) {
+	onMenu (e: any, element: string, isTemplate: boolean) {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
@@ -147,10 +147,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		menuStore.open('blockLatex', {
 			element: `#block-${block.id} #${element}`,
 			commonFilter: true,
+			className: (isTemplate ? 'isTemplate' : ''),
 			onClose: () => {
 				commonStore.filterSet(0, '');
 			},
 			data: {
+				isTemplate: isTemplate,
 				rootId: rootId,
 				blockId: block.id,
 				onSelect: (from: number, to: number, item: any) => {
@@ -209,7 +211,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onEdit (e: any) {
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block, readonly, isPopup } = this.props;
+		const container = Util.getPageContainer(isPopup ? 'popup' : 'page');
 
 		if (readonly) {
 			return;
@@ -219,6 +222,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setState({ isEditing: true });
 
 		$(window).unbind('click.latex').on('click.latex', (e: any) => {	
+			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
+				return;
+			};
+
+			menuStore.close('blockLatex');
+
 			C.BlockUpdateContent({ 
 				...block, 
 				content: { 
