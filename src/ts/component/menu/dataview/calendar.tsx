@@ -98,7 +98,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 								onMouseDown={() => { keyboard.disableBlur(true); }}
 								onClick={(e: any) => { 
 									e.stopPropagation();
-									this.setValue(Util.timestamp(y, item.m, item.d), true, true); 
+									this.setValue(Util.timestamp(item.y, item.m, item.d), true, true); 
 								}}
 							>
 								{item.d}
@@ -163,21 +163,29 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		let wdl = Number(Util.date('w', Util.timestamp(y, m, Constant.monthDays[m])));
 		
 		let pm = m - 1;
+		let nm = m + 1;
 		let py = y;
+		let ny = y;
+
 		if (pm < 1) {
 			pm = 12;
 			py = y - 1;
 		};
-		
+
+		if (nm > 12) {
+			nm = 1;
+			ny = y + 1;
+		};
+
 		let days = [];
 		for (let i = 1; i <= wdf; ++i) {
-			days.push({ d: Constant.monthDays[pm] - (wdf - i) });
+			days.push({ d: Constant.monthDays[pm] - (wdf - i), m: pm, y: py });
 		};
 		for (let i = 1; i <= Constant.monthDays[m]; ++i) {
 			days.push({ y: y, m: m, d: i });
 		};
 		for (let i = 1; i < 7 - wdl; ++i) {
-			days.push({ d: i });
+			days.push({ d: i, m: nm, y: ny });
 		};
 		return days;
 	};

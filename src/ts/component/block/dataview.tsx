@@ -133,7 +133,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
-		const limit = view.type == I.ViewType.Grid ? 0 : Constant.limit.dataview.records;
+		
+		let limit = Constant.limit.dataview.records;
+		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
+			limit = 0;
+		};
 
 		if (viewChange) {
 			meta.viewId = newViewId;

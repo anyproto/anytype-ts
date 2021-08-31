@@ -269,6 +269,7 @@ const Mapper = {
 				id: obj.getId(),
 				type: obj.getType(),
 				name: obj.getName(),
+				coverRelationKey: '',//obj.getCoverrelationkey(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
@@ -534,6 +535,7 @@ const Mapper = {
 			item.setId(obj.id);
 			item.setName(obj.name);
 			item.setType(obj.type);
+			//item.setCoverrelationkey(obj.coverRelationKey);
 			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
 			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));

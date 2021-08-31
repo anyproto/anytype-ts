@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
 import { Icon } from 'ts/component';
-import { blockStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 import { SortableContainer } from 'react-sortable-hoc';
 import { observer } from 'mobx-react';
 
@@ -20,7 +20,9 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const relations = view.relations.filter((it: any) => { 
+			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+		});
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 		
 		const Row = SortableContainer((item: any) => (

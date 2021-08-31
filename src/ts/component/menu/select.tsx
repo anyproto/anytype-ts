@@ -32,8 +32,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, value, noFilter } = data;
+		const options = this.getItemsWithoutFilter();
 		const items = this.getItems();
-		const withFilter = !noFilter && (items.length > LIMIT);
+		const withFilter = !noFilter && (options.length > LIMIT);
 
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
@@ -165,13 +166,20 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			};
 		}, 15);
 	};
+
+	getItemsWithoutFilter () {
+		const { param } = this.props;
+		const { data } = param;
+
+		return (data.options || []).filter((it: any) => { return it; });
+	};
 	
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
 
-		let items = (data.options || []).filter((it: any) => { return it; });
+		let items = this.getItemsWithoutFilter();
 		if (data.filter) {
 			items = items.filter((it: any) => { return it.name.match(filter); });
 		};
@@ -222,19 +230,19 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { position, getId, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
+		const options = this.getItemsWithoutFilter();
 		const items = this.getItems();
-		const obj = $('#' + getId());
+		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
+		const withFilter = !noFilter && (options.length > LIMIT);
 
-		const length = Math.max(items.length, 1);
-		const withFilter = !noFilter && (length > LIMIT);
+		let offset = withFilter ? 44 : 0;
 
-		let offset = withFilter ? 50 : 0;
-		if (length <= LIMIT) {
+		if (items.length <= LIMIT) {
 			offset += 16;
 		};
 
-		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, length * HEIGHT + offset));
+		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, Math.max(items.length, 1) * HEIGHT + offset));
 
 		content.css({ height: height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');

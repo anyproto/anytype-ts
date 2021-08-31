@@ -2,76 +2,130 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { Pager } from 'ts/component';
 import { dbStore } from 'ts/store';
+import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
 import Card from './gallery/card';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const SPACE = 16;
 
 const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}> {
 
+	cache: any = {};
+	cellPositioner: any = null;
+	ref: any = null;
+	width: number = 0;
+
+	constructor(props: Props) {
+		super(props);
+
+		const size = Constant.size.dataview.gallery;
+
+		this.cache = new CellMeasurerCache({
+			defaultHeight: 250,
+			defaultWidth: size.card,
+			fixedWidth: true,
+		});
+
+		this.cellPositioner = createMasonryCellPositioner({
+			cellMeasurerCache: this.cache,
+			columnCount: 3,
+			columnWidth: size.card,
+			spacer: SPACE,
+		});
+
+		this.onResize = this.onResize.bind(this);
+	};
+
 	render () {
-		const { rootId, block, getData, getView } = this.props;
+		const { rootId, block, getData, getView, isPopup } = this.props;
 		const view = getView();
+		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
-		
-		let pager = null;
-		if (total && data.length) {
-			pager = (
-				<Pager 
-					offset={offset} 
-					limit={Constant.limit.dataview.records} 
-					total={total} 
-					onChange={(page: number) => { getData(view.id, (page - 1) * Constant.limit.dataview.records); }} 
-				/>
-			);
+		const { coverRelationKey } = view;
+
+		for (let item of data) {
+			for (let k in item) {
+			};
 		};
-		
+
 		return (
 			<div className="wrap">
 				<div className="viewItem viewGallery">
-					{data.map((item: any, i: number) => (
-						<Card key={'gallery-card-' + i} {...this.props} index={i} />
-					))}
+					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+						{({ height, isScrolling, registerChild, scrollTop }) => {
+							return (
+								<AutoSizer 
+									disableHeight 
+									onResize={this.onResize} 
+									overscanByPixels={200}
+								>
+									{({ width }) => {
+										return (
+											<div ref={registerChild}>
+												<Masonry
+													ref={(ref: any) => { this.ref = ref; }}
+													autoHeight
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													isScrolling={isScrolling}
+													cellCount={data.length}
+													cellMeasurerCache={this.cache}
+													cellPositioner={this.cellPositioner}
+													cellRenderer={({ key, index, parent, style }) => (
+														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+															<Card 
+																key={'gallery-card-' + view.id + index} 
+																{...this.props} 
+																index={index} 
+																style={style}
+															/>
+														</CellMeasurer>
+													)}
+													scrollTop={scrollTop}
+												/>
+											</div>
+										);
+									}}
+								</AutoSizer>
+							);
+						}}
+					</WindowScroller>
 				</div>
-
-				{pager}
 			</div>
 		);
 	};
 
-	componentDidMount () {
-		this.resize();
-	};
-
 	componentDidUpdate () {
-		this.resize();
+		this.reset();
 	};
 
-	resize () {
-		const size = Constant.size.dataview.gallery;
-
-		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const viewItem = node.find('.viewItem');
-
-		const cnt = Math.floor((node.width() + size.margin) / (size.card + size.margin));
-		const width = cnt * (size.card + size.margin) - size.margin;
-		const cards = viewItem.find('.card');
-
-		viewItem.css({ width: width, columnCount: cnt });
-		cards.each((i: number, item: any) => {
-			$(item).css({ marginRight: ((i > 0) && ((i + 1) % cnt === 0) ? 0 : '') });
-		});
-
-		win.trigger('resize.editor');
+	reset () {
+		this.cache.clearAll();
+		this.resetPositioner();
+		this.ref.clearCellPositions();
 	};
-	
+
+	resetPositioner () {
+		const size = Constant.size.dataview.gallery.card;
+		this.cellPositioner.reset({
+			columnCount: Math.floor(this.width / (size + SPACE)),
+			columnWidth: size,
+			spacer: SPACE,
+    	});
+	};
+
+	onResize ({ width }) {
+		this.width = width;
+		this.resetPositioner();
+		this.ref.recomputeCellPositions();
+	};
+
 });
 
 export default ViewGallery;

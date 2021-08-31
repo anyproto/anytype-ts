@@ -40,6 +40,7 @@ export interface Menu {
 	id: string;
 	param: MenuParam;
 	setActive?(item?: any, scroll?: boolean): void;
+	setHover?(item?: any, scroll?: boolean): void;
 	onKeyDown?(e: any): void;
 	getId?(): string;
 	getSize?(): any;
@@ -66,4 +67,5 @@ export interface MenuItem {
 	iconSize?: number;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
 };

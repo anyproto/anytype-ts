@@ -679,7 +679,12 @@ class Util {
 	};
 
 	cntWord (cnt: any, w1: string, w2?: string) {
-		return String(cnt || '').substr(-1) == '1' ? w1 : (w2 ? w2 : w1 + 's');
+		cnt = String(cnt || '');
+		w2 = w2 ? w2 : w1 + 's';
+		if (cnt.substr(-2) == 11) {
+			return w2;
+		};
+		return cnt.substr(-1) == '1' ? w1 : w2;
 	};
 
 	uuid () {

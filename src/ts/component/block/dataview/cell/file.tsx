@@ -40,6 +40,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 
 		const cn = [ 'wrap' ];
 		const length = value.length;
+
 		if (length >= 3) {
 			cn.push('column3'); 
 		};

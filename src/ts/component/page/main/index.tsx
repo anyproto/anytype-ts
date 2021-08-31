@@ -327,7 +327,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 
 		const { tab } = this.state;
-		const { root, recent } = blockStore;
+		const { root, recent, profile } = blockStore;
 		const { config } = commonStore;
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
@@ -363,7 +363,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (object.isReadonly) {
+		if (object.isReadonly || (object.id == profile)) {
 			archive = null;
 		};
 
