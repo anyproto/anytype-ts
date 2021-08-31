@@ -14,7 +14,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Inbox now stores a list of draft objects, sorted by editing date.` },
 	{ style: I.TextStyle.Bulleted, text: `Support for plain text in a code snippet. Thanks, <a href="https://community.anytype.io/d/317-support-for-plain-text-in-a-code-snippet/1">maxitg</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Add link creation via Markdown Syntax. Just write this anywhere in text block with format [text](link). Thanks, <a href="https://community.anytype.io/d/709-add-link-creation-via-markdown-syntax/1">alsmnn</a>.` },
-	{ style: I.TextStyle.Bulleted, text: `We added fast community feature request / bug report link instead of Typeform & link to knowledge base.` },
+	{ style: I.TextStyle.Bulleted, text: `We've added fast community feature request / bug report link instead of Typeform & link to knowledge base.` },
 
 	{ style: I.TextStyle.Header2, text: `Bugs we've fixed` },
 	{ style: I.TextStyle.Bulleted, text: `Page restored from archive tab is still visible in archive tab. Thanks, <a href="https://community.anytype.io/d/536-page-restored-from-archive-tab-is-still-visible-in-archive-tab">Tanzeel098, lynxlove, gis, Aljosha Leusmann</a>.` },
