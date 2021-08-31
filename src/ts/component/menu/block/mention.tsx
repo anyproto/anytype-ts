@@ -166,7 +166,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			},
 		];
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (!config.debug.ho) {
