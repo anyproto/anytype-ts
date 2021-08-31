@@ -136,6 +136,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	};
 	
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isTemplate } = data;
 		const items = this.getItems(true);
 
 		this._isMounted = true;
@@ -144,7 +147,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: (isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL),
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -263,12 +266,20 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	};
 
 	resize () {
-		const { getId, position } = this.props;
+		const { param, getId, position } = this.props;
+		const { data } = param;
+		const { isTemplate } = data;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
+
+		let height = 0;
+
+		for (let item of items) {
+			height += this.getItemHeight(item);
+		};
 		
-		let height = Math.max(HEIGHT_ITEM + offset, Math.min(280, items.length * HEIGHT_ITEM + offset));
+		height = Math.max((isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL) + offset, Math.min(280, height));
 
 		if (!items.length) {
 			height = 44;
