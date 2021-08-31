@@ -32,7 +32,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When you delete a relation from Set you still might had empty column in other views` },
 	{ style: I.TextStyle.Bulleted, text: `DatePicker. Adding date from next month drop the value to December of 2020. Thanks, <a href="https://community.anytype.io/d/629-date-picker-defaulting-to-dec-2020-when-picking-certain-dates/1">Corsecharter</a>` },
 	{ style: I.TextStyle.Bulleted, text: `DatePicker. The year in the date was changed incorrectly if there was a value set.` },
-	{ style: I.TextStyle.Bulleted, text: `Unexpected behavior may trigger when clicking at the right side of object’s name in Set. Thanks, <a href="https://community.anytype.io/d/655-unexpected-behavior-when-clicking-input-fields/1">nizos</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Unexpected behavior may occur when clicking at the right side of object’s name in Set. Thanks, <a href="https://community.anytype.io/d/655-unexpected-behavior-when-clicking-input-fields/1">nizos</a>` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
