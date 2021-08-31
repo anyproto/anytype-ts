@@ -10,7 +10,7 @@ export default [
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Sets can have custom icon & cover and might have their own relations as other objects.` },
-	{ style: I.TextStyle.Bulleted, text: `We start updating mentions after an object's name change from this release. We will introduce this enhancement for Android in the next release.` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype starts updating mentions after an object's name change from this release. We will introduce this enhancement for Android in the next release.` },
 	{ style: I.TextStyle.Bulleted, text: `Inbox now stores a list of draft objects, sorted by editing date.` },
 	{ style: I.TextStyle.Bulleted, text: `Support for plain text in a code snippet. Thanks, <a href="https://community.anytype.io/d/317-support-for-plain-text-in-a-code-snippet/1">maxitg</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Add link creation via Markdown Syntax. Just write this anywhere in text block with format [text](link). Thanks, <a href="https://community.anytype.io/d/709-add-link-creation-via-markdown-syntax/1">alsmnn</a>` },
