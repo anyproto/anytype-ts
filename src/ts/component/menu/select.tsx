@@ -239,7 +239,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		let offset = withFilter ? 44 : 0;
 
 		if (items.length <= LIMIT) {
-			offset += 8;
+			offset += 16;
 		};
 
 		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, Math.max(items.length, 1) * HEIGHT + offset));
