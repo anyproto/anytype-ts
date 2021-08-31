@@ -147,6 +147,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			let size = iconSize;
+			let is = undefined;
 
 			switch (viewType) {
 				case I.ViewType.List:
@@ -156,6 +157,9 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				case I.ViewType.Gallery:
 				case I.ViewType.Board:
 					size = 48;
+					if (record.layout == I.ObjectLayout.Task) {
+						is = 24;
+					};
 					break;
 			};
 
@@ -169,6 +173,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 						onUpload={this.onIconUpload}
 						onCheckbox={this.onCheckbox}
 						size={size} 
+						iconSize={is}
 						canEdit={canEdit} 
 						offsetY={4} 
 						object={record} 
@@ -306,6 +311,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let record = getRecord(index);
 
 		keyboard.setFocus(false);
+		this.range = null;
 
 		if (keyboard.isBlurDisabled) {
 			return;

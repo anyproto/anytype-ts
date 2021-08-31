@@ -90,6 +90,7 @@ export interface View {
 	id: string;
 	name: string;
 	type: ViewType;
+	coverRelationKey: string;
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];

@@ -42,9 +42,6 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 		if (elementMapper) {
 			value = value.map((it: any) => { return elementMapper(relation, it); });
 		};
-		if (!value.length) {
-			cn.push('isEmpty');
-		};
 
 		return (
 			<div className={cn.join(' ')}>

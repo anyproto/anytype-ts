@@ -21,6 +21,10 @@
                 .icon { background-image: url('~img/icon/plus/menu1.svg'); }
             }
 
+			.cellContent.c-shortText {
+				.name { height: 24px; }
+			}
+
 			.cellContent {
 				.name:empty { display: none; }
 			}

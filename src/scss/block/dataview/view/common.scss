@@ -6,25 +6,24 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { margin-bottom: 6px; cursor: default !important; }
-				.cellContent:last-child { margin-bottom: 0px; }
-				
+				.cellContent { cursor: pointer; margin-bottom: 6px; }
+				.cellContent:empty, .cellContent.isEmpty { display: none; }
+
 				.cellContent.c-date { color: $colorVeryDarkGrey; }
 
-				.cellContent.c-shortText { @include text-paragraph; margin-bottom: 6px; }
+				.cellContent.c-shortText { @include text-paragraph; }
 				.cellContent.c-shortText {
-					.iconObject { margin-bottom: 10px; }
-					.name { height: 24px; width: 100% !important; }
+					.iconObject { margin: 0px 10px 0px 0px; }
+					.name { width: 100% !important; }
 				}
 
-				.cellContent.c-select { margin-bottom: 0px; }
-
-				.cellContent.c-file {
-					.inputWithFile { display: none; }
+				.cellContent.c-select {
+					.tagItem { max-width: 80px; margin: 0px 6px 6px 0px; }
 				}
 
-				.cellContent.c-object {
-					.element { width: 100%; }
+				.cellContent.c-object, .cellContent.c-file {
+					.element { width: 100%; margin: 0px 0px 6px 0px; }
+					.element:last-child { margin-bottom: 0px; }
 				}
 			}
 		}

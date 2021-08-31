@@ -137,6 +137,7 @@ class Menu extends React.Component<Props, State> {
 		
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
+		this.setHover = this.setHover.bind(this);
 		this.setActive = this.setActive.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.getId = this.getId.bind(this);
@@ -207,6 +208,7 @@ class Menu extends React.Component<Props, State> {
 							ref={(ref: any) => { this.ref = ref; }}
 							{...this.props} 
 							setActive={this.setActive}
+							setHover={this.setHover}
 							onKeyDown={this.onKeyDown}
 							getId={this.getId} 
 							getSize={this.getSize}
@@ -621,7 +623,7 @@ class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref.onRemove && !refInput.isFocused) {
+		if (this.ref.onRemove && refInput && !refInput.isFocused) {
 			keyboard.shortcut('backspace', e, (pressed: string) => {
 				e.preventDefault();
 
@@ -712,7 +714,7 @@ class Menu extends React.Component<Props, State> {
 			const ch = scrollWrap.height();
 			const top = Math.max(0, st + pt + eh - BORDER - ch);
 			
-			scrollWrap.stop(true, true).animate({ scrollTop: top }, 100);
+			scrollWrap.scrollTop(top);
 		};
 	};
 
