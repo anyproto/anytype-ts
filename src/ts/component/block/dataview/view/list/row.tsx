@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Cell } from 'ts/component';
+import { dbStore } from 'ts/store';
 
 interface Props extends I.ViewComponent {
 	index: number;
@@ -11,9 +12,11 @@ interface Props extends I.ViewComponent {
 const Row = observer(class Row extends React.Component<Props, {}> {
 
 	render () {
-		const { index, getView, onCellClick, onRef, style } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
+		const relations = view.relations.filter((it: any) => { 
+			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+		});
 		const idPrefix = 'dataviewCell';
 
 		return (
