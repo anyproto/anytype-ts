@@ -41,6 +41,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	clicks: number = 0;
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
+	preventMenu: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -210,9 +211,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	setValue (v: string) {
 		const { block } = this.props;
-		const { content } = block;
 		const fields = block.fields || {};
-		const { style, marks } = content;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		
@@ -224,11 +223,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		this.text = text;
 
 		let html = text;
-		if (style == I.TextStyle.Code) {
+		if (block.isTextCode()) {
 			let lang = fields.lang;
 			let grammar = Prism.languages[lang];
 
-			if (!grammar) {
+			if (!grammar && (lang != 'plain')) {
 				lang = Constant.default.codeLang;
 				grammar = Prism.languages[lang];
 			};
@@ -237,7 +236,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				this.refLang.setValue(lang);
 			};
 
-			html = Prism.highlight(html, grammar, lang);
+			if (grammar) {
+				html = Prism.highlight(html, grammar, lang);
+			};
 		} else {
 			html = Mark.toHtml(html, this.marks);
 			html = html.replace(/\n/g, '<br/>');
@@ -245,7 +246,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		
 		value.get(0).innerHTML = html;
 
-		if (!block.isTextCode() && (html != text) && marks.length) {
+		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			raf(() => {
 				this.renderLinks();
 				this.renderMentions();
@@ -271,7 +272,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (!items.length) {
 			return;
 		};
-		
+
 		items.unbind('click.link mouseenter.link');
 			
 		items.on('mouseenter.link', function (e: any) {
@@ -517,7 +518,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			if (!menuOpenAdd && !menuOpenMention) {
-				if (!range || !range.to) {
+				if (!range) {
 					return;
 				};
 
@@ -611,9 +612,11 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
 		let reg = null;
 
-		const canOpenMenuAdd = (symbolBefore == '/') && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canParseMarkdown = !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+
+		this.preventMenu = false;
 		
 		if (menuOpenAdd) {
 			if (k == Key.space) {
@@ -886,6 +889,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	onPaste (e: any) {
 		e.persist();
 		e.preventDefault();
+
+		this.preventMenu = true;
 
 		this.setText(this.marks, true);
 		this.props.onPaste(e);
