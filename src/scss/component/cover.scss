@@ -5,20 +5,20 @@
 	top: 0px; width: 100%; height: 100%; background-color: $colorBlack;
 }
 
-.cover.type2.white { background-color: #fff; }
-.cover.type2.yellow { background-color: #fee874; }
-.cover.type2.orange { background-color: #ffb522; }
-.cover.type2.red { background-color: #f55522; }
-.cover.type2.pink { background-color: #efaea1; }
-.cover.type2.purple { background-color: #6a1036; }
-.cover.type2.navy { background-color: #132877; }
-.cover.type2.blue { background-color: #2869e9; }
-.cover.type2.ice { background-color: #88cdf3; }
-.cover.type2.teal { background-color: #9bb0b7; }
-.cover.type2.green { background-color: #136E41; }
-.cover.type2.lightgrey { background-color: $colorLightGrey; }
-.cover.type2.darkgrey { background: $colorMediumGrey; }
-.cover.type2.black { background-color: $colorBlack; }
+.cover.type2.white { background-color: #fff !important; }
+.cover.type2.yellow { background-color: #fee874 !important; }
+.cover.type2.orange { background-color: #ffb522 !important; }
+.cover.type2.red { background-color: #f55522 !important; }
+.cover.type2.pink { background-color: #efaea1 !important; }
+.cover.type2.purple { background-color: #6a1036 !important; }
+.cover.type2.navy { background-color: #132877 !important; }
+.cover.type2.blue { background-color: #2869e9 !important; }
+.cover.type2.ice { background-color: #88cdf3 !important; }
+.cover.type2.teal { background-color: #9bb0b7 !important; }
+.cover.type2.green { background-color: #136E41 !important; }
+.cover.type2.lightgrey { background-color: $colorLightGrey !important; }
+.cover.type2.darkgrey { background: $colorMediumGrey !important; }
+.cover.type2.black { background-color: $colorBlack !important; }
 		
 .cover.type3.yellow { background-image: linear-gradient(180deg, $colorOrange 0%, $colorYellow 105.47%); }
 .cover.type3.red { background-image: linear-gradient(180deg, $colorRed 0%, $colorPink 105.47%); }
