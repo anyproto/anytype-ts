@@ -21,12 +21,21 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		});
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
-		const picture = this.getPicture();
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
+
+		let cover = null;
+		if (view.coverRelationKey) {
+			if (view.coverRelationKey == 'pageCover') {
+				const { coverType, coverId, coverX, coverY, coverScale } = record;
+				cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
+			} else {
+				cover = <Cover src={this.getPicture()} />;
+			};
+		};
 
 		return (
 			<div className={cn.join(' ')} style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(record); }}>
-				{picture ? <Cover src={picture} /> : ''}
+				{cover}
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
 						const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
