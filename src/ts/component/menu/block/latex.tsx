@@ -14,7 +14,7 @@ const $ = require('jquery');
 const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM_BIG = 72;
+const HEIGHT_ITEM_BIG = 70;
 const HEIGHT_ITEM_SMALL = 48;
 const LIMIT = 40;
 
@@ -75,7 +75,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 						) : (
 							<div className="inner">
 								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-								<div className="name">{name}</div>
+								<div className="info">
+									<div className="name">{name}</div>
+								</div>
 							</div>
 						)}
 					</div>
@@ -273,7 +275,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
 
-		let height = 0;
+		let height = offset;
 
 		for (let item of items) {
 			height += this.getItemHeight(item);

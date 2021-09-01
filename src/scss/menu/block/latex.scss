@@ -3,32 +3,32 @@
 .menus {
 	.menu.menuBlockLatex {
 		.content { transition: none; padding: 0px; }
-		.items { height: 100%; padding: 0px 14px; }
+		.items { height: 100%; }
 
-		.item { padding: 0px; text-align: center; }
 		.item {
-			.inner {  border-radius: 4px; margin-bottom: 2px; height: 70px; padding: 6px; }
-
 			.math { 
 				border: 1px solid $colorLightGrey; border-radius: 4px; overflow: hidden; text-align: center; line-height: 40px; height: 40px; display: block; 
-				width: 52px; height: 40px;
+				width: 52px; height: 40px; position: absolute;
 			}
 			.math {
 				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
 			}
-			.info { height: 40px; line-height: 40px; padding-left: 48px; }
-			.name { @include text-overflow-nw; @include text-small; display: block; }
+			.info { height: 40px; line-height: 40px; padding-left: 60px; }
+			.name { @include text-overflow-nw; @include text-small; vertical-align: middle; }
 		}
-
-		.item.empty { padding: 12px 14px; }
-
-		.sectionName { padding: 5px 0px; }
 	}
 
 	.menu.menuBlockLatex.isTemplate {
+		.items { padding: 0px 14px; }
+
+		.item { padding: 0px; text-align: center; }
 		.item {
-			.inner { border: 1px solid $colorLightGrey; }
-			.math { border: 0px; }
+			.inner { border: 1px solid $colorLightGrey; padding: 6px; border-radius: 4px; height: 70px; }
+			.math { border: 0px; text-align: center; width: 100%; height: auto; }
+			.name { display: block; vertical-align: top; }
 		}
+
+		.sectionName { padding: 5px 0px; }
+		.item.empty { padding: 12px 14px; }
 	}
 }
