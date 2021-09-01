@@ -48,7 +48,11 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const canEdit = this.canEdit();
-		const check = DataUtil.checkRelationValue (relation, record[relation.relationKey]);
+
+		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
+		if (relation.relationKey == Constant.relationKey.name) {
+			check = true;
+		};
 
 		const cn = [ 
 			'cellContent', 
