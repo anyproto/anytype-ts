@@ -41,6 +41,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 						const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 						return (
 							<Cell 
+								elementId={id}
 								key={'list-cell-' + view.id + relation.relationKey} 
 								{...this.props}
 								ref={(ref: any) => { onRef(ref, id); }} 
@@ -48,6 +49,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 								viewType={view.type}
 								idPrefix={idPrefix}
 								index={index}
+								showTooltip={true}
 							/>
 						);
 					})}

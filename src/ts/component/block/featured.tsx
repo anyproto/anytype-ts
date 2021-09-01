@@ -94,7 +94,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									isInline={true}
 									idPrefix={PREFIX}
 									elementMapper={this.elementMapper}
-									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
+									showTooltip={true}
 									onMouseLeave={this.onMouseLeave}
 								/>
 							</span>

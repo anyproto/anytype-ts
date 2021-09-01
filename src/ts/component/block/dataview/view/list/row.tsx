@@ -25,7 +25,8 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 					const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 					return (
 						<Cell 
-							key={'list-cell-' + relation.relationKey} 
+							key={'list-cell-' + relation.relationKey}
+							elementId={id}
 							ref={(ref: any) => { onRef(ref, id); }} 
 							{...this.props}
 							relationKey={relation.relationKey}
@@ -34,6 +35,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 							index={index}
 							isInline={true}
+							showTooltip={true}
 						/>
 					);
 				})}
