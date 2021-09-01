@@ -11,7 +11,6 @@ interface Props extends I.ViewComponent {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const SPACE = 16;
 
 const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}> {
 
@@ -23,19 +22,19 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	constructor(props: Props) {
 		super(props);
 
-		const size = Constant.size.dataview.gallery;
+		const { card, margin } = Constant.size.dataview.gallery;
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: 250,
-			defaultWidth: size.card,
+			defaultWidth: card,
 			fixedWidth: true,
 		});
 
 		this.cellPositioner = createMasonryCellPositioner({
 			cellMeasurerCache: this.cache,
 			columnCount: 3,
-			columnWidth: size.card,
-			spacer: SPACE,
+			columnWidth: card,
+			spacer: margin,
 		});
 
 		this.onResize = this.onResize.bind(this);
@@ -112,11 +111,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	resetPositioner () {
-		const size = Constant.size.dataview.gallery.card;
+		const { card, margin } = Constant.size.dataview.gallery;
 		this.cellPositioner.reset({
-			columnCount: Math.floor(this.width / (size + SPACE)),
-			columnWidth: size,
-			spacer: SPACE,
+			columnCount: Math.floor(this.width / (card + margin)),
+			columnWidth: card,
+			spacer: margin,
     	});
 	};
 
