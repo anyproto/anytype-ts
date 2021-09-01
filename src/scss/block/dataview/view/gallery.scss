@@ -2,13 +2,13 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewGallery { padding: 16px 0px; }
+		.viewItem.viewGallery { padding: 0px 14px; }
 		.viewItem.viewGallery {
 			.card { 
 				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; display: inline-block; cursor: pointer; 
 			}
 			.card {
-				.cover { position: static; height: 160px; background-position: center center; border-radius: 12px 12px 0px 0px; }
+				.cover { position: static; height: 260px; background-position: center center; border-radius: 12px 12px 0px 0px; }
 
 				.cellContent.c-shortText {
 					.name { height: 48px; line-height: 48px; }
