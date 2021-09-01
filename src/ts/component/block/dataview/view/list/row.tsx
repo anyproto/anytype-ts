@@ -33,6 +33,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 							idPrefix={idPrefix}
 							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
 							index={index}
+							isInline={true}
 						/>
 					);
 				})}
