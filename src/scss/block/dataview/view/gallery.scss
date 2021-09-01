@@ -8,7 +8,10 @@
 				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; display: inline-block; cursor: pointer; 
 			}
 			.card {
-				.cover { position: static; height: 260px; background-position: center center; border-radius: 12px 12px 0px 0px; }
+				.cover { 
+					position: static; height: 260px; background-position: center center; border-radius: 12px 12px 0px 0px;
+					background-color: $colorLightGrey;
+				}
 
 				.cellContent.c-shortText {
 					.name { height: 48px; line-height: 48px; }
