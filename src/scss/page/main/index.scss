@@ -3,7 +3,10 @@
 .pageMainIndex {
 	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
 	
-	.title { color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; white-space: nowrap; }
+	.title { 
+		color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; 
+		white-space: nowrap; user-select: none;
+	}
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
 		.icon { 
