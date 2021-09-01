@@ -2,10 +2,10 @@
 
 .progress { 
 	position: fixed; left: 0px; top: 0px; z-index: 110; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
-	transition: background 0.05s ease-in-out; pointer-events: none;
+	transition: background 0.05s ease-in-out; user-select: none;
 }
 
-.progress.isUnlocked { background: none; }
+.progress.isUnlocked { background: none; pointer-events: none; }
 .progress.isUnlocked {
 	.inner { top: auto; left: 10px; top: 40px; margin: 0px; }
 }

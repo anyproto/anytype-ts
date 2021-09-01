@@ -77,6 +77,7 @@ import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
 import 'scss/block/featured.scss';
 import 'scss/block/type.scss';
+import 'scss/block/latex.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -114,6 +115,7 @@ import 'scss/menu/block/icon.scss';
 import 'scss/menu/block/cover.scss';
 import 'scss/menu/block/mention.scss';
 import 'scss/menu/block/relation.scss';
+import 'scss/menu/block/latex.scss';
 
 import 'scss/menu/dataview/common.scss';
 import 'scss/menu/dataview/sort.scss';

@@ -7,11 +7,13 @@ import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
+import { InlineMath, BlockMath } from 'react-katex';
 import 'prismjs/themes/prism.css';
+import 'katex/dist/katex.min.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	onToggle?(e: any): void;
-}
+};
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
@@ -28,7 +30,7 @@ const langs = [
 ];
 for (let lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
-}
+};
 
 const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
@@ -214,6 +216,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const fields = block.fields || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
+		const img = node.find('#img');
 		
 		let text = String(v || '');
 		if (text === '\n') {

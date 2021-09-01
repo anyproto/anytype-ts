@@ -188,6 +188,9 @@
 	"blockNameNewRelation": { "en": "New relation" },
 	"blockTextNewRelation": { "en": "Meaningful connection between objects" },
 
+	"blockNameLatex": { "en": "LaTex" },
+	"blockTextLatex": { "en": "Display a math equations" },
+
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },

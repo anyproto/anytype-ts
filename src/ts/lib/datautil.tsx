@@ -46,20 +46,13 @@ class DataUtil {
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default:
+					default:					 icon = this.textClass(v); break;
 					case I.TextStyle.Paragraph:	 icon = 'text'; break;
-					case I.TextStyle.Header1:	 icon = 'header1'; break;
-					case I.TextStyle.Header2:	 icon = 'header2'; break;
-					case I.TextStyle.Header3:	 icon = 'header3'; break;
-					case I.TextStyle.Quote:		 icon = 'quote'; break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
 					case I.TextStyle.Bulleted:	 icon = 'list'; break;
-					case I.TextStyle.Numbered:	 icon = 'numbered'; break;
-					case I.TextStyle.Toggle:	 icon = 'toggle'; break;
-					case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
 				};
 				break;
-				
+
 			case I.BlockType.Div:
 				switch (v) {
 					default:
@@ -77,21 +70,10 @@ class DataUtil {
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:		 
-				c.push('blockText ' + this.textClass(style)); 
-				break;
-
-			case I.BlockType.Layout:	 
-				c.push('blockLayout c' + style); 
-				break;
-
-			case I.BlockType.IconPage:	 
-				c.push('blockIconPage'); 
-				break;
-
-			case I.BlockType.IconUser:	 
-				c.push('blockIconUser'); 
-				break;
+			case I.BlockType.Text:	 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
+			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
+			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
 				
 			case I.BlockType.File:
 				if (state == I.FileState.Done) {
@@ -113,37 +95,15 @@ class DataUtil {
 				};
 				break;
 				
-			case I.BlockType.Bookmark:
-				c.push('blockBookmark');
-				break;
-			
-			case I.BlockType.Dataview:
-				c.push('blockDataview');
-				break;
-				
-			case I.BlockType.Div:
-				c.push('blockDiv c' + style);
-				break;
-				
-			case I.BlockType.Link:
-				c.push('blockLink');
-				break;
-				
-			case I.BlockType.Cover:
-				c.push('blockCover');
-				break;
-
-			case I.BlockType.Relation:
-				c.push('blockRelation');
-				break;
-
-			case I.BlockType.Featured:
-				c.push('blockFeatured');
-				break;
-
-			case I.BlockType.Type:
-				c.push('blockType');
-				break;
+			case I.BlockType.Bookmark:	 c.push('blockBookmark'); break;
+			case I.BlockType.Dataview:	 c.push('blockDataview'); break;
+			case I.BlockType.Div:		 c.push('blockDiv c' + style); break;
+			case I.BlockType.Link:		 c.push('blockLink'); break;
+			case I.BlockType.Cover:		 c.push('blockCover'); break;
+			case I.BlockType.Relation:	 c.push('blockRelation'); break;
+			case I.BlockType.Featured:	 c.push('blockFeatured'); break;
+			case I.BlockType.Type:		 c.push('blockType'); break;
+			case I.BlockType.Latex:		 c.push('blockLatex'); break;
 		};
 
 		return c.join(' ');
@@ -646,6 +606,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		];
 		return ret.map(this.menuMapperBlock);
 	};
@@ -907,8 +868,9 @@ class DataUtil {
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
 			s.children = s.children.map((it: any, i: number) => {
-				it.itemId = it.id || i;
-				it.id = s.id + '-' + it.id;
+				it.id = it.id || i;
+				it.itemId = it.id;
+				it.id = [ s.id, it.id ].join('-');
 				it.color = it.color || s.color || '';
 				return it;
 			});

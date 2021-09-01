@@ -31,6 +31,7 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
+import MenuBlockLatex from './block/latex';
 
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationView from './block/relation/view';
@@ -96,6 +97,7 @@ const Components: any = {
 	blockCover:				 MenuBlockCover,
 	blockMention:			 MenuBlockMention,
 	blockLayout:			 MenuBlockLayout,
+	blockLatex:				 MenuBlockLatex,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
 	blockRelationView:		 MenuBlockRelationView,
@@ -518,6 +520,8 @@ class Menu extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
+		const { param } = this.props;
+		const { commonFilter } = param;
 		const refInput = this.ref.refFilter || this.ref.refName;
 
 		let ret = false;
@@ -564,7 +568,15 @@ class Menu extends React.Component<Props, State> {
 			return;
 		};
 
-		keyboard.shortcut('arrowleft, escape', e, (pressed: string) => {
+		const shortcutClose = [ 'escape' ];
+		const shortcutSelect = [ 'tab', 'enter' ];
+
+		if (!commonFilter) {
+			shortcutClose.push('arrowleft');
+			shortcutSelect.push('arrowright');
+		};
+
+		keyboard.shortcut(shortcutClose.join(', '), e, (pressed: string) => {
 			e.preventDefault();
 			this.close();
 		});
@@ -603,10 +615,10 @@ class Menu extends React.Component<Props, State> {
 		});
 
 		if (this.ref.onClick) {	
-			keyboard.shortcut('tab, enter, arrowright', e, (pressed: string) => {
+			keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
 				e.preventDefault();
 				if (item) {
-					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 				};
 			});
 		};
