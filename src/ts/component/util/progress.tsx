@@ -48,6 +48,9 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 		);
 	};
 
+	componentDidMount () {
+		$(window).unbind('resize.progress').on('resize.progress', () => { this.resize(); });
+	};
 	
 	componentDidUpdate () {
 		const { progress } = commonStore;
@@ -57,13 +60,8 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 
 		const { current, total } = progress;
 		const node = $(ReactDOM.findDOMNode(this));
-		const obj = node.find('#inner');
-		const coords = Storage.get('progress');
 
-		if (coords) {
-			const { x, y } = this.checkCoords(coords.x, coords.y);
-			this.setStyle(obj, x, y);
-		};
+		this.resize();
 		
 		node.removeClass('hide');
 		
@@ -71,6 +69,10 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 			node.addClass('hide');
 			setTimeout(() => { commonStore.progressClear(); }, 200);
 		};
+	};
+
+	componentWillUnmount () {
+		$(window).unbind('resize.progress');
 	};
 	
 	onCancel (e: any) {
@@ -80,17 +82,26 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 		C.ProcessCancel(id);
 	};
 
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const coords = Storage.get('progress');
+
+		this.obj = node.find('#inner');
+		this.height = this.obj.outerHeight();
+		this.width = this.obj.outerWidth();
+
+		if (coords) {
+			const { x, y } = this.checkCoords(coords.x, coords.y);
+			this.setStyle(this.obj, x, y);
+		};
+	};
+
 	onDragStart (e: any) {
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
-		const obj = node.find('#inner');
-		const offset = obj.offset();
+		const offset = this.obj.offset();
 
-		this.obj = obj;
 		this.dx = e.pageX - offset.left;
 		this.dy = e.pageY - offset.top;
-		this.width = obj.width();
-		this.height = obj.height();
 
 		win.unbind('mousemove.progress mouseup.progress');
 		win.on('mousemove.progress', (e: any) => { this.onDragMove(e); });
@@ -111,8 +122,11 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	checkCoords (x: number, y: number): { x: number, y: number } {
 		const win = $(window);
 
+		x = Number(x);
 		x = Math.max(0, x);
 		x = Math.min(win.width() - this.width, x);
+
+		y = Number(y);
 		y = Math.max(Util.sizeHeader(), y);
 		y = Math.min(win.height() - this.height, y);
 
