@@ -170,6 +170,9 @@
 	"blockNameVideo": { "en": "Video" },
 	"blockTextVideo": { "en": "Upload playable video" },
 
+	"blockNameAudio": { "en": "Audio" },
+	"blockTextAudio": { "en": "Upload playable audio" },
+
 	"blockNameBookmark": { "en": "Bookmark" },
 	"blockTextBookmark": { "en": "Save your favorite link with summary" },
 
