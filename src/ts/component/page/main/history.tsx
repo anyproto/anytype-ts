@@ -282,7 +282,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				history.push('/main/index');
+				history.push('/main/edit/' + rootId);
 				return;
 			};
 
