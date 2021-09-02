@@ -267,7 +267,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 	
 	loadList (lastId: string) { 
-		const { match } = this.props;
+		const { history, match } = this.props;
 		const { versions, loading } = this.state;
 		const rootId = match.params.id;
 		
@@ -281,14 +281,16 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		C.HistoryVersions(rootId, lastId, LIMIT, (message: any) => {
 			this.setState({ loading: false });
 
-			if (message.error.code || !message.versions.length) {
+			if (message.error.code) {
+				history.push('/main/index');
 				return;
 			};
 
-			this.setState({ versions: versions.concat(message.versions) });
+			const list = message.versions || [];
+			this.setState({ versions: versions.concat(list) });
 
-			if (!this.version) {
-				this.loadVersion(message.versions[0].id);
+			if (!this.version && list.length) {
+				this.loadVersion(list[0].id);
 			};
 		});
   	};
