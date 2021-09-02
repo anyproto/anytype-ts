@@ -484,8 +484,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 	};
 
 	loadPage (id: string) {
-		const { config } = commonStore;
-		const filter = (it: I.PageInfo) => { return this.filterMapper(it, config); };
+		const filter = (it: I.PageInfo) => { return this.filterMapper(it); };
 
 		this.setState({ loading: true });
 		crumbs.addPage(id);
@@ -514,21 +513,8 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 		});
 	};
 
-	filterMapper (it: I.PageInfo, config: any) {
-		const object = it.details;
-		if (object.isArchived) {
-			return false;
-		};
-
-		if (!config.allowDataview) {
-			if (object.type == Constant.typeId.template) {
-				return false;
-			};
-			if ([ I.ObjectLayout.Page, I.ObjectLayout.Dashboard ].indexOf(object.layout) < 0) {
-				return false;
-			};
-		};
-		return true;
+	filterMapper (it: I.PageInfo) {
+		return !it.details.isArchived;
 	};
 
 	onClick (e: any, item: I.PageInfo) {

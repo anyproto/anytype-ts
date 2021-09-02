@@ -332,11 +332,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			return s;
 		});
 
-		if (config.allowDataview) {
-			sections = sections.concat([
-				{ id: 'relation', name: 'Relations', children: this.relations },
-			]);
-		};
+		sections = sections.concat([
+			{ id: 'relation', name: 'Relations', children: this.relations },
+		]);
 		
 		if (filter && filter.text) {
 			const actions = DataUtil.menuGetActions(false);
@@ -403,10 +401,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
 		];
 
-		if (!config.allowDataview) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-		};
-
 		const text = Util.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
@@ -461,10 +455,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			case 'turnObject':
 				menuId = 'searchObject';
 				menuParam.className = 'single';
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
