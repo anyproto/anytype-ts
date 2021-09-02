@@ -34,7 +34,10 @@
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
 			}
 
-			.icon.checkbox { width: 20px; height: 20px; vertical-align: top; }
+			.cellContent.c-checkbox {
+				.icon.checkbox { width: 20px; height: 20px; vertical-align: top; margin-top: 2px; }
+			}
+			.cellContent.c-checkbox.canEdit { cursor: pointer !important; }
         }
     }
 }
