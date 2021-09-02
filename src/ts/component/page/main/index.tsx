@@ -390,7 +390,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				this.load();
 			};
 
-			C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
+			C.ObjectSetIsArchived(object.id, v, cb);
 		};
 
 		menuStore.open('select', { 

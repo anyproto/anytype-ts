@@ -320,10 +320,6 @@ const BlockListSetAlign = (response: any) => {
 	return {};
 };
 
-const BlockListSetPageIsArchived = (response: any) => {
-	return {};
-};
-
 const BlockListDeletePage = (response: any) => {
 	return {};
 };
@@ -555,7 +551,6 @@ export {
 	BlockListMoveToNewPage,
 	BlockListDuplicate,
 	BlockListConvertChildrenToPages,
-	BlockListSetPageIsArchived,
 
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
