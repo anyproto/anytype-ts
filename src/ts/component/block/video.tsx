@@ -74,8 +74,10 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 				element = (
 					<div className="wrap resizable" style={css}>
 						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
-						<Icon className="play" onClick={this.onPlay} />
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						<div className="videoControls">
+							<Icon className="play" onClick={this.onPlay} />
+							<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						</div>
 					</div>
 				);
 				break;

@@ -32,23 +32,41 @@
 		}
 
 		video { height: 100%; }
+
+		.audioControls { width: 100%; height: 24px; line-height: 20px; }
+		.audioControls {
+			.icon.play { width: 20px; height: 20px; background: red; cursor: pointer; }
+			.icon.mute { width: 20px; height: 20px; background: red; margin-left: 6px; cursor: pointer; }
+			.time { 
+				display: inline-block; vertical-align: middle; @include text-small; margin: 0px 6px; white-space: nowrap; 
+				width: 100px; text-align: center;
+			}
+
+			.input-drag { display: inline-block; vertical-align: middle; width: 150px; height: 12px; }
+			.input-drag {
+				.icon { border-color: $colorBlack; background: $colorBlack; }
+				.fill { background: $colorBlack; }
+				.back { background: $colorDarkGrey; }
+			}
+		}
 		
-		.icon.resize {
-			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
-			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+		.videoControls {
+			.icon.resize {
+				width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
+				background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+			}
+			.icon.play {
+				width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
+				background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
+				background-size: 24px 28px; background-position: 24px center;
+			}
+			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
 				
 		.icon.dots {
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
 		}
-		
-		.icon.play {
-			width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
-			background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
-			background-size: 24px 28px; background-position: 24px center;
-		}
-		.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 	}
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 

@@ -16,11 +16,6 @@ const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const os = window.require('os');
 const path = window.require('path');
-const sprintf = require('sprintf-kit')({
-	d: require('sprintf-kit/modifiers/d'),
-	s: require('sprintf-kit/modifiers/s'),
-	f: require('sprintf-kit/modifiers/f'),
-});
 
 class Util {
 	
@@ -30,7 +25,116 @@ class Util {
 	linkPreviewOpen: boolean = false;
 	
 	sprintf (...args: any[]) {
-		return sprintf.apply(this, args);
+		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
+		let a = arguments, i = 0, format = a[i++];
+		let pad = function (str, len, chr, leftJustify) {
+			let padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
+			return leftJustify ? str + padding : padding + str;
+		};
+
+		let justify = function (value, prefix, leftJustify, minWidth, zeroPad) {
+			let diff = minWidth - value.length;
+			if (diff > 0) {
+				if (leftJustify || !zeroPad) {
+					value = pad(value, minWidth, ' ', leftJustify);
+				} else {
+					value = value.slice(0, prefix.length) + pad('', diff, '0', true) + value.slice(prefix.length);
+				};
+			};
+			return value;
+		};
+
+		let formatBaseX = function (value, base, prefix, leftJustify, minWidth, precision, zeroPad) {
+			let number = value >>> 0;
+			prefix = prefix && number && {'2': '0b', '8': '0', '16': '0x'}[base] || '';
+			value = prefix + pad(number.toString(base), precision || 0, '0', false);
+			return justify(value, prefix, leftJustify, minWidth, zeroPad);
+		};
+		
+		let formatString = function (value, leftJustify, minWidth, precision, zeroPad) {
+			if (precision != null) {
+				value = value.slice(0, precision);
+			};
+			return justify(value, '', leftJustify, minWidth, zeroPad);
+		};
+		
+		let doFormat = function (substring, valueIndex, flags, minWidth, _, precision, type) {
+			if (substring == '%%') return '%';
+			let leftJustify = false, positivePrefix = '', zeroPad = false, prefixBaseX = false;
+			for (let j = 0; flags && j < flags.length; j++) switch (flags.charAt(j)) {
+				case ' ': positivePrefix = ' '; break;
+				case '+': positivePrefix = '+'; break;
+				case '-': leftJustify = true; break;
+				case '0': zeroPad = true; break;
+				case '#': prefixBaseX = true; break;
+			};
+		
+			if (!minWidth) {
+				minWidth = 0;
+			} else if (minWidth == '*') {
+				minWidth = +a[i++];
+			} else if (minWidth.charAt(0) == '*') {
+				minWidth = +a[minWidth.slice(1, -1)];
+			} else {
+				minWidth = +minWidth;
+			};
+		
+			if (minWidth < 0) {
+				minWidth = -minWidth;
+				leftJustify = true;
+			};
+		
+			if (!isFinite(minWidth)) {
+				throw new Error('sprintf: (minimum-)width must be finite');
+			};
+		
+			if (!precision) {
+				precision = 'fFeE'.indexOf(type) > -1 ? 6 : (type == 'd') ? 0 : void(0);
+			} else if (precision == '*') {
+				precision = +a[i++];
+			} else if (precision.charAt(0) == '*') {
+				precision = +a[precision.slice(1, -1)];
+			} else {
+				precision = +precision;
+			};
+		
+			let value: any = valueIndex ? a[valueIndex.slice(0, -1)] : a[i++];
+		
+			switch (type) {
+				case 's': return formatString(String(value), leftJustify, minWidth, precision, zeroPad);
+				case 'c': return formatString(String.fromCharCode(+value), leftJustify, minWidth, precision, zeroPad);
+				case 'b': return formatBaseX(value, 2, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'o': return formatBaseX(value, 8, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'x': return formatBaseX(value, 16, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'X': return formatBaseX(value, 16, prefixBaseX, leftJustify, minWidth, precision, zeroPad).toUpperCase();
+				case 'u': return formatBaseX(value, 10, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'i':
+				case 'd': {
+					let number = +value;
+					number = parseInt(String(number));
+					let prefix = number < 0 ? '-' : positivePrefix;
+					value = prefix + pad(String(Math.abs(number)), precision, '0', false);
+					return justify(value, prefix, leftJustify, minWidth, zeroPad);
+				};
+				case 'e':
+				case 'E':
+				case 'f':
+				case 'F':
+				case 'g':
+				case 'G': {
+					let number = +value;
+					let prefix = number < 0 ? '-' : positivePrefix;
+					let method = ['toExponential', 'toFixed', 'toPrecision']['efg'.indexOf(type.toLowerCase())];
+					let textTransform = ['toString', 'toUpperCase']['eEfFgG'.indexOf(type) % 2];
+
+					value = prefix + Math.abs(number)[method](precision);
+					return justify(value, prefix, leftJustify, minWidth, zeroPad)[textTransform]();
+				};
+				default: return substring;
+			}
+		};
+		
+		return format.replace(regex, doFormat);
 	};
 	
 	toUpperCamelCase (str: string) {
@@ -415,16 +519,16 @@ class Util {
 		let s = delta;
 
 		if (d > 0) {
-			return sprintf('%d days ago', d);
+			return this.sprintf('%d days ago', d);
 		};
 		if (h > 0) {
-			return sprintf('%d hours ago', h);
+			return this.sprintf('%d hours ago', h);
 		};
 		if (m > 0) {
-			return sprintf('%d minutes ago', m);
+			return this.sprintf('%d minutes ago', m);
 		};
 		if (s > 0) {
-			return sprintf('%d seconds ago', s);
+			return this.sprintf('%d seconds ago', s);
 		};
 		return '';
 	};
@@ -441,13 +545,13 @@ class Util {
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g > 1) {
-			v = sprintf('%fGB', this.round(g, 2));
+			v = this.sprintf('%fGB', this.round(g, 2));
 		} else if (m > 1) {
-			v = sprintf('%fMB', this.round(m, 2));
+			v = this.sprintf('%fMB', this.round(m, 2));
 		} else if (k > 1) {
-			v = sprintf('%fKB', this.round(k, 2));
+			v = this.sprintf('%fKB', this.round(k, 2));
 		} else {
-			v = sprintf('%dB', this.round(v, 0));
+			v = this.sprintf('%dB', this.round(v, 0));
 		};
 		return v;
 	};

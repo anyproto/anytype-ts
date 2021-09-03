@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, Icon, Loader, Error } from 'ts/component';
-import { I, C, translate, focus } from 'ts/lib';
+import { InputWithFile, Icon, Loader, Error, Drag } from 'ts/component';
+import { I, C, translate, focus, Util } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -13,6 +13,7 @@ const Constant = require('json/constant.json');
 const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
+	volume: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -22,6 +23,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		this.onFocus = this.onFocus.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
+		this.onPlay = this.onPlay.bind(this);
+		this.onMute = this.onMute.bind(this);
 	};
 
 	render () {
@@ -29,9 +32,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;
 		
-		let { width } = fields;
 		let element = null;
-		let css: any = {};
 		
 		switch (state) {
 			default:
@@ -61,8 +62,17 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div className="wrap" style={css}>
-						<audio controls={true} preload="auto" src={commonStore.fileUrl(hash)} />
+					<div>
+						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
+						<div className="audioControls">
+							<Icon className="play" onClick={this.onPlay} />
+							<div className="time">
+								<span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
+								<span id="timeTotal" className="total">0:00</span>
+							</div>
+							<Drag value={1} onMove={(v: number) => { this.onVolume(v); }} />
+							<Icon className="mute" onClick={this.onMute} />
+						</div>
 					</div>
 				);
 				break;
@@ -81,6 +91,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 	
 	componentDidUpdate () {
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -94,11 +105,25 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		};
 
 		this.unbind();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio');
+
+		if (el.length) {
+			el.on('canplay timeupdate', () => { this.onTime(); });
+		};
 	};
 	
 	unbind () {
 		if (!this._isMounted) {
 			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio');
+
+		if (el.length) {
+			el.unbind('canplay playing');
 		};
 	};
 
@@ -135,6 +160,53 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const { id } = block;
 		
 		C.BlockUpload(rootId, id, '', path);
+	};
+
+	onPlay (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+
+		el.paused ? el.play() : el.pause();
+	};
+
+	onMute (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+
+		el.volume = !el.volume ? this.volume : 0;
+	};
+
+	onVolume (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+
+		this.volume = el.volume = v;
+	};
+
+	onTime () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+		if (!el) {
+			return;
+		};
+
+		const current = node.find('.time .current');
+		const total = node.find('.time .total');
+
+		let t = this.getTime(el.currentTime);
+		current.text(`${Util.sprintf('%02d', t.m)}:${Util.sprintf('%02d', t.s)}`);
+
+		t = this.getTime(el.duration);
+		total.text(`${Util.sprintf('%02d', t.m)}:${Util.sprintf('%02d', t.s)}`);
+	};
+
+	getTime (t: number): { m: number, s: number } {
+		let m = Math.floor(t / 60);
+
+		t -= m * 60;
+		let s = Math.floor(t);
+
+		return { m, s };
 	};
 	
 });
