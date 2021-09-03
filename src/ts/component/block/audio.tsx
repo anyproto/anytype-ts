@@ -17,6 +17,11 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	constructor (props: any) {
 		super(props);
 		
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onChangeUrl = this.onChangeUrl.bind(this);
+		this.onChangeFile = this.onChangeFile.bind(this);
 	};
 
 	render () {
@@ -40,6 +45,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 							icon="audio" 
 							textFile="Upload an audio" 
 							accept={Constant.extension.audio} 
+							onChangeUrl={this.onChangeUrl} 
+							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
 						/>
 					</React.Fragment>
@@ -55,13 +62,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 			case I.FileState.Done:
 				element = (
 					<div className="wrap" style={css}>
+						<audio controls={true} preload="auto" src={commonStore.fileUrl(hash)} />
 					</div>
 				);
 				break;
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0}>
+			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
 			</div>
 		);
@@ -69,6 +77,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
@@ -76,6 +85,56 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		this.unbind();
+	};
+	
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+	};
+
+	onKeyDown (e: any) {
+		const { onKeyDown } = this.props;
+		
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
+	};
+	
+	onKeyUp (e: any) {
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	onChangeUrl (e: any, url: string) {
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
+		C.BlockUpload(rootId, id, url, '');
+	};
+	
+	onChangeFile (e: any, path: string) {
+		const { rootId, block } = this.props;
+		const { id } = block;
+		
+		C.BlockUpload(rootId, id, '', path);
 	};
 	
 });

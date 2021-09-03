@@ -97,13 +97,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.resize();
-		this.bind();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
 		const win = $(window);
 
-		this.bind();
+		this.rebind();
 		this.resize();
 		this.onScroll();
 
@@ -114,7 +114,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		this.unbind();
 	};
 
-	bind () {
+	rebind () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 

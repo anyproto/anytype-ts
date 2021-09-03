@@ -90,11 +90,11 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.bind();
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
-		this.bind();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -102,7 +102,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		this.unbind();
 	};
 	
-	bind () {
+	rebind () {
 		if (!this._isMounted) {
 			return;
 		};
