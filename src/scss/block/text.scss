@@ -28,13 +28,14 @@
 		mention * { user-select: text; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
-			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; }
+			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
 			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorMediumGrey; }
 		}
 
 		mention.withImage {
 			smile { display: inline; }
+			.space { display: inline; }
 		}
 		mention.withImage.c24 name bgcolor:first-child { margin-left: -22px; padding-left: 22px; }
 		mention.withImage.c26 name bgcolor:first-child { margin-left: -22px; padding-left: 22px; }

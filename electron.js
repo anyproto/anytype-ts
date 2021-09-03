@@ -195,6 +195,7 @@ function createWindow () {
 			enableRemoteModule: true,
 			nodeIntegration: true,
 			contextIsolation: false,
+			spellcheck: false
 		},
 	};
 
@@ -581,6 +582,13 @@ function menuInit () {
 		menuParam.push({
 			label: 'Sudo',
 			submenu: [
+				{
+					label: 'Experimental', type: 'checkbox', checked: config.experimental,
+					click: () => { 
+						setConfig({ experimental: !config.experimental });
+						win.reload();
+					}
+				},
 				{
 					label: 'Graph',
 					click: () => { send('popup', 'graph', {}); }

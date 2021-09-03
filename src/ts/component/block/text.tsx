@@ -25,7 +25,7 @@ const langs = [
 	'clike', 'c', 'cpp', 'csharp', 'abap', 'arduino', 'bash', 'basic', 'clojure', 'coffeescript', 'dart', 'diff', 'docker', 'elixir',
 	'elm', 'erlang', 'flow', 'fortran', 'fsharp', 'gherkin', 'graphql', 'groovy', 'go', 'haskell', 'json', 'latex', 'less', 'lisp',
 	'livescript', 'lua', 'markdown', 'makefile', 'matlab', 'nginx', 'objectivec', 'ocaml', 'pascal', 'perl', 'php', 'powershell', 'prolog',
-	'python', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
+	'python', 'r', 'reason', 'ruby', 'rust', 'sass', 'java', 'scala', 'scheme', 'scss', 'sql', 'swift', 'typescript', 'vbnet', 'verilog',
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
 ];
 for (let lang of langs) {
@@ -617,7 +617,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(k) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(k) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canParseMarkdown = !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 
 		this.preventMenu = false;
 		
@@ -683,7 +682,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			cmdParsed = true;
 		};
 
-		if (canParseMarkdown) {
+		if (block.canHaveMarks()) {
 			// Parse markdown commands
 			for (let k in Markdown) {
 				reg = new RegExp(`^(${k} )`);
@@ -728,7 +727,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.placeholderCheck();
 
-		if (!block.isTextCode()) {
+		if (block.canHaveMarks()) {
 			let { marks, text } = this.getMarksFromHtml();
 			this.marks = marks;
 

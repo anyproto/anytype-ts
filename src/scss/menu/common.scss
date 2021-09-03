@@ -38,7 +38,7 @@
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
+		.content { overflow-y: scroll; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
 		.loaderWrapper { 

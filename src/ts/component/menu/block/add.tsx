@@ -456,6 +456,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+				];
+
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
 					label: 'Your object type library',
