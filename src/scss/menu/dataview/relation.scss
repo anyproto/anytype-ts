@@ -4,7 +4,7 @@
 	.menu.menuDataviewRelationList { width: 360px; }
 	.menu.menuDataviewRelationList {
 		.content { overflow: visible; max-height: unset; padding: 0px; }
-		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: auto; max-height: 350px; }
+		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: scroll; max-height: 350px; }
 
 		.item { padding: 4px 10px; }
 		.item {

@@ -195,6 +195,7 @@ function createWindow () {
 			enableRemoteModule: true,
 			nodeIntegration: true,
 			contextIsolation: false,
+			spellcheck: false
 		},
 	};
 
