@@ -36,7 +36,7 @@
 		.audioControls { width: 100%; height: 24px; line-height: 20px; }
 		.audioControls {
 			.icon.play { width: 20px; height: 20px; background: red; cursor: pointer; }
-			.icon.mute { width: 20px; height: 20px; background: red; margin-left: 6px; cursor: pointer; }
+			.icon.mute { width: 20px; height: 20px; background: red; margin-left: 10px; cursor: pointer; }
 			.time { 
 				display: inline-block; vertical-align: middle; @include text-small; margin: 0px 6px; white-space: nowrap; 
 				width: 100px; text-align: center;
