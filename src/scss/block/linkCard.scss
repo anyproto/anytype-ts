@@ -1,0 +1,75 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockLink {
+        .linkCard { display: inline-block; vertical-align: top; width: 100%; margin: 6px 0px; }
+        .linkCard:nth-child(2n + 2) { margin-right: 0px; }
+        .linkCard {
+            .sides { display: flex; }
+            .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
+            .side.right { width: 100%; }
+
+            .iconObject { margin: 0px; }
+            .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
+
+            .side.right {
+                .cardName { @include text-paragraph; margin-bottom: 2px; max-width: 100%; }
+                .cardDescription { 
+                    @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
+                    -webkit-box-orient: vertical; display: -webkit-box; margin-bottom: 6px;
+                }
+            }
+
+            .block.blockFeatured { @include text-small; margin: 0px; padding: 0px; }
+            .block.blockFeatured {
+                .wrapMenu { display: none; }
+                .wrapContent { width: 100%; }
+
+                .cellContent {
+                    .iconObject { display: none; }
+                }
+            }
+        }
+        .linkCard.c24 {
+            .side.left { margin-right: 6px; }
+        }
+
+        .linkCard.card {
+            .sides { border: 1px solid #dfddd0; }
+        }
+        .linkCard.withCover {
+            .sides { border: 0px; }
+        }
+        .linkCard.card, .linkCard.withCover {
+            .sides { padding: 16px; background: #fff; border-radius: 6px; }
+        }
+
+        .linkCard.align1 { text-align: center; }
+        .linkCard.align1 {
+            .sides { display: block; }
+            .side.left { margin: 0px 0px 8px 0px; }
+            .iconObject { display: inline-block; }
+        }
+
+        .linkCard.align2 { text-align: right; }
+        .linkCard.align2 {
+            .side.left { margin: 0px 0px 0px 16px; }
+            .iconObject { display: inline-block; }
+            .block.blockFeatured {
+                .cell.last .cellContent { margin-right: -6px; }
+            }
+        }
+
+        .linkCard.isTask {
+            .iconObject { width: 24px; height: 24px; }
+            .side.left { margin: 0px 6px 0px 0px; }
+        }
+        .linkCard.isTask.align2 {
+            .side.left { margin: 0px 0px 0px 6px; }
+        }
+
+        .linkCard.isHuman {
+            .cardName { font-weight: 600; }
+        }
+    }
+}

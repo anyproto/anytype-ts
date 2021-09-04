@@ -64,8 +64,6 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			};
 		};
 
-		console.log(cards);
-
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{_empty_ ? (

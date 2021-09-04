@@ -68,6 +68,7 @@ import 'scss/block/text.scss';
 import 'scss/block/media.scss';
 import 'scss/block/file.scss';
 import 'scss/block/link.scss';
+import 'scss/block/linkCard.scss';
 import 'scss/block/bookmark.scss';
 import 'scss/block/div.scss';
 import 'scss/block/layout.scss';

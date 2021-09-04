@@ -33,8 +33,6 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             iconSize = 16;
         };
 
-        console.log(object);
-
         cn.push('c' + iconSize);
 
         const sideLeft = withIcon ? (
