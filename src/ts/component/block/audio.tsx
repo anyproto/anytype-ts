@@ -165,8 +165,11 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	onPlay (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
+		const paused = el.paused;
 
-		el.paused ? el.play() : el.pause();
+		$('audio').each((i: number, item: any) => { item.pause(); });
+
+		paused ? el.play() : el.pause();
 	};
 
 	onMute (e: any) {
