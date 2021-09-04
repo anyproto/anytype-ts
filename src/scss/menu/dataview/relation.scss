@@ -25,6 +25,7 @@
 		.button { width: 100%; margin-top: 8px; }
 		.button.grey { cursor: default; }
 
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 		.item.disabled { cursor: default; opacity: 1 !important; }
 		.item.disabled:hover::before { opacity: 0; }
 
