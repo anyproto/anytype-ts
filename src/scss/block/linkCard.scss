@@ -29,6 +29,7 @@
                 .cellContent {
                     .iconObject { display: none; }
                 }
+                .cellContent.type { margin-left: -4px; }
                 .cellContent.c-file { font-size: 18px; line-height: 18px; padding: 1.5px 2px; }
                 .cellContent.c-file {
                     .iconObject { display: inline-block; margin-top: -3px; }
@@ -61,7 +62,7 @@
             .side.left { margin: 0px 0px 0px 16px; }
             .iconObject { display: inline-block; }
             .block.blockFeatured {
-                .cell.last .cellContent { margin-right: -6px; }
+                .cell.last .cellContent { margin-right: -4px; }
             }
         }
 
