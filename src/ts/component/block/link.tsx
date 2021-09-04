@@ -55,10 +55,10 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 				for (let align of aligns) {
 					if (option.withIcon) {
 						for (let size of sizes) {
-							addCard({ option, className, iconSize: size, align, object });	
+							addCard({ option, className, iconSize: size, align });	
 						};
 					} else {
-						addCard({ option, className, align, object });
+						addCard({ option, className, align });
 					};
 				};
 			};
@@ -88,7 +88,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 						<div className="archive">{translate('blockLinkArchived')}</div>
 						<div className="linkCards">
 							{cards.map((item: any, i: number) => (
-								<LinkCard key={i} {...this.props} {...item} />
+								<LinkCard key={i} {...this.props} {...item} object={object} />
 							))}
 						</div>
 					</React.Fragment>

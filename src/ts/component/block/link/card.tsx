@@ -16,7 +16,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, withIcon, withCover, object, className, align } = this.props;
+        const { rootId, block, withIcon, withCover, object, className, align } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, layoutAlign, name, description } = object;
         const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
         const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
@@ -46,7 +46,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
                 <div className="cardName">{name}</div>
                 <div className="cardDescription">{description}</div>
 
-                <Block {...this.props} iconSize={18} block={featured} readonly={true} className="noPlus" />
+                <Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />
             </div>
         ); 
 
