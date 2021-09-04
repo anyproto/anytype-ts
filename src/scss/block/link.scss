@@ -27,6 +27,34 @@
 			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; }
 			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 		}
+
+		.linkCards { margin-top: 16px; white-space: normal; }
+
+		.linkCard { display: inline-block; vertical-align: top; width: calc(50% - 8px); margin: 0px 16px 16px 0px; }
+		.linkCard:nth-child(2n + 2) { margin-right: 0px; }
+		.linkCard {
+			.sides { display: flex; }
+			.side.left { flex-shrink: 0; margin-right: 16px; }
+			.side.right { width: 100%; }
+
+			.iconObject { margin: 0px; }
+			.name { @include text-paragraph; margin-bottom: 2px; max-width: 100%; }
+			.descr { @include text-common; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box; }
+			.cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
+		}
+		.linkCard.c24 {
+			.side.left { margin-right: 6px; }
+		}
+
+		.linkCard.card {
+			.sides { border: 1px solid #dfddd0; }
+		}
+		.linkCard.withCover {
+			.sides { border: 0px; }
+		}
+		.linkCard.card, .linkCard.withCover {
+			.sides { padding: 16px; background: #fff; border-radius: 6px; }
+		}
 	}
 	.block.blockLink:hover {
 		.name .txt:before { border-color: $colorBlack; }

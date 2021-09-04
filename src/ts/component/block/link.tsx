@@ -6,6 +6,8 @@ import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
+import LinkCard from './link/card';
+
 interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
@@ -25,7 +27,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const object = detailStore.get(rootId, content.targetBlockId, []);
+		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, name, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
 
@@ -36,6 +38,35 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		if (isArchived) {
 			cn.push('isArchived');
 		};
+
+		let cards: any[] = [];
+		let sizes = [ 24, 64, 96 ];
+		let options = [ {}, { withIcon: true },  { withCover: true }, { withIcon: true, withCover: true } ];
+		let classNames = [ 'text', 'card' ];
+
+		let addCard = (param: any) => {
+			let card: any = { 
+				iconSize: param.size, 
+				object: object, 
+				className: param.className,
+			};
+			card = Object.assign(card, param.option);
+			cards.push(card);
+		};
+
+		for (let className of classNames) {
+			for (let option of options) {
+				if (option.withIcon) {
+					for (let size of sizes) {
+						addCard({ option, className, size });	
+					};
+				} else {
+					addCard({ option, className });
+				};
+			};
+		};
+
+		console.log(cards);
 
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
@@ -59,6 +90,11 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 							<div className="txt">{name}</div>
 						</div>
 						<div className="archive">{translate('blockLinkArchived')}</div>
+						<div className="linkCards">
+							{cards.map((item: any, i: number) => (
+								<LinkCard key={i} {...this.props} {...item} />
+							))}
+						</div>
 					</React.Fragment>
 				)}
 			</div>
