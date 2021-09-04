@@ -29,6 +29,7 @@ class Cell extends React.Component<Props, {}> {
 	public static defaultProps = {
 		index: 0,
 		canOpen: true,
+		tooltipY: I.MenuDirection.Top,
 	};
 
 	ref: any = null;
@@ -371,7 +372,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (showTooltip) {
-			Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+			Util.tooltipShow(relation.name, cell, tooltipY);
 		};
 	};
 	

@@ -25,13 +25,13 @@
                 .wrapMenu { display: none; }
                 .wrapContent { width: 100%; }
 
-                .cellContent { padding: 1.5px 6px; }
+                .cellContent { padding: 1.5px 4px; }
                 .cellContent {
                     .iconObject { display: none; }
                 }
-                .cellContent.c-file { font-size: 18px; line-height: 18px; padding: 1.5px 3px; }
+                .cellContent.c-file { font-size: 18px; line-height: 18px; padding: 1.5px 2px; }
                 .cellContent.c-file {
-                    .iconObject { display: inline-block; margin-top: -2px; }
+                    .iconObject { display: inline-block; margin-top: -3px; }
                 }
             }
         }

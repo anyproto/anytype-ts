@@ -78,12 +78,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					return (
 						<React.Fragment key={i}>
 							{bullet}
-							<span id={id} className={cn.join(' ')} onClick={(e: any) => { 
+							<span className={cn.join(' ')} onClick={(e: any) => { 
 								e.persist(); 
 								this.onRelation(e, relationKey); 
 							}}>
 								<Cell 
 									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+									elementId={id}
 									rootId={rootId}
 									storeId={rootId}
 									block={block}
