@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Cover } from 'ts/component';
-import { I, DataUtil } from 'ts/lib';
+import { IconObject, Cover, Block } from 'ts/component';
+import { I, M, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
     withIcon?: boolean;
     withCover?: boolean;
     iconSize: number;
+    align: I.BlockAlign;
     object: any;
     className?: string;
 };
@@ -15,9 +16,10 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { withIcon, withCover, object, className } = this.props;
-        const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
-        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout) ];
+        const { rootId, withIcon, withCover, object, className, align } = this.props;
+        const { id, layout, coverType, coverId, coverX, coverY, coverScale, layoutAlign, name, description } = object;
+        const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
+        const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
 
         if (className) {
             cn.push(className);
@@ -35,15 +37,35 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
         let content = (
             <div className="sides">
-                {withIcon ? (
-                    <div className="side left">
-                        <IconObject size={iconSize} object={object} />
-                    </div>
-                ) : ''}
-                <div className="side right">
-                    <div className="name">{name}</div>
-                    <div className="descr">{description}</div>
-                </div>
+                {align == I.BlockAlign.Right ? (
+                    <React.Fragment>
+                        <div className="side right">
+                            <div className="cardName">{name}</div>
+                            <div className="cardDescription">{description}</div>
+        
+                            <Block {...this.props} iconSize={18} block={featured} readonly={true} />
+                        </div>
+                        {withIcon ? (
+                            <div className="side left">
+                                <IconObject size={iconSize} object={object} />
+                            </div>
+                        ) : ''}
+                    </React.Fragment>
+                ) : (
+                    <React.Fragment>
+                        {withIcon ? (
+                            <div className="side left">
+                                <IconObject size={iconSize} object={object} />
+                            </div>
+                        ) : ''}
+                        <div className="side right">
+                            <div className="cardName">{name}</div>
+                            <div className="cardDescription">{description}</div>
+        
+                            <Block {...this.props} iconSize={18} block={featured} readonly={true} />
+                        </div>
+                    </React.Fragment>
+                )}
             </div>
         );
 

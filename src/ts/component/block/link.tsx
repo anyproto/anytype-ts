@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Loader } from 'ts/component';
-import { I, DataUtil, translate } from 'ts/lib';
+import { I, DataUtil, Util, translate } from 'ts/lib';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
@@ -43,25 +43,23 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		let sizes = [ 24, 64, 96 ];
 		let options = [ {}, { withIcon: true },  { withCover: true }, { withIcon: true, withCover: true } ];
 		let classNames = [ 'text', 'card' ];
+		let aligns = [ 0, 1, 2 ];
 
 		let addCard = (param: any) => {
-			let card: any = { 
-				iconSize: param.size, 
-				object: object, 
-				className: param.className,
-			};
-			card = Object.assign(card, param.option);
-			cards.push(card);
+			param = Object.assign(param, param.option);
+			cards.push(param);
 		};
 
 		for (let className of classNames) {
 			for (let option of options) {
-				if (option.withIcon) {
-					for (let size of sizes) {
-						addCard({ option, className, size });	
+				for (let align of aligns) {
+					if (option.withIcon) {
+						for (let size of sizes) {
+							addCard({ option, className, iconSize: size, align, object });	
+						};
+					} else {
+						addCard({ option, className, align, object });
 					};
-				} else {
-					addCard({ option, className });
 				};
 			};
 		};
