@@ -69,7 +69,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		console.log(cards);
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{_empty_ ? (
 					<div className="loading" data-target-block-id={content.targetBlockId}>
 						<Loader />
@@ -86,7 +86,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 							onUpload={this.onUpload}
 							onCheckbox={this.onCheckbox}
 						/>
-						<div className="name">
+						<div className="name" onClick={this.onClick}>
 							<div className="txt">{name}</div>
 						</div>
 						<div className="archive">{translate('blockLinkArchived')}</div>

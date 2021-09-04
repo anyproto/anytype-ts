@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Cover } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -15,9 +15,9 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { withIcon, withCover, iconSize, object, className } = this.props;
-        const cn = [ 'linkCard', 'c' + iconSize ];
-        const { coverType, coverId, coverX, coverY, coverScale, name, description } = object;
+        const { withIcon, withCover, object, className } = this.props;
+        const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
+        const cn = [ 'linkCard', DataUtil.layoutClass(id, layout) ];
 
         if (className) {
             cn.push(className);
@@ -25,6 +25,13 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         if (withCover && coverId && coverType) {
             cn.push('withCover');
         };
+
+        let iconSize = this.props.iconSize;
+        if (layout == I.ObjectLayout.Task) {
+            iconSize = 16;
+        };
+
+        cn.push('c' + iconSize);
 
         let content = (
             <div className="sides">

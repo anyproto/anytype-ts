@@ -136,7 +136,7 @@ class DataUtil {
 			case I.ObjectLayout.Page:		 c = 'isPage'; break;
 			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
 			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.Type:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Type:		 c = 'isObjectType'; break;
 			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
