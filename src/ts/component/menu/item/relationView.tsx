@@ -75,7 +75,9 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						onCellChange={onCellChange}
 						optionCommand={optionCommand}
 					/>
-					<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
+					{canFav ? (
+						<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
+					) : ''}
 				</div>
 			</div>
 		);

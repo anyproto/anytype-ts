@@ -179,7 +179,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text.replace(/\\/g, ''), 0, 0, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};

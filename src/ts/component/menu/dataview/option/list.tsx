@@ -49,7 +49,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			let content = null;
 			if (item.id == 'add') {
 				content =  (
-					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -59,7 +59,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item" style={param.style}>
+					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 							<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
 						</div>
