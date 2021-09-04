@@ -33,37 +33,36 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             iconSize = 16;
         };
 
+        console.log(object);
+
         cn.push('c' + iconSize);
+
+        const sideLeft = withIcon ? (
+            <div className="side left">
+                <IconObject size={iconSize} object={object} />
+            </div>
+        ) : null;
+
+        const sideRight = (
+            <div className="side right">
+                <div className="cardName">{name}</div>
+                <div className="cardDescription">{description}</div>
+
+                <Block {...this.props} iconSize={18} block={featured} readonly={true} className="noPlus" />
+            </div>
+        ); 
 
         let content = (
             <div className="sides">
                 {align == I.BlockAlign.Right ? (
                     <React.Fragment>
-                        <div className="side right">
-                            <div className="cardName">{name}</div>
-                            <div className="cardDescription">{description}</div>
-        
-                            <Block {...this.props} iconSize={18} block={featured} readonly={true} />
-                        </div>
-                        {withIcon ? (
-                            <div className="side left">
-                                <IconObject size={iconSize} object={object} />
-                            </div>
-                        ) : ''}
+                        {sideRight}
+                        {sideLeft}
                     </React.Fragment>
                 ) : (
                     <React.Fragment>
-                        {withIcon ? (
-                            <div className="side left">
-                                <IconObject size={iconSize} object={object} />
-                            </div>
-                        ) : ''}
-                        <div className="side right">
-                            <div className="cardName">{name}</div>
-                            <div className="cardDescription">{description}</div>
-        
-                            <Block {...this.props} iconSize={18} block={featured} readonly={true} />
-                        </div>
+                        {sideLeft}
+                        {sideRight}
                     </React.Fragment>
                 )}
             </div>

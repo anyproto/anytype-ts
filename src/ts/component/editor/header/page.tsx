@@ -84,8 +84,8 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 					</div>
 				) : ''}
 
-				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
-				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} className="noPlus" /> : ''}
+				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} className="noPlus" /> : ''}
 
 				<Block 
 					key={header.id} 
