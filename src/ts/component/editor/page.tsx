@@ -1268,9 +1268,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
-		if (url && !force) {
+		if (url && !force && !block.isTextTitle() && !block.isTextDescription()) {
 			menuStore.open('select', { 
-				element: '#block-' + focused,
+				element: `#block-${focused}`,
 				offsetX: Constant.size.blockMenu,
 				onOpen: () => {
 					if (block) {
@@ -1319,8 +1319,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let to = 0;
 
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
-			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
-
 			if (message.error.code) {
 				return;
 			};
