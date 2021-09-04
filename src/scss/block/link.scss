@@ -83,6 +83,9 @@
 		.linkCard.align2 {
 			.side.left { margin: 0px 0px 0px 16px; }
 			.iconObject { display: inline-block; }
+			.block.blockFeatured {
+				.cell.last .cellContent { margin-right: -6px; }
+			}
 		}
 
 		.linkCard.isTask {

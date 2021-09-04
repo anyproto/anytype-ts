@@ -71,6 +71,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						return null;
 					};
 
+					if (i == items.length - 1) {
+						cn.push('last');
+					};
+
 					return (
 						<React.Fragment key={i}>
 							{bullet}
