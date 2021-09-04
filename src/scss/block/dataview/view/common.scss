@@ -8,6 +8,7 @@
 			.card {
 				.cellContent { cursor: pointer; margin-bottom: 6px; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
+				.cellContent:last-child { margin: 0px; }
 
 				.cellContent.c-date { color: $colorVeryDarkGrey; }
 
