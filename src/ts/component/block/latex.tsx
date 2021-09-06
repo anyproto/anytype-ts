@@ -37,6 +37,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	constructor (props: any) {
 		super(props);
 
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onEdit = this.onEdit.bind(this);
@@ -71,6 +72,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					onFocus={this.onFocus}
 					onBlur={this.onBlur}
 					onKeyUp={this.onKeyUp} 
+					onKeyDown={this.onKeyDown}
 					onChange={this.onChange}
 				/>
 			</div>
@@ -101,6 +103,21 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this._isMounted = false;
 	};
 
+	onKeyDown (e: any) {
+		const { filter } = commonStore;
+		const menuOpen = menuStore.isOpen('blockLatex');
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const el: any = input.get(0);
+		const range = getRange(el);
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (range.start == filter.from) {
+				menuStore.close('blockLatex');
+			};
+		});
+	};
+
 	onKeyUp (e: any) {
 		const { filter } = commonStore;
 		const value = this.getValue();
@@ -119,13 +136,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			this.onMenu(e, 'input', false);
 		};
 
-		keyboard.shortcut('backspace', e, () => {
-			if ((symbolBefore == '\\') && menuOpen) {
-				menuStore.close('blockLatex');
-				menuOpen = false;
-			};
-		});
-
 		if (menuOpen) {
 			const d = range.start - filter.from;
 			if (d >= 0) {
@@ -133,19 +143,27 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				commonStore.filterSetText(part);
 			};
 
-			let rect = Util.selectionRect();
-			if (!rect.x && !rect.y && !rect.width && !rect.height) {
-				rect = null;
-			};
-
-			if (rect) {
-				menuStore.update('blockLatex', { 
-					rect: { ...rect, y: rect.y + win.scrollTop() }
-				});
-			};
+			this.updateRect();
 		};
 
 		this.setContent(value);
+	};
+
+	updateRect () {
+		const win = $(window);
+
+		let rect = Util.selectionRect();
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
+		};
+
+		if (!rect || !menuStore.isOpen('blockLatex')) {
+			return;
+		};
+
+		menuStore.update('blockLatex', { 
+			rect: { ...rect, y: rect.y + win.scrollTop() }
+		});
 	};
 
 	onChange (e: any) {
@@ -244,6 +262,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				output: 'html',
 			}) : '';
 		};
+
+		this.updateRect();
 	};
 
 	onEdit (e: any) {
