@@ -16,8 +16,10 @@ interface State {
 	isEditing: boolean;
 };
 
+const raf = require('raf');
 const $ = require('jquery');
 const katex = require('katex');
+const Constant = require('json/constant.json');
 
 require(`prismjs/components/prism-latex.js`);
 require('katex/dist/contrib/mhchem.min.js');
@@ -35,6 +37,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	constructor (props: any) {
 		super(props);
 
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.onEdit = this.onEdit.bind(this);
@@ -69,6 +72,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					onFocus={this.onFocus}
 					onBlur={this.onBlur}
 					onKeyUp={this.onKeyUp} 
+					onKeyDown={this.onKeyDown}
 					onChange={this.onChange}
 				/>
 			</div>
@@ -86,6 +90,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
+		const { block } = this.props;
 
 		if (isEditing) {
 			const node = $(ReactDOM.findDOMNode(this));
@@ -93,22 +98,41 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 			setRange(input.get(0), this.range);
 		};
+
+		this.placeholderCheck(block.content.text);
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
 
+	onKeyDown (e: any) {
+		const { filter } = commonStore;
+		const menuOpen = menuStore.isOpen('blockLatex');
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const el: any = input.get(0);
+		const range = getRange(el);
+
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (range.start == filter.from) {
+				menuStore.close('blockLatex');
+			};
+		});
+	};
+
 	onKeyUp (e: any) {
 		const { filter } = commonStore;
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
 		const symbolBefore = value[range.start - 1];
-		const menuOpen = menuStore.isOpen('blockLatex');
+		
+		let menuOpen = menuStore.isOpen('blockLatex');
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
 			commonStore.filterSet(range.start, '');
@@ -121,9 +145,28 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				const part = value.substr(filter.from, d).replace(/^\\/, '');
 				commonStore.filterSetText(part);
 			};
+
+			this.updateRect();
 		};
 
 		this.setContent(value);
+	};
+
+	updateRect () {
+		const win = $(window);
+
+		let rect = Util.selectionRect();
+		if (!rect.x && !rect.y && !rect.width && !rect.height) {
+			rect = null;
+		};
+
+		if (!rect || !menuStore.isOpen('blockLatex')) {
+			return;
+		};
+
+		menuStore.update('blockLatex', { 
+			rect: { ...rect, y: rect.y + win.scrollTop() }
+		});
 	};
 
 	onChange (e: any) {
@@ -143,25 +186,39 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
+		const win = $(window);
 
-		menuStore.open('blockLatex', {
-			element: `#block-${block.id} #${element}`,
-			commonFilter: true,
-			className: (isTemplate ? 'isTemplate' : ''),
-			onClose: () => {
-				commonStore.filterSet(0, '');
-			},
-			data: {
-				isTemplate: isTemplate,
-				rootId: rootId,
-				blockId: block.id,
-				onSelect: (from: number, to: number, item: any) => {
-					this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+		raf(() => {
+			let rect = null;
+			if (element == 'input') {
+				rect = Util.selectionRect();
+				if (!rect.x && !rect.y && !rect.width && !rect.height) {
+					rect = null;
+				};
+			};
 
-					const value = this.getValue();
-					setRange(el, { start: value.length, end: value.length });
+			menuStore.open('blockLatex', {
+				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				element: `#block-${block.id} #${element}`,
+				offsetY: 4,
+				offsetX: rect ? 0 : Constant.size.blockMenu,
+				commonFilter: true,
+				className: (isTemplate ? 'isTemplate' : ''),
+				onClose: () => {
+					commonStore.filterSet(0, '');
 				},
-			},
+				data: {
+					isTemplate: isTemplate,
+					rootId: rootId,
+					blockId: block.id,
+					onSelect: (from: number, to: number, item: any) => {
+						this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+
+						const value = this.getValue();
+						setRange(el, { start: value.length, end: value.length });
+					},
+				},
+			});
 		});
 	};
 
@@ -197,9 +254,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
-		const empty = node.find('#empty');
-
-		value.length ? empty.hide() : empty.show();
 
 		if (val.length) {
 			val.get(0).innerHTML = value ? katex.renderToString(value, { 
@@ -208,6 +262,16 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				output: 'html',
 			}) : '';
 		};
+
+		this.placeholderCheck(value);
+		this.updateRect();
+	};
+
+	placeholderCheck (value: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const empty = node.find('#empty');
+
+		value.length ? empty.hide() : empty.show();
 	};
 
 	onEdit (e: any) {

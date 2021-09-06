@@ -459,7 +459,7 @@ class Menu extends React.Component<Props, State> {
 				css.width = param.width;
 			};
 			menu.css(css);
-			
+
 			if (isSub && (type == I.MenuType.Vertical)) {
 				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
