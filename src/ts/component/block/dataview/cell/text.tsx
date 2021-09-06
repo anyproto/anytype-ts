@@ -208,6 +208,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (isEditing) {
 			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+			let length = String(value || '').length;
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
@@ -218,7 +219,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				this.ref.setValue(value);
 
 				if (this.ref.setRange) {
-					this.ref.setRange(this.range || { from: value.length, to: value.length });
+					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};
 

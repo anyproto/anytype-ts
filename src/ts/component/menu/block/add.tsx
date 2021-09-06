@@ -88,8 +88,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						</div>
 						<div
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-							onClick={(e: any) => { this.onClick(e, item); }}
+							className={[ 'cell', DataUtil.relationClass(item.format) ].join(' ')} 
 						>
 							<Cell 
 								rootId={rootId}
