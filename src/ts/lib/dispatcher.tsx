@@ -645,12 +645,6 @@ class Dispatcher {
 	};
 
 	blockTypeCheck (rootId: string) {
-		const { config } = commonStore;
-		
-		if (!config.allowDataview) {
-			return;
-		};
-
 		const object = detailStore.get(rootId, rootId, []);
 
 		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));

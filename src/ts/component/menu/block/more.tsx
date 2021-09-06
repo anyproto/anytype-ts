@@ -56,19 +56,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		);
 
 		let sectionPage = null;
-		if (block && block.isPage() && config.allowDataview) {
+		if (block && block.isPage() && config.sudo && restr.length) {
 			sectionPage = (
 				<React.Fragment>
-					{config.sudo && restr.length ? (
-						<div className="section">
-							<div className="name">Restrictions</div>
-							<div className="items">
-								{restr.map((item: any, i: number) => (
-									<div className="item" key={i}>{item || 'Empty'}</div>
-								))}
-							</div>
+					<div className="section">
+						<div className="name">Restrictions</div>
+						<div className="items">
+							{restr.map((item: any, i: number) => (
+								<div className="item" key={i}>{item || 'Empty'}</div>
+							))}
 						</div>
-					) : ''}
+					</div>
 				</React.Fragment>
 			);
 		};
@@ -184,7 +182,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (!config.allowDataview || (object.type == Constant.typeId.page)) {
+			if (object.type == Constant.typeId.page) {
 				template = null;
 			};
 
@@ -271,9 +269,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
-		};
+		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		switch (item.id) {
 			case 'turnObject':
@@ -283,10 +279,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
@@ -310,10 +302,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
@@ -335,10 +323,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,

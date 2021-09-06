@@ -253,9 +253,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
-		if (!config.allowDataview) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
-		};
 		if (type == I.NavigationType.Move) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
@@ -302,19 +299,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if (it.id == skipId) {
 			return false;
 		};
-
-		if (!config.allowDataview) {
-			if (it.type == Constant.typeId.template) {
-				return false;
-			};
-			if ((it.layout != I.ObjectLayout.Page) && (it.id != Constant.typeId.page)) {
-				return false;
-			};
-			if ((type == I.NavigationType.Link) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.layout) < 0)) {
-				return false;
-			};
-		};
-
 		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
 			return false;
 		};

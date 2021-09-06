@@ -332,13 +332,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		
-		let types = [ Constant.typeId.page ]; 
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; }); 
 
-		if (config.allowDataview) {
-			types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		};
-		
 		setActive(item, false);
 
 		if (!item.arrow) {
@@ -396,12 +391,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.className = 'single';
 
 				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] }
 				];
-
-				if (config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',

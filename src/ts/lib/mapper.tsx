@@ -15,9 +15,7 @@ const Mapper = {
 		},
 
 		AccountConfig: (obj: any): I.AccountConfig => {
-			return {
-				allowDataview: obj.getEnabledataview(),
-			};
+			return {};
 		},
 		
 		ObjectInfo: (obj: any): I.PageInfo => {

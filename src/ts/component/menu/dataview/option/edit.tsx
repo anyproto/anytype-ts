@@ -16,12 +16,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	timeout: number = 0;
 	n: number = -1;
 
-	constructor(props: any) {
-		super(props);
-
-		this.onRemove = this.onRemove.bind(this);
-	};
-
 	render () {
 		const { param } = this.props;
 		const { data } = param;
@@ -159,11 +153,11 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 			this.forceUpdate();
 		} else
 		if (item.id == 'remove') {
-			this.onRemove(e);
+			this.remove();
 		};
 	};
 
-	onRemove (e: any) {
+	remove () {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { option, rootId, blockId, record, onChange, optionCommand } = data;

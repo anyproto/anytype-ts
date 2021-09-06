@@ -98,9 +98,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						<div className="rightMenu">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
-							{config.allowDataview ? (
-								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
-							) : ''}
+							<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
 							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={56} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
@@ -108,13 +106,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					<div id="documents"> 
 						<div className="tabWrap">
 							<div className="tabs">
-								{Tabs.map((item: any, i: number) => {
-									if (!config.allowDataview && ([ Tab.Draft, Tab.Set ].indexOf(item.id) >= 0)) {
-										return null;
-									};
-
-									return <TabItem key={i} {...item} />
-								})}
+								{Tabs.map((item: any, i: number) => (
+									<TabItem key={i} {...item} />
+								))}
 							</div>
 							<div id="searchWrap" className="searchWrap" onClick={this.onSearch}>
 								<Icon className="search" />
@@ -339,10 +333,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let link = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-
-		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
-		};
+		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		if (item.isBlock) {
 			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
@@ -410,10 +401,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 							const filters = [
 								{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 							];
-
-							if (!config.allowDataview) {
-								filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-							};
 
 							menuStore.open('searchObject', {
 								element: `#menuSelect #item-${el.id}`,
@@ -578,11 +565,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { layout, name, _empty_, isArchived } = object;
+					const { name, isArchived } = object;
 
-					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
-						return false;
-					};
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};

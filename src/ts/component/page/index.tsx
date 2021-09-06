@@ -240,9 +240,6 @@ class Page extends React.Component<Props, {}> {
 		if (config.debug.dm) {
 			cn.push('dark');
 		};
-		if (config.allowDataview) {
-			cn.push('withDataview');
-		};
 
 		obj.attr({ class: cn.join(' ') });
 	};
