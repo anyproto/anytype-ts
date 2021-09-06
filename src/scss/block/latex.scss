@@ -22,14 +22,14 @@
 		}
 		.select:hover, .select.active { background: none; }
 
-		#value { text-align: center; font-size: 20px; line-height: 20px; padding: 16px; width: 100%; overflow: auto; }
+		#value { font-size: 20px; line-height: 20px; padding: 16px; width: 100%; overflow: auto; }
 		#value:empty { display: none; }
 		#input { 
 			background: #f3f2ec; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
 			-webkit-user-modify: read-write-plaintext-only; display: none;
 		}
 
-		.katex-display { margin: 0px; }
-		.katex { white-space: normal; line-height: 1.5em; }
+		.katex-display { margin: 0px; text-align: inherit; }
+		.katex { white-space: normal; line-height: 1.5em;  text-align: inherit; }
 	}
 }
