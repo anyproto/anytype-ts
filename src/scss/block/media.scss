@@ -33,22 +33,33 @@
 
 		video { height: 100%; }
 
+		.inner.audio { background-color: #f3f2ec; padding: 12px 18px; border-radius: 6px; overflow: hidden; }
+
 		.audioControls { width: 100%; height: 24px; line-height: 20px; white-space: nowrap; }
 		.audioControls {
-			.icon.play { width: 20px; height: 20px; background: red; cursor: pointer; }
-			.icon.mute { width: 20px; height: 20px; background: red; margin-left: 10px; cursor: pointer; }
+			.icon.play { width: 20px; height: 20px; background-image: url('~img/icon/audio/play.svg'); cursor: pointer; }
+			.icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
+
+			.icon.volume { width: 20px; height: 20px; margin-right: 12px; background-image: url('~img/icon/audio/volume.svg'); cursor: pointer; }
+			.icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
+
 			.time { 
-				display: inline-block; vertical-align: middle; @include text-small; margin: 0px 6px; width: 100px; text-align: center;
+				display: inline-block; vertical-align: middle; @include text-common; width: 100px; text-align: center;
+				font-weight: 500;
 			}
 
-			.input-drag { display: inline-block; vertical-align: middle; width: 150px; height: 12px; }
+			.line { width: 1px; height: 24px; margin: 0px 20px; background: #dfddd0; display: inline-block; vertical-align: middle; }
+
+			.input-drag { display: inline-block; vertical-align: middle; height: 12px; }
 			.input-drag {
-				.icon { border-color: $colorBlack; background: $colorBlack; }
-				.fill { background: $colorBlack; }
-				.back { background: $colorLightGrey; }
+				.icon { width: 6px; height: 6px; border: 0px; background: none;  }
+				.bullet { width: 6px; height: 6px; border-radius: 100%; background: #f09c0e; } 
+				.fill { background: #f09c0e; }
+				.back { background: #dfddd0; }
 			}
 
-			#volume { width: 60px; margin-right: 8px; }
+			#time { margin: 0px 12px 0px 8px; width: 40%; }
+			#volume { width: 70px; margin-right: 8px; }
 		}
 		
 		.videoControls {

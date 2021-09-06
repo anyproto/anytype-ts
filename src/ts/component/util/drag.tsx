@@ -51,7 +51,9 @@ class Drag extends React.Component<Props, {}> {
 			<div id={id} className={cn.join(' ')} onMouseDown={this.start}>
 				<div id="back" className="back"></div>
 				<div id="fill" className="fill"></div>
-				<Icon id="icon" />
+				<div id="icon" className="icon">
+					<div className="bullet" />
+				</div>
 			</div>
 		);
 	};
@@ -114,6 +116,7 @@ class Drag extends React.Component<Props, {}> {
 		const { snap } = this.props;
 		const nw = this.node.width();
 		const iw = this.icon.width();
+		const ib = parseInt(this.icon.css('border-width'));
 		const mw = this.maxWidth();
 		
 		x = Math.max(0, x);
@@ -126,10 +129,10 @@ class Drag extends React.Component<Props, {}> {
 		x = this.value * mw;
 
 		const w = Math.min(nw, x + iw / 2);
-		
+
 		this.icon.css({ left: x });
-		this.back.css({ left: (w + 8), width: (nw - w - 8) });
-		this.fill.css({ width: (w - 2) });
+		this.back.css({ left: (w + iw / 2 + ib), width: (nw - w - iw / 2 - ib) });
+		this.fill.css({ width: (w - ib) });
 	};
 	
 	maxWidth () {

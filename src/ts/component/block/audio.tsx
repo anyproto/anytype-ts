@@ -16,6 +16,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	volume: number = 0;
 	playOnSeek: boolean = false;
 	refTime: any = null;
+	refVolume: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -64,15 +65,10 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div>
+					<div className="inner audio">
 						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
 						<div className="audioControls">
 							<Icon className="play" onClick={this.onPlay} />
-							<div className="time">
-								<span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
-								<span id="timeTotal" className="total">0:00</span>
-							</div>
-							<Drag id="volume" value={1} onMove={(v: number) => { this.onVolume(v); }} />
 							<Drag 
 								id="time" 
 								ref={(ref: any) => { this.refTime = ref; }} 
@@ -80,7 +76,18 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 								onMove={(v: number) => { this.onTime(v); }} 
 								onEnd={(v: number) => { this.onTimeEnd(v); }}
 							/>
-							<Icon className="mute" onClick={this.onMute} />
+							<div className="time">
+								<span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
+								<span id="timeTotal" className="total">0:00</span>
+							</div>
+							<div className="line" />
+							<Icon className="volume" onClick={this.onMute} />
+							<Drag 
+								id="volume" 
+								ref={(ref: any) => { this.refVolume = ref; }} 
+								value={1} 
+								onMove={(v: number) => { this.onVolume(v); }} 
+							/>
 						</div>
 					</div>
 				);
@@ -116,10 +123,12 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		this.unbind();
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const icon = node.find('.icon.play');
 		const el = node.find('#audio');
 
 		if (el.length) {
 			el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
+			el.on('end', () => { icon.removeClass('active'); });
 		};
 	};
 	
@@ -132,7 +141,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio');
 
 		if (el.length) {
-			el.unbind('canplay playing');
+			el.unbind('canplay playing end');
 		};
 	};
 
@@ -173,19 +182,29 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 	onPlay (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
+		const icon = node.find('.icon.play');
 		const el = node.find('#audio').get(0);
 		const paused = el.paused;
 
 		$('audio, video').each((i: number, item: any) => { item.pause(); });
 
-		paused ? el.play() : el.pause();
+		if (paused) {
+			el.play();
+			icon.addClass('active');
+		} else {
+			el.pause();
+			icon.removeClass('active');
+		};
 	};
 
 	onMute (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 
-		el.volume = !el.volume ? this.volume : 0;
+		el.volume = el.volume ? 0 : (this.volume || 1);
+
+		this.refVolume.setValue(el.volume);
+		this.setVolumeIcon();
 	};
 
 	onVolume (v: number) {
@@ -193,6 +212,15 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio').get(0);
 
 		this.volume = el.volume = v;
+		this.setVolumeIcon();
+	};
+
+	setVolumeIcon () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+		const icon = node.find('.icon.volume');
+
+		el.volume ? icon.removeClass('active') : icon.addClass('active');
 	};
 
 	onTime (v: number) {
