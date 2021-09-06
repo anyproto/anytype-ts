@@ -1,9 +1,6 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockRelationEdit {
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
-	}
 
 	.menu.menuBlockRelationView {
 		.icon.edit { display: none; }
@@ -26,6 +23,9 @@
 
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
+
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item.disabled:hover::before { opacity: 0; }
 
 		.icon.arrow { 
 			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 

@@ -590,6 +590,13 @@ function menuInit () {
 					}
 				},
 				{
+					label: 'Experimental', type: 'checkbox', checked: config.experimental,
+					click: () => { 
+						setConfig({ experimental: !config.experimental });
+						win.reload();
+					}
+				},
+				{
 					label: 'Graph',
 					click: () => { send('popup', 'graph', {}); }
 				},
