@@ -90,6 +90,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
+		const { block } = this.props;
 
 		if (isEditing) {
 			const node = $(ReactDOM.findDOMNode(this));
@@ -97,6 +98,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 			setRange(input.get(0), this.range);
 		};
+
+		this.placeholderCheck(block.content.text);
 	};
 	
 	componentWillUnmount () {
@@ -251,9 +254,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
-		const empty = node.find('#empty');
-
-		value.length ? empty.hide() : empty.show();
 
 		if (val.length) {
 			val.get(0).innerHTML = value ? katex.renderToString(value, { 
@@ -263,7 +263,15 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			}) : '';
 		};
 
+		this.placeholderCheck(value);
 		this.updateRect();
+	};
+
+	placeholderCheck (value: string) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const empty = node.find('#empty');
+
+		value.length ? empty.hide() : empty.show();
 	};
 
 	onEdit (e: any) {
