@@ -45,8 +45,10 @@
 			.input-drag {
 				.icon { border-color: $colorBlack; background: $colorBlack; }
 				.fill { background: $colorBlack; }
-				.back { background: $colorDarkGrey; }
+				.back { background: $colorLightGrey; }
 			}
+
+			#volume { width: 60px; margin-right: 8px; }
 		}
 		
 		.videoControls {

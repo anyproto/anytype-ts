@@ -14,6 +14,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 	_isMounted: boolean = false;
 	volume: number = 0;
+	playOnSeek: boolean = false;
+	refTime: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -70,7 +72,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 								<span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
 								<span id="timeTotal" className="total">0:00</span>
 							</div>
-							<Drag value={1} onMove={(v: number) => { this.onVolume(v); }} />
+							<Drag id="volume" value={1} onMove={(v: number) => { this.onVolume(v); }} />
+							<Drag 
+								id="time" 
+								ref={(ref: any) => { this.refTime = ref; }} 
+								value={0} 
+								onMove={(v: number) => { this.onTime(v); }} 
+								onEnd={(v: number) => { this.onTimeEnd(v); }}
+							/>
 							<Icon className="mute" onClick={this.onMute} />
 						</div>
 					</div>
@@ -110,7 +119,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio');
 
 		if (el.length) {
-			el.on('canplay timeupdate', () => { this.onTime(); });
+			el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
 		};
 	};
 	
@@ -167,7 +176,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio').get(0);
 		const paused = el.paused;
 
-		$('audio').each((i: number, item: any) => { item.pause(); });
+		$('audio, video').each((i: number, item: any) => { item.pause(); });
 
 		paused ? el.play() : el.pause();
 	};
@@ -186,7 +195,28 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		this.volume = el.volume = v;
 	};
 
-	onTime () {
+	onTime (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+		const paused = el.paused;
+
+		if (!paused) {
+			el.pause();
+			this.playOnSeek = true;
+		};
+		el.currentTime = Number(v * el.duration) || 0;
+	};
+
+	onTimeEnd (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find('#audio').get(0);
+
+		if (this.playOnSeek) {
+			el.play();
+		};
+	};
+
+	onTimeUpdate () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 		if (!el) {
@@ -201,6 +231,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 		t = this.getTime(el.duration);
 		total.text(`${Util.sprintf('%02d', t.m)}:${Util.sprintf('%02d', t.s)}`);
+
+		this.refTime.setValue(el.currentTime / el.duration);
 	};
 
 	getTime (t: number): { m: number, s: number } {

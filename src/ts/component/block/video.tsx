@@ -182,6 +182,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const video = node.find('video');
 		const el = video.get(0);
+
+		$('audio, video').each((i: number, item: any) => { item.pause(); });
 		
 		video.unbind('ended pause play');
 		el.play();
