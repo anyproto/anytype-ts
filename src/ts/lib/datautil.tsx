@@ -951,11 +951,12 @@ class DataUtil {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
 		});
+		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
 
 		for (let key of forceKeys) {
 			const relation = dbStore.getRelation(rootId, blockId, key);
 			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
-				relations.push(relation);
+				relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, relation);
 			};
 		};
 
