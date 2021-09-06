@@ -783,7 +783,7 @@ class DataUtil {
 		let ret = [
 			{ id: I.ViewType.Grid },
 		];
-		if (config.debug.ho) {
+		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.ViewType.Gallery },
 				{ id: I.ViewType.List },
