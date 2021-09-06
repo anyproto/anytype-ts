@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
 import arrayMove from 'array-move';
@@ -220,7 +220,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			},
 		];
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
 
 		if (tab == Tab.Draft) {
@@ -235,7 +235,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
-		C.ObjectSearch(filters, sorts, [ ...Constant.defaultRelationKeys, 'lastOpenedDate' ], filter, 0, 100, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -327,7 +327,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 
 		const { tab } = this.state;
-		const { root, recent } = blockStore;
+		const { root, recent, profile } = blockStore;
 		const { config } = commonStore;
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
@@ -363,7 +363,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (object.isReadonly) {
+		if (object.isReadonly || (object.id == profile)) {
 			archive = null;
 		};
 
@@ -404,7 +404,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			},
 			data: {
 				options: options,
-				onMouseEnter: (e: any, el: any) => {
+				onOver: (e: any, el: any) => {
 					menuStore.closeAll(subIds, () => {
 						if (el.id == 'move') {
 							const filters = [
@@ -420,7 +420,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+
 								data: {
+									rebind: menuContext.ref.rebind,
 									rootId: rootId,
 									blockId: item.id,
 									blockIds: [ item.id ],

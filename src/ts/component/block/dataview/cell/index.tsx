@@ -10,10 +10,13 @@ import CellObject from './object';
 import CellFile from './file';
 
 interface Props extends I.Cell {
+	elementId?: string;
 	relationKey?: string;
 	storeId?: string;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
+	showTooltip?: boolean;
+	tooltipY?: I.MenuDirection;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -36,22 +39,33 @@ class Cell extends React.Component<Props, {}> {
 		
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
-		const { relationKey, index, onClick, onMouseEnter, onMouseLeave, idPrefix } = this.props;
+		const { elementId, relationKey, index, onClick, idPrefix, getRecord } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
+
 		if (!relation) {
 			return null;
 		};
 
 		const canEdit = this.canEdit();
+
+		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
+		if (relation.relationKey == Constant.relationKey.name) {
+			check = true;
+		};
+
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
 			DataUtil.relationClass(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == Constant.relationKey.name ? 'isName' : ''),
+			(!check ? 'isEmpty' :  ''),
 		];
 
 		let CellComponent: React.ReactType<Props>;
@@ -91,7 +105,7 @@ class Cell extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 
 		return (
-			<div className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+			<div id={elementId} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
 					id={id} 
@@ -345,6 +359,30 @@ class Cell extends React.Component<Props, {}> {
 		if (record && onCellChange) {
 			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
 		};
+	};
+
+	onMouseEnter (e: any) {
+		const { onMouseEnter, showTooltip, tooltipY, idPrefix, index } = this.props;
+		const relation = this.getRelation();
+		const cell = $(`#${DataUtil.cellId(idPrefix, relation.relationKey, index)}`);
+
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+
+		if (showTooltip) {
+			Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+
+		if (onMouseLeave) {
+			onMouseLeave(e);
+		};
+
+		Util.tooltipHide(false);
 	};
 
 	getRelation () {

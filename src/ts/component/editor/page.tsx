@@ -231,8 +231,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.forceUpdate();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
-			dispatcher.setNumbers(rootId);
-
 			if (onOpen) {
 				onOpen();
 			};
@@ -1023,11 +1021,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// If block is closed toggle - find next block on the same level
 		if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-			const element = blockStore.getMapElement(rootId, block.parentId);
-			if (element) {
-				const idx = element.childrenIds.indexOf(block.id);
-				next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
-			};
+			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.parentId != block.id && it.isFocusable(); });
 		} else {
 			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		};
@@ -1105,6 +1099,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
+			commonFilter: true,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
@@ -1273,9 +1268,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
-		if (url && !force) {
+		if (url && !force && !block.isTextTitle() && !block.isTextDescription()) {
 			menuStore.open('select', { 
-				element: '#block-' + focused,
+				element: `#block-${focused}`,
 				offsetX: Constant.size.blockMenu,
 				onOpen: () => {
 					if (block) {
@@ -1324,8 +1319,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let to = 0;
 
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
-			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
-
 			if (message.error.code) {
 				return;
 			};

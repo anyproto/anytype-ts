@@ -60,7 +60,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				): ''}
 
 				{items.map((relationKey: any, i: any) => {
-					const id = DataUtil.cellId(PREFIX, relationKey, 0);
+					const id = DataUtil.cellId(PREFIX + block.id, relationKey, 0);
 					const relation = dbStore.getRelation(rootId, rootId, relationKey);
 					const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
@@ -92,9 +92,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									iconSize={iconSize}
 									readonly={!canEdit}
 									isInline={true}
-									idPrefix={PREFIX}
+									idPrefix={PREFIX + block.id}
 									elementMapper={this.elementMapper}
-									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
+									showTooltip={true}
 									onMouseLeave={this.onMouseLeave}
 								/>
 							</span>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
-import { blockStore, dbStore } from 'ts/store';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 
@@ -15,9 +15,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	isFocused: boolean = false;
 	timeout: number = 0;
 
-	type: I.ViewType = I.ViewType.Grid;
-	name: string = '';
-
 	constructor(props: any) {
 		super(props);
 		
@@ -27,12 +24,14 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param } = this.props;
+		const { param, setHover } = this.props;
 		const { data } = param;
 		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
-		
+		const fileOptions = this.getFileOptions();
+		const fileOption = fileOptions.find((it: any) => { return it.id == view.coverRelationKey; });
+
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -54,7 +53,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		return (
 			<div>
-				<form className="filter isName">
+				<div className="filter isName">
 					<div className="inner">
 						<Input 
 							ref={(ref: any) => { this.ref = ref; }} 
@@ -68,7 +67,22 @@ class MenuViewEdit extends React.Component<Props, {}> {
 						/>
 					</div>
 					<div className="line" />
-				</form>
+				</div>	
+
+				{view.type == I.ViewType.Gallery ? (
+					<React.Fragment>
+						<div className="sectionName">Cover relation</div>
+						<MenuItemVertical 
+							id="coverRelationKey"
+							icon={fileOption ? fileOption.icon : undefined}
+							name={fileOption ? fileOption.name : 'Select relation'}
+							onMouseEnter={(e: any) => { setHover({ id: 'coverRelationKey' }); }}
+							onMouseLeave={(e: any) => { setHover(); }}
+							onClick={(e: any) => { this.onCoverRelation(e); }} 
+							arrow={true}
+						/>
+					</React.Fragment>
+				): ''}
 
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />
@@ -83,9 +97,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
-		this.focus();
+		this.props.position();
+		this.props.setActive();
 	};
-	
+
 	componentWillUnmount () {
 		window.clearTimeout(this.timeout);
 	};
@@ -145,7 +160,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any, v: string) {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { view } = data;
 
@@ -281,6 +296,48 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (onSelect) {
 			onSelect();
 		};
+	};
+
+	onCoverRelation (e: any) {
+		const { param, close, getId, getSize } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		menuStore.open('select', { 
+			element: `#${getId()} #item-coverRelationKey`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			data: {
+				value: view.coverRelationKey,
+				options: this.getFileOptions(),
+				onSelect: (e, item) => {
+					view.coverRelationKey = item.id;
+
+					this.forceUpdate();
+					this.save();
+				},
+			}
+		});
+	};
+
+	getFileOptions () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const options: any[] = dbStore.getRelations(rootId, blockId).filter((it: I.Relation) => {
+			return !it.isHidden && (it.format == I.RelationType.File);
+		}).map((it: any) => {
+			return { 
+				id: it.relationKey, 
+				icon: 'relation ' + DataUtil.relationClass(it.format),
+				name: it.name, 
+			};
+		});
+
+		options.unshift({ id: 'pageCover', icon: '', name: 'Page cover' });
+		options.unshift({ id: '', icon: '', name: 'None' });
+		return options;
 	};
 	
 };

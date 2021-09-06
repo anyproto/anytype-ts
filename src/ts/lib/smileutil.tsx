@@ -129,7 +129,11 @@ class SmileUtil {
 	};
 
 	srcFromColons (colons: string, skin: number) {
-		const parts = colons.split('::');
+		if (!colons) {
+			return '';
+		};
+
+		const parts = String(colons || '').split('::');
 		const id = String(parts[0] || '').replace(/:/g, '');
 		const item = EmojiData.emojis[id];
 

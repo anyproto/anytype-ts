@@ -5,7 +5,7 @@
 
         .viewItem.viewBoard {
             .columns { white-space: nowrap; }
-            .column { width: 240px; margin-right: 24px; display: inline-block; vertical-align: top; overflow-x: visible; overflow-y: auto; }
+            .column { width: 240px; margin-right: 24px; display: inline-block; vertical-align: top; overflow-x: visible; overflow-y: scroll; }
             .column {
                 .head { padding: 10px 4px; width: 100%; }
             }
@@ -20,6 +20,10 @@
             .card.add:hover {
                 .icon { background-image: url('~img/icon/plus/menu1.svg'); }
             }
+
+			.cellContent.c-shortText {
+				.name { height: 24px; }
+			}
 
 			.cellContent {
 				.name:empty { display: none; }

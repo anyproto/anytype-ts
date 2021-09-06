@@ -131,20 +131,6 @@ class Mark {
 		return Util.unmap(map).sort(this.sort);
 	};
 	
-	move (marks: I.Mark[], start: number, diff: number) {
-		marks = marks || [];
-		for (let mark of marks) {
-			if ((mark.range.from < start && mark.range.to >= start) || (!start && !mark.range.from)) {
-				mark.range.to += diff;
-			} else
-			if (mark.range.from >= start) {
-				mark.range.from += diff;
-				mark.range.to += diff;
-			};
-		};
-		return marks;
-	};
-	
 	sort (c1: I.Mark, c2: I.Mark) {
 		if (c1.type > c2.type) return 1;
 		if (c1.type < c2.type) return -1;
@@ -231,6 +217,7 @@ class Mark {
 				mark.range.from += length;
 				mark.range.to += length;
 			};
+			mark.range.from = Math.max(0, mark.range.from);
 		};
 		return marks;
 	};
@@ -292,9 +279,14 @@ class Mark {
 
 			let prefix = '';
 			let suffix = '';
+			let space = '';
+
+			if (mark.type == I.MarkType.Mention) {
+				space = '<img src="./img/space.svg" class="space" />';
+			};
 
 			if ((mark.type == I.MarkType.Mention) || (mark.type == I.MarkType.Emoji)) {
-				prefix = '<smile></smile><name>';
+				prefix = `<smile></smile>${space}<name>`;
 				suffix = '</name>';
 			};
 
@@ -430,7 +422,7 @@ class Mark {
 
 	fromMarkdown (html: string, marks: I.Mark[]) {
 		let text = html;
-		let test = /[`\*_~]{1}/.test(text);
+		let test = /[`\*_~\[]{1}/.test(text);
 
 		if (!test) {
 			return { marks, text };
@@ -450,20 +442,48 @@ class Mark {
 				let to = from + p3.length;
 				let replace = p1 + p3 + ' ';
 
-				// Marks should be moved by replacement lengths
-				for (let i in marks) {
-					let m = marks[i];
-					if (m.range.from >= from) {
-						m.range.from = Math.max(0, m.range.from - p2.length * 2);
-						m.range.to = Math.max(0, m.range.to - p2.length * 2);
-					};
-				};
-
+				this.adjust(marks, from, -p2.length * 2);
 				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
 				text = text.replace(s, replace);
 				return s;
 			});
 		};
+
+		// Links
+		html = text;
+		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
+			p1 = String(p1 || '');
+			p2 = String(p2 || '');
+			p3 = String(p3 || '');
+
+			let from = (Number(text.indexOf(s)) || 0);
+			let to = from + p1.length;
+			let innerIdx = [];
+
+			// Remove inner links and adjust other marks to new range
+			for (let i = 0; i < marks.length; ++i) {
+				let mark = marks[i];
+				if ((mark.range.from >= from) && (mark.range.to <= from + p1.length + p2.length + 4)) {
+					if (mark.type == I.MarkType.Link) {
+						marks.splice(i, 1);
+						i--;
+					} else {
+						innerIdx.push(i);
+					};
+				};
+			};
+
+			this.adjust(marks, from, -(p2.length + 4));
+
+			for (let i of innerIdx) {
+				marks[i].range.from = from;
+				marks[i].range.to = to;
+			};
+
+			marks.push({ type: I.MarkType.Link, range: { from: from, to: to }, param: p2 });
+			text = text.replace(s, p1 + ' ');
+			return s;
+		});
 
 		marks = this.checkRanges(text, marks);
 		return { marks, text };

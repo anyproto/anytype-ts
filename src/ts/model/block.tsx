@@ -236,6 +236,10 @@ class Block implements I.Block {
 	isDivDot (): boolean {
 		return this.isDiv() && (this.content.type == I.DivStyle.Dot);
 	};
+
+	isLatex (): boolean {
+		return this.type == I.BlockType.Latex;
+	};
 	
 	isText (): boolean {
 		return this.type == I.BlockType.Text;
@@ -296,7 +300,7 @@ class Block implements I.Block {
 	isTextQuote (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
 	};
-	
+
 	getLength (): number {
 		return this.isText() ? String(this.content.text || '').length : 0;
 	};

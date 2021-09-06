@@ -266,6 +266,16 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
+const BlockUpdateContent = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.UpdateContent.Request();
+	
+	request.setBlock(Mapper.To.Block(block));
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+
+	dispatcher.request('blockUpdateContent', request, callBack);
+};
+
 const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) => {
 	details = details || {};
 
@@ -1012,6 +1022,16 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request('objectSetLayout', request, callBack);
 };
 
+const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Graph.Request();
+	
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+    request.setLimit(limit);
+	request.setObjecttypefilterList(types);
+
+	dispatcher.request('objectGraph', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1098,6 +1118,7 @@ export {
 	BlockCreate,
 	BlockCreatePage,
 	BlockCreateSet,
+	BlockUpdateContent,
 
 	BlockSetTextText,
 	BlockSetTextChecked,
@@ -1166,6 +1187,7 @@ export {
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
 	ObjectSetLayout,
+	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 

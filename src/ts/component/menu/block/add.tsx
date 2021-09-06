@@ -88,8 +88,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						</div>
 						<div
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-							onClick={(e: any) => { this.onClick(e, item); }}
+							className={[ 'cell', DataUtil.relationClass(item.format) ].join(' ')} 
 						>
 							<Cell 
 								rootId={rootId}
@@ -101,8 +100,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								scrollContainer={Util.getScrollContainer('menuBlockRelationList')}
-								pageContainer={Util.getPageContainer('menuBlockRelationList')}
+								scrollContainer={Util.getScrollContainer('menuBlockAdd')}
+								pageContainer={Util.getPageContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
 								placeholder={translate('placeholderCellCommon')}
@@ -420,6 +419,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			isSub: true,
 			className: param.className,
 			data: {
+				rebind: this.rebind,
 				rootId: rootId,
 				skipId: rootId,
 				blockId: blockId,
@@ -461,8 +461,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+				];
+
+				if (config.allowDataview) {
+					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] });
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {

@@ -2,12 +2,22 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewGallery { padding: 16px 0px; display: flex; flex-wrap: wrap; column-count: 4; }
+		.viewItem.viewGallery { padding: 0px 14px; }
 		.viewItem.viewGallery {
 			.card { 
-				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; 
-				margin: 0px 16px 16px 0px; display: inline-block; vertical-align: top;
+				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; display: inline-block; cursor: pointer; 
 			}
+			.card {
+				.cover { 
+					position: static; height: 260px; background-position: center center; border-radius: 12px 12px 0px 0px;
+					background-color: $colorLightGrey;
+				}
+
+				.cellContent.c-shortText {
+					.name { height: 48px; line-height: 48px; }
+				}
+			}
+			.card > .inner { padding: 16px; }
 		}
 	}
 }

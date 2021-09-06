@@ -29,7 +29,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getData, getView, readonly, onRowAdd, isPopup, scrollContainer } = this.props;
+		const { rootId, block, getData, getView, readonly, onRowAdd, isPopup } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
@@ -191,7 +191,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 		content.css({ left: 0, right: 'auto' });
 
-		if (x - sx + width >= ww - 64) {
+		if (x - sx + width >= ww - 92) {
 			content.css({ left: 'auto', right: 0 });
 		};
 	};

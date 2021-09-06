@@ -6,7 +6,35 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 10 August, 2021` },
+	{ style: I.TextStyle.Title, text: `Updates for 31 August, 2021` },
+
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+	{ style: I.TextStyle.Bulleted, text: `Sets can have custom icon & cover and might have their own relations as other objects.` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype starts updating mentions after an object's name change from this release. We will introduce this enhancement for Android in the next release.` },
+	{ style: I.TextStyle.Bulleted, text: `Inbox now stores a list of draft objects, sorted by editing date.` },
+	{ style: I.TextStyle.Bulleted, text: `Support for plain text in a code snippet. Thanks, <a href="https://community.anytype.io/d/317-support-for-plain-text-in-a-code-snippet/1">maxitg</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Add link creation via Markdown Syntax. Just write this anywhere in text block with format [text](link). Thanks, <a href="https://community.anytype.io/d/709-add-link-creation-via-markdown-syntax/1">alsmnn</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `We've added fast community feature request / bug report link instead of Typeform & link to knowledge base.` },
+
+	{ style: I.TextStyle.Header2, text: `Bugs we've fixed` },
+	{ style: I.TextStyle.Bulleted, text: `Page restored from archive tab is still visible in archive tab. Thanks, <a href="https://community.anytype.io/d/536-page-restored-from-archive-tab-is-still-visible-in-archive-tab">Tanzeel098, lynxlove, gis, Aljosha Leusmann</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Delay to start a new block after hitting “enter”. Thanks, <a href="https://community.anytype.io/d/334-delay-to-start-a-new-block-after-hitting-enter/1">HLucas</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes updates of names on home stop arriving after opening and changing on the second device.` },
+	{ style: I.TextStyle.Bulleted, text: `Instable download crashes application. Thanks, <a href="https://community.anytype.io/d/654-instable-download-crashes-application/1">wemiprog</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Greek letter “ώ” displays incorrectly. Thanks, <a href="https://community.anytype.io/d/826-visual-greek-letter-w-is-displayed-incorrectly/1">CrossDrain</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Pasting text with / and @ at the end launched menus.` },
+	{ style: I.TextStyle.Bulleted, text: `The embedded text disappears from the toggle if you press enter in the open toggle.` },
+	{ style: I.TextStyle.Bulleted, text: `The arrow down key stops working from 21st toggle in a row. Thanks, SHIZOXLIFE.` },
+	{ style: I.TextStyle.Bulleted, text: `Menu with all tag / status options closes when chose and select one.` },
+	{ style: I.TextStyle.Bulleted, text: `Changed option of the tag / status relation become updated in other places with a delay.` },
+	{ style: I.TextStyle.Bulleted, text: `When you delete a relation from Set you might still have empty column in other views.` },
+	{ style: I.TextStyle.Bulleted, text: `Adding date from next month drops the value to December of 2020. Thanks, <a href="https://community.anytype.io/d/629-date-picker-defaulting-to-dec-2020-when-picking-certain-dates/1">Corsecharter</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `The year in the date was changed incorrectly if there was already a value been set.` },
+	{ style: I.TextStyle.Bulleted, text: `Unexpected behavior may happen when clicking at the right side of object’s name in Set. Thanks, <a href="https://community.anytype.io/d/655-unexpected-behavior-when-clicking-input-fields/1">nizos</a>.` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Updates for 10 August, 2021` },
 	{ text: `Some features are being tested by a smaller group while we verify their stability, and so may not be available to everyone. If you want to try Types before they were released for everyone: <a href="https://community.anytype.io/d/604-onboarding-for-the-new-anytype/2">click here for more info</a>.` },
 	{ style: I.TextStyle.Header2, text: `Fixes & tech` },
 	{ style: I.TextStyle.Bulleted, text: `Fix of higher memory consumption. Thanks, <a href="https://community.anytype.io/d/619-anytype-swallows-ram">Srinath, lucasmmarino</a>.` },

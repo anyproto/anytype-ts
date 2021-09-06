@@ -26,7 +26,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	constructor (props: any) {
 		super(props);
 		
-		this.onSortEnd = this.onSortEnd.bind(this);
+		this.rebind = this.rebind.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
@@ -49,7 +49,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			let content = null;
 			if (item.id == 'add') {
 				content =  (
-					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
+					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
 					</div>
@@ -59,8 +59,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 			} else {
 				content = (
-					<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
-						<div className="clickable">
+					<div id={'item-' + item.id} className="item" style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+						<div className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 							<Tag text={item.text} color={item.color} className={DataUtil.tagClass(relation.format)} />
 						</div>
 						<div className="buttons">
@@ -192,6 +192,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	};
 
 	onClick (e: any, item: any) {
+		e.stopPropagation();
 		item.id == 'add' ? this.onOptionAdd() : this.onValueAdd(item.id);
 	};
 
@@ -248,13 +249,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
 		menuStore.close('dataviewOptionEdit', () => {
 			menuStore.open('dataviewOptionEdit', { 
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: 288,
+				offsetX: getSize().width,
 				vertical: I.MenuDirection.Center,
 				passThrough: true,
 				noFlipY: true,
@@ -262,24 +263,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
+					rebind: this.rebind,
 					option: item,
 				}
 			});
 		});
-	};
-	
-	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId } = data;
-		const relation = data.relation.get();
-
-		relation.selectDict = arrayMove(relation.selectDict, oldIndex, newIndex);
-		data.relation.set(relation);
-		DataUtil.dataviewRelationUpdate(rootId, blockId, relation);
-
-		menuStore.updateData(this.props.id, { relation: observable.box(relation) });
 	};
 
 	getItems (withSections: boolean): I.SelectOption[] {
@@ -308,7 +296,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			items = items.filter((it: I.SelectOption) => { return it.text.match(filter); });
 
 			if (canAdd && !check.length) {
-				ret.unshift({ id: 'add', name: `Create option "${data.filter}"` });
+				const name = (relation.format == I.RelationType.Status) ? `Set status "${data.filter}"` : `Create option "${data.filter}"`;
+				ret.unshift({ id: 'add', name: name });
 			};
 		};
 

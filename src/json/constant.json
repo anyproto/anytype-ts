@@ -47,7 +47,7 @@
 
 	"menuIds": {
 		"cell": [ 
-			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
+			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
 		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
@@ -55,7 +55,7 @@
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
 		"add": [
-			"searchObject", "blockRelationList", "blockRelationEdit"
+			"searchObject", "blockRelationEdit"
 		],
 		"action": [
 			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
@@ -131,7 +131,8 @@
 		"type": "_otobjectType",
 		"image": "_otimage",
 		"file": "_otfile",
-		"video": "_otvideo"
+		"video": "_otvideo",
+		"relation": "_otrelation"
 	},
 
 	"blockId": {
@@ -268,11 +269,13 @@
 		"perl":			 "Perl",
 		"php":			 "PHP",
 		"powershell":	 "Power Shell",
+		"plain":         "Plain Text",
 		"prolog":		 "Prolog",
 		"python":		 "Python",
 		"reason":		 "Reason",
 		"ruby":			 "Ruby",
 		"rust":			 "Rust",
+		"r":			 "R",
 		"sass":			 "Sass",
 		"scala":		 "Scala",
 		"scheme":		 "Scheme",

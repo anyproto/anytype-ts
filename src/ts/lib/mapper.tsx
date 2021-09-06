@@ -73,6 +73,7 @@ const Mapper = {
 			if (v == V.DATAVIEW)			 t = I.BlockType.Dataview;
 			if (v == V.RELATION)			 t = I.BlockType.Relation;
 			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
+			if (v == V.LATEX)				 t = I.BlockType.Latex;
 			return t;
 		},
 
@@ -162,6 +163,12 @@ const Mapper = {
 			if (type == I.BlockType.Relation) {
 				item.content = {
 					key: content.getKey(),
+				};
+			};
+
+			if (type == I.BlockType.Latex) {
+				item.content = {
+					text: content.getText(),
 				};
 			};
 	
@@ -262,6 +269,7 @@ const Mapper = {
 				id: obj.getId(),
 				type: obj.getType(),
 				name: obj.getName(),
+				coverRelationKey: obj.getCoverrelationkey(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
 				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
@@ -321,6 +329,30 @@ const Mapper = {
                 lastPulled: obj.getLastpulled(),
                 lastEdited: obj.getLastedited(),
 				devices: (obj.getDevicesList() || []).map(Mapper.From.ThreadDevice),
+            };
+        },
+
+		GraphEdge: (obj: any) => {
+            return {
+				type: obj.getType(),
+				source: obj.getSource(),
+				target: obj.getTarget(),
+				name: obj.getName(),
+				description: obj.getDescription(),
+				iconImage: obj.getIconimage(),
+				iconEmoji: obj.getIconemoji(),
+            };
+        },
+
+		GraphNode: (obj: any) => {
+            return {
+                id: obj.getId(),
+				type: obj.getType(),
+				name: obj.getName(),
+				layout: obj.getLayout(),
+				description: obj.getDescription(),
+				iconImage: obj.getIconimage(),
+				iconEmoji: obj.getIconemoji(),
             };
         },
 
@@ -451,6 +483,14 @@ const Mapper = {
 				block.setRelation(content);
 			};
 
+			if (obj.type == I.BlockType.Latex) {
+				content = new Model.Block.Content.Latex();
+	
+				content.setText(obj.content.text);
+	
+				block.setLatex(content);
+			};
+
 			return block;
 		},
 
@@ -495,6 +535,7 @@ const Mapper = {
 			item.setId(obj.id);
 			item.setName(obj.name);
 			item.setType(obj.type);
+			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
 			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));

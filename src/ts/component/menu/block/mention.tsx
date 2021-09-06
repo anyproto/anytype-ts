@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader } from 'ts/component';
-import { I, C, Key, keyboard, Util, DataUtil, Mark } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, keyboard, Util, DataUtil, Mark } from 'ts/lib';
+import { commonStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -156,9 +156,17 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { filter } = commonStore;
 		const { config } = commonStore;
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
-		const filters = [];
+		const filters: any[] = [
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			},
+		];
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (!config.debug.ho) {
@@ -171,7 +179,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text, 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text.replace(/\\/g, ''), 0, 0, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -228,7 +236,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			let to = from + name.length + 1;
 			let marks = Util.objectCopy(data.marks || []);
 
-			marks = Mark.adjust(marks, from, name.length + 1);
+			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
 				param: id, 
