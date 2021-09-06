@@ -16,8 +16,10 @@ interface State {
 	isEditing: boolean;
 };
 
+const raf = require('raf');
 const $ = require('jquery');
 const katex = require('katex');
+const Constant = require('json/constant.json');
 
 require(`prismjs/components/prism-latex.js`);
 require('katex/dist/contrib/mhchem.min.js');
@@ -103,23 +105,43 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { filter } = commonStore;
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
+		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
 		const symbolBefore = value[range.start - 1];
-		const menuOpen = menuStore.isOpen('blockLatex');
+		
+		let menuOpen = menuStore.isOpen('blockLatex');
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
 			commonStore.filterSet(range.start, '');
 			this.onMenu(e, 'input', false);
 		};
 
+		keyboard.shortcut('backspace', e, () => {
+			if ((symbolBefore == '\\') && menuOpen) {
+				menuStore.close('blockLatex');
+				menuOpen = false;
+			};
+		});
+
 		if (menuOpen) {
 			const d = range.start - filter.from;
 			if (d >= 0) {
 				const part = value.substr(filter.from, d).replace(/^\\/, '');
 				commonStore.filterSetText(part);
+			};
+
+			let rect = Util.selectionRect();
+			if (!rect.x && !rect.y && !rect.width && !rect.height) {
+				rect = null;
+			};
+
+			if (rect) {
+				menuStore.update('blockLatex', { 
+					rect: { ...rect, y: rect.y + win.scrollTop() }
+				});
 			};
 		};
 
@@ -143,25 +165,39 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
+		const win = $(window);
 
-		menuStore.open('blockLatex', {
-			element: `#block-${block.id} #${element}`,
-			commonFilter: true,
-			className: (isTemplate ? 'isTemplate' : ''),
-			onClose: () => {
-				commonStore.filterSet(0, '');
-			},
-			data: {
-				isTemplate: isTemplate,
-				rootId: rootId,
-				blockId: block.id,
-				onSelect: (from: number, to: number, item: any) => {
-					this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+		raf(() => {
+			let rect = null;
+			if (element == 'input') {
+				rect = Util.selectionRect();
+				if (!rect.x && !rect.y && !rect.width && !rect.height) {
+					rect = null;
+				};
+			};
 
-					const value = this.getValue();
-					setRange(el, { start: value.length, end: value.length });
+			menuStore.open('blockLatex', {
+				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				element: `#block-${block.id} #${element}`,
+				offsetY: 4,
+				offsetX: rect ? 0 : Constant.size.blockMenu,
+				commonFilter: true,
+				className: (isTemplate ? 'isTemplate' : ''),
+				onClose: () => {
+					commonStore.filterSet(0, '');
 				},
-			},
+				data: {
+					isTemplate: isTemplate,
+					rootId: rootId,
+					blockId: block.id,
+					onSelect: (from: number, to: number, item: any) => {
+						this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+
+						const value = this.getValue();
+						setRange(el, { start: value.length, end: value.length });
+					},
+				},
+			});
 		});
 	};
 
