@@ -65,7 +65,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div className="inner audio">
+					<div className="inner resizable audio">
 						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
 						<div className="audioControls">
 							<Icon className="play" onClick={this.onPlay} />
@@ -103,10 +103,12 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
+		this.resize();
 		this.rebind();
 	};
 	
 	componentDidUpdate () {
+		this.resize();
 		this.rebind();
 	};
 	
@@ -126,6 +128,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const icon = node.find('.icon.play');
 		const el = node.find('#audio');
 
+		node.on('resize', (e: any, oe: any) => { this.resize(); });
+
 		if (el.length) {
 			el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
 			el.on('end', () => { icon.removeClass('active'); });
@@ -142,6 +146,29 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 		if (el.length) {
 			el.unbind('canplay playing end');
+		};
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { getWrapperWidth } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const inner = node.find('.inner');
+		const rect = node.get(0).getBoundingClientRect() as DOMRect;
+		const width = rect.width;
+		const mw = getWrapperWidth();
+		
+		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
+		
+		if (this.refTime) {
+			this.refTime.resize();
+		};
+
+		if (this.refVolume) {
+			this.refVolume.resize();
 		};
 	};
 
