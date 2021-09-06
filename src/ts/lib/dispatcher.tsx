@@ -566,7 +566,6 @@ class Dispatcher {
 
 					switch (state) {
 						case I.ProgressState.Running:
-						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
 								status: translate('progress' + pt),
@@ -577,6 +576,7 @@ class Dispatcher {
 							});
 							break;
 
+						case I.ProgressState.Done:
 						case I.ProgressState.Canceled:
 							commonStore.progressClear();
 							break;

@@ -545,11 +545,11 @@ class Util {
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g > 1) {
-			v = this.sprintf('%fGB', this.round(g, 2));
+			v = this.sprintf('%0.2fGB', this.round(g, 2));
 		} else if (m > 1) {
-			v = this.sprintf('%fMB', this.round(m, 2));
+			v = this.sprintf('%0.2fMB', this.round(m, 2));
 		} else if (k > 1) {
-			v = this.sprintf('%fKB', this.round(k, 2));
+			v = this.sprintf('%0.2fKB', this.round(k, 2));
 		} else {
 			v = this.sprintf('%dB', this.round(v, 0));
 		};
