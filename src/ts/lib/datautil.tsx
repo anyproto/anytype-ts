@@ -86,10 +86,8 @@ class DataUtil {
 						break;
 						
 					case I.FileType.Image: 
-						c.push('blockMedia');
-						break;
-						
 					case I.FileType.Video: 
+					case I.FileType.Audio: 
 						c.push('blockMedia');
 						break;
 				};
@@ -609,8 +607,12 @@ class DataUtil {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		];
+
 		if (config.experimental) {
-			ret.push({ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' });
+			ret = ret.concat([
+				{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
+				{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
+			]);
 		};
 
 		return ret.map(this.menuMapperBlock);

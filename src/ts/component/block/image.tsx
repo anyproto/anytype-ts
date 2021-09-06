@@ -87,7 +87,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.bind();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -95,7 +95,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		this.unbind();
 	};
 	
-	bind () {
+	rebind () {
 		if (!this._isMounted) {
 			return;
 		};

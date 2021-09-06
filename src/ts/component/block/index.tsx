@@ -8,11 +8,12 @@ import { menuStore, blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
-import BlockImage from './image';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockVideo from './video';
 import BlockFile from './file';
+import BlockImage from './image';
+import BlockVideo from './video';
+import BlockAudio from './audio';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
@@ -128,6 +129,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 						
 					case I.FileType.Video: 
 						blockComponent = <BlockVideo {...this.props} />;
+						break;
+
+					case I.FileType.Audio: 
+						blockComponent = <BlockAudio {...this.props} />;
 						break;
 				};
 				break;
