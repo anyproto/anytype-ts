@@ -135,7 +135,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return it.isLink() && (it.content.targetBlockId == rootId);
 		});
 
-		if (object.isFavorite) {
+		if (favorites.length) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
 			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };

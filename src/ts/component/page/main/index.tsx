@@ -332,9 +332,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
+		const favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
+			return it.isLink() && (it.content.targetBlockId == object.id);
+		});
 
 		let menuContext = null;
-		let favorites = []; 
 		let archive = null;
 		let link = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
@@ -344,16 +346,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			types = types.filter((it: string) => { return it != Constant.typeId.page; });
 		};
 
-		if (item.isBlock) {
-			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-				return it.isLink() && (it.content.targetBlockId == object.id);
-			});
-		};
-
 		if (favorites.length) {
-			link = { id: 'unlink', icon: 'unfav', name: 'Remove from Favorites' };
+			link = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			link = { id: 'link', icon: 'fav', name: 'Add to Favorites' };
+			link = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (object.isArchived) {
@@ -450,24 +446,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 							onArchive(false);
 							break;
 
-						case 'link':
-							const newBlock = {
-								type: I.BlockType.Link,
-								content: {
-									targetBlockId: object.id,
-								}
-							};
-							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+						case 'fav':
+							C.ObjectSetIsFavorite(object.id, true);
 							break;
 
-						case 'unlink':
-							let favorites = blockStore.getChildren(root, root, (it: I.Block) => { 
-								return it.isLink() && (it.content.targetBlockId == object.id);
-							}).map((it: I.Block) => { return it.id; });
-
-							if (favorites.length) {
-								C.BlockUnlink(root, favorites);
-							};
+						case 'unfav':
+							C.ObjectSetIsFavorite(object.id, false);
 							break;
 					};
 				},
