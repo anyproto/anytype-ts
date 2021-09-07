@@ -110,15 +110,20 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 									<TabItem key={i} {...item} />
 								))}
 							</div>
-							<div id="searchWrap" className="searchWrap" onClick={this.onSearch}>
-								<Icon className="search" />
-								<Filter 
-									ref={(ref: any) => { this.refFilter = ref; }} 
-									placeholder="" 
-									placeholderFocus="" 
-									value={filter}
-									onChange={this.onFilterChange}
-								/>
+							<div className="btns">
+								<div id="searchWrap" className="btn searchWrap" onClick={this.onSearch}>
+									<Icon className="search" />
+									<Filter 
+										ref={(ref: any) => { this.refFilter = ref; }} 
+										placeholder="" 
+										placeholderFocus="" 
+										value={filter}
+										onChange={this.onFilterChange}
+									/>
+								</div>
+								{tab == Tab.Recent ? (
+									<div className="btn" onClick={this.onClear}>Clear</div>
+								) : ''}
 							</div>
 						</div>
 						<ListIndex 
@@ -602,6 +607,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		return list;
+	};
+
+	onClear () {
+		const recent = crumbs.get(I.CrumbsType.Recent);
+		recent.ids = [];
+		crumbs.save(I.CrumbsType.Recent, recent);
 	};
 
 });
