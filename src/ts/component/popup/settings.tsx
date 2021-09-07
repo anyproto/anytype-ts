@@ -31,6 +31,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		error: '',
 		entropy: '',
 	};
+	pinConfirmed: boolean = false;
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
@@ -454,6 +455,17 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onPage (id: string) {
+		const pin = Storage.get('pin');
+		if (pin && (id == 'phrase') && !this.pinConfirmed) {
+			this.onConfirmPin = () => { 
+				this.pinConfirmed = true;
+				this.onPage('phrase');
+				this.pinConfirmed = false;
+			};
+			this.onPage('pinConfirm');
+			return;
+		};
+
 		if (id != 'phrase') {
 			this.onConfirmPhrase = null;
 		};
