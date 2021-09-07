@@ -106,6 +106,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const platform = Util.getPlatform();
 
 		if (!block) {
 			return [];
@@ -128,7 +129,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let link = { id: 'link', name: 'Link to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
+		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
 			return it.isLink() && (it.content.targetBlockId == rootId);
 		});
