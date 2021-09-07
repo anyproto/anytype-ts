@@ -131,11 +131,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
-		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-			return it.isLink() && (it.content.targetBlockId == rootId);
-		});
 
-		if (favorites.length) {
+		if (object.isFavorite) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
 			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
@@ -144,6 +141,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (object.isArchived) {
 			//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from archive' };
+			fav = null;
 		} else {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 		};
