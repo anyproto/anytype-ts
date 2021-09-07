@@ -32,23 +32,60 @@
 		}
 
 		video { height: 100%; }
+
+		.inner.audio { background-color: #f3f2ec; padding: 12px 18px; border-radius: 6px; overflow: hidden; }
+
+		.audioControls { width: 100%; height: 20px; line-height: 20px; white-space: nowrap; }
+		.audioControls {
+			.icon { vertical-align: top; }
+			.icon.play { width: 20px; height: 20px; background-image: url('~img/icon/audio/play.svg'); cursor: pointer; }
+			.icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
+
+			.icon.volume { width: 20px; height: 20px; margin-right: 8px; background-image: url('~img/icon/audio/volume.svg'); cursor: pointer; }
+			.icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
+
+			.time { 
+				display: inline-block; vertical-align: top; @include text-common; width: 100px; text-align: center;
+				font-weight: 500; line-height: 20px;
+			}
+
+			.line { width: 1px; height: 24px; margin: -2px 20px 0px 20px; background: #dfddd0; display: inline-block; vertical-align: middle; }
+
+			.input-drag { display: inline-block; vertical-align: top; height: 20px; }
+			.input-drag {
+				.icon { width: 6px; height: 6px; border: 0px; background: none;  }
+				.bullet { width: 6px; height: 6px; border-radius: 100%; background: #f09c0e; } 
+				.fill { background: #f09c0e; }
+				.back { background: #dfddd0; }
+			}
+
+			#time { margin: 0px 12px 0px 8px; width: 40%; }
+			#volume { width: 10%; margin-right: 8px; }
+		}
+
+		.inner.audio.vertical {
+			.audioControls { height: 56px; }
+			.line { display: block; width: 100%; height: 1px; margin: 8px 0px 7px 0px; }
+			#volume { width: 40%; }
+		}
 		
-		.icon.resize {
-			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
-			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+		.videoControls {
+			.icon.resize {
+				width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
+				background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+			}
+			.icon.play {
+				width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
+				background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
+				background-size: 24px 28px; background-position: 24px center;
+			}
+			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
 				
 		.icon.dots {
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
 		}
-		
-		.icon.play {
-			width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
-			background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
-			background-size: 24px 28px; background-position: 24px center;
-		}
-		.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 	}
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 

@@ -164,9 +164,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 			this.filter = filter.text;
 		};
 
+		this.resize();
 		this.props.setActive();
 		this.props.position();
-		this.resize();
 	};
 
 	componentWillUnmount () {

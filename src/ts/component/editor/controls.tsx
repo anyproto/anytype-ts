@@ -71,12 +71,10 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						</div>
 					) : ''}
 
-					{config.allowDataview ? (
-						<div id="button-relation" className="btn" onClick={this.onRelation}>
-							<Icon className="relation" />
-							<div className="txt">{translate('editorControlRelation')}</div>
-						</div>
-					) : ''}
+					<div id="button-relation" className="btn" onClick={this.onRelation}>
+						<Icon className="relation" />
+						<div className="txt">{translate('editorControlRelation')}</div>
+					</div>
 				</div>
 			</div>
 		);

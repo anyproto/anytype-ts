@@ -583,13 +583,6 @@ function menuInit () {
 			label: 'Sudo',
 			submenu: [
 				{
-					label: 'Dataview', type: 'checkbox', checked: config.allowDataview,
-					click: () => { 
-						setConfig({ allowDataview: !config.allowDataview });
-						win.reload();
-					}
-				},
-				{
 					label: 'Experimental', type: 'checkbox', checked: config.experimental,
 					click: () => { 
 						setConfig({ experimental: !config.experimental });

@@ -70,12 +70,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 	componentDidMount () {
 		this._isMounted = true;
 		this.resize();
-		this.bind();
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
 		this.resize();
-		this.bind();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -123,7 +123,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		C.BlockBookmarkFetch(rootId, id, url);
 	};
 	
-	bind () {
+	rebind () {
 		if (!this._isMounted) {
 			return;
 		};

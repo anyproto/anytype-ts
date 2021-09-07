@@ -5,6 +5,7 @@ export enum FileType {
 	File	 = 1,
 	Image	 = 2,
 	Video	 = 3,
+	Audio	 = 4,
 };
 
 export enum FileState {

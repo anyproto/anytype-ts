@@ -566,7 +566,6 @@ class Dispatcher {
 
 					switch (state) {
 						case I.ProgressState.Running:
-						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
 								status: translate('progress' + pt),
@@ -577,6 +576,7 @@ class Dispatcher {
 							});
 							break;
 
+						case I.ProgressState.Done:
 						case I.ProgressState.Canceled:
 							commonStore.progressClear();
 							break;
@@ -645,12 +645,6 @@ class Dispatcher {
 	};
 
 	blockTypeCheck (rootId: string) {
-		const { config } = commonStore;
-		
-		if (!config.allowDataview) {
-			return;
-		};
-
 		const object = detailStore.get(rootId, rootId, []);
 
 		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));

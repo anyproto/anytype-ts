@@ -6,8 +6,9 @@
 	.fill { height: 2px; background: #fff; width: 0px; position: absolute; left: 0px; top: 50%; margin-top: -1px; }
 	.icon { 
 		width: 12px; height: 12px; border: 2px solid #fff; border-radius: 12px; position: absolute; left: 0px; top: 50%; 
-		margin-top: -6px; transition: none; cursor: grab;
+		transform: translateY(-50%); transition: none; cursor: grab;
 	}
+	.bullet { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px); }
 }
 .input-drag.isDragging { cursor: grab; }
 

@@ -56,19 +56,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		);
 
 		let sectionPage = null;
-		if (block && block.isPage() && config.allowDataview) {
+		if (block && block.isPage() && config.sudo && restr.length) {
 			sectionPage = (
 				<React.Fragment>
-					{config.sudo && restr.length ? (
-						<div className="section">
-							<div className="name">Restrictions</div>
-							<div className="items">
-								{restr.map((item: any, i: number) => (
-									<div className="item" key={i}>{item || 'Empty'}</div>
-								))}
-							</div>
+					<div className="section">
+						<div className="name">Restrictions</div>
+						<div className="items">
+							{restr.map((item: any, i: number) => (
+								<div className="item" key={i}>{item || 'Empty'}</div>
+							))}
 						</div>
-					) : ''}
+					</div>
 				</React.Fragment>
 			);
 		};
@@ -108,6 +106,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { config } = commonStore;
 		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const platform = Util.getPlatform();
 
 		if (!block) {
 			return [];
@@ -130,7 +129,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let link = { id: 'link', name: 'Link to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
+		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
@@ -182,7 +181,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (!config.allowDataview || (object.type == Constant.typeId.page)) {
+			if (object.type == Constant.typeId.page) {
 				template = null;
 			};
 
@@ -269,9 +268,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
-		};
+		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		switch (item.id) {
 			case 'turnObject':
@@ -281,10 +278,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
@@ -308,10 +301,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
@@ -333,10 +322,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,

@@ -3,7 +3,7 @@
 .popups {
 	.popup.popupPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
-		.content { height: 100%; }
+		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
 		.page { padding: 0px; height: 100%; }
