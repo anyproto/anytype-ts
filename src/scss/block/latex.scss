@@ -11,8 +11,6 @@
 			.select { display: inline-block; }
 		}
 
-		.empty { text-align: center; }
-
 		.select { 
 			border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; display: none; 
 			margin-bottom: 10px; 
