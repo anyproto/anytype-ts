@@ -145,8 +145,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				const part = value.substr(filter.from, d).replace(/^\\/, '');
 				commonStore.filterSetText(part);
 			};
-
-			this.updateRect();
 		};
 
 		this.setContent(value);
