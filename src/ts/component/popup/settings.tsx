@@ -31,6 +31,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		error: '',
 		entropy: '',
 	};
+	prevPage: string = '';
 	pinConfirmed: boolean = false;
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
@@ -63,7 +64,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		let Head = (item: any) => (
 			<div className="head">
-				<div className="element" onClick={() => { this.onPage(item.id); }}>
+				<div className="element" onClick={() => { this.onPage(item.id || this.prevPage); }}>
 					<Icon className="back" />
 					{item.name}
 				</div>
@@ -154,7 +155,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						</div>
 
 						<div className="row">
-						<Label className="name" text={translate('popupSettingsPicture')} />
+							<Label className="name" text={translate('popupSettingsPicture')} />
 							<div className="covers">
 								{covers1.map((item: any, i: number) => (
 									<Item key={i} {...item} active={item.id == cover.id} />
@@ -256,7 +257,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'pinConfirm':
 				content = (
 					<div>
-						<Head id="pinIndex" name={translate('commonCancel')} />
+						<Head name={translate('commonCancel')} />
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinVerify')} />
 						<Error text={error} />
@@ -470,6 +471,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			this.onConfirmPhrase = null;
 		};
 
+		this.prevPage = this.state.page;
 		this.setState({ page: id });
 	};
 
