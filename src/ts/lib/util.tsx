@@ -501,6 +501,22 @@ class Util {
 		});
 	};
 
+	day (t: any): string {
+		t = Number(t) || 0;
+
+		const ct = this.date('d.m.Y', t);
+		if (ct == this.date('d.m.Y', this.time())) {
+			return 'Today';
+		};
+		if (ct == this.date('d.m.Y', this.time() + 86400)) {
+			return 'Tomorrow';
+		};
+		if (ct == this.date('d.m.Y', this.time() - 86400)) {
+			return 'Yesterday';
+		};
+		return '';
+	};
+
 	timeAgo (t: number): string {
 		if (!t) {
 			return '';
