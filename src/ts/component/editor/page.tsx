@@ -486,6 +486,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Mark-up
 		if (ids.length) {
 			let type = null;
+			let param = '';
 
 			// Bold
 			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
@@ -512,6 +513,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				type = I.MarkType.Link;
 			});
 
+			// BgColor
+			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
+				param = Storage.get('bgColor');
+				if (param) {
+					type = I.MarkType.BgColor;
+				};
+			});
+
+			// Color
+			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
+				param = Storage.get('color');
+				if (param) {
+					type = I.MarkType.Color;
+				};
+			});
+
 			if (type !== null) {
 				e.preventDefault();
 
@@ -530,7 +547,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						}
 					});
 				} else {
-					C.BlockListSetTextMark(rootId, ids, { type: type, param: '', range: { from: 0, to: 0 } });
+					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
 				};
 			};
 
@@ -744,6 +761,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Mark-up
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
+			let param = '';
 
 			// Bold
 			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
@@ -759,7 +777,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
 				type = I.MarkType.Strike;
 			});
-
+			
 			// Link
 			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
 				type = I.MarkType.Link;
@@ -770,11 +788,28 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				type = I.MarkType.Code;
 			});
 
+			// BgColor
+			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
+				param = Storage.get('bgColor');
+				if (param) {
+					type = I.MarkType.BgColor;
+				};
+			});
+
+			// Color
+			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
+				param = Storage.get('color');
+				if (param) {
+					type = I.MarkType.Color;
+				};
+			});
+
 			if (type !== null) {
 				e.preventDefault();
 
+				const mark = Mark.getInRange(marks, type, range);
+
 				if (type == I.MarkType.Link) {
-					const mark = Mark.getInRange(marks, type, range);
 					const el = $(`#block-${block.id}`);
 
 					let rect = Util.selectionRect();
@@ -802,7 +837,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						});
 					});
 				} else {
-					marks = Mark.toggle(marks, { type: type, range: range });
+					marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
 						focus.apply();
 					});
