@@ -86,9 +86,13 @@ class DataUtil {
 						break;
 						
 					case I.FileType.Image: 
+						c.push('blockMedia isImage');
+						break;
 					case I.FileType.Video: 
+						c.push('blockMedia isVideo');
+						break;
 					case I.FileType.Audio: 
-						c.push('blockMedia');
+						c.push('blockMedia isAudio');
 						break;
 				};
 				break;

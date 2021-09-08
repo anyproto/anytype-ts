@@ -33,7 +33,7 @@
 
 		video { height: 100%; }
 
-		.inner.audio { background-color: #f3f2ec; padding: 16px; border-radius: 6px; overflow: hidden; }
+		.inner.audio { padding: 16px; border-radius: 6px; overflow: hidden; }
 
 		.audioControls { width: 100%; min-width: 160px; white-space: nowrap; position: relative; }
 		.audioControls {
@@ -41,7 +41,7 @@
 				@include text-common; @include text-overflow-nw; display: inline-block; vertical-align: top; 
 				line-height: 20px; width: calc(100% - 26px); 
 			}
-			.icon { vertical-align: top; }
+			.icon { vertical-align: top; transition: none; }
 			.icon.play { width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/play.svg'); cursor: pointer; }
 			.icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
 
@@ -81,6 +81,8 @@
 		}
 	}
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
+
+	.block.blockMedia.isAudio > .wrapContent { background-color: #f3f2ec; border-radius: 6px; }
 
 	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.resize { display: none; }
 	
