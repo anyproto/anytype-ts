@@ -777,7 +777,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
 				type = I.MarkType.Strike;
 			});
-
+			
 			// Link
 			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
 				type = I.MarkType.Link;
