@@ -33,7 +33,7 @@
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
-		"audio": [ "mp3", "ogg", "wav" ]
+		"audio": [ "mp3", "m4a", "adts", "webm", "flac", "ogg", "wav" ]
 	},
 
 	"limit": {
