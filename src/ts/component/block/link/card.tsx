@@ -10,12 +10,17 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     iconSize: number;
     object: any;
     className?: string;
+    canEdit?: boolean;
+    onSelect?(id: string): void;
+	onUpload?(hash: string): void;
+	onCheckbox?(e: any): void;
+    onClick?(e: any): void;
 };
 
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withIcon, withCover, object, className } = this.props;
+        const { rootId, block, withIcon, withCover, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
         const { align } = block;
         const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
@@ -37,12 +42,12 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
         const sideLeft = withIcon ? (
             <div className="side left">
-                <IconObject size={iconSize} object={object} />
+                <IconObject size={iconSize} object={object} canEdit={canEdit} onSelect={onSelect} onUpload={onUpload} onCheckbox={onCheckbox} />
             </div>
         ) : null;
 
         const sideRight = (
-            <div className="side right">
+            <div className="side right" onClick={onClick}>
                 <div className="cardName">{name}</div>
                 <div className="cardDescription">{description}</div>
 

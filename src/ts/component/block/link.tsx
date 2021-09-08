@@ -85,7 +85,17 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 						<div className="archive">{translate('blockLinkArchived')}</div>
 						<div className="linkCards">
 							{cards.map((item: any, i: number) => (
-								<LinkCard key={i} {...this.props} {...item} object={object} />
+								<LinkCard 
+									key={i} 
+									{...this.props} 
+									{...item} 
+									object={object} 
+									canEdit={!readonly} 
+									onClick={this.onClick}
+									onSelect={this.onSelect} 
+									onUpload={this.onUpload}
+									onCheckbox={this.onCheckbox} 
+								/>
 							))}
 						</div>
 					</React.Fragment>
