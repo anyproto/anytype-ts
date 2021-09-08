@@ -93,6 +93,10 @@ class Drag extends React.Component<Props, {}> {
 		this.move(e.pageX - ox - iw / 2);
 		this.node.addClass('isDragging');
 		
+		if (onStart) {
+			onStart(this.value);
+		};
+
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
 			this.move(e.pageX - ox - iw / 2);
 
@@ -108,10 +112,6 @@ class Drag extends React.Component<Props, {}> {
 				onEnd(this.value);
 			};
 		});
-		
-		if (onStart) {
-			onStart(this.value);
-		};
 	};
 	
 	move (x: number) {
