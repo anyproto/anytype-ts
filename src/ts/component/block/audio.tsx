@@ -202,13 +202,10 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 
 	onPlay (e: any) {
-<<<<<<< Updated upstream
-=======
 		if (!this._isMounted) {
 			return;
 		};
 
->>>>>>> Stashed changes
 		const node = $(ReactDOM.findDOMNode(this));
 		const icon = node.find('.icon.play');
 		const el = node.find('#audio').get(0);
