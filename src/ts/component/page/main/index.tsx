@@ -359,7 +359,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (object.isReadonly || (object.id == profile)) {
+		if (object.isReadonly || object.templateIsBundled || (object.id == profile)) {
 			archive = null;
 		};
 
@@ -584,7 +584,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, []);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled' ]);
 					it.isBlock = true;
 					return it;
 				});
