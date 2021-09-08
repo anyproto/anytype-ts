@@ -33,7 +33,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	render () {
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;
+		const { state, hash, name, type, mime } = content;
 		
 		let element = null;
 		
@@ -69,6 +69,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
 						<div className="audioControls">
 							<Icon className="play" onClick={this.onPlay} />
+							<div className="name">{name}</div>
+
 							<Drag 
 								id="time" 
 								ref={(ref: any) => { this.refTime = ref; }} 
@@ -76,11 +78,12 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 								onMove={(v: number) => { this.onTime(v); }} 
 								onEnd={(v: number) => { this.onTimeEnd(v); }}
 							/>
+
 							<div className="time">
 								<span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
 								<span id="timeTotal" className="total">0:00</span>
 							</div>
-							<div className="line" />
+
 							<Icon className="volume" onClick={this.onMute} />
 							<Drag 
 								id="volume" 
@@ -154,15 +157,6 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 			return;
 		};
 
-		const { getWrapperWidth } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const inner = node.find('.inner');
-		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const width = rect.width;
-		const mw = getWrapperWidth();
-		
-		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
-		
 		if (this.refTime) {
 			this.refTime.resize();
 		};

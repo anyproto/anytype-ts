@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics } from 'ts/lib';
+import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics, Storage } from 'ts/lib';
 import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -46,7 +46,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		};
 		
 		let icon = DataUtil.styleIcon(type, style);
-		let colorMark = Mark.getInRange(marks, I.MarkType.TextColor, range) || {};
+		let colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
 		let color = (
@@ -79,7 +79,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				
 				{block.canHaveMarks() ? (
 					<div className="section">
-						<Icon id={`button-${blockId}-${I.MarkType.TextColor}`} className="color" inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.TextColor); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.Color}`} className="color" inner={color} tooltip="Сolor" onClick={(e: any) => { this.onMark(e, I.MarkType.Color); }} />
 						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" onClick={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
 					</div>
 				) : ''}
@@ -216,8 +216,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				menuId = 'blockLink';
 				break;
 				
-			case I.MarkType.TextColor:
-				mark = Mark.getInRange(marks, I.MarkType.TextColor, { from: from, to: to });
+			case I.MarkType.Color:
+				mark = Mark.getInRange(marks, I.MarkType.Color, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),
 					onChange: (param: string) => {
@@ -225,7 +225,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							return;
 						};
 
-						marks = Mark.toggle(marks, { type: I.MarkType.TextColor, param: param, range: { from: from, to: to } });
+						Storage.set('color', param);
+
+						marks = Mark.toggle(marks, { type: I.MarkType.Color, param: param, range: { from: from, to: to } });
 						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 					},
@@ -242,6 +244,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						if (!mark && !param) {
 							return;
 						};
+
+						Storage.set('bgColor', param);
 
 						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
 						menuStore.updateData(this.props.id, { marks: marks });
