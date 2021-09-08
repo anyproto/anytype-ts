@@ -30,6 +30,12 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
+		
+		let fields = block.fields || {};
+		let iconSize = fields.iconSize || I.LinkIconSize.Small;
+		let style = fields.style || I.LinkCardStyle.Text;
+		let withIcon = undefined === fields.withIcon ? true : fields.withIcon;
+		let { withCover, withDescription } = fields;
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -39,30 +45,8 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			cn.push('isArchived');
 		};
 
-		let cards: any[] = [];
-		let sizes = [ 24, 64, 96 ];
-		let options = [ {}, { withIcon: true },  { withCover: true }, { withIcon: true, withCover: true } ];
-		let classNames = [ 'text', 'card' ];
-
 		if (layout == I.ObjectLayout.Task) {
-			sizes = [ 16 ];
-		};
-
-		let addCard = (param: any) => {
-			param = Object.assign(param, param.option);
-			cards.push(param);
-		};
-
-		for (let className of classNames) {
-			for (let option of options) {
-				if (option.withIcon) {
-					for (let size of sizes) {
-						addCard({ option, className, iconSize: size });	
-					};
-				} else {
-					addCard({ option, className });
-				};
-			};
+			iconSize = 16;
 		};
 
 		return (
@@ -74,19 +58,20 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 					</div>
 				) : (
 					<React.Fragment>
-						{cards.map((item: any, i: number) => (
-							<LinkCard 
-								key={i} 
-								{...this.props} 
-								{...item} 
-								object={object} 
-								canEdit={!readonly} 
-								onClick={this.onClick}
-								onSelect={this.onSelect} 
-								onUpload={this.onUpload}
-								onCheckbox={this.onCheckbox} 
-							/>
-						))}
+					<LinkCard 
+						{...this.props} 
+						className={DataUtil.linkCardClass(style)}
+						iconSize={iconSize}
+						withIcon={withIcon}
+						withCover={withCover}
+						withDescription={withDescription}
+						object={object} 
+						canEdit={!readonly} 
+						onClick={this.onClick}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload}
+						onCheckbox={this.onCheckbox} 
+					/>
 					</React.Fragment>
 				)}
 			</div>

@@ -356,6 +356,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					type: I.BlockType.Link,
 					content: {
 						targetBlockId: String(item.id || ''),
+					},
+					fields: {
+						withIcon: true,
+						withCover: false,
+						withDescription: false,
+						iconSize: I.LinkIconSize.Small,
+						style: I.LinkCardStyle.Text,
 					}
 				};
 				C.BlockCreate(newBlock, rootId, blockId, position);

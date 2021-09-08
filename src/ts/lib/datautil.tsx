@@ -173,6 +173,16 @@ class DataUtil {
 		return c;
 	};
 
+	linkCardClass (v: I.LinkCardStyle): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.LinkCardStyle.Text:		 c = 'text'; break;
+			case I.LinkCardStyle.Card:		 c = 'card'; break;
+		};
+		return c;
+	};
+
 	dateFormat (v: I.DateFormat): string {
 		let f = '';
 		switch (v) {
