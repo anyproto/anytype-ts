@@ -86,10 +86,8 @@ class DataUtil {
 						break;
 						
 					case I.FileType.Image: 
-						c.push('blockMedia');
-						break;
-						
 					case I.FileType.Video: 
+					case I.FileType.Audio: 
 						c.push('blockMedia');
 						break;
 				};
@@ -609,8 +607,12 @@ class DataUtil {
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		];
+
 		if (config.experimental) {
-			ret.push({ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' });
+			ret = ret.concat([
+				{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
+				{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
+			]);
 		};
 
 		return ret.map(this.menuMapperBlock);
@@ -624,27 +626,23 @@ class DataUtil {
 		];
 		let i = 0;
 
-		if (config.allowDataview) {
-			let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
-			if (!config.debug.ho) {
-				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
-			};
-			objectTypes.sort(this.sortByName);
+		let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
+		};
+		objectTypes.sort(this.sortByName);
 
-			for (let type of objectTypes) {
-				ret.push({ 
-					type: I.BlockType.Page, 
-					id: 'object' + i++, 
-					objectTypeId: type.id, 
-					iconEmoji: type.iconEmoji, 
-					name: type.name || this.defaultName('page'), 
-					description: type.description,
-					isObject: true,
-					isHidden: type.isHidden,
-				});
-			};
-		} else {
-			ret.push({ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' });
+		for (let type of objectTypes) {
+			ret.push({ 
+				type: I.BlockType.Page, 
+				id: 'object' + i++, 
+				objectTypeId: type.id, 
+				iconEmoji: type.iconEmoji, 
+				name: type.name || this.defaultName('page'), 
+				description: type.description,
+				isObject: true,
+				isHidden: type.isHidden,
+			});
 		};
 
 		return ret.map(this.menuMapperBlock);
@@ -661,26 +659,24 @@ class DataUtil {
 		const { config } = commonStore;
 		const ret = [];
 
-		if (config.allowDataview) {
-			let objectTypes = dbStore.objectTypes;
-			if (!config.debug.ho) {
-				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-			};
-			objectTypes.sort(this.sortByName);
+		let objectTypes = dbStore.objectTypes;
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		};
+		objectTypes.sort(this.sortByName);
 
-			let i = 0;
-			for (let type of objectTypes) {
-				ret.push({ 
-					type: I.BlockType.Page, 
-					id: 'object' + i++, 
-					objectTypeId: type.id, 
-					iconEmoji: type.iconEmoji, 
-					name: type.name || this.defaultName('page'), 
-					description: type.description,
-					isObject: true,
-					isHidden: type.isHidden,
-				});
-			};
+		let i = 0;
+		for (let type of objectTypes) {
+			ret.push({ 
+				type: I.BlockType.Page, 
+				id: 'object' + i++, 
+				objectTypeId: type.id, 
+				iconEmoji: type.iconEmoji, 
+				name: type.name || this.defaultName('page'), 
+				description: type.description,
+				isObject: true,
+				isHidden: type.isHidden,
+			});
 		};
 
 		return ret.map(this.menuMapperBlock);
@@ -951,11 +947,12 @@ class DataUtil {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
 		});
+		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
 
 		for (let key of forceKeys) {
 			const relation = dbStore.getRelation(rootId, blockId, key);
 			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
-				relations.push(relation);
+				relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, relation);
 			};
 		};
 

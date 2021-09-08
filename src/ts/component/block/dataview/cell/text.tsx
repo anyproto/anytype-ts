@@ -133,13 +133,21 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Date) {
-				const format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
+				if (value !== null) {
+					value = Number(value) || 0;
 
-				if (viewRelation.includeTime) {
-					format.push(DataUtil.timeFormat(viewRelation.timeFormat));
+					const day = Util.day(value);
+					const date = day ? day : Util.date(DataUtil.dateFormat(viewRelation.dateFormat), value);
+					const time = Util.date(DataUtil.timeFormat(viewRelation.timeFormat), value);
+					
+					if (viewRelation.includeTime) {
+						value = [ date, time ].join((day ? ', ' : ' '));
+					} else {
+						value = date;
+					};
+				} else {
+					value = '';
 				};
-
-				value = value !== null ? Util.date(format.join(' '), Number(value)) : '';
 			};
 		};
 

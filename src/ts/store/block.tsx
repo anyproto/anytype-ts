@@ -459,10 +459,10 @@ class BlockStore {
 
 				const { from, to } = mark.range;
 				const object = detailStore.get(rootId, mark.param, [ Constant.relationKey.name ], true);
-				const old = String(text.substr(from, to - from) || '');
+				const old = text.substr(from, to - from);
 
 				if (old != object.name) {
-					const d = old.length - object.name.length;
+					const d = String(old || '').length - String(object.name || '').length;
 
 					text = Util.stringInsert(text, object.name, mark.range.from, mark.range.to);
 

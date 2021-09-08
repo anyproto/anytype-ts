@@ -137,6 +137,9 @@ class DetailStore {
 			layout: Number(object.layout) || I.ObjectLayout.Page,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
+			coverX: Number(object.coverX) || 0,
+			coverY: Number(object.coverY) || 0,
+			coverScale: Number(object.coverScale) || 1,
 		};
 	};
 

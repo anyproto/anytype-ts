@@ -77,7 +77,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		this.unbind();
 	};
 
-	bind () {
+	rebind () {
 		this.unbind();
 		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e); });
 	};
@@ -272,7 +272,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.item.hover').removeClass('hover');
 
-		this.bind();
+		this.rebind();
 	};
 
 	onFilterChange (e: any) {

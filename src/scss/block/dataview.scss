@@ -32,7 +32,7 @@
 			.viewItem:last-child { margin: 0px; }
 			.viewItem:hover, .viewItem.active { color: $colorBlack; }
 			
-			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
+			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
 			.viewItem.btn { line-height: 20px; }
 
 			.first { display: none; }

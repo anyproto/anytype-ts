@@ -3,7 +3,6 @@ export interface Account {
 };
 
 export interface AccountConfig {
-	allowDataview: boolean;
 };
 
 export enum Platform {

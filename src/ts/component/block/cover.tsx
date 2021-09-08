@@ -118,12 +118,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							</div>
 						) : ''}
 
-						{config.allowDataview ? (
-							<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
-								<Icon className="relation" />
-								<div className="txt">{translate('editorControlRelation')}</div>
-							</div>
-						) : ''}
+						<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
+							<Icon className="relation" />
+							<div className="txt">{translate('editorControlRelation')}</div>
+						</div>
 					</div>
 				</React.Fragment>
 			);

@@ -155,8 +155,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	load (clear: boolean, callBack?: (message: any) => void) {
 		const { filter } = commonStore;
 		const { config } = commonStore;
-		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
 					blockStore.storeType,
@@ -171,10 +171,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
-		};
-		if (!config.allowDataview) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Page });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
 		};
 
 		this.setState({ loading: true });
@@ -194,21 +190,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					name: String(it.name || DataUtil.defaultName('page')),
 				};
 			}));
-			this.items = this.items.filter(filterMapper);
 			this.items.sort(DataUtil.sortByName);
 
 			this.setState({ loading: false });
 		});
-	};
-
-	filterMapper (it: any, config: any) {
-		if (it.isArchived) {
-			return false;
-		};
-		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
-			return false;
-		};
-		return true;
 	};
 
 	onOver (e: any, item: any) {

@@ -51,7 +51,9 @@ class Drag extends React.Component<Props, {}> {
 			<div id={id} className={cn.join(' ')} onMouseDown={this.start}>
 				<div id="back" className="back"></div>
 				<div id="fill" className="fill"></div>
-				<Icon id="icon" />
+				<div id="icon" className="icon">
+					<div className="bullet" />
+				</div>
 			</div>
 		);
 	};
@@ -81,7 +83,7 @@ class Drag extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		const { onStart } = this.props;
+		const { onStart, onMove, onEnd } = this.props;
 		const win = $(window);
 		const iw = this.icon.width();
 		const ox = this.node.offset().left;
@@ -91,10 +93,18 @@ class Drag extends React.Component<Props, {}> {
 		
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
 			this.move(e.pageX - ox - iw / 2);
+
+			if (onMove) {
+				onMove(this.value);
+			};
 		});
 		
 		win.unbind('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
 			this.end(e);
+
+			if (onEnd) {
+				onEnd(this.value);
+			};
 		});
 		
 		if (onStart) {
@@ -103,9 +113,10 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	move (x: number) {
-		const { onMove, snap } = this.props;
+		const { snap } = this.props;
 		const nw = this.node.width();
 		const iw = this.icon.width();
+		const ib = parseInt(this.icon.css('border-width'));
 		const mw = this.maxWidth();
 		
 		x = Math.max(0, x);
@@ -118,14 +129,10 @@ class Drag extends React.Component<Props, {}> {
 		x = this.value * mw;
 
 		const w = Math.min(nw, x + iw / 2);
-		
+
 		this.icon.css({ left: x });
-		this.back.css({ left: (w + 8), width: (nw - w - 8) });
-		this.fill.css({ width: (w - 2) });
-		
-		if (onMove) {
-			onMove(this.value);
-		};
+		this.back.css({ left: (w + iw / 2 + ib), width: (nw - w - iw / 2 - ib) });
+		this.fill.css({ width: (w - ib) });
 	};
 	
 	maxWidth () {
@@ -133,15 +140,10 @@ class Drag extends React.Component<Props, {}> {
 	};
 	
 	end (e: any) {
-		const { onEnd } = this.props;
 		const win = $(window);
 		
 		win.unbind('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
 		this.node.removeClass('isDragging');
-		
-		if (onEnd) {
-			onEnd(this.value);
-		};
 	};
 	
 	checkValue (v: number): number {

@@ -140,7 +140,6 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const value = record[relation.relationKey] || '';
 
-		$('.cell.isEditing').removeClass('isEditing');
 		cell.addClass('isEditing');
 
 		if (cellPosition) {
