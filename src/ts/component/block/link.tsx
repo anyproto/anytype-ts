@@ -28,7 +28,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId);
-		const { _empty_, name, isArchived, done, layout } = object;
+		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
 
 		if ((layout == I.ObjectLayout.Task) && done) {
@@ -43,6 +43,10 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		let sizes = [ 24, 64, 96 ];
 		let options = [ {}, { withIcon: true },  { withCover: true }, { withIcon: true, withCover: true } ];
 		let classNames = [ 'text', 'card' ];
+
+		if (layout == I.ObjectLayout.Task) {
+			sizes = [ 16 ];
+		};
 
 		let addCard = (param: any) => {
 			param = Object.assign(param, param.option);
@@ -69,7 +73,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 						<div className="name">{translate('blockLinkSyncing')}</div>
 					</div>
 				) : (
-					<div className="linkCards">
+					<React.Fragment>
 						{cards.map((item: any, i: number) => (
 							<LinkCard 
 								key={i} 
@@ -83,7 +87,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 								onCheckbox={this.onCheckbox} 
 							/>
 						))}
-					</div>
+					</React.Fragment>
 				)}
 			</div>
 		);

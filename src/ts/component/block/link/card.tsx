@@ -20,7 +20,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withIcon, withCover, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
+        const { rootId, block, withIcon, withCover, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
         const { align } = block;
         const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
@@ -33,16 +33,18 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             cn.push('withCover');
         };
 
-        let iconSize = this.props.iconSize;
-        if (layout == I.ObjectLayout.Task) {
-            iconSize = 16;
-        };
-
         cn.push('c' + iconSize);
 
         const sideLeft = withIcon ? (
             <div className="side left">
-                <IconObject size={iconSize} object={object} canEdit={canEdit} onSelect={onSelect} onUpload={onUpload} onCheckbox={onCheckbox} />
+                <IconObject 
+                    size={iconSize} 
+                    object={object} 
+                    canEdit={canEdit} 
+                    onSelect={onSelect} 
+                    onUpload={onUpload} 
+                    onCheckbox={onCheckbox} 
+                />
             </div>
         ) : null;
 
@@ -75,7 +77,16 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 		return (
 			<div className={cn.join(' ')} onMouseDown={onClick}>
                 {withCover && coverId && coverType ? (
-                    <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true}>
+                    <Cover 
+                        type={coverType} 
+                        id={coverId} 
+                        image={coverId} 
+                        className={coverId} 
+                        x={coverX} 
+                        y={coverY} 
+                        scale={coverScale} 
+                        withScale={true}
+                    >
                         {content}
                     </Cover>
                 ) : (
