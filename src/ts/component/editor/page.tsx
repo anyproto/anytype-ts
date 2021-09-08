@@ -807,8 +807,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			if (type !== null) {
 				e.preventDefault();
 
+				const mark = Mark.getInRange(marks, type, range);
+
 				if (type == I.MarkType.Link) {
-					const mark = Mark.getInRange(marks, type, range);
 					const el = $(`#block-${block.id}`);
 
 					let rect = Util.selectionRect();
@@ -836,7 +837,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						});
 					});
 				} else {
-					marks = Mark.toggle(marks, { type: type, param: param, range: range });
+					console.log(mark);
+					marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
 						focus.apply();
 					});
