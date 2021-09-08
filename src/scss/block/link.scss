@@ -31,10 +31,10 @@
             .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
 
             .side.right {
-                .cardName { @include text-paragraph; margin-bottom: 2px; max-width: 100%; }
+                .cardName { @include text-paragraph; max-width: 100%; }
                 .cardDescription { 
                     @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
-                    -webkit-box-orient: vertical; display: -webkit-box; margin-bottom: 6px;
+                    -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 6px 0px;
                 }
             }
 
@@ -54,7 +54,10 @@
                 }
             }
         }
-        .linkCard.c24 {
+        
+        .linkCard.c24, .linkCard.c16 { margin: 0px; }
+        .linkCard.c24, .linkCard.c16 {
+            .cardName { font-weight: 400 !important; }
             .side.left { margin-right: 6px; }
         }
 
