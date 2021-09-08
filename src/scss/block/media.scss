@@ -35,7 +35,7 @@
 
 		.inner.audio { padding: 16px; border-radius: 6px; overflow: hidden; }
 
-		.audioControls { width: 100%; min-width: 160px; white-space: nowrap; position: relative; }
+		.audioControls { width: 100%; min-width: 160px; white-space: nowrap; position: relative; text-align: left; }
 		.audioControls {
 			.name { 
 				@include text-common; @include text-overflow-nw; display: inline-block; vertical-align: top; 
