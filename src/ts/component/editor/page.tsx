@@ -837,7 +837,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						});
 					});
 				} else {
-					console.log(mark);
 					marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
 						focus.apply();
