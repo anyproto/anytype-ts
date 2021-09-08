@@ -135,7 +135,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 		if (el.length) {
 			el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
-			el.on('end', () => { icon.removeClass('active'); });
+			el.on('ended pause', () => { icon.removeClass('active'); });
 		};
 	};
 	
@@ -148,7 +148,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio');
 
 		if (el.length) {
-			el.unbind('canplay playing end');
+			el.unbind('canplay playing ended pause');
 		};
 	};
 
@@ -202,6 +202,13 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 
 	onPlay (e: any) {
+<<<<<<< Updated upstream
+=======
+		if (!this._isMounted) {
+			return;
+		};
+
+>>>>>>> Stashed changes
 		const node = $(ReactDOM.findDOMNode(this));
 		const icon = node.find('.icon.play');
 		const el = node.find('#audio').get(0);
