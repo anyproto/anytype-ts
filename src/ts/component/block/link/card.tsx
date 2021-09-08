@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Cover, Block } from 'ts/component';
-import { I, M, DataUtil } from 'ts/lib';
+import { IconObject, Cover } from 'ts/component';
+import { I, M, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
@@ -47,9 +47,10 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         ) : null;
 
         const sideRight = (
-            <div className="side right" onClick={onClick}>
+            <div className="side right">
                 <div className="cardName">{name}</div>
                 <div className="cardDescription">{description}</div>
+                <div className="archive">{translate('blockLinkArchived')}</div>
 
                 {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
             </div>
@@ -72,7 +73,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         );
 
 		return (
-			<div className={cn.join(' ')}>
+			<div className={cn.join(' ')} onMouseDown={onClick}>
                 {withCover && coverId && coverType ? (
                     <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true}>
                         {content}

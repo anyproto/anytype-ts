@@ -263,6 +263,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		if (canEdit) {
+			e.preventDefault();
 			e.stopPropagation();
 
 			if (layout == I.ObjectLayout.Task) {
