@@ -88,6 +88,8 @@ class Drag extends React.Component<Props, {}> {
 		const iw = this.icon.width();
 		const ox = this.node.offset().left;
 		
+		$('body').addClass('grab');
+
 		this.move(e.pageX - ox - iw / 2);
 		this.node.addClass('isDragging');
 		
@@ -135,15 +137,17 @@ class Drag extends React.Component<Props, {}> {
 		this.fill.css({ width: (w - ib) });
 	};
 	
-	maxWidth () {
-		return this.node.width() - this.icon.width();
-	};
-	
 	end (e: any) {
 		const win = $(window);
 		
 		win.unbind('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
+
+		$('body').removeClass('grab');
 		this.node.removeClass('isDragging');
+	};
+
+	maxWidth () {
+		return this.node.width() - this.icon.width();
 	};
 	
 	checkValue (v: number): number {

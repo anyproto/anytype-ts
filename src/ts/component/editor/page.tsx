@@ -516,17 +516,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// BgColor
 			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
 				param = Storage.get('bgColor');
-				if (param) {
-					type = I.MarkType.BgColor;
-				};
+				type = I.MarkType.BgColor;
 			});
 
 			// Color
 			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
 				param = Storage.get('color');
-				if (param) {
-					type = I.MarkType.Color;
-				};
+				type = I.MarkType.Color;
 			});
 
 			if (type !== null) {
@@ -791,17 +787,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			// BgColor
 			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
 				param = Storage.get('bgColor');
-				if (param) {
-					type = I.MarkType.BgColor;
-				};
+				type = I.MarkType.BgColor;
 			});
 
 			// Color
 			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
 				param = Storage.get('color');
-				if (param) {
-					type = I.MarkType.Color;
-				};
+				type = I.MarkType.Color;
 			});
 
 			if (type !== null) {

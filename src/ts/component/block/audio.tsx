@@ -223,7 +223,6 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-		const icon = node.find('.icon.play');
 		const el = node.find('#audio').get(0);
 		const paused = el.paused;
 
@@ -237,9 +236,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-
 		node.find('#audio').get(0).play();
-		node.find('.icon.play').addClass('active');
 	};
 
 	pause () {
@@ -248,9 +245,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
-
 		node.find('#audio').get(0).pause();
-		node.find('.icon.play').removeClass('active');
 	};
 
 	onMute () {
@@ -271,7 +266,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		if (!this._isMounted) {
 			return;
 		};
-		
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 
@@ -315,6 +310,10 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 
 	onTimeUpdate () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 		if (!el) {

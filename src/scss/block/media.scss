@@ -59,7 +59,10 @@
 			}
 
 			#time { margin: 6px 0px; width: 100%; display: block; }
-			#volume { width: 40px; }
+			#volume { width: 40px; opacity: 0; transition: opacity 0.2s ease-in-out; }
+		}
+		.audioControls:hover {
+			#volume { opacity: 1; }
 		}
 
 		.videoControls {
