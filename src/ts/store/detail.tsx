@@ -93,24 +93,20 @@ class DetailStore {
 	};
 
     delete (rootId: string, id: string, keys: string[]) {
-		const map = this.map.get(rootId);
-		if (!map) {
-			return;
-		};
-
-		let list = map.get(id);
-		if (!list) {
-			return;
-		};
+		let map = this.map.get(rootId);
+		let list = this.getArray(rootId, id);
 
 		list = list.filter((it: Detail) => { return keys.indexOf(it.relationKey) < 0 });
 		map.set(id, list);
 	};
 
-    get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+	getArray (rootId: string, id: string): any[] {
 		let map = this.map.get(rootId) || new Map();
-		let list = map.get(id) || [];
+		return map.get(id) || [];
+	};
 
+    get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+		let list = this.getArray(rootId, id);
 		if (!list.length) {
 			return { _empty_: true };
 		};

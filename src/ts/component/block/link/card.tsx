@@ -8,7 +8,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     withIcon?: boolean;
     withCover?: boolean;
     iconSize: number;
-    align: I.BlockAlign;
     object: any;
     className?: string;
 };
@@ -16,8 +15,9 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withIcon, withCover, object, className, align } = this.props;
-        const { id, layout, coverType, coverId, coverX, coverY, coverScale, layoutAlign, name, description } = object;
+        const { rootId, block, withIcon, withCover, object, className } = this.props;
+        const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
+        const { align } = block;
         const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
         const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
 
@@ -46,7 +46,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
                 <div className="cardName">{name}</div>
                 <div className="cardDescription">{description}</div>
 
-                <Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />
+                {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
             </div>
         ); 
 
