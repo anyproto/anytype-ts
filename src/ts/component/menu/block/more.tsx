@@ -119,7 +119,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let template = null;
 		let archive = null;
-		let linkRoot = null;
+		let fav = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
@@ -130,24 +130,22 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
-		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-			return it.isLink() && (it.content.targetBlockId == rootId);
-		});
 
-		if (favorites.length) {
-			linkRoot = { id: 'unlinkRoot', icon: 'unfav', name: 'Remove from Favorites' };
+		if (object.isFavorite) {
+			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (object.isArchived) {
 			//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from archive' };
+			fav = null;
 		} else {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (!allowedDetails || (object.id == profile)) {
+		if (!allowedDetails || object.isReadonly || (object.id == profile)) {
 			archive = null;
 		};
 
@@ -155,7 +153,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
 			sections = [
 				{ children: [ archive ] },
-				{ children: [ linkRoot, link ] },
+				{ children: [ fav, link ] },
 				{ children: [ print ] },
 			];
 
@@ -189,7 +187,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			sections = [
 				{ children: [ undo, redo, history, archive ] },
-				{ children: [ linkRoot, link, template ] },
+				{ children: [ fav, link, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
@@ -464,7 +462,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'archivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
+				C.ObjectSetIsArchived(rootId, true, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -485,7 +483,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'unarchivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], false, (message: any) => {
+				C.ObjectSetIsArchived(rootId, false, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -496,24 +494,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'linkRoot':
-				const newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: block.id,
-					}
-				};
-				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+			case 'fav':
+				C.ObjectSetIsFavorite(rootId, true);
 				break;
 
-			case 'unlinkRoot':
-				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
-					return it.isLink() && (it.content.targetBlockId == rootId);
-				}).map((it: I.Block) => { return it.id; });
-
-				if (favorites.length) {
-					C.BlockUnlink(blockStore.root, favorites);
-				};
+			case 'unfav':
+				C.ObjectSetIsFavorite(rootId, false);
 				break;
 
 			case 'remove':
