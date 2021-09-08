@@ -327,7 +327,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const { tab } = this.state;
 		const { root, recent, profile } = blockStore;
-		const { config } = commonStore;
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
