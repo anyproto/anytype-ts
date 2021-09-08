@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Icon, Loader, Error, Drag } from 'ts/component';
-import { I, C, translate, focus, Util } from 'ts/lib';
+import { I, C, translate, focus, Util, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -168,6 +168,20 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
+
+		let ret = false;
+
+		keyboard.shortcut('space', e, (pressed: string) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			this.onPlay(e);
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
 		
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 });
