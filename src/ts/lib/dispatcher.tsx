@@ -572,7 +572,7 @@ class Dispatcher {
 								current: progress.getDone(),
 								total: progress.getTotal(),
 								isUnlocked: true,
-								canCancel: true,
+								canCancel: pt != I.ProgressType.Recover,
 							});
 							break;
 
