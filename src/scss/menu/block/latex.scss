@@ -24,9 +24,9 @@
 
 		.item { padding: 0px; text-align: center; }
 		.item {
-			.inner { border: 1px solid $colorLightGrey; border-radius: 4px; height: 70px; }
-			.math { border: 0px; text-align: center; width: 100%; height: auto; }
-			.name { display: block; vertical-align: top; }
+			.inner { border: 1px solid $colorLightGrey; padding: 6px; border-radius: 4px; height: 70px; overflow: hidden; }
+			.math { border: 0px; text-align: center; width: 100%; height: auto; position: static; }
+			.name { display: block; }
 		}
 
 		.sectionName { padding: 5px 0px; }

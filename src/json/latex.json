@@ -4,41 +4,41 @@
         "name": "Templates",
         "children": [
 						{
-                "rendered": "$e = m*c^2$",
-                "comment": "`e = m*c^2`"
+                "comment": "`e = m*c^2`",
+                "name": "Формула1"
             },
-						{
-								"rendered": "$\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}$",
-								"comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`"
-						},
-						{
-								"rendered": "$\\cfrac{a}{1 + b}$",
-								"comment": "`\\cfrac{a}{1 + b}`"
-						},
-						{
-								"rendered": "$\\dbinom{n}{k}$",
-								"comment": "`\\dbinom{n}{k}`"
-						},
-						{
-								"rendered": "$\\begin{matrix} a & b \\\\ c & d \\end{matrix}$",
-								"comment": "`\\begin{matrix} a & b \\\\ c & d \\end{matrix}`"
-						},
-						{
-								"rendered": "$\\begin{Bmatrix} 0 & -1 \\\\ -1 & 0 \\end{Bmatrix}$",
-								"comment": "`\\begin{Bmatrix} 0 & -1 \\\\ -1 & 0 \\end{Bmatrix}`"
-						},
-						{
-								"rendered": "$\\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}$",
-								"comment": "`\\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`"
-						},
-						{
-								"rendered": "$\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij}$",
-								"comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij}`"
-						},
-						{
-								"rendered": "$\\ce{C6H5-CHO}$",
-								"comment": "`\\ce{C6H5-CHO}`"
-						}
+            {
+                "comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`",
+                "name": "Формула2"
+            },
+            {
+                "comment": "`\\cfrac{a}{1 + b}`",
+                "name": "Формула3"
+            },
+            {
+                "comment": "`\\dbinom{n}{k}`",
+                "name": "Формула4"
+            },
+            {
+                "comment": "`\\begin{matrix} a & b \\\\ c & d \\end{matrix}`",
+                "name": "Формула5"
+            },
+            {
+                "comment": "`\\begin{Bmatrix} 0 & -1 \\\\ -1 & 0 \\end{Bmatrix}`",
+                "name": "Формула6"
+            },
+            {
+                "comment": "`\\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`",
+                "name": "Формула7"
+            },
+            {
+                "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij}`",
+                "name": "Формула8"
+            },
+            {
+                "comment": "`\\ce{C6H5-CHO}`",
+                "name": "Формула9"
+            }
 		]
 	},
     {

@@ -45,6 +45,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onMenu = this.onMenu.bind(this);
+		this.onTemplate = this.onTemplate.bind(this);
 	};
 
 	render () {
@@ -53,7 +54,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
-				<div id="select" className="select" onClick={(e: any) => { this.onMenu(e, 'select', true); this.onEdit(e); }}>
+				<div id="select" className="select" onClick={this.onTemplate}>
 					<div className="name">Template formula</div>
 					<Icon className="arrow light" />
 				</div>
@@ -90,16 +91,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { block } = this.props;
-
 		if (isEditing) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('#input');
 
 			setRange(input.get(0), this.range);
 		};
-
-		this.placeholderCheck(block.content.text);
 	};
 	
 	componentWillUnmount () {
@@ -109,7 +106,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onKeyDown (e: any) {
 		const { filter } = commonStore;
-		const menuOpen = menuStore.isOpen('blockLatex');
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
@@ -126,12 +122,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { filter } = commonStore;
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
-		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 		const el: any = input.get(0);
 		const range = getRange(el);
-		const symbolBefore = value[range.start - 1];
+		const symbolBefore = value[range?.start - 1];
 		
 		let menuOpen = menuStore.isOpen('blockLatex');
 
@@ -180,6 +175,16 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		keyboard.setFocus(false);
 	};
 
+	onTemplate (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const el: any = input.get(0);
+		const range = getRange(el);
+
+		commonStore.filterSet(range?.start, '');
+		this.onMenu(e, 'select', true);
+	};
+
 	onMenu (e: any, element: string, isTemplate: boolean) {
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
@@ -211,7 +216,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					rootId: rootId,
 					blockId: block.id,
 					onSelect: (from: number, to: number, item: any) => {
-						this.setValue(Util.stringInsert(this.getValue(), item.comment || item.name, from, to));
+						this.setValue(Util.stringInsert(this.getValue(), item.symbol || item.comment, from, to));
 
 						const value = this.getValue();
 						setRange(el, { start: value.length, end: value.length });
@@ -270,13 +275,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const empty = node.find('#empty');
 
+		value = value.trim();
 		value.length ? empty.hide() : empty.show();
 	};
 
 	onEdit (e: any) {
-		const { rootId, block, readonly, isPopup } = this.props;
-		const container = Util.getPageContainer(isPopup ? 'popup' : 'page');
-
+		const { rootId, block, readonly } = this.props;
 		if (readonly) {
 			return;
 		};
@@ -290,6 +294,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			};
 
 			menuStore.close('blockLatex');
+			this.placeholderCheck(this.getValue());
 
 			C.BlockUpdateContent({ 
 				...block, 
