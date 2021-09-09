@@ -104,6 +104,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		$(window).unbind('click.latex');
 	};
 
 	onKeyDown (e: any) {

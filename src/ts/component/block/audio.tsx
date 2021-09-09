@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { InputWithFile, Icon, Loader, Error, Drag } from 'ts/component';
-import { I, C, translate, focus, Util } from 'ts/lib';
+import { I, C, translate, focus, Util, keyboard } from 'ts/lib';
 import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -33,7 +33,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	render () {
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { state, hash, type, mime } = content;
+		const { state, hash, name, type, mime } = content;
 		
 		let element = null;
 		
@@ -65,22 +65,28 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div className="inner resizable audio">
+					<div className="wrap resizable audio">
 						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
 						<div className="audioControls">
 							<Icon className="play" onClick={this.onPlay} />
+							<div className="name">
+								<span>{name}</span>
+							</div>
+
 							<Drag 
 								id="time" 
 								ref={(ref: any) => { this.refTime = ref; }} 
 								value={0} 
+								onStart={(v: number) => { this.onTime(v); }} 
 								onMove={(v: number) => { this.onTime(v); }} 
 								onEnd={(v: number) => { this.onTimeEnd(v); }}
 							/>
+
 							<div className="time">
 								<span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
 								<span id="timeTotal" className="total">0:00</span>
 							</div>
-							<div className="line" />
+
 							<Icon className="volume" onClick={this.onMute} />
 							<Drag 
 								id="volume" 
@@ -132,7 +138,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 		if (el.length) {
 			el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
-			el.on('end', () => { icon.removeClass('active'); });
+			el.on('play', () => { 
+				node.addClass('isPlaying');
+				icon.addClass('active'); 
+			});
+			el.on('ended pause', () => { 
+				node.removeClass('isPlaying');
+				icon.removeClass('active'); 
+			});
 		};
 	};
 	
@@ -145,7 +158,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		const el = node.find('#audio');
 
 		if (el.length) {
-			el.unbind('canplay playing end');
+			el.unbind('canplay timeupdate play ended pause');
 		};
 	};
 
@@ -154,15 +167,6 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 			return;
 		};
 
-		const { getWrapperWidth } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
-		const inner = node.find('.inner');
-		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const width = rect.width;
-		const mw = getWrapperWidth();
-		
-		width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
-		
 		if (this.refTime) {
 			this.refTime.resize();
 		};
@@ -174,6 +178,20 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
+
+		let ret = false;
+
+		keyboard.shortcut('space', e, (pressed: string) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			this.onPlay();
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
 		
 		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 });
@@ -207,24 +225,42 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 		C.BlockUpload(rootId, id, '', path);
 	};
 
-	onPlay (e: any) {
+	onPlay () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
-		const icon = node.find('.icon.play');
 		const el = node.find('#audio').get(0);
 		const paused = el.paused;
 
 		$('audio, video').each((i: number, item: any) => { item.pause(); });
-
-		if (paused) {
-			el.play();
-			icon.addClass('active');
-		} else {
-			el.pause();
-			icon.removeClass('active');
-		};
+		paused ? this.play() : this.pause();
 	};
 
-	onMute (e: any) {
+	play () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#audio').get(0).play();
+	};
+
+	pause () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#audio').get(0).pause();
+	};
+
+	onMute () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 
@@ -235,6 +271,10 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 
 	onVolume (v: number) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 
@@ -243,6 +283,10 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 
 	setVolumeIcon () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 		const icon = node.find('.icon.volume');
@@ -251,27 +295,33 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 	};
 
 	onTime (v: number) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 		const paused = el.paused;
 
 		if (!paused) {
-			el.pause();
+			this.pause();
 			this.playOnSeek = true;
 		};
+
 		el.currentTime = Number(v * el.duration) || 0;
 	};
 
 	onTimeEnd (v: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const el = node.find('#audio').get(0);
-
 		if (this.playOnSeek) {
-			el.play();
+			this.play();
 		};
 	};
 
 	onTimeUpdate () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#audio').get(0);
 		if (!el) {

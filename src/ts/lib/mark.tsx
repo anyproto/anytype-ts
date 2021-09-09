@@ -230,7 +230,7 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-		let hasParam = [ I.MarkType.Link, I.MarkType.TextColor, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
+		let hasParam = [ I.MarkType.Link, I.MarkType.Color, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -509,7 +509,7 @@ class Mark {
 				attr = 'contenteditable="false"';
 				break;
 				
-			case I.MarkType.TextColor:
+			case I.MarkType.Color:
 				attr = 'class="textColor textColor-' + param + '"';
 				break;
 				

@@ -13,6 +13,7 @@ body {
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; }
+body.grab { cursor: grab !important; }
 body.fullScreen {
 	#drag { display: none; }
 }

@@ -604,15 +604,6 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.request('blockListSetAlign', request, callBack);
 };
 
-const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Page.IsArchived.Request();
-
-	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setIsarchived(isArchived);
-
-	dispatcher.request('blockListSetPageIsArchived', request, callBack);
-};
 
 const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Delete.Page.Request();
@@ -1022,6 +1013,24 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request('objectSetLayout', request, callBack);
 };
 
+const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) =>  {
+	const request = new Rpc.Object.SetIsFavorite.Request();
+	
+	request.setContextid(contextId);
+    request.setIsfavorite(isFavorite);
+
+	dispatcher.request('objectSetIsFavorite', request, callBack);
+};
+
+const ObjectSetIsArchived = (contextId: string, isArchived: boolean, callBack?: (message: any) => void) =>  {
+	const request = new Rpc.Object.SetIsArchived.Request();
+	
+	request.setContextid(contextId);
+    request.setIsarchived(isArchived);
+
+	dispatcher.request('objectSetIsArchived', request, callBack);
+};
+
 const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 	
@@ -1137,7 +1146,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListSetPageIsArchived,
 	BlockListDeletePage,
 
 	BlockDataviewViewCreate,
@@ -1187,6 +1195,8 @@ export {
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
 	ObjectSetLayout,
+	ObjectSetIsFavorite,
+	ObjectSetIsArchived,
 	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,

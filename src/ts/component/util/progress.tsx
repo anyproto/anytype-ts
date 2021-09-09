@@ -109,7 +109,8 @@ const Progress = observer(class Progress extends React.Component<Props, {}> {
 	};
 
 	onDragMove (e: any) {
-		const { x, y } = this.checkCoords(e.pageX - this.dx, e.pageY - this.dy);
+		const win = $(window);
+		const { x, y } = this.checkCoords(e.pageX - this.dx - win.scrollLeft(), e.pageY - this.dy - win.scrollTop());
 
 		this.setStyle(this.obj, x, y);
 		Storage.set('progress', { x, y });

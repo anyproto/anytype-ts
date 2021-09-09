@@ -45,10 +45,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
+		const isAudio = file?.isFileAudio();
 		const cn = [ 'blocks' ];
 
-		if (isVideo || isImage) {
-			if (isVideo || (object.widthInPixels > object.heightInPixels)) {
+		if (isVideo || isImage || isAudio) {
+			if (isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
@@ -58,6 +59,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 			};
 			if (isImage) {
 				cn.push('isImage');
+			};
+			if (isAudio) {
+				cn.push('isAudio');
 			};
 		} else {
 			cn.push('vertical');
@@ -75,7 +79,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 					{file ? (
 						<React.Fragment>
 							<div className="side left">
-								{isVideo || isImage ? (
+								{isVideo || isImage || isAudio ? (
 									<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
 								) : (
 									<IconObject object={object} size={96} />

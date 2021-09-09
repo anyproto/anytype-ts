@@ -221,6 +221,10 @@ class Block implements I.Block {
 		return this.isFile() && (this.content.type == I.FileType.Video);
 	};
 
+	isFileAudio (): boolean {
+		return this.isFile() && (this.content.type == I.FileType.Audio);
+	};
+
 	isBookmark (): boolean {
 		return this.type == I.BlockType.Bookmark;
 	};
