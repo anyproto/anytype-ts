@@ -39,7 +39,7 @@
 		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {
 			.input-drag { width: 96px; }
-			.number { width: calc(100% - 106px); }
+			.number { width: calc(100% - 106px); white-space: nowrap; }
 		}
 	
 		.btn { 

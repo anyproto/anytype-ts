@@ -1247,6 +1247,7 @@ class DataUtil {
 	};
 
 	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
+		fields.withIcon = undefined === fields.withIcon ? true : fields.withIcon;
 
 		if ((layout == I.ObjectLayout.Human) && (fields.iconSize == I.LinkIconSize.Small)) {
 			fields.iconSize = I.LinkIconSize.Medium;

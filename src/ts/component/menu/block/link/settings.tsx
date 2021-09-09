@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Switch, Button } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Storage } from 'ts/lib';
 import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -137,6 +137,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         };
 
         fields[id] = v;
+
+        Storage.set('linkSettings', fields);
         C.BlockListSetFields(rootId, [ { blockId: blockId, fields: fields } ]);        
     };
 

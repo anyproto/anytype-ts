@@ -557,7 +557,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				if (item.type == I.BlockType.File) {
 					param.content.type = item.itemId;
 				};
-				
+
 				if (item.type == I.BlockType.Div) {
 					param.content.style = item.itemId;
 				};
