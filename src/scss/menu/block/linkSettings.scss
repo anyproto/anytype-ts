@@ -16,12 +16,12 @@
 		.section.card {
 			.items { display: flex; padding: 10px 16px 7px 16px; }
 			.item { 
-				display: inline-block; width: 50%; height: 94px; line-height: 94px; border-radius: 12px; 
+				display: inline-block; width: 50%; height: 94px; line-height: 94px; border-radius: 12px; color: #dfddd0;
 				text-align: center; padding: 0px; box-shadow: 0px 0px; transition: $transitionFast; margin-right: 24px;
 			}
 			.item:last-child { margin: 0px; }
 			.item {
-				.icon { margin: 0px 0px 14px 0px; }
+				.icon { margin: 0px 0px 14px 0px; transition: $transitionFast; }
 				.name { width: auto; display: block; }
 			}
 
