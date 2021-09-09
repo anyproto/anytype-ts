@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Icon, Switch, Button } from 'ts/component';
-import { I, C, keyboard, DataUtil } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { Icon, Switch, Button } from 'ts/component';
+import { I, C, DataUtil } from 'ts/lib';
+import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
@@ -19,21 +19,29 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const { fields } = block;
+        const { content } = block;
+        const object = detailStore.get(rootId, content.targetBlockId);
+        const { layout } = object;
 
+        let fields = DataUtil.checkLinkSettings(block.fields || {}, layout);
         fields.style = Number(fields.style) || I.LinkCardStyle.Text;
         fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
 
-        const styles = [
+        const styles: any[] = [
             { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
             { id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
         ];
 
-        const buttons = [
-            { id: I.LinkIconSize.Small, name: 'S' },
+        let buttons: any[] = [
             { id: I.LinkIconSize.Medium, name: 'M' },
             { id: I.LinkIconSize.Large, name: 'L' },
         ];
+        if (object.layout != I.ObjectLayout.Human) {
+            buttons.unshift({ id: I.LinkIconSize.Small, name: 'S' });
+        };
+        if (object.layout == I.ObjectLayout.Task) {
+            buttons = [];
+        };
 
         const Item = (item: any) => (
             <div className="item">
@@ -77,16 +85,18 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
                         ) : ''}
                     </div>
 
-                    <div className="buttons">
-                        {buttons.map((item: any, i: number) => (
-                            <Button 
-                                key={i} 
-                                text={item.name} 
-                                color={item.id == fields.iconSize ? 'orange' : 'grey'}
-                                onClick={() => { this.setField('iconSize', item.id); }} 
-                            />
-                        ))}
-                    </div>
+                    {buttons.length ? (
+                        <div className="buttons">
+                            {buttons.map((item: any, i: number) => (
+                                <Button 
+                                    key={i} 
+                                    text={item.name} 
+                                    color={item.id == fields.iconSize ? 'orange' : 'grey'}
+                                    onClick={() => { this.setField('iconSize', item.id); }} 
+                                />
+                            ))}
+                        </div>
+                    ) : ''}
 
                     <div className="items">
                         <Item 

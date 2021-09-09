@@ -31,7 +31,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
 		
-		let fields = block.fields || {};
+		let fields = DataUtil.checkLinkSettings(block.fields || {}, layout);
 		let iconSize = fields.iconSize || I.LinkIconSize.Small;
 		let style = fields.style || I.LinkCardStyle.Text;
 		let withIcon = undefined === fields.withIcon ? true : fields.withIcon;
@@ -46,7 +46,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		};
 
 		if (layout == I.ObjectLayout.Task) {
-			iconSize = 16;
+			iconSize = I.LinkIconSize.VerySmall;
 		};
 
 		return (

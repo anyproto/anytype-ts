@@ -1242,6 +1242,19 @@ class DataUtil {
 		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
 	};
 
+	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
+
+		if ((layout == I.ObjectLayout.Human) && (fields.iconSize == I.LinkIconSize.Small)) {
+			fields.iconSize = I.LinkIconSize.Medium;
+		};
+
+		if (layout == I.ObjectLayout.Task) {
+			fields.iconSize = I.LinkIconSize.VerySmall;
+		};
+
+		return fields;
+	};
+
 };
 
 export default new DataUtil();
