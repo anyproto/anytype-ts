@@ -65,11 +65,13 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div className="inner resizable audio">
+					<div className="wrap resizable audio">
 						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
 						<div className="audioControls">
 							<Icon className="play" onClick={this.onPlay} />
-							<div className="name">{name}</div>
+							<div className="name">
+								<span>{name}</span>
+							</div>
 
 							<Drag 
 								id="time" 
@@ -136,8 +138,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 
 		if (el.length) {
 			el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
-			el.on('play', () => { icon.addClass('active'); });
-			el.on('ended pause', () => { icon.removeClass('active'); });
+			el.on('play', () => { 
+				node.addClass('isPlaying');
+				icon.addClass('active'); 
+			});
+			el.on('ended pause', () => { 
+				node.removeClass('isPlaying');
+				icon.removeClass('active'); 
+			});
 		};
 	};
 	
