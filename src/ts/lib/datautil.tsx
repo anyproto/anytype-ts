@@ -700,7 +700,7 @@ class DataUtil {
 	};
 	
 	// Action menu
-	menuGetActions (hasFile: boolean) {
+	menuGetActions (hasFile: boolean, hasLink: boolean) {
 		let cmd = keyboard.ctrlSymbol();
 
 		let items: any[] = [
@@ -714,6 +714,10 @@ class DataUtil {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
+		};
+
+		if (hasLink) {
+			items.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
 		};
 		
 		items = items.map((it: any) => {

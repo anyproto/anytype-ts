@@ -174,7 +174,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnList = true;
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
-			let hasFile = false;
+			let hasFile = true;
+			let hasLink = true;
 			let hasQuote = false;
 			let hasAction = true;
 			let hasAlign = true;
@@ -190,12 +191,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
+				if (!block.isFile())			 hasFile = false;
+				if (!block.isLink())			 hasLink = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
 				if (block.isFeatured())			 hasAction = false;
 				if (block.isTextQuote())		 hasQuote = true;
-				if (block.isFile())				 hasFile = true;
 			};
 
 			if (hasTurnText)	 sections.push(turnText);
@@ -211,7 +213,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions(hasFile);
+				action.children = DataUtil.menuGetActions(hasFile, hasLink);
 				sections.push(action);
 			};
 
@@ -236,6 +238,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
+			let hasLink = true;
 			let hasTitle = false;
 			let hasAlign = true;
 			let hasColor = true;
@@ -251,6 +254,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isFile())			 hasFile = false;
+				if (!block.isLink())			 hasLink = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -268,6 +272,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
+			};
+
+			if (hasLink) {
+				sections[0].children.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
 			};
 
 			if (hasTitle) {
@@ -344,7 +352,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth();
-		const offsetY = -el.outerHeight() - 8;
 		
 		let filters = [];
 		let menuId = '';
@@ -352,7 +359,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
-			offsetY: offsetY,
+			offsetY: node.offset().top - el.offset().top - 36,
 			isSub: true,
 			data: {
 				rootId: rootId,
@@ -424,7 +431,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'color':
 				menuId = 'blockColor';
-				menuParam.offsetY = node.offset().top - el.offset().top - 40;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: color,
@@ -440,7 +446,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'background':
 				menuId = 'blockBackground';
-				menuParam.offsetY = node.offset().top - el.offset().top - 40;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: bgColor,
@@ -456,6 +461,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'align':
 				menuId = 'blockAlign';
+				menuParam.offsetY = 0;
+				menuParam.vertical = I.MenuDirection.Center;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: align,
@@ -466,6 +473,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 						close();
 					}
+				});
+				break;
+
+			case 'linkSettings':
+				menuId = 'blockLinkSettings';
+
+				menuParam.data = Object.assign(menuParam.data, {
 				});
 				break;
 		};
