@@ -18,6 +18,13 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
     onClick?(e: any): void;
 };
 
+const Size: any = {};
+Size[I.LinkIconSize.VerySmall] = 16;
+Size[I.LinkIconSize.Small] = 24;
+Size[I.LinkIconSize.Medium] = 64;
+Size[I.LinkIconSize.Large] = 96;
+
+
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
@@ -34,12 +41,12 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             cn.push('withCover');
         };
 
-        cn.push('c' + iconSize);
+        cn.push('c' + Size[iconSize]);
 
         const sideLeft = withIcon ? (
             <div className="side left">
                 <IconObject 
-                    size={iconSize} 
+                    size={Size[iconSize]} 
                     object={object} 
                     canEdit={canEdit} 
                     onSelect={onSelect} 
@@ -51,11 +58,13 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
         const sideRight = (
             <div className="side right">
-                <div className="cardName">{name}</div>
-                {withDescription ? <div className="cardDescription">{description}</div> : ''}
-                <div className="archive">{translate('blockLinkArchived')}</div>
+                <div className="txt">
+                    <div className="cardName">{name}</div>
+                    {withDescription ? <div className="cardDescription">{description}</div> : ''}
+                    <div className="archive">{translate('blockLinkArchived')}</div>
 
-                {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
+                    {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
+                </div>
             </div>
         ); 
 

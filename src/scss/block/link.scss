@@ -36,6 +36,7 @@
                     @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
                     -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 6px 0px;
                 }
+                .cardDescription:empty { display: none; }
             }
 
             .block.blockFeatured { @include text-small; margin: 0px; padding: 0px; }
@@ -59,6 +60,17 @@
         .linkCard.c24, .linkCard.c16 {
             .cardName { font-weight: 400 !important; }
             .side.left { margin-right: 6px; }
+            .side.right {
+                .txt { vertical-align: top; }
+            }
+        }
+
+        .linkCard.c64 {
+            .side.right { line-height: 64px; }
+        }
+
+        .linkCard.c96 {
+            .side.right { line-height: 96px; }
         }
 
         .linkCard.card {

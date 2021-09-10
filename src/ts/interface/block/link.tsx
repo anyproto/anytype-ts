@@ -12,10 +12,10 @@ export enum LinkCardStyle {
 };
 
 export enum LinkIconSize {
-	VerySmall	 = 16,
-	Small		 = 24,
-	Medium		 = 64,
-	Large		 = 96,
+	VerySmall	 = 0,
+	Small		 = 1,
+	Medium		 = 2,
+	Large		 = 3,
 }
 
 export interface ContentLink {
