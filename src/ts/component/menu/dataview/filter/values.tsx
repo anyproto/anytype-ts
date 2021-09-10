@@ -56,7 +56,14 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
 		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={item.onClick} onMouseEnter={() => { this.props.setHover({ id: 'add' }); }}>
+			<div 
+				id="item-add" 
+				className="item add" 
+				onClick={item.onClick} 
+				onMouseEnter={() => { 
+					menuStore.close('select'); 
+					this.props.setHover({ id: 'add' }); 
+				}}>
 				<Icon className="plus" />
 				<div className="name">Add</div>
 			</div>
@@ -68,9 +75,16 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.Status:
 				Item = (element: any) => {
 					return (
-						<div className="item" >
+						<div 
+							id={'item-tag-' + element.id} 
+							className="item" 
+							onMouseEnter={() => {
+								menuStore.close('select'); 
+								this.props.setHover({ id: 'tag-' + element.id }); 
+							}}
+						>
 							<div className="clickable" onClick={(e: any) => { this.onTag(e, element); }}>
-								<Tag {...element} key={item.id} className={DataUtil.tagClass(relation.format)} />
+								<Tag {...element} className={DataUtil.tagClass(relation.format)} />
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
