@@ -488,12 +488,12 @@ class DataUtil {
 		popupStore.open(popupId, param);
 	};
 	
-	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
+	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
-		C.BlockCreatePage(rootId, targetId, details, position, templateId, (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (message.error.code) {
@@ -1244,6 +1244,16 @@ class DataUtil {
 
 	fileName (object: any) {
 		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
+	};
+
+	defaultLinkSettings () {
+		return Object.assign({
+			withIcon: true,
+			withCover: false,
+			withDescription: false,
+			iconSize: I.LinkIconSize.Small,
+			style: I.LinkCardStyle.Text,
+		}, Storage.get('linkSettings') || {});
 	};
 
 	checkLinkSettings (fields: any, layout: I.ObjectLayout) {

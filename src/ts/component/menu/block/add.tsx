@@ -577,7 +577,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, (message: any) => {
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), (message: any) => {
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
 							analytics.event('ObjectCreate', {
@@ -606,7 +606,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					});
 				} else 
 				if (item.type == I.BlockType.Page) {
-					DataUtil.pageCreate(rootId, blockId, details, position, '', (message: any) => {
+					DataUtil.pageCreate(rootId, blockId, details, position, '', DataUtil.defaultLinkSettings(), (message: any) => {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {
