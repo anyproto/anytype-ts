@@ -14,7 +14,7 @@ const $ = require('jquery');
 const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM_BIG = 70;
+const HEIGHT_ITEM_BIG = 72;
 const HEIGHT_ITEM_SMALL = 48;
 const LIMIT = 40;
 
@@ -53,7 +53,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 			} else {
 				const name = String(item.name || '').replace(/\\\\/g, '\\');
 
-				const math = katex.renderToString(item.comment || item.name, {
+				const math = katex.renderToString(item.comment || item.symbol, {
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
@@ -220,9 +220,8 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 		sections = sections.map((it: any) => {
 			it.children = it.children.map((c: any) => {
-				c.name = String(c.symbol || '');
+				c.name = String(c.name || c.symbol || '');
 				c.comment = String(c.comment || '').replace(/`/g, '');
-				delete(c.symbol);
 				return c;
 			});
 			return it;

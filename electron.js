@@ -162,7 +162,6 @@ function initTray () {
 };
 
 function createWindow () {
-	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
 
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -177,8 +176,8 @@ function createWindow () {
 	initTray();
 
 	let state = windowStateKeeper({
-		defaultWidth: width,
-		defaultHeight: height
+		defaultWidth: 800,
+		defaultHeight: 600
 	});
 
 	let param = {

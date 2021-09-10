@@ -57,6 +57,7 @@
 
 	.menu.menuDataviewFilterValues { width: 288px; }
 	.menu.menuDataviewFilterValues {
+		.content { max-height: 300px; }
 		.item { display: flex; }
 
 		.select { border: 0px; padding: 0px; display: block; width: 100%; }

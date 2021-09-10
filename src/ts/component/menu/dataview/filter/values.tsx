@@ -56,7 +56,14 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
 		const ItemAdd = (item: any) => (
-			<div className="item add" onClick={item.onClick}>
+			<div 
+				id="item-add" 
+				className="item add" 
+				onClick={item.onClick} 
+				onMouseEnter={() => { 
+					menuStore.close('select'); 
+					this.props.setHover({ id: 'add' }); 
+				}}>
 				<Icon className="plus" />
 				<div className="name">Add</div>
 			</div>
@@ -68,9 +75,16 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.Status:
 				Item = (element: any) => {
 					return (
-						<div className="item" >
+						<div 
+							id={'item-tag-' + element.id} 
+							className="item" 
+							onMouseEnter={() => {
+								menuStore.close('select'); 
+								this.props.setHover({ id: 'tag-' + element.id }); 
+							}}
+						>
 							<div className="clickable" onClick={(e: any) => { this.onTag(e, element); }}>
-								<Tag {...element} key={item.id} className={DataUtil.tagClass(relation.format)} />
+								<Tag {...element} className={DataUtil.tagClass(relation.format)} />
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
@@ -79,7 +93,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = (item.value || []).map((id: string, i: number) => { 
+				list = DataUtil.getRelationArrayValue(item.value).map((id: string) => { 
 					return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 				});
 				list = list.filter((it: any) => { return it && it.id; });

@@ -712,6 +712,7 @@ class Util {
 
 		const obj = $('#linkPreview');
 		
+		this.linkPreviewOpen = false;
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		
 		if (force) {
@@ -722,7 +723,6 @@ class Util {
 		obj.css({ opacity: 0 });
 		this.timeoutLinkPreviewHide = window.setTimeout(() => { 
 			obj.hide();
-			this.linkPreviewOpen = false;
 			obj.removeClass('top bottom withImage'); 
 		}, 250);
 	};

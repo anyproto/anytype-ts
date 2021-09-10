@@ -278,6 +278,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		menuStore.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${item.id}`,
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				...data,
 				save: this.save,
