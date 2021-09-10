@@ -4,13 +4,9 @@
 	.block.blockLink {
 		.focusable { cursor: pointer; }
 
-		.archive {
-			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
-			@include text-small; color: $colorMediumGrey; padding: 0px 6px; display: none;
-		}
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
-			.archive { display: inline-block; }
+			.archive { display: inline-block !important; }
 		}
 
 		.loading { color: $colorMediumGrey; }
@@ -25,7 +21,7 @@
         .linkCard {
             .sides { display: flex; }
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
-            .side.right { width: 100%; }
+            .side.right { width: 100%; position: relative; }
 
             .iconObject { margin: 0px; }
             .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
@@ -37,6 +33,11 @@
                     -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 6px 0px;
                 }
                 .cardDescription:empty { display: none; }
+
+                .archive {
+                    border-radius: 3px; background-color: #f3f2ec; @include text-small; color: $colorMediumGrey; 
+                    padding: 0px 6px; display: none; position: absolute; right: 0px; top: 0px; vertical-align: middle;
+                }
             }
 
             .block.blockFeatured { @include text-small; margin: 0px; padding: 0px; }
@@ -62,6 +63,7 @@
             .side.left { margin-right: 6px; }
             .side.right {
                 .txt { vertical-align: top; }
+                .archive { position: static; margin: 0px 0px 0px 8px; }
             }
         }
 
