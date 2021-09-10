@@ -149,6 +149,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const cmd = keyboard.ctrlSymbol();
+		const { config } = commonStore;
 		
 		if (!block) {
 			return [];
@@ -274,7 +275,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
 			};
 
-			if (hasLink) {
+			if (hasLink && config.experimental) {
 				sections[0].children.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
 			};
 

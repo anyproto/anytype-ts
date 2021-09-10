@@ -705,8 +705,8 @@ class DataUtil {
 	
 	// Action menu
 	menuGetActions (hasFile: boolean, hasLink: boolean) {
+		let { config } = commonStore;
 		let cmd = keyboard.ctrlSymbol();
-
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
@@ -720,7 +720,7 @@ class DataUtil {
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
 
-		if (hasLink) {
+		if (hasLink && config.experimental) {
 			items.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
 		};
 		
