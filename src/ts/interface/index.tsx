@@ -29,10 +29,11 @@ import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
-import { FileType, FileState, File, BlockFile } from './block/file';
+import { FileType, FileState, ContentFile, BlockFile } from './block/file';
 import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
+import { ContentLatex, BlockLatex } from './block/latex';
 
 export {
 	Account,
@@ -133,7 +134,7 @@ export {
 
 	FileType,
 	FileState,
-	File,
+	ContentFile,
 	BlockFile,
 
 	ContentBookmark,
@@ -141,4 +142,7 @@ export {
 
 	ContentRelation, 
 	BlockRelation,
+
+	ContentLatex,
+	BlockLatex,
 }
