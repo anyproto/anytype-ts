@@ -440,7 +440,7 @@ class Mark {
 
 				let from = (Number(text.indexOf(s)) || 0) + p1.length;
 				let to = from + p3.length;
-				let replace = p1 + p3 + ' ';
+				let replace = String((p1 + p3) || '').replace(new RegExp('\\$', 'g'), '$$$');
 
 				this.adjust(marks, from, -p2.length * 2);
 				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
