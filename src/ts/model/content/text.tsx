@@ -40,7 +40,7 @@ class BlockContentText implements I.ContentText {
 		self.style = Number(props.style) || I.TextStyle.Paragraph;
 		self.checked = Boolean(props.checked);
 		self.color = String(props.color || '');
-		self.marks = props.marks || [];
+		self.marks = (props.marks || []).map((it: I.Mark) => { return new Mark(it); });
 
 		makeObservable(self, {
 			text: observable,
