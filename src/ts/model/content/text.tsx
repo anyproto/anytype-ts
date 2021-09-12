@@ -13,6 +13,14 @@ class Mark implements I.Mark {
 		self.type = Number(props.type) || I.MarkType.Strike;
 		self.param = String(props.param || '');
 		self.range = props.range || { from: 0, to: 0 };
+
+		makeObservable(self, {
+			type: observable,
+			param: observable,
+			range: observable,
+		});
+
+		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
 };
@@ -32,7 +40,7 @@ class BlockContentText implements I.ContentText {
 		self.style = Number(props.style) || I.TextStyle.Paragraph;
 		self.checked = Boolean(props.checked);
 		self.color = String(props.color || '');
-		self.marks = (props.marks || []).map((it: I.Mark) => { return new Mark(it); });
+		self.marks = props.marks || [];
 
 		makeObservable(self, {
 			text: observable,

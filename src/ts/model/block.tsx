@@ -57,6 +57,7 @@ class Block implements I.Block {
 			align: observable,
 			bgColor: observable,
 			fields: observable,
+			content: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
