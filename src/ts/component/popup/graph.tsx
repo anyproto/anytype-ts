@@ -496,8 +496,9 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	onDragMove (e: any, d: any) {
+		const win = $(window);
 		const p = d3.pointer(e, d3.select(this.canvas));
-		this.send('onDragMove', { subjectId: this.subject.id, active: e.active, x: p[0], y: p[1] });
+		this.send('onDragMove', { subjectId: this.subject.id, active: e.active, x: p[0] - win.scrollLeft(), y: p[1] - win.scrollTop() });
 		this.tooltip.style('display', 'none');
 	};
 			
