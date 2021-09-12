@@ -17,10 +17,10 @@ class BlockContentFile implements I.ContentFile {
 		self.hash = String(props.hash || '');
 		self.name = String(props.name || '');
 		self.mime = String(props.mime || '');
-		self.size = Number(self.size) || 0;
-		self.addedAt = Number(self.addedAt) || 0;
-		self.type = Number(self.type) || I.FileType.None;
-		self.state = Number(self.state) || I.FileState.Empty;
+		self.size = Number(props.size) || 0;
+		self.addedAt = Number(props.addedAt) || 0;
+		self.type = Number(props.type) || I.FileType.None;
+		self.state = Number(props.state) || I.FileState.Empty;
 		
 		makeObservable(self, {
 			hash: observable,
