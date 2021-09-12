@@ -45,8 +45,8 @@ class Block implements I.Block {
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
-		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
+		self.content = props.content || {};
 
 		if (ContentModel[self.type]) {
 			self.content = new ContentModel[self.type](self.content);
