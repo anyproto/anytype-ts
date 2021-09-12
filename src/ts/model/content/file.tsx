@@ -7,7 +7,6 @@ class BlockContentFile implements I.ContentFile {
 	name: string = '';
 	mime: string = '';
 	size: number = 0;
-	addedAt: number = 0;
 	type: I.FileType = I.FileType.None;
 	state: I.FileState = I.FileState.Empty;
 	
@@ -18,7 +17,6 @@ class BlockContentFile implements I.ContentFile {
 		self.name = String(props.name || '');
 		self.mime = String(props.mime || '');
 		self.size = Number(props.size) || 0;
-		self.addedAt = Number(props.addedAt) || 0;
 		self.type = Number(props.type) || I.FileType.None;
 		self.state = Number(props.state) || I.FileState.Empty;
 		
@@ -27,7 +25,6 @@ class BlockContentFile implements I.ContentFile {
 			name: observable,
 			mime: observable,
 			size: observable,
-			addedAt: observable,
 			type: observable,
 			state: observable,
 		});
