@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, Label } from 'ts/component';
-import { I, C, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
+import { I, C, keyboard, Util, crumbs, DataUtil, translate, Storage } from 'ts/lib';
 import { commonStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -356,7 +356,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					type: I.BlockType.Link,
 					content: {
 						targetBlockId: String(item.id || ''),
-					}
+					},
+					fields: DataUtil.defaultLinkSettings(),
 				};
 				C.BlockCreate(newBlock, rootId, blockId, position);
 				break;

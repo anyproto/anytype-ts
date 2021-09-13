@@ -29,7 +29,7 @@ class Cover extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { id, image, src, type, x, y, scale, withScale, className, preview, onClick, onMouseDown } = this.props;
+		const { id, image, src, type, x, y, scale, withScale, className, preview, onClick, onMouseDown, children } = this.props;
 
 		let cn = [ 'cover', 'type' + type, id ];
 		let style: any = {};
@@ -56,7 +56,9 @@ class Cover extends React.Component<Props, {}> {
 		};
 		
 		return (
-			<div className={cn.join(' ')} onClick={onClick} onMouseDown={onMouseDown} style={style} />
+			<div className={cn.join(' ')} onClick={onClick} onMouseDown={onMouseDown} style={style}>
+				{children}
+			</div>
 		);
 	};
 	

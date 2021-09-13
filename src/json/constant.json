@@ -59,7 +59,7 @@
 			"searchObject", "blockRelationEdit"
 		],
 		"action": [
-			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
+			"blockStyle", "blockColor", "blockBackground", "blockAlign", "blockLinkSettings", "searchObject"
 		],
 		"more": [
 			"select", "searchObject", "blockAlign"

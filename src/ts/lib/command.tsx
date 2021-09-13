@@ -276,7 +276,7 @@ const BlockUpdateContent = (block: any, contextId: string, blockId: string, call
 	dispatcher.request('blockUpdateContent', request, callBack);
 };
 
-const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) => {
+const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.Block.CreatePage.Request();
@@ -286,6 +286,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	request.setPosition(position);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
+	request.setFields(Encode.encodeStruct(fields || {}));
 
 	dispatcher.request('blockCreatePage', request, callBack);
 };
