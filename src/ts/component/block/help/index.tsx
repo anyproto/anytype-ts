@@ -9,7 +9,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 import ContentIcon from './icon';
-import ContentTitle from './title';
 import ContentText from './text';
 import ContentLink from './link';
 

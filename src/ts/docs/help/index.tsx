@@ -28,8 +28,10 @@ const Status = [
 ];
 
 import WhatsNew from './whatsNew';
+import Intro from './intro';
 
 export {
 	Status,
 	WhatsNew,
+	Intro,
 };
