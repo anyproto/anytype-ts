@@ -64,7 +64,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 			};
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, {}, position, '', {}, (message: any) => {
 			DataUtil.objectOpen({ id: message.targetId });
 		});
 	};

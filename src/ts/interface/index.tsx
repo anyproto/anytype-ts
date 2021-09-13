@@ -27,7 +27,7 @@ import {
 import { BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
-import { LinkStyle, ContentLink, BlockLink } from './block/link';
+import { LinkStyle, LinkIconSize, LinkCardStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
 import { FileType, FileState, ContentFile, BlockFile } from './block/file';
 import { ContentBookmark, BlockBookmark } from './block/bookmark';
@@ -118,6 +118,8 @@ export {
 	BlockIcon,
 
 	LinkStyle,
+	LinkIconSize,
+	LinkCardStyle,
 	ContentLink,
 	BlockLink,
 

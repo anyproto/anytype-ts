@@ -138,7 +138,7 @@ class DataUtil {
 			case I.ObjectLayout.Page:		 c = 'isPage'; break;
 			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
 			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.Type:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Type:		 c = 'isObjectType'; break;
 			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
@@ -173,6 +173,16 @@ class DataUtil {
 			default:
 			case I.RelationType.Status:		 c = 'isStatus'; break;
 			case I.RelationType.Tag:		 c = 'isTag'; break;
+		};
+		return c;
+	};
+
+	linkCardClass (v: I.LinkCardStyle): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.LinkCardStyle.Text:		 c = 'text'; break;
+			case I.LinkCardStyle.Card:		 c = 'card'; break;
 		};
 		return c;
 	};
@@ -478,12 +488,12 @@ class DataUtil {
 		popupStore.open(popupId, param);
 	};
 	
-	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
+	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
-		C.BlockCreatePage(rootId, targetId, details, position, templateId, (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (message.error.code) {
@@ -694,9 +704,9 @@ class DataUtil {
 	};
 	
 	// Action menu
-	menuGetActions (hasFile: boolean) {
+	menuGetActions (hasFile: boolean, hasLink: boolean) {
+		let { config } = commonStore;
 		let cmd = keyboard.ctrlSymbol();
-
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
@@ -708,6 +718,10 @@ class DataUtil {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
+		};
+
+		if (hasLink && config.experimental) {
+			items.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
 		};
 		
 		items = items.map((it: any) => {
@@ -1230,6 +1244,30 @@ class DataUtil {
 
 	fileName (object: any) {
 		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
+	};
+
+	defaultLinkSettings () {
+		return Object.assign({
+			withIcon: true,
+			withCover: false,
+			withDescription: false,
+			iconSize: I.LinkIconSize.Small,
+			style: I.LinkCardStyle.Text,
+		}, Storage.get('linkSettings') || {});
+	};
+
+	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
+		fields.withIcon = undefined === fields.withIcon ? true : fields.withIcon;
+
+		if ((layout == I.ObjectLayout.Human) && (fields.iconSize == I.LinkIconSize.Small)) {
+			fields.iconSize = I.LinkIconSize.Medium;
+		};
+
+		if (layout == I.ObjectLayout.Task) {
+			fields.iconSize = I.LinkIconSize.VerySmall;
+		};
+
+		return fields;
 	};
 
 };

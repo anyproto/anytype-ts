@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject, Loader } from 'ts/component';
-import { I, DataUtil, translate } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { I, DataUtil, C, translate } from 'ts/lib';
+import { detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
+
+import LinkCard from './link/card';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
@@ -25,9 +27,15 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	render() {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const object = detailStore.get(rootId, content.targetBlockId, []);
-		const { _empty_, name, isArchived, done, layout } = object;
+		const object = detailStore.get(rootId, content.targetBlockId);
+		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
+		
+		let fields = DataUtil.checkLinkSettings(block.fields || {}, layout);
+		let iconSize = fields.iconSize || I.LinkIconSize.Small;
+		let style = fields.style || I.LinkCardStyle.Text;
+		let withIcon = undefined === fields.withIcon ? true : fields.withIcon;
+		let { withCover, withDescription } = fields;
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -37,8 +45,12 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			cn.push('isArchived');
 		};
 
+		if (layout == I.ObjectLayout.Task) {
+			iconSize = I.LinkIconSize.VerySmall;
+		};
+
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{_empty_ ? (
 					<div className="loading" data-target-block-id={content.targetBlockId}>
 						<Loader />
@@ -46,19 +58,20 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 					</div>
 				) : (
 					<React.Fragment>
-						<IconObject 
-							object={object} 
-							id={'block-page-' + id} 
-							size={24} 
-							canEdit={!readonly} 
-							onSelect={this.onSelect} 
-							onUpload={this.onUpload}
-							onCheckbox={this.onCheckbox}
-						/>
-						<div className="name">
-							<div className="txt">{name}</div>
-						</div>
-						<div className="archive">{translate('blockLinkArchived')}</div>
+					<LinkCard 
+						{...this.props} 
+						className={DataUtil.linkCardClass(style)}
+						iconSize={iconSize}
+						withIcon={withIcon}
+						withCover={withCover}
+						withDescription={withDescription}
+						object={object} 
+						canEdit={!readonly} 
+						onClick={this.onClick}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload}
+						onCheckbox={this.onCheckbox} 
+					/>
 					</React.Fragment>
 				)}
 			</div>

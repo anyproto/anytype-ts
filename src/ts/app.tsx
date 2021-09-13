@@ -111,6 +111,7 @@ import 'scss/menu/preview/object.scss';
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
 import 'scss/menu/block/link.scss';
+import 'scss/menu/block/linkSettings.scss';
 import 'scss/menu/block/icon.scss';
 import 'scss/menu/block/cover.scss';
 import 'scss/menu/block/mention.scss';

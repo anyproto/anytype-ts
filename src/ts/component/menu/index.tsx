@@ -32,6 +32,7 @@ import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
 import MenuBlockLatex from './block/latex';
+import MenuBlockLinkSettings from './block/link/settings';
 
 import MenuBlockRelationEdit from './block/relation/edit';
 import MenuBlockRelationView from './block/relation/view';
@@ -98,6 +99,7 @@ const Components: any = {
 	blockMention:			 MenuBlockMention,
 	blockLayout:			 MenuBlockLayout,
 	blockLatex:				 MenuBlockLatex,
+	blockLinkSettings:		 MenuBlockLinkSettings,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
 	blockRelationView:		 MenuBlockRelationView,
