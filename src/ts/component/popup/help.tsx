@@ -23,7 +23,7 @@ class PopupHelp extends React.Component<Props, {}> {
 		const { data } = param;
 		const { document } = data;
 		const doc = Docs.Help[Util.toUpperCamelCase(document)] || [];
-		const title = doc.find((it: any) => { return (it.type == I.BlockType.Text) && (it.style == I.TextStyle.Title); });
+		const title = doc.find((it: any) => { return it.style == I.TextStyle.Title; });
 
 		return (
 			<div className="wrapper">
@@ -31,13 +31,11 @@ class PopupHelp extends React.Component<Props, {}> {
 					<div className="side left">
 						{title ? <Label text={title.text} /> : ''}
 					</div>
-					{document == 'whatsNew' ? (
-						<div className="side right">
-							<Label text={translate('popupHelpLabel')} />
-							<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
-							<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
-						</div>
-					) : ''}
+					<div className="side right">
+						<Label text={translate('popupHelpLabel')} />
+						<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
+						<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
+					</div>
 				</div>
 				
 				<div className="editor help">
