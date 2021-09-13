@@ -22,10 +22,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { content } = block;
         const object = detailStore.get(rootId, content.targetBlockId);
         const { layout } = object;
-
-        let fields = DataUtil.checkLinkSettings(block.fields || {}, layout);
-        fields.style = Number(fields.style) || I.LinkCardStyle.Text;
-        fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
+        const fields = DataUtil.checkLinkSettings(block.fields, layout);
 
         const styles: any[] = [
             { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },

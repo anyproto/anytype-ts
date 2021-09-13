@@ -30,12 +30,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
-		
-		let fields = DataUtil.checkLinkSettings(block.fields || {}, layout);
-		let iconSize = fields.iconSize || I.LinkIconSize.Small;
-		let style = fields.style || I.LinkCardStyle.Text;
-		let withIcon = undefined === fields.withIcon ? true : fields.withIcon;
-		let { withCover, withDescription } = fields;
+		const fields = DataUtil.checkLinkSettings(block.fields, layout);
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -43,10 +38,6 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 
 		if (isArchived) {
 			cn.push('isArchived');
-		};
-
-		if (layout == I.ObjectLayout.Task) {
-			iconSize = I.LinkIconSize.VerySmall;
 		};
 
 		return (
@@ -59,11 +50,8 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 				) : (
 					<LinkCard 
 						{...this.props} 
-						className={DataUtil.linkCardClass(style)}
-						iconSize={iconSize}
-						withIcon={withIcon}
-						withCover={withCover}
-						withDescription={withDescription}
+						{...fields}
+						className={DataUtil.linkCardClass(fields.style)}
 						object={object} 
 						canEdit={!readonly} 
 						onClick={this.onClick}

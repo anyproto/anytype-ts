@@ -1258,14 +1258,16 @@ class DataUtil {
 
 	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
 		fields = Util.objectCopy(fields || {});
-		fields.withIcon = undefined === fields.withIcon ? true : fields.withIcon;
+		fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
+		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
+		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
 
 		if ((layout == I.ObjectLayout.Human) && (fields.iconSize == I.LinkIconSize.Small)) {
 			fields.iconSize = I.LinkIconSize.Medium;
 		};
 
 		if (layout == I.ObjectLayout.Task) {
-			fields.iconSize = I.LinkIconSize.VerySmall;
+			fields.iconSize = I.LinkIconSize.Small;
 		};
 
 		return fields;

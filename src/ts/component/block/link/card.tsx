@@ -19,7 +19,6 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 };
 
 const Size: any = {};
-Size[I.LinkIconSize.VerySmall] = 16;
 Size[I.LinkIconSize.Small] = 24;
 Size[I.LinkIconSize.Medium] = 64;
 Size[I.LinkIconSize.Large] = 96;
