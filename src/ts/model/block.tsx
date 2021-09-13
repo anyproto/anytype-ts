@@ -1,6 +1,28 @@
 import { I, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
+import BlockContentLayout from './content/layout';
+import BlockContentLink from './content/link';
+import BlockContentLatex from './content/latex';
+import BlockContentRelation from './content/relation';
+import BlockContentDiv from './content/relation';
+import BlockContentBookmark from './content/bookmark';
+import BlockContentText from './content/text';
+import BlockContentFile from './content/file';
+import BlockContentDataview from './content/dataview';
+
+const ContentModel = {
+	layout:		 BlockContentLayout,
+	link:		 BlockContentLink,
+	latex:		 BlockContentLatex,
+	relation:	 BlockContentRelation,
+	div:		 BlockContentDiv,
+	bookmark:	 BlockContentBookmark,
+	text:		 BlockContentText,
+	file:		 BlockContentFile,
+	dataview:	 BlockContentDataview,
+};
+
 class Block implements I.Block {
 	
 	id: string = '';
@@ -23,8 +45,12 @@ class Block implements I.Block {
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
-		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
+		self.content = props.content || {};
+
+		if (ContentModel[self.type]) {
+			self.content = new ContentModel[self.type](self.content);
+		};
 
 		makeObservable(self, {
 			layout: observable,

@@ -259,12 +259,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
 
+		value = String(value || '').trim();
+
 		if (val.length) {
-			val.get(0).innerHTML = value ? katex.renderToString(value, { 
+			val.html(value ? katex.renderToString(value, { 
 				displayMode: true, 
 				throwOnError: false,
 				output: 'html',
-			}) : '';
+			}) : '');
 		};
 
 		this.placeholderCheck(value);

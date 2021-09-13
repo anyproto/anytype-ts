@@ -57,7 +57,6 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 						<div className="name">{translate('blockLinkSyncing')}</div>
 					</div>
 				) : (
-					<React.Fragment>
 					<LinkCard 
 						{...this.props} 
 						className={DataUtil.linkCardClass(style)}
@@ -72,7 +71,6 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 						onUpload={this.onUpload}
 						onCheckbox={this.onCheckbox} 
 					/>
-					</React.Fragment>
 				)}
 			</div>
 		);

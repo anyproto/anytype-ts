@@ -1257,6 +1257,7 @@ class DataUtil {
 	};
 
 	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
+		fields = Util.objectCopy(fields || {});
 		fields.withIcon = undefined === fields.withIcon ? true : fields.withIcon;
 
 		if ((layout == I.ObjectLayout.Human) && (fields.iconSize == I.LinkIconSize.Small)) {

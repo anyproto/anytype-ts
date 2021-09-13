@@ -107,7 +107,7 @@ class BlockStore {
     recentSet (id: string) {
 		this.recentId = String(id || '');
 	};
-
+	
     set (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
 	};

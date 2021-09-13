@@ -16,7 +16,7 @@
 			.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
 		}
 
-		.linkCard { display: inline-block; vertical-align: top; width: 100%; margin: 6px 0px; }
+		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard:nth-child(2n + 2) { margin-right: 0px; }
         .linkCard {
             .sides { display: flex; }
@@ -57,7 +57,7 @@
             }
         }
         
-        .linkCard.c24, .linkCard.c16 { margin: 0px; }
+        .linkCard.c24, .linkCard.c16 { }
         .linkCard.c24, .linkCard.c16 {
             .cardName { font-weight: 400 !important; }
             .side.left { margin-right: 6px; }

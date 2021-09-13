@@ -87,7 +87,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			cn.push('isReadonly');
 		};
 
-		if (bgColor) {
+		if (bgColor && !block.isLink()) {
 			cd.push('bgColor bgColor-' + bgColor);
 		};
 		
