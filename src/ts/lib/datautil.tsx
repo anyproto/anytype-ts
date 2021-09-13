@@ -1262,10 +1262,6 @@ class DataUtil {
 		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
 		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
 
-		if ((layout == I.ObjectLayout.Human) && (fields.iconSize == I.LinkIconSize.Small)) {
-			fields.iconSize = I.LinkIconSize.Medium;
-		};
-
 		if (layout == I.ObjectLayout.Task) {
 			fields.iconSize = I.LinkIconSize.Small;
 		};

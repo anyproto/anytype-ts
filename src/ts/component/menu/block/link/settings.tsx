@@ -30,12 +30,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         ];
 
         let buttons: any[] = [
+            { id: I.LinkIconSize.Small, name: 'S' },
             { id: I.LinkIconSize.Medium, name: 'M' },
             { id: I.LinkIconSize.Large, name: 'L' },
         ];
-        if (object.layout != I.ObjectLayout.Human) {
-            buttons.unshift({ id: I.LinkIconSize.Small, name: 'S' });
-        };
         if (object.layout == I.ObjectLayout.Task) {
             buttons = [];
         };
