@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockMedia { padding: 6px 0px; border-radius: 6px; }
+	.block.blockMedia { padding: 6px 0px; }
 	.block.blockMedia.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockMedia {
