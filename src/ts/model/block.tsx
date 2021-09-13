@@ -5,7 +5,7 @@ import BlockContentLayout from './content/layout';
 import BlockContentLink from './content/link';
 import BlockContentLatex from './content/latex';
 import BlockContentRelation from './content/relation';
-import BlockContentDiv from './content/relation';
+import BlockContentDiv from './content/div';
 import BlockContentBookmark from './content/bookmark';
 import BlockContentText from './content/text';
 import BlockContentFile from './content/file';
