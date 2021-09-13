@@ -276,7 +276,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasLink && config.experimental) {
-				sections[0].children.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
+				sections[0].children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 			};
 
 			if (hasTitle) {

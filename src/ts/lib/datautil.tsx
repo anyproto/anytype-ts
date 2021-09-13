@@ -721,7 +721,7 @@ class DataUtil {
 		};
 
 		if (hasLink && config.experimental) {
-			items.push({ id: 'linkSettings', icon: 'link', name: 'Customize', arrow: true });
+			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 		};
 		
 		items = items.map((it: any) => {
