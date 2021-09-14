@@ -1248,6 +1248,7 @@ class DataUtil {
 
 	defaultLinkSettings () {
 		return Object.assign({
+			withName: true,
 			withIcon: true,
 			withCover: false,
 			withDescription: false,
@@ -1261,6 +1262,11 @@ class DataUtil {
 		fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
 		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
 		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
+		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
+
+		if (fields.style == I.LinkCardStyle.Text) {
+            fields.withCover = false;
+        };
 
 		if (layout == I.ObjectLayout.Task) {
 			fields.iconSize = I.LinkIconSize.Small;
