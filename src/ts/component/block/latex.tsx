@@ -29,6 +29,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	_isMounted: boolean = false;
 	ref: any = null;
 	range: any = { start: 0, end: 0 };
+	text: string = '';
 
 	state = {
 		isEditing: false,
@@ -82,15 +83,20 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	
 	componentDidMount () {
 		const { block } = this.props;
-		const length = block.content.text.length;
+		this.text = String(block.content.text || '');
+
+		const length = this.text.length;
 
 		this._isMounted = true;
 		this.range = { start: length, end: length };
-		this.setValue(block.content.text);
+		this.setValue(this.text);
 	};
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
+
+		this.setValue(this.text);
+
 		if (isEditing) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('#input');
@@ -143,6 +149,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			};
 		};
 
+		this.text = value;
 		this.setContent(value);
 	};
 
