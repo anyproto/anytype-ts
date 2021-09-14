@@ -18,7 +18,7 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; overflow: hidden; }
+            .sides { display: flex; overflow: hidden; transition: $transitionFast; }
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.right { width: 100%; position: relative; }
 
@@ -121,7 +121,8 @@
 	}
 
     .block.blockLink:hover {
-        .cardName span::before { background: $colorMediumGrey; }
+        .sides { border-color: $colorBlack !important; }
+        .cardName span::before { background: $colorBlack; }
     }
 
     .block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
