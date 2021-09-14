@@ -5,6 +5,7 @@ import { I, M, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
+    withName?: boolean;
     withIcon?: boolean;
     withCover?: boolean;
     withDescription?: boolean;
@@ -27,7 +28,7 @@ Size[I.LinkIconSize.Large] = 96;
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withIcon, withCover, withDescription, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
+        const { rootId, block, withName, withIcon, withCover, withDescription, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
         const { align, bgColor } = block;
         const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
@@ -63,7 +64,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const sideRight = (
             <div className="side right">
                 <div className="txt">
-                    <div className="cardName">{name}</div>
+                    {withName ? <div className="cardName">{name}</div> : ''}
                     {withDescription ? <div className="cardDescription">{description}</div> : ''}
                     <div className="archive">{translate('blockLinkArchived')}</div>
 
