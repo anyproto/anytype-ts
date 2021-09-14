@@ -19,7 +19,7 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard:nth-child(2n + 2) { margin-right: 0px; }
         .linkCard {
-            .sides { display: flex; }
+            .sides { display: flex; overflow: hidden; }
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.right { width: 100%; position: relative; }
 
@@ -27,7 +27,9 @@
             .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
 
             .side.right {
-                .cardName { @include text-paragraph; max-width: 100%; }
+                .txt { width: 100%; }
+
+                .cardName { @include text-paragraph; @include text-overflow-nw; max-width: 100%; overflow: hidden; }
                 .cardDescription { 
                     @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
                     -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 6px 0px;

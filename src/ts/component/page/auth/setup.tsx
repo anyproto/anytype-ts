@@ -159,7 +159,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				authStore.previewSet('');
 
-				Storage.delete('popupNewBlock');
 				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {

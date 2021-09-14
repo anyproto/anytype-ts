@@ -56,12 +56,6 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 
 		if (account) {
 			history.push(redirect || '/main/index');
-				
-			if (!Storage.get('popupNewBlock')) {
-				popupStore.open('help', { 
-					data: { document: 'whatsNew' },
-				});
-			};
 		} else {
 			history.push('/');
 		};

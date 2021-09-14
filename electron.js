@@ -492,16 +492,16 @@ function menuInit () {
 					click: () => { send('commandGlobal', 'id'); }
 				},
 				{
-					label: 'Status',
-					click: () => { send('popup', 'help', { data: { document: 'status' } }); }
-				},
-				{
 					label: 'Shortcuts',
 					click: () => { send('popup', 'shortcut'); }
 				},
 				{
 					label: 'What\'s new',
 					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
+				},
+				{
+					label: 'Introduction',
+					click: () => { send('popup', 'help', { data: { document: 'intro' } }); }
 				},
 			]
 		},
