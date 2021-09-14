@@ -101,6 +101,11 @@ class Keyboard {
 			Util.linkPreviewHide(false);
 		});
 
+		// Shortcuts
+		this.shortcut('ctrl+space', e, (pressed: string) => {
+			popupStore.open('shortcut', {});
+		});
+
 		if (isMain) {
 			// Print
 			keyboard.shortcut(`${cmd}+p`, e, (pressed: string) => {
