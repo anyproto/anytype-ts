@@ -65,7 +65,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const sideRight = (
             <div className="side right">
                 <div className="txt">
-                    {withName ? <div className="cardName">{name}</div> : ''}
+                    {withName ? <div className="cardName"><span>{name}</span></div> : ''}
                     {withDescription ? <div className="cardDescription">{description}</div> : ''}
                     <div className="archive">{translate('blockLinkArchived')}</div>
 
