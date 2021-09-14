@@ -1,5 +1,8 @@
 import { I } from 'ts/lib';
 
+const { app } = window.require('electron').remote;
+const path = app.getPath('userData');
+
 export default [
 	{ type: I.BlockType.IconPage, icon: '👋' },
 	{ style: I.TextStyle.Title, text: `Introduction` },
@@ -8,10 +11,10 @@ export default [
 	{ style: I.TextStyle.Header1, text: `Privacy and Security` },
 	{ style: I.TextStyle.Header3, text: `Encryption` },
 	{ text: `Your data is stored on your devices and encrypted with a keychain phrase. The keychain phrase is something only you know, please keep it safe. You need it to sign in to new devices. If you lose it Anytype cannot help you recover your data. ` },
-	{ text: `<i>To read more about privacy:</i> <a href="https://community.anytype.io/knowledgebase/271-privacy-security"><i>https://community.anytype.io/knowledgebase/271-privacy-security</i></a>` },
-	{ style: I.TextStyle.Header3, text: `Backup and Storage` },
+	{ text: `<a href="https://community.anytype.io/knowledgebase/271-privacy-security"><i>Read more about privacy</i></a>` },
+	{ style: I.TextStyle.Header3, text: `Backup and Syncing` },
 	{ text: `One feature of the alpha program is a decentralised and encrypted backup node. This is provided free of charge to all alpha testers. Your objects are encrypted and synced to our cafe nodes. If your device is lost or damaged, you can restore the latest snapshot from our backup node. This feature is currently in early alpha. Data on the backup node is encrypted, and the Anytype team cannot access your data.` },
-	{ text: `<i>To read more about storage:</i> <a href="https://community.anytype.io/knowledgebase/272-storage-deletion"><i>https://community.anytype.io/knowledgebase/272-storage-deletion</i></a>` },
+	{ text: `<a href="https://community.anytype.io/knowledgebase/272-storage-deletion"><i>Read more about storage & deletion</i></a>` },
 	{ style: I.TextStyle.Header1, text: `Objects` },
 	{ text: `Everything in Anytype is an object: people, books, musicians, documents, ideas, places, numbers or files. For instance, a person named "Enda", an essay to write, the music of "Pink Floyd", the film "2001", a town named "Berlin", a year, or just a simple status like "Done". ` },
 	{ text: `<img src="./img/help/intro/d2b5ca33bd970f64a6301fa75ae2eb22.png" class="full" />` },
@@ -113,6 +116,9 @@ export default [
 	{ text: `<img src="./img/help/intro/438eb7b559abca855553778d41ab29fd.png" class="full" />` },
 	{ style: I.TextStyle.Header1, text: `Summary` },
 	{ text: `This is the very first version of Anytype. An encrypted, offline-first tool for thought with robust sync on mobile and desktop. In the coming months we will release full support on iOS, Graph view, dark mode, and local APIs.` },
+	{ style: I.TextStyle.Header1, text: `Problems and feature requests` },
+	{ text: `If you experience any problems, please, get in touch with us in the forum. You can make a bug report, feature request, or ask questions there. You can also join our telegram and discord groups for chatting with other Anytypers.` },
+	{ text: `If you see any problems with synchronisation, not responding app, high resource consumption, please open <a href="https://community.anytype.io/d/675-sync-problems-white-screen-or-not-responding-high-resource-consumption/5"><i>this thread for solutions first</i></a>. Your Anytype's data folder is here: <a href="${path}" class="path cp bgColor bgColor-grey textColor textColor-red">${path}</a>.` },
 	{ style: I.TextStyle.Header1, text: `Thank you` },
 	{ text: `We still have a long way to go, but your feedback gets us there faster. Thank you for being a part of the alpha program, and thank you for being part of this journey.` },
 	{ text: `— Anton, Roman, Zhanna & the entire Anyteam.` },
