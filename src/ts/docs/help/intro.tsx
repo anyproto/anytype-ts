@@ -4,8 +4,9 @@ const { app } = window.require('electron').remote;
 const path = app.getPath('userData');
 
 export default [
+	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, className: 'pink' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
-	{ style: I.TextStyle.Title, text: `Introduction` },
+	{ style: I.TextStyle.Title, text: `Welcome to Anytype!` },
 	{ text: `Anytype is a personal knowledge base, a digital brain that allows you to capture, describe, and connect information quickly. ` },
 	{ text: `You can use Anytype to create books, tasks, notes, ideas, documents, tools and organise them any way you want. Future versions will allow you to share your work and safely collaborate with others. We want Anytype to be a global repository of knowledge.` },
 	{ style: I.TextStyle.Header1, text: `Privacy and Security` },

@@ -163,6 +163,7 @@ class Page extends React.Component<Props, {}> {
 				if (!popupIntroBlock) {
 					popupStore.open('help', { data: { document: 'intro' } });
 					Storage.set('popupIntroBlock', 1);
+					Storage.set('popupNewBlock', 1);
 				} else
 				if (!popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
