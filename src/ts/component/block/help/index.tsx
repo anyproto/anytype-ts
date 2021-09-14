@@ -6,6 +6,7 @@ interface Props extends RouteComponentProps<any> {
 	type: I.BlockType;
 	style?: any;
 	icon?: string;
+	align?: I.BlockAlign;
 };
 
 import ContentIcon from './icon';
@@ -17,12 +18,13 @@ class Block extends React.Component<Props, {}> {
 	public static defaultProps = {
 		type: I.BlockType.Text,
 		style: I.TextStyle.Paragraph,
+		align: I.BlockAlign.Left,
 	};
 
 	render () {
-		const { type, style } = this.props;
+		const { type, style, align } = this.props;
 		
-		let cn = [ 'block', DataUtil.blockClass({ type: type, content: { style: style } }) ];
+		let cn = [ 'block', DataUtil.blockClass({ type: type, content: { style: style } }), 'align' + align ];
 		let content = null;
 		
 		switch (type) {
