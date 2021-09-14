@@ -11,6 +11,11 @@
 			pointer-events: none; border-radius: 6px;
 		}
 
+		.icon.resize {
+			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
+			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+		}
+
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
@@ -28,6 +33,7 @@
 			}
 
 			img:after { content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 13px; top: 11px; }
+			
 			.icon.resize { display: none; }
 		}
 
@@ -64,10 +70,6 @@
 
 		video { height: 100%; }
 		.videoControls {
-			.icon.resize {
-				width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
-				background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
-			}
 			.icon.play {
 				width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
 				background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
