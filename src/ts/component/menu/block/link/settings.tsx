@@ -95,6 +95,12 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
                     <div className="items">
                         <Item 
+                            id="withName" 
+                            icon={'relation ' + DataUtil.relationClass(I.RelationType.LongText)} 
+                            name="Name" 
+                            onClick={() => { this.setField('withName', true); }} 
+                        />
+                        <Item 
                             id="withDescription" 
                             icon={'relation ' + DataUtil.relationClass(I.RelationType.LongText)} 
                             name="Description" 
@@ -125,13 +131,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        const { fields } = block;
-
-        if ((id == 'style') && (v == I.LinkCardStyle.Text)) {
-            fields.withCover = false;
-        };
-
+        const { content } = block;
+        const object = detailStore.get(rootId, content.targetBlockId);
+        const { layout } = object;
+        
+        let fields = block.fields || {};
         fields[id] = v;
+        fields = DataUtil.checkLinkSettings(fields, layout);
 
         Storage.set('linkSettings', fields);
         C.BlockListSetFields(rootId, [ { blockId: blockId, fields: fields } ]);        
