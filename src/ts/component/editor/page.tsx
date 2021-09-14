@@ -999,7 +999,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || (!block.isText() && keyboard.isFocused)) {
+			if (!block.isText() && keyboard.isFocused) {
 				return;
 			};
 
@@ -1503,6 +1503,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
 		const isList = focused.isTextList();
+		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
 		const childrenIds = blockStore.getChildrenIds(rootId, focused.id);
 		const length = focused.getLength();
@@ -1518,7 +1519,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			mode = I.BlockSplitMode.Inner;
 		};
 
-		if (isToggle && isOpen) {
+		if (isCode || (isToggle && isOpen)) {
 			style = I.TextStyle.Paragraph;
 		};
 

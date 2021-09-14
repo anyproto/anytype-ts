@@ -14,7 +14,7 @@ const $ = require('jquery');
 const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM_BIG = 72;
+const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 48;
 const LIMIT = 40;
 
