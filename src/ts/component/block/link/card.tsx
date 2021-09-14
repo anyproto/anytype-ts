@@ -51,6 +51,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const sideLeft = withIcon ? (
             <div className="side left">
                 <IconObject 
+                    id={`block-${block.id}-icon`}
                     size={Size[iconSize]} 
                     object={object} 
                     canEdit={canEdit} 

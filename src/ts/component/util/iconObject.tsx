@@ -263,13 +263,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		if (canEdit) {
-			e.stopPropagation();
-
 			if (layout == I.ObjectLayout.Task) {
+				e.stopPropagation();
 				onCheckbox(e);
 			};
 
 			if (layoutsEmoji.indexOf(layout) >= 0) {
+				e.stopPropagation();
 				this.onEmoji(e);
 			};
 		};

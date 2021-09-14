@@ -479,9 +479,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			case 'linkSettings':
 				menuId = 'blockLinkSettings';
-
-				menuParam.data = Object.assign(menuParam.data, {
-				});
 				break;
 		};
 

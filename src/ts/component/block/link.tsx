@@ -25,12 +25,13 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block } = this.props;
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id ];
 		const fields = DataUtil.checkLinkSettings(block.fields, layout);
+		const readonly = this.props.readonly || object.isReadonly || object.templateIsBundled;
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');

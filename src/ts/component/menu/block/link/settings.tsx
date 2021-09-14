@@ -129,7 +129,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
     setField (id: string, v: any) {
         const { param } = this.props;
         const { data } = param;
-        const { rootId, blockId } = data;
+        const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
         const { content } = block;
         const object = detailStore.get(rootId, content.targetBlockId);
@@ -140,7 +140,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         fields = DataUtil.checkLinkSettings(fields, layout);
 
         Storage.set('linkSettings', fields);
-        C.BlockListSetFields(rootId, [ { blockId: blockId, fields: fields } ]);        
+        C.BlockListSetFields(rootId, blockIds.map((it: string) => {
+            return { blockId: it, fields: fields };
+        }));
     };
 
 });
