@@ -19,7 +19,7 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard:nth-child(2n + 2) { margin-right: 0px; }
         .linkCard {
-            .sides { display: flex; }
+            .sides { display: flex; overflow: hidden; }
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.right { width: 100%; position: relative; }
 
