@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, keyboard, Util, C } from 'ts/lib';
-import { Icon, Select } from 'ts/component';
+import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
-import { menuStore, commonStore } from 'ts/store';
+import { menuStore, commonStore, blockStore } from 'ts/store';
 import { getRange, setRange } from 'selection-ranges';
 import * as Prism from 'prismjs';
 
@@ -180,6 +180,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onBlur () {
 		keyboard.setFocus(false);
+		this.save();
 	};
 
 	onTemplate (e: any) {
@@ -304,17 +305,27 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 			menuStore.close('blockLatex');
 			this.placeholderCheck(this.getValue());
-
-			C.BlockUpdateContent({ 
-				...block, 
-				content: { 
-					...block.content, 
-					text: this.getValue(),
-				},
-			}, rootId, block.id, () => {
-				this.setState({ isEditing: false });
-			});
+			this.save(() => { this.setState({ isEditing: false }); });
 		});
+	};
+
+	save (callBack?: (message: any) => void) {
+		const { rootId, block, readonly } = this.props;
+		if (readonly) {
+			return;
+		};
+
+		const value = this.getValue();
+		const param = { 
+			...block, 
+			content: { 
+				...block.content, 
+				text: value,
+			},
+		};
+
+		blockStore.update(rootId, param);
+		C.BlockUpdateContent(param, rootId, block.id, callBack);
 	};
 
 	onSelect (e: any) {
