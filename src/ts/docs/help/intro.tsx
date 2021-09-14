@@ -79,7 +79,7 @@ export default [
 	{ text: `<i><a href="https://community.anytype.io/knowledgebase/935-how-can-i-add-relations-to-all-existing-objects-with-one-type">How can I add relations to all existing objects with one Type?</a></i> ` },
 	{ style: I.TextStyle.Header1, text: `Types` },
 	{ text: `Types bring definition to your objects, informing how they look and the relations they feature. You can always change your object's type. What begins as an idea can turn into a task and eventually a project. Your types and their changes sync automatically between your devices.` },
-	{ text: `<img src="./img/help/intro/types_store.png" class="full" />` },
+	{ text: `<img src="./img/help/intro/types-store.png" class="full" />` },
 	{ text: `<b>Types included with Anytype:</b>` },
 	{ style: I.TextStyle.Bulleted, text: `Tasks ` },
 	{ style: I.TextStyle.Bulleted, text: `Contacts` },
