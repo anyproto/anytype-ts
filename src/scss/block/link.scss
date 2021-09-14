@@ -17,7 +17,6 @@
 		}
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
-        .linkCard:nth-child(2n + 2) { margin-right: 0px; }
         .linkCard {
             .sides { display: flex; overflow: hidden; }
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
@@ -76,7 +75,7 @@
             .side.right { line-height: 96px; }
         }
 
-        .linkCard.card { margin: 6px 0px; }
+        .linkCard.card { margin: 3px 0px; }
         .linkCard.card {
             .sides { border: 1px solid #dfddd0; }
         }
@@ -116,5 +115,6 @@
         }
 	}
 
+    .block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
     .block.blockLink > .wrapContent > .selectable > .dropTarget.isOver.middle .sides { background: #ffebc0 !important; }
 }
