@@ -470,7 +470,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenSmile = menuStore.isOpen('smile');
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || menuOpen) {
+			if (menuOpen) {
 				return;
 			};
 
