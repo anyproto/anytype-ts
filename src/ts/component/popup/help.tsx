@@ -52,14 +52,6 @@ class PopupHelp extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { param } = this.props;
-		const { data } = param;
-		const { document } = data;
-		
-		if (document == 'whatsNew') {
-			Storage.set('popupNewBlock', 1);
-		};
-
 		this.renderLinks();
 		this.rebind();
 		this.resize();
