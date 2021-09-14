@@ -98,7 +98,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						<div className="rightMenu">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
-							<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
+							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
 							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={56} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
