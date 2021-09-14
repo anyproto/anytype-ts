@@ -5,7 +5,7 @@ const path = app.getPath('userData');
 
 export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, className: 'pink' } },
-	{ type: I.BlockType.IconPage, icon: '👋' },
+	{ type: I.BlockType.IconPage, icon: '🚀' },
 	{ style: I.TextStyle.Title, text: `Welcome to Anytype!` },
 	{ text: `Anytype is a personal knowledge base, a digital brain that allows you to quickly capture, describe, and connect information. You can use Anytype to create books, tasks, notes, ideas, documents, tools and organise them any way you want.` },
 	{ style: I.TextStyle.Header1, text: `A new metaphor` },

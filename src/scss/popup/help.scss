@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupHelp {
-		.innerWrap { width: 864px; height: calc(100% - 128px); padding: 40px 0px 0px 0px; }
+		.innerWrap { width: 864px; height: calc(100% - 32px); padding: 40px 0px 0px 0px; }
 
 		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: $colorMediumGrey; line-height: 24px; }
 		.head {

@@ -290,7 +290,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onEdit (e: any) {
-		const { rootId, block, readonly } = this.props;
+		const { block, readonly } = this.props;
 		if (readonly) {
 			return;
 		};
