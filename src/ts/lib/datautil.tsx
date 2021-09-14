@@ -720,7 +720,7 @@ class DataUtil {
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
 
-		if (hasLink && config.experimental) {
+		if (hasLink) {
 			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 		};
 		

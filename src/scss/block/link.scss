@@ -115,4 +115,6 @@
             .cardName { font-weight: 600; }
         }
 	}
+
+    .block.blockLink > .wrapContent > .selectable > .dropTarget.isOver.middle .sides { background: #ffebc0 !important; }
 }
