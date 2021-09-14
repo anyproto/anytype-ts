@@ -526,6 +526,8 @@ const Mapper = {
 		},
 
 		View: (obj: I.View) => {
+			obj = new M.View(Util.objectCopy(obj));
+			
 			const item = new Model.Block.Content.Dataview.View();
 
 			item.setId(obj.id);
