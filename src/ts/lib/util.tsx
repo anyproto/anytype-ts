@@ -751,7 +751,7 @@ class Util {
 	};
 	
 	filterFix (v: string) {
-		return escapeStringRegexp(String(v || ''));
+		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	};
 	
 	lengthFixOut (text: string, len: number): number {
