@@ -285,6 +285,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			if (onChange) {
 				onChange(value, () => {
 					menuStore.closeAll(Constant.menuIds.cell);
+					this.range = null;
 					this.setState({ isEditing: false });
 				});
 			};
