@@ -27,8 +27,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const cnt = Math.floor(this.width / (card + margin));
 		const width = Math.floor((this.width - margin * (cnt - 1)) / cnt);
 
-		console.log(this.width, width);
-
 		this.cache = new CellMeasurerCache({
 			defaultHeight: 250,
 			defaultWidth: width,
