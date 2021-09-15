@@ -6,11 +6,13 @@ import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {
+	className?: string;
+};
 
 interface State {
 	page: number;
-}
+};
 
 const $ = require('jquery');
 
@@ -29,7 +31,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, rootId, block, getView, readonly, onRowAdd } = this.props;
+		const { className, getData, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
@@ -41,6 +43,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const cn = [ 'dataviewControls', (className ? className : '') ];
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -86,40 +89,38 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		));
 		
 		return (
-			<div className="dataviewControls">
-				<div className="buttons">
-					<div id="sideLeft" className="side left">
-						<div className="first">
-							<div 
-								id={'view-item-' + view.id} 
-								className="viewItem active" 
-								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-								onContextMenu={(e: any) => { this.onView(e, view); }}
-							>
-								{view.name}
+			<div className={cn.join(' ')}>
+				<div id="sideLeft" className="side left">
+					<div className="first">
+						<div 
+							id={'view-item-' + view.id} 
+							className="viewItem active" 
+							onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
+							onContextMenu={(e: any) => { this.onView(e, view); }}
+						>
+							{view.name}
 
-								<Icon className="arrow" />
-							</div>
+							<Icon className="arrow" />
 						</div>
-
-						<Views 
-							axis="x" 
-							lockAxis="x"
-							lockToContainerEdges={true}
-							transitionDuration={150}
-							distance={10}
-							onSortEnd={this.onSortEnd}
-							helperClass="isDragging"
-							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
-						/>
 					</div>
 
-					<div id="sideRight" className="side right">
-						{buttons.map((item: any, i: number) => (
-							<ButtonItem key={item.id} {...item} />
-						))}	
-						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
-					</div>
+					<Views 
+						axis="x" 
+						lockAxis="x"
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						onSortEnd={this.onSortEnd}
+						helperClass="isDragging"
+						helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
+					/>
+				</div>
+
+				<div id="sideRight" className="side right">
+					{buttons.map((item: any, i: number) => (
+						<ButtonItem key={item.id} {...item} />
+					))}	
+					{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 				</div>
 			</div>
 		);

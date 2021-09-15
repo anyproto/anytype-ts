@@ -22,11 +22,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	constructor(props: Props) {
 		super(props);
 
+		this.width = $(window).width() - 96;
 		const { card, margin } = Constant.size.dataview.gallery;
+		const cnt = Math.floor(this.width / (card + margin));
+		const width = Math.floor((this.width - margin * (cnt - 1)) / cnt);
+
+		console.log(this.width, width);
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: 250,
-			defaultWidth: card,
+			defaultWidth: width,
 			fixedWidth: true,
 		});
 
@@ -112,9 +117,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 
 	resetPositioner () {
 		const { card, margin } = Constant.size.dataview.gallery;
+
+		const cnt = Math.floor(this.width / (card + margin));
+		const width = Math.floor((this.width - margin * (cnt - 1)) / cnt);
+
 		this.cellPositioner.reset({
 			columnCount: Math.floor(this.width / (card + margin)),
-			columnWidth: card,
+			columnWidth: width,
 			spacer: margin,
     	});
 	};

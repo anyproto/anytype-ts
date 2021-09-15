@@ -17,9 +17,10 @@
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
+		.dataviewControls { display: flex; font-weight: 500; color: $colorMediumGrey; }
 		.dataviewControls {
-			.side.left { width: calc(100% - 100px); }
-			.side.right { width: 100px; }
+			.side { padding: 26px 0px; height: 72px; width: 50%; white-space: nowrap; }
+			.side.right { text-align: right; }
 
 			.views { white-space: nowrap; display: inline-block; line-height: 20px; }
 			.viewItem { 
@@ -41,13 +42,6 @@
 				.views { visibility: hidden; pointer-events: none; }
 				.first { display: inline-block; line-height: 20px; }
 			}
-		}
-
-		.buttons { display: flex; font-weight: 500; color: $colorMediumGrey; }
-		.buttons {
-			.side { padding: 26px 0px; height: 72px; width: 50%; white-space: nowrap; }
-			.side.left { padding-left: 14px; }
-			.side.right { line-height: 26px; text-align: right; }
 
 			.icon { vertical-align: top; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
 			.icon:last-child { margin: 0px; }
@@ -71,7 +65,10 @@
 				.dot { display: block; }
 			}
 		}
-		
+		.dataviewControls.viewGrid {
+			.side.left { padding-left: 14px; }
+		}
+
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.view { border-top: 1px solid #e0ded2; }

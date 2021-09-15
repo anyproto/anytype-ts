@@ -49,22 +49,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		let ViewComponent: React.ReactType<I.ViewComponent>;
+		let className = '';
+
 		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
+				className = 'viewGrid';
 				break;
 				
 			case I.ViewType.Board:
 				ViewComponent = ViewBoard;
+				className = 'viewBoard';
 				break;
 				
 			case I.ViewType.Gallery:
 				ViewComponent = ViewGallery;
+				className = 'viewGallery';
 				break;
 			
 			case I.ViewType.List:
 				ViewComponent = ViewList;
+				className = 'viewList';
 				break;
 		};
 		
@@ -72,6 +78,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			<div>
 				<Controls 
 					{...this.props} 
+					className={className}
 					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
