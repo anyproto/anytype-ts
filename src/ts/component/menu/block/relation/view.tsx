@@ -253,6 +253,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
+				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationDelete(rootId, relationKey);
+				},
 			}
 		});
 	};

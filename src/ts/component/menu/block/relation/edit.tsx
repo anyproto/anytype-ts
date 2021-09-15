@@ -319,9 +319,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	onRemove (e: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { rootId, relationKey } = data;
+		const { rootId, relationKey, blockId, deleteCommand } = data;
 
-		C.ObjectRelationDelete(rootId, relationKey);
+		if (deleteCommand) {
+			deleteCommand(rootId, blockId, relationKey);
+		};
 		close();
 	};
 

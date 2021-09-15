@@ -243,6 +243,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
+				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationDelete(rootId, relationKey);
+				},
 			}
 		});
 	};
