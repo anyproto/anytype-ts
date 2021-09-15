@@ -308,29 +308,26 @@ class App extends React.Component<Props, State> {
 	};
 
 	preload (callBack?: () => void) {
-		const prefix = './dist/img';
-		const folders = [ 'cover', 'emoji', 'help' ];
-		
-		let loaded = 0;
-		let images: string[] = [];
-		let cb = () => {
-			loaded++;
-			if (loaded == folders.length) {
-				Util.cacheImages(images, callBack);
+		const prefix = './dist/';
+		const fr = new RegExp(/\.png|gif|jpg|svg/);
+		const images: string[] = [];
+		const readDir = (prefix: string, folder: string) => {
+			const fp = path.join(prefix, folder);
+			const files = fs.readdirSync(fp);
+
+			for (let file of files) {
+				const fn = path.join(fp, file);
+				const isDir = fs.lstatSync(fn).isDirectory();
+				if (isDir) {
+					readDir(fp, file);
+				} else 
+				if (file.match(fr)) {
+					images.push(fn.replace(/^dist\//, ''));
+				};
 			};
 		};
-
-		folders.forEach(folder => {
-			const path = [ prefix, folder ].join('/')
-			fs.readdir(path, (err: any, files: any[]) => {
-				if (err) {
-					cb();
-					return;
-				};
-				images = images.concat(files.map((it: string) => { return [ 'img', folder, it ].join('/') }));
-				cb();
-			});
-		});
+		readDir(prefix, 'img');
+		Util.cacheImages(images, callBack);
 	};
 
 	setIpcEvents () {

@@ -68,7 +68,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"searchObject", "select", "dataviewDate"
+			"select", "searchObject", "dataviewDate"
 		],
 		"layout": [
 			"blockAlign"

@@ -232,8 +232,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const name = filter.text.replace(/\\/g, '');
-			C.PageCreate({ name: name }, (message: any) => {
+			C.PageCreate({ name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

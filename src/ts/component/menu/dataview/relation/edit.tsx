@@ -12,7 +12,7 @@ interface Props extends I.Menu {
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-class MenuRelationEdit extends React.Component<Props, {}> {
+const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<Props, {}> {
 
 	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
@@ -405,6 +405,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		return getView()?.getRelation(relationKey);
 	};
 
-};
+});
 
 export default MenuRelationEdit;

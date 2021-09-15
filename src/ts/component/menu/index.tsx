@@ -347,7 +347,7 @@ class Menu extends React.Component<Props, State> {
 			if (!this._isMounted) {
 				return;
 			};
-			
+
 			const win = $(window);
 			const node = $(ReactDOM.findDOMNode(this));
 			const menu = node.find('.menu');
