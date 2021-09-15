@@ -176,6 +176,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				break;
 
 			case I.ObjectLayout.Human:
+				if (iconImage) {
+					cn.push('withImage');
+				};
+				
 				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;

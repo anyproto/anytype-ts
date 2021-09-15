@@ -197,7 +197,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
-			passThrough: true,
 			data: {
 				...data,
 				relationKey: item.relationKey,

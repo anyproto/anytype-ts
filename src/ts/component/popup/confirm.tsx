@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Icon, Label, Button } from 'ts/component';
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {}
@@ -34,6 +34,14 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, 
 				{canCancel ? <Button text={textCancel} color="grey" onClick={this.onCancel} /> : ''}
 			</React.Fragment>
 		);
+	};
+
+	componentDidMount() {
+		keyboard.setFocus(true);
+	};
+
+	componentWillUnmount() {
+		keyboard.setFocus(false);
 	};
 	
 	onConfirm (e: any) {

@@ -338,6 +338,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		this.save();
+		this.menuClose();
 		this.props.close();
 	};
 
