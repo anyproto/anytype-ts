@@ -205,10 +205,6 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		const { isPopup, rootId } = this.props;
 
-		if (isPopup) {
-			return;
-		};
-
 		popupStore.open('search', {
 			preventResize: true, 
 			data: {
