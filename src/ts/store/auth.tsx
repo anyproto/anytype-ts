@@ -6,141 +6,141 @@ import { keyboard } from 'ts/lib';
 
 class AuthStore {
 	
-		public dataPath: string = '';
-		public accountItem: I.Account = null;
-		public accountList: I.Account[] = [];
-		public pin: string = '';
-		public icon: string = '';
-		public preview: string = '';
-		public name: string = '';
-		public phrase: string = '';
-		public code: string = '';
-		public threadMap: Map<string, any> = new Map();
+	public dataPath: string = '';
+	public accountItem: I.Account = null;
+	public accountList: I.Account[] = [];
+	public pin: string = '';
+	public icon: string = '';
+	public preview: string = '';
+	public name: string = '';
+	public phrase: string = '';
+	public code: string = '';
+	public threadMap: Map<string, any> = new Map();
 
-		constructor () {
-				makeObservable(this, {
-						dataPath: observable,
-						accountItem: observable,
-						accountList: observable,
-						pin: observable,
-						icon: observable,
-						preview: observable,
-						name: observable,
-						phrase: observable,
-						code: observable,
-						threadMap: observable,
-						accounts: computed,
-						account: computed,
-						path: computed,
-						pathSet: action,
-						pinSet: action,
-						phraseSet: action,
-						codeSet: action,
-						iconSet: action,
-						previewSet: action,
-						nameSet: action,
-						accountAdd: action,
-						accountSet: action,
-						threadSet: action,
-						threadRemove: action,
-						logout: action
-				});
-		};
+	constructor () {
+		makeObservable(this, {
+			dataPath: observable,
+			accountItem: observable,
+			accountList: observable,
+			pin: observable,
+			icon: observable,
+			preview: observable,
+			name: observable,
+			phrase: observable,
+			code: observable,
+			threadMap: observable,
+			accounts: computed,
+			account: computed,
+			path: computed,
+			pathSet: action,
+			pinSet: action,
+			phraseSet: action,
+			codeSet: action,
+			iconSet: action,
+			previewSet: action,
+			nameSet: action,
+			accountAdd: action,
+			accountSet: action,
+			threadSet: action,
+			threadRemove: action,
+			logout: action,
+		});
+	};
 
-		get accounts (): I.Account[] {
-			return this.accountList;
-		};
+	get accounts (): I.Account[] {
+		return this.accountList;
+	};
 
     get account (): I.Account {
-      return this.accountItem;
+		return this.accountItem;
     };
 
-		get path (): string {
-      return this.dataPath || Storage.get('dataPath') || '';
+	get path (): string {
+		return this.dataPath || Storage.get('dataPath') || '';
     };
 
-		pathSet (v: string) {
-      this.dataPath = v;
-      Storage.set('dataPath', v);
+	pathSet (v: string) {
+		this.dataPath = v;
+		Storage.set('dataPath', v);
     };
 
-		pinSet (v: string) {
-      this.pin = v;
+	pinSet (v: string) {
+		this.pin = v;
     };
 
-		phraseSet (v: string) {
-      this.phrase = v;
+	phraseSet (v: string) {
+		this.phrase = v;
     };
 
-		codeSet (v: string) {
-      this.code = v;
+	codeSet (v: string) {
+		this.code = v;
     };
 
-		iconSet (v: string) {
-      this.icon = v;
+	iconSet (v: string) {
+		this.icon = v;
     };
 
-		previewSet (v: string) {
-      this.preview = v;
+	previewSet (v: string) {
+		this.preview = v;
     };
 
-		nameSet (v: string) {
-      this.name = v;
+	nameSet (v: string) {
+		this.name = v;
     };
 
-		accountAdd (account: I.Account) {
-      this.accountList.push(account);
+	accountAdd (account: I.Account) {
+		this.accountList.push(account);
     };
 
-		accountClear () {
-      this.accountList = [];
+	accountClear () {
+		this.accountList = [];
     };
 
-		accountSet (account: I.Account) {
-      this.accountItem = account as I.Account;
+	accountSet (account: I.Account) {
+		this.accountItem = account as I.Account;
 
-      Storage.set('accountId', account.id);
-      analytics.profile(account);
-      Sentry.setUser({ id: account.id });
+		Storage.set('accountId', account.id);
+		analytics.profile(account);
+		Sentry.setUser({ id: account.id });
     };
 
-		threadSet (rootId: string, obj: any) {
-      const thread = this.threadMap.get(rootId);
-      if (thread) {
-        set(thread, observable(obj));
-      } else {
-        this.threadMap.set(rootId, observable(obj));
-      };
+	threadSet (rootId: string, obj: any) {
+		const thread = this.threadMap.get(rootId);
+		if (thread) {
+			set(thread, observable(obj));
+		} else {
+			this.threadMap.set(rootId, observable(obj));
+		};
     };
 
-		threadRemove (rootId: string) {
-      this.threadMap.delete(rootId);
+	threadRemove (rootId: string) {
+		this.threadMap.delete(rootId);
     };
 
-		threadGet (rootId: string) {
-      return this.threadMap.get(rootId) || {};
+	threadGet (rootId: string) {
+		return this.threadMap.get(rootId) || {};
     };
 
-		logout () {
-      Storage.logout();
+	logout () {
+		Storage.logout();
 
-      keyboard.setPinChecked(false);
-      crumbs.delete(I.CrumbsType.Page);
-      crumbs.delete(I.CrumbsType.Recent);
+		keyboard.setPinChecked(false);
+		crumbs.delete(I.CrumbsType.Page);
+		crumbs.delete(I.CrumbsType.Recent);
 
-      commonStore.coverSetDefault();
+		commonStore.coverSetDefault();
 
-      blockStore.breadcrumbsSet('');
-      blockStore.recentSet('');
-      blockStore.clearAll();
-      detailStore.clearAll();
+		blockStore.breadcrumbsSet('');
+		blockStore.recentSet('');
+		blockStore.clearAll();
+		detailStore.clearAll();
 
-      dbStore.objectTypesClear();
+		dbStore.objectTypesClear();
 
-      this.accountItem = null;
-      this.nameSet('');
-      this.previewSet('');
-      this.phraseSet('');
+		this.accountItem = null;
+		this.nameSet('');
+		this.previewSet('');
+		this.phraseSet('');
     };
 
 };
