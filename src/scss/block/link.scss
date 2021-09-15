@@ -29,7 +29,10 @@
             .side.right {
                 .txt { width: 100%; }
 
-                .cardName { @include text-paragraph; @include text-overflow-nw; max-width: 100%; overflow: hidden; }
+                .cardName { 
+                    @include text-paragraph; @include text-overflow-nw; max-width: 100%; overflow: hidden; 
+                    display: inline-block; vertical-align: middle; 
+                }
                 .cardName span { position: relative; }
                 .cardName span::before {
                     content: ""; width: 100%; height: 1px; transition: $transitionFast; position: absolute; bottom: 0px; left: 0px; z-index: 1;
