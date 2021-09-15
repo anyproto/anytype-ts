@@ -12,19 +12,19 @@
 		}
 
 		.select { 
-			border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; display: none; 
-			margin-bottom: 10px; 
+			border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
+			display: none; margin-bottom: 8px;
 		}
 		.select {
 			.name { overflow: visible; }
 		}
 		.select:hover, .select.active { background: none; }
 
-		#value { font-size: 20px; line-height: 20px; padding: 16px; width: 100%; overflow: auto; }
+		#value { font-size: 20px; line-height: 20px; width: 100%; overflow: auto; }
 		#value:empty { display: none; }
 		#input { 
 			background: #f3f2ec; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
-			-webkit-user-modify: read-write-plaintext-only; display: none;
+			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
 		}
 
 		.katex-display { margin: 0px; text-align: inherit; }

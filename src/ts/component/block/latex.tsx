@@ -30,6 +30,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	ref: any = null;
 	range: any = { start: 0, end: 0 };
 	text: string = '';
+	timeout: number = 0;
 
 	state = {
 		isEditing: false,
@@ -50,8 +51,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { readonly } = this.props;
+		const { readonly, block } = this.props;
 		const { isEditing } = this.state;
+		const { content } = block;
+		const { text } = content;
 
 		return (
 			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
@@ -87,6 +90,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const length = this.text.length;
 
+		this.rebind();
 		this._isMounted = true;
 		this.range = { start: length, end: length };
 		this.setValue(this.text);
@@ -95,6 +99,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	componentDidUpdate () {
 		const { isEditing } = this.state;
 
+		this.rebind();
 		this.setValue(this.text);
 
 		if (isEditing) {
@@ -107,6 +112,29 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		const { block } = this.props;
+		const self = this;
+
+		this.unbind();
+		$(window).on('click.latex', (e: any) => {
+			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
+				return;
+			};
+
+			menuStore.close('blockLatex');
+			window.clearTimeout(self.timeout);
+			self.placeholderCheck(self.getValue());
+			self.save(() => { 
+				self.setState({ isEditing: false });
+			});
+		});
+	};
+
+	unbind () {
 		$(window).unbind('click.latex');
 	};
 
@@ -151,6 +179,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		this.text = value;
 		this.setContent(value);
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => { this.save(); }, 500); 
 	};
 
 	updateRect () {
@@ -180,6 +211,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onBlur () {
 		keyboard.setFocus(false);
+		window.clearTimeout(this.timeout);
+
 		this.save();
 	};
 
@@ -297,16 +330,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		e.stopPropagation();
 		this.setState({ isEditing: true });
-
-		$(window).unbind('click.latex').on('click.latex', (e: any) => {	
-			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
-				return;
-			};
-
-			menuStore.close('blockLatex');
-			this.placeholderCheck(this.getValue());
-			this.save(() => { this.setState({ isEditing: false }); });
-		});
 	};
 
 	save (callBack?: (message: any) => void) {
