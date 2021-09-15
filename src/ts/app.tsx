@@ -307,27 +307,32 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 	};
 
-	preload (callBack?: () => void) {
+	preload () {
 		const prefix = './dist/';
 		const fr = new RegExp(/\.png|gif|jpg|svg/);
-		const images: string[] = [];
+		
 		const readDir = (prefix: string, folder: string) => {
 			const fp = path.join(prefix, folder);
-			const files = fs.readdirSync(fp);
-
-			for (let file of files) {
-				const fn = path.join(fp, file);
-				const isDir = fs.lstatSync(fn).isDirectory();
-				if (isDir) {
-					readDir(fp, file);
-				} else 
-				if (file.match(fr)) {
-					images.push(fn.replace(/^dist\//, ''));
+			fs.readdir(fp, (err: any, files: string[]) => {
+				if (err) {
+					return;
 				};
-			};
+
+				let images: string[] = [];
+				for (let file of files) {
+					const fn = path.join(fp, file);
+					const isDir = fs.lstatSync(fn).isDirectory();
+					if (isDir) {
+						readDir(fp, file);
+					} else 
+					if (file.match(fr)) {
+						images.push(fn.replace(/^dist\//, ''));
+					};
+				};
+				Util.cacheImages(images);
+			});
 		};
 		readDir(prefix, 'img');
-		Util.cacheImages(images, callBack);
 	};
 
 	setIpcEvents () {
