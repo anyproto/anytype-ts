@@ -49,7 +49,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         cn.push('c' + Size[iconSize]);
 
         const sideLeft = withIcon ? (
-            <div className="side left">
+            <div id="sideLeft" className="side left">
                 <IconObject 
                     id={`block-${block.id}-icon`}
                     size={Size[iconSize]} 
@@ -63,7 +63,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         ) : null;
 
         const sideRight = (
-            <div className="side right">
+            <div id="sideRight" className="side right">
                 <div className="txt">
                     {withName ? <div className="cardName"><span>{name}</span></div> : ''}
                     {withDescription ? <div className="cardDescription">{description}</div> : ''}
@@ -75,7 +75,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         ); 
 
         let content = (
-            <div className={cns.join(' ')}>
+            <div id="sides" className={cns.join(' ')}>
                 {align == I.BlockAlign.Right ? (
                     <React.Fragment>
                         {sideRight}

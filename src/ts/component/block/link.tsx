@@ -1,17 +1,22 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Loader } from 'ts/component';
-import { I, DataUtil, C, translate } from 'ts/lib';
-import { detailStore, dbStore } from 'ts/store';
+import { Loader } from 'ts/component';
+import { I, DataUtil, translate } from 'ts/lib';
+import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
 import LinkCard from './link/card';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {}
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+
+const $ = require('jquery');
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
+	_isMounted: boolean = false;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -29,7 +34,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { id, content } = block;
 		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, isArchived, done, layout } = object;
-		const cn = [ 'focusable', 'c' + id ];
+		const cn = [ 'focusable', 'c' + id, 'resizable' ];
 		const fields = DataUtil.checkLinkSettings(block.fields, layout);
 		const readonly = this.props.readonly || object.isReadonly || object.templateIsBundled;
 
@@ -63,6 +68,41 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 				)}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this._isMounted = true;
+		this.resize();
+		this.rebind();
+	};
+	
+	componentDidUpdate () {
+		this.resize();
+		this.rebind();
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		this.unbind();
+		const node = $(ReactDOM.findDOMNode(this));
+		node.on('resize', (e: any) => { this.resize(); });
+	};
+	
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.unbind('resize');
 	};
 
 	onKeyDown (e: any) {
@@ -121,6 +161,19 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, targetBlockId, []);
 
 		DataUtil.pageSetDone(targetBlockId, !object.done);
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const sides = node.find('#sides');
+		const sideLeft = node.find('#sideLeft');
+		const sideRight = node.find('#sideRight');
+
+		if (!sides.length) {
+			return;
+		};
+
+		sideRight.css({ width: sides.width() - sideLeft.outerWidth(true) });
 	};
 	
 });
