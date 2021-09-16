@@ -23,6 +23,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const object = detailStore.get(rootId, content.targetBlockId);
         const { layout } = object;
         const fields = DataUtil.checkLinkSettings(block.fields, layout);
+        const canIcon = object.layout != I.ObjectLayout.Task;
+        const canCover = fields.style == I.LinkCardStyle.Card;
 
         const styles: any[] = [
             { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
@@ -74,10 +76,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
                     <div className="name">Show / Hide on preview</div>
                     
                     <div className="items">
-                        <Item id="withIcon" name="Icon" icon="item-icon" />
-                        {fields.style == I.LinkCardStyle.Card ? (
-                            <Item id="withCover" name="Cover" icon="item-cover" />
-                        ) : ''}
+                        {canIcon ? <Item id="withIcon" name="Icon" icon="item-icon" /> : ''}
+                        {canCover ? <Item id="withCover" name="Cover" icon="item-cover" /> : ''}
                     </div>
 
                     {buttons.length ? (

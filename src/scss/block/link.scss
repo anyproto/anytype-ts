@@ -74,14 +74,18 @@
                 .txt { vertical-align: top; }
                 .archive { position: static; margin: 0px 0px 0px 8px; }
             }
+
+            .sides.bgColor .side.right { line-height: 20px; padding: 2px; }
         }
 
         .linkCard.c64 {
             .side.right { line-height: 64px; }
+            .sides.bgColor .side.right { line-height: 56px; padding: 4px; }
         }
 
         .linkCard.c96 {
             .side.right { line-height: 96px; }
+            .sides.bgColor .side.right { line-height: 88px; padding: 4px; }
         }
 
         .linkCard.card { margin: 3px 0px; }

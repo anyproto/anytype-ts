@@ -6,8 +6,17 @@ export default [
 
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 31 August, 2021` },
+	{ style: I.TextStyle.Header1, text: `Updates for 16 September, 2021` },
 
+	{ style: I.TextStyle.Header2, text: `Types and Sets are now open for everyone!` },
+	{ text: `<b>Take a look at the "Welcome to Anytype" page containing all information with useful links for tips and tricks!</b>` },
+
+	{ style: I.TextStyle.Header2, text: `Features` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Audio.</b>  You can now upload your favourite music with formats: <span class="${sc}">.wav</span>, <span class="${sc}">.mp3</span>, <span class="${sc}">.ogg</span>, <span class="${sc}">.m4a</span> and <span class="${sc}">.flac</span> as a new media block. They will also become objects inside Anytype, that you can collect into sets. Enjoy your listening!` },
+	{ style: I.TextStyle.Bulleted, text: `<b>Different views of links.</b> You can change the appearance to Cards and make it yours! You can turn on / off showing covers, changing the icon size, show description under the text.` },
+	{ align: I.BlockAlign.Center, text: `<i>Picture was influenced by Danijel and Florencia studying flows 👋</i>` }, 
+
+	{ style: I.TextStyle.Header1, text: `Updates for 31 August, 2021` },
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Sets can have custom icon & cover and might have their own relations as other objects.` },
 	{ style: I.TextStyle.Bulleted, text: `Anytype starts updating mentions after an object's name change from this release. We will introduce this enhancement for Android in the next release.` },

@@ -1269,6 +1269,7 @@ class DataUtil {
         };
 
 		if (layout == I.ObjectLayout.Task) {
+			fields.withIcon = true;
 			fields.iconSize = I.LinkIconSize.Small;
 		};
 
