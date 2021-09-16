@@ -20,12 +20,17 @@ export default [
 	{ style: I.TextStyle.Header2, text: `New features:` },
 	{ style: I.TextStyle.Header3, text: `Play that funky music, Anytype` },
 	{ text: `You can now upload your favorite music with formats: <span class="${sc}">.wav</span>, <span class="${sc}">.mp3</span>, <span class="${sc}">.ogg</span>, <span class="${sc}">.m4a</span> and <span class="${sc}">.flac</span> into a new media block. Audio files are available on canvas and as objects inside Anytype, which you can collect into sets.` },
+	{ text: `<img src="./img/help/Audio-block.png" class="full">` },
 
 	{ style: I.TextStyle.Header3, text: `Custom views for links and bookmarks` },
 	{ text: `You can change the appearance of cards to make them yours. Links and cards can now show cover images, different icon sizes, and descriptions under the text.` },
+	{ text: `<img src="./img/help/Link-to-object.png" class="full">` },
 
 	{ style: I.TextStyle.Header3, text: `Open attached files in Anytype` },
 	{ text: `You can now open the attached files directly in Anytype instead of having to download them. So now you don’t need to download files and then find them in the file system. They open just from Anytype! <a href="https://community.anytype.io/d/51-open-attached-files-directly-instead-of-downloading-them">Thanks, bzimor, reuseman</a>` },
+
+	{ style: I.TextStyle.Header3, text: `@Today is the day!` },
+	{ text: `Enhance your Daily notes with handy date shortcuts! Anytype will create an object with a relative date automatically. Write it the way you like: @now, @today, @yesterday, @three days ago, @last month, @one year from now, @sunday, @next January, @last February, @December 25th, @01.10.21, @2016-05-12. So handy with backlinks!  <a href="https://community.anytype.io/d/770-timedate-shortcuts-eg-now-today-date-etc">Thanks, levifig</a>` },
 
 	{ style: I.TextStyle.Header2, text: `Fixes` },
 	{ style: I.TextStyle.Bulleted, text: `The keychain phrase is visible without any password authentication. Thanks, shizoxlife` },

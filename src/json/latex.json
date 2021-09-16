@@ -4,8 +4,7 @@
         "name": "Templates",
         "children": [
 						{
-                "comment": "`e = m*c^2`",
-                "name": "Формула1"
+                "comment": "`e = m*c^2`"
             },
             {
                 "comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`",
@@ -28,12 +27,10 @@
                 "name": "Формула6"
             },
             {
-                "comment": "`\\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`",
-                "name": "Формула7"
+                "comment": "`\\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`"
             },
             {
-                "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij}`",
-                "name": "Формула8"
+                "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij}`"
             },
             {
                 "comment": "`\\ce{C6H5-CHO}`",
