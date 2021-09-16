@@ -120,6 +120,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '&#8984; + Q',			 com: 'Ctrl + Q',			 name: 'Close Anytype' },
 						{ mac: '&#8984; + Y',			 com: 'Ctrl + H',			 name: 'Show page edit history' },
 						{ mac: '&#8984; + Click',		 com: 'Ctrl + Click',	 name: 'On page link will open it in modal view' },
+						{ mac: 'Ctrl + Space',		 com: 'Ctrl + Space',	 name: 'Shortcuts to launch shortcuts view' },
 					]
 				},
 
@@ -176,6 +177,8 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '←',					 name: 'Go to the left side of navigation. Link from page' },
 						{ com: '→',					 name: 'Go to the right side of navigation. Link to page' },
 						{ com: 'Enter',				 name: 'Select option' },
+						{ mac: '&#8984; + Shift + C',		 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
+						{ mac: '&#8984; + Shift + H',		 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
 					]
 				},
 
@@ -207,7 +210,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '`',		 name: 'Inline code' },
 						{ com: '** or __',		 name: 'Inline bold' },
 						{ com: '* or _',		 name: 'Inline italic' },
-						{ com: '~~',		 name: 'Inline strike' },						
+						{ com: '~~',		 name: 'Inline strike' },
 					]
 				},
 			],
@@ -244,6 +247,7 @@ class PopupShortcut extends React.Component<Props, State> {
 
 				{
 					name: 'Objects', children: [
+						{ com: '@today, @tomorrow',	name: 'Create an object with a relative date. Also available: @three days ago, @last month, @2016-05-12' },
 						{ com: '/page',			 name: 'Page' },
 						{ com: '/file',			 name: 'File' },
 						{ com: '/image',		 name: 'Image' },
