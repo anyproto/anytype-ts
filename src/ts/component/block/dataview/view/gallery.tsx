@@ -22,7 +22,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	constructor(props: Props) {
 		super(props);
 
-		this.width = $(window).width() - 96;
+		this.width = $(window).width() - 124;
 		const { card, margin } = Constant.size.dataview.gallery;
 		const cnt = Math.floor(this.width / (card + margin));
 		const width = Math.floor((this.width - margin * (cnt - 1)) / cnt);
