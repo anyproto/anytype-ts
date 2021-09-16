@@ -165,6 +165,8 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: '&#8984; + Shift +S',	 com: 'Ctrl + Shift + S',	 name: 'Strikethrough' },
 						{ mac: '&#8984; + K',			 com: 'Ctrl + K',			 name: 'Add a link' },
 						{ mac: '&#8984; + L',			 com: 'Ctrl + L',			 name: 'Convert to Inline code' },
+						{ mac: '&#8984; + Shift + C',		 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
+						{ mac: '&#8984; + Shift + H',		 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
 					]
 				},
 			],
@@ -177,8 +179,6 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '←',					 name: 'Go to the left side of navigation. Link from page' },
 						{ com: '→',					 name: 'Go to the right side of navigation. Link to page' },
 						{ com: 'Enter',				 name: 'Select option' },
-						{ mac: '&#8984; + Shift + C',		 com: 'Ctrl + Shift + C',	 name: 'Apply previously selected font color' },
-						{ mac: '&#8984; + Shift + H',		 com: 'Ctrl + Shift + H',	 name: 'Apply previously selected highlight' },
 					]
 				},
 
