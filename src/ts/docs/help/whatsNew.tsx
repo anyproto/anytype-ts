@@ -8,13 +8,46 @@ export default [
 
 	{ style: I.TextStyle.Header1, text: `Updates for 16 September, 2021` },
 
-	{ style: I.TextStyle.Header2, text: `Types and Sets are now open for everyone!` },
-	{ text: `<b>Take a look at the "Welcome to Anytype" page containing all information with useful links for tips and tricks!</b>` },
+	{ style: I.TextStyle.Header2, text: `Types, Sets, and Relations are now available!` },
+	{ text: `This upgrade has been in testing all summer. Thank you, everyone, for joining the onboarding calls, for sharing your feedback and your creations. Because of your help, we can now deliver this upgrade to everyone in the alpha program.` },
 
-	{ style: I.TextStyle.Header2, text: `Features` },
-	{ style: I.TextStyle.Bulleted, text: `<b>Audio.</b>  You can now upload your favourite music with formats: <span class="${sc}">.wav</span>, <span class="${sc}">.mp3</span>, <span class="${sc}">.ogg</span>, <span class="${sc}">.m4a</span> and <span class="${sc}">.flac</span> as a new media block. They will also become objects inside Anytype, that you can collect into sets. Enjoy your listening!` },
-	{ style: I.TextStyle.Bulleted, text: `<b>Different views of links.</b> You can change the appearance to Cards and make it yours! You can turn on / off showing covers, changing the icon size, show description under the text.` },
-	{ align: I.BlockAlign.Center, text: `<i>Picture was influenced by Danijel and Florencia studying flows 👋</i>` }, 
+	{ style: I.TextStyle.Header2, text: `Major features:` },
+	{ style: I.TextStyle.Bulleted, text: `New types of objects and the power to connect them with relations.` },
+	{ style: I.TextStyle.Bulleted, text: `Layouts help you save time on repetitive tasks, customize your objects with featured relations and reusable templates.` },
+	{ style: I.TextStyle.Bulleted, text: `Finally, you can now work with multiple objects using Sets.` },
+	{ text: `Take a look at the <span class="${sc}">“Welcome to Anytype”</span> page to help you get started. There are also helpful tips and tricks to get the most out of this substantial new update.` },
+
+	{ style: I.TextStyle.Header2, text: `New features:` },
+	{ style: I.TextStyle.Header3, text: `Play that funky music, Anytype` },
+	{ text: `You can now upload your favorite music with formats: <span class="${sc}">.wav</span>, <span class="${sc}">.mp3</span>, <span class="${sc}">.ogg</span>, <span class="${sc}">.m4a</span> and <span class="${sc}">.flac</span> into a new media block. Audio files are available on canvas and as objects inside Anytype, which you can collect into sets.` },
+
+	{ style: I.TextStyle.Header3, text: `Custom views for links and bookmarks` },
+	{ text: `You can change the appearance of cards to make them yours. Links and cards can now show cover images, different icon sizes, and descriptions under the text.` },
+
+	{ style: I.TextStyle.Header3, text: `Open attached files in Anytype` },
+	{ text: `You can now open the attached files directly in Anytype instead of having to download them. So now you don’t need to download files and then find them in the file system. They open just from Anytype! <a href="https://community.anytype.io/d/51-open-attached-files-directly-instead-of-downloading-them">Thanks, bzimor, reuseman</a>` },
+
+	{ style: I.TextStyle.Header2, text: `Fixes` },
+	{ style: I.TextStyle.Bulleted, text: `The keychain phrase is visible without any password authentication. Thanks, shizoxlife` },
+	{ style: I.TextStyle.Bulleted, text: `Navigating back and forth between objects is unreliable. <a href="https://community.anytype.io/d/643-forward-and-back-buttons-stop-working">Thanks, ​​irdinamaztura & abheek</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Carriage returns to the top of the screen whenever I select something in the quick editor. <a href="https://community.anytype.io/d/851-selection-jumps-to-top-in-popup-mode/1">Thanks, bluatruli</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype (Human) version history breaks app login, triggers an infinite loop. <a href="https://community.anytype.io/d/805-version-history-of-anytype-page-breaks-the-app/1">Thanks, selimsandal</a>` },
+	{ style: I.TextStyle.Bulleted, text: `The shortcut for page history is not working. <a href="https://community.anytype.io/d/603-page-history-shortcut-not-working/1">Thanks, lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Rendering on some geometries causes a flicker of UI elements. <a href="https://community.anytype.io/d/760-rendering-on-some-geometries-causing-flicker-of-ui-elements/1">Thanks, jotamudo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Search box “not found” text formatting. <a href="https://community.anytype.io/d/705-search-box-not-found-text-formatting/1">Thanks, kEbZeCK</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Pasting URL into title triggers menu` },
+	{ style: I.TextStyle.Bulleted, text: `The carriage in the Number relation shifts to the beginning of the line when the cell reopens.` },
+	{ style: I.TextStyle.Bulleted, text: `UI focus disappears in the list of statuses and tags.` },
+
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+	{ style: I.TextStyle.Bulleted, text: `New shortcut for Shortcuts - <span class="${sc}">Ctrl + Space</span>. <a href="https://community.anytype.io/d/602-shortcut-for-shortcuts/1">Thanks, lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Changing text color: remember last used color or background and add shortcut - <span class="${sc}">Cmd/Ctrl + Shift + C</span> <span class="${sc}">or Cmd/Ctrl + Shift + H</span>. <a href="https://community.anytype.io/d/546-changing-text-color-remember-last-used-color-and-adding-shortcut/1">Thanks, abstractgeek</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Favorite & unfavorite. You can’t add an object to favorites multiple times anymore. <a href="https://community.anytype.io/d/568-possible-to-mark-an-object-as-favorite-multiple-times/1">Thanks, Isak</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Ability to clear the "Recent" list on the dashboard. <a href="https://community.anytype.io/d/646-ability-to-clear-the-recent-list/1">Thanks, ste</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Link to object — first result not highlighted visually. <a href="https://community.anytype.io/d/696-link-to-object-first-result-not-visually-chosen/1">Thanks, kEbZeCK</a>` },
+	{ style: I.TextStyle.Bulleted, text: `An issue with dashes in the page title when creating a new page using <span class="${sc}">@</span>. <a href="https://community.anytype.io/d/324-issue-with-dash-in-page-name-when-new-page-created-using-at/1">Thanks, bskinner</a>` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
 	{ style: I.TextStyle.Header1, text: `Updates for 31 August, 2021` },
 	{ style: I.TextStyle.Header2, text: `Enhancements` },

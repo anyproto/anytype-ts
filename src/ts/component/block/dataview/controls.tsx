@@ -127,6 +127,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
+		this.resize();
 		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
 	};
 
@@ -240,7 +241,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const sideLeft = node.find('#sideLeft');
 
 		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
-		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
+		console.log(views.width(), sideLeft.outerWidth());
+		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
 });

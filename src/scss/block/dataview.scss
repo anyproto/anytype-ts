@@ -19,9 +19,9 @@
 
 		.dataviewControls { display: flex; font-weight: 500; color: $colorMediumGrey; }
 		.dataviewControls {
-			.side.left { padding-left: 14px; }
-			.side { padding: 26px 0px; height: 72px; width: 50%; white-space: nowrap; }
-			.side.right { text-align: right; }
+			.side { padding: 26px 0px; height: 72px; white-space: nowrap; }
+			.side.left { padding-left: 14px; width: calc(100% - 80px); }
+			.side.right { text-align: right; width: 80px; }
 
 			.views { white-space: nowrap; display: inline-block; line-height: 20px; }
 			.viewItem { 
