@@ -121,9 +121,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										onChange={this.onFilterChange}
 									/>
 								</div>
-								{tab == Tab.Recent ? (
-									<div className="btn" onClick={this.onClear}>Clear</div>
-								) : ''}
+								{(tab == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
 						<ListIndex 
