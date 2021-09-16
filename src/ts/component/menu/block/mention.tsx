@@ -190,8 +190,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					name: String(it.name || DataUtil.defaultName('page')),
 				};
 			}));
-			this.items.sort(DataUtil.sortByName);
-
 			this.setState({ loading: false });
 		});
 	};
