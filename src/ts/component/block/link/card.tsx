@@ -49,7 +49,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         cn.push('c' + Size[iconSize]);
 
         const sideLeft = withIcon ? (
-            <div id="sideLeft" className="side left">
+            <div key="sideLeft" id="sideLeft" className="side left">
                 <IconObject 
                     id={`block-${block.id}-icon`}
                     size={Size[iconSize]} 
@@ -63,7 +63,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         ) : null;
 
         const sideRight = (
-            <div id="sideRight" className="side right">
+            <div key="sideRight" id="sideRight" className="side right">
                 <div className="txt">
                     {withName ? <div className="cardName"><span>{name}</span></div> : ''}
                     {withDescription ? <div className="cardDescription">{description}</div> : ''}

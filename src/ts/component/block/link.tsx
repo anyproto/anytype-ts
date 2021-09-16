@@ -173,6 +173,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			return;
 		};
 
+		sideLeft.css({ width: 'auto' });
 		sideRight.css({ width: sides.width() - sideLeft.outerWidth(true) });
 	};
 	
