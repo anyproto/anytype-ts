@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupShortcut {
-		.innerWrap { width: 672px; height: calc(100% - 128px); padding: 48px 0px 0px 0px; }
+		.innerWrap { width: 672px; height: calc(100% - 72px); padding: 48px 0px 0px 0px; overflow: visible; }
 		.content { position: relative; padding-top: 38px; height: 100%; }
 		.wrapper { height: 100%; }
 
