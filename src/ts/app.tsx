@@ -380,7 +380,6 @@ class App extends React.Component<Props, State> {
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
-			console.log('ROUTE', route);
 			history.push(route);
 		});
 

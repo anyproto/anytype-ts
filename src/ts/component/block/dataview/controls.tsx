@@ -241,7 +241,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const sideLeft = node.find('#sideLeft');
 
 		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
-		console.log(views.width(), sideLeft.outerWidth());
 		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
