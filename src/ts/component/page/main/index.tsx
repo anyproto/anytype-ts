@@ -103,7 +103,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						</div>
 					</div>
 					
-					<div id="documents"> 
+					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
 						<div className="tabWrap">
 							<div className="tabs">
 								{Tabs.map((item: any, i: number) => (
@@ -191,7 +191,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onTab (id: Tab) {
-		this.state.tab = id;
+		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
 		Storage.set('tabIndex', id);
@@ -300,7 +300,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 		e.persist();
 
+		const { tab } = this.state;
 		const object = item.isBlock ? item._object_ : item;
+
+		if (tab == Tab.Archive) {
+			return;
+		};
 
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, object);
@@ -555,9 +560,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 					if (reg && name && !name.match(reg)) {
 						return false;
-					};
-					if (tab == Tab.Recent) {
-						return true;
 					};
 					return !isArchived;
 				}).map((it: any) => {
