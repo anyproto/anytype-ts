@@ -6,13 +6,6 @@
 		.items { height: 100%; }
 
 		.item {
-			.math { 
-				border: 1px solid $colorLightGrey; border-radius: 4px; overflow: hidden; text-align: center; line-height: 40px; height: 40px; display: block; 
-				width: 52px; height: 40px; position: absolute;
-			}
-			.math {
-				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
-			}
 			.info { height: 40px; line-height: 40px; padding-left: 60px; }
 			.name { @include text-overflow-nw; @include text-small; vertical-align: middle; }
 		}
@@ -27,6 +20,9 @@
 			.math { 
 				border: 0px; text-align: center; width: 100%; height: auto; position: static; display: inline-block; 
 				vertical-align: middle; 
+			}
+			.math {
+				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
 			}
 		}
 		.item > .inner { 

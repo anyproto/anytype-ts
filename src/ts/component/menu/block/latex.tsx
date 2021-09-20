@@ -15,7 +15,7 @@ const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
-const HEIGHT_ITEM_SMALL = 48;
+const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
@@ -72,12 +72,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
 							</div>
 						) : (
-							<div className="inner">
-								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-								<div className="info">
-									<div className="name">{name}</div>
-								</div>
-							</div>
+							<div className="name">{name}</div>
 						)}
 					</div>
 				);
