@@ -457,6 +457,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onPage (id: string) {
 		const pin = Storage.get('pin');
+
 		if (pin && (id == 'phrase') && !this.pinConfirmed) {
 			this.onConfirmPin = () => { 
 				this.pinConfirmed = true;
@@ -490,9 +491,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			authStore.logout();
 			history.push('/');
 
+			this.pinConfirmed = false;
 			this.onConfirmPhrase = null;
 		};
-		
+
+		this.pinConfirmed = true;
 		this.onPage('phrase');
 	};
 
