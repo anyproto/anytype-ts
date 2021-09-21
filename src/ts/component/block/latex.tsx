@@ -106,7 +106,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			const node = $(ReactDOM.findDOMNode(this));
 			const input = node.find('#input');
 
-			setRange(input.get(0), this.range);
+			if (input.length) {
+				setRange(input.get(0), this.range);
+			};
 		};
 	};
 	
@@ -249,6 +251,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				offsetX: rect ? 0 : Constant.size.blockMenu,
 				commonFilter: true,
 				className: (isTemplate ? 'isTemplate' : ''),
+				subIds: Constant.menuIds.latex,
 				onClose: () => {
 					commonStore.filterSet(0, '');
 				},

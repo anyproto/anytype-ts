@@ -15,6 +15,7 @@ import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
 
 import MenuPreviewObject from './preview/object';
+import MenuPreviewLatex from './preview/latex';
 
 import MenuThreadList from './thread/list';
 import MenuThreadStatus from './thread/status';
@@ -82,6 +83,7 @@ const Components: any = {
 	searchObject:			 MenuSearchObject,
 
 	previewObject:			 MenuPreviewObject,
+	previewLatex:			 MenuPreviewLatex,
 
 	threadList:				 MenuThreadList,
 	threadStatus:			 MenuThreadStatus,
