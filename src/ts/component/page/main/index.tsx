@@ -22,15 +22,13 @@ enum Tab {
 	None = '',
 	Favorite = 'favorite',
 	Recent = 'recent',
-	Draft = 'draft',
 	Set = 'Set',
 	Archive = 'archive',
 }
 
 const Tabs = [
-	{ id: Tab.Draft, name: 'Inbox' },
-	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Favorite, name: 'Favorites' },
+	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
@@ -42,7 +40,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	timeoutFilter: number = 0;
 
 	state = {
-		tab: Tab.Draft,
+		tab: Tab.Favorite,
 		filter: '',
 		pages: [],
 	};
@@ -191,12 +189,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onTab (id: Tab) {
+		if (!Tabs.find((it: any) => { return it.id == id; })) {
+			id = Tabs[0].id;
+		};
+
 		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
 		Storage.set('tabIndex', id);
 
-		if ([ Tab.Archive, Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
+		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
@@ -219,10 +221,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
-
-		if (tab == Tab.Draft) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
-		};
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
@@ -584,7 +582,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case Tab.Archive:
 			case Tab.Set:
-			case Tab.Draft:
 				list = pages;
 				break;
 		};
