@@ -12,6 +12,7 @@ import LinkCard from './link/card';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
+const raf = require('raf');
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
@@ -173,8 +174,10 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			return;
 		};
 
-		sideLeft.css({ width: 'auto' });
-		sideRight.css({ width: sides.width() - (sideLeft.length ? sideLeft.outerWidth(true) : 0) });
+		raf(() => {
+			sideLeft.css({ width: 'auto' });
+			sideRight.css({ width: sides.width() - (sideLeft.length ? sideLeft.outerWidth(true) : 0) });
+		});
 	};
 	
 });
