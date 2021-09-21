@@ -184,8 +184,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
-
-		let item = view.sorts.find((item: any, i: number) => { return i == id; });
+		const item = view.getSort(id);
 
 		if (k == 'relationKey') {
 			view.sorts = view.sorts.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationKey != v); });

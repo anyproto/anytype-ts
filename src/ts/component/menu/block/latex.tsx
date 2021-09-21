@@ -195,6 +195,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	};
 
 	onOver (e: any, item: any) {
+		if (!item) {
+			return;
+		};
+
 		const { getId, getSize } = this.props;
 
 		menuStore.close('previewLatex', () => {
