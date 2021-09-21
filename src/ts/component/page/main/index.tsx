@@ -13,17 +13,17 @@ interface State {
 	tab: Tab;
 	filter: string;
 	pages: any[];
-}
+};
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
 enum Tab {
-	None = '',
-	Favorite = 'favorite',
-	Recent = 'recent',
-	Set = 'Set',
-	Archive = 'archive',
+	None		 = '',
+	Favorite	 = 'favorite',
+	Recent		 = 'recent',
+	Set			 = 'set',
+	Archive		 = 'archive',
 }
 
 const Tabs = [
