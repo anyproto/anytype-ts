@@ -436,7 +436,9 @@ class BlockStore {
 
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');
 		Storage.setToggle(rootId, blockId, v);
+		
 		$(window).trigger('resize.editor');
+		element.find('.resizable').trigger('resize', [ $.Event('resize') ]);
 	};
 
 	updateMarkup (rootId: string) {
