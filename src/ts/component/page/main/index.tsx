@@ -28,7 +28,7 @@ enum Tab {
 
 const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
-	{ id: Tab.Recent, name: 'Recent' },
+	{ id: Tab.Recent, name: 'History' },
 	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
