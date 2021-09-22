@@ -342,16 +342,15 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 
 		const value = this.getValue();
-		const param = { 
+
+		blockStore.update(rootId, { 
 			...block, 
 			content: { 
 				...block.content, 
 				text: value,
 			},
-		};
-
-		blockStore.update(rootId, param);
-		C.BlockUpdateContent(param, rootId, block.id, callBack);
+		});
+		C.BlockSetLatexText(rootId, block.id, value, callBack);
 	};
 
 	onSelect (e: any) {
