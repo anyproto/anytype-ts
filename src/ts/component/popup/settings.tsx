@@ -86,7 +86,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('phrase'); }}>
+							<div className="row" onClick={() => { 
+								this.onConfirmPhrase = null; 
+								this.onPage('phrase'); 
+							}}>
 								<Icon className="phrase" />
 								<Label text={translate('popupSettingsPhraseTitle')} />
 								<Icon className="arrow" />
@@ -203,12 +206,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<QRCode value={entropy} />
 								</div>
 							</div>
-						) : ''}
-						{this.onConfirmPhrase ? (
+						) : (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { this.onConfirmPhrase(); }} />
+								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { console.log(this.onConfirmPhrase); this.onConfirmPhrase(); }} />
 							</div>
-						) : ''}
+						)}
 					</div>
 				);
 				break;
@@ -468,10 +470,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			return;
 		};
 
-		if (id != 'phrase') {
-			this.onConfirmPhrase = null;
-		};
-
 		this.prevPage = this.state.page;
 		this.setState({ page: id });
 	};
@@ -495,7 +493,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			this.onConfirmPhrase = null;
 		};
 
-		this.pinConfirmed = true;
 		this.onPage('phrase');
 	};
 
