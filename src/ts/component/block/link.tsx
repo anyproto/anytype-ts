@@ -32,7 +32,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 
 	render() {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
+		const { id, content, align } = block;
 		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id, 'resizable' ];
@@ -165,12 +165,20 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const sides = node.find('#sides');
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
 
 		if (!sides.length) {
+			return;
+		};
+
+		sideLeft.css({ width: 'auto' });
+		sideRight.css({ width: 'auto' });
+
+		if (block.align == I.BlockAlign.Center) {
 			return;
 		};
 
