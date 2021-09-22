@@ -398,9 +398,13 @@ class BlockStore {
 			};
 
 			let cb = item.childBlocks;
-			delete(item.childBlocks);
 
+			if (cb) {
+				delete(item.childBlocks);
+			};
+			
 			ret.push(item);
+			
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
