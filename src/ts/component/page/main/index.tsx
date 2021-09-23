@@ -13,24 +13,22 @@ interface State {
 	tab: Tab;
 	filter: string;
 	pages: any[];
-}
+};
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
 enum Tab {
-	None = '',
-	Favorite = 'favorite',
-	Recent = 'recent',
-	Draft = 'draft',
-	Set = 'Set',
-	Archive = 'archive',
+	None		 = '',
+	Favorite	 = 'favorite',
+	Recent		 = 'recent',
+	Set			 = 'set',
+	Archive		 = 'archive',
 }
 
 const Tabs = [
-	{ id: Tab.Draft, name: 'Inbox' },
-	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Favorite, name: 'Favorites' },
+	{ id: Tab.Recent, name: 'History' },
 	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
@@ -42,7 +40,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	timeoutFilter: number = 0;
 
 	state = {
-		tab: Tab.Draft,
+		tab: Tab.Favorite,
 		filter: '',
 		pages: [],
 	};
@@ -103,7 +101,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						</div>
 					</div>
 					
-					<div id="documents"> 
+					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
 						<div className="tabWrap">
 							<div className="tabs">
 								{Tabs.map((item: any, i: number) => (
@@ -191,12 +189,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onTab (id: Tab) {
-		this.state.tab = id;
+		if (!Tabs.find((it: any) => { return it.id == id; })) {
+			id = Tabs[0].id;
+		};
+
+		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
 		Storage.set('tabIndex', id);
 
-		if ([ Tab.Archive, Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
+		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
@@ -219,10 +221,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
-
-		if (tab == Tab.Draft) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
-		};
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
@@ -300,7 +298,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 		e.persist();
 
+		const { tab } = this.state;
 		const object = item.isBlock ? item._object_ : item;
+
+		if (tab == Tab.Archive) {
+			return;
+		};
 
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, object);
@@ -556,9 +559,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					if (tab == Tab.Recent) {
-						return true;
-					};
 					return !isArchived;
 				}).map((it: any) => {
 					if (tab == Tab.Recent) {
@@ -582,7 +582,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case Tab.Archive:
 			case Tab.Set:
-			case Tab.Draft:
 				list = pages;
 				break;
 		};

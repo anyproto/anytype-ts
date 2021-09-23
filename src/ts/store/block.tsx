@@ -398,9 +398,13 @@ class BlockStore {
 			};
 
 			let cb = item.childBlocks;
-			delete(item.childBlocks);
 
+			if (cb) {
+				delete(item.childBlocks);
+			};
+			
 			ret.push(item);
+			
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
@@ -436,7 +440,9 @@ class BlockStore {
 
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');
 		Storage.setToggle(rootId, blockId, v);
+		
 		$(window).trigger('resize.editor');
+		element.find('.resizable').trigger('resize', [ $.Event('resize') ]);
 	};
 
 	updateMarkup (rootId: string) {

@@ -24,7 +24,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, block, relation, getRecord, index, placeholder, elementMapper } = this.props;
+		const { rootId, block, relation, getRecord, index, placeholder, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		const canClear = relation.format == I.RelationType.Status;
 		const cn = [ 'wrap' ];
@@ -38,9 +38,14 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 			return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 		});
 		value = value.filter((it: any) => { return it && it.id; });
+		let length = value.length;
 
 		if (elementMapper) {
 			value = value.map((it: any) => { return elementMapper(relation, it); });
+		};
+
+		if (arrayLimit) {
+			value = value.slice(0, arrayLimit);
 		};
 
 		return (
@@ -52,6 +57,7 @@ const CellSelect = observer(class CellSelect extends React.Component<Props, Stat
 								return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
 							})}
 						</span>
+						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 						{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 					</React.Fragment>
 				) : (

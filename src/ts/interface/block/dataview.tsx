@@ -123,6 +123,7 @@ export interface Cell {
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	cellPosition?: (cellId: string) => void;
 	elementMapper?: (relation: any, item: any) => any;
+	arrayLimit?: number;
 };
 
 export interface ContentDataview {

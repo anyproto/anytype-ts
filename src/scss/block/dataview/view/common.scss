@@ -6,7 +6,7 @@
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { cursor: pointer; margin-bottom: 6px; }
+				.cellContent { cursor: pointer; margin-bottom: 6px; @include text-small; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent:last-child { margin: 0px; }
 
@@ -18,13 +18,14 @@
 					.name { width: 100% !important; }
 				}
 
+				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { max-width: 80px; margin: 0px 6px 6px 0px; }
+					.tagItem { max-width: 80px; margin-bottom: 0px; @include text-small; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {
-					.element { width: 100%; margin: 0px 0px 6px 0px; }
-					.element:last-child { margin-bottom: 0px; }
+					.element { margin: 0px 6px 0px 0px; }
+					.element:last-child { margin-right: 0px; }
 				}
 			}
 		}

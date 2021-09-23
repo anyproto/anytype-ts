@@ -6,6 +6,7 @@ import { commonStore } from 'ts/store';
 
 import 'katex/dist/katex.min.css';
 import 'react-virtualized/styles.css';
+import { menuStore } from '../../../store';
 
 interface Props extends I.Menu {}
 
@@ -15,7 +16,7 @@ const katex = require('katex');
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
-const HEIGHT_ITEM_SMALL = 48;
+const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
@@ -69,16 +70,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 					>
 						{isTemplate ? (
 							<div className="inner">
-								<div className="name">{name}</div>
 								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
 							</div>
 						) : (
-							<div className="inner">
-								<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-								<div className="info">
-									<div className="name">{name}</div>
-								</div>
-							</div>
+							<div className="name">{name}</div>
 						)}
 					</div>
 				);
@@ -141,12 +136,12 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const items = this.getItems(true);
 
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
 
+		let items = this.getItems(true);
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: (isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL),
@@ -158,6 +153,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
+		const items = this.getItems(false);
 
 		if (filter.text != this.filter) {
 			this.n = 0;
@@ -165,8 +161,14 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		};
 
 		this.resize();
-		this.props.setActive();
 		this.props.position();
+
+		menuStore.close('previewLatex');
+
+		window.setTimeout(() => {
+			this.props.setActive();
+			this.onOver(null, items[this.n]);
+		}, 15);
 	};
 
 	componentWillUnmount () {
@@ -175,7 +177,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 
@@ -183,10 +185,35 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		$(window).unbind('keydown.menu');
 	};
 
+	onKeyDown (e: any) {
+		const items = this.getItems(false);
+
+		this.props.onKeyDown(e);
+
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: any) => {
+			this.props.setActive(items[this.n]);
+			this.onOver(e, items[this.n]);
+		});
+	};
+
 	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
+		if (!item) {
+			return;
 		};
+
+		const { getId, getSize } = this.props;
+
+		menuStore.close('previewLatex', () => {
+			menuStore.open('previewLatex', {
+				element: `#${getId()} #item-${item.id}`,
+				offsetX: getSize().width,
+				vertical: I.MenuDirection.Center,
+				isSub: true,
+				data: {
+					text: item.comment || item.symbol,
+				}
+			});
+		});
 	};
 
 	onMouseEnter (e: any, item: any) {

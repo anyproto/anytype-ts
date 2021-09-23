@@ -132,6 +132,10 @@
 			.icon.more { background-image: url('~img/icon/index/more1.svg'); }
 		}
 	}
+
+	#documents.tabArchive {
+		.item { cursor: default; }
+	}
 	
 }
 
