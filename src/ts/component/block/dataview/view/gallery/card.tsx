@@ -53,6 +53,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 								index={index}
 								arrayLimit={1}
 								showTooltip={true}
+								tooltipX={I.MenuDirection.Left}
 							/>
 						);
 					})}

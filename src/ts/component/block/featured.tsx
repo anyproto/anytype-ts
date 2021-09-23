@@ -197,7 +197,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (relation) {
-			Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+			Util.tooltipShow(relation.name, cell, I.MenuDirection.Center, I.MenuDirection.Top);
 		};
 	};
 

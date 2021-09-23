@@ -16,6 +16,7 @@ interface Props extends I.Cell {
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	showTooltip?: boolean;
+	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
@@ -29,6 +30,7 @@ class Cell extends React.Component<Props, {}> {
 	public static defaultProps = {
 		index: 0,
 		canOpen: true,
+		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Top,
 	};
 
@@ -362,7 +364,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any) {
-		const { onMouseEnter, showTooltip, tooltipY, idPrefix, index } = this.props;
+		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, index } = this.props;
 		const relation = this.getRelation();
 		const cell = $(`#${DataUtil.cellId(idPrefix, relation.relationKey, index)}`);
 
@@ -371,7 +373,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (showTooltip) {
-			Util.tooltipShow(relation.name, cell, tooltipY);
+			Util.tooltipShow(relation.name, cell, tooltipX, tooltipY);
 		};
 	};
 	
