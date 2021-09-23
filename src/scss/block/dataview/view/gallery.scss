@@ -7,13 +7,13 @@
 			.galleryWrap { margin-left: 14px; }
 
 			.card { 
-				width: 260px; border: 1px solid $colorLightGrey; border-radius: 12px; display: inline-block; cursor: pointer; 
+				width: 260px; border: 1px solid #dfddd0; border-radius: 12px; display: inline-block; cursor: pointer; 
 				background: #fff;
 			}
 			.card {
 				.cover { 
 					position: static; height: 144px; background-position: top center; border-radius: 12px 12px 0px 0px;
-					background-color: $colorLightGrey;
+					background-color: #f5f5f8; box-shadow: 0px -1px #dfddd0 inset;
 				}
 			}
 			.card > .inner { padding: 16px; }
