@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
@@ -255,12 +256,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const id = DataUtil.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
+		const view = this.getView();
 
 		if (!relation || !ref || !record) {
 			return;
 		};
 
-		if ((relation.relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
+		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
+			const scheme = DataUtil.getRelationUrlScheme(relation.format, record[relationKey]);
+			ipcRenderer.send('urlOpen', scheme + record[relationKey]);
+			return;
+		};
+
+		if ((relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
 			DataUtil.objectOpenPopup(record);
 		} else {
 			ref.onClick(e);

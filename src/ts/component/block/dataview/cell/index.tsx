@@ -293,24 +293,12 @@ class Cell extends React.Component<Props, {}> {
 					],
 					onSelect: (event: any, item: any) => {
 						let value = '';
-						let scheme = '';
 
 						if (this.ref) {
 							value = this.ref.ref.getValue();
 						};
 
-						if (relation.format == I.RelationType.Url) {
-							if (!value.match(/:\/\//)) {
-								scheme = 'http://';
-							};
-						};
-						if (relation.format == I.RelationType.Email) {
-							scheme = 'mailto:';
-						};
-						if (relation.format == I.RelationType.Phone) {
-							scheme = 'tel:';
-						};
-
+						const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
 						if (item.id == 'go') {
 							ipcRenderer.send('urlOpen', scheme + value);
 						};

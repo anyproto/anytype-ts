@@ -1013,6 +1013,22 @@ class DataUtil {
 		return Util.arrayUnique(value);
 	};
 
+	getRelationUrlScheme (type: I.RelationType, value: any): string {
+		value = String(value || '');
+
+		let ret = '';
+		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
+			ret = 'http://';
+		};
+		if (type == I.RelationType.Email) {
+			ret = 'mailto:';
+		};
+		if (type == I.RelationType.Phone) {
+			ret = 'tel:';
+		};
+		return ret;
+	};
+
 	relationWidth (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
 		return Number(width || size['format' + format]) || size.default;

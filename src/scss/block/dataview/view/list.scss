@@ -52,6 +52,16 @@
 				.name { display: none; }
 			}
 
+			.cellContent.c-url, 
+			.cellContent.c-email, 
+			.cellContent.c-phone { cursor: pointer !important; }
+
+			.cellContent.c-url:hover, 
+			.cellContent.c-email:hover, 
+			.cellContent.c-phone:hover {
+				.name { text-decoration: underline; }
+			}
+
 			.cellContent.c-checkbox {
 				.icon.checkbox { width: 20px; height: 20px; vertical-align: top; margin-top: 2px; }
 			}
