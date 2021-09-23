@@ -9,9 +9,15 @@
 		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; }
 			.row:last-child { margin: 0px; }
 
-			.cellContent { display: inline-block; vertical-align: top; line-height: 24px; height: 24px; cursor: default !important; margin-right: 8px; }
+			.cellContent { display: inline-block; vertical-align: top; line-height: 24px; height: 24px; cursor: default !important; }
 			.cellContent:last-child { margin: 0px; }
 			.cellContent:empty, .cellContent.isEmpty { display: none; }
+
+			.cellContent::before { 
+				content: ""; width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; 
+				vertical-align: middle; margin: 0px 6px; 
+			}
+			.cellContent:first-child::before { display: none; }
 
             .cellContent.c-shortText { @include text-paragraph; }
 			.cellContent.c-shortText {
@@ -32,6 +38,13 @@
 				.element { margin-top: 2px; }
 				.tagItem { margin-top: 3px; }
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
+			}
+			.cellContent.c-select {
+				.more { margin-top: 3px; }
+			}
+			.cellContent.c-file {
+				.iconObject { margin: 0px; }
+				.name { display: none; }
 			}
 
 			.cellContent.c-checkbox {

@@ -49,6 +49,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 								viewType={view.type}
 								idPrefix={idPrefix}
 								index={index}
+								arrayLimit={1}
 								showTooltip={true}
 							/>
 						);

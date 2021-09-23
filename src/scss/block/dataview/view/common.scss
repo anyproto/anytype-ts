@@ -18,8 +18,9 @@
 					.name { width: 100% !important; }
 				}
 
+				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { max-width: 80px; margin: 0px 6px 6px 0px; }
+					.tagItem { max-width: 80px; margin-bottom: 0px; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {
