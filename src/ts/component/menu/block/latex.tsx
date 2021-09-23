@@ -163,6 +163,8 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		this.resize();
 		this.props.position();
 
+		menuStore.close('previewLatex');
+
 		window.setTimeout(() => {
 			this.props.setActive();
 			this.onOver(null, items[this.n]);
