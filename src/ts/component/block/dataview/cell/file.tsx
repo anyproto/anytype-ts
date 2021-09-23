@@ -62,9 +62,11 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
-						{value.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
+						<span className="over">
+							{value.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</span>
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</React.Fragment>
 				) : (

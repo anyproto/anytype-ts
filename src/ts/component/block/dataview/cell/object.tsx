@@ -48,9 +48,11 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
-						{value.map((id: string) => (
-							<ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
-						))}
+						<span className="over">
+							{value.map((id: string) => (
+								<ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
+							))}
+						</span>
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</React.Fragment>
 				) : (

@@ -42,12 +42,10 @@
 				.wrap { display: inline-block; line-height: 24px; vertical-align: top; }
 				.over { display: inline-block; line-height: 24px; vertical-align: top; overflow: visible; }
 				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 100px; vertical-align: top; @include text-small; }
+				.more { margin-top: 3px; }
 				.element { margin-top: 2px; }
 				.tagItem { margin-top: 3px; }
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
-			}
-			.cellContent.c-select {
-				.more { margin-top: 3px; }
 			}
 			.cellContent.c-file {
 				.iconObject { margin: 0px; }

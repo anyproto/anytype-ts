@@ -15,6 +15,13 @@
 				}
 			}
 			.card > .inner { padding: 16px; }
+
+			.cellContent {
+				.more { margin-top: 1px; }
+			}
+			.cellContent.c-select {
+				.more { margin-top: 0px; }
+			}
 		}
 	}
 }
