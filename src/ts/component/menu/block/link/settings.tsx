@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Switch, Button } from 'ts/component';
+import { Icon, Button, MenuItemVertical } from 'ts/component';
 import { I, C, DataUtil, Storage } from 'ts/lib';
 import { blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -40,18 +40,19 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
             buttons = [];
         };
 
-        const Item = (item: any) => (
-            <div className="item">
-                <span className="clickable" onClick={(e: any) => {  }}>
-                    <Icon className={item.icon} />
-                    <div className="name">{item.name}</div>
-                </span>
-                <Switch 
-                    value={fields[item.id]} 
-                    onChange={(e: any, v: boolean) => { this.setField(item.id, !fields[item.id]); }} 
-                />
-            </div>
-        );
+        let items1: any[] = [];
+        let items2: any[] = [
+            { id: 'withName', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), name: 'Name' },
+            { id: 'withDescription', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), name: 'Description' }
+        ];
+
+        if (canIcon) {
+            items1.push({ id: 'withIcon', icon: 'item-icon', name: 'Icon' });
+        };
+
+        if (canCover) {
+            items1.push({ id: 'withCover', icon: 'item-cover', name: 'Cover' });
+        };
 
         return (
             <div>
@@ -76,8 +77,15 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
                     <div className="name">Show / Hide on preview</div>
                     
                     <div className="items">
-                        {canIcon ? <Item id="withIcon" name="Icon" icon="item-icon" /> : ''}
-                        {canCover ? <Item id="withCover" name="Cover" icon="item-cover" /> : ''}
+                        {items1.map((item: any, i: number) => (
+                            <MenuItemVertical 
+                                key={i}
+                                {...item} 
+                                withSwitch={true}
+                                switchValue={fields[item.id]}
+                                onSwitch={(e: any, v: boolean) => { this.setField(item.id, v); }} 
+                            />
+                        ))}
                     </div>
 
                     {buttons.length ? (
@@ -94,18 +102,15 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
                     ) : ''}
 
                     <div className="items">
-                        <Item 
-                            id="withName" 
-                            icon={'relation ' + DataUtil.relationClass(I.RelationType.LongText)} 
-                            name="Name" 
-                            onClick={() => { this.setField('withName', true); }} 
-                        />
-                        <Item 
-                            id="withDescription" 
-                            icon={'relation ' + DataUtil.relationClass(I.RelationType.LongText)} 
-                            name="Description" 
-                            onClick={() => { this.setField('withDescription', true); }} 
-                        />
+                        {items2.map((item: any, i: number) => (
+                            <MenuItemVertical 
+                                key={i}
+                                {...item} 
+                                withSwitch={true}
+                                switchValue={fields[item.id]}
+                                onSwitch={(e: any, v: boolean) => { this.setField(item.id, v); }} 
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

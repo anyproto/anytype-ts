@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, translate } from 'ts/lib';
-import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { I, C, M, DataUtil, Util, translate } from 'ts/lib';
+import { Icon, Input, MenuItemVertical, Button } from 'ts/component';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -66,11 +66,15 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 				{isDate && relation ? (
 					<div className="section">
-						<div className="item" onMouseEnter={this.menuClose}>
-							<Icon className="clock" />
-							<div className="name">Include time</div>
-							<Switch value={viewRelation ? viewRelation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-						</div>
+						<MenuItemVertical 
+							id="includeTime" 
+							icon="clock" 
+							name="Include time" 
+							onMouseEnter={this.menuClose}
+							withSwitch={true}
+							switchValue={viewRelation?.includeTime}
+							onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
+						/>
 
 						<MenuItemVertical 
 							id="date-settings" 
@@ -402,7 +406,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { relationKey, getView } = data;
 
-		return getView()?.getRelation(relationKey);
+		let relation = getView()?.getRelation(relationKey);
+		if (!relation) {
+			relation = new M.ViewRelation({ relationKey: relationKey });
+		};
+		return relation;
 	};
 
 });

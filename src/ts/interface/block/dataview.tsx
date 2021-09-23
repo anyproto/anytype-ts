@@ -68,11 +68,11 @@ export interface Filter {
 
 export interface ViewRelation {
 	relationKey: string;
-	isVisible: boolean;
-	width: number;
-	includeTime: boolean;
-	dateFormat: I.DateFormat;
-	timeFormat: I.TimeFormat;
+	isVisible?: boolean;
+	width?: number;
+	includeTime?: boolean;
+	dateFormat?: I.DateFormat;
+	timeFormat?: I.TimeFormat;
 };
 
 export interface ViewComponent {
