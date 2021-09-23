@@ -75,8 +75,8 @@
 	}
 }
 
-.cellContent.isName { display: flex; }
 .cellContent.isName {
+	.flex { position: static; }
 	.iconObject { z-index: 1; cursor: pointer; }
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
 }
