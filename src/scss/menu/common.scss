@@ -77,7 +77,7 @@
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
 		
 		.item {
-			.name { display: inline-block; vertical-align: top; position: relative; }
+			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
@@ -110,7 +110,6 @@
 			.descr:empty { display: none; }
 			.info { padding-left: 52px; line-height: 40px; width: 100%; }
 			.txt { width: 100%; }
-			.name { line-height: 20px; }
 		}
 
 		.item.withCaption { display: flex; }

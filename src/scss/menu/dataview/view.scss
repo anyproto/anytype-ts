@@ -33,9 +33,9 @@
 		}
 
 		.item.withCaption {
-			.caption { @include text-common; width: 104px; }
+			.caption { @include text-common; line-height: 20px; width: 100px; }
 			.caption::after {
-				content: ""; width: 24px; height: 24px; background-image: url('~img/arrow/caption.svg'); background-repeat: no-repeat;
+				content: ""; width: 20px; height: 20px; background-image: url('~img/arrow/caption.svg'); background-repeat: no-repeat;
 				background-size: 100% 100%; display: inline-block; vertical-align: middle; 
 			}
 		}
