@@ -2,6 +2,7 @@ import * as React from 'react';
 import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Cell, Cover } from 'ts/component';
+import * as ReactDOM from 'react-dom';
 import { commonStore, detailStore, dbStore } from 'ts/store';
 
 interface Props extends I.ViewComponent {
@@ -9,6 +10,7 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const Card = observer(class Card extends React.Component<Props, {}> {
@@ -57,6 +59,19 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				</div>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('.cellContent.isEmpty').remove();
 	};
 
 	getPicture () {
