@@ -174,7 +174,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			value = value || DataUtil.defaultName('page');
 
 			content = (
-				<React.Fragment>
+				<div className="flex">
 					<IconObject 
 						id={[ relation.relationKey, record.id ].join('-')} 
 						onSelect={this.onIconSelect} 
@@ -191,7 +191,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 						e.stopPropagation(); 
 						onParentClick(e);
 					}} />
-				</React.Fragment>
+				</div>
 			);
 		} else {
 			content = <Name name={value} />;
