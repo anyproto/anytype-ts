@@ -42,6 +42,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
@@ -79,6 +80,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					onKeyUp={this.onKeyUp} 
 					onKeyDown={this.onKeyDown}
 					onChange={this.onChange}
+					onPaste={this.onPaste}
 				/>
 			</div>
 		);
@@ -163,7 +165,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const el: any = input.get(0);
 		const range = getRange(el);
 		const symbolBefore = value[range?.start - 1];
-		
+
 		let menuOpen = menuStore.isOpen('blockLatex');
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
@@ -179,7 +181,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			};
 		};
 
-		this.text = value;
 		this.setContent(value);
 
 		window.clearTimeout(this.timeout);
@@ -207,6 +208,22 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setValue(this.getValue());
 	};
 
+	onPaste (e: any) {
+		e.preventDefault();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const el: any = input.get(0);
+		const range = getRange(el);
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+
+		this.setValue(Util.stringInsert(this.getValue(), cb.getData('text/plain'), range.start, range.end));
+
+		const length = this.getValue().length;
+		this.range = { start: length, end: length };
+		setRange(el, this.range);
+	};
+
 	onFocus () {
 		keyboard.setFocus(true);
 	};
@@ -232,7 +249,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
-		const el: any = input.get(0);
 		const win = $(window);
 
 		raf(() => {
@@ -262,8 +278,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					onSelect: (from: number, to: number, item: any) => {
 						this.setValue(Util.stringInsert(this.getValue(), item.symbol || item.comment, from, to));
 
-						const value = this.getValue();
-						setRange(el, { start: value.length, end: value.length });
+						const length = this.getValue().length;
+						this.range = { start: length, end: length };
+						this.save();
 					},
 				},
 			});
@@ -281,6 +298,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		if (input.length) {
 			input.get(0).innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
 		};
+
 		this.setContent(value);
 	};
 
@@ -303,7 +321,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
 
-		value = String(value || '').trim();
+		value = String(value || '');
+		this.text = value;
 
 		if (val.length) {
 			val.html(value ? katex.renderToString(value, { 
@@ -326,7 +345,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onEdit (e: any) {
-		const { block, readonly } = this.props;
+		const { readonly } = this.props;
 		if (readonly) {
 			return;
 		};
