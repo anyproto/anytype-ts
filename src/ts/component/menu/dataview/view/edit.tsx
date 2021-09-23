@@ -81,6 +81,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 								onMouseLeave={(e: any) => { setHover(); }}
 								onClick={(e: any) => { this.onCoverRelation(e); }} 
 								withCaption={true}
+								arrow={true}
 							/>
 
 							<MenuItemVertical 
@@ -92,6 +93,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 								onMouseLeave={(e: any) => { setHover(); }}
 								onClick={(e: any) => { this.onCardSize(e); }} 
 								withCaption={true}
+								arrow={true}
 							/>
 
 							<MenuItemVertical 
