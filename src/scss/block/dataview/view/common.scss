@@ -8,7 +8,7 @@
 			.card {
 				.cellContent { cursor: pointer; margin-bottom: 6px; @include text-small; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
-				.cellContent:last-child { margin: 0px; }
+				.cellContent.last { margin: 0px; }
 
 				.cellContent.c-date { color: $colorVeryDarkGrey; }
 

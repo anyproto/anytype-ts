@@ -15,6 +15,8 @@ const Constant = require('json/constant.json');
 
 const Card = observer(class Card extends React.Component<Props, {}> {
 
+	_isMounted: boolean = false;
+
 	render () {
 		const { rootId, block, index, getView, getRecord, onRef, style } = this.props;
 		const view = getView();
@@ -63,6 +65,8 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.resize();
 	};
 
@@ -70,9 +74,22 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		this.resize();
 	};
 
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const node = $(ReactDOM.findDOMNode(this));
-		node.find('.cellContent.isEmpty').remove();
+		const last = node.find('.cellContent:not(.isEmpty)').last();
+
+		node.find('.cellContent').removeClass('last');
+		if (last.length) {
+			last.addClass('last');
+		};
 	};
 
 	getPicture () {
