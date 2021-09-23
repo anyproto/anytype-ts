@@ -97,6 +97,8 @@
 			}
 			
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
+
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 		}
 
 		.item.empty { cursor: default; }

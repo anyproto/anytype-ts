@@ -187,6 +187,17 @@ class DataUtil {
 		return c;
 	};
 
+	cardSizeClass (v: I.CardSize) {
+		let c = '';
+		switch (v) {
+			default:
+			case I.CardSize.Small:		 c = 'small'; break;
+			case I.CardSize.Medium:		 c = 'medium'; break;
+			case I.CardSize.Large:		 c = 'large'; break;
+		};
+		return c;
+	};
+
 	dateFormat (v: I.DateFormat): string {
 		let f = '';
 		switch (v) {

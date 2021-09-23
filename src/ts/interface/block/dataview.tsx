@@ -1,5 +1,11 @@
 import { I } from 'ts/lib';
 
+export enum CardSize {
+	Small	 = 0,
+	Medium	 = 1,
+	Large	 = 2,
+};
+
 export enum DateFormat {
 	MonthAbbrBeforeDay	 = 0, // Jul 30, 2020
 	MonthAbbrAfterDay	 = 1, // 30 Jul 2020
@@ -91,6 +97,8 @@ export interface View {
 	name: string;
 	type: ViewType;
 	coverRelationKey: string;
+	coverFit: boolean;
+	cardSize: I.CardSize;
 	hideIcon: boolean;
 	sorts: Sort[];
 	filters: Filter[];

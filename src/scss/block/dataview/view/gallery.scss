@@ -12,11 +12,27 @@
 			}
 			.card {
 				.cover { 
-					position: static; height: 144px; background-position: center center; border-radius: 12px 12px 0px 0px;
+					position: static; height: 144px; background-position: top center; border-radius: 12px 12px 0px 0px;
 					background-color: $colorLightGrey;
 				}
 			}
 			.card > .inner { padding: 16px; }
+
+			.card.coverFit {
+				.cover { background-size: contain; background-position: center center; }
+			}
+
+			.card.small {
+				.cover { height: 144px; }
+			}
+
+			.card.medium {
+				.cover { height: 216px; }
+			}
+
+			.card.large {
+				.cover { height: 288px; }
+			}
 
 			.cellContent {
 				.more { margin-top: 1px; }

@@ -268,6 +268,8 @@ const Mapper = {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
+				coverFit: obj.getCoverfit(),
+				cardSize: obj.getCardsize(),
 				hideIcon: obj.getHideicon(),
 				sorts: obj.getSortsList().map(Mapper.From.Sort),
 				filters: obj.getFiltersList().map(Mapper.From.Filter),
@@ -535,6 +537,8 @@ const Mapper = {
 			item.setName(obj.name);
 			item.setType(obj.type);
 			item.setCoverrelationkey(obj.coverRelationKey);
+			item.setCoverfit(obj.coverFit);
+			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);
 			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
 			item.setFiltersList(obj.filters.map(Mapper.To.Filter));

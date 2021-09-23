@@ -39,7 +39,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
-		const { coverRelationKey } = view;
+		const { coverRelationKey, cardSize  } = view;
 
 		for (let item of data) {
 			for (let k in item) {

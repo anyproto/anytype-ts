@@ -25,7 +25,11 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		});
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
+		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(view.cardSize) ];
+
+		if (view.coverFit) {
+			cn.push('coverFit');
+		};
 
 		let cover = null;
 		if (view.coverRelationKey) {

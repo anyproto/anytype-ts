@@ -26,7 +26,18 @@
 	.menu.menuDataviewViewEdit { width: 360px; }
 	.menu.menuDataviewViewEdit {
 		.item {
-			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+			.icon.item-icon { background-image: url('~img/icon/menu/view/icon.svg'); }
+			.icon.item-cover { background-image: url('~img/icon/menu/view/cover.svg'); }
+			.icon.item-size { background-image: url('~img/icon/menu/view/size.svg'); }
+			.icon.item-fit { background-image: url('~img/icon/menu/view/fit.svg'); }
+		}
+
+		.item.withCaption {
+			.caption { @include text-common; width: 104px; }
+			.caption::after {
+				content: ""; width: 24px; height: 24px; background-image: url('~img/arrow/caption.svg'); background-repeat: no-repeat;
+				background-size: 100% 100%; display: inline-block; vertical-align: middle; 
+			}
 		}
 	}
 }

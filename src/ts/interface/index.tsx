@@ -8,6 +8,7 @@ import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
+	CardSize,
 	DateFormat,
 	TimeFormat,
 	ViewRelation,
@@ -93,6 +94,7 @@ export {
 	Block,
 	BlockStructure,
 
+	CardSize,
 	DateFormat,
 	TimeFormat,
 	ViewRelation,

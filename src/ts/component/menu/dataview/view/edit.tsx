@@ -29,8 +29,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const fileOptions = this.getFileOptions();
-		const fileOption = fileOptions.find((it: any) => { return it.id == view.coverRelationKey; });
+		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
+		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -71,26 +71,52 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 				<div className="section">
 					{view.type == I.ViewType.Gallery ? (
-						<MenuItemVertical 
-							id="coverRelationKey"
-							icon="item-cover"
-							name="Cover"
-							caption={fileOption ? fileOption.name : 'Select relation'}
-							onMouseEnter={(e: any) => { setHover({ id: 'coverRelationKey' }); }}
-							onMouseLeave={(e: any) => { setHover(); }}
-							onClick={(e: any) => { this.onCoverRelation(e); }} 
-							withCaption={true}
-						/>
+						<React.Fragment>
+							<MenuItemVertical 
+								id="coverRelationKey"
+								icon="item-cover"
+								name="Cover"
+								caption={fileOption ? fileOption.name : 'Select'}
+								onMouseEnter={(e: any) => { setHover({ id: 'coverRelationKey' }); }}
+								onMouseLeave={(e: any) => { setHover(); }}
+								onClick={(e: any) => { this.onCoverRelation(e); }} 
+								withCaption={true}
+							/>
+
+							<MenuItemVertical 
+								id="cardSize"
+								icon="item-size"
+								name="Card size"
+								caption={sizeOption ? sizeOption.name : 'Select'}
+								onMouseEnter={(e: any) => { setHover({ id: 'cardSize' }); }}
+								onMouseLeave={(e: any) => { setHover(); }}
+								onClick={(e: any) => { this.onCardSize(e); }} 
+								withCaption={true}
+							/>
+
+							<MenuItemVertical 
+								id="coverFit"
+								icon="item-fit"
+								name="Fit image"
+								onMouseEnter={(e: any) => { setHover({ id: 'coverFit' }); }}
+								onMouseLeave={(e: any) => { setHover(); }}
+								withSwitch={true}
+								switchValue={view.coverFit}
+								onSwitch={(e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }} 
+							/>
+						</React.Fragment>
 					): ''}
 
-					<div className="item">
-						<Icon className="item-icon" />
-						<div className="name">Icon</div>
-						<Switch 
-							value={!view.hideIcon} 
-							onChange={(e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }} 
-						/>
-					</div>
+					<MenuItemVertical 
+						id="hideIcon"
+						icon="item-icon"
+						name="Show icon"
+						onMouseEnter={(e: any) => { setHover({ id: 'hideIcon' }); }}
+						onMouseLeave={(e: any) => { setHover(); }}
+						withSwitch={true}
+						switchValue={!view.hideIcon}
+						onSwitch={(e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }} 
+					/>
 				</div>
 
 				{sections.map((item: any, i: number) => (
@@ -317,7 +343,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onCoverRelation (e: any) {
-		const { param, close, getId, getSize } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { view } = data;
 
@@ -337,6 +363,37 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				},
 			}
 		});
+	};
+
+	onCardSize (e: any) {
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		menuStore.open('select', { 
+			element: `#${getId()} #item-cardSize`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			data: {
+				value: view.cardSize,
+				options: this.getSizeOptions(),
+				onSelect: (e, item) => {
+					view.cardSize = item.id;
+
+					this.forceUpdate();
+					this.save();
+				},
+			}
+		});
+	};
+
+	getSizeOptions () {
+		return [
+			{ id: I.CardSize.Small, name: 'Small' },
+			{ id: I.CardSize.Medium, name: 'Medium' },
+			{ id: I.CardSize.Large, name: 'Large' },
+		];
 	};
 
 	getFileOptions () {
