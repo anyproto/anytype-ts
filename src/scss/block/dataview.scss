@@ -17,8 +17,11 @@
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
-		.dataviewControls { display: flex; font-weight: 500; color: $colorMediumGrey; }
+		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls {
+			.line { height: 1px; width: calc(100% - 14px); background: $colorLightGrey; margin-left: 14px; }
+
+			.sides { display: flex; }
 			.side { padding: 26px 0px; height: 72px; white-space: nowrap; }
 			.side.left { padding-left: 14px; width: calc(100% - 80px); }
 			.side.right { text-align: right; width: 80px; }
@@ -65,6 +68,9 @@
 			.icon.on {
 				.dot { display: block; }
 			}
+		}
+		.dataviewControls.viewGrid {
+			.line { width: 100%; margin: 0px; }
 		}
 
 		.content {
