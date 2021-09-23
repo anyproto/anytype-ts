@@ -24,4 +24,9 @@
 	}
 
 	.menu.menuDataviewViewEdit { width: 360px; }
+	.menu.menuDataviewViewEdit {
+		.item {
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+		}
+	}
 }

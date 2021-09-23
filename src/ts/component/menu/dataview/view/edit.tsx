@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
-import { Input, MenuItemVertical } from 'ts/component';
+import { Input, MenuItemVertical, Switch, Icon } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -69,20 +69,29 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					<div className="line" />
 				</div>	
 
-				{view.type == I.ViewType.Gallery ? (
-					<React.Fragment>
-						<div className="sectionName">Cover relation</div>
+				<div className="section">
+					{view.type == I.ViewType.Gallery ? (
 						<MenuItemVertical 
 							id="coverRelationKey"
-							icon={fileOption ? fileOption.icon : undefined}
-							name={fileOption ? fileOption.name : 'Select relation'}
+							icon="item-cover"
+							name="Cover"
+							caption={fileOption ? fileOption.name : 'Select relation'}
 							onMouseEnter={(e: any) => { setHover({ id: 'coverRelationKey' }); }}
 							onMouseLeave={(e: any) => { setHover(); }}
 							onClick={(e: any) => { this.onCoverRelation(e); }} 
-							arrow={true}
+							withCaption={true}
 						/>
-					</React.Fragment>
-				): ''}
+					): ''}
+
+					<div className="item">
+						<Icon className="item-icon" />
+						<div className="name">Icon</div>
+						<Switch 
+							value={!view.hideIcon} 
+							onChange={(e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }} 
+						/>
+					</div>
+				</div>
 
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />
@@ -248,6 +257,15 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 		};
+	};
+
+	onSwitch (e: any, key: string, v: boolean) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		view[key] = v;
+		this.save();
 	};
 
 	onClick (e: any, item: any) {

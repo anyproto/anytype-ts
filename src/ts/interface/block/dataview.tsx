@@ -91,6 +91,7 @@ export interface View {
 	name: string;
 	type: ViewType;
 	coverRelationKey: string;
+	hideIcon: boolean;
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];

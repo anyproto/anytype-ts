@@ -46,10 +46,12 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			return null;
 		};
 
+		let view = null;
 		let viewRelation: any = {};
 
 		if (getView) {
-			viewRelation = getView().getRelation(relation.relationKey);
+			view = getView();
+			viewRelation = view.getRelation(relation.relationKey);
 		};
 
 		let Name = null;
@@ -175,17 +177,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			content = (
 				<div className="flex">
-					<IconObject 
-						id={[ relation.relationKey, record.id ].join('-')} 
-						onSelect={this.onIconSelect} 
-						onUpload={this.onIconUpload}
-						onCheckbox={this.onCheckbox}
-						size={size} 
-						iconSize={is}
-						canEdit={canEdit} 
-						offsetY={4} 
-						object={record} 
-					/>
+					{!view || (view && !view.hideIcon) ? (
+						<IconObject 
+							id={[ relation.relationKey, record.id ].join('-')} 
+							onSelect={this.onIconSelect} 
+							onUpload={this.onIconUpload}
+							onCheckbox={this.onCheckbox}
+							size={size} 
+							iconSize={is}
+							canEdit={canEdit} 
+							offsetY={4} 
+							object={record} 
+						/>
+					) : ''}
 					<Name name={value} />
 					<Icon className="edit" onMouseDown={(e: any) => { 
 						e.stopPropagation(); 
