@@ -100,6 +100,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									idPrefix={PREFIX + block.id}
 									elementMapper={this.elementMapper}
 									showTooltip={true}
+									tooltipX={I.MenuDirection.Left}
+									arrayLimit={2}
 									onMouseLeave={this.onMouseLeave}
 								/>
 							</span>

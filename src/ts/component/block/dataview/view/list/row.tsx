@@ -36,7 +36,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 							index={index}
 							isInline={true}
 							showTooltip={true}
-							arrayLimit={1}
+							arrayLimit={2}
 						/>
 					);
 				})}
