@@ -127,7 +127,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
+				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { 
+					return detailStore.get(rootId, it, []); 
+				})
 				list = list.filter((it: any) => { return !it._empty_; });
 
 				value = (
