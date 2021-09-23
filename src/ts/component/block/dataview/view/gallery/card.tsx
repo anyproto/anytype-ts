@@ -31,14 +31,27 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			cn.push('coverFit');
 		};
 
+		let blankCover = (
+			<div className="cover type0">
+				<div className="inner" />
+			</div>
+		);
 		let cover = null;
 		if (view.coverRelationKey) {
 			if (view.coverRelationKey == 'pageCover') {
 				const { coverType, coverId, coverX, coverY, coverScale } = record;
-				cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
+				if (coverId && coverType) {
+					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />;
+				} else {
+					cover = blankCover;
+				};
 			} else {
 				const src = this.getPicture();
-				cover = <Cover type={src ? I.CoverType.Upload : I.CoverType.None} src={src} />;
+				if (src) {
+					cover = <Cover type={I.CoverType.Upload} src={src} />;
+				} else {
+					cover = blankCover;
+				};
 			};
 		};
 
