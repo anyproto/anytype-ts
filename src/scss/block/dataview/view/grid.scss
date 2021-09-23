@@ -2,10 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead { 
-			display: block; box-shadow: 0px 1px #e0ded2 inset; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; 
-			height: 48px;
-		}
+		.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 48px; }
 
 		.cellHead { 
 			text-align: left; color: $colorDarkGrey; padding: 14px; font-weight: 400; line-height: 20px; position: relative; 
@@ -102,7 +99,9 @@
 				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
 			}
 
-			.cell.c-select { padding-bottom: 8px; }
+			.cellContent.c-select {
+				.tagItem { margin-bottom: 0px; }
+			}
 		}
     }
 }

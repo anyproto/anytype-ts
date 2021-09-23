@@ -105,7 +105,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		};
 
 		menuStore.open('relationSuggest', { 
-			element: '#block-' + block.id,
+			element: `#block-${block.id}`,
 			offsetX: Constant.size.blockMenu,
 			data: {
 				rootId: rootId,

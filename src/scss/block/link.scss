@@ -67,6 +67,10 @@
             }
         }
 
+        .linkCard.c24.text {
+            .sides.bgColor .side { padding: 2px; }
+        }
+
         .linkCard.c24 {
             .cardName { font-weight: 400 !important; }
             .side.left { margin-right: 6px; }
@@ -74,8 +78,6 @@
                 .txt { vertical-align: top; }
                 .archive { position: static; margin: 0px 0px 0px 8px; }
             }
-
-            .sides.bgColor .side.right { line-height: 20px; padding: 2px; }
         }
 
         .linkCard.c64 {
@@ -118,6 +120,9 @@
         .linkCard.isTask {
             .iconObject { width: 24px; height: 24px; }
             .side.left { margin: 0px 6px 0px 0px; }
+        }
+        .linkCard.isTask.align1 {
+            .side { display: inline-block; }
         }
         .linkCard.isTask.align2 {
             .side.left { margin: 0px 0px 0px 6px; }

@@ -48,6 +48,10 @@ class View implements I.View {
 		this.filters[index] = Object.assign(this.getFilter(index), filter);
 	};
 
+	getSort (index: number) {
+		return this.sorts[index] || {};
+	};
+
 };
 
 export default View;

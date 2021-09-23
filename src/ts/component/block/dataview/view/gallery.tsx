@@ -18,26 +18,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	cellPositioner: any = null;
 	ref: any = null;
 	width: number = 0;
+	columnWidth: number = 0;
+	columnCount: number = 0;
 
 	constructor(props: Props) {
 		super(props);
 
-		this.width = $(window).width() - 124;
-		const { card, margin } = Constant.size.dataview.gallery;
-		const cnt = Math.floor(this.width / (card + margin));
-		const width = Math.floor((this.width - margin * (cnt - 1)) / cnt);
-
 		this.cache = new CellMeasurerCache({
 			defaultHeight: 250,
-			defaultWidth: width,
+			defaultWidth: Constant.size.dataview.gallery.card,
 			fixedWidth: true,
-		});
-
-		this.cellPositioner = createMasonryCellPositioner({
-			cellMeasurerCache: this.cache,
-			columnCount: 3,
-			columnWidth: card,
-			spacer: margin,
 		});
 
 		this.onResize = this.onResize.bind(this);
@@ -59,45 +49,51 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		return (
 			<div className="wrap">
 				<div className="viewItem viewGallery">
-					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
-						{({ height, isScrolling, registerChild, scrollTop }) => {
-							return (
-								<AutoSizer 
-									disableHeight 
-									onResize={this.onResize} 
-									overscanByPixels={200}
-								>
-									{({ width }) => {
-										return (
-											<div ref={registerChild}>
-												<Masonry
-													ref={(ref: any) => { this.ref = ref; }}
-													autoHeight
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													isScrolling={isScrolling}
-													cellCount={data.length}
-													cellMeasurerCache={this.cache}
-													cellPositioner={this.cellPositioner}
-													cellRenderer={({ key, index, parent, style }) => (
-														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-															<Card 
-																key={'gallery-card-' + view.id + index} 
-																{...this.props} 
-																index={index} 
-																style={style}
-															/>
-														</CellMeasurer>
-													)}
-													scrollTop={scrollTop}
-												/>
-											</div>
-										);
-									}}
-								</AutoSizer>
-							);
-						}}
-					</WindowScroller>
+					<div className="galleryWrap">
+						<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
+							{({ height, isScrolling, registerChild, scrollTop }) => {
+								return (
+									<AutoSizer 
+										disableHeight 
+										onResize={this.onResize} 
+										overscanByPixels={200}
+									>
+										{({ width }) => {
+											this.width = width;
+											this.setDimensions();
+											this.initPositioner();
+
+											return (
+												<div ref={registerChild}>
+													<Masonry
+														ref={(ref: any) => { this.ref = ref; }}
+														autoHeight
+														height={Number(height) || 0}
+														width={Number(width) || 0}
+														isScrolling={isScrolling}
+														cellCount={data.length}
+														cellMeasurerCache={this.cache}
+														cellPositioner={this.cellPositioner}
+														cellRenderer={({ key, index, parent, style }) => (
+															<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+																<Card 
+																	key={'gallery-card-' + view.id + index} 
+																	{...this.props} 
+																	index={index} 
+																	style={{ ...style, width: this.columnWidth }}
+																/>
+															</CellMeasurer>
+														)}
+														scrollTop={scrollTop}
+													/>
+												</div>
+											);
+										}}
+									</AutoSizer>
+								);
+							}}
+						</WindowScroller>
+					</div>
 				</div>
 			</div>
 		);
@@ -108,28 +104,41 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	};
 
 	reset () {
+		this.setDimensions();
 		this.cache.clearAll();
 		this.resetPositioner();
 		this.ref.clearCellPositions();
 	};
 
-	resetPositioner () {
+	setDimensions () {
 		const { card, margin } = Constant.size.dataview.gallery;
 
-		const cnt = Math.floor(this.width / (card + margin));
-		const width = Math.floor((this.width - margin * (cnt - 1)) / cnt);
+		this.columnCount = Math.max(1, Math.floor((this.width - margin) / card));
+		this.columnWidth = (this.width - (this.columnCount - 1) * margin) / this.columnCount;
+	};
 
+	initPositioner () {
+		if (!this.cellPositioner) {
+			this.cellPositioner = createMasonryCellPositioner({
+				cellMeasurerCache: this.cache,
+				columnCount: this.columnCount,
+				columnWidth: this.columnWidth,
+				spacer: Constant.size.dataview.gallery.margin,
+			});
+		};
+	};
+
+	resetPositioner () {
 		this.cellPositioner.reset({
-			columnCount: Math.floor(this.width / (card + margin)),
-			columnWidth: width,
-			spacer: margin,
+			columnCount: this.columnCount,
+			columnWidth: this.columnWidth,
+			spacer: Constant.size.dataview.gallery.margin,
     	});
 	};
 
 	onResize ({ width }) {
 		this.width = width;
-		this.resetPositioner();
-		this.ref.recomputeCellPositions();
+		this.reset();
 	};
 
 });

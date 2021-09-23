@@ -12,6 +12,7 @@ import LinkCard from './link/card';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
+const raf = require('raf');
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
@@ -31,7 +32,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 
 	render() {
 		const { rootId, block } = this.props;
-		const { id, content } = block;
+		const { id, content, align } = block;
 		const object = detailStore.get(rootId, content.targetBlockId);
 		const { _empty_, isArchived, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id, 'resizable' ];
@@ -164,6 +165,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	resize () {
+		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const sides = node.find('#sides');
 		const sideLeft = node.find('#sideLeft');
@@ -174,7 +176,16 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		};
 
 		sideLeft.css({ width: 'auto' });
-		sideRight.css({ width: sides.width() - (sideLeft.length ? sideLeft.outerWidth(true) : 0) });
+		sideRight.css({ width: 'auto' });
+
+		if (block.align == I.BlockAlign.Center) {
+			return;
+		};
+
+		raf(() => {
+			sideLeft.css({ width: 'auto' });
+			sideRight.css({ width: sides.width() - (sideLeft.length ? sideLeft.outerWidth(true) : 0) });
+		});
 	};
 	
 });

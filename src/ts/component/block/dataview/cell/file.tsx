@@ -24,7 +24,7 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, relation, index, getRecord, canEdit, iconSize, placeholder, elementMapper } = this.props;
+		const { rootId, block, readonly, relation, index, getRecord, canEdit, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		if (!record) {
 			return null;
@@ -45,6 +45,10 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 			cn.push('column3'); 
 		};
 
+		if (arrayLimit) {
+			value = value.slice(0, arrayLimit);
+		};
+
 		const Item = (item: any) => (
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
 				<div className="flex">
@@ -58,9 +62,12 @@ const CellFile = observer(class CellFile extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
-						{value.map((item: any, i: number) => (
-							<Item key={i} {...item} />
-						))}
+						<span className="over">
+							{value.map((item: any, i: number) => (
+								<Item key={i} {...item} />
+							))}
+						</span>
+						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</React.Fragment>
 				) : (
 					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>

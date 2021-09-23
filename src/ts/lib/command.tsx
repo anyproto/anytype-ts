@@ -341,6 +341,16 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	dispatcher.request('blockSetTextChecked', request, callBack);
 };
 
+const BlockSetLatexText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Set.Latex.Text.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setText(text);
+
+	dispatcher.request('blockSetLatexText', request, callBack);
+};
+
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Set.Fields.Request();
 	
@@ -1134,6 +1144,7 @@ export {
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
+	BlockSetLatexText,
 
 	BlockListMove,
 	BlockListMoveToNewPage,

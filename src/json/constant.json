@@ -72,6 +72,9 @@
 		],
 		"layout": [
 			"blockAlign"
+		],
+		"latex": [
+			"previewLatex"
 		]
 	},
 

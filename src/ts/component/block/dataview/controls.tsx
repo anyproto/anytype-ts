@@ -90,38 +90,42 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		
 		return (
 			<div className={cn.join(' ')}>
-				<div id="sideLeft" className="side left">
-					<div className="first">
-						<div 
-							id={'view-item-' + view.id} 
-							className="viewItem active" 
-							onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-							onContextMenu={(e: any) => { this.onView(e, view); }}
-						>
-							{view.name}
+				<div className="sides">
+					<div id="sideLeft" className="side left">
+						<div className="first">
+							<div 
+								id={'view-item-' + view.id} 
+								className="viewItem active" 
+								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
+								onContextMenu={(e: any) => { this.onView(e, view); }}
+							>
+								{view.name}
 
-							<Icon className="arrow" />
+								<Icon className="arrow" />
+							</div>
 						</div>
+
+						<Views 
+							axis="x" 
+							lockAxis="x"
+							lockToContainerEdges={true}
+							transitionDuration={150}
+							distance={10}
+							onSortEnd={this.onSortEnd}
+							helperClass="isDragging"
+							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
+						/>
 					</div>
 
-					<Views 
-						axis="x" 
-						lockAxis="x"
-						lockToContainerEdges={true}
-						transitionDuration={150}
-						distance={10}
-						onSortEnd={this.onSortEnd}
-						helperClass="isDragging"
-						helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
-					/>
+					<div id="sideRight" className="side right">
+						{buttons.map((item: any, i: number) => (
+							<ButtonItem key={item.id} {...item} />
+						))}	
+						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
+					</div>
 				</div>
 
-				<div id="sideRight" className="side right">
-					{buttons.map((item: any, i: number) => (
-						<ButtonItem key={item.id} {...item} />
-					))}	
-					{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
-				</div>
+				<div className="line" />
 			</div>
 		);
 	};
