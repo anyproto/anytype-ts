@@ -37,7 +37,8 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				const { coverType, coverId, coverX, coverY, coverScale } = record;
 				cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />
 			} else {
-				cover = <Cover src={this.getPicture()} />;
+				const src = this.getPicture();
+				cover = <Cover type={src ? I.CoverType.Upload : I.CoverType.None} src={src} />;
 			};
 		};
 

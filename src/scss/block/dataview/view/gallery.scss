@@ -13,8 +13,10 @@
 			.card {
 				.cover { 
 					position: static; height: 144px; background-position: top center; border-radius: 12px 12px 0px 0px;
-					background-color: #f5f5f8; box-shadow: 0px -1px #dfddd0 inset;
+					background-color: #f5f5f8; box-shadow: 0px -1px #dfddd0 inset; width: calc(100% + 2px); 
+					margin: -1px -1px 0px -1px;
 				}
+				.cover.type0 { box-shadow: 0px 0px 0px 1px #dfddd0 inset; }
 			}
 			.card > .inner { padding: 16px; }
 
