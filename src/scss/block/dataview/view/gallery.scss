@@ -45,7 +45,7 @@
 			}
 
 			.card.coverFit {
-				.cover { background-size: contain; background-position: center center; }
+				.cover { background-size: contain; background-position: center center; box-shadow: 0px 0px 0px 1px #dfddd0 inset; }
 			}
 
 			.card.small {
