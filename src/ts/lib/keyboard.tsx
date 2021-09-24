@@ -103,7 +103,7 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			popupStore.closeAll();
+			popupStore.closeLast();
 			menuStore.closeAll();
 			Util.linkPreviewHide(false);
 		});
