@@ -51,7 +51,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 			if (view.coverRelationKey == 'pageCover') {
 				const { coverType, coverId, coverX, coverY, coverScale } = record;
 				if (coverId && coverType) {
-					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />;
+					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
 				} else {
 					cover = <BlankCover />;
 				};
