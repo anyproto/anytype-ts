@@ -165,16 +165,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	onKeyDownBlock (e: any) {
 		const { onKeyDown } = this.props;
+		const { isEditing } = this.state;
 		
-		if (onKeyDown) {
+		if (onKeyDown && !isEditing) {
 			onKeyDown(e, '', [], { from: 0, to: 0 });
 		};
 	};
 	
 	onKeyUpBlock (e: any) {
 		const { onKeyUp } = this.props;
+		const { isEditing } = this.state;
 
-		if (onKeyUp) {
+		if (onKeyUp && !isEditing) {
 			onKeyUp(e, '', [], { from: 0, to: 0 });
 		};
 	};
@@ -256,7 +258,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const length = this.getValue().length;
 		this.range = { start: length, end: length };
-		setRange(el, this.range);
+		this.focus();
 	};
 
 	onFocusInput () {
