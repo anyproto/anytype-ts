@@ -54,6 +54,8 @@ class Keyboard {
 	};
 
 	onMouseDown (e: any) {
+		const { focused } = focus.state;
+
 		// Mouse back
 		if (e.buttons & 8) {
 			e.preventDefault();
@@ -64,6 +66,11 @@ class Keyboard {
 		if (e.buttons & 16) {
 			e.preventDefault();
 			this.forward();
+		};
+
+		// Remove isFocusable from focused block
+		if ($(e.target).parents(`#block-${focused}`).length <= 0) {
+			$('.focusable.c' + focused).removeClass('isFocused');
 		};
 	};
 	
