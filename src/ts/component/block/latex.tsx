@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, keyboard, Util, C } from 'ts/lib';
+import { I, keyboard, Util, C, focus } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore, blockStore } from 'ts/store';
@@ -39,13 +39,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	constructor (props: any) {
 		super(props);
 
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
+		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
+		this.onFocusBlock = this.onFocusBlock.bind(this);
+
+		this.onKeyDownInput = this.onKeyDownInput.bind(this);
+		this.onKeyUpInput = this.onKeyUpInput.bind(this);
+		this.onFocusInput = this.onFocusInput.bind(this);
+		this.onBlurInput = this.onBlurInput.bind(this);
+
 		this.onChange = this.onChange.bind(this);
 		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onTemplate = this.onTemplate.bind(this);
@@ -58,7 +63,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { text } = content;
 
 		return (
-			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
+			<div 
+				tabIndex={0} 
+				className={[ 'wrap', 'focusable', 'c' + block.id, (isEditing ? 'isEditing' : '') ].join(' ')}
+				onKeyDown={this.onKeyDownBlock} onKeyUp={this.onKeyUpBlock} onFocus={this.onFocusBlock}
+			>
 				<div id="select" className="select" onClick={this.onTemplate}>
 					<div className="name">Template formula</div>
 					<Icon className="arrow light" />
@@ -75,10 +84,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					ref={(ref: any) => { this.ref = ref; }}
 					placeholder="Enter text in format LaTeX" 
 					onSelect={this.onSelect}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onKeyUp={this.onKeyUp} 
-					onKeyDown={this.onKeyDown}
+					onFocus={this.onFocusInput}
+					onBlur={this.onBlurInput}
+					onKeyUp={this.onKeyUpInput} 
+					onKeyDown={this.onKeyDownInput}
 					onChange={this.onChange}
 					onPaste={this.onPaste}
 				/>
@@ -143,7 +152,28 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		$(window).unbind('click.latex');
 	};
 
-	onKeyDown (e: any) {
+	onFocusBlock () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	onKeyDownBlock (e: any) {
+		const { onKeyDown } = this.props;
+		
+		if (onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
+	};
+	
+	onKeyUpBlock (e: any) {
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
+	};
+
+	onKeyDownInput (e: any) {
 		const { filter } = commonStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
@@ -157,7 +187,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		});
 	};
 
-	onKeyUp (e: any) {
+	onKeyUpInput (e: any) {
 		const { filter } = commonStore;
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
@@ -225,11 +255,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		setRange(el, this.range);
 	};
 
-	onFocus () {
+	onFocusInput () {
 		keyboard.setFocus(true);
 	};
 
-	onBlur () {
+	onBlurInput () {
 		keyboard.setFocus(false);
 		window.clearTimeout(this.timeout);
 
