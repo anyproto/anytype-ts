@@ -149,7 +149,9 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { width: v } },
-		]);
+		], () => {
+			$('.resizable').trigger('resize', [ $.Event('resize') ]);
+		});
 	};
 
 	onClone (e: any) {
