@@ -201,12 +201,14 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 			return;
 		};
 
-		const { getId, getSize } = this.props;
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { isTemplate } = data;
 
 		menuStore.close('previewLatex', () => {
 			menuStore.open('previewLatex', {
 				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
+				offsetX: getSize().width - (isTemplate ? 14 : 0),
 				vertical: I.MenuDirection.Center,
 				isSub: true,
 				data: {
@@ -242,7 +244,6 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { isTemplate } = data;
 
 		let sections = DataUtil.menuSectionsMap(Sections);
-
 		sections = sections.filter((it: any) => { return (it.id == 'templates') == isTemplate; });
 
 		sections = sections.map((it: any) => {

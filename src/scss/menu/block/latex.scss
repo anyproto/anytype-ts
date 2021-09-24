@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockLatex {
 		.content { transition: none; padding: 0px; }
-		.items { height: 100%; }
+		.items { height: 100%; padding: 0px; }
 
 		.item {
 			.info { height: 40px; line-height: 40px; padding-left: 60px; }
@@ -13,7 +13,7 @@
 	}
 
 	.menu.menuBlockLatex.isTemplate {
-		.items { padding: 0px 14px; }
+		.ReactVirtualized__List { padding: 0px 14px; }
 
 		.item { padding: 0px; text-align: center; }
 		.item {
