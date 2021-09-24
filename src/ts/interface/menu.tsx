@@ -65,6 +65,7 @@ export interface MenuItem {
 	withCaption?: boolean;
 	withSwitch?: boolean;
 	switchValue?: boolean;
+	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
 	onClick?(e: any): void;

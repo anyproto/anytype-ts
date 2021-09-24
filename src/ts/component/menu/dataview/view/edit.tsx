@@ -28,8 +28,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
-		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -40,7 +38,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
-							className={!allowedView ? 'isReadonly' : ''}
+							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
@@ -190,6 +188,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const views = dbStore.getViews(rootId, blockId);
 		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
 		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
@@ -226,7 +225,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			{ id: 'type', name: 'View as', children: types }
 		];
 
-		if (view.id && !readonly) {
+		if (view.id && !readonly && allowedView) {
 			sections.push({
 				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
@@ -264,11 +263,12 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onOver (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const { rootId, blockId, view } = data;
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 
-		if (!item.arrow) {
+		if (!item.arrow || !allowedView) {
 			return;
 		};
 

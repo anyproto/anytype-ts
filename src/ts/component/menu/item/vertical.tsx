@@ -7,7 +7,7 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		let { id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, className, onClick, onMouseEnter, onMouseLeave, style, iconSize, switchValue, onSwitch } = this.props;
+		let { id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, className, onClick, onMouseEnter, onMouseLeave, style, iconSize, switchValue, onSwitch, readonly } = this.props;
 		let cn = [ 'item' ];
 
 		if (className) {
@@ -33,6 +33,9 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		};
 		if (isActive) {
 			cn.push('active');
+		};
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 
 		let iconElement = null;
@@ -70,6 +73,7 @@ class MenuItemVertical extends React.Component<Props, {}> {
 						</div>
 						<Switch 
 							value={switchValue} 
+							readonly={readonly}
 							onChange={(e: any, v: boolean) => { onSwitch(e, v); }} 
 						/>
 					</React.Fragment>

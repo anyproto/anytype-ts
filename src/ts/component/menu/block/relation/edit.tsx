@@ -56,7 +56,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 							object={{ ...objectType, layout: I.ObjectLayout.Type }} 
 							name={objectType ? objectType.name : 'Select object type'} 
 							onMouseEnter={this.onObjectType} 
-							className={this.isReadonly() ? 'isReadonly' : ''}
+							readonly={this.isReadonly()}
 							arrow={this.isReadonly()}
 						/>
 					</div>
@@ -75,7 +75,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 							icon="settings" 
 							name="Preferences" 
 							arrow={!this.isReadonly()} 
-							className={this.isReadonly() ? 'isReadonly' : ''}
+							readonly={this.isReadonly()}
 							onMouseEnter={this.onDateSettings} 
 						/>
 					</div>
@@ -110,7 +110,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<MenuItemVertical 
 						id="relation-type" 
 						icon={'relation ' + DataUtil.relationClass(this.format)} 
-						className={this.isReadonly() ? 'isReadonly' : ''}
+						readonly={this.isReadonly()}
 						name={translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
 						arrow={!relation}

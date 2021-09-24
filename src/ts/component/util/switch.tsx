@@ -5,6 +5,7 @@ interface Props {
 	value?: boolean;
 	color?: string;
 	className?: string;
+	readonly?: boolean;
 	onChange?(e: any, value: boolean): void;
 };
 
@@ -30,7 +31,7 @@ class Switch extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, color, className } = this.props;
+		const { id, color, className, readonly } = this.props;
 		const { value } = this.state;
 		
 		let cn = [ 'switch', color ];
@@ -39,6 +40,9 @@ class Switch extends React.Component<Props, State> {
 		};
 		if (value) {
 			cn.push('active');
+		};
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 		
 		return (
@@ -53,13 +57,17 @@ class Switch extends React.Component<Props, State> {
 	};
 	
 	onChange (e: any) {
-		const { onChange } = this.props;
+		const { onChange, readonly } = this.props;
 		const { value } = this.state;
+
+		if (readonly) {
+			return;
+		};
 		
 		this.setValue(!value);
 		
-		if (this.props.onChange) {
-			this.props.onChange(e, !value);
+		if (onChange) {
+			onChange(e, !value);
 		};
 	};
 	
