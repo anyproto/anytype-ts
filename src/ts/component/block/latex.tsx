@@ -20,6 +20,7 @@ const raf = require('raf');
 const $ = require('jquery');
 const katex = require('katex');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 require(`prismjs/components/prism-latex.js`);
 require('katex/dist/contrib/mhchem.min.js');
@@ -61,11 +62,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 		const { content } = block;
 		const { text } = content;
+		const cn = [ 'wrap', 'focusable', 'c' + block.id, (isEditing ? 'isEditing' : '') ];
 
 		return (
 			<div 
 				tabIndex={0} 
-				className={[ 'wrap', 'focusable', 'c' + block.id, (isEditing ? 'isEditing' : '') ].join(' ')}
+				className={cn.join(' ')}
 				onKeyDown={this.onKeyDownBlock} onKeyUp={this.onKeyUpBlock} onFocus={this.onFocusBlock}
 			>
 				<div id="select" className="select" onClick={this.onTemplate}>
@@ -101,7 +103,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const length = this.text.length;
 
-		this.rebind();
 		this._isMounted = true;
 		this.range = { start: length, end: length };
 		this.setValue(this.text);
@@ -109,30 +110,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { block } = this.props;
 
-		this.rebind();
+		this.unbind();
 		this.setValue(this.text);
 
 		if (isEditing) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('#input');
-
-			if (input.length) {
-				setRange(input.get(0), this.range);
-
-				$(window).on('click.latex', (e: any) => {
-					if ($(e.target).parents(`#block-${block.id}`).length > 0) {
-						return;
-					};
-		
-					menuStore.close('blockLatex');
-					window.clearTimeout(this.timeout);
-					
-					this.placeholderCheck(this.getValue());
-					this.save(() => { this.setState({ isEditing: false }); });
-				});
-			};
+			this.focus();
+			this.rebind();
 		};
 	};
 	
@@ -143,18 +127,40 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	rebind () {
 		const { block } = this.props;
-		const self = this;
 
 		this.unbind();
+
+		$(window).on('click.latex', (e: any) => {
+			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
+				return;
+			};
+
+			menuStore.close('blockLatex');
+			window.clearTimeout(this.timeout);
+			
+			this.placeholderCheck(this.getValue());
+			this.save(() => { this.setState({ isEditing: false }); });
+		});
 	};
 
 	unbind () {
 		$(window).unbind('click.latex');
 	};
 
+	focus () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		if (input.length) {
+			setRange(input.get(0), this.range);
+		};
+	};
+
 	onFocusBlock () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
+
+		this.focus();
 	};
 
 	onKeyDownBlock (e: any) {
@@ -213,9 +219,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		};
 
 		this.setContent(value);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500); 
+		this.save();
 	};
 
 	updateRect () {
@@ -360,8 +364,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				displayMode: true, 
 				throwOnError: false,
 				output: 'html',
+				trust: (context: any) => [ '\\url', '\\href' ].includes(context.command)
 			}) : '');
 		};
+
+		val.find('a').each((i: number, item: any) => {
+			item = $(item);
+
+			item.unbind('click').click((e: any) => {
+				e.preventDefault();
+				ipcRenderer.send('urlOpen', item.attr('href'));
+			});
+		});
 
 		this.placeholderCheck(value);
 		this.updateRect();
