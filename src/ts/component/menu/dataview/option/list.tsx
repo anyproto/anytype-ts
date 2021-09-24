@@ -252,21 +252,19 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 
-		menuStore.close('dataviewOptionEdit', () => {
-			menuStore.open('dataviewOptionEdit', { 
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				passThrough: true,
-				noFlipY: true,
-				noAnimation: true,
-				classNameWrap: classNameWrap,
-				data: {
-					...data,
-					rebind: this.rebind,
-					option: item,
-				}
-			});
+		menuStore.open('dataviewOptionEdit', { 
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			passThrough: true,
+			noFlipY: true,
+			noAnimation: true,
+			classNameWrap: classNameWrap,
+			data: {
+				...data,
+				rebind: this.rebind,
+				option: item,
+			}
 		});
 	};
 

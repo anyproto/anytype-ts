@@ -374,23 +374,21 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { view } = data;
 
-		menuStore.close('select', () => { 
-			menuStore.open('select', { 
-				element: `#${getId()} #item-coverRelationKey`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				noAnimation: true,
-				data: {
-					value: view.coverRelationKey,
-					options: this.getFileOptions(),
-					onSelect: (e, item) => {
-						view.coverRelationKey = item.id;
+		menuStore.open('select', { 
+			element: `#${getId()} #item-coverRelationKey`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			data: {
+				value: view.coverRelationKey,
+				options: this.getFileOptions(),
+				onSelect: (e, item) => {
+					view.coverRelationKey = item.id;
 
-						this.forceUpdate();
-						this.save();
-					},
-				}
-			});
+					this.forceUpdate();
+					this.save();
+				},
+			}
 		});
 	};
 
@@ -399,25 +397,23 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { view } = data;
 
-		menuStore.close('select', () => { 
-			menuStore.open('select', { 
-				element: `#${getId()} #item-cardSize`,
-				offsetX: getSize().width,
-				vertical: I.MenuDirection.Center,
-				noAnimation: true,
-				data: {
-					value: view.cardSize,
-					options: this.getSizeOptions(),
-					onSelect: (e, item) => {
-						view.cardSize = item.id;
-	
-						this.forceUpdate();
-						this.save();
-					},
-				}
-			});
+		menuStore.open('select', { 
+			element: `#${getId()} #item-cardSize`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			data: {
+				value: view.cardSize,
+				options: this.getSizeOptions(),
+				onSelect: (e, item) => {
+					view.cardSize = item.id;
+
+					this.forceUpdate();
+					this.save();
+				},
+			}
 		});
-	};
+};
 
 	getSizeOptions () {
 		return [

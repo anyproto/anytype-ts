@@ -224,14 +224,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onOver: (e: any, context: any, item: any) => {
-						menuStore.close('previewObject', () => {
-							menuStore.open('previewObject', {
-								element: `#${context.props.getId()} #item-${item.id}`,
-								offsetX: context.props.getSize().width,
-								isSub: true,
-								vertical: I.MenuDirection.Center,
-								data: { rootId: item.id }
-							});
+						menuStore.open('previewObject', {
+							element: `#${context.props.getId()} #item-${item.id}`,
+							offsetX: context.props.getSize().width,
+							isSub: true,
+							vertical: I.MenuDirection.Center,
+							data: { rootId: item.id }
 						});
 					},
 					onSelect: (item: any) => {

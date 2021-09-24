@@ -205,16 +205,14 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { data } = param;
 		const { isTemplate } = data;
 
-		menuStore.close('previewLatex', () => {
-			menuStore.open('previewLatex', {
-				element: `#${getId()} #item-${item.id}`,
-				offsetX: getSize().width - (isTemplate ? 14 : 0),
-				vertical: I.MenuDirection.Center,
-				isSub: true,
-				data: {
-					text: item.comment || item.symbol,
-				}
-			});
+		menuStore.open('previewLatex', {
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width - (isTemplate ? 14 : 0),
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				text: item.comment || item.symbol,
+			}
 		});
 	};
 
