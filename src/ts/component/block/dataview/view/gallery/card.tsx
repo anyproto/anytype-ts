@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { Cell, Cover } from 'ts/component';
+import { Cell, Cover, Icon } from 'ts/component';
 import * as ReactDOM from 'react-dom';
 import { commonStore, detailStore, dbStore } from 'ts/store';
 
@@ -26,16 +26,26 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(view.cardSize) ];
+		//const readonly = this.props.readonly || record.isReadonly;
+		const readonly = true;
 
 		if (view.coverFit) {
 			cn.push('coverFit');
 		};
 
-		let blankCover = (
-			<div className="cover type0">
-				<div className="inner" />
+		let BlankCover = (item: any) => (
+			<div className={[ 'cover', 'type0', (!readonly ? 'canEdit' : '') ].join(' ')}>
+				<div className="inner">
+					{!readonly ? (
+						<div className="add">
+							<Icon className="plus" />
+							Add picture
+						</div>
+					) : ''}
+				</div>
 			</div>
 		);
+
 		let cover = null;
 		if (view.coverRelationKey) {
 			if (view.coverRelationKey == 'pageCover') {
@@ -43,14 +53,14 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 				if (coverId && coverType) {
 					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} />;
 				} else {
-					cover = blankCover;
+					cover = <BlankCover />;
 				};
 			} else {
 				const src = this.getPicture();
 				if (src) {
 					cover = <Cover type={I.CoverType.Upload} src={src} />;
 				} else {
-					cover = blankCover;
+					cover = <BlankCover />;
 				};
 			};
 		};
