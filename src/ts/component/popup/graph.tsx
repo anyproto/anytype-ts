@@ -89,14 +89,14 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						<div className="name">Center</div>
 						<div className="item">
 							<Label id="center-x" text={`X: ${this.forceProps.center.x}`} />
-							<Drag value={this.forceProps.center.x} onMove={(v: number) => { 
+							<Drag value={this.forceProps.center.x} onMove={(e: any, v: number) => { 
 								this.forceProps.center.x = v; 
 								this.updateLabel('center-x', `X: ${Math.ceil(v * 100) + '%'}`);
 								this.updateForces();
 							}} />
 
 							<Label id="center-y" text={`Y: ${this.forceProps.center.y}`} />
-							<Drag value={this.forceProps.center.y} onMove={(v: number) => { 
+							<Drag value={this.forceProps.center.y} onMove={(e: any, v: number) => { 
 								this.forceProps.center.y = v; 
 								this.updateLabel('center-y', `Y: ${Math.ceil(v * 100) + '%'}`);
 								this.updateForces();
@@ -114,7 +114,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						</div>
 						<div className="item">
 							<Label id="charge-strength" text={`Strength: ${this.forceProps.charge.strength}`} />
-							<Drag value={(this.forceProps.charge.strength + 200) / 250} onMove={(v: number) => { 
+							<Drag value={(this.forceProps.charge.strength + 200) / 250} onMove={(e: any, v: number) => { 
 								this.forceProps.charge.strength = v * 250 - 200; 
 								this.updateLabel('charge-strength', `Strength: ${Math.ceil(v * 250 - 200)}`);
 								this.updateForces();
@@ -123,7 +123,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="charge-distanceMin" text={`Distance Min: ${this.forceProps.charge.distanceMin}`} />
-							<Drag value={this.forceProps.charge.distanceMin / 50} onMove={(v: number) => { 
+							<Drag value={this.forceProps.charge.distanceMin / 50} onMove={(e: any, v: number) => { 
 								this.forceProps.charge.distanceMin = v * 50;
 								this.updateLabel('charge-distanceMin', `Distance Min: ${Math.ceil(v * 50)}`);
 								this.updateForces();
@@ -132,7 +132,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="charge-distanceMax" text={`Distance Max: ${this.forceProps.charge.distanceMax}`} />
-							<Drag value={this.forceProps.charge.distanceMax / 2000} onMove={(v: number) => { 
+							<Drag value={this.forceProps.charge.distanceMax / 2000} onMove={(e: any, v: number) => { 
 								this.forceProps.charge.distanceMax = v * 2000;
 								this.updateLabel('charge-distanceMax', `Distance Max: ${Math.ceil(v * 2000)}`);
 								this.updateForces();
@@ -150,7 +150,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 						</div>
 						<div className="item">
 							<Label id="collide-strength" text={`Strength: ${this.forceProps.collide.strength}`} />
-							<Drag value={this.forceProps.collide.strength / 2} onMove={(v: number) => { 
+							<Drag value={this.forceProps.collide.strength / 2} onMove={(e: any, v: number) => { 
 								this.forceProps.collide.strength = v * 2; 
 								this.updateLabel('collide-strength', `Strength: ${Math.ceil(v * 2 * 1000) / 1000}`);
 								this.updateForces();
@@ -159,7 +159,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="collide-radius" text={`Radius: ${this.forceProps.collide.radius}`} />
-							<Drag value={this.forceProps.collide.radius / 5} onMove={(v: number) => { 
+							<Drag value={this.forceProps.collide.radius / 5} onMove={(e: any, v: number) => { 
 								this.forceProps.collide.radius = v * 5;
 								this.updateLabel('collide-radius', `Radius: ${Math.ceil(v * 5 * 1000) / 1000}`);
 								this.updateForces();
@@ -168,7 +168,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="collide-iterations" text={`Iterations: ${this.forceProps.collide.iterations}`} />
-							<Drag value={this.forceProps.collide.iterations / 10} onMove={(v: number) => { 
+							<Drag value={this.forceProps.collide.iterations / 10} onMove={(e: any, v: number) => { 
 								this.forceProps.collide.iterations = v * 10;
 								this.updateLabel('collide-iterations', `Iterations: ${Math.ceil(v * 10)}`);
 								this.updateForces();
@@ -187,7 +187,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="forceX-strengh" text={`Strength: ${this.forceProps.forceX.strength}`} />
-							<Drag value={this.forceProps.forceX.strength} onMove={(v: number) => { 
+							<Drag value={this.forceProps.forceX.strength} onMove={(e: any, v: number) => { 
 								this.forceProps.forceX.strengh = v;
 								this.updateLabel('forceX-strengh', `Strength: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
@@ -196,7 +196,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="forceX-x" text={`X: ${this.forceProps.forceX.x}`} />
-							<Drag value={this.forceProps.forceX.x} onMove={(v: number) => { 
+							<Drag value={this.forceProps.forceX.x} onMove={(e: any, v: number) => { 
 								this.forceProps.forceX.x = v;
 								this.updateLabel('forceX-x', `X: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
@@ -215,7 +215,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="forceY-strengh" text={`Strength: ${this.forceProps.forceY.strength}`} />
-							<Drag value={this.forceProps.forceY.strength} onMove={(v: number) => { 
+							<Drag value={this.forceProps.forceY.strength} onMove={(e: any, v: number) => { 
 								this.forceProps.forceY.strengh = v;
 								this.updateLabel('forceY-strengh', `Strength: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
@@ -224,7 +224,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="forceY-x" text={`Y: ${this.forceProps.forceY.y}`} />
-							<Drag value={this.forceProps.forceY.y} onMove={(v: number) => { 
+							<Drag value={this.forceProps.forceY.y} onMove={(e: any, v: number) => { 
 								this.forceProps.forceY.y = v;
 								this.updateLabel('forceY-y', `Y: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
@@ -243,7 +243,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="link-distance" text={`Distance: ${this.forceProps.link.distance}`} />
-							<Drag value={this.forceProps.link.distance / 100} onMove={(v: number) => { 
+							<Drag value={this.forceProps.link.distance / 100} onMove={(e: any, v: number) => { 
 								this.forceProps.link.distance = v * 100;
 								this.updateLabel('link-distance', `Distance: ${Math.ceil(v * 100)}`);
 								this.updateForces();
@@ -252,7 +252,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="link-strength" text={`Strength: ${this.forceProps.link.strength}`} />
-							<Drag value={this.forceProps.link.strength} onMove={(v: number) => { 
+							<Drag value={this.forceProps.link.strength} onMove={(e: any, v: number) => { 
 								this.forceProps.link.strength = v; 
 								this.updateLabel('link-strength', `Strength: ${Math.ceil(v * 1000) / 1000}`);
 								this.updateForces();
@@ -261,7 +261,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 						<div className="item">
 							<Label id="link-iterations" text={`Iterations: ${this.forceProps.link.iterations}`} />
-							<Drag value={this.forceProps.link.iterations / 10} onMove={(v: number) => { 
+							<Drag value={this.forceProps.link.iterations / 10} onMove={(e: any, v: number) => { 
 								this.forceProps.link.iterations = v * 10;
 								this.updateLabel('link-iterations', `Iterations: ${Math.ceil(v * 10)}`);
 								this.updateForces();

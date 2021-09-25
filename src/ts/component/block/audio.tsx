@@ -77,9 +77,9 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 								id="time" 
 								ref={(ref: any) => { this.refTime = ref; }} 
 								value={0} 
-								onStart={(v: number) => { this.onTime(v); }} 
-								onMove={(v: number) => { this.onTime(v); }} 
-								onEnd={(v: number) => { this.onTimeEnd(v); }}
+								onStart={(e: any, v: number) => { this.onTime(v); }} 
+								onMove={(e: any, v: number) => { this.onTime(v); }} 
+								onEnd={(e: any, v: number) => { this.onTimeEnd(v); }}
 							/>
 
 							<div className="time">
