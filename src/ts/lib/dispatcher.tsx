@@ -197,13 +197,9 @@ class Dispatcher {
 					break;
 
 				case 'objectRemove':
-					id = data.getId();
-					if (!id) {
-						break;
-					};
-
-					crumbs.removeItem(I.CrumbsType.Page, id);
-					crumbs.removeItem(I.CrumbsType.Recent, id);
+					ids = data.getIdsList();
+					crumbs.removeItems(I.CrumbsType.Page, ids);
+					crumbs.removeItems(I.CrumbsType.Recent, ids);
 					break;
 
 				case 'blockAdd':

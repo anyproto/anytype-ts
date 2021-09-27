@@ -156,15 +156,13 @@ class Crumbs {
 		this.save(I.CrumbsType.Recent, item);
 	};
 
-	removeItem (key: I.CrumbsType, id: string) {
-		if (!id) {
+	removeItems (key: I.CrumbsType, ids: string[]) {
+		if (!ids || !ids.length) {
 			return;
 		};
 
 		let item = this.get(key);
-		item.ids = item.ids.filter((it: string) => { return it != id; });
-		item.ids = Util.arrayUnique(item.ids);
-
+		item.ids = item.ids.filter((it: string) => { return ids.indexOf(it) < 0; });
 		this.save(key, item);
 	};
 		
