@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, keyboard, Key, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
 import { menuStore, popupStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -127,7 +128,7 @@ const Components: any = {
 	dataviewText:			 MenuDataviewText,
 };
 
-class Menu extends React.Component<Props, State> {
+const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	timeoutPoly: number = 0;
@@ -153,7 +154,8 @@ class Menu extends React.Component<Props, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { tabs, type, vertical, horizontal, passThrough, noDimmer } = param;
+		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer } = param;
+		const { data } = param;
 		
 		let tab = '';
 		if (tabs.length) {
@@ -769,6 +771,6 @@ class Menu extends React.Component<Props, State> {
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
-};
+});
 
 export default Menu;

@@ -16,6 +16,7 @@ interface Props extends I.Cell {
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	showTooltip?: boolean;
+	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
@@ -29,6 +30,7 @@ class Cell extends React.Component<Props, {}> {
 	public static defaultProps = {
 		index: 0,
 		canOpen: true,
+		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Top,
 	};
 
@@ -291,24 +293,12 @@ class Cell extends React.Component<Props, {}> {
 					],
 					onSelect: (event: any, item: any) => {
 						let value = '';
-						let scheme = '';
 
 						if (this.ref) {
 							value = this.ref.ref.getValue();
 						};
 
-						if (relation.format == I.RelationType.Url) {
-							if (!value.match(/:\/\//)) {
-								scheme = 'http://';
-							};
-						};
-						if (relation.format == I.RelationType.Email) {
-							scheme = 'mailto:';
-						};
-						if (relation.format == I.RelationType.Phone) {
-							scheme = 'tel:';
-						};
-
+						const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
 						if (item.id == 'go') {
 							ipcRenderer.send('urlOpen', scheme + value);
 						};
@@ -362,7 +352,7 @@ class Cell extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any) {
-		const { onMouseEnter, showTooltip, tooltipY, idPrefix, index } = this.props;
+		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, index } = this.props;
 		const relation = this.getRelation();
 		const cell = $(`#${DataUtil.cellId(idPrefix, relation.relationKey, index)}`);
 
@@ -371,7 +361,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (showTooltip) {
-			Util.tooltipShow(relation.name, cell, tooltipY);
+			Util.tooltipShow(relation.name, cell, tooltipX, tooltipY);
 		};
 	};
 	

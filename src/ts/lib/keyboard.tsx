@@ -54,6 +54,8 @@ class Keyboard {
 	};
 
 	onMouseDown (e: any) {
+		const { focused } = focus.state;
+
 		// Mouse back
 		if (e.buttons & 8) {
 			e.preventDefault();
@@ -64,6 +66,11 @@ class Keyboard {
 		if (e.buttons & 16) {
 			e.preventDefault();
 			this.forward();
+		};
+
+		// Remove isFocusable from focused block
+		if ($(e.target).parents(`#block-${focused}`).length <= 0) {
+			$('.focusable.c' + focused).removeClass('isFocused');
 		};
 	};
 	
@@ -96,7 +103,7 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			popupStore.closeAll();
+			popupStore.closeLast();
 			menuStore.closeAll();
 			Util.linkPreviewHide(false);
 		});
@@ -308,7 +315,7 @@ class Keyboard {
 		const popup = popupStore.get('page');
 
 		// Do not allow in set or store
-		if (this.isMainSet() || this.isMainStore() || ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0)) {
+		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0))) {
 			return;
 		};
 

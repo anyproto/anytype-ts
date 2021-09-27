@@ -187,6 +187,17 @@ class DataUtil {
 		return c;
 	};
 
+	cardSizeClass (v: I.CardSize) {
+		let c = '';
+		switch (v) {
+			default:
+			case I.CardSize.Small:		 c = 'small'; break;
+			case I.CardSize.Medium:		 c = 'medium'; break;
+			case I.CardSize.Large:		 c = 'large'; break;
+		};
+		return c;
+	};
+
 	dateFormat (v: I.DateFormat): string {
 		let f = '';
 		switch (v) {
@@ -1000,6 +1011,22 @@ class DataUtil {
 		};
 		value = value.filter((it: string) => { return it; });
 		return Util.arrayUnique(value);
+	};
+
+	getRelationUrlScheme (type: I.RelationType, value: any): string {
+		value = String(value || '');
+
+		let ret = '';
+		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
+			ret = 'http://';
+		};
+		if (type == I.RelationType.Email) {
+			ret = 'mailto:';
+		};
+		if (type == I.RelationType.Phone) {
+			ret = 'tel:';
+		};
+		return ret;
 	};
 
 	relationWidth (width: number, format: I.RelationType): number {

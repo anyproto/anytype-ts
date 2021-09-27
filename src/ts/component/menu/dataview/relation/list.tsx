@@ -84,7 +84,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							return <Item key={item.relationKey} {...item} index={i} />;
 						})}
 					</div>
-					{!readonly ? (
+					{!readonly && allowedView ? (
 						<div className="bottom">
 							<div className="line" />
 							<ItemAdd /> 

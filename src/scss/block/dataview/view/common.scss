@@ -8,19 +8,19 @@
 			.card {
 				.cellContent { cursor: pointer; margin-bottom: 6px; @include text-small; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
-				.cellContent:last-child { margin: 0px; }
+				.cellContent.last { margin: 0px; }
 
 				.cellContent.c-date { color: $colorVeryDarkGrey; }
 
-				.cellContent.c-shortText { @include text-paragraph; }
-				.cellContent.c-shortText {
+				.cellContent.isName { @include text-paragraph; }
+				.cellContent.isName {
 					.iconObject { margin-right: 6px; }
-					.name { width: 100% !important; }
+					.name { width: 100% !important; line-height: 24px; vertical-align: top; }
 				}
 
 				.cellContent.c-select { line-height: 18px; }
 				.cellContent.c-select {
-					.tagItem { max-width: 80px; margin-bottom: 0px; @include text-small; }
+					.tagItem { max-width: 140px; margin-bottom: 0px; @include text-small; }
 				}
 
 				.cellContent.c-object, .cellContent.c-file {

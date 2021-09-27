@@ -12,6 +12,7 @@
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 
 		.bottom { padding: 0px 0px 8px 0px; }
 		.bottom {

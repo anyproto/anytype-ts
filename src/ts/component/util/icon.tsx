@@ -68,7 +68,7 @@ class Icon extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (tooltip) {
-			Util.tooltipShow(tooltip, node, tooltipY);
+			Util.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);
 		};
 		
 		if (onMouseEnter) {

@@ -8,9 +8,9 @@ interface Props {
 	className: string;
 	value: number;
 	snap?: number;
-	onStart?(v: number): void;
-	onMove?(v: number): void;
-	onEnd?(v: number): void;
+	onStart?(e: any, v: number): void;
+	onMove?(e: any, v: number): void;
+	onEnd?(e: any, v: number): void;
 };
 
 const $ = require('jquery');
@@ -94,14 +94,14 @@ class Drag extends React.Component<Props, {}> {
 		this.node.addClass('isDragging');
 		
 		if (onStart) {
-			onStart(this.value);
+			onStart(e, this.value);
 		};
 
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
 			this.move(e.pageX - ox - iw / 2);
 
 			if (onMove) {
-				onMove(this.value);
+				onMove(e, this.value);
 			};
 		});
 		
@@ -109,7 +109,7 @@ class Drag extends React.Component<Props, {}> {
 			this.end(e);
 
 			if (onEnd) {
-				onEnd(this.value);
+				onEnd(e, this.value);
 			};
 		});
 	};

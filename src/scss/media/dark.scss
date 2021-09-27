@@ -1,5 +1,6 @@
 $colorWhite: #fff;
 $colorBlack: #333;
+$colorDarker: #444;
 $colorMediumGrey: $colorWhite;
 
 /*@media (prefers-color-scheme: dark) {*/
@@ -21,10 +22,15 @@ html.dark {
 	}
 
 	.menus {
-		.menu { background: #444; }
-		.menu.vertical .item { background: #444; }
+		.menu { background: $colorDarker; }
+		.menu.vertical {
+			.item { background: $colorDarker; }
+			.tabs {
+				.tab:hover, .tab.active { color: $colorWhite; }
+			}
+		}
 
-		.menu.menuDataviewText .textarea { background: #444; }
+		.menu.menuDataviewText .textarea { background: $colorDarker; }
 	}
 
 	.pageMainIndex {
@@ -38,12 +44,16 @@ html.dark {
 	.blocks {
 		.block.blockDataview {
 			.views { 
-				.item:hover, .item.active { color: $colorWhite; }
+				.viewItem:hover, .viewItem.active { color: $colorWhite; }
 			}
 
 			.buttons { color: $colorWhite; }
 			.buttons {
 				.item:hover { color: $colorWhite; }
+			}
+
+			.viewItem.viewGallery {
+				.card { border: 0px; background: $colorDarker; }
 			}
 		}
 
@@ -51,7 +61,7 @@ html.dark {
 
 		.block.blockIconUser .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
 
-		.block.blockText.code > .wrapContent > .selectable > .dropTarget { background: #444; }
+		.block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorDarker; }
 
 		.block.blockRelation .info .name { color: #bbb; }
 	}

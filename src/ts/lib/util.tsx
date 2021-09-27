@@ -632,7 +632,7 @@ class Util {
 		return String(icon || 'other');
 	};
 	
-	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {
+	tooltipShow (text: string, node: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
 		if (!node.length || keyboard.isResizing) {
 			return;
 		};
@@ -643,23 +643,45 @@ class Util {
 			let obj = $('#tooltip');
 			let offset = node.offset();
 			let st = win.scrollTop(); 
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
+			let nw = node.outerWidth();
+			let nh = node.outerHeight();
 
 			text = text.toString().replace(/\\n/, '\n');
 			
 			obj.find('.txt').html(this.lbBr(text));
 			obj.show().css({ opacity: 0 });
 			
-			let x = offset.left - obj.outerWidth() / 2 + node.outerWidth() / 2;
+			let x = 0;
 			let y = 0;
-			
-			if (typeY == I.MenuDirection.Top) {
-				y = offset.top - obj.outerHeight() - 6 - st;
-			};
-			
-			if (typeY == I.MenuDirection.Bottom) {
-				y = offset.top + node.outerHeight() + 6 - st;
+
+			switch (typeX) {
+				case I.MenuDirection.Left:
+					x = offset.left;
+					break;
+
+				default:
+				case I.MenuDirection.Center:
+					x = offset.left - ow / 2 + nw / 2;
+					break;
+
+				case I.MenuDirection.Right:
+					x = offset.left + ow - nw;
+					break;
 			};
 
+			switch (typeY) {
+				default:
+				case I.MenuDirection.Top:
+					y = offset.top - oh - 6 - st;
+					break;
+				
+				case I.MenuDirection.Bottom:
+					y = offset.top + nh + 6 - st;
+					break;
+			};
+			
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 

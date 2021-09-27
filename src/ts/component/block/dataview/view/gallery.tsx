@@ -39,7 +39,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
 		const data = dbStore.getData(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
-		const { coverRelationKey } = view;
+		const { coverRelationKey, cardSize } = view;
 
 		for (let item of data) {
 			for (let k in item) {
@@ -110,10 +110,25 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		this.ref.clearCellPositions();
 	};
 
-	setDimensions () {
-		const { card, margin } = Constant.size.dataview.gallery;
+	getSize (): number {
+		const { getView } = this.props;
+		const view = getView();
+		
+		let size = 0;
+		switch (view.cardSize) {
+			default:
+			case I.CardSize.Small:	 size = 224; break;
+			case I.CardSize.Medium:	 size = 284; break;
+			case I.CardSize.Large:	 size = 360; break;
+		};
 
-		this.columnCount = Math.max(1, Math.floor((this.width - margin) / card));
+		return size;
+	};
+
+	setDimensions () {
+		const { margin } = Constant.size.dataview.gallery;
+
+		this.columnCount = Math.max(1, Math.floor((this.width - margin) / this.getSize()));
 		this.columnWidth = (this.width - (this.columnCount - 1) * margin) / this.columnCount;
 	};
 

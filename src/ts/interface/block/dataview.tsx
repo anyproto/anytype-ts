@@ -1,5 +1,11 @@
 import { I } from 'ts/lib';
 
+export enum CardSize {
+	Small	 = 0,
+	Medium	 = 1,
+	Large	 = 2,
+};
+
 export enum DateFormat {
 	MonthAbbrBeforeDay	 = 0, // Jul 30, 2020
 	MonthAbbrAfterDay	 = 1, // 30 Jul 2020
@@ -62,11 +68,11 @@ export interface Filter {
 
 export interface ViewRelation {
 	relationKey: string;
-	isVisible: boolean;
-	width: number;
-	includeTime: boolean;
-	dateFormat: I.DateFormat;
-	timeFormat: I.TimeFormat;
+	isVisible?: boolean;
+	width?: number;
+	includeTime?: boolean;
+	dateFormat?: I.DateFormat;
+	timeFormat?: I.TimeFormat;
 };
 
 export interface ViewComponent {
@@ -91,6 +97,9 @@ export interface View {
 	name: string;
 	type: ViewType;
 	coverRelationKey: string;
+	coverFit: boolean;
+	cardSize: I.CardSize;
+	hideIcon: boolean;
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];

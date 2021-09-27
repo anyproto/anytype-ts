@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
-import { Input, MenuItemVertical } from 'ts/component';
+import { Input, MenuItemVertical, Switch, Icon } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -13,7 +13,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	n: number = -1;
 	ref: any = null;
 	isFocused: boolean = false;
-	timeout: number = 0;
 
 	constructor(props: any) {
 		super(props);
@@ -29,8 +28,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const fileOptions = this.getFileOptions();
-		const fileOption = fileOptions.find((it: any) => { return it.id == view.coverRelationKey; });
 
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
@@ -41,9 +38,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							key={i} 
 							{...action} 
 							icon={action.icon || action.id}
-							className={!allowedView ? 'isReadonly' : ''}
+							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
-							onMouseEnter={(e: any) => { this.onOver(e, action); }}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -69,21 +66,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					<div className="line" />
 				</div>	
 
-				{view.type == I.ViewType.Gallery ? (
-					<React.Fragment>
-						<div className="sectionName">Cover relation</div>
-						<MenuItemVertical 
-							id="coverRelationKey"
-							icon={fileOption ? fileOption.icon : undefined}
-							name={fileOption ? fileOption.name : 'Select relation'}
-							onMouseEnter={(e: any) => { setHover({ id: 'coverRelationKey' }); }}
-							onMouseLeave={(e: any) => { setHover(); }}
-							onClick={(e: any) => { this.onCoverRelation(e); }} 
-							arrow={true}
-						/>
-					</React.Fragment>
-				): ''}
-
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />
 				))}
@@ -102,7 +84,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
-		window.clearTimeout(this.timeout);
+		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 
 	focus () {
@@ -128,7 +110,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		if (this.isFocused) {
 			if (k == Key.enter) {
-				window.clearTimeout(this.timeout);
 				this.save();
 				this.props.close();
 				return;
@@ -205,6 +186,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, view, readonly } = data;
 		const views = dbStore.getViews(rootId, blockId);
+		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
+		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		const types = DataUtil.menuGetViews().map((it: any) => {
 			it.sectionId = 'type';
@@ -212,11 +196,36 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			return it;
 		});
 
+		let settings: any[] = [];
+
+		if (view.type == I.ViewType.Gallery) {
+			settings = settings.concat([
+				{ 
+					id: 'coverRelationKey', icon: 'item-cover', name: 'Cover', caption: fileOption ? fileOption.name : 'Select',
+					withCaption: true, arrow: true,
+				},
+				{ 
+					id: 'cardSize', icon: 'item-size', name: 'Card size', caption: sizeOption ? sizeOption.name : 'Select',
+					withCaption: true, arrow: true,
+				},
+				{
+					id: 'coverFit', icon: 'item-fit', name: 'Fit image', withSwitch: true, switchValue: view.coverFit,
+					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
+				}
+			]);
+		};
+
+		settings.push({
+			id: 'hideIcon', icon: 'item-icon', name: 'Show icon', withSwitch: true, switchValue: !view.hideIcon,
+			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
+		});
+
 		let sections: any[] = [
+			{ id: 'settings', name: '', children: settings },
 			{ id: 'type', name: 'View as', children: types }
 		];
 
-		if (view.id && !readonly) {
+		if (view.id && !readonly && allowedView) {
 			sections.push({
 				id: 'actions', children: [
 					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
@@ -243,11 +252,71 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		
 		return items;
 	};
-	
-	onOver (e: any, item: any) {
+
+	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
+			this.onOver(e, item);
 			this.props.setActive(item, false);
 		};
+	};
+	
+	onOver (e: any, item: any) {
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { rootId, blockId, view } = data;
+		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+
+		menuStore.closeAll(Constant.menuIds.viewEdit);
+
+		if (!item.arrow || !allowedView) {
+			return;
+		};
+
+		let menuId = '';
+		let menuParam: I.MenuParam = { 
+			element: `#${getId()} #item-${item.id}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				value: view[item.id],
+				onSelect: (e: any, el: any) => {
+					view[item.id] = el.id;
+
+					this.forceUpdate();
+					this.save();
+				},
+			}
+		};
+
+		switch (item.id) {
+			case 'coverRelationKey':
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					options: this.getFileOptions(),
+				});
+				break;
+
+			case 'cardSize':
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					options: this.getSizeOptions(),
+				});
+				break;
+		};
+
+		if (menuId) {
+			window.setTimeout(() => { menuStore.open(menuId, menuParam); }, Constant.delay.menu);
+		};
+	};
+
+	onSwitch (e: any, key: string, v: boolean) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		view[key] = v;
+		this.save();
 	};
 
 	onClick (e: any, item: any) {
@@ -256,7 +325,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { rootId, blockId, getData, getView, view, onSelect, onSave, readonly } = data;
 		const current = getView();
 
-		if (readonly) {
+		if (readonly || item.arrow) {
 			return;
 		};
 
@@ -266,10 +335,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			this.save();
 		} else 
 		if (view.id) {
-			close();
-
 			switch (item.id) {
 				case 'copy':
+					close();
+
 					C.BlockDataviewViewCreate(rootId, blockId, view, () => {
 						if (onSave) {
 							onSave();
@@ -278,6 +347,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					break;
 
 				case 'remove':
+					close();
+
 					const views = dbStore.getViews(rootId, blockId);
 					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
 					const next = filtered[filtered.length - 1];
@@ -299,7 +370,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onCoverRelation (e: any) {
-		const { param, close, getId, getSize } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { view } = data;
 
@@ -321,6 +392,37 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		});
 	};
 
+	onCardSize (e: any) {
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { view } = data;
+
+		menuStore.open('select', { 
+			element: `#${getId()} #item-cardSize`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			noAnimation: true,
+			data: {
+				value: view.cardSize,
+				options: this.getSizeOptions(),
+				onSelect: (e, item) => {
+					view.cardSize = item.id;
+
+					this.forceUpdate();
+					this.save();
+				},
+			}
+		});
+};
+
+	getSizeOptions () {
+		return [
+			{ id: I.CardSize.Small, name: 'Small' },
+			{ id: I.CardSize.Medium, name: 'Medium' },
+			{ id: I.CardSize.Large, name: 'Large' },
+		];
+	};
+
 	getFileOptions () {
 		const { param } = this.props;
 		const { data } = param;
@@ -335,7 +437,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			};
 		});
 
-		options.unshift({ id: 'pageCover', icon: '', name: 'Page cover' });
+		options.unshift({ id: 'pageCover', icon: 'image', name: 'Page cover' });
 		options.unshift({ id: '', icon: '', name: 'None' });
 		return options;
 	};

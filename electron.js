@@ -19,6 +19,7 @@ const keytar = require('keytar');
 const bindings = require('bindings');
 const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
+const protocol = 'anytype';
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,6 +29,8 @@ const CONFIG_NAME = 'devconfig';
 
 let env = {};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
+
+app.setAsDefaultProtocolClient(protocol);
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -732,6 +735,13 @@ app.on('before-quit', (e) => {
 
 app.on('activate', () => {
 	win ? win.show() : createWindow();
+});
+
+app.on('open-url', (e, url) => {
+	if (process.platform == 'win32') {
+		url = process.argv.slice(1);
+	};
+	send('route', url.replace(`${protocol}://`, ''));
 });
 
 function send () {

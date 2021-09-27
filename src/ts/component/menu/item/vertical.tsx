@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, IconObject } from 'ts/component';
+import { Icon, IconObject, Switch } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props extends I.MenuItem {};
@@ -7,7 +7,7 @@ interface Props extends I.MenuItem {};
 class MenuItemVertical extends React.Component<Props, {}> {
 
 	render () {
-		let { id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, className, onClick, onMouseEnter, onMouseLeave, style, iconSize } = this.props;
+		let { id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, className, onClick, onMouseEnter, onMouseLeave, style, iconSize, switchValue, onSwitch, readonly } = this.props;
 		let cn = [ 'item' ];
 
 		if (className) {
@@ -25,51 +25,80 @@ class MenuItemVertical extends React.Component<Props, {}> {
 		if (withCaption) {
 			cn.push('withCaption');
 		};
+		if (withSwitch) {
+			cn.push('withSwitch');
+		};
 		if (checkbox) {
 			cn.push('withCheckbox');
 		};
 		if (isActive) {
 			cn.push('active');
 		};
+		if (readonly) {
+			cn.push('isReadonly');
+		};
 
-		let element = null;
+		let iconElement = null;
 		if (object) {
-			element = <IconObject object={object} size={iconSize} />;
+			iconElement = <IconObject object={object} size={iconSize} />;
 
 			if (object.isHidden) {
 				cn.push('isHidden');
 			};
 		} else 
 		if (icon) {
-			element = <Icon className={icon} inner={inner} />;
+			iconElement = <Icon className={icon} inner={inner} />;
+		};
+
+		let content = null;
+		if (withDescription) {
+			content = (
+				<React.Fragment>
+					{iconElement}
+					<div className="info">
+						<div className="txt">
+							<div className="name">{name}</div>
+							<div className="descr">{description}</div>
+						</div>
+					</div>
+				</React.Fragment>
+			);
+		} else {
+			if (withSwitch) {
+				content = (
+					<React.Fragment>
+						<div className="clickable" onMouseDown={onClick}>
+							{iconElement}
+							<div className="name">{name}</div>
+						</div>
+						<Switch 
+							value={switchValue} 
+							readonly={readonly}
+							onChange={(e: any, v: boolean) => { onSwitch(e, v); }} 
+						/>
+					</React.Fragment>
+				);
+			} else {
+				content = (
+					<React.Fragment>
+						{iconElement}
+						<div className="name">{name}</div>
+						{withCaption ? <div className="caption" dangerouslySetInnerHTML={{ __html: caption }} /> : ''}
+					</React.Fragment>
+				);
+			};
 		};
 
 		return (
 			<div 
 				id={'item-' + id} 
 				className={cn.join(' ')} 
-				onMouseDown={onClick} 
+				onMouseDown={!withSwitch ? onClick : undefined} 
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave} 
 				style={style}
 			>
-				{withDescription ? (
-					<React.Fragment>
-						{element}
-						<div className="info">
-							<div className="txt">
-								<div className="name">{name}</div>
-								<div className="descr">{description}</div>
-							</div>
-						</div>
-					</React.Fragment>
-				) : (
-					<React.Fragment>
-						{element}
-						<div className="name">{name}</div>
-						{withCaption ? <div className="caption" dangerouslySetInnerHTML={{ __html: caption }} /> : ''}
-					</React.Fragment>
-				)}
+				{content}
 				{arrow ? <Icon className="arrow" /> : ''}
 				{checkbox ? <Icon className="chk" /> : ''}
 			</div>

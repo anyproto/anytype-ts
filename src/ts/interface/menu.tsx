@@ -63,9 +63,13 @@ export interface MenuItem {
 	isActive?: boolean;
 	withDescription?: boolean;
 	withCaption?: boolean;
+	withSwitch?: boolean;
+	switchValue?: boolean;
+	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
+	onSwitch?(e: any, v: boolean): void;
 };

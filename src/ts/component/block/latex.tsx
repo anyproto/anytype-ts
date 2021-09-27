@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, keyboard, Util, C } from 'ts/lib';
+import { I, keyboard, Util, C, focus } from 'ts/lib';
 import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { menuStore, commonStore, blockStore } from 'ts/store';
@@ -20,6 +20,7 @@ const raf = require('raf');
 const $ = require('jquery');
 const katex = require('katex');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 require(`prismjs/components/prism-latex.js`);
 require('katex/dist/contrib/mhchem.min.js');
@@ -39,12 +40,18 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	constructor (props: any) {
 		super(props);
 
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
+		this.onKeyUpBlock = this.onKeyUpBlock.bind(this);
+		this.onFocusBlock = this.onFocusBlock.bind(this);
+
+		this.onKeyDownInput = this.onKeyDownInput.bind(this);
+		this.onKeyUpInput = this.onKeyUpInput.bind(this);
+		this.onFocusInput = this.onFocusInput.bind(this);
+		this.onBlurInput = this.onBlurInput.bind(this);
+
 		this.onChange = this.onChange.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 		this.onEdit = this.onEdit.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onMenu = this.onMenu.bind(this);
 		this.onTemplate = this.onTemplate.bind(this);
@@ -55,9 +62,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 		const { content } = block;
 		const { text } = content;
+		const cn = [ 'wrap', 'focusable', 'c' + block.id, (isEditing ? 'isEditing' : '') ];
 
 		return (
-			<div className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')}>
+			<div 
+				tabIndex={0} 
+				className={cn.join(' ')}
+				onKeyDown={this.onKeyDownBlock} onKeyUp={this.onKeyUpBlock} onFocus={this.onFocusBlock}
+			>
 				<div id="select" className="select" onClick={this.onTemplate}>
 					<div className="name">Template formula</div>
 					<Icon className="arrow light" />
@@ -74,11 +86,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					ref={(ref: any) => { this.ref = ref; }}
 					placeholder="Enter text in format LaTeX" 
 					onSelect={this.onSelect}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onKeyUp={this.onKeyUp} 
-					onKeyDown={this.onKeyDown}
+					onFocus={this.onFocusInput}
+					onBlur={this.onBlurInput}
+					onKeyUp={this.onKeyUpInput} 
+					onKeyDown={this.onKeyDownInput}
 					onChange={this.onChange}
+					onPaste={this.onPaste}
 				/>
 			</div>
 		);
@@ -90,7 +103,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		const length = this.text.length;
 
-		this.rebind();
 		this._isMounted = true;
 		this.range = { start: length, end: length };
 		this.setValue(this.text);
@@ -99,16 +111,12 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	componentDidUpdate () {
 		const { isEditing } = this.state;
 
-		this.rebind();
+		this.unbind();
 		this.setValue(this.text);
 
 		if (isEditing) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('#input');
-
-			if (input.length) {
-				setRange(input.get(0), this.range);
-			};
+			this.focus();
+			this.rebind();
 		};
 	};
 	
@@ -119,20 +127,19 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 	rebind () {
 		const { block } = this.props;
-		const self = this;
 
 		this.unbind();
+
 		$(window).on('click.latex', (e: any) => {
 			if ($(e.target).parents(`#block-${block.id}`).length > 0) {
 				return;
 			};
 
 			menuStore.close('blockLatex');
-			window.clearTimeout(self.timeout);
-			self.placeholderCheck(self.getValue());
-			self.save(() => { 
-				self.setState({ isEditing: false });
-			});
+			window.clearTimeout(this.timeout);
+			
+			this.placeholderCheck(this.getValue());
+			this.save(() => { this.setState({ isEditing: false }); });
 		});
 	};
 
@@ -140,7 +147,41 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		$(window).unbind('click.latex');
 	};
 
-	onKeyDown (e: any) {
+	focus () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+
+		if (input.length) {
+			setRange(input.get(0), this.range);
+		};
+	};
+
+	onFocusBlock () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
+
+		this.focus();
+	};
+
+	onKeyDownBlock (e: any) {
+		const { onKeyDown } = this.props;
+		const { isEditing } = this.state;
+		
+		if (onKeyDown && !isEditing) {
+			onKeyDown(e, '', [], { from: 0, to: 0 });
+		};
+	};
+	
+	onKeyUpBlock (e: any) {
+		const { onKeyUp } = this.props;
+		const { isEditing } = this.state;
+
+		if (onKeyUp && !isEditing) {
+			onKeyUp(e, '', [], { from: 0, to: 0 });
+		};
+	};
+
+	onKeyDownInput (e: any) {
 		const { filter } = commonStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
@@ -154,7 +195,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		});
 	};
 
-	onKeyUp (e: any) {
+	onKeyUpInput (e: any) {
 		const { filter } = commonStore;
 		const value = this.getValue();
 		const k = e.key.toLowerCase();
@@ -163,7 +204,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const el: any = input.get(0);
 		const range = getRange(el);
 		const symbolBefore = value[range?.start - 1];
-		
+
 		let menuOpen = menuStore.isOpen('blockLatex');
 
 		if ((symbolBefore == '\\') && !keyboard.isSpecial(k)) {
@@ -179,11 +220,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			};
 		};
 
-		this.text = value;
 		this.setContent(value);
-
-		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500); 
+		this.save();
 	};
 
 	updateRect () {
@@ -207,11 +245,27 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this.setValue(this.getValue());
 	};
 
-	onFocus () {
+	onPaste (e: any) {
+		e.preventDefault();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input');
+		const el: any = input.get(0);
+		const range = getRange(el);
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+
+		this.setValue(Util.stringInsert(this.getValue(), cb.getData('text/plain'), range.start, range.end));
+
+		const length = this.getValue().length;
+		this.range = { start: length, end: length };
+		this.focus();
+	};
+
+	onFocusInput () {
 		keyboard.setFocus(true);
 	};
 
-	onBlur () {
+	onBlurInput () {
 		keyboard.setFocus(false);
 		window.clearTimeout(this.timeout);
 
@@ -232,7 +286,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { rootId, block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
-		const el: any = input.get(0);
 		const win = $(window);
 
 		raf(() => {
@@ -262,8 +315,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					onSelect: (from: number, to: number, item: any) => {
 						this.setValue(Util.stringInsert(this.getValue(), item.symbol || item.comment, from, to));
 
-						const value = this.getValue();
-						setRange(el, { start: value.length, end: value.length });
+						const length = this.getValue().length;
+						this.range = { start: length, end: length };
+						this.save();
 					},
 				},
 			});
@@ -281,6 +335,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		if (input.length) {
 			input.get(0).innerHTML = Prism.highlight(value, Prism.languages.latex, 'latex');
 		};
+
 		this.setContent(value);
 	};
 
@@ -303,15 +358,26 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const val = node.find('#value');
 
-		value = String(value || '').trim();
+		value = String(value || '');
+		this.text = value;
 
 		if (val.length) {
 			val.html(value ? katex.renderToString(value, { 
 				displayMode: true, 
 				throwOnError: false,
 				output: 'html',
+				trust: (context: any) => [ '\\url', '\\href' ].includes(context.command)
 			}) : '');
 		};
+
+		val.find('a').each((i: number, item: any) => {
+			item = $(item);
+
+			item.unbind('click').click((e: any) => {
+				e.preventDefault();
+				ipcRenderer.send('urlOpen', item.attr('href'));
+			});
+		});
 
 		this.placeholderCheck(value);
 		this.updateRect();
@@ -326,7 +392,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onEdit (e: any) {
-		const { block, readonly } = this.props;
+		const { readonly } = this.props;
 		if (readonly) {
 			return;
 		};
@@ -358,12 +424,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
+		const win = $(window);
 
 		this.range = getRange(input.get(0));
 		
 		selection.preventSelect(true);
-		$(window).unbind('mouseup.latex').on('mouseup.latex', (e: any) => {	
+		win.unbind('mouseup.latex').on('mouseup.latex', (e: any) => {	
 			selection.preventSelect(false);
+			win.unbind('mouseup.latex');
 		});
 	};
 	
