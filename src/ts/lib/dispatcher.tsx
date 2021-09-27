@@ -1,6 +1,7 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
+import { crumbs } from '.';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
@@ -124,6 +125,7 @@ class Dispatcher {
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
 		if (v == V.OBJECTSHOW)					 t = 'objectShow';
+		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
 		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
 		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
 		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
@@ -192,6 +194,16 @@ class Dispatcher {
 
 				case 'objectShow':
 					this.onObjectShow(rootId, Response.ObjectShow(data));
+					break;
+
+				case 'objectRemove':
+					id = data.getId();
+					if (!id) {
+						break;
+					};
+
+					crumbs.removeItem(I.CrumbsType.Page, id);
+					crumbs.removeItem(I.CrumbsType.Recent, id);
 					break;
 
 				case 'blockAdd':
