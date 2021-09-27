@@ -660,10 +660,11 @@ class Dispatcher {
 	};
 
 	blockTypeCheck (rootId: string) {
-		const object = detailStore.get(rootId, rootId, []);
+		const object = detailStore.get(rootId, rootId, [ 'isDraft' ]);
+		const type = blockStore.getLeaf(rootId, Constant.blockId.type);
 
 		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
-		if (object.isDraft) {
+		if (object.isDraft && !type) {
 			childrenIds.push(Constant.blockId.type);
 
 			blockStore.add(rootId, { 
@@ -676,7 +677,8 @@ class Dispatcher {
 			});
 
 			blockStore.updateStructure(rootId, rootId, childrenIds);
-		} else {
+		} else 
+		if (!object.isDraft) {
 			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
 
 			blockStore.delete(rootId, Constant.blockId.type);

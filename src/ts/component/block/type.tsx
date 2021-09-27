@@ -265,7 +265,9 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 
 		if (item.id == Constant.typeId.set) {
-			console.log('CREATE SET');
+			C.ObjectToSet(rootId, Constant.typeId.page, (message: any) => {
+				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
+			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
 				if (message.records.length > 1) {

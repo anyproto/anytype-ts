@@ -457,6 +457,12 @@ const ObjectRelationOptionAdd = (response: any) => {
 	};
 };
 
+const ObjectToSet = (response: any) => {
+	return {
+		id: response.getSetid(),
+	};
+};
+
 const MakeTemplate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -585,6 +591,7 @@ export {
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
+	ObjectToSet,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

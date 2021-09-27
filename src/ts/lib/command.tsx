@@ -1052,6 +1052,15 @@ const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: 
 	dispatcher.request('objectGraph', request, callBack);
 };
 
+const ObjectToSet = (contextId: string, objectTypeUrl: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToSet.Request();
+	
+	request.setContextid(contextId);
+	request.setObjecttypeurl(objectTypeUrl);
+
+	dispatcher.request('objectToSet', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1212,6 +1221,7 @@ export {
 	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
+	ObjectToSet,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
