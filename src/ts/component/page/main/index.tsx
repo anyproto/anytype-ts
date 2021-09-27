@@ -24,7 +24,7 @@ enum Tab {
 	Recent		 = 'recent',
 	Set			 = 'set',
 	Archive		 = 'archive',
-}
+};
 
 const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
@@ -315,7 +315,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, (message: any) => {
+		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 			this.load();
 
 			DataUtil.objectOpenPopup({ id: message.targetId });

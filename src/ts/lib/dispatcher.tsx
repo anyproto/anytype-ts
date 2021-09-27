@@ -663,8 +663,7 @@ class Dispatcher {
 		const object = detailStore.get(rootId, rootId, []);
 
 		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
-
-		if ((object.type == Constant.typeId.page) && (childrenIds.length == 1)) {
+		if (object.isDraft) {
 			childrenIds.push(Constant.blockId.type);
 
 			blockStore.add(rootId, { 
@@ -677,8 +676,7 @@ class Dispatcher {
 			});
 
 			blockStore.updateStructure(rootId, rootId, childrenIds);
-		} else 
-		if (object.type && (object.type != Constant.typeId.page) && (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
+		} else {
 			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
 
 			blockStore.delete(rootId, Constant.blockId.type);
