@@ -46,7 +46,6 @@ printf "Found asset: $asset_id\n"
 echo -n "Downloading file..."
 curl -sL -H "Authorization: token $token" -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id" > $FILE
 
-echo -n "https://$GITHUB/repos/$REPO/releases/assets/$asset_id"
 printf "Done\n"
 
 if [ "$platform" = "windows-latest" ]; then
