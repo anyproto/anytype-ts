@@ -212,7 +212,7 @@ function createWindow () {
 
 		const a = systemVersion.split('.');
 		if (a.length && (a[0] == 11)) {
-			param.trafficLightPosition = { x: 20, y: 26 };
+			param.trafficLightPosition = { x: 20, y: 18 };
 		} else {
 			param.trafficLightPosition = { x: 20, y: 10 };
 		};
@@ -381,6 +381,8 @@ function menuInit () {
 				{
 					label: 'About Anytype',
 					click: () => {
+						console.log(path.join(__dirname, '/electron/icon.png'));
+
 						openAboutWindow({
 							icon_path: path.join(__dirname, '/electron/icon.png'),
 							css_path: path.join(__dirname, '/electron/about.css'),
