@@ -1,12 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockRelationList, 
-	.menu.menuBlockRelationEdit {
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
-	}
 
-	.menu.menuBlockRelationList,
 	.menu.menuBlockRelationView {
 		.icon.edit { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
@@ -20,28 +15,6 @@
 		}
 	}
 
-	.menu.menuBlockRelationList { width: 640px; }
-	.menu.menuBlockRelationList {
-		.wrap { display: flex; flex-direction: column; height: 100%; }
-
-		.content { transition: none; padding: 0px; }
-		.items { height: 100%; }
-		.input { border: 0px; padding: 0px; }
-
-		.item {
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
-		}
-		.item * { cursor: pointer; }
-
-		.cellContent { overflow: hidden; height: 20px; line-height: 20px; }
-		.cellContent.c-longText {
-			.name { -webkit-line-clamp: 1; -webkit-box-orient: vertical; display: -webkit-box; }
-		}
-	}
-	.menu.menuBlockRelationList.withFilter {
-		.content { padding-top: 8px; }
-	}
-	
 	.menu.menuBlockRelationEdit {
 		.wrap { padding: 0px 16px 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
@@ -50,6 +23,9 @@
 
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
+
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item.disabled:hover::before { opacity: 0; }
 
 		.icon.arrow { 
 			width: 20px; height: 20px; position: absolute; right: 14px; top: 50%; margin: -10px 0px 0px 0px; 
@@ -73,7 +49,7 @@
 
 		#section-featured::after { display: block; }
 
-		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: auto; }
+		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: scroll; }
 		.item { padding: 0px 32px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }

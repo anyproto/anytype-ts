@@ -19,6 +19,8 @@ const keytar = require('keytar');
 const bindings = require('bindings');
 const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
+const protocol = 'anytype';
+const remote = require('@electron/remote/main');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,6 +30,9 @@ const CONFIG_NAME = 'devconfig';
 
 let env = {};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
+
+app.setAsDefaultProtocolClient(protocol);
+remote.initialize();
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -162,7 +167,6 @@ function initTray () {
 };
 
 function createWindow () {
-	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
 
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -177,8 +181,8 @@ function createWindow () {
 	initTray();
 
 	let state = windowStateKeeper({
-		defaultWidth: width,
-		defaultHeight: height
+		defaultWidth: 800,
+		defaultHeight: 600
 	});
 
 	let param = {
@@ -192,9 +196,9 @@ function createWindow () {
 		minHeight: MIN_HEIGHT,
 		webPreferences: {
 			nativeWindowOpen: true,
-			enableRemoteModule: true,
 			nodeIntegration: true,
 			contextIsolation: false,
+			spellcheck: false
 		},
 	};
 
@@ -224,6 +228,7 @@ function createWindow () {
 	};
 
 	win = new BrowserWindow(param);
+	remote.enable(win.webContents);
 
 	state.manage(win);
 
@@ -492,16 +497,16 @@ function menuInit () {
 					click: () => { send('commandGlobal', 'id'); }
 				},
 				{
-					label: 'Status',
-					click: () => { send('popup', 'help', { data: { document: 'status' } }); }
-				},
-				{
 					label: 'Shortcuts',
 					click: () => { send('popup', 'shortcut'); }
 				},
 				{
 					label: 'What\'s new',
 					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
+				},
+				{
+					label: 'Introduction',
+					click: () => { send('popup', 'help', { data: { document: 'intro' } }); }
 				},
 			]
 		},
@@ -582,12 +587,16 @@ function menuInit () {
 			label: 'Sudo',
 			submenu: [
 				{
-					label: 'Dataview', type: 'checkbox', checked: config.allowDataview,
+					label: 'Experimental', type: 'checkbox', checked: config.experimental,
 					click: () => { 
-						setConfig({ allowDataview: !config.allowDataview });
+						setConfig({ experimental: !config.experimental });
 						win.reload();
 					}
-				}
+				},
+				{
+					label: 'Graph',
+					click: () => { send('popup', 'graph', {}); }
+				},
 			]
 		});
 	};
@@ -728,6 +737,13 @@ app.on('before-quit', (e) => {
 
 app.on('activate', () => {
 	win ? win.show() : createWindow();
+});
+
+app.on('open-url', (e, url) => {
+	if (process.platform == 'win32') {
+		url = process.argv.slice(1);
+	};
+	send('route', url.replace(`${protocol}://`, ''));
 });
 
 function send () {

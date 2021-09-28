@@ -1,6 +1,28 @@
 import { I, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
+import BlockContentLayout from './content/layout';
+import BlockContentLink from './content/link';
+import BlockContentLatex from './content/latex';
+import BlockContentRelation from './content/relation';
+import BlockContentDiv from './content/div';
+import BlockContentBookmark from './content/bookmark';
+import BlockContentText from './content/text';
+import BlockContentFile from './content/file';
+import BlockContentDataview from './content/dataview';
+
+const ContentModel = {
+	layout:		 BlockContentLayout,
+	link:		 BlockContentLink,
+	latex:		 BlockContentLatex,
+	relation:	 BlockContentRelation,
+	div:		 BlockContentDiv,
+	bookmark:	 BlockContentBookmark,
+	text:		 BlockContentText,
+	file:		 BlockContentFile,
+	dataview:	 BlockContentDataview,
+};
+
 class Block implements I.Block {
 	
 	id: string = '';
@@ -23,8 +45,12 @@ class Block implements I.Block {
 		self.align = Number(props.align) || I.BlockAlign.Left;
 		self.bgColor = String(props.bgColor || '');
 		self.fields = props.fields || {};
-		self.content = props.content || {};
 		self.childrenIds = props.childrenIds || [];
+		self.content = props.content || {};
+
+		if (ContentModel[self.type]) {
+			self.content = new ContentModel[self.type](self.content);
+		};
 
 		makeObservable(self, {
 			layout: observable,
@@ -42,7 +68,7 @@ class Block implements I.Block {
 	};
 
 	canHaveAlign (): boolean {
-		return !this.isSystem() && (this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo());
+		return !this.isSystem() && (this.isLink() || this.isTextParagraph() || this.isTextQuote() || this.isTextHeader() || this.isFileImage() || this.isFileVideo() || this.isLatex());
 	};
 
 	canHaveColor (): boolean {
@@ -221,6 +247,10 @@ class Block implements I.Block {
 		return this.isFile() && (this.content.type == I.FileType.Video);
 	};
 
+	isFileAudio (): boolean {
+		return this.isFile() && (this.content.type == I.FileType.Audio);
+	};
+
 	isBookmark (): boolean {
 		return this.type == I.BlockType.Bookmark;
 	};
@@ -235,6 +265,10 @@ class Block implements I.Block {
 
 	isDivDot (): boolean {
 		return this.isDiv() && (this.content.type == I.DivStyle.Dot);
+	};
+
+	isLatex (): boolean {
+		return this.type == I.BlockType.Latex;
 	};
 	
 	isText (): boolean {
@@ -296,7 +330,7 @@ class Block implements I.Block {
 	isTextQuote (): boolean {
 		return this.isText() && (this.content.style == I.TextStyle.Quote);
 	};
-	
+
 	getLength (): number {
 		return this.isText() ? String(this.content.text || '').length : 0;
 	};

@@ -25,7 +25,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, getRecord, index, relation, iconSize, placeholder, elementMapper } = this.props;
+		const { rootId, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		const cn = [ 'wrap' ];
 
@@ -33,20 +33,27 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return null;
 		};
 
-		const value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
-		const length = value.length;
+		let value = DataUtil.getRelationArrayValue(record[relation.relationKey]);
+		let length = value.length;
 
 		if (length >= 3) {
 			cn.push('column3'); 
+		};
+
+		if (arrayLimit) {
+			value = value.slice(0, arrayLimit);
 		};
 
 		return (
 			<div className={cn.join(' ')}>
 				{value.length ? (
 					<React.Fragment>
-						{value.map((id: string) => (
-							<ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
-						))}
+						<span className="over">
+							{value.map((id: string) => (
+								<ItemObject key={id} rootId={rootId} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
+							))}
+						</span>
+						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
 					</React.Fragment>
 				) : (
 					<div className="empty">{placeholder || translate(`placeholderCell${relation.format}`)}</div>

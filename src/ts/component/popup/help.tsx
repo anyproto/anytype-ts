@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Label, Icon } from 'ts/component';
-import { I, Docs, Storage, Util, translate } from 'ts/lib';
+import { Label, Icon, Cover } from 'ts/component';
+import { I, Docs, Util, translate } from 'ts/lib';
 import Block from 'ts/component/block/help';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -22,8 +22,12 @@ class PopupHelp extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { document } = data;
-		const doc = Docs.Help[Util.toUpperCamelCase(document)] || [];
-		const title = doc.find((it: any) => { return (it.type == I.BlockType.Text) && (it.style == I.TextStyle.Title); });
+		
+		let doc = Docs.Help[Util.toUpperCamelCase(document)] || [];
+		let title = doc.find((it: any) => { return it.style == I.TextStyle.Title; });
+		let cover = doc.find((it: any) => { return it.type == I.BlockType.Cover; });
+
+		doc = doc.filter((it: any) => { return it.type != I.BlockType.Cover; });
 
 		return (
 			<div className="wrapper">
@@ -31,16 +35,16 @@ class PopupHelp extends React.Component<Props, {}> {
 					<div className="side left">
 						{title ? <Label text={title.text} /> : ''}
 					</div>
-					{document == 'whatsNew' ? (
-						<div className="side right">
-							<Label text={translate('popupHelpLabel')} />
-							<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
-							<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
-						</div>
-					) : ''}
+					<div className="side right">
+						<Label text={translate('popupHelpLabel')} />
+						<Icon onClick={(e) => { this.onUrl(Url.telegram); }} className="telegram" />
+						<Icon onClick={(e) => { this.onUrl(Url.twitter); }} className="twitter" />
+					</div>
 				</div>
 				
-				<div className="editor help">
+				<div className={[ 'editor', 'help', (cover ? 'withCover' : '') ].join(' ')}>
+					{cover ? <Cover {...cover.param} /> : ''}
+
 					<div className="blocks">
 						{doc.map((item: any, i: number) => (
 							<Block key={i} {...this.props} {...item} />
@@ -53,14 +57,6 @@ class PopupHelp extends React.Component<Props, {}> {
 	
 	componentDidMount () {
 		this._isMounted = true;
-
-		const { param } = this.props;
-		const { data } = param;
-		const { document } = data;
-		
-		if (document == 'whatsNew') {
-			Storage.set('popupNewBlock', 1);
-		};
 
 		this.renderLinks();
 		this.rebind();

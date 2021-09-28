@@ -90,6 +90,15 @@ const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, c
 	dispatcher.request('uploadFile', request, callBack);
 };
 
+const DownloadFile = (hash: string, path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.DownloadFile.Request();
+	
+	request.setHash(hash);
+	request.setPath(path);
+
+	dispatcher.request('downloadFile', request, callBack);
+};
+
 const ProcessCancel = (id: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Process.Cancel.Request();
 	
@@ -257,7 +266,17 @@ const BlockCreate = (block: any, contextId: string, targetId: string, position: 
 	dispatcher.request('blockCreate', request, callBack);
 };
 
-const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) => {
+const BlockUpdateContent = (block: any, contextId: string, blockId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.UpdateContent.Request();
+	
+	request.setBlock(Mapper.To.Block(block));
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+
+	dispatcher.request('blockUpdateContent', request, callBack);
+};
+
+const BlockCreatePage = (contextId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.Block.CreatePage.Request();
@@ -267,6 +286,7 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	request.setPosition(position);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
+	request.setFields(Encode.encodeStruct(fields || {}));
 
 	dispatcher.request('blockCreatePage', request, callBack);
 };
@@ -319,6 +339,16 @@ const BlockSetTextChecked = (contextId: string, blockId: string, checked: boolea
 	request.setChecked(checked);
 
 	dispatcher.request('blockSetTextChecked', request, callBack);
+};
+
+const BlockSetLatexText = (contextId: string, blockId: string, text: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Set.Latex.Text.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setText(text);
+
+	dispatcher.request('blockSetLatexText', request, callBack);
 };
 
 const BlockSetFields = (contextId: string, blockId: string, fields: any, callBack?: (message: any) => void) => {
@@ -585,15 +615,6 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.request('blockListSetAlign', request, callBack);
 };
 
-const BlockListSetPageIsArchived = (contextId: string, blockIds: string[], isArchived: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Set.Page.IsArchived.Request();
-
-	request.setContextid(contextId);
-    request.setBlockidsList(blockIds);
-    request.setIsarchived(isArchived);
-
-	dispatcher.request('blockListSetPageIsArchived', request, callBack);
-};
 
 const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Delete.Page.Request();
@@ -1003,6 +1024,34 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request('objectSetLayout', request, callBack);
 };
 
+const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) =>  {
+	const request = new Rpc.Object.SetIsFavorite.Request();
+	
+	request.setContextid(contextId);
+    request.setIsfavorite(isFavorite);
+
+	dispatcher.request('objectSetIsFavorite', request, callBack);
+};
+
+const ObjectSetIsArchived = (contextId: string, isArchived: boolean, callBack?: (message: any) => void) =>  {
+	const request = new Rpc.Object.SetIsArchived.Request();
+	
+	request.setContextid(contextId);
+    request.setIsarchived(isArchived);
+
+	dispatcher.request('objectSetIsArchived', request, callBack);
+};
+
+const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Graph.Request();
+	
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+    request.setLimit(limit);
+	request.setObjecttypefilterList(types);
+
+	dispatcher.request('objectGraph', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1046,6 +1095,7 @@ export {
 	Shutdown,
 	LinkPreview,
 	UploadFile,
+	DownloadFile,
 	ProcessCancel,
 	Export,
 	ExportTemplates,
@@ -1088,11 +1138,13 @@ export {
 	BlockCreate,
 	BlockCreatePage,
 	BlockCreateSet,
+	BlockUpdateContent,
 
 	BlockSetTextText,
 	BlockSetTextChecked,
 	BlockSetFields,
 	BlockSetDetails,
+	BlockSetLatexText,
 
 	BlockListMove,
 	BlockListMoveToNewPage,
@@ -1106,7 +1158,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListSetPageIsArchived,
 	BlockListDeletePage,
 
 	BlockDataviewViewCreate,
@@ -1156,6 +1207,9 @@ export {
 	ObjectRelationDelete,
 	ObjectRelationListAvailable,
 	ObjectSetLayout,
+	ObjectSetIsFavorite,
+	ObjectSetIsArchived,
+	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 

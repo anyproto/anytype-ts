@@ -4,10 +4,6 @@
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; width: 100%; }
 }
 
-.cell.c-select {
-	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
-}
-
 .cell.isEditing { border-radius: 2px; }
 .cell.isEditing {
 	.input-text { padding: 0px; height: 20px; }
@@ -48,6 +44,11 @@
 
 	.name { display: inline-block; vertical-align: top; }
 	.empty { vertical-align: top; display: none; }
+
+	.more { 
+		background: #f5f5f0; border-radius: 3px; display: inline-block; vertical-align: top; padding: 0px 4px; 
+		@include text-small; color: $colorDarkGrey; margin-left: 6px;
+	}
 }
 
 .cellContent.c-file {
@@ -60,6 +61,12 @@
 	.cellContent { white-space: normal; }
 }
 
+.cellContent.c-select {
+	.over { display: inline-block; vertical-align: top; }
+	.tagItem { margin: 0px 6px 6px 0px; vertical-align: top; }
+	.tagItem:last-child { margin-right: 0px; }
+}
+
 .cellContent.c-object {
 	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; cursor: pointer; }
 	.element:last-child { margin-right: 0px; }
@@ -68,8 +75,8 @@
 	}
 }
 
-.cellContent.isName { display: flex; }
 .cellContent.isName {
+	.flex { position: static; }
 	.iconObject { z-index: 1; cursor: pointer; }
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
 }

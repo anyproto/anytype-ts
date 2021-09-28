@@ -3,7 +3,6 @@ export interface Account {
 };
 
 export interface AccountConfig {
-	allowDataview: boolean;
 };
 
 export enum Platform {
@@ -64,8 +63,17 @@ export interface LinkPreview {
 export enum ExportFormat {
 	Markdown = 0,
 	Protobuf = 1,
+	Json	 = 2,
+	Dot		 = 3,
+	Svg		 = 4,
+	GraphJson = 5,
 };
 
 export enum Source {
 	Popup = 0,
+};
+
+export enum EdgeType {
+	Link		 = 0,
+	Relation	 = 1,
 };

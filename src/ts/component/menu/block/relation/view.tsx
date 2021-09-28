@@ -36,6 +36,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const block = blockStore.getLeaf(rootId, rootId);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
 
 		const Section = (section: any) => (
 			<div id={'section-' + section.id} className="section">
@@ -45,6 +46,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
 						const id = DataUtil.cellId(PREFIX, item.relationKey, '0');
+						
+						let canFav = allowedValue;
+						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == Constant.relationKey.description)) {
+							canFav = false;
+						};
+
 						return (
 							<Item 
 								key={id} 
@@ -56,7 +63,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
-								canFav={allowedValue}
+								canFav={canFav}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
@@ -245,6 +252,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				},
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
+				},
+				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationDelete(rootId, relationKey);
 				},
 			}
 		});

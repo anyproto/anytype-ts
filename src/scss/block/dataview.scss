@@ -17,9 +17,14 @@
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
+		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls {
-			.side.left { width: calc(100% - 100px); }
-			.side.right { width: 100px; }
+			.line { height: 1px; width: calc(100% - 14px); background: $colorLightGrey; margin-left: 14px; }
+
+			.sides { display: flex; }
+			.side { padding: 26px 0px; height: 72px; white-space: nowrap; }
+			.side.left { padding-left: 14px; width: calc(100% - 80px); }
+			.side.right { text-align: right; width: 80px; }
 
 			.views { white-space: nowrap; display: inline-block; line-height: 20px; }
 			.viewItem { 
@@ -32,7 +37,7 @@
 			.viewItem:last-child { margin: 0px; }
 			.viewItem:hover, .viewItem.active { color: $colorBlack; }
 			
-			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; }
+			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
 			.viewItem.btn { line-height: 20px; }
 
 			.first { display: none; }
@@ -41,13 +46,6 @@
 				.views { visibility: hidden; pointer-events: none; }
 				.first { display: inline-block; line-height: 20px; }
 			}
-		}
-
-		.buttons { display: flex; font-weight: 500; color: $colorMediumGrey; }
-		.buttons {
-			.side { padding: 26px 0px; height: 72px; width: 50%; white-space: nowrap; }
-			.side.left { padding-left: 14px; }
-			.side.right { line-height: 26px; text-align: right; }
 
 			.icon { vertical-align: top; cursor: pointer; transition: $transitionFast; position: relative; width: 20px; height: 20px; margin: 0px 18px 0px 0px; }
 			.icon:last-child { margin: 0px; }
@@ -71,13 +69,13 @@
 				.dot { display: block; }
 			}
 		}
-		
+		.dataviewControls.viewGrid {
+			.line { width: 100%; margin: 0px; }
+		}
+
 		.content {
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.view { border-top: 1px solid #e0ded2; }
-			
-			.card { min-height: 112px; border: 1px solid $colorLightGrey; border-radius: 12px; padding: 16px; }
-			.cell { @include text-common; line-height: 20px; }
 		}
 	}	
 }

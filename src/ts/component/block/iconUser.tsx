@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.BlockComponent {}
 
 const Constant = require('json/constant.json');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 
 const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, {}> {
 

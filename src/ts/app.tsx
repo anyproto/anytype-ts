@@ -77,6 +77,7 @@ import 'scss/block/cover.scss';
 import 'scss/block/relation.scss';
 import 'scss/block/featured.scss';
 import 'scss/block/type.scss';
+import 'scss/block/latex.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
@@ -89,6 +90,7 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
+import 'scss/popup/graph.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -109,10 +111,12 @@ import 'scss/menu/preview/object.scss';
 import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
 import 'scss/menu/block/link.scss';
+import 'scss/menu/block/linkSettings.scss';
 import 'scss/menu/block/icon.scss';
 import 'scss/menu/block/cover.scss';
 import 'scss/menu/block/mention.scss';
 import 'scss/menu/block/relation.scss';
+import 'scss/menu/block/latex.scss';
 
 import 'scss/menu/dataview/common.scss';
 import 'scss/menu/dataview/sort.scss';
@@ -137,7 +141,7 @@ interface State {
 
 const $ = require('jquery');
 const path = require('path');
-const { app, dialog, process } = window.require('electron').remote;
+const { app, dialog, process } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 const { ipcRenderer } = window.require('electron');
@@ -303,30 +307,32 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 	};
 
-	preload (callBack?: () => void) {
-		const prefix = './dist/img';
-		const folders = [ 'cover', 'emoji', 'help' ];
+	preload () {
+		const prefix = './dist/';
+		const fr = new RegExp(/\.png|gif|jpg|svg/);
 		
-		let loaded = 0;
-		let images: string[] = [];
-		let cb = () => {
-			loaded++;
-			if (loaded == folders.length) {
-				Util.cacheImages(images, callBack);
-			};
-		};
-
-		folders.forEach(folder => {
-			const path = [ prefix, folder ].join('/')
-			fs.readdir(path, (err: any, files: any[]) => {
+		const readDir = (prefix: string, folder: string) => {
+			const fp = path.join(prefix, folder);
+			fs.readdir(fp, (err: any, files: string[]) => {
 				if (err) {
-					cb();
 					return;
 				};
-				images = images.concat(files.map((it: string) => { return [ 'img', folder, it ].join('/') }));
-				cb();
+
+				let images: string[] = [];
+				for (let file of files) {
+					const fn = path.join(fp, file);
+					const isDir = fs.lstatSync(fn).isDirectory();
+					if (isDir) {
+						readDir(fp, file);
+					} else 
+					if (file.match(fr)) {
+						images.push(fn.replace(/^dist\//, ''));
+					};
+				};
+				Util.cacheImages(images);
 			});
-		});
+		};
+		readDir(prefix, 'img');
 	};
 
 	setIpcEvents () {

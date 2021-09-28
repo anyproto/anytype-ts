@@ -70,12 +70,11 @@ class Storage {
 	};
 
 	logout () {
-		this.delete('accountId');
-		this.delete('scroll');
-		this.delete('toggle');
-		this.delete('crumbs');
-		this.delete('tabIndex');
-		this.delete('tabStore');
+		const keys = [ 'accountId', 'scroll', 'toggle', 'crumbs', 'tabIndex', 'tabStore', 'linkSettings' ];
+
+		for (let key of keys) {
+			this.delete(key);
+		};
 	};
 	
 };

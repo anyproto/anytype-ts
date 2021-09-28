@@ -15,7 +15,7 @@ interface State {
 	entropy: string;
 }
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
@@ -31,6 +31,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		error: '',
 		entropy: '',
 	};
+	prevPage: string = '';
+	pinConfirmed: boolean = false;
 	onConfirmPin: () => void = null;
 	onConfirmPhrase: any = null;
 	format: string = '';
@@ -62,7 +64,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		let Head = (item: any) => (
 			<div className="head">
-				<div className="element" onClick={() => { this.onPage(item.id); }}>
+				<div className="element" onClick={() => { this.onPage(item.id || this.prevPage); }}>
 					<Icon className="back" />
 					{item.name}
 				</div>
@@ -84,7 +86,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row" onClick={() => { this.onPage('phrase'); }}>
+							<div className="row" onClick={() => { 
+								this.onConfirmPhrase = null; 
+								this.onPage('phrase'); 
+							}}>
 								<Icon className="phrase" />
 								<Label text={translate('popupSettingsPhraseTitle')} />
 								<Icon className="arrow" />
@@ -153,7 +158,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						</div>
 
 						<div className="row">
-						<Label className="name" text={translate('popupSettingsPicture')} />
+							<Label className="name" text={translate('popupSettingsPicture')} />
 							<div className="covers">
 								{covers1.map((item: any, i: number) => (
 									<Item key={i} {...item} active={item.id == cover.id} />
@@ -201,12 +206,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<QRCode value={entropy} />
 								</div>
 							</div>
-						) : ''}
-						{this.onConfirmPhrase ? (
+						) : (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { this.onConfirmPhrase(); }} />
+								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { console.log(this.onConfirmPhrase); this.onConfirmPhrase(); }} />
 							</div>
-						) : ''}
+						)}
 					</div>
 				);
 				break;
@@ -255,7 +259,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			case 'pinConfirm':
 				content = (
 					<div>
-						<Head id="pinIndex" name={translate('commonCancel')} />
+						<Head name={translate('commonCancel')} />
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinVerify')} />
 						<Error text={error} />
@@ -454,10 +458,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onPage (id: string) {
-		if (id != 'phrase') {
-			this.onConfirmPhrase = null;
+		const pin = Storage.get('pin');
+
+		if (pin && (id == 'phrase') && !this.pinConfirmed) {
+			this.onConfirmPin = () => { 
+				this.pinConfirmed = true;
+				this.onPage('phrase');
+				this.pinConfirmed = false;
+			};
+			this.onPage('pinConfirm');
+			return;
 		};
 
+		this.prevPage = this.state.page;
 		this.setState({ page: id });
 	};
 
@@ -476,9 +489,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			authStore.logout();
 			history.push('/');
 
+			this.pinConfirmed = false;
 			this.onConfirmPhrase = null;
 		};
-		
+
 		this.onPage('phrase');
 	};
 

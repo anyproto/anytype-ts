@@ -15,6 +15,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const { ipcRenderer } = window.require('electron');
 
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
 
@@ -49,22 +50,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		let ViewComponent: React.ReactType<I.ViewComponent>;
+		let className = '';
+
 		switch (view.type) {
 			default:
 			case I.ViewType.Grid:
 				ViewComponent = ViewGrid;
+				className = 'viewGrid';
 				break;
 				
 			case I.ViewType.Board:
 				ViewComponent = ViewBoard;
+				className = 'viewBoard';
 				break;
 				
 			case I.ViewType.Gallery:
 				ViewComponent = ViewGallery;
+				className = 'viewGallery';
 				break;
 			
 			case I.ViewType.List:
 				ViewComponent = ViewList;
+				className = 'viewList';
 				break;
 		};
 		
@@ -72,6 +79,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			<div>
 				<Controls 
 					{...this.props} 
+					className={className}
 					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
@@ -133,7 +141,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
-		const limit = view.type == I.ViewType.Grid ? 0 : Constant.limit.dataview.records;
+		
+		let limit = Constant.limit.dataview.records;
+		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
+			limit = 0;
+		};
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -212,14 +224,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onOver: (e: any, context: any, item: any) => {
-						menuStore.close('previewObject', () => {
-							menuStore.open('previewObject', {
-								element: `#${context.props.getId()} #item-${item.id}`,
-								offsetX: context.props.getSize().width,
-								isSub: true,
-								vertical: I.MenuDirection.Center,
-								data: { rootId: item.id }
-							});
+						menuStore.open('previewObject', {
+							element: `#${context.props.getId()} #item-${item.id}`,
+							offsetX: context.props.getSize().width,
+							isSub: true,
+							vertical: I.MenuDirection.Center,
+							data: { rootId: item.id }
 						});
 					},
 					onSelect: (item: any) => {
@@ -244,12 +254,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const id = DataUtil.cellId('dataviewCell', relationKey, index);
 		const ref = this.cellRefs.get(id);
 		const record = this.getRecord(index);
+		const view = this.getView();
 
 		if (!relation || !ref || !record) {
 			return;
 		};
 
-		if ((relation.relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
+		if ((view.type == I.ViewType.List) && ([ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].indexOf(relation.format) >= 0)) {
+			const scheme = DataUtil.getRelationUrlScheme(relation.format, record[relationKey]);
+			ipcRenderer.send('urlOpen', scheme + record[relationKey]);
+			return;
+		};
+
+		if ((relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
 			DataUtil.objectOpenPopup(record);
 		} else {
 			ref.onClick(e);

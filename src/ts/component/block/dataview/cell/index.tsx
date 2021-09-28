@@ -10,10 +10,14 @@ import CellObject from './object';
 import CellFile from './file';
 
 interface Props extends I.Cell {
+	elementId?: string;
 	relationKey?: string;
 	storeId?: string;
 	menuClassName?: string;
 	menuClassNameWrap?: string;
+	showTooltip?: boolean;
+	tooltipX?: I.MenuDirection;
+	tooltipY?: I.MenuDirection;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -26,6 +30,8 @@ class Cell extends React.Component<Props, {}> {
 	public static defaultProps = {
 		index: 0,
 		canOpen: true,
+		tooltipX: I.MenuDirection.Center,
+		tooltipY: I.MenuDirection.Top,
 	};
 
 	ref: any = null;
@@ -36,22 +42,33 @@ class Cell extends React.Component<Props, {}> {
 		
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
-		const { relationKey, index, onClick, onMouseEnter, onMouseLeave, idPrefix } = this.props;
+		const { elementId, relationKey, index, onClick, idPrefix, getRecord } = this.props;
 		const relation = this.getRelation();
+		const record = getRecord(index);
+
 		if (!relation) {
 			return null;
 		};
 
 		const canEdit = this.canEdit();
+
+		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
+		if (relation.relationKey == Constant.relationKey.name) {
+			check = true;
+		};
+
 		const cn = [ 
 			'cellContent', 
 			'c-' + relation.relationKey,
 			DataUtil.relationClass(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == Constant.relationKey.name ? 'isName' : ''),
+			(!check ? 'isEmpty' :  ''),
 		];
 
 		let CellComponent: React.ReactType<Props>;
@@ -91,7 +108,7 @@ class Cell extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 
 		return (
-			<div className={cn.join(' ')} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+			<div id={elementId} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
 					id={id} 
@@ -125,7 +142,6 @@ class Cell extends React.Component<Props, {}> {
 		const height = cell.outerHeight();
 		const value = record[relation.relationKey] || '';
 
-		$('.cell.isEditing').removeClass('isEditing');
 		cell.addClass('isEditing');
 
 		if (cellPosition) {
@@ -277,24 +293,12 @@ class Cell extends React.Component<Props, {}> {
 					],
 					onSelect: (event: any, item: any) => {
 						let value = '';
-						let scheme = '';
 
 						if (this.ref) {
 							value = this.ref.ref.getValue();
 						};
 
-						if (relation.format == I.RelationType.Url) {
-							if (!value.match(/:\/\//)) {
-								scheme = 'http://';
-							};
-						};
-						if (relation.format == I.RelationType.Email) {
-							scheme = 'mailto:';
-						};
-						if (relation.format == I.RelationType.Phone) {
-							scheme = 'tel:';
-						};
-
+						const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
 						if (item.id == 'go') {
 							ipcRenderer.send('urlOpen', scheme + value);
 						};
@@ -345,6 +349,30 @@ class Cell extends React.Component<Props, {}> {
 		if (record && onCellChange) {
 			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
 		};
+	};
+
+	onMouseEnter (e: any) {
+		const { onMouseEnter, showTooltip, tooltipX, tooltipY, idPrefix, index } = this.props;
+		const relation = this.getRelation();
+		const cell = $(`#${DataUtil.cellId(idPrefix, relation.relationKey, index)}`);
+
+		if (onMouseEnter) {
+			onMouseEnter(e);
+		};
+
+		if (showTooltip) {
+			Util.tooltipShow(relation.name, cell, tooltipX, tooltipY);
+		};
+	};
+	
+	onMouseLeave (e: any) {
+		const { onMouseLeave } = this.props;
+
+		if (onMouseLeave) {
+			onMouseLeave(e);
+		};
+
+		Util.tooltipHide(false);
 	};
 
 	getRelation () {

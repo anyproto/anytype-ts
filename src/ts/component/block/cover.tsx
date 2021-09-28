@@ -15,7 +15,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	
@@ -85,7 +85,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 					</div>
 					
 					<div className="dragWrap">
-						<Drag ref={(ref: any) => { this.refDrag = ref; }} onStart={this.onScaleStart} onMove={this.onScaleMove} onEnd={this.onScaleEnd} />
+						<Drag 
+							ref={(ref: any) => { this.refDrag = ref; }} 
+							onStart={this.onScaleStart} 
+							onMove={this.onScaleMove} 
+							onEnd={this.onScaleEnd} 
+						/>
 						<div id="dragValue" className="number">100%</div>
 					</div>
 					
@@ -118,12 +123,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							</div>
 						) : ''}
 
-						{config.allowDataview ? (
-							<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
-								<Icon className="relation" />
-								<div className="txt">{translate('editorControlRelation')}</div>
-							</div>
-						) : ''}
+						<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
+							<Icon className="relation" />
+							<div className="txt">{translate('editorControlRelation')}</div>
+						</div>
 					</div>
 				</React.Fragment>
 			);
@@ -394,7 +397,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			};
 
 			this.rect = (node.get(0) as Element).getBoundingClientRect();
-			this.onScaleMove(coverScale);
+			this.onScaleMove($.Event('resize'), coverScale);
 			this.cover.css({ opacity: 1 });
 			this.loaded = true;
 		};
@@ -477,7 +480,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.coords = { x: this.cx / this.rect.cw, y: this.cy / this.rect.ch };
 	};
 	
-	onScaleStart (v: number) {
+	onScaleStart (e: any, v: number) {
 		if (!this._isMounted) {
 			return false;
 		};
@@ -488,7 +491,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		selection.preventSelect(true);
 	};
 	
-	onScaleMove (v: number) {
+	onScaleMove (e: any, v: number) {
 		if (!this._isMounted || !this.cover || !this.cover.length) {
 			return false;
 		};
@@ -514,7 +517,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this.setTransform(this.x, this.y);
 	};
 	
-	onScaleEnd (v: number) {
+	onScaleEnd (e: any, v: number) {
 		if (!this._isMounted) {
 			return false;
 		};

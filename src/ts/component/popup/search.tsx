@@ -384,23 +384,24 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const { filter } = this.state;
 		
 		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.Video ];
-		if (!config.allowDataview) {
-			skipLayouts = skipLayouts.concat(I.ObjectLayout.Human, I.ObjectLayout.Set, I.ObjectLayout.Type, I.ObjectLayout.Relation);
-		};
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ 
+				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
+					blockStore.storeType,
+					blockStore.storeTemplate,
+					blockStore.storeRelation,
+				] 
+			},
 		];
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
-		if (!config.allowDataview) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
 		};
 
 		this.setState({ loading: true, n: -1 });
@@ -467,9 +468,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return false;
 		};
 		if (!config.debug.ho && it.isHidden) {
-			return false;
-		};
-		if (!config.allowDataview && (it.layout != I.ObjectLayout.Page)) {
 			return false;
 		};
 		return true;

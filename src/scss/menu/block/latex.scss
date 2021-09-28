@@ -1,0 +1,40 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuBlockLatex {
+		.content { transition: none; padding: 0px; }
+		.items { height: 100%; padding: 0px; }
+
+		.item {
+			.info { height: 40px; line-height: 40px; padding-left: 60px; }
+			.name { @include text-overflow-nw; @include text-small; vertical-align: middle; }
+		}
+		.item.empty { padding: 12px 14px; }
+	}
+
+	.menu.menuBlockLatex.isTemplate {
+		.ReactVirtualized__List { padding: 0px 14px; }
+
+		.item { padding: 0px; text-align: center; }
+		.item {
+			.math { 
+				border: 0px; text-align: center; width: 100%; height: auto; position: static; display: inline-block; 
+				vertical-align: middle; 
+			}
+			.math {
+				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
+			}
+		}
+		.item > .inner { 
+			border: 1px solid $colorLightGrey; border-radius: 4px; height: 78px; overflow: hidden; 
+			line-height: 74px;
+		}
+
+		.sectionName { padding: 5px 0px; }
+		.item.empty { padding: 12px 14px; }
+	}
+
+	.menu.menuPreviewLatex {
+		.content { padding: 20px; }
+	}
+}

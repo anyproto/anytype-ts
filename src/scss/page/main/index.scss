@@ -3,7 +3,10 @@
 .pageMainIndex {
 	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
 	
-	.title { color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; white-space: nowrap; }
+	.title { 
+		color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; 
+		white-space: nowrap; user-select: none;
+	}
 	.title {
 		.rightMenu { position: absolute; right: 0px; top: 0px; }
 		.icon { 
@@ -51,25 +54,33 @@
 				.tab.active { background: rgba(0,0,0,0.3); color: #fff; }
 			}
 
-			.searchWrap { 
-				height: 44px; width: 44px; position: absolute; right: 0px; top: 0px; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
-				transition: width 0.2s ease-in-out, background 0.2s ease-in-out; z-index: 1;
-			}
-			.searchWrap {
-				.icon.search { width: 20px; height: 20px; background-image: url('~img/icon/index/search.svg'); position: absolute; top: 12px; left: 12px; }
-				.filter { height: 20px; padding: 0px; display: none; vertical-align: top; width: 100%; }
-				.filter {
-					.inner { height: 20px; }
-					.input { height: 20px; color: #fff; }
-					.line { display: none; }
-					.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); }
-					.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); }
+			.btns { position: absolute; right: 0px; top: 0px; z-index: 1; }
+			.btns {
+				.btn {
+					height: 44px; line-height: 44px; color: #fff; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
+					display: inline-block; vertical-align: top; transition: width 0.2s ease-in-out, background 0.2s ease-in-out; padding: 0px 20px;
+					margin-right: 16px; font-weight: 500;
 				}
-			}
+				.btn:last-child { margin-right: 0px; }
+				.btn:hover { background: rgba(0,0,0,0.5); }
 
-			.searchWrap.active { width: 320px; background: rgba(0,0,0,0.5); padding: 12px 12px 12px 36px; }
-			.searchWrap.active {
-				.filter { display: inline-block; }
+				.searchWrap { width: 44px; padding: 0px; }
+				.searchWrap {
+					.icon.search { width: 20px; height: 20px; background-image: url('~img/icon/index/search.svg'); position: absolute; top: 12px; left: 12px; }
+					.filter { height: 20px; padding: 0px; display: none; vertical-align: top; width: 100%; }
+					.filter {
+						.inner { height: 20px; }
+						.input { height: 20px; color: #fff; }
+						.line { display: none; }
+						.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); }
+						.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); }
+					}
+				}
+
+				.searchWrap.active { width: 320px; background: rgba(0,0,0,0.5); padding: 12px 12px 12px 36px; }
+				.searchWrap.active {
+					.filter { display: inline-block; }
+				}
 			}
 		}
 
@@ -120,6 +131,10 @@
 		.item.active {
 			.icon.more { background-image: url('~img/icon/index/more1.svg'); }
 		}
+	}
+
+	#documents.tabArchive {
+		.item { cursor: default; }
 	}
 	
 }

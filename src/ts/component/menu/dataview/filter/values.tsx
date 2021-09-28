@@ -18,10 +18,12 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	timeoutChange: number = 0;
 	refValue: any = null;
 	range: any = null;
+	n: number = 0;
 
 	constructor (props: any) {
 		super(props);
 
+		this.rebind = this.rebind.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onFocusText = this.onFocusText.bind(this);
 		this.onFocusDate = this.onFocusDate.bind(this);
@@ -29,11 +31,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.onObject = this.onObject.bind(this);
 		this.onTag = this.onTag.bind(this);
 		this.onClear = this.onClear.bind(this);
-		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onOver = this.onOver.bind(this);
 	};
 
 	render () {
-		const { param, getId } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
@@ -46,6 +48,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		];
 		const relationOption: any = relationOptions.find((it: any) => { return it.id == item.relationKey; }) || {};
 		const conditionOption: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
+		const items = this.getItems();
 
 		let value = null;
 		let Item = null;
@@ -53,7 +56,14 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let onSubmit = (e: any) => { this.onSubmit(e, item); };
 
 		const ItemAdd = (item: any) => (
-			<div className="item add" onClick={item.onClick}>
+			<div 
+				id="item-add" 
+				className="item add" 
+				onClick={item.onClick} 
+				onMouseEnter={() => { 
+					menuStore.close('select'); 
+					this.props.setHover({ id: 'add' }); 
+				}}>
 				<Icon className="plus" />
 				<div className="name">Add</div>
 			</div>
@@ -65,9 +75,16 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			case I.RelationType.Status:
 				Item = (element: any) => {
 					return (
-						<div className="item" >
+						<div 
+							id={'item-tag-' + element.id} 
+							className="item" 
+							onMouseEnter={() => {
+								menuStore.close('select'); 
+								this.props.setHover({ id: 'tag-' + element.id }); 
+							}}
+						>
 							<div className="clickable" onClick={(e: any) => { this.onTag(e, element); }}>
-								<Tag {...element} key={item.id} className={DataUtil.tagClass(relation.format)} />
+								<Tag {...element} className={DataUtil.tagClass(relation.format)} />
 							</div>
 							<div className="buttons">
 								<Icon className="delete" onClick={(e: any) => { this.onRemove(e, element); }} />
@@ -76,7 +93,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = (item.value || []).map((id: string, i: number) => { 
+				list = DataUtil.getRelationArrayValue(item.value).map((id: string) => { 
 					return (relation.selectDict || []).find((it: any) => { return it.id == id; });
 				});
 				list = list.filter((it: any) => { return it && it.id; });
@@ -110,7 +127,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
+				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { 
+					return detailStore.get(rootId, it, []); 
+				})
 				list = list.filter((it: any) => { return !it._empty_; });
 
 				value = (
@@ -179,20 +198,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		return (
 			<div>
 				<div className="section">
-					<MenuItemVertical 
-						id="relation" 
-						icon={relationOption.icon}
-						name={relationOption.name} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'relation'); }}
-						arrow={true}
-					/>
-
-					<MenuItemVertical 
-						id="condition" 
-						name={conditionOption.name} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'condition'); }}
-						arrow={true}
-					/>
+					{items.map((item: any, i: number) => (
+						<MenuItemVertical key={i} {...item} onMouseEnter={(e: any) => { this.onOver(e, item); }} />
+					))}
 				</div>
 
 				{value ? (
@@ -209,12 +217,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
+		this.rebind();
 	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-		menuStore.closeAll(Constant.menuIds.cell);
-    };
 
 	componentDidUpdate () {
 		const { param } = this.props;
@@ -225,6 +229,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
 		this.init();
+		this.props.setActive();
 
 		if (relation && this.refValue) {
 			if (this.refValue.setValue) {
@@ -241,6 +246,22 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 	};
 
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+		menuStore.closeAll(Constant.menuIds.cell);
+    };
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+
 	init () {
 		const { param } = this.props;
 		const { data } = param;
@@ -250,40 +271,52 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.checkClear(item.value);
 	};
 
-	onMouseEnter (e: any, id: string) {
-		if (keyboard.isMouseDisabled) {
-			return;
-		};
-
-		const { param, getId, getSize } = this.props;
+	getItems () {
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 		const item = getView().getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
+		const relationOption: any = relationOptions.find((it: any) => { return it.id == item.relationKey; }) || {};
+		const conditionOption: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
+
+		return [
+			{ id: 'relation', icon: relationOption.icon, name: relationOption.name, arrow: true },
+			{ id: 'condition', icon: conditionOption.icon, name: conditionOption.name, format: relation.format, arrow: true, }
+		];
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
+
+		const { getId, getSize } = this.props;
 
 		let options = [];
 		let key = '';
 
-		switch (id) {
+		switch (item.id) {
 			case 'relation':
-				options = relationOptions;
+				options = this.getRelationOptions();
 				key = 'relationKey';
 				break;
 
 			case 'condition':
-				options = conditionOptions;	
+				options = DataUtil.filterConditionsByType(item.format);	
 				key = 'condition';
 				break;
 		};
 
 		menuStore.open('select', {
-			element: `#${getId()} #item-${id}`,
+			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			offsetY: -36,
 			isSub: true,
 			data: {
+				rebind: this.rebind,
 				value: item[key],
 				options: options,
 				onSelect: (e: any, el: any) => {
@@ -362,7 +395,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return;
 		};
 
-		let value = Util.objectCopy(item.value);
+		let value = DataUtil.getRelationArrayValue(item.value);
 		value = value.filter((it: any) => { return it != element.id; });
 		value = Util.arrayUnique(value);
 
@@ -426,6 +459,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				window.setTimeout(() => { this.refValue.focus(); }, 200);
 			},
 			data: { 
+				rebind: this.rebind,
 				value: value, 
 				onChange: (value: number) => {
 					this.onChange('value', value);
@@ -449,6 +483,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
 				data: { 
+					rebind: this.rebind,
 					rootId: rootId,
 					blockId: blockId,
 					value: item.value || [], 
@@ -478,6 +513,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
 				data: { 
+					rebind: this.rebind,
 					rootId: rootId,
 					blockId: blockId,
 					value: item.value || [], 

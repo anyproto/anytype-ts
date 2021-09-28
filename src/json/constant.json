@@ -32,7 +32,8 @@
 	"extension": {
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
-		"cover": [ "jpg", "jpeg", "png" ]
+		"cover": [ "jpg", "jpeg", "png" ],
+		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ]
 	},
 
 	"limit": {
@@ -47,7 +48,7 @@
 
 	"menuIds": {
 		"cell": [ 
-			"select", "button", "dataviewText", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
+			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
 			"dataviewOptionList", "dataviewOptionEdit", "dataviewFileList", "dataviewFileValues", "dataviewCalendar", "relationSuggest"
 		],
 		"cellAdd": [ "dataviewRelationEdit", "dataviewRelationSuggest", "dataviewRelationList" ],
@@ -55,10 +56,10 @@
 			"select", "blockStyle", "blockMore", "blockLink", "blockColor", "blockBackground"
 		],
 		"add": [
-			"searchObject", "blockRelationList", "blockRelationEdit"
+			"searchObject", "blockRelationEdit"
 		],
 		"action": [
-			"blockStyle", "blockColor", "blockBackground", "blockAlign", "searchObject"
+			"blockStyle", "blockColor", "blockBackground", "blockAlign", "blockLinkSettings", "searchObject"
 		],
 		"more": [
 			"select", "searchObject", "blockAlign"
@@ -67,10 +68,16 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"searchObject", "select", "dataviewDate"
+			"select", "searchObject", "dataviewDate"
 		],
 		"layout": [
 			"blockAlign"
+		],
+		"latex": [
+			"previewLatex"
+		],
+		"viewEdit": [ 
+			"select" 
 		]
 	},
 
@@ -131,7 +138,8 @@
 		"type": "_otobjectType",
 		"image": "_otimage",
 		"file": "_otfile",
-		"video": "_otvideo"
+		"video": "_otvideo",
+		"relation": "_otrelation"
 	},
 
 	"blockId": {
@@ -153,7 +161,7 @@
 
 		"dataview": {
 			"gallery": {
-				"card": 260,
+				"card": 224,
 				"margin": 16
 			},
 			"board": {
@@ -268,11 +276,13 @@
 		"perl":			 "Perl",
 		"php":			 "PHP",
 		"powershell":	 "Power Shell",
+		"plain":         "Plain Text",
 		"prolog":		 "Prolog",
 		"python":		 "Python",
 		"reason":		 "Reason",
 		"ruby":			 "Ruby",
 		"rust":			 "Rust",
+		"r":			 "R",
 		"sass":			 "Sass",
 		"scala":		 "Scala",
 		"scheme":		 "Scheme",

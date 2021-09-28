@@ -21,7 +21,7 @@ interface State {
 	size: Size;
 };
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 const raf = require('raf');
 const SMALL_WIDTH = 248;
@@ -122,7 +122,7 @@ class InputWithFile extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.resize();
-		this.bind();
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
@@ -130,7 +130,7 @@ class InputWithFile extends React.Component<Props, State> {
 		const { block } = this.props;
 		
 		this.resize();
-		this.bind();
+		this.rebind();
 		
 		if (focused) {
 			if (this.urlRef) {
@@ -152,7 +152,7 @@ class InputWithFile extends React.Component<Props, State> {
 		};
 	};
 	
-	bind () {
+	rebind () {
 		const { canResize } = this.props;
 		if (!this._isMounted || !canResize) {
 			return;

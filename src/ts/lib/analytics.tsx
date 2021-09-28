@@ -3,12 +3,12 @@ import { I, M, Mapper, Util } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
-const { app } = window.require('electron').remote;
+const { app } = window.require('@electron/remote');
 const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
-const KEYS = [ 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template' ];
+const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template' ];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
 
 class Analytics {

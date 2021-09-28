@@ -5,7 +5,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; font-size: 14px; line-height: 22px; letter-spacing: 0.2px; color: $colorBlack;
-	overflow-x: hidden; overflow-y: auto;
+	overflow-x: hidden; overflow-y: scroll;
 	-webkit-font-smoothing: antialiased;
 	backface-visibility: hidden;
 	transform-style: flat;
@@ -13,6 +13,7 @@ body {
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; }
+body.grab { cursor: grab !important; }
 body.fullScreen {
 	#drag { display: none; }
 }

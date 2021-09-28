@@ -8,11 +8,12 @@ import { menuStore, blockStore } from 'ts/store';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
-import BlockImage from './image';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockVideo from './video';
 import BlockFile from './file';
+import BlockImage from './image';
+import BlockVideo from './video';
+import BlockAudio from './audio';
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
@@ -20,6 +21,7 @@ import BlockDiv from './div';
 import BlockRelation from './relation';
 import BlockFeatured from './featured';
 import BlockType from './type';
+import BlockLatex from './latex';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -33,6 +35,8 @@ const Constant = require('json/constant.json');
 const SNAP = 0.01;
 
 const Block = observer(class Block extends React.Component<Props, {}> {
+
+	ref: any = null;
 
 	public static defaultProps = {
 		align: I.BlockAlign.Left,
@@ -71,6 +75,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
+		let setRef = (ref: any) => { this.ref = ref; };
 		
 		if (className) {
 			cn.push(className);
@@ -85,7 +90,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			cn.push('isReadonly');
 		};
 
-		if (bgColor) {
+		if (bgColor && !block.isLink()) {
 			cd.push('bgColor bgColor-' + bgColor);
 		};
 		
@@ -95,7 +100,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					cn.push('isChecked');
 				};
 
-				blockComponent = <BlockText {...this.props} onToggle={this.onToggle} />;
+				blockComponent = <BlockText ref={setRef} {...this.props} onToggle={this.onToggle} />;
 				break;
 
 			case I.BlockType.Layout:
@@ -105,65 +110,73 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			case I.BlockType.IconPage:
 				canSelect = false;
 				canDrop = false;
-				blockComponent = <BlockIconPage {...this.props} />;
+				blockComponent = <BlockIconPage ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.IconUser:
 				canSelect = false;
 				canDrop = false;
-				blockComponent = <BlockIconUser {...this.props} />;
+				blockComponent = <BlockIconUser ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
 				switch (content.type) {
 					default: 
 					case I.FileType.File: 
-						blockComponent = <BlockFile {...this.props} />;
+						blockComponent = <BlockFile ref={setRef} {...this.props} />;
 						break;
 						
 					case I.FileType.Image: 
-						blockComponent = <BlockImage {...this.props} />;
+						blockComponent = <BlockImage ref={setRef} {...this.props} />;
 						break;
 						
 					case I.FileType.Video: 
-						blockComponent = <BlockVideo {...this.props} />;
+						blockComponent = <BlockVideo ref={setRef} {...this.props} />;
+						break;
+
+					case I.FileType.Audio: 
+						blockComponent = <BlockAudio ref={setRef} {...this.props} />;
 						break;
 				};
 				break;
 				
 			case I.BlockType.Bookmark:
-				blockComponent = <BlockBookmark {...this.props} />;
+				blockComponent = <BlockBookmark ref={setRef} {...this.props} />;
 				break;
 			
 			case I.BlockType.Dataview:
 				canSelect = false;
-				blockComponent = <BlockDataview {...this.props} />;
+				blockComponent = <BlockDataview ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.Div:
-				blockComponent = <BlockDiv {...this.props} />;
+				blockComponent = <BlockDiv ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.Link:
-				blockComponent = <BlockLink {...this.props} />;
+				blockComponent = <BlockLink ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.Cover:
 				canSelect = false;
-				blockComponent = <BlockCover {...this.props} />;
+				blockComponent = <BlockCover ref={setRef} {...this.props} />;
 				break;
 
 			case I.BlockType.Relation:
-				blockComponent = <BlockRelation {...this.props} />;
+				blockComponent = <BlockRelation ref={setRef} {...this.props} />;
 				break;
 
 			case I.BlockType.Featured:
-				blockComponent = <BlockFeatured {...this.props} />;
+				blockComponent = <BlockFeatured ref={setRef} {...this.props} />;
 				break;
 
 			case I.BlockType.Type:
 				canSelect = false;
-				blockComponent = <BlockType {...this.props} />;
+				blockComponent = <BlockType ref={setRef} {...this.props} />;
+				break;
+
+			case I.BlockType.Latex:
+				blockComponent = <BlockLatex ref={setRef} {...this.props} />;
 				break;
 		};
 		
@@ -307,7 +320,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		selection.preventSelect(true);
 		selection.preventClear(true);
-		
+
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
 		onDragStart(e, I.DragItem.Block, ids, this);
 	};

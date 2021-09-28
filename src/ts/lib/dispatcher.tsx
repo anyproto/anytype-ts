@@ -6,14 +6,12 @@ const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
-const { remote } = window.require('electron');
 const Constant = require('json/constant.json');
-const raf = require('raf');
+const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
-const { app } = remote;
 const bindings = window.require('bindings')({
 	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
@@ -25,7 +23,8 @@ class Dispatcher {
 	service: any = null;
 	stream: any = null;
 	timeoutStream: number = 0;
-	timeoutNumber: any = {};
+	timeoutEvent: any = {};
+	reconnects: number = 0;
 
 	constructor () {
 		/// #if USE_ADDON
@@ -42,7 +41,7 @@ class Dispatcher {
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			let serverAddr = remote.getGlobal('serverAddr');
+			let serverAddr = getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
@@ -71,8 +70,17 @@ class Dispatcher {
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
 
+			let t = 1000;
+			if (this.reconnects == 10) {
+				t = 30000;
+				this.reconnects = 0;
+			};
+
 			window.clearTimeout(this.timeoutStream);
-			this.timeoutStream = window.setTimeout(() => { this.listenEvents(); }, 1000);
+			this.timeoutStream = window.setTimeout(() => { 
+				this.listenEvents(); 
+				this.reconnects++;
+			}, t);
 		});
 	};
 
@@ -95,6 +103,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
+		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
@@ -231,7 +240,7 @@ class Dispatcher {
 				case 'blockSetText':
 					id = data.getId();
 					block = Util.objectCopy(blockStore.getLeaf(rootId, id));
-					if (!block) {
+					if (!block || !block.id) {
 						break;
 					};
 
@@ -369,6 +378,20 @@ class Dispatcher {
 
 					if (data.hasKey()) {
 						block.content.key = data.getKey().getValue();
+					};
+
+					blockStore.update(rootId, block);
+					break;
+
+				case 'blockSetLatex':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasText()) {
+						block.content.text = data.getText().getValue();
 					};
 
 					blockStore.update(rootId, block);
@@ -556,17 +579,17 @@ class Dispatcher {
 
 					switch (state) {
 						case I.ProgressState.Running:
-						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
 								status: translate('progress' + pt),
 								current: progress.getDone(),
 								total: progress.getTotal(),
 								isUnlocked: true,
-								canCancel: true,
+								canCancel: pt != I.ProgressType.Recover,
 							});
 							break;
 
+						case I.ProgressState.Done:
 						case I.ProgressState.Canceled:
 							commonStore.progressClear();
 							break;
@@ -575,12 +598,11 @@ class Dispatcher {
 			};
 		};
 		
-		this.setNumbers(rootId);
-	};
-
-	setNumbers (rootId: string) {
-		window.clearTimeout(this.timeoutNumber[rootId]);
-		this.timeoutNumber[rootId] = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 10);
+		window.clearTimeout(this.timeoutEvent[rootId]);
+		this.timeoutEvent[rootId] = window.setTimeout(() => { 
+			blockStore.setNumbers(rootId); 
+			blockStore.updateMarkup(rootId);
+		}, 10);
 	};
 
 	sort (c1: any, c2: any) {
@@ -629,17 +651,13 @@ class Dispatcher {
 
 		blockStore.set(rootId, blocks);
 		blockStore.setStructure(rootId, structure);
+		blockStore.setNumbers(rootId); 
+		blockStore.updateMarkup(rootId);
 
 		this.blockTypeCheck(rootId);
 	};
 
 	blockTypeCheck (rootId: string) {
-		const { config } = commonStore;
-		
-		if (!config.allowDataview) {
-			return;
-		};
-
 		const object = detailStore.get(rootId, rootId, []);
 
 		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));

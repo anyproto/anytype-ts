@@ -205,10 +205,6 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 		const { isPopup, rootId } = this.props;
 
-		if (isPopup) {
-			return;
-		};
-
 		popupStore.open('search', {
 			preventResize: true, 
 			data: {
@@ -227,7 +223,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const node = $(ReactDOM.findDOMNode(this));
 		const path = node.find('.path');
 
-		Util.tooltipShow('Click to search', path, I.MenuDirection.Bottom);
+		Util.tooltipShow('Click to search', path, I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
 	onPathOut () {

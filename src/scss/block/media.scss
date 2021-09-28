@@ -8,7 +8,12 @@
 		.focusable.isFocused { background: none; }
 		.focusable.isFocused::before { 
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(134, 125, 66, 0.1); z-index: 1; 
-			pointer-events: none;
+			pointer-events: none; border-radius: 6px;
+		}
+
+		.icon.resize {
+			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
+			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
 		}
 
 		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
@@ -28,28 +33,58 @@
 			}
 
 			img:after { content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 13px; top: 11px; }
+			
 			.icon.resize { display: none; }
 		}
 
+		.audioControls { width: 100%; min-width: 160px; white-space: nowrap; position: relative; text-align: left; }
+		.audioControls {
+			.name { 
+				@include text-common; @include text-overflow-nw; display: inline-block; vertical-align: top; 
+				line-height: 20px; width: calc(100% - 26px);
+			}
+			.name span { display: inline-block; min-width: 100%; height: 100%; }
+			.icon { vertical-align: top; transition: none; }
+			.icon.play { width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/play.svg'); cursor: pointer; }
+			.icon.play.active { background-image: url('~img/icon/audio/pause.svg'); }
+
+			.icon.volume { width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/volume.svg'); cursor: pointer; }
+			.icon.volume.active { background-image: url('~img/icon/audio/mute.svg'); }
+
+			.time { @include text-small; text-align: right; line-height: 20px; position: absolute; right: 0px; bottom: 0px; }
+
+			.input-drag { display: inline-block; vertical-align: top; height: 20px; }
+			.input-drag {
+				.icon { width: 6px; height: 6px; border: 0px; background: none;  }
+				.bullet { width: 6px; height: 6px; border-radius: 100%; background: #f09c0e; } 
+				.fill { background: #f09c0e; }
+				.back { background: rgba(134, 125, 66, 0.08); }
+			}
+
+			#time { margin: 6px 0px; width: 100%; display: block; }
+			#volume { width: 40px; opacity: 0; transition: opacity 0.2s ease-in-out; }
+		}
+		.audioControls:hover {
+			#volume { opacity: 1; }
+		}
+
 		video { height: 100%; }
-		
-		.icon.resize {
-			width: 20px; height: 20px; position: absolute; right: 2px; bottom: 2px; z-index: 1;
-			background-image: url('~img/icon/resize.svg'); opacity: 0; cursor: nwse-resize;
+		.videoControls {
+			.icon.play {
+				width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
+				background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
+				background-size: 24px 28px; background-position: 24px center;
+			}
+			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
 				
 		.icon.dots {
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
 			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
 		}
-		
-		.icon.play {
-			width: 64px; height: 64px; border-radius: 100%; position: absolute; left: 50%; top: 50%; margin: -32px 0px 0px -32px;
-			background-image: url('~img/icon/play.svg'); background-color: rgba(255,255,255,0.7); cursor: pointer;
-			background-size: 24px 28px; background-position: 24px center;
-		}
-		.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 	}
+
+	.block.blockMedia > .wrapContent { border-radius: 6px; }
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 
 	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.resize { display: none; }
@@ -64,9 +99,12 @@
 		.icon.dots { opacity: 1; }
 	}
 	
-	.block.blockMedia > .wrapContent > .selectable > .dropTarget > .focusable.isPlaying > .wrap {
+	.block.blockMedia.isVideo > .wrapContent > .selectable > .dropTarget > .focusable.isPlaying > .wrap {
 		.icon.resize { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }
 	}
+
+	.block.blockMedia.isAudio > .wrapContent { background-color: #f3f2ec; }
+	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
 }

@@ -68,7 +68,6 @@ export enum RelationScope {
 export enum OptionScope {
     Local	 = 0,
 	Relation = 1,
-	Format	 = 2,
 };
 
 export interface ObjectType {

@@ -60,7 +60,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				): ''}
 
 				{items.map((relationKey: any, i: any) => {
-					const id = DataUtil.cellId(PREFIX, relationKey, 0);
+					const id = DataUtil.cellId(PREFIX + block.id, relationKey, 0);
 					const relation = dbStore.getRelation(rootId, rootId, relationKey);
 					const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
@@ -71,15 +71,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						return null;
 					};
 
+					if (i == items.length - 1) {
+						cn.push('last');
+					};
+
 					return (
 						<React.Fragment key={i}>
 							{bullet}
-							<span id={id} className={cn.join(' ')} onClick={(e: any) => { 
+							<span className={cn.join(' ')} onClick={(e: any) => { 
 								e.persist(); 
 								this.onRelation(e, relationKey); 
 							}}>
 								<Cell 
 									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
+									elementId={id}
 									rootId={rootId}
 									storeId={rootId}
 									block={block}
@@ -92,9 +97,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									iconSize={iconSize}
 									readonly={!canEdit}
 									isInline={true}
-									idPrefix={PREFIX}
+									idPrefix={PREFIX + block.id}
 									elementMapper={this.elementMapper}
-									onMouseEnter={(e: any) => { this.onMouseEnter(e, relationKey); }}
+									showTooltip={true}
+									tooltipX={I.MenuDirection.Left}
+									arrayLimit={2}
 									onMouseLeave={this.onMouseLeave}
 								/>
 							</span>
@@ -192,7 +199,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const relation = dbStore.getRelation(rootId, rootId, relationKey);
 
 		if (relation) {
-			Util.tooltipShow(relation.name, cell, I.MenuDirection.Top);
+			Util.tooltipShow(relation.name, cell, I.MenuDirection.Center, I.MenuDirection.Top);
 		};
 	};
 

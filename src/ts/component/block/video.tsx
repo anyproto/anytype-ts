@@ -74,8 +74,10 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 				element = (
 					<div className="wrap resizable" style={css}>
 						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
-						<Icon className="play" onClick={this.onPlay} />
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						<div className="videoControls">
+							<Icon className="play" onClick={this.onPlay} />
+							<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						</div>
 					</div>
 				);
 				break;
@@ -90,11 +92,11 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 	
 	componentDidMount () {
 		this._isMounted = true;
-		this.bind();
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
-		this.bind();
+		this.rebind();
 	};
 	
 	componentWillUnmount () {
@@ -102,7 +104,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		this.unbind();
 	};
 	
-	bind () {
+	rebind () {
 		if (!this._isMounted) {
 			return;
 		};
@@ -180,6 +182,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const video = node.find('video');
 		const el = video.get(0);
+
+		$('audio, video').each((i: number, item: any) => { item.pause(); });
 		
 		video.unbind('ended pause play');
 		el.play();

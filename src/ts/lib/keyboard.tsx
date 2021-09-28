@@ -1,5 +1,5 @@
 import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
-import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -54,6 +54,8 @@ class Keyboard {
 	};
 
 	onMouseDown (e: any) {
+		const { focused } = focus.state;
+
 		// Mouse back
 		if (e.buttons & 8) {
 			e.preventDefault();
@@ -65,9 +67,15 @@ class Keyboard {
 			e.preventDefault();
 			this.forward();
 		};
+
+		// Remove isFocusable from focused block
+		if ($(e.target).parents(`#block-${focused}`).length <= 0) {
+			$('.focusable.c' + focused).removeClass('isFocused');
+		};
 	};
 	
 	onKeyDown (e: any) {
+		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
@@ -95,9 +103,14 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			popupStore.closeAll();
+			popupStore.closeLast();
 			menuStore.closeAll();
 			Util.linkPreviewHide(false);
+		});
+
+		// Shortcuts
+		this.shortcut('ctrl+space', e, (pressed: string) => {
+			popupStore.open('shortcut', {});
 		});
 
 		if (isMain) {
@@ -136,6 +149,17 @@ class Keyboard {
 					}, 
 				});
 			});
+
+			// Graph
+			if (config.sudo) {
+				this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+					popupStore.open('graph', {
+						data: { 
+							rootId: rootId,
+						}, 
+					});
+				});
+			};
 
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
@@ -188,7 +212,7 @@ class Keyboard {
 			};
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, {}, position, '', {}, (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
@@ -291,7 +315,7 @@ class Keyboard {
 		const popup = popupStore.get('page');
 
 		// Do not allow in set or store
-		if (this.isMainSet() || this.isMainStore() || ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0)) {
+		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0))) {
 			return;
 		};
 

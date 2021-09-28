@@ -68,6 +68,8 @@
 }
 
 .editor.help {
+	.cover { position: absolute; left: 16px; top: 44px; height: 256px; width: calc(100% - 32px); border-radius: 4px; }
+
 	.blocks {
 		.block {
 			.wrapContent { width: 100% !important; }
@@ -77,16 +79,20 @@
 		
 				.icon { width: 20px; height: 20px; margin-top: -4px; }
 				.icon.help { background-image: url('~img/icon/help.svg'); }
-
 				.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
-		
-				img.full { width: 100%; }
+
+				.full { width: 100%; margin: 16px 0px; }
+				.half { width: 50%; margin: 16px 0px; }
+
 				img.mention { margin-left: -18px; }
 			}
 		}
 
 		.block.blockDiv { margin: 30px 0px; }
 	}
+}
+.editor.help.withCover {
+	.blocks { padding-top: 150px; }
 }
 
 /* Page */

@@ -15,7 +15,7 @@ interface State {
 const $ = require('jquery');
 const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
@@ -339,7 +339,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		Util.tooltipShow(item.smile, $(e.currentTarget), I.MenuDirection.Top);
+		Util.tooltipShow(item.smile, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Top);
 	};
 
 	onMouseLeave (e: any) {

@@ -387,7 +387,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 
 		const create = (template: any) => {
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, (message: any) => {
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, {}, (message: any) => {
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
 				analytics.event('ObjectCreate', {
@@ -463,6 +463,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				readonly: !allowed,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation ]);
+				},
+				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectTypeRelationRemove(rootId, relationKey);
 				},
 			}
 		});

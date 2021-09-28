@@ -105,10 +105,6 @@ class Input extends React.Component<Props, State> {
 		this.initMask();
 	};
 	
-	componentDidUpdate () {
-		this.initMask();
-	};
-	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};

@@ -13,6 +13,7 @@
 .switch.active { background: $colorVeryDarkGrey; }
 .switch.green.active { background: $colorLime; }
 .switch.orange.active { background: #ffd15b; }
+.switch.isReadonly { cursor: default; }
 
 .switch.active {
 	.inner { left: auto; right: 2px; }

@@ -46,20 +46,13 @@ class DataUtil {
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default:
+					default:					 icon = this.textClass(v); break;
 					case I.TextStyle.Paragraph:	 icon = 'text'; break;
-					case I.TextStyle.Header1:	 icon = 'header1'; break;
-					case I.TextStyle.Header2:	 icon = 'header2'; break;
-					case I.TextStyle.Header3:	 icon = 'header3'; break;
-					case I.TextStyle.Quote:		 icon = 'quote'; break;
 					case I.TextStyle.Code:		 icon = 'kbd'; break;
 					case I.TextStyle.Bulleted:	 icon = 'list'; break;
-					case I.TextStyle.Numbered:	 icon = 'numbered'; break;
-					case I.TextStyle.Toggle:	 icon = 'toggle'; break;
-					case I.TextStyle.Checkbox:	 icon = 'checkbox'; break;
 				};
 				break;
-				
+
 			case I.BlockType.Div:
 				switch (v) {
 					default:
@@ -77,21 +70,10 @@ class DataUtil {
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:		 
-				c.push('blockText ' + this.textClass(style)); 
-				break;
-
-			case I.BlockType.Layout:	 
-				c.push('blockLayout c' + style); 
-				break;
-
-			case I.BlockType.IconPage:	 
-				c.push('blockIconPage'); 
-				break;
-
-			case I.BlockType.IconUser:	 
-				c.push('blockIconUser'); 
-				break;
+			case I.BlockType.Text:	 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
+			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
+			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
 				
 			case I.BlockType.File:
 				if (state == I.FileState.Done) {
@@ -104,46 +86,26 @@ class DataUtil {
 						break;
 						
 					case I.FileType.Image: 
-						c.push('blockMedia');
+						c.push('blockMedia isImage');
 						break;
-						
 					case I.FileType.Video: 
-						c.push('blockMedia');
+						c.push('blockMedia isVideo');
+						break;
+					case I.FileType.Audio: 
+						c.push('blockMedia isAudio');
 						break;
 				};
 				break;
 				
-			case I.BlockType.Bookmark:
-				c.push('blockBookmark');
-				break;
-			
-			case I.BlockType.Dataview:
-				c.push('blockDataview');
-				break;
-				
-			case I.BlockType.Div:
-				c.push('blockDiv c' + style);
-				break;
-				
-			case I.BlockType.Link:
-				c.push('blockLink');
-				break;
-				
-			case I.BlockType.Cover:
-				c.push('blockCover');
-				break;
-
-			case I.BlockType.Relation:
-				c.push('blockRelation');
-				break;
-
-			case I.BlockType.Featured:
-				c.push('blockFeatured');
-				break;
-
-			case I.BlockType.Type:
-				c.push('blockType');
-				break;
+			case I.BlockType.Bookmark:	 c.push('blockBookmark'); break;
+			case I.BlockType.Dataview:	 c.push('blockDataview'); break;
+			case I.BlockType.Div:		 c.push('blockDiv c' + style); break;
+			case I.BlockType.Link:		 c.push('blockLink'); break;
+			case I.BlockType.Cover:		 c.push('blockCover'); break;
+			case I.BlockType.Relation:	 c.push('blockRelation'); break;
+			case I.BlockType.Featured:	 c.push('blockFeatured'); break;
+			case I.BlockType.Type:		 c.push('blockType'); break;
+			case I.BlockType.Latex:		 c.push('blockLatex'); break;
 		};
 
 		return c.join(' ');
@@ -176,7 +138,7 @@ class DataUtil {
 			case I.ObjectLayout.Page:		 c = 'isPage'; break;
 			case I.ObjectLayout.Human:		 c = 'isHuman'; break;
 			case I.ObjectLayout.Task:		 c = 'isTask'; break;
-			case I.ObjectLayout.Type:	 c = 'isObjectType'; break;
+			case I.ObjectLayout.Type:		 c = 'isObjectType'; break;
 			case I.ObjectLayout.Relation:	 c = 'isRelation'; break;
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
@@ -211,6 +173,27 @@ class DataUtil {
 			default:
 			case I.RelationType.Status:		 c = 'isStatus'; break;
 			case I.RelationType.Tag:		 c = 'isTag'; break;
+		};
+		return c;
+	};
+
+	linkCardClass (v: I.LinkCardStyle): string {
+		let c = '';
+		switch (v) {
+			default:
+			case I.LinkCardStyle.Text:		 c = 'text'; break;
+			case I.LinkCardStyle.Card:		 c = 'card'; break;
+		};
+		return c;
+	};
+
+	cardSizeClass (v: I.CardSize) {
+		let c = '';
+		switch (v) {
+			default:
+			case I.CardSize.Small:		 c = 'small'; break;
+			case I.CardSize.Medium:		 c = 'medium'; break;
+			case I.CardSize.Large:		 c = 'large'; break;
 		};
 		return c;
 	};
@@ -516,12 +499,12 @@ class DataUtil {
 		popupStore.open(popupId, param);
 	};
 	
-	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, callBack?: (message: any) => void) {
+	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
-		C.BlockCreatePage(rootId, targetId, details, position, templateId, (message: any) => {
+		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
 			
 			if (message.error.code) {
@@ -640,13 +623,23 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
+		const { config } = commonStore;
+
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
+			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 		];
+
+		if (config.experimental) {
+			ret = ret.concat([
+				{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
+			]);
+		};
+
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -658,27 +651,23 @@ class DataUtil {
 		];
 		let i = 0;
 
-		if (config.allowDataview) {
-			let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
-			if (!config.debug.ho) {
-				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
-			};
-			objectTypes.sort(this.sortByName);
+		let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
+		};
+		objectTypes.sort(this.sortByName);
 
-			for (let type of objectTypes) {
-				ret.push({ 
-					type: I.BlockType.Page, 
-					id: 'object' + i++, 
-					objectTypeId: type.id, 
-					iconEmoji: type.iconEmoji, 
-					name: type.name || this.defaultName('page'), 
-					description: type.description,
-					isObject: true,
-					isHidden: type.isHidden,
-				});
-			};
-		} else {
-			ret.push({ type: I.BlockType.Page, id: 'page', icon: 'page', lang: 'Page' });
+		for (let type of objectTypes) {
+			ret.push({ 
+				type: I.BlockType.Page, 
+				id: 'object' + i++, 
+				objectTypeId: type.id, 
+				iconEmoji: type.iconEmoji, 
+				name: type.name || this.defaultName('page'), 
+				description: type.description,
+				isObject: true,
+				isHidden: type.isHidden,
+			});
 		};
 
 		return ret.map(this.menuMapperBlock);
@@ -695,26 +684,24 @@ class DataUtil {
 		const { config } = commonStore;
 		const ret = [];
 
-		if (config.allowDataview) {
-			let objectTypes = dbStore.objectTypes;
-			if (!config.debug.ho) {
-				objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
-			};
-			objectTypes.sort(this.sortByName);
+		let objectTypes = dbStore.objectTypes;
+		if (!config.debug.ho) {
+			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; });
+		};
+		objectTypes.sort(this.sortByName);
 
-			let i = 0;
-			for (let type of objectTypes) {
-				ret.push({ 
-					type: I.BlockType.Page, 
-					id: 'object' + i++, 
-					objectTypeId: type.id, 
-					iconEmoji: type.iconEmoji, 
-					name: type.name || this.defaultName('page'), 
-					description: type.description,
-					isObject: true,
-					isHidden: type.isHidden,
-				});
-			};
+		let i = 0;
+		for (let type of objectTypes) {
+			ret.push({ 
+				type: I.BlockType.Page, 
+				id: 'object' + i++, 
+				objectTypeId: type.id, 
+				iconEmoji: type.iconEmoji, 
+				name: type.name || this.defaultName('page'), 
+				description: type.description,
+				isObject: true,
+				isHidden: type.isHidden,
+			});
 		};
 
 		return ret.map(this.menuMapperBlock);
@@ -728,9 +715,9 @@ class DataUtil {
 	};
 	
 	// Action menu
-	menuGetActions (hasFile: boolean) {
+	menuGetActions (hasFile: boolean, hasLink: boolean) {
+		let { config } = commonStore;
 		let cmd = keyboard.ctrlSymbol();
-
 		let items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
@@ -742,6 +729,10 @@ class DataUtil {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
+		};
+
+		if (hasLink) {
+			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 		};
 		
 		items = items.map((it: any) => {
@@ -814,11 +805,11 @@ class DataUtil {
 		
 		let ret = [
 			{ id: I.ViewType.Grid },
+			{ id: I.ViewType.Gallery },
+			{ id: I.ViewType.List },
 		];
-		if (config.debug.ho) {
+		if (config.experimental) {
 			ret = ret.concat([
-				{ id: I.ViewType.Gallery },
-				{ id: I.ViewType.List },
 				{ id: I.ViewType.Board },
 			]);
 		};
@@ -907,8 +898,9 @@ class DataUtil {
 		sections = sections.map((s: any, i: number) => {
 			s.id = s.id || i;
 			s.children = s.children.map((it: any, i: number) => {
-				it.itemId = it.id || i;
-				it.id = s.id + '-' + it.id;
+				it.id = it.id || i;
+				it.itemId = it.id;
+				it.id = [ s.id, it.id ].join('-');
 				it.color = it.color || s.color || '';
 				return it;
 			});
@@ -984,11 +976,12 @@ class DataUtil {
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
 			return relation && (relation.format != I.RelationType.File);
 		});
+		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
 
 		for (let key of forceKeys) {
 			const relation = dbStore.getRelation(rootId, blockId, key);
 			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
-				relations.push(relation);
+				relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, relation);
 			};
 		};
 
@@ -1018,6 +1011,22 @@ class DataUtil {
 		};
 		value = value.filter((it: string) => { return it; });
 		return Util.arrayUnique(value);
+	};
+
+	getRelationUrlScheme (type: I.RelationType, value: any): string {
+		value = String(value || '');
+
+		let ret = '';
+		if (type == I.RelationType.Url && !value.match(/:\/\//)) {
+			ret = 'http://';
+		};
+		if (type == I.RelationType.Email) {
+			ret = 'mailto:';
+		};
+		if (type == I.RelationType.Phone) {
+			ret = 'tel:';
+		};
+		return ret;
 	};
 
 	relationWidth (width: number, format: I.RelationType): number {
@@ -1262,6 +1271,36 @@ class DataUtil {
 
 	fileName (object: any) {
 		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
+	};
+
+	defaultLinkSettings () {
+		return Object.assign({
+			withName: true,
+			withIcon: true,
+			withCover: false,
+			withDescription: false,
+			iconSize: I.LinkIconSize.Small,
+			style: I.LinkCardStyle.Text,
+		}, Storage.get('linkSettings') || {});
+	};
+
+	checkLinkSettings (fields: any, layout: I.ObjectLayout) {
+		fields = Util.objectCopy(fields || {});
+		fields.iconSize = Number(fields.iconSize) || I.LinkIconSize.Small;
+		fields.style = Number(fields.style) || I.LinkCardStyle.Text;
+		fields.withIcon = Boolean(undefined === fields.withIcon ? true : fields.withIcon);
+		fields.withName = Boolean(undefined === fields.withName ? true : fields.withName);
+
+		if (fields.style == I.LinkCardStyle.Text) {
+            fields.withCover = false;
+        };
+
+		if (layout == I.ObjectLayout.Task) {
+			fields.withIcon = true;
+			fields.iconSize = I.LinkIconSize.Small;
+		};
+
+		return fields;
 	};
 
 };

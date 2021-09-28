@@ -7,6 +7,9 @@ import { observer } from 'mobx-react';
 interface Props extends I.BlockComponent {}
 
 const { ipcRenderer } = window.require('electron');
+const { app } = window.require('@electron/remote')
+const path = window.require('path');
+const userPath = app.getPath('userData');
 
 const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 
@@ -142,7 +145,13 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 				}
 			});
 		} else {
-			ipcRenderer.send('urlOpen', commonStore.fileUrl(hash));
+			C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
+				if (message.path) {
+					ipcRenderer.send('pathOpen', message.path);
+				};
+			});
+
+			//ipcRenderer.send('urlOpen', commonStore.fileUrl(hash));
 		};
 	};
 	

@@ -6,11 +6,13 @@ import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {
+	className?: string;
+};
 
 interface State {
 	page: number;
-}
+};
 
 const $ = require('jquery');
 
@@ -29,7 +31,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, rootId, block, getView, readonly, onRowAdd } = this.props;
+		const { className, getData, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
@@ -41,6 +43,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const cn = [ 'dataviewControls', (className ? className : '') ];
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -86,8 +89,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		));
 		
 		return (
-			<div className="dataviewControls">
-				<div className="buttons">
+			<div className={cn.join(' ')}>
+				<div className="sides">
 					<div id="sideLeft" className="side left">
 						<div className="first">
 							<div 
@@ -121,11 +124,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
+
+				<div className="line" />
 			</div>
 		);
 	};
 
 	componentDidMount () {
+		this.resize();
 		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
 	};
 
@@ -239,7 +245,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const sideLeft = node.find('#sideLeft');
 
 		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
-		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
+		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
 });

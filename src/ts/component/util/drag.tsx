@@ -8,9 +8,9 @@ interface Props {
 	className: string;
 	value: number;
 	snap?: number;
-	onStart?(v: number): void;
-	onMove?(v: number): void;
-	onEnd?(v: number): void;
+	onStart?(e: any, v: number): void;
+	onMove?(e: any, v: number): void;
+	onEnd?(e: any, v: number): void;
 };
 
 const $ = require('jquery');
@@ -51,7 +51,9 @@ class Drag extends React.Component<Props, {}> {
 			<div id={id} className={cn.join(' ')} onMouseDown={this.start}>
 				<div id="back" className="back"></div>
 				<div id="fill" className="fill"></div>
-				<Icon id="icon" />
+				<div id="icon" className="icon">
+					<div className="bullet" />
+				</div>
 			</div>
 		);
 	};
@@ -81,31 +83,42 @@ class Drag extends React.Component<Props, {}> {
 		e.preventDefault();
 		e.stopPropagation();
 		
-		const { onStart } = this.props;
+		const { onStart, onMove, onEnd } = this.props;
 		const win = $(window);
 		const iw = this.icon.width();
 		const ox = this.node.offset().left;
 		
+		$('body').addClass('grab');
+
 		this.move(e.pageX - ox - iw / 2);
 		this.node.addClass('isDragging');
 		
+		if (onStart) {
+			onStart(e, this.value);
+		};
+
 		win.unbind('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
 			this.move(e.pageX - ox - iw / 2);
+
+			if (onMove) {
+				onMove(e, this.value);
+			};
 		});
 		
 		win.unbind('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
 			this.end(e);
+
+			if (onEnd) {
+				onEnd(e, this.value);
+			};
 		});
-		
-		if (onStart) {
-			onStart(this.value);
-		};
 	};
 	
 	move (x: number) {
-		const { onMove, snap } = this.props;
+		const { snap } = this.props;
 		const nw = this.node.width();
 		const iw = this.icon.width();
+		const ib = parseInt(this.icon.css('border-width'));
 		const mw = this.maxWidth();
 		
 		x = Math.max(0, x);
@@ -118,30 +131,23 @@ class Drag extends React.Component<Props, {}> {
 		x = this.value * mw;
 
 		const w = Math.min(nw, x + iw / 2);
-		
+
 		this.icon.css({ left: x });
-		this.back.css({ left: (w + 8), width: (nw - w - 8) });
-		this.fill.css({ width: (w - 2) });
-		
-		if (onMove) {
-			onMove(this.value);
-		};
-	};
-	
-	maxWidth () {
-		return this.node.width() - this.icon.width();
+		this.back.css({ left: (w + iw / 2 + ib), width: (nw - w - iw / 2 - ib) });
+		this.fill.css({ width: (w - ib) });
 	};
 	
 	end (e: any) {
-		const { onEnd } = this.props;
 		const win = $(window);
 		
 		win.unbind('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
+
+		$('body').removeClass('grab');
 		this.node.removeClass('isDragging');
-		
-		if (onEnd) {
-			onEnd(this.value);
-		};
+	};
+
+	maxWidth () {
+		return this.node.width() - this.icon.width();
 	};
 	
 	checkValue (v: number): number {

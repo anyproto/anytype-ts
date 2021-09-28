@@ -23,7 +23,7 @@ export enum MarkType {
 	Bold		 = 3,
 	Under		 = 4,
 	Link		 = 5,
-	TextColor	 = 6,
+	Color		 = 6,
 	BgColor		 = 7,
 	Mention		 = 8,
 	Emoji		 = 9,
@@ -44,10 +44,8 @@ export interface ContentText {
 	text: string;
 	style: TextStyle;
 	marks: Mark[];
-	number: number;
 	checked: boolean;
 	color: string;
-	bgColor: string;
 };
 
 export interface BlockText extends I.Block {

@@ -6,6 +6,10 @@ class View implements I.View {
 	id: string = '';
 	name: string = '';
 	type: I.ViewType = I.ViewType.Grid;
+	coverRelationKey: string = '';
+	coverFit: boolean = false;
+	cardSize: I.CardSize = I.CardSize.Small;
+	hideIcon: boolean = false;
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -16,6 +20,10 @@ class View implements I.View {
 		self.id = String(props.id || '');
 		self.name = String(props.name || DataUtil.defaultName('view'));
 		self.type = Number(props.type) || I.ViewType.Grid;
+		self.coverRelationKey = String(props.coverRelationKey || '');
+		self.coverFit = Boolean(props.coverFit);
+		self.hideIcon = Boolean(props.hideIcon);
+		self.cardSize = Number(props.cardSize) || I.CardSize.Small;
 		
 		self.relations = (props.relations || []).map((it: I.ViewRelation) => { return new M.ViewRelation(it); });
 		self.filters = (props.filters || []).map((it: I.Filter) => { return new M.Filter(it); });
@@ -25,6 +33,10 @@ class View implements I.View {
 			id: observable,
 			name: observable,
 			type: observable,
+			coverRelationKey: observable,
+			coverFit: observable,
+			cardSize: observable,
+			hideIcon: observable,
 			sorts: observable,
 			filters: observable,
 			relations: observable,
@@ -43,6 +55,10 @@ class View implements I.View {
 
 	setFilter (index: number, filter: any) {
 		this.filters[index] = Object.assign(this.getFilter(index), filter);
+	};
+
+	getSort (index: number) {
+		return this.sorts[index] || {};
 	};
 
 };

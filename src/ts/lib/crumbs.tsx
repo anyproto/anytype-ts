@@ -45,7 +45,7 @@ class Crumbs {
 	
 	add (key: I.CrumbsType, item: CrumbsObject, id: string, callBack?: () => void): CrumbsObject {
 		if (!id) {
-			return;
+			return item;
 		};
 		
 		this.savePrev(key, item);

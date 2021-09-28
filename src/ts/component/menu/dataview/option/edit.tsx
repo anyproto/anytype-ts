@@ -11,22 +11,17 @@ const $ = require('jquery');
 
 const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props, {}> {
 	
-	ref: any = null;
+	refName: any = null;
 	color: string = null;
 	timeout: number = 0;
-
-	constructor(props: any) {
-		super(props);
-
-		this.onRemove = this.onRemove.bind(this);
-	};
+	n: number = -1;
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
 		const { option } = data;
 		const relation = data.relation.get();
-		const colors = DataUtil.menuGetBgColors();
+		const sections = this.getSections();
 
 		let prefix = '';
 		switch (relation.format) {
@@ -39,10 +34,30 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 				break;
 		};
 
+		const Section = (item: any) => (
+			<div className="section">
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						if (action.isBgColor) {
+							action.inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
+							action.icon = 'color';
+							action.checkbox = action.value == this.color;
+						};
+
+						return <MenuItemVertical 
+							key={i} 
+							{...action} 
+							onClick={(e: any) => { this.onClick(e, action); }}
+						/>;
+					})}
+				</div>
+			</div>
+		);
+
 		return (
 			<div>
 				<Filter
-					ref={(ref: any) => { this.ref = ref; }}
+					ref={(ref: any) => { this.refName = ref; }}
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
@@ -51,25 +66,9 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
 
-				{colors.map((action: any, i: number) => {
-					let inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
-					return (
-						<MenuItemVertical 
-							id={i} 
-							key={i} {...action} 
-							icon="color" 
-							inner={inner} 
-							checkbox={action.value == option.color} 
-							onClick={(e: any) => { this.onColor(e, action); }}
-						/>
-					);
-				})}
-
-				<div className="line" />
-				<div className="item" onClick={this.onRemove}>
-					<Icon className="remove" />
-					<div className="name">{translate('menuDataviewOptionEditDelete')}</div>
-				</div>
+				{sections.map((item: any, i: number) => (
+					<Section key={i} {...item} />
+				))}
 			</div>
 		);
 	};
@@ -85,7 +84,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 
 	componentDidUpdate () {
-		this.focus();
+		this.props.setActive();
 	};
 
 	componentWillUnmount () {
@@ -94,8 +93,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 
 	focus () {
 		window.setTimeout(() => { 
-			if (this.ref) {
-				this.ref.focus(); 
+			if (this.refName) {
+				this.refName.focus(); 
 			};
 		}, 15);
 	};
@@ -108,6 +107,28 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	getSections () {
+		return [
+			{ children: DataUtil.menuGetBgColors() },
+			{ 
+				children: [
+					{ id: 'remove', icon: 'remove', name: translate('menuDataviewOptionEditDelete') }
+				] 
+			},
+		];
+	};
+
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		
+		return items;
 	};
 
 	onKeyDown (e: any, v: string) {
@@ -124,12 +145,19 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
-	onColor (e: any, item: any) {
-		this.color = item.value;
-		this.save();
+
+	onClick (e: any, item: any) {
+		if (item.isBgColor) {
+			this.color = item.value;
+			this.save();
+			this.forceUpdate();
+		} else
+		if (item.id == 'remove') {
+			this.remove();
+		};
 	};
 
-	onRemove (e: any) {
+	remove () {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { option, rootId, blockId, record, onChange, optionCommand } = data;
@@ -160,7 +188,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const { option, rootId, blockId, record, optionCommand } = data;
 		const relation = data.relation.get();
 		const idx = relation.selectDict.findIndex((it: any) => { return it.id == option.id; });
-		const value = this.ref.getValue();
+		const value = this.refName.getValue();
 
 		if (!value) {
 			return;

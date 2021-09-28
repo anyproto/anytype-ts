@@ -77,7 +77,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		this.unbind();
 	};
 
-	bind () {
+	rebind () {
 		this.unbind();
 		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e); });
 	};
@@ -90,6 +90,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		const { filter } = this.state;
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
+		let set = dbStore.getObjectType(Constant.typeId.set);
+
+		if (set) {
+			items.push(set);
+		};
 
 		items.sort(DataUtil.sortByName);
 
@@ -259,20 +264,24 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			});
 		};
 
-		DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
-			if (message.records.length > 1) {
-				showMenu();
-			} else {
-				create(message.records.length ? message.records[0] : '');
-			};
-		});
+		if (item.id == Constant.typeId.set) {
+			console.log('CREATE SET');
+		} else {
+			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
+				if (message.records.length > 1) {
+					showMenu();
+				} else {
+					create(message.records.length ? message.records[0] : '');
+				};
+			});
+		};
 	};
 
 	onFilterFocus (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.item.hover').removeClass('hover');
 
-		this.bind();
+		this.rebind();
 	};
 
 	onFilterChange (e: any) {
