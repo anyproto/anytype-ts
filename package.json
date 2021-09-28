@@ -507,7 +507,7 @@
 			],
 			"identity": "6SFR4648FW",
 			"category": "public.app-category.productivity",
-			"artifactName": "${productName}-${version}.${ext}",
+			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
 			"publish": [
 				{
 					"provider": "spaces",
