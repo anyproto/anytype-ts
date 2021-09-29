@@ -21,6 +21,7 @@ let images = {};
 let simulation = null;
 let Color = {
 	bg: '#fff',
+	text: '#2c2b27',
 	link: {
 		0: '#dfddd0',
 		1: '#f09c0e',
@@ -62,18 +63,10 @@ init = (data) => {
 			d.radius = 10;
 		};
 
-		let color = '#929082';
-		if (forceProps.filter && d.name.match(forceProps.filter)) {
-			color = '#000';
-		};
-		if (d.isRoot) {
-			color = '#000';
-		};
-
 		octx.save();
 		octx.clearRect(0, 0, 250, 40);
-		octx.font = '20px Arial';
-		octx.fillStyle = color;
+		octx.font = '20px Helvetica';
+		octx.fillStyle = Color.text;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 125, 20);
 		octx.restore();
