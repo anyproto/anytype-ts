@@ -106,8 +106,13 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { view } = data;
+		const item = this.getItems()[this.n];
 		const k = e.key.toLowerCase();
 
+		let ret = false;
 		if (this.isFocused) {
 			if (k == Key.enter) {
 				this.save();
@@ -126,6 +131,19 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				this.ref.focus();
 				return;
 			};
+
+			keyboard.shortcut('space', e, (pressed: string) => {
+				if ([ 'hideIcon', 'coverFit' ].indexOf(item.id) >= 0) {
+					e.preventDefault();
+
+					this.onSwitch(e, item.id, !view[item.id]);
+					ret = true;
+				};
+			});
+		};
+
+		if (ret) {
+			return;
 		};
 
 		this.props.onKeyDown(e);
