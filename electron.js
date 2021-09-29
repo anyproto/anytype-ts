@@ -21,7 +21,7 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 
-const TIMEOUT_UPDATE = 600 * 1000;
+const TIMEOUT_UPDATE = 30 * 1000; //600 * 1000;
 const MIN_WIDTH = 752;
 const MIN_HEIGHT = 480;
 const KEYTAR_SERVICE = 'Anytype';
@@ -305,6 +305,10 @@ function createWindow () {
 
 	ipcMain.on('updateDownload', (e) => {
 		autoUpdater.downloadUpdate();
+	});
+
+	ipcMain.on('updateConfirm', (e) => {
+		exit(true);
 	});
 
 	ipcMain.on('updateCancel', (e) => {
@@ -696,7 +700,12 @@ function autoUpdaterInit () {
 		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
-		exit(true);
+
+		if (!autoUpdate) {
+			exit(true);
+		} else {
+			send('update-confirm');
+		};
 	});
 };
 
