@@ -263,7 +263,8 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver) {
-		bg = Color.node.over;
+		stroke = Color.link[1];
+		width = 1;
 	};
 
 	ctx.beginPath();
@@ -290,7 +291,6 @@ drawNode = (d) => {
 	let y = d.y - d.radius / 2;
 	let w = d.radius;
 	let h = d.radius;
-	let size = img.width;
 
 	ctx.save();
 
