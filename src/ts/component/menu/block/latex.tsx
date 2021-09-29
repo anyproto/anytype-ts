@@ -177,23 +177,12 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 
 	unbind () {
 		$(window).unbind('keydown.menu');
-	};
-
-	onKeyDown (e: any) {
-		const items = this.getItems(false);
-
-		this.props.onKeyDown(e);
-
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: any) => {
-			this.props.setActive(items[this.n]);
-			this.onOver(e, items[this.n]);
-		});
 	};
 
 	onOver (e: any, item: any) {

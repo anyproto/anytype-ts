@@ -334,7 +334,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const { view } = data;
 
 		view[key] = v;
+
 		this.save();
+		this.forceUpdate();
 	};
 
 	onClick (e: any, item: any) {
