@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject } from 'ts/component';
-import { I, M, C, crumbs, Action, Util } from 'ts/lib';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button } from 'ts/component';
+import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
 import { detailStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -21,6 +21,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	constructor (props: any) {
 		super(props);
 
+		this.onCreate = this.onCreate.bind(this);
 	};
 
 	render () {
@@ -43,11 +44,14 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						<div className="side left">
 							<IconObject size={96} object={object} />
 						</div>
-						<div className="side right">
+						<div className="side center">
 							<div className="title">{object.name}</div>
 							<div className="descr">{object.description}</div>
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+						</div>
+						<div className="side right">
+							<Button id="button-create" text="Create set" onClick={this.onCreate} />
 						</div>
 					</div>
 
@@ -75,7 +79,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	componentWillUnmount () {
 		this.close();
 	};
-
 
 	open () {
 		const { history } = this.props;
@@ -124,6 +127,17 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	onCreate () {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+
+		C.SetCreate([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
+			if (!message.error.code) {
+				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
+			};
+		});
 	};
 
 });
