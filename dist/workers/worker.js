@@ -150,14 +150,6 @@ draw = () => {
 	ctx.translate(transform.x, transform.y);
 	ctx.scale(transform.k, transform.k);
 
-	nodes.forEach(d => {
-		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
-			return;
-		};
-
-		drawNode(d);
-	});
-
 	edges.forEach(d => {
 		if (!forceProps.links && (d.type == 0)) {
 			return;
@@ -167,6 +159,14 @@ draw = () => {
 		};
 
 		drawLine(d, 1, 1, false, forceProps.markers);
+	});
+
+	nodes.forEach(d => {
+		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
+			return;
+		};
+
+		drawNode(d);
 	});
 	
 	ctx.restore();
@@ -256,6 +256,7 @@ drawNode = (d) => {
 	let bg = Color.node.common;
 	let stroke = '';
 	let width = 0;
+	let img = images[d.src];
 
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
 		bg = Color.node.filter;
@@ -288,20 +289,21 @@ drawNode = (d) => {
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - 14, d.y + d.radius + 1, 28, 5);
 	};
 
-	if (!images[d.src]) {
+	if (!img) {
 		return;
 	};
 
 	let x = d.x - d.radius / 2;
 	let y = d.y - d.radius / 2;
 	let w = d.radius;
+	let h = d.radius;
+	let size = img.width;
 
 	ctx.save();
 
 	if (d.iconImage) {
 		x = d.x - d.radius;
 		y = d.y - d.radius;
-		w = d.radius * 2;
 
 		ctx.beginPath();
 		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
@@ -309,10 +311,34 @@ drawNode = (d) => {
 		ctx.fill();
 
 		ctx.clip();
+
+		if (img.width > img.height) {
+			h = d.radius * 2;
+			w = h * (img.width / img.height)
+			x -= (w - d.radius * 2) / 2;
+		} else {
+			w = d.radius * 2;
+			h = w * (img.height / img.width);
+			y -= (h - d.radius * 2) / 2;
+		};
 	};
 
-	ctx.drawImage(images[d.src], 0, 0, images[d.src].width, images[d.src].width, x, y, w, w);
+	ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	ctx.restore();
+};
+
+roundedRect = (x, y, width, height, radius) => {
+	ctx.beginPath();
+	ctx.moveTo(x + radius, y);
+	ctx.lineTo(x + width - radius, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	ctx.lineTo(x + width, y + height - radius);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	ctx.lineTo(x + radius, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	ctx.lineTo(x, y + radius);
+	ctx.quadraticCurveTo(x, y, x + radius, y);
+	ctx.closePath();
 };
 
 onZoom = (data) => {
