@@ -520,12 +520,8 @@ class Dispatcher {
 					details = Decode.decodeStruct(data.getDetails());
 					detailStore.update(rootId, { id: id, details: details }, true);
 
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-						
-						this.blockTypeCheck(rootId);
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -539,12 +535,8 @@ class Dispatcher {
 					};
 					detailStore.update(rootId, { id: id, details: details }, false);
 
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-						
-						this.blockTypeCheck(rootId);
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -663,35 +655,6 @@ class Dispatcher {
 		blockStore.setStructure(rootId, structure);
 		blockStore.setNumbers(rootId); 
 		blockStore.updateMarkup(rootId);
-
-		this.blockTypeCheck(rootId);
-	};
-
-	blockTypeCheck (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'isDraft' ]);
-		const type = blockStore.getLeaf(rootId, Constant.blockId.type);
-
-		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
-		if (object.isDraft && !type) {
-			childrenIds.push(Constant.blockId.type);
-
-			blockStore.add(rootId, { 
-				id: Constant.blockId.type, 
-				parentId: rootId,
-				type: I.BlockType.Type,
-				fields: {},
-				content: {},
-				childrenIds: [],
-			});
-
-			blockStore.updateStructure(rootId, rootId, childrenIds);
-		} else 
-		if (!object.isDraft) {
-			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
-
-			blockStore.delete(rootId, Constant.blockId.type);
-			blockStore.updateStructure(rootId, rootId, childrenIds);
-		};
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
