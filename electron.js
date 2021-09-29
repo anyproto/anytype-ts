@@ -21,7 +21,7 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 
-const TIMEOUT_UPDATE = 30 * 1000; //600 * 1000;
+const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
 const MIN_HEIGHT = 480;
 const KEYTAR_SERVICE = 'Anytype';
