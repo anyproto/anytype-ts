@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
-import { I, M, C, crumbs, Action } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject } from 'ts/component';
+import { I, M, C, crumbs, Action, Util } from 'ts/lib';
+import { detailStore, dbStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-}
+};
+
+const BLOCK_ID_OBJECT = 'dataview';
 
 const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, {}> {
 
@@ -30,6 +32,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 
 		return (
 			<div>
@@ -45,6 +48,13 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 							<div className="descr">{object.description}</div>
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+						</div>
+					</div>
+
+					<div className="section set">
+						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
+						<div className="content">
+							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
 					</div>
 				</div>
