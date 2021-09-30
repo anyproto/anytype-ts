@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { I, Action } from 'ts/lib';
 import { ObjectPreviewBlock } from 'ts/component';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
@@ -12,7 +13,7 @@ class MenuPreviewObject extends React.Component<Props, {}> {
 		const { rootId } = data;
 
 		return (
-			<ObjectPreviewBlock rootId={rootId} />
+			<ObjectPreviewBlock key={'objectPreview-' + rootId} rootId={rootId} />
 		);
 	};
 

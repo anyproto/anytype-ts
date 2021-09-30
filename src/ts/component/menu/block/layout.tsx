@@ -16,6 +16,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 	constructor (props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onResize = this.onResize.bind(this);
 	};
@@ -142,6 +143,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 			classNameWrap: param.classNameWrap,
 			data: {
 				rootId: rootId,
+				rebind: this.rebind,
 			},
 		};
 

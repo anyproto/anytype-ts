@@ -100,7 +100,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				>
 					<MenuItemVertical 
 						{...props}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
 						className={cn.join(' ')}
@@ -305,14 +305,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return true;
 	};
 
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+			this.onOver(e, item);
+		};
+	};
+
 	onOver (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onOver } = data;
-
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
 
 		if (onOver) {
 			onOver(e, this, item);

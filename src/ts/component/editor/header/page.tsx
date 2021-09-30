@@ -28,6 +28,7 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 	constructor (props: any) {
 		super(props);
 
+		this.setPercent = this.setPercent.bind(this);
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
@@ -130,15 +131,12 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		const { selection } = dataset || {};
 		
 		selection.preventSelect(true);
+		this.setPercent(v);
 	};
 	
 	onScaleMove (e: any, v: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#dragValue');
-
-		value.text(Math.ceil(v * 100) + '%');
-
 		this.props.onResize(v);
+		this.setPercent(v);
 	};
 	
 	onScaleEnd (e: any, v: number) {
@@ -146,12 +144,20 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		const { selection } = dataset || {};
 
 		selection.preventSelect(false);
+		this.setPercent(v);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { width: v } },
 		], () => {
 			$('.resizable').trigger('resize', [ e ]);
 		});
+	};
+
+	setPercent (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#dragValue');
+
+		value.text(Math.ceil(v * 100) + '%');
 	};
 
 	onClone (e: any) {

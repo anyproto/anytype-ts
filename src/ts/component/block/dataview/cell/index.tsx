@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, DataUtil, Util } from 'ts/lib';
 import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
@@ -121,6 +122,24 @@ class Cell extends React.Component<Props, {}> {
 				/>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.checkIcon();
+	};
+
+	componentDidUpdate () {
+		this.checkIcon();
+	};
+
+	checkIcon () {
+		const relation = this.getRelation();
+		if (relation.format == I.RelationType.ShortText) {
+			const node = $(ReactDOM.findDOMNode(this));
+			const icon = node.find('.iconObject');
+
+			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		};
 	};
 
 	onClick (e: any) {

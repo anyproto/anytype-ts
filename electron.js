@@ -307,6 +307,10 @@ function createWindow () {
 		autoUpdater.downloadUpdate();
 	});
 
+	ipcMain.on('updateConfirm', (e) => {
+		exit(true);
+	});
+
 	ipcMain.on('updateCancel', (e) => {
 		isUpdating = false;
 		clearTimeout(timeoutUpdate);
@@ -696,7 +700,12 @@ function autoUpdaterInit () {
 		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
-		exit(true);
+
+		if (!autoUpdate) {
+			exit(true);
+		} else {
+			send('update-confirm');
+		};
 	});
 };
 

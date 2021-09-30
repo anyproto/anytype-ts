@@ -76,9 +76,11 @@
 }
 
 .cellContent.isName {
-	.flex { position: static; }
 	.iconObject { z-index: 1; cursor: pointer; }
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
+}
+.cellContent.isName.withIcon {
+	.name { width: calc(100% - 24px); }
 }
 
 .cellContent.c-link {
