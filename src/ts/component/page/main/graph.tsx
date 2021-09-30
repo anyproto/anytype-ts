@@ -284,16 +284,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { isPopup, matchPopup } = this.props;
-
 		this.resize();
 		this.load();
 
 		crumbs.addPage(this.getRootId());
-
-		if (isPopup) {
-			history.pushMatch(matchPopup);
-		};
 	};
 
 	componentDidUpdate () {

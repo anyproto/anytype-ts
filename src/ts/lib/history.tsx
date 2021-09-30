@@ -36,7 +36,6 @@ class History {
 	};
 
 	checkBack () {
-		console.log(this);
 		return this.index - 1 >= 0;
 	};
 
