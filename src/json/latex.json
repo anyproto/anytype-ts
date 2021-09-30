@@ -36,11 +36,11 @@
        "name": "Symbols",
        "children": [
           {
-             "symbol": "\\!",
-             "comment": "`n!`"
+             "symbol": "!",
+             "comment": "`!`"
           },
           {
-             "symbol": "\\\\\\!",
+             "symbol": "\\!",
              "comment": "`a\\!b`"
           },
           {
@@ -48,15 +48,15 @@
              "comment": "`\\def\\bar#1{#1^2} \\bar{y}`"
           },
           {
-             "symbol": "\\\\#",
+             "symbol": "\\#",
              "comment": ""
           },
           {
              "symbol": "%",
-             "comment": "`%this is a comment`"
+             "comment": "`\\%this\\medspace is\\medspace a\\medspace comment`"
           },
           {
-             "symbol": "\\\\%",
+             "symbol": "\\%",
              "comment": ""
           },
           {
@@ -64,7 +64,7 @@
              "comment": "`\\begin{matrix}``a & b \\\\``c & d``\\end{matrix}`"
           },
           {
-             "symbol": "\\\\&",
+             "symbol": "\\&",
              "comment": ""
           },
           {
@@ -72,7 +72,7 @@
              "comment": ""
           },
           {
-             "symbol": "\\\\\\'",
+             "symbol": "\\'",
              "comment": "`\\text{\\'{a}}`"
           },
           {
@@ -84,35 +84,35 @@
              "comment": ""
           },
           {
-             "symbol": "\\\\\\(…\\\\\\)",
+             "symbol": "\\(…\\)",
              "comment": "`\\text{\\(\\frac a b\\)}`"
           },
           {
-             "symbol": "\\\\",
+             "symbol": "\\",
              "comment": "`a\\ b`"
           },
           {
-             "symbol": "\\\\\"",
+             "symbol": "\\\"",
              "comment": "`\\text{\\\"{a}}`"
           },
           {
-             "symbol": "\\\\$",
+             "symbol": "\\$",
              "comment": ""
           },
           {
-             "symbol": "\\\\,",
+             "symbol": "\\,",
              "comment": "`a\\,\\,{b}`"
           },
           {
-             "symbol": "\\\\.",
+             "symbol": "\\.",
              "comment": "`\\text{\\.{a}}`"
           },
           {
-             "symbol": "\\\\:",
+             "symbol": "\\:",
              "comment": "`a\\:\\:{b}`"
           },
           {
-             "symbol": "\\\\;",
+             "symbol": "\\;",
              "comment": "a`\\;\\;{b}`"
           },
           {
@@ -120,19 +120,19 @@
              "comment": "`x_i`"
           },
           {
-             "symbol": "\\\\_",
+             "symbol": "\\_",
              "comment": ""
           },
           {
-             "symbol": "\\\\\\`",
+             "symbol": "\\\\`",
              "comment": "`\\text{\\\\'{a}}`"
           },
           {
-             "symbol": "&#060;",
+             "symbol": "<",
              "comment": ""
           },
           {
-             "symbol": "\\\\=",
+             "symbol": "\\=",
              "comment": "`\\text{\\\\={a}}`"
           },
           {
@@ -140,15 +140,15 @@
              "comment": ""
           },
           {
-             "symbol": "\\\\>",
+             "symbol": "\\>",
              "comment": "`a\\>\\>{b}`"
           },
           {
-             "symbol": "\\[",
+             "symbol": "[",
              "comment": ""
           },
           {
-             "symbol": "\\]",
+             "symbol": "]",
              "comment": ""
           },
           {
@@ -160,19 +160,19 @@
              "comment": "`{a}`"
           },
           {
-             "symbol": "\\\\{",
+             "symbol": "\\{",
              "comment": ""
           },
           {
-             "symbol": "\\\\}",
+             "symbol": "\\}",
              "comment": ""
           },
           {
-             "symbol": "&#124;",
+             "symbol": "|",
              "comment": ""
           },
           {
-             "symbol": "\\\\&#124;",
+             "symbol": "\\|",
              "comment": ""
           },
           {
@@ -180,20 +180,16 @@
              "comment": "`\\text{no~no~no~breaks}`"
           },
           {
-             "symbol": "\\\\~",
-             "comment": "`\\text{\\\\~{a}}`"
-          },
-          {
-             "symbol": "\\\\\\\\",
-             "comment": "`\\begin{matrix}``a & b \\\\``c & d`'`\\end{matrix}`"
+             "symbol": "\\~",
+             "comment": "`\\text{\\~{a}}`"
           },
           {
              "symbol": "^",
              "comment": "`x^i`"
           },
           {
-             "symbol": "\\\\^",
-             "comment": "`\\text{\\\\^{a}}`"
+             "symbol": "\\^",
+             "comment": "`\\text{\\^{a}}`"
           }
        ]
     },
@@ -395,7 +391,7 @@
           },
           {
              "symbol": "\\Bbb",
-             "comment": "`\\Bbb{ABC}`'KaTeX supports A-Z & k"
+             "comment": "`\\Bbb{ABC}`"
           },
           {
              "symbol": "\\Bbbk",
