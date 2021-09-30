@@ -78,6 +78,10 @@ init = (data) => {
 	initForces();
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
+
+	for (var i = 0; i < 300; ++i) {
+		simulation.tick();
+	};
 };
 
 image = ({ src, bitmap }) => {

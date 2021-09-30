@@ -46,7 +46,7 @@
 			background: rgba(255,255,255, 0.7);
 		}
 
-		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
+		.tabs { padding: 10px 0px; border-bottom: 1px solid $colorLightGrey; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }

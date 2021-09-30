@@ -1,31 +1,71 @@
 @import "~scss/_vars";
 
 .pageMainGraph {
-    .wrapper { display: flex; height: 100%; }
+
+    .wrapper { display: flex; height: 100%; overflow: hidden; }
     .wrapper {
         .side { height: 100%; }
-        .side.left { width: calc(100% - 300px); }
-        .side.right { width: 300px; background: rgba(134, 125, 66, 0.08); padding: 20px; overflow: auto; border-left: 1px solid $colorLightGrey; }
+        .side.left { width: calc(100% - 268px); }
+        .side.right { 
+            width: 268px; overflow: auto; border-left: 1px solid $colorLightGrey; position: relative; 
+            z-index: 21;
+        }
+        .side.right {
+            .bottom { 
+                position: absolute; left: 0px; bottom: 0px; padding: 14px 16px; width: 100%; border-top: 1px solid $colorLightGrey;
+            }
+            .bottom {
+                .icon.search { 
+                    width: 20px; height: 20px; margin-right: 8px; vertical-align: top; background-image: url('~img/icon/graph/search.svg');
+                }
+
+                .filter { padding: 0px; background: #fff; width: calc(100% - 28px); display: inline-block; vertical-align: top; }
+                .filter {
+                    .inner { height: auto; }
+                    .input { height: 20px; line-height: 20px; }
+                    .icon.clear { top: 0px; }
+                    .line { display: none; }
+                }
+            }
+        }
     }
 
     #graphWrapper { height: 100%; }
     #graph { width: 100%; height: 100%; }
     canvas { width: 100%; height: 100%; background: #fff; }
 
-    .filter { padding: 0px; background: #fff; border-radius: 3px; border: 1px solid $colorLightGrey; }
-    .filter {
-        .inner { height: auto; padding: 0px 4px; }
-        .line { display: none; }
+    .tabs { padding: 0px 16px; border-bottom: 1px solid $colorLightGrey; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
+    .tabs {
+        .tab { display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
+        .tab:hover, .tab.active { color: $colorBlack; }
+        .tab:last-child { margin: 0px; }
     }
 
-    .section { margin-bottom: 24px; }
+    .sections { overflow: auto; padding: 14px 0px; }
+    .section { padding: 11px 0px 0px 0px; }
+    .section::after { content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block; }
+    .section:first-child { padding: 0px; }
+    .section:last-child { border: 0px; }
+    .section:last-child::after { display: none; }
+    .section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; font-weight: 500; }
     .section {
-        .item { margin-bottom: 10px; line-height: 24px; }
+        .item { padding: 4px 16px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: #fff; }
+        .item::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
+			transition: background 0.2s ease-in-out; pointer-events: none;
+		}
+        .item:hover::before { background: rgba(172, 169, 150, 0.1); }
 
-        .name { @include text-header3; margin-bottom: 12px; line-height: 24px; }
-        .label { @include text-common; margin-bottom: 6px; }
+        .item {
+			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
+			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+		}
 
-        .icon.checkbox { vertical-align: top; margin-right: 6px; cursor: pointer; }
+        .icon.label { background-image: url('~img/icon/graph/label.svg'); }
+        .icon.link { background-image: url('~img/icon/graph/link.svg'); }
+        .icon.relation { background-image: url('~img/icon/graph/relation.svg'); }
+        .icon.orphan { background-image: url('~img/icon/graph/orphan.svg'); }
     }
 
     .input-drag { height: 12px; }

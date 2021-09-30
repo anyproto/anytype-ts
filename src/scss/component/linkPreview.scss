@@ -16,7 +16,7 @@
 		
 	.img {
 		width: 100%; height: 112px; background-repeat: no-repeat; background-size: cover; background-position: center center; 
-		border-bottom: 1px solid #eae9e0;
+		border-bottom: 1px solid $colorLightGrey;
 	}
 		
 	.icon.fav { width: 16px; height: 16px; margin: -4px 6px 0px 0px; }
@@ -34,12 +34,12 @@
 }
 
 .linkPreview.top {
-	.head { border-top: 1px solid #eae9e0; bottom: 0px; padding-bottom: 11px; }
+	.head { border-top: 1px solid $colorLightGrey; bottom: 0px; padding-bottom: 11px; }
 	.content { padding-bottom: 44px; }
 	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
 }
 
 .linkPreview.bottom {
-	.head { border-bottom: 1px solid #eae9e0; top: 0px; padding-top: 11px; }
+	.head { border-bottom: 1px solid $colorLightGrey; top: 0px; padding-top: 11px; }
 	.content { padding-top: 44px; }
 }

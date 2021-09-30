@@ -39,7 +39,7 @@
 			}
 		}
 
-		table { width: 100%; border-collapse: collapse; border-bottom: 1px solid #eae9e0; table-layout: fixed; border-top: 1px solid #eae9e0; }
+		table { width: 100%; border-collapse: collapse; border-bottom: 1px solid $colorLightGrey; table-layout: fixed; border-top: 1px solid $colorLightGrey; }
 		table {
 			.cellHead { 
 				text-align: left; color: $colorVeryDarkGrey; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
@@ -48,21 +48,21 @@
 			.cellHead {
 				.name { 
 					display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
-					@include text-overflow-nw; border-right: 1px solid #eae9e0;
+					@include text-overflow-nw; border-right: 1px solid $colorLightGrey;
 				}
 			}
 			.cellHead:last-child {
 				.name { border: 0px; }
 			}
 
-			tbody { border-top: 1px solid #eae9e0; }
+			tbody { border-top: 1px solid $colorLightGrey; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent.c-object {
 				.wrap { white-space: nowrap; }
 			}
 
-			.cell { padding: 14px; border-bottom: 1px solid #eae9e0; vertical-align: top; position: relative; word-break: break-word; }
+			.cell { padding: 14px; border-bottom: 1px solid $colorLightGrey; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.c-select { padding-bottom: 8px; }
 		}
 	}
