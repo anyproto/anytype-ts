@@ -24,7 +24,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	zoom: any = null;
 	worker: any = null;
 	images: any = {};
-	tooltip: any = null;
 	subject: any = null;
 	isDragging: boolean = false;
 
@@ -129,8 +128,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			return d;
 		});
 
-		this.tooltip = d3.select(elementId).append('div').attr('class', 'tooltip');
-
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (this.width * density) + 'px')
 		.attr('height', (this.height * density) + 'px')
@@ -169,7 +166,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			this.send('onClick', { x: p[0], y: p[1] });
 		})
 		.on('mousedown', (e: any) => {
-			this.tooltip.style('display', 'none');
 		})
 		.on('mousemove', (e: any) => {
 			const p = d3.pointer(e);
@@ -216,7 +212,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	onDragStart (e: any, d: any) {
 		this.isDragging = true;
 		this.send('onDragStart', { active: e.active });
-		this.tooltip.style('display', 'none');
 	};
 
 	onDragMove (e: any, d: any) {
@@ -231,7 +226,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			x: p[0] - win.scrollLeft() - offset.left, 
 			y: p[1] - win.scrollTop() - offset.top,
 		});
-		this.tooltip.style('display', 'none');
 	};
 			
 	onDragEnd (e: any, d: any) {
@@ -259,22 +253,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				const d = data.node;
 				if (!this.isDragging) {
 					this.subject = d;
-				};
-
-				if (d) {
-					const type = dbStore.getObjectType(d.type);
-
-					this.tooltip.
-					style('display', 'block').
-					style('left', data.x + 'px').
-					style('top', data.y + 'px').
-					html([ 
-						`<b>Name:</b> ${Util.shorten(d.name, 52)}`,
-						`<b>Type</b>: ${type ? type.name : translate('defaultNamePage')}`,
-						`<b>Layout</b>: ${translate('layout' + d.layout)}`,
-					].join('<br/>'));
-				} else {
-					this.tooltip.style('display', 'none');
 				};
 				break;
 
