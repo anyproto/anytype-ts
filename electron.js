@@ -597,7 +597,9 @@ function menuInit () {
 				},
 				{
 					label: 'Graph',
-					click: () => { send('popup', 'graph', {}); }
+					click: () => { 
+						send('commandGlobal', 'graph');
+					}
 				},
 			]
 		});

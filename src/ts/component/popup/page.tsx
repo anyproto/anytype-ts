@@ -41,6 +41,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
 		historyPopup.clear();
 	};
 

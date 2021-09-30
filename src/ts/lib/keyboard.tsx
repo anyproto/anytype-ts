@@ -153,11 +153,7 @@ class Keyboard {
 			// Graph
 			if (config.sudo) {
 				this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
-					popupStore.open('graph', {
-						data: { 
-							rootId: rootId,
-						}, 
-					});
+					this.onGraph();
 				});
 			};
 
@@ -283,6 +279,10 @@ class Keyboard {
 				this.onSearch();
 				break;
 
+			case 'graph':
+				this.onGraph();
+				break;
+
 			case 'print':
 				this.onPrint();
 				break;
@@ -309,6 +309,20 @@ class Keyboard {
 	onPrint () {
 		focus.clearRange(true);
 		window.print();
+	};
+
+	onGraph () {
+		popupStore.open('page', {
+			data: { 
+				matchPopup: { 
+					params: {
+						page: 'main',
+						action: 'graph',
+						id: this.getRootId(),
+					},
+				},
+			}, 
+		});
 	};
 
 	onSearch () {

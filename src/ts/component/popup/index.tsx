@@ -15,7 +15,6 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupTemplate from './template';
-import PopupGraph from './graph';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -50,7 +49,6 @@ class Popup extends React.Component<Props, {}> {
 			shortcut: PopupShortcut,
 			page: PopupPage,
 			template: PopupTemplate,
-			graph: PopupGraph,
 		};
 		
 		const popupId = this.getId();

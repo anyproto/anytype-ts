@@ -1,17 +1,19 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
+import { I, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
 import { Label, Drag, Checkbox, Filter } from 'ts/component';
 import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
-interface Props extends I.Popup {};
+interface Props {
+	rootId: string;
+	data: any;
+};
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
-const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> {
+const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
 
 	canvas: any = null;
 	simulation: any = null;
@@ -313,48 +315,23 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	componentDidMount () {
-		const filters: any[] = [
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
-				value: [ 
-					Constant.typeId.relation,
-					Constant.typeId.template,
-					Constant.typeId.type,
-					Constant.typeId.file,
-					Constant.typeId.image,
-					Constant.typeId.video,
-				] 
-			},
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
-				value: [
-					'_anytype_profile',
-					blockStore.profile,
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
-		];
-
-		C.ObjectGraph(filters, 0, [], (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			this.edges = message.edges.filter(d => { return d.source !== d.target; });
-			this.nodes = message.nodes;
-
-			this.init();
-		});
-
-		$(window).unbind('resize.graph').on('resize.graph', () => { this.resize(); });
+		this.resize();
+		this.rebind();
 	};
 
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
 		};
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.graph', () => { this.resize(); });
+	};
+
+	unbind () {
 		$(window).unbind('resize.graph');
 	};
 
@@ -364,9 +341,7 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	};
 
 	init () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+		const { rootId, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#graphWrapper');
 		const density = window.devicePixelRatio;
@@ -375,13 +350,13 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 		this.height = wrapper.height();
 		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 
-		this.edges = this.edges.map((d: any) => {
+		this.edges = (data.edges || []).map((d: any) => {
 			d.type = Number(d.type) || 0;
 			d.typeName = translate('edgeType' + d.type);
 			return d;
 		});
 
-		this.nodes = this.nodes.map((d: any) => {
+		this.nodes = (data.nodes || []).map((d: any) => {
 			const sourceCnt = this.edges.filter((it: any) => { return it.source == d.id; }).length;
 			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
@@ -495,7 +470,15 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 	onDragMove (e: any, d: any) {
 		const win = $(window);
 		const p = d3.pointer(e, d3.select(this.canvas));
-		this.send('onDragMove', { subjectId: this.subject.id, active: e.active, x: p[0] - win.scrollLeft(), y: p[1] - win.scrollTop() });
+		const node = $(ReactDOM.findDOMNode(this));
+		const offset = node.offset();
+
+		this.send('onDragMove', { 
+			subjectId: this.subject.id, 
+			active: e.active, 
+			x: p[0] - win.scrollLeft() - offset.left, 
+			y: p[1] - win.scrollTop() - offset.top,
+		});
 		this.tooltip.style('display', 'none');
 	};
 			
@@ -531,8 +514,8 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 					this.tooltip.
 					style('display', 'block').
-					style('left', (data.x + 30) + 'px').
-					style('top', (data.y + 30) + 'px').
+					style('left', data.x + 'px').
+					style('top', data.y + 'px').
 					html([ 
 						`<b>Name:</b> ${Util.shorten(d.name, 52)}`,
 						`<b>Type</b>: ${type ? type.name : translate('defaultNamePage')}`,
@@ -609,4 +592,4 @@ const PopupGraph = observer(class PopupGraph extends React.Component<Props, {}> 
 
 });
 
-export default PopupGraph;
+export default Graph;

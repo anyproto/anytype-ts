@@ -55,6 +55,7 @@ import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/store.scss';
 import 'scss/page/main/media.scss';
+import 'scss/page/main/graph.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -90,7 +91,6 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
-import 'scss/popup/graph.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
