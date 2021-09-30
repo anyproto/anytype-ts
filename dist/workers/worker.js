@@ -172,10 +172,10 @@ redraw = () => {
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let x1 = d.source.x;
 	let y1 = d.source.y;
-	let r1 = d.source.radius + 1;
+	let r1 = d.source.radius + 3;
 	let x2 = d.target.x;
 	let y2 = d.target.y;
-	let r2 = d.target.radius + 1;
+	let r2 = d.target.radius + 3;
 	let bg = Color.link[d.type] || Color.link[0];
 
     let a1 = Math.atan2(y2 - y1, x2 - x1);
@@ -225,6 +225,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(a2);
+		ctx.font = 'italic 3px Helvetica';
 
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
@@ -267,9 +268,13 @@ drawNode = (d) => {
 		width = 1;
 	};
 
-	ctx.beginPath();
-	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-	ctx.fillStyle = bg;
+	if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+		ctx.beginPath();
+		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+		ctx.closePath();
+	} else {
+		roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, d.radius / 4);
+	};
 
 	if (stroke) {
 		ctx.lineWidth = width;
@@ -277,6 +282,7 @@ drawNode = (d) => {
 		ctx.stroke();
 	};
 	
+	ctx.fillStyle = bg;
 	ctx.fill();
 
 	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {

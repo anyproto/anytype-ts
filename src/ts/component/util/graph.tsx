@@ -13,7 +13,7 @@ interface Props {
 
 const $ = require('jquery');
 
-const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
+const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 	canvas: any = null;
 	simulation: any = null;
@@ -77,38 +77,26 @@ const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
 	};
 
 	render () {
+		const { isPopup } = this.props;
+
 		return (
 			<div id="graphWrapper">
-				<div id="graph" />
+				<div id={'graph' + (isPopup ? '-popup' : '')} />
 			</div>
 		);
-	};
-
-	componentDidMount () {
-		this.resize();
-		this.rebind();
 	};
 
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
 		};
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on('resize.graph', () => { this.resize(); });
-	};
-
-	unbind () {
-		$(window).unbind('resize.graph');
 	};
 
 	init () {
-		const { rootId, data } = this.props;
+		const { rootId, data, isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
+		const elementId = '#graph' + (isPopup ? '-popup' : '');
 
 		this.width = node.width();
 		this.height = node.height();
@@ -141,12 +129,16 @@ const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
 			return d;
 		});
 
-		this.tooltip = d3.select('#graph').append('div').attr('class', 'tooltip');
+		console.log(elementId);
 
-		this.canvas = d3.select('#graph').append('canvas')
+		this.tooltip = d3.select(elementId).append('div').attr('class', 'tooltip');
+
+		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (this.width * density) + 'px')
 		.attr('height', (this.height * density) + 'px')
 		.node();
+
+		console.log(this.canvas);
 
 		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
 

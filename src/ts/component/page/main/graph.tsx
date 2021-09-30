@@ -31,7 +31,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
-				<div className="sides">
+
+				<div className="wrapper">
 					<div className="side left">
 						<Graph 
 							ref={(ref: any) => { this.refGraph = ref; }} 
@@ -285,6 +286,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidMount () {
 		this.resize();
+		this.rebind();
 		this.load();
 
 		crumbs.addPage(this.getRootId());
@@ -292,6 +294,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	componentDidUpdate () {
 		this.resize();
+	};
+
+	componentWillUnmount () {
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.graph', () => { this.resize(); });
+	};
+
+	unbind () {
+		$(window).unbind('resize.graph');
 	};
 
 	load () {
@@ -339,11 +354,28 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	resize () {
 		const { isPopup } = this.props;
+		const win = $(window);
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const header = obj.find('#header');
+		const wrapper = obj.find('.wrapper');
+
+		let height = 0;
+
+		if (isPopup) {
+			height = obj.height();
+		} else {
+			height = win.height();
+		};
+
+		wrapper.css({ paddingTop: header.height() });
+		wrapper.find('.side').css({ height: height });
 		
 		if (isPopup) {
 			const obj = $('#popupPage .content');
 			obj.css({ minHeight: 'unset', height: '100%' });
 		};
+
+		this.refGraph.resize();
 	};
 
 	getRootId () {

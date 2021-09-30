@@ -110,9 +110,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-
-		DataUtil.objectOpen(object);
+		this.props.history.push('/main/graph/' + rootId);
 	};
 	
 	onSearch (e: any) {
