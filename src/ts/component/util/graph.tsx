@@ -223,8 +223,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.send('onDragMove', { 
 			subjectId: this.subject.id, 
 			active: e.active, 
-			x: p[0] - win.scrollLeft() - offset.left, 
-			y: p[1] - win.scrollTop() - offset.top,
+			x: p[0] - offset.left, 
+			y: p[1] - offset.top,
 		});
 	};
 			

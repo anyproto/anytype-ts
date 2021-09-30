@@ -6,6 +6,8 @@ import { HeaderMainGraph as Header, Graph, Filter, MenuItemVertical, Icon } from
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
+import Controls from './graph/controls';
+
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
@@ -24,15 +26,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	refHeader: any = null;
 	refGraph: any = null;
 
+	constructor (props: any) {
+		super(props);
+
+		this.onSwitch = this.onSwitch.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+	};
+
 	render () {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const itemsAppearance: any[] = [
-			{ id: 'labels', icon: 'label', name: 'Labels' },
-			{ id: 'links', icon: 'link', name: 'Links' },
-			{ id: 'relations', icon: 'relation', name: 'Relations' },
-			{ id: 'orphans', icon: 'orphan', name: 'Orphans' },
-		];
 		const ref = this.refGraph;
 
 		return (
@@ -51,40 +54,14 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					</div>
 
 					<div className="side right">
-						{this.refGraph ? (
-							<React.Fragment>
-								<div className="tabs">
-									<div className="tab">View</div>
-									<div className="tab">Filters</div>
-								</div>
-								<div className="sections">
-									<div className="section">
-										<div className="name">Appearance</div>
-										{itemsAppearance.map((item: any, i: number) => (
-											<MenuItemVertical 
-												key={i}
-												{...item}
-												withSwitch={true}
-												switchValue={ref.forceProps[item.id]}
-												onSwitch={(e: any, v: any) => {
-													ref.forceProps[item.id] = v;
-													ref.updateProps();
-												}}
-											/>
-										))}
-									</div>
-								</div>
-
-								<div className="bottom">
-									<Icon className="search" />
-									<Filter placeholder="Search for an object" onChange={(v: string) => {
-										ref.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
-										ref.updateProps();
-									}} />
-								</div>
-							</React.Fragment>
+						{ref ? (
+							<Controls
+								data={ref.forceProps}
+								onFilterChange={this.onFilterChange}
+								onSwitch={this.onSwitch}
+							/>
 						) : ''}
-						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -156,11 +133,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		});
 	};
 
-	updateLabel (id: string, text: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find(`#${id}`).text(text);
-	};
-
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
@@ -191,6 +163,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	onSwitch (id: string, v: any) {
+		this.refGraph.forceProps[id] = v;
+		this.refGraph.updateProps();
+	};
+
+	onFilterChange (v: string) {
+		this.refGraph.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
+		this.refGraph.updateProps();
 	};
 
 });
