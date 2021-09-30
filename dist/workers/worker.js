@@ -60,7 +60,7 @@ init = (data) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
 			d.fy = height / 2;
-			d.radius = 10;
+			d.radius = 6;
 		};
 
 		octx.save();
@@ -78,10 +78,7 @@ init = (data) => {
 	initForces();
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
-
-	for (var i = 0; i < 300; ++i) {
-		simulation.tick();
-	};
+	simulation.tick(1000);
 };
 
 image = ({ src, bitmap }) => {

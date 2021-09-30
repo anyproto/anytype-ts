@@ -147,7 +147,7 @@ class DataUtil {
 		return c;
 	};
 
-	relationClass (v: I.RelationType): string {
+	relationTypeName (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
 			default:
@@ -155,8 +155,8 @@ class DataUtil {
 			case I.RelationType.ShortText:	 c = 'shortText'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Status:		 c = 'select isStatus'; break;
-			case I.RelationType.Tag:		 c = 'select isTag'; break;
+			case I.RelationType.Status:		 c = 'status'; break;
+			case I.RelationType.Tag:		 c = 'tag'; break;
 			case I.RelationType.File:		 c = 'file'; break;
 			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
 			case I.RelationType.Url:		 c = 'url'; break;
@@ -164,13 +164,20 @@ class DataUtil {
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
 		};
+		return c;
+	};
+
+	relationClass (v: I.RelationType): string {
+		let c = this.relationTypeName(v);
+		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
+			c = 'select ' + this.tagClass(v);
+		};
 		return 'c-' + c;
 	};
 
 	tagClass (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
-			default:
 			case I.RelationType.Status:		 c = 'isStatus'; break;
 			case I.RelationType.Tag:		 c = 'isTag'; break;
 		};

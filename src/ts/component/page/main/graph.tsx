@@ -117,15 +117,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 	load () {
 		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
 				value: [ 
 					Constant.typeId.relation,
-					Constant.typeId.template,
 					Constant.typeId.type,
+					Constant.typeId.template,
 					Constant.typeId.file,
 					Constant.typeId.image,
 					Constant.typeId.video,
+					Constant.typeId.audio,
 				] 
 			},
 			{ 

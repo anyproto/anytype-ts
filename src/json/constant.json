@@ -139,6 +139,7 @@
 		"image": "_otimage",
 		"file": "_otfile",
 		"video": "_otvideo",
+		"audio": "_otaudio",
 		"relation": "_otrelation"
 	},
 

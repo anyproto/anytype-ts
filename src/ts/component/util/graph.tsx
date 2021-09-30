@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, translate, keyboard } from 'ts/lib';
-import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
+import { I, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
+import { commonStore, blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -115,7 +115,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
 			d.shortName = Util.shorten(d.name, 16);
-			d.radius = Math.max(5, Math.min(10, sourceCnt));
+			d.radius = Math.max(3, Math.min(8, Math.sqrt(sourceCnt)));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
@@ -129,16 +129,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			return d;
 		});
 
-		console.log(elementId);
-
 		this.tooltip = d3.select(elementId).append('div').attr('class', 'tooltip');
 
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (this.width * density) + 'px')
 		.attr('height', (this.height * density) + 'px')
 		.node();
-
-		console.log(this.canvas);
 
 		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
 
@@ -293,8 +289,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		};
 
 		switch (d.layout) {
+			case I.ObjectLayout.Relation:
+				src = `img/icon/relation/big/${DataUtil.relationTypeName(d.relationFormat)}.svg`;
+				break;
+
 			case I.ObjectLayout.Task:
-				src = 'img/icon/task.svg';
+				src = `img/icon/checkbox${Number(d.done) || 0}.svg`;
 				break;
 
 			case I.ObjectLayout.File:
