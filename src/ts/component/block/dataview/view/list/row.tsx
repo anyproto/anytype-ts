@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Cell } from 'ts/component';
@@ -7,9 +8,13 @@ import { dbStore } from 'ts/store';
 interface Props extends I.ViewComponent {
 	index: number;
 	style?: any;
-}
+};
+
+const $ = require('jquery');
 
 const Row = observer(class Row extends React.Component<Props, {}> {
+
+	_isMounted: boolean = false;
 
 	render () {
 		const { rootId, block, index, getView, onCellClick, onRef, style } = this.props;
@@ -42,6 +47,33 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 				})}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this._isMounted = true;
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const first = node.find('.cellContent:not(.isEmpty)').first();
+
+		node.find('.cellContent').removeClass('first');
+		if (first.length) {
+			first.addClass('first');
+		};
 	};
 
 });
