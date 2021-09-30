@@ -277,7 +277,8 @@ drawNode = (d) => {
 		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 		ctx.closePath();
 	} else {
-		roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, d.radius / 4);
+		const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+		roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
 	};
 
 	if (stroke) {
@@ -308,11 +309,16 @@ drawNode = (d) => {
 		x = d.x - d.radius;
 		y = d.y - d.radius;
 
-		ctx.beginPath();
-		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-		ctx.closePath();
-		ctx.fill();
+		if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+			ctx.beginPath();
+			ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+			ctx.closePath();
+		} else {
+			const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+			roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+		};
 
+		ctx.fill();
 		ctx.clip();
 
 		if (img.width > img.height) {
