@@ -25,9 +25,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		this.onHome = this.onHome.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
-		this.onMore = this.onMore.bind(this);
-		this.onNavigation = this.onNavigation.bind(this);
-		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
@@ -63,7 +60,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 					</div>
 				)}
 
@@ -119,83 +115,6 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		DataUtil.objectOpen(object);
 	};
 	
-	onMore (e: any) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
-		const { isPopup, match, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-more`;
-		const param: any = {
-			element: elementId,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.more,
-			data: {
-				rootId: rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				match: match,
-			}
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-
-			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
-		} else {
-			param.offsetY = 4;
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
-	};
-
-	onSync (e: any) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
-		const { isPopup, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-sync`;
-		const param: any = {
-			element: elementId,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rootId: rootId,
-			}
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
-		} else {
-			param.offsetY = 4;
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
-	};
-
-	onNavigation (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { rootId } = this.props;
-
-		popupStore.open('navigation', {
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
-		});
-	};
-
 	onSearch (e: any) {
 		e.preventDefault();
 		e.stopPropagation();

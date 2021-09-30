@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
-import { Label, Drag, Checkbox, Filter } from 'ts/component';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { I, Util, DataUtil, SmileUtil, translate, keyboard } from 'ts/lib';
+import { commonStore, blockStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
 interface Props {
+	isPopup?: boolean;
 	rootId: string;
 	data: any;
 };
@@ -70,246 +70,16 @@ const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
 		filter: '',
 	};
 
+	constructor (props: any) {
+		super(props);
+
+		this.onMessage = this.onMessage.bind(this);
+	};
+
 	render () {
 		return (
-			<div className="sides">
-				<div id="graphWrapper" className="side left">
-					<div id="graph" />
-				</div>
-				<div className="side right">
-					<div className="section">
-						<div className="name">Filter</div>
-						<div className="item">
-							<Filter onChange={(v: string) => {
-								this.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
-								this.updateProps();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">Center</div>
-						<div className="item">
-							<Label id="center-x" text={`X: ${this.forceProps.center.x}`} />
-							<Drag value={this.forceProps.center.x} onMove={(e: any, v: number) => { 
-								this.forceProps.center.x = v; 
-								this.updateLabel('center-x', `X: ${Math.ceil(v * 100) + '%'}`);
-								this.updateForces();
-							}} />
-
-							<Label id="center-y" text={`Y: ${this.forceProps.center.y}`} />
-							<Drag value={this.forceProps.center.y} onMove={(e: any, v: number) => { 
-								this.forceProps.center.y = v; 
-								this.updateLabel('center-y', `Y: ${Math.ceil(v * 100) + '%'}`);
-								this.updateForces();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">
-							<Checkbox value={this.forceProps.charge.enabled} onChange={(e: any, v: any) => {
-								this.forceProps.charge.enabled = v;
-								this.updateForces();
-							}} />
-							Charge
-						</div>
-						<div className="item">
-							<Label id="charge-strength" text={`Strength: ${this.forceProps.charge.strength}`} />
-							<Drag value={(this.forceProps.charge.strength + 200) / 250} onMove={(e: any, v: number) => { 
-								this.forceProps.charge.strength = v * 250 - 200; 
-								this.updateLabel('charge-strength', `Strength: ${Math.ceil(v * 250 - 200)}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="charge-distanceMin" text={`Distance Min: ${this.forceProps.charge.distanceMin}`} />
-							<Drag value={this.forceProps.charge.distanceMin / 50} onMove={(e: any, v: number) => { 
-								this.forceProps.charge.distanceMin = v * 50;
-								this.updateLabel('charge-distanceMin', `Distance Min: ${Math.ceil(v * 50)}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="charge-distanceMax" text={`Distance Max: ${this.forceProps.charge.distanceMax}`} />
-							<Drag value={this.forceProps.charge.distanceMax / 2000} onMove={(e: any, v: number) => { 
-								this.forceProps.charge.distanceMax = v * 2000;
-								this.updateLabel('charge-distanceMax', `Distance Max: ${Math.ceil(v * 2000)}`);
-								this.updateForces();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">
-							<Checkbox value={this.forceProps.collide.enabled} onChange={(e: any, v: any) => {
-								this.forceProps.collide.enabled = v;
-								this.updateForces();
-							}} />
-							Collide
-						</div>
-						<div className="item">
-							<Label id="collide-strength" text={`Strength: ${this.forceProps.collide.strength}`} />
-							<Drag value={this.forceProps.collide.strength / 2} onMove={(e: any, v: number) => { 
-								this.forceProps.collide.strength = v * 2; 
-								this.updateLabel('collide-strength', `Strength: ${Math.ceil(v * 2 * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="collide-radius" text={`Radius: ${this.forceProps.collide.radius}`} />
-							<Drag value={this.forceProps.collide.radius / 5} onMove={(e: any, v: number) => { 
-								this.forceProps.collide.radius = v * 5;
-								this.updateLabel('collide-radius', `Radius: ${Math.ceil(v * 5 * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="collide-iterations" text={`Iterations: ${this.forceProps.collide.iterations}`} />
-							<Drag value={this.forceProps.collide.iterations / 10} onMove={(e: any, v: number) => { 
-								this.forceProps.collide.iterations = v * 10;
-								this.updateLabel('collide-iterations', `Iterations: ${Math.ceil(v * 10)}`);
-								this.updateForces();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">
-							<Checkbox value={this.forceProps.forceX.enabled} onChange={(e: any, v: any) => {
-								this.forceProps.forceX.enabled = v;
-								this.updateForces();
-							}} />
-							Force X
-						</div>
-
-						<div className="item">
-							<Label id="forceX-strengh" text={`Strength: ${this.forceProps.forceX.strength}`} />
-							<Drag value={this.forceProps.forceX.strength} onMove={(e: any, v: number) => { 
-								this.forceProps.forceX.strengh = v;
-								this.updateLabel('forceX-strengh', `Strength: ${Math.ceil(v * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="forceX-x" text={`X: ${this.forceProps.forceX.x}`} />
-							<Drag value={this.forceProps.forceX.x} onMove={(e: any, v: number) => { 
-								this.forceProps.forceX.x = v;
-								this.updateLabel('forceX-x', `X: ${Math.ceil(v * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">
-							<Checkbox value={this.forceProps.forceY.enabled} onChange={(e: any, v: any) => {
-								this.forceProps.forceY.enabled = v;
-								this.updateForces();
-							}} />
-							Force Y
-						</div>
-
-						<div className="item">
-							<Label id="forceY-strengh" text={`Strength: ${this.forceProps.forceY.strength}`} />
-							<Drag value={this.forceProps.forceY.strength} onMove={(e: any, v: number) => { 
-								this.forceProps.forceY.strengh = v;
-								this.updateLabel('forceY-strengh', `Strength: ${Math.ceil(v * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="forceY-x" text={`Y: ${this.forceProps.forceY.y}`} />
-							<Drag value={this.forceProps.forceY.y} onMove={(e: any, v: number) => { 
-								this.forceProps.forceY.y = v;
-								this.updateLabel('forceY-y', `Y: ${Math.ceil(v * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">
-							<Checkbox value={this.forceProps.link.enabled} onChange={(e: any, v: any) => {
-								this.forceProps.link.enabled = v;
-								this.updateForces();
-							}} />
-							Link
-						</div>
-
-						<div className="item">
-							<Label id="link-distance" text={`Distance: ${this.forceProps.link.distance}`} />
-							<Drag value={this.forceProps.link.distance / 100} onMove={(e: any, v: number) => { 
-								this.forceProps.link.distance = v * 100;
-								this.updateLabel('link-distance', `Distance: ${Math.ceil(v * 100)}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="link-strength" text={`Strength: ${this.forceProps.link.strength}`} />
-							<Drag value={this.forceProps.link.strength} onMove={(e: any, v: number) => { 
-								this.forceProps.link.strength = v; 
-								this.updateLabel('link-strength', `Strength: ${Math.ceil(v * 1000) / 1000}`);
-								this.updateForces();
-							}} />
-						</div>
-
-						<div className="item">
-							<Label id="link-iterations" text={`Iterations: ${this.forceProps.link.iterations}`} />
-							<Drag value={this.forceProps.link.iterations / 10} onMove={(e: any, v: number) => { 
-								this.forceProps.link.iterations = v * 10;
-								this.updateLabel('link-iterations', `Iterations: ${Math.ceil(v * 10)}`);
-								this.updateForces();
-							}} />
-						</div>
-					</div>
-
-					<div className="section">
-						<div className="name">Flags</div>
-						<div className="item">
-							<Checkbox value={this.forceProps.orphans} onChange={(e: any, v: any) => {
-								this.forceProps.orphans = v;
-								this.updateProps();
-							}} />
-							Show orphans
-						</div>
-						<div className="item">
-							<Checkbox value={this.forceProps.markers} onChange={(e: any, v: any) => {
-								this.forceProps.markers = v;
-								this.updateProps();
-							}} />
-							Show markers
-						</div>
-						<div className="item">
-							<Checkbox value={this.forceProps.labels} onChange={(e: any, v: any) => {
-								this.forceProps.labels = v;
-								this.updateProps();
-							}} />
-							Show labels
-						</div>
-						<div className="item">
-							<Checkbox value={this.forceProps.links} onChange={(e: any, v: any) => {
-								this.forceProps.links = v;
-								this.updateProps();
-							}} />
-							Show links
-						</div>
-						<div className="item">
-							<Checkbox value={this.forceProps.relations} onChange={(e: any, v: any) => {
-								this.forceProps.relations = v;
-								this.updateProps();
-							}} />
-							Show relations
-						</div>
-					</div>
-				</div>
+			<div id="graphWrapper">
+				<div id="graph" />
 			</div>
 		);
 	};
@@ -335,19 +105,13 @@ const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
 		$(window).unbind('resize.graph');
 	};
 
-	updateLabel (id: string, text: string) {
-		const node = $(ReactDOM.findDOMNode(this));
-		node.find(`#${id}`).text(text);
-	};
-
 	init () {
 		const { rootId, data } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrapper = node.find('#graphWrapper');
 		const density = window.devicePixelRatio;
 
-		this.width = wrapper.width();
-		this.height = wrapper.height();
+		this.width = node.width();
+		this.height = node.height();
 		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 
 		this.edges = (data.edges || []).map((d: any) => {
@@ -581,11 +345,10 @@ const Graph = observer(class PopupGraph extends React.Component<Props, {}> {
 
 	resize () {
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrapper = node.find('#graphWrapper');
 		const density = window.devicePixelRatio;
 
-		this.width = wrapper.width();
-		this.height = wrapper.height();
+		this.width = node.width();
+		this.height = node.height();
 
 		this.send('onResize', { width: this.width, height: this.height, density: density });
 	};
