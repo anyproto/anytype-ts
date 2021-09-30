@@ -263,7 +263,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		let src = '';
 
 		if (d.id == blockStore.root) {
-			return 'img/icon/home.svg';
+			return 'img/icon/home-big.svg';
 		};
 
 		switch (d.layout) {
