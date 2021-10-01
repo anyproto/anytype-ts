@@ -158,6 +158,36 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 	dispatcher.request('accountSelect', request, callBack);
 };
 
+const ObjectAddWithShareLink = (link: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.AddWithShareLink.Request();
+
+	request.setLinj(link);
+
+	dispatcher.request('addWithShareLink', request, callBack);
+};
+
+const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.CreateFromBlock.Request();
+
+	request.setObjectId(objectId);
+
+	dispatcher.request('objectShareByLink', request, callBack);
+};
+
+const WorkspaceCreate = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Create.Request();
+
+
+	dispatcher.request('workspaceCreate', request, callBack);
+};
+
+const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Select.Request();
+	request.setWorkspaceid(workspaceId);
+
+	dispatcher.request('workspaceSelect', request, callBack);
+};
+
 const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Stop.Request();
 	
@@ -1095,6 +1125,9 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 };
 
 export {
+	ObjectAddWithShareLink,
+	ObjectShareByLink,
+
 	VersionGet,
 	DebugSync,
 	DebugTree,
@@ -1227,4 +1260,7 @@ export {
 	MakeTemplateByObjectType,
 	ApplyTemplate,
 	CloneTemplate,
+
+	WorkspaceCreate,
+	WorkspaceSelect,
 };
