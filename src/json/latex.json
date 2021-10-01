@@ -4,10 +4,10 @@
        "name": "Templates",
        "children": [
           {
-             "comment": "`e = m*c^2`"
+             "comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`"
           },
           {
-             "comment": "`\\begin{align*} a&=b+c \\\\ d+e&=f \\end{align*}`"
+             "comment": "`\\int_{-\\infty}^\\infty f(\\hat\\xi\\,)e^{2 \\pi i \\xi x}\\,d\\xi`"
           },
           {
              "comment": "`\\cfrac{a}{1 + b}`"
@@ -22,10 +22,7 @@
              "comment": "`\\begin{Bmatrix} 0 & -1 \\\\ -1 & 0 \\end{Bmatrix}`"
           },
           {
-             "comment": "`\\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`"
-          },
-          {
-             "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij}`"
+             "comment": "`\\sum_{\\mathclap{1\\le i\\le j\\le n}} x_{ij} + \\sum_{\\begin{subarray}{l}i\\in\\Lambda\\\\0<j<n\\end{subarray}}`"
           },
           {
              "comment": "`\\ce{C6H5-CHO}`"
@@ -36,52 +33,24 @@
        "name": "Symbols",
        "children": [
           {
-             "symbol": "!",
-             "comment": "`!`"
-          },
-          {
              "symbol": "\\!",
              "comment": "`a\\!b`"
-          },
-          {
-             "symbol": "#",
-             "comment": "`\\def\\bar#1{#1^2} \\bar{y}`"
           },
           {
              "symbol": "\\#",
              "comment": ""
           },
           {
-             "symbol": "%",
-             "comment": "`\\%this\\medspace is\\medspace a\\medspace comment`"
-          },
-          {
              "symbol": "\\%",
              "comment": ""
-          },
-          {
-             "symbol": "&",
-             "comment": "`\\begin{matrix}``a & b \\\\``c & d``\\end{matrix}`"
           },
           {
              "symbol": "\\&",
              "comment": ""
           },
           {
-             "symbol": "'",
-             "comment": ""
-          },
-          {
              "symbol": "\\'",
-             "comment": "`\\text{\\'{a}}`"
-          },
-          {
-             "symbol": "(",
-             "comment": ""
-          },
-          {
-             "symbol": ")",
-             "comment": ""
+             "comment": "`\\'{a}`"
           },
           {
              "symbol": "\\(…\\)",
@@ -93,7 +62,7 @@
           },
           {
              "symbol": "\\\"",
-             "comment": "`\\text{\\\"{a}}`"
+             "comment": "\\text{\\\"{a}}"
           },
           {
              "symbol": "\\$",
@@ -116,48 +85,20 @@
              "comment": "a`\\;\\;{b}`"
           },
           {
-             "symbol": "_",
-             "comment": "`x_i`"
-          },
-          {
              "symbol": "\\_",
              "comment": ""
           },
           {
              "symbol": "\\\\`",
-             "comment": "`\\text{\\\\'{a}}`"
-          },
-          {
-             "symbol": "<",
-             "comment": ""
+             "comment": "`\\text{\\\\`{a}}`"
           },
           {
              "symbol": "\\=",
              "comment": "`\\text{\\\\={a}}`"
           },
           {
-             "symbol": ">",
-             "comment": ""
-          },
-          {
              "symbol": "\\>",
              "comment": "`a\\>\\>{b}`"
-          },
-          {
-             "symbol": "[",
-             "comment": ""
-          },
-          {
-             "symbol": "]",
-             "comment": ""
-          },
-          {
-             "symbol": "{",
-             "comment": "`{a}`"
-          },
-          {
-             "symbol": "}",
-             "comment": "`{a}`"
           },
           {
              "symbol": "\\{",
@@ -168,24 +109,12 @@
              "comment": ""
           },
           {
-             "symbol": "|",
-             "comment": ""
-          },
-          {
              "symbol": "\\|",
              "comment": ""
           },
           {
-             "symbol": "~",
-             "comment": "`\\text{no~no~no~breaks}`"
-          },
-          {
              "symbol": "\\~",
              "comment": "`\\text{\\~{a}}`"
-          },
-          {
-             "symbol": "^",
-             "comment": "`x^i`"
           },
           {
              "symbol": "\\^",
@@ -233,30 +162,6 @@
              "comment": ""
           },
           {
-             "symbol": "{align}",
-             "comment": "`\\begin{align}``a&=b+c \\\\``d+e&=f`'`\\end{align}`"
-          },
-          {
-             "symbol": "{align\\*}",
-             "comment": "`\\begin{align*}``a&=b+c \\\\``d+e&=f`'`\\end{align*}`"
-          },
-          {
-             "symbol": "{aligned}",
-             "comment": "`\\begin{aligned}``a&=b+c \\\\``d+e&=f`'`\\end{aligned}`"
-          },
-          {
-             "symbol": "{alignat}",
-             "comment": "`\\begin{alignat}{2}``10&x+ &3&y = 2 \\\\`` 3&x+&13&y = 4`'`\\end{alignat}`"
-          },
-          {
-             "symbol": "{alignat\\*}",
-             "comment": "`\\begin{alignat*}{2}``10&x+ &3&y = 2 \\\\`` 3&x+&13&y = 4`'`\\end{alignat*}`"
-          },
-          {
-             "symbol": "{alignedat}",
-             "comment": "`\\begin{alignedat}{2}``10&x+ &3&y = 2 \\\\`` 3&x+&13&y = 4`'`\\end{alignedat}`"
-          },
-          {
              "symbol": "\\allowbreak",
              "comment": ""
           },
@@ -274,10 +179,6 @@
           },
           {
              "symbol": "\\And",
-             "comment": ""
-          },
-          {
-             "symbol": "\\angl",
              "comment": ""
           },
           {
@@ -337,12 +238,8 @@
              "comment": ""
           },
           {
-             "symbol": "{array}",
-             "comment": "`\\begin{array}{cc}``a & b \\\\``c & d`'`\\end{array}`"
-          },
-          {
              "symbol": "\\arraystretch",
-             "comment": "`\\def\\arraystretch{1.5}`'`\\begin{array}{cc}``a & b \\\\``c & d`'`\\end{array}`"
+             "comment": "`\\def\\arraystretch{1.5} \\begin{array}{cc} a & b \\\\ c & d \\end{array}`"
           },
           {
              "symbol": "\\ast",
@@ -411,7 +308,7 @@
           },
           {
              "symbol": "\\begingroup",
-             "comment": "`\\begingroup a}`"
+             "comment": "`\\begingroup`"
           },
           {
              "symbol": "\\Beta",
@@ -582,22 +479,6 @@
              "comment": "`\\bm{AaBb}`"
           },
           {
-             "symbol": "{Bmatrix}",
-             "comment": "`\\begin{Bmatrix}``a & b \\\\``c & d`'`\\end{Bmatrix}`"
-          },
-          {
-             "symbol": "{Bmatrix*}",
-             "comment": "`\\begin{Bmatrix*}[r]``0 & -1 \\\\``-1 & 0`'`\\end{Bmatrix*}`"
-          },
-          {
-             "symbol": "{bmatrix}",
-             "comment": "`\\begin{bmatrix}``a & b \\\\``c & d`'`\\end{bmatrix}`"
-          },
-          {
-             "symbol": "{bmatrix*}",
-             "comment": "`\\begin{bmatrix*}[r]``0 & -1 \\\\``-1 & 0`'`\\end{bmatrix*}`"
-          },
-          {
              "symbol": "\\bmod",
              "comment": "`a \\bmod b`"
           },
@@ -703,14 +584,6 @@
              "comment": ""
           },
           {
-             "symbol": "{cases}",
-             "comment": "`\\begin{cases}``a &\\text{if } b  \\\\``c &\\text{if } d`'`\\end{cases}`"
-          },
-          {
-             "symbol": "{CD}",
-             "comment": "`\\begin{CD}``A  @>a>>  B  \\\\`'`@VbVV    @AAcA \\\\``C  @=     D`'`\\end{CD}`"
-          },
-          {
              "symbol": "\\cdot",
              "comment": ""
           },
@@ -724,15 +597,11 @@
           },
           {
              "symbol": "\\ce",
-             "comment": "`\\ce{C6H5-CHO}` Requires an [extension](https://github.com/KaTeX/KaTeX/tree/master/contrib/mhchem/)"
+             "comment": "`\\ce{C6H5-CHO}`"
           },
           {
              "symbol": "\\centerdot",
              "comment": "`a\\centerdot b`"
-          },
-          {
-             "symbol": "",
-             "comment": null
           },
           {
              "symbol": "\\cfrac",
@@ -932,7 +801,7 @@
           },
           {
              "symbol": "\\cr",
-             "comment": "`\\begin{matrix}``a & b \\cr``c & d`'`\\end{matrix}`"
+             "comment": "`\\begin{matrix}``a & b \\cr ``c & d`'`\\end{matrix}`"
           },
           {
              "symbol": "\\csc",
@@ -1034,10 +903,6 @@
           {
              "symbol": "\\dblcolon",
              "comment": ""
-          },
-          {
-             "symbol": "{dcases}",
-             "comment": "`\\begin{dcases}``a &\\text{if } b  \\\\``c &\\text{if } d`'`\\end{dcases}`"
           },
           {
              "symbol": "\\ddag",
@@ -1202,10 +1067,6 @@
           {
              "symbol": "\\downharpoonright",
              "comment": ""
-          },
-          {
-             "symbol": "{drcases}",
-             "comment": "`\\begin{drcases}``a &\\text{if } b  \\\\``c &\\text{if } d`'`\\end{drcases}`"
           }
        ]
     },
@@ -1259,14 +1120,6 @@
           {
              "symbol": "\\eqcolon",
              "comment": ""
-          },
-          {
-             "symbol": "{equation}",
-             "comment": "`\\begin{equation}``a = b + c`'`\\end{equation}`"
-          },
-          {
-             "symbol": "{equation*}",
-             "comment": "`\\begin{equation*}``a = b + c`'`\\end{equation*}`"
           },
           {
              "symbol": "\\Eqqcolon",
@@ -1393,14 +1246,6 @@
           {
              "symbol": "\\gamma",
              "comment": ""
-          },
-          {
-             "symbol": "{gather}",
-             "comment": "`\\begin{gather}``a=b \\\\ ``e=b+c`'`\\end{gather}`"
-          },
-          {
-             "symbol": "{gathered}",
-             "comment": "`\\begin{gathered}``a=b \\\\ ``e=b+c`'`\\end{gathered}`"
           },
           {
              "symbol": "\\gcd",
@@ -2232,14 +2077,6 @@
              "comment": "`\\mathtt{AaBb123}`"
           },
           {
-             "symbol": "{matrix}",
-             "comment": "`\\begin{matrix}``a & b \\\\``c & d`'`\\end{matrix}`"
-          },
-          {
-             "symbol": "{matrix*}",
-             "comment": "`\\begin{matrix*}[r]``0 & -1 \\\\``-1 & 0`'`\\end{matrix*}`"
-          },
-          {
              "symbol": "\\max",
              "comment": ""
           },
@@ -2763,14 +2600,6 @@
              "comment": ""
           },
           {
-             "symbol": "{pmatrix}",
-             "comment": "`\\begin{pmatrix}``a & b \\\\``c & d`'`\\end{pmatrix}`"
-          },
-          {
-             "symbol": "{pmatrix*}",
-             "comment": "`\\begin{pmatrix*}[r]``0 & -1 \\\\``-1 & 0`'`\\end{pmatrix*}`"
-          },
-          {
              "symbol": "\\pmb",
              "comment": "`\\pmb{\\mu}`"
           },
@@ -2914,10 +2743,6 @@
           {
              "symbol": "\\rbrack",
              "comment": ""
-          },
-          {
-             "symbol": "{rcases}",
-             "comment": "`\\begin{rcases}``a &\\text{if } b  \\\\``c &\\text{if } d`'`\\end{rcases}`"
           },
           {
              "symbol": "\\rceil",
@@ -3177,10 +3002,6 @@
              "comment": ""
           },
           {
-             "symbol": "{smallmatrix}",
-             "comment": "`\\begin{smallmatrix}``a & b \\\\``c & d`'`\\end{smallmatrix}`"
-          },
-          {
              "symbol": "\\smallsetminus",
              "comment": ""
           },
@@ -3215,10 +3036,6 @@
           {
              "symbol": "\\sphericalangle",
              "comment": ""
-          },
-          {
-             "symbol": "{split}",
-             "comment": "`\\begin{equation}`'`\\begin{split}``a &=b+c\\\\`&nbsp;&nbsp;&nbsp;`&=e+f`'`\\end{split}`'`\\end{equation}`"
           },
           {
              "symbol": "\\sqcap",
@@ -3970,22 +3787,6 @@
           {
              "symbol": "\\vert",
              "comment": ""
-          },
-          {
-             "symbol": "{Vmatrix}",
-             "comment": "`\\begin{Vmatrix}``a & b \\\\``c & d`'`\\end{Vmatrix}`"
-          },
-          {
-             "symbol": "{Vmatrix*}",
-             "comment": "`\\begin{Vmatrix*}[r]``0 & -1 \\\\``-1 & 0`'`\\end{Vmatrix*}`"
-          },
-          {
-             "symbol": "{vmatrix}",
-             "comment": "`\\begin{vmatrix}``a & b \\\\``c & d`'`\\end{vmatrix}`"
-          },
-          {
-             "symbol": "{vmatrix*}",
-             "comment": "`\\begin{vmatrix*}[r]``0 & -1 \\\\``-1 & 0`'`\\end{vmatrix*}`"
           },
           {
              "symbol": "\\vphantom",

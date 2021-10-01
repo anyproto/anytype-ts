@@ -12,16 +12,27 @@ class MenuPreviewLatex extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { text } = data;
+		const { text, example } = data;
 
 		const math = katex.renderToString(String(text || ''), {
-			displayMode: true, 
+			displayMode: true,
 			throwOnError: false,
 			output: 'html',
 		});
 
+		if (example) {
+			return (
+				<div>
+					<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+					<div className="item">Example: { text }</div>
+				</div>
+			);
+		}
+
 		return (
-			<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+			<div>
+				<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+			</div>
 		);
 	};
 
