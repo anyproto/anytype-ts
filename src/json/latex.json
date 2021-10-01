@@ -881,10 +881,6 @@
              "comment": ""
           },
           {
-             "symbol": "$\\begin{darray}{cc}a&b\\\\c&d\\end{darray}$",
-             "comment": ""
-          },
-          {
              "symbol": "\\dashleftarrow",
              "comment": ""
           },
@@ -1030,7 +1026,7 @@
           },
           {
              "symbol": "\\dotsm",
-             "comment": "`$x_1 x_2 \\dotsm x_n`"
+             "comment": "`x_1 x_2 \\dotsm x_n`"
           },
           {
              "symbol": "\\dotso",
@@ -1095,7 +1091,7 @@
           },
           {
              "symbol": "\\endgroup",
-             "comment": "`{a\\endgroup`"
+             "comment": ""
           },
           {
              "symbol": "\\enspace",
@@ -1228,7 +1224,7 @@
           },
           {
              "symbol": "\\futurelet",
-             "comment": ""
+             "comment": "\\futurelet\\cs<token1><token2>"
           }
        ]
     },
@@ -1386,7 +1382,7 @@
           },
           {
              "symbol": "\\hdashline",
-             "comment": "`\\begin{matrix}``a & b \\\\``\\hdashline``c & d`'`\\end{matrix}`"
+             "comment": "`\\begin{matrix} a & b \\\\ \\hdashline c & d \\end{matrix}`"
           },
           {
              "symbol": "\\hearts",
@@ -1398,7 +1394,7 @@
           },
           {
              "symbol": "\\hline",
-             "comment": "`\\begin{matrix}``a & b \\\\ \\hline``c & d`'`\\end{matrix}`"
+             "comment": "`\\begin{matrix}``a & b \\\\ \\hline`` c & d`'`\\end{matrix}`"
           },
           {
              "symbol": "\\hom",
@@ -3739,10 +3735,6 @@
           {
              "symbol": "\\vcentcolon",
              "comment": "`\\mathrel{\\vcentcolon =}`"
-          },
-          {
-             "symbol": "\\vcenter",
-             "comment": "`a+\\left(\\vcenter{\\hbox{$\\frac{\\frac a b}c$}}\\right)`'TeX (strict) syntax"
           },
           {
              "symbol": "\\vcenter",
