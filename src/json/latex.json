@@ -1414,7 +1414,7 @@
           },
           {
              "symbol": "\\href",
-             "comment": "`\\href{https://katex.org/}{\\KaTeX}` Requires `trust` [option](options.md)"
+             "comment": "`\\href{http://www.anytype.io}{Anytype.io}"
           },
           {
              "symbol": "\\hskip",
@@ -1427,22 +1427,6 @@
           {
              "symbol": "\\hspace",
              "comment": "`s\\hspace7ex k`"
-          },
-          {
-             "symbol": "\\htmlClass",
-             "comment": "`\\htmlClass{foo}{x}` Must enable `trust` and disable `strict` [option](options.md)"
-          },
-          {
-             "symbol": "\\htmlData",
-             "comment": "`\\htmlData{foo=a, bar=b}{x}` Must enable `trust` and disable `strict` [option](options.md)"
-          },
-          {
-             "symbol": "\\htmlId",
-             "comment": "`\\htmlId{bar}{x}` Must enable `trust` and disable `strict` [option](options.md)"
-          },
-          {
-             "symbol": "\\htmlStyle",
-             "comment": "`\\htmlStyle{color: red;}{x}` Must enable `trust` and disable `strict` [option](options.md)"
           },
           {
              "symbol": "\\huge",
