@@ -1,10 +1,7 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
-import { commonStore } from 'ts/store';
 
-const Errors = require('json/error.json');
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const { ipcRenderer } = window.require('electron');
 const Rpc = Commands.Rpc;
 
 const VersionGet = (callBack?: (message: any) => void) => {
@@ -158,31 +155,15 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 	dispatcher.request('accountSelect', request, callBack);
 };
 
-const ObjectAddWithShareLink = (link: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.AddWithShareLink.Request();
-
-	request.setLinj(link);
-
-	dispatcher.request('addWithShareLink', request, callBack);
-};
-
-const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.CreateFromBlock.Request();
-
-	request.setObjectId(objectId);
-
-	dispatcher.request('objectShareByLink', request, callBack);
-};
-
 const WorkspaceCreate = (callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
-
 
 	dispatcher.request('workspaceCreate', request, callBack);
 };
 
 const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Select.Request();
+	
 	request.setWorkspaceid(workspaceId);
 
 	dispatcher.request('workspaceSelect', request, callBack);
@@ -1091,6 +1072,22 @@ const ObjectToSet = (contextId: string, objectTypeUrl: string, callBack?: (messa
 	dispatcher.request('objectToSet', request, callBack);
 };
 
+const ObjectAddWithShareLink = (link: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.AddWithShareLink.Request();
+
+	request.setLink(link);
+
+	dispatcher.request('objectAddWithShareLink', request, callBack);
+};
+
+const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ShareByLink.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request('objectShareByLink', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1125,9 +1122,6 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 };
 
 export {
-	ObjectAddWithShareLink,
-	ObjectShareByLink,
-
 	VersionGet,
 	DebugSync,
 	DebugTree,
@@ -1255,6 +1249,8 @@ export {
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 	ObjectToSet,
+	ObjectAddWithShareLink,
+	ObjectShareByLink,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
