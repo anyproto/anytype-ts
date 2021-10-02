@@ -255,11 +255,13 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 				c.comment = String(c.comment || '').replace(/`/g, '');
 				return c;
 			});
+			it.children.sort(DataUtil.sortByName);
 			return it;
 		});
 
 		if (filter.text) {
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+			sections.sort(DataUtil.sortByName);
 		};
 		return sections;
 	};
