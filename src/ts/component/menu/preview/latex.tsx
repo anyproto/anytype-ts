@@ -24,7 +24,7 @@ class MenuPreviewLatex extends React.Component<Props, {}> {
 		return (
 			<div>
 				<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-				{example ? <div className="item">Example: {text}</div> : ''}
+				{example ? <div className="example">Example: {text}</div> : ''}
 			</div>
 		);
 	};
