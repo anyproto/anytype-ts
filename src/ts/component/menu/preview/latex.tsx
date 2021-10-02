@@ -18,20 +18,13 @@ class MenuPreviewLatex extends React.Component<Props, {}> {
 			displayMode: true,
 			throwOnError: false,
 			output: 'html',
+			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 		});
-
-		if (example) {
-			return (
-				<div>
-					<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-					<div className="item">Example: { text }</div>
-				</div>
-			);
-		}
 
 		return (
 			<div>
 				<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
+				{example ? <div className="item">Example: {text}</div> : ''}
 			</div>
 		);
 	};
