@@ -22,6 +22,7 @@ const LIMIT = 40;
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
+	emptyLength: number = 0;
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
@@ -158,6 +159,15 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		if (filter.text != this.filter) {
 			this.n = 0;
 			this.filter = filter.text;
+		};
+
+		if (!items.length && !this.emptyLength) {
+			this.emptyLength = filter.text.length;
+		};
+
+		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
+			this.props.close();
+			return;
 		};
 
 		this.resize();
