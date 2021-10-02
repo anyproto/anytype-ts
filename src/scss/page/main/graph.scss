@@ -73,17 +73,29 @@
         .loaderWrapper { width: 100%; height: 100%; border: 1px solid $colorLightGrey; border-radius: 8px; }
         .cover { position: absolute; height: 86px; }
 
+        .block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
+
         .heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
         .heading {
             .iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; }
-            .name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: bold; position: relative; }
+            .title { display: block; @include text-header3; font-weight: bold; position: relative; }
             .icon.checkbox { 
                 position: absolute; top: 5px; left: -20px; width: 14px; height: 14px; background-image: url('~img/icon/object/checkbox0.svg') !important; 
             }
             .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
-            .description { @include text-small; @include text-overflow-nw; }
+            .description { @include text-common; }
             .author { @include text-very-small; color: $colorMediumGrey; }
+        }
+
+        .buttons { margin-top: 24px; }
+        .buttons {
+            .button { width: calc(50% - 4px); height: 32px; line-height: 32px; margin-right: 8px; }
+            .button:last-child { margin: 0px; }
         }
     }
     .preview.withCover { padding-top: 104px; }

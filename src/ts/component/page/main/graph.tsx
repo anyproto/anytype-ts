@@ -59,6 +59,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					<div id="sideRight" className="side right">
 						{ref ? (
 							<Panel
+								key="panel"
+								{...this.props} 
 								ref={(ref: any) => { this.refPanel = ref; }}
 								data={ref.forceProps}
 								onFilterChange={this.onFilterChange}
@@ -142,9 +144,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const win = $(window);
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
 		const wrapper = obj.find('.wrapper');
-		const header = obj.find('#header');
-		const tabs = obj.find('.tabs');
-		const hh = header.height();
 
 		let height = 0;
 		if (isPopup) {
@@ -153,7 +152,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			height = win.height();
 		};
 
-		tabs.css({ lineHeight: hh + 'px' });
 		wrapper.find('.side').css({ height: height });
 		
 		if (isPopup) {
@@ -161,11 +159,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			obj.css({ minHeight: 'unset', height: '100%' });
 		};
 
-		this.refGraph.resize();
+		if (this.refGraph) {
+			this.refGraph.resize();
+		};
+		if (this.refPanel) {
+			this.refPanel.resize();
+		};
 	};
 
 	onClickObject (object: any) {
-		this.refPanel.setView(I.GraphView.Preview, object);
+		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
 	};
 
 	getRootId () {

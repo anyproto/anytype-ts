@@ -1,20 +1,19 @@
 import * as React from 'react';
-import { Loader, IconObject, Cover, Icon } from 'ts/component';
-import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
+import { RouteComponentProps } from 'react-router';
+import { Loader, IconObject, Cover, Icon, Block, Button } from 'ts/component';
+import { detailStore } from 'ts/store';
+import { I, C, M, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	onClick?: (e: any) => void;
+	setState?: (state: any) => void;
 };
 
 interface State {
 	loading: boolean;
 };
-
-const Constant = require('json/constant.json');
-const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
 const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<Props, State> {
 	
@@ -31,13 +30,14 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId } = this.props;
+		const { rootId, setState } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
-		const cn = [ 'preview' , check.className, ];
+		const cn = [ 'preview', 'blocks', check.className, ];
+		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		return (
 			<div className={cn.join(' ')}>
@@ -50,9 +50,14 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 							) : (
 								<IconObject size={48} iconSize={32} object={object} />
 							)}
-							<div className="name">{name}</div>
+							<div className="title">{name}</div>
 							<div className="description">{description}</div>
-							<div className="author">{author.name}</div>
+
+							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+						</div>
+						<div className="buttons">
+							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />
+							<Button text="Cancel" color="blank" onClick={() => { setState({ view: I.GraphView.Controls }); }} />
 						</div>
 					</React.Fragment>
 				)}
@@ -62,6 +67,7 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.open();
 	};
 
 	componentDidUpdate () {
@@ -89,6 +95,7 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 			};
 
 			this.setState({ loading: false });
+			this.forceUpdate();
 		});
 	};
 
