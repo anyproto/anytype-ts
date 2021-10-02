@@ -6,7 +6,7 @@ import { HeaderMainGraph as Header, Graph, Filter, MenuItemVertical, Icon } from
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-import Controls from './graph/controls';
+import Panel from './graph/panel';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -25,11 +25,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 	refHeader: any = null;
 	refGraph: any = null;
+	refPanel: any = null;
 
 	constructor (props: any) {
 		super(props);
 
 		this.onSwitch = this.onSwitch.bind(this);
+		this.onClickObject = this.onClickObject.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
@@ -46,16 +48,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					<div className="side left">
 						<Graph 
 							key="graph"
+							{...this.props} 
 							ref={(ref: any) => { this.refGraph = ref; }} 
 							rootId={rootId} 
 							data={this.data}
-							{...this.props} 
+							onClick={this.onClickObject}
 						/>
 					</div>
 
-					<div className="side right">
+					<div id="sideRight" className="side right">
 						{ref ? (
-							<Controls
+							<Panel
+								ref={(ref: any) => { this.refPanel = ref; }}
 								data={ref.forceProps}
 								onFilterChange={this.onFilterChange}
 								onSwitch={this.onSwitch}
@@ -158,6 +162,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		};
 
 		this.refGraph.resize();
+	};
+
+	onClickObject (object: any) {
+		this.refPanel.setView(I.GraphView.Preview, object);
 	};
 
 	getRootId () {

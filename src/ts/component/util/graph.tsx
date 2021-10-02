@@ -9,6 +9,7 @@ interface Props {
 	isPopup?: boolean;
 	rootId: string;
 	data: any;
+	onClick?: (object: any) => void;
 };
 
 const $ = require('jquery');
@@ -239,6 +240,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
   	};
 
 	onMessage ({ data }) {
+		const { onClick } = this.props;
+
 		switch (data.id) {
 
 			case 'onClick':
@@ -246,7 +249,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					break;
 				};
 
-				DataUtil.objectOpenPopup(data.node);
+				onClick(data.node);
 				break;
 
 			case 'onMouseMove':

@@ -77,3 +77,9 @@ export enum EdgeType {
 	Link		 = 0,
 	Relation	 = 1,
 };
+
+export enum GraphView {
+    Controls = 1,
+    Preview = 2,
+    Filters = 3,
+};
