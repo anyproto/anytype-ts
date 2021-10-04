@@ -157,13 +157,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { config } = commonStore;
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },

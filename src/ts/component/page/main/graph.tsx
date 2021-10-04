@@ -118,9 +118,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				value: [
 					'_anytype_profile',
 					blockStore.profile,
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
 				] 
 			},
 		];
