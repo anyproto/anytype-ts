@@ -494,6 +494,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const body = node.find('#body');
 		const documents = node.find('#documents');
 		const items = node.find('#documents .item');
+		const hh = Util.sizeHeader();
 
 		const maxWidth = ww - size.border * 2;
 		const cnt = Math.floor(maxWidth / (size.width + size.margin));
@@ -503,7 +504,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		items.css({ width: width }).removeClass('last');
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - size.titleY - height - 8 });
+		documents.css({ marginTop: wh - size.titleY - height - hh });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
