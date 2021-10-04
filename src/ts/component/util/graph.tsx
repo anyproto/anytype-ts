@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
-import { commonStore, blockStore, dbStore } from 'ts/store';
+import { I, Util, DataUtil, SmileUtil, translate, Storage } from 'ts/lib';
+import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
 
@@ -97,6 +97,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
+		const transform = (Storage.get('graph') || {}).transform;
 
 		this.width = node.width();
 		this.height = node.height();
@@ -161,7 +162,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(-this.width, -this.height).scale(3))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(transform.x || -this.width, transform.y || -this.height).scale(transform.k || 3))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
 			this.send('onClick', { x: p[0], y: p[1] });
@@ -236,6 +237,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	};
 
 	onZoom ({ transform }) {
+		Storage.set('graph', { transform });
 		this.send('onZoom', { transform: transform });
   	};
 
@@ -323,6 +325,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.width = node.width();
 		this.height = node.height();
 
+		Storage.set('graph', { transform: {} });
 		this.send('onResize', { width: this.width, height: this.height, density: density });
 	};
 
