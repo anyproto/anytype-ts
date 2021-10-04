@@ -399,6 +399,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		this.placeholderCheck(value);
 		this.updateRect();
+		this.resize();
 	};
 
 	placeholderCheck (value: string) {
@@ -451,6 +452,14 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			selection.preventSelect(false);
 			win.unbind('mouseup.latex');
 		});
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+
+		value.css({ height: 'auto' });
+		value.css({ height: value.height() + 20 });
 	};
 	
 });
