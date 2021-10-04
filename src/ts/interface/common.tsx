@@ -80,6 +80,6 @@ export enum EdgeType {
 
 export enum GraphView {
     Controls = 1,
-    Preview = 2,
-    Filters = 3,
+    Preview	 = 2,
+    Filter	 = 3,
 };

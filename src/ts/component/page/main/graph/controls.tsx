@@ -21,10 +21,6 @@ const GraphControls = observer(class GraphControls extends React.Component<Props
 
 		return (
 			<div>
-                <div className="tabs">
-                    <div className="tab">View</div>
-                    <div className="tab">Filters</div>
-                </div>
                 <div className="sections">
                     <div className="section">
                         <div className="name">Appearance</div>

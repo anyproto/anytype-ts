@@ -77,7 +77,11 @@
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
 		}
-		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; }
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; }
+        .block.blockFeatured {
+            .cellContent { padding: 2px 6px; }
+            .bullet { margin: 0px; }
+        }
 
         .heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
         .heading {
@@ -88,7 +92,7 @@
             }
             .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
-            .description { @include text-common; }
+            .description { @include text-common; margin: 4px 0px 12px 0px; }
             .author { @include text-very-small; color: $colorMediumGrey; }
         }
 
