@@ -503,7 +503,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	onConfirm (e: any, item: I.PageInfo) {
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, { id: item.id });
+			DataUtil.objectOpenEvent(e, item.details);
 		});
 	};
 
