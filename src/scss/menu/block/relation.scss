@@ -49,7 +49,7 @@
 
 		#section-featured::after { display: block; }
 
-		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: scroll; }
+		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: overlay; }
 		.item { padding: 0px 32px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }

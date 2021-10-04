@@ -57,7 +57,7 @@
 			.logout:hover { color: $colorBlack; }
 		}
 		
-		.tabWallpaper { overflow-y: scroll; height: 520px; }
+		.tabWallpaper { overflow-y: overlay; height: 520px; }
 		
 		.tabWallpaper {
 			.covers { margin-left: -2px; width: 596px; }

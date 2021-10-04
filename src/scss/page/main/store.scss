@@ -20,7 +20,7 @@
 		}
 	}
 
-	.body { width: 100%; height: 100%; overflow-y: scroll; display: flex; flex-direction: column; }
+	.body { width: 100%; height: 100%; overflow-y: overlay; display: flex; flex-direction: column; }
 	.body {
 		.mid { text-align: center; padding: 44px 0px 56px 0px; margin: 0px auto; }
 		.mid {

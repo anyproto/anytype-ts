@@ -16,7 +16,7 @@
 			}
 		}
 
-		.body { overflow-y: scroll; height: 100%; padding: 24px 48px 48px 48px; }
+		.body { overflow-y: overlay; height: 100%; padding: 24px 48px 48px 48px; }
 		.body {
 			.section { margin-bottom: 25px; }
 			.section:last-child { margin-bottom: 0px; }
