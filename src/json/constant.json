@@ -93,6 +93,7 @@
 		"isHidden", 
 		"isArchived", 
 		"isReadonly", 
+		"isDraft",
 		"done", 
 		"fileExt", 
 		"fileMimeType" 

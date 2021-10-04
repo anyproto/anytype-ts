@@ -155,6 +155,16 @@ class Crumbs {
 
 		this.save(I.CrumbsType.Recent, item);
 	};
+
+	removeItems (key: I.CrumbsType, ids: string[]) {
+		if (!ids || !ids.length) {
+			return;
+		};
+
+		let item = this.get(key);
+		item.ids = item.ids.filter((it: string) => { return ids.indexOf(it) < 0; });
+		this.save(key, item);
+	};
 		
 };
 

@@ -849,10 +849,11 @@ class DataUtil {
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
-		const reg = new RegExp(Util.filterFix(filter), 'gi');
+		const regS = new RegExp('/^' + Util.filterFix(filter) + '/', 'gi');
+		const regC = new RegExp(Util.filterFix(filter), 'gi');
 		
 		sections = sections.filter((s: any) => {
-			if (s.name.match(reg)) {
+			if (s.name.match(regC)) {
 				return true;
 			};
 			s._sortWeight_ = 0;
@@ -863,17 +864,17 @@ class DataUtil {
 				if (c.skipFilter) {
 					ret = true;
 				} else 
-				if (c.name && c.name.match(reg)) {
+				if (c.name && c.name.match(regC)) {
 					ret = true;
-					c._sortWeight_ = 100;
+					c._sortWeight_ = (c.name.match(regS) ? 10000 : 1000);
 				} else 
-				if (c.description && c.description.match(reg)) {
+				if (c.description && c.description.match(regC)) {
 					ret = true;
-					c._sortWeight_ = 10;
+					c._sortWeight_ = (c.description.match(regS) ? 100 : 10);
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
-						if (alias.match(reg)) {
+						if (alias.match(regC)) {
 							ret = true;
 							break;
 						};
