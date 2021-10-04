@@ -117,7 +117,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isPopup, rootId } = this.props;
+		const { rootId } = this.props;
 
 		popupStore.open('search', {
 			preventResize: true, 
