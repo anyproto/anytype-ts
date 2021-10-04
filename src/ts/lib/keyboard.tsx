@@ -142,18 +142,13 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
-				popupStore.open('navigation', { 
-					data: { 
-						type: I.NavigationType.Go, 
-						rootId: rootId,
-					}, 
-				});
+				this.onPopupPage('navigation', this.getRootId());
 			});
 
 			// Graph
 			if (config.sudo) {
 				this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
-					this.onGraph();
+					this.onPopupPage('graph', this.getRootId());
 				});
 			};
 
@@ -214,7 +209,9 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		return this.match?.params?.id || blockStore.root;
+		const isPopup = popupStore.isOpen('page');
+		const popupMatch = this.getPopupMatch();
+		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
 	};
 
 	onKeyUp (e: any) {
@@ -280,7 +277,7 @@ class Keyboard {
 				break;
 
 			case 'graph':
-				this.onGraph();
+				this.onPopupPage('graph', this.getRootId());
 				break;
 
 			case 'print':
@@ -311,14 +308,14 @@ class Keyboard {
 		window.print();
 	};
 
-	onGraph () {
+	onPopupPage (page: string, id: string) {
 		popupStore.open('page', {
 			data: { 
 				matchPopup: { 
 					params: {
 						page: 'main',
-						action: 'graph',
-						id: this.getRootId(),
+						action: page,
+						id: id,
 					},
 				},
 			}, 
@@ -327,9 +324,12 @@ class Keyboard {
 
 	onSearch () {
 		const popup = popupStore.get('page');
+		const popupMatch = this.getPopupMatch();
+
+		console.log(popupMatch);
 
 		// Do not allow in set or store
-		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0))) {
+		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popupMatch.action) >= 0))) {
 			return;
 		};
 
@@ -344,6 +344,11 @@ class Keyboard {
 				},
 			});
 		}, Constant.delay.menu);
+	};
+
+	getPopupMatch () {
+		const popup = popupStore.get('page');
+		return popup && popup?.param.data.matchPopup.params || {};
 	};
 
 	ctrlByPlatform (e: any) {

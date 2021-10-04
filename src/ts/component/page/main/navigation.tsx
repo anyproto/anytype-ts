@@ -1,15 +1,18 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Cover, Loader, IconObject } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { commonStore, blockStore, detailStore } from 'ts/store';
+import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Popup {
-	history: any;
-}
+interface Props extends RouteComponentProps<any> {
+	rootId: string;
+	isPopup?: boolean;
+	matchPopup?: any;
+};
 
 interface State {
 	pageId: string;
@@ -18,7 +21,7 @@ interface State {
 	pagesIn: I.PageInfo[];
 	pagesOut: I.PageInfo[];
 	n: number;
-}
+};
 
 const $ = require('jquery');
 const raf = require('raf');
@@ -29,9 +32,9 @@ enum Panel {
 	Left = 1, 
 	Center = 2, 
 	Right = 3,
-}
+};
 
-const PopupNavigation = observer(class PopupNavigation extends React.Component<Props, State> {
+const PageMainNavigation = observer(class PageMainNavigation extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
@@ -58,13 +61,10 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 	
 	render () {
 		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
-		const { param, close } = this.props;
-		const { data } = param;
-		const { type } = data;
 		const { root } = blockStore;
 		const isRoot = pageId == root;
 
-		let confirm = '';
+		let confirm = translate('popupNavigationOpen');
 		let iconHome = (
 			<div className="iconObject isRelation c48">
 				<div className="iconEmoji c48">
@@ -72,21 +72,6 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 				</div>
 			</div>
 		);
-
-		switch (type) {
-			default:
-			case I.NavigationType.Go:
-				confirm = translate('popupNavigationOpen');
-				break;
-
-			case I.NavigationType.Move:
-				confirm = translate('popupNavigationMove');
-				break;
-
-			case I.NavigationType.Link:
-				confirm = translate('popupNavigationLink');
-				break;
-		};
 
 		const Item = (item: any) => {
 			let { name } = item.details || {};
@@ -139,17 +124,18 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 			let isRoot = item.id == root;
 			let icon = null;
 			let withScale = true;
-			let withButtons = this.withButtons(item);
+			let withButtons = true;
 
 			if (isRoot) {
 				icon = iconHome;
 				name = 'Home';
+				withScale = false;
+				withButtons = false;
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
 					coverType = I.CoverType.Image;
 				};
-				withScale = false;
 			} else {
 				icon = <IconObject object={item.details} size={48} />
 			};
@@ -160,6 +146,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
+				
 					{withButtons ? (
 						<div className="buttons">
 							<Button text={confirm} onClick={(e: any) => { this.onConfirm(e, item); }} />
@@ -257,9 +244,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
+		const rootId = this.getRootId();;
 
 		this._isMounted = true;
 
@@ -318,12 +303,12 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const platform = Util.getPlatform();
-		const { position } = this.props;
 
 		raf(() => {
 			const win = $(window);
-			const obj = $('#popupNavigation #innerWrap');
+			const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
 			const items = obj.find('.items');
 			const sides = obj.find('.sides');
 			const empty = obj.find('#empty');
@@ -343,8 +328,6 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
 			obj.css({ width: width, marginLeft: -width / 2, height: oh });
-
-			position();
 		});
 	};
 	
@@ -358,7 +341,6 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 		keyboard.disableMouse(true);
 
 		e.preventDefault();
-		e.stopPropagation();
 
 		switch (k) {
 			case Key.up:
@@ -426,10 +408,7 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 					this.loadPage(item.id);
 				};
 				break;
-				
-			case Key.escape:
-				this.props.close();
-				break;
+
 		};
 	};
 
@@ -523,86 +502,11 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, type, blockId, blockIds, position } = data;
-
-		if (!this.withButtons(item)) {
-			return;
-		};
-
-		let newBlock: any = {};
-
-		switch (type) {
-			case I.NavigationType.Go:
-				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, { id: item.id });
-				});
-				break;
-
-			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
-				break;
-
-			case I.NavigationType.Link:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: String(item.id || ''),
-					}
-				};
-				C.BlockCreate(param, rootId, blockId, position);
-				break;
-
-			case I.NavigationType.LinkTo:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: blockId,
-					}
-				};
-				C.BlockCreate(newBlock, item.id, '', position);
-				break;
-		};
-
-		close();
+		crumbs.cut(I.CrumbsType.Page, 0, () => {
+			DataUtil.objectOpenEvent(e, { id: item.id });
+		});
 	};
 
-	withButtons (item: I.PageInfo) {
-		const { param } = this.props;
-		const { data } = param;
-		const { type, rootId, blockId, blockIds } = data;
-		const { root } = blockStore;
-
-		let isRoot = item.id == root;
-		let isSelf = (item.id == rootId) || (item.id == blockId);
-		let ret = true;
-
-		if (isSelf && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
-			ret = false;
-		};
-
-		if (isRoot && ([ I.NavigationType.Move, I.NavigationType.Link ].indexOf(type) >= 0)) {
-			ret = false;
-		};
-
-		if (type == I.NavigationType.Move) {
-			for (let id of blockIds) {
-				let block = blockStore.getLeaf(rootId, id);
-				if (isRoot && (block.type != I.BlockType.Link)) {
-					ret = false;
-					break;
-				};
-				if ((block.type == I.BlockType.Link) && (item.id == block.content.targetBlockId)) {
-					ret = false;
-					break;
-				};
-			};
-		};
-
-		return ret;
-	};
-	
 	getPage (page: any): I.PageInfo {
 		page.details.name = String(page.details.name || DataUtil.defaultName('page'));
 
@@ -611,7 +515,12 @@ const PopupNavigation = observer(class PopupNavigation extends React.Component<P
 			text: [ page.details.name, page.snippet ].join(' '),
 		};
 	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
+	};
 	
 });
 
-export default PopupNavigation;
+export default PageMainNavigation;

@@ -189,14 +189,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
-
-		popupStore.open('navigation', {
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
-		});
+		keyboard.onPopupPage('navigation', this.props.rootId);
 	};
 
 	onSearch (e: any) {

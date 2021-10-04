@@ -25,6 +25,7 @@ import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
+import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
 const { process } = window.require('electron').remote;
@@ -53,6 +54,7 @@ const Components: any = {
 	'main/relation':		 PageMainRelation,
 	'main/store':			 PageMainStore,
 	'main/graph':			 PageMainGraph,
+	'main/navigation':		 PageMainNavigation,
 };
 
 interface Props extends RouteComponentProps<any> {
