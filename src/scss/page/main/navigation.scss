@@ -1,10 +1,6 @@
 @import "~scss/_vars";
 
 .pageMainNavigation {
-	.content { overflow: visible; transition: none; }
-	.innerWrap { transform: scale3d(1,1,1); transition: none; }
-	.dimmer { transition: none; }
-
 	.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
 	.empty {
 		b { display: block; font-weight: 400; color: $colorBlack; }
