@@ -109,7 +109,10 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	componentDidUpdate () {
+		const { block } = this.props;
 		const { isEditing } = this.state;
+		
+		this.text = String(block.content.text || '');
 
 		this.unbind();
 		this.setValue(this.text);
@@ -151,7 +154,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const node = $(ReactDOM.findDOMNode(this));
 		const input = node.find('#input');
 
-		if (input.length) {
+		if (input.length && this.range) {
 			setRange(input.get(0), this.range);
 		};
 	};
@@ -164,8 +167,23 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	};
 
 	onKeyDownBlock (e: any) {
-		const { onKeyDown } = this.props;
+		const { rootId, onKeyDown } = this.props;
 		const { isEditing } = this.state;
+		const cmd = keyboard.ctrlKey();
+
+		if (isEditing) {
+			// Undo
+			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+				e.preventDefault();
+				C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			});
+
+			// Redo
+			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+				e.preventDefault();
+				C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			});
+		};
 		
 		if (onKeyDown && !isEditing) {
 			onKeyDown(e, '', [], { from: 0, to: 0 });
@@ -366,7 +384,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 				displayMode: true, 
 				throwOnError: false,
 				output: 'html',
-				trust: (context: any) => [ '\\url', '\\href' ].includes(context.command)
+				trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 			}) : '');
 		};
 
