@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<any> {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Props, {}> {
+const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 
@@ -104,7 +104,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/graph/' + rootId);
+		this.props.history.push('/main/navigation/' + rootId);
 	};
 	
 	onSearch (e: any) {
@@ -145,4 +145,4 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 	
 });
 
-export default HeaderMainGraph;
+export default HeaderMainNavigation;

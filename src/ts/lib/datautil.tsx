@@ -429,31 +429,43 @@ class DataUtil {
 
 		keyboard.setSource(null);
 
+		let action = '';
+		let id = object.id;
+
 		switch (object.layout) {
 			default:
-				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
+				if (object.id == root) {
+					action = 'index';
+					id = '';
+				} else {
+					action = 'edit';
+				};
 				break;
 
 			case I.ObjectLayout.Set:
-				this.history.push('/main/set/' + object.id);
+				action = 'set';
 				break;
 
 			case I.ObjectLayout.Type:
-				this.history.push('/main/type/' + object.id);
+				action = 'type';
 				break;
 
 			case I.ObjectLayout.Relation:
-				this.history.push('/main/relation/' + object.id);
+				action = 'relation';
 				break;
 
 			case I.ObjectLayout.File:
 			case I.ObjectLayout.Image:
-				this.history.push('/main/media/' + object.id);
+				action = 'media';
 				break;
 
-			case I.ObjectLayout.Store:
-				this.history.push('/main/store');
+			case I.ObjectLayout.Navigation:
+				action = 'navigation';
 				break;
+		};
+
+		if (action) {
+			this.history.push('/main/' + action + (id ? '/' + id : ''));
 		};
 	};
 
@@ -483,9 +495,9 @@ class DataUtil {
 			case I.ObjectLayout.Image:
 				action = 'media';
 				break;
-
-			case I.ObjectLayout.Store:
-				action = 'store';
+			
+			case I.ObjectLayout.Navigation:
+				action = 'navigation';
 				break;
 		};
 

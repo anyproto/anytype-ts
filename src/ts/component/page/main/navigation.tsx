@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Cover, Loader, IconObject } from 'ts/component';
+import { Icon, Button, Cover, Loader, IconObject, HeaderMainNavigation as Header } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -15,7 +15,6 @@ interface Props extends RouteComponentProps<any> {
 };
 
 interface State {
-	pageId: string;
 	loading: boolean;
 	info: I.PageInfo;
 	pagesIn: I.PageInfo[];
@@ -38,19 +37,20 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	
 	_isMounted: boolean = false;
 	state = {
-		pageId: '',
 		loading: false,
 		info: null,
 		pagesIn: [] as I.PageInfo[],
 		pagesOut: [] as I.PageInfo[],
 		n: 0,
 	};
+	id: string = '';
 	timeout: number = 0;
 	panel: Panel = Panel.Left;
 	cacheIn: any = {};
 	cacheOut: any = {};
 	focus: boolean = false;
 	select: boolean = false;
+	refHeader: any = null;
 	
 	constructor (props: any) {
 		super (props);
@@ -60,9 +60,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	render () {
-		const { pageId, info, pagesIn, pagesOut, loading, n } = this.state;
+		const { isPopup } = this.props;
+		const { info, pagesIn, pagesOut, loading, n } = this.state;
 		const { root } = blockStore;
-		const isRoot = pageId == root;
+		const rootId = this.getRootId();
+		const isRoot = rootId == root;
+
+		console.log(rootId);
 
 		let confirm = translate('popupNavigationOpen');
 		let iconHome = (
@@ -158,7 +162,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		return (
-			<div>
+			<div className="wrapper">
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+
 				{loading ? <Loader /> : ''}
 				<div key="sides" className="sides">
 					<div id={'panel-' + Panel.Left} className="items left">
@@ -244,21 +250,25 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	componentDidMount () {
-		const rootId = this.getRootId();;
+		const rootId = this.getRootId();
 
 		this._isMounted = true;
-
-		crumbs.addPage(rootId);
-		this.setState({ pageId: rootId });
 		this.loadPage(rootId);
-
 		this.resize();
 		this.rebind();
+
 		focus.clear(true);
 	};
 	
-	componentDidUpdate (prevProps: any, prevState: any) {
+	componentDidUpdate () {
+		const rootId = this.getRootId();
 		const { pagesIn, pagesOut } = this.state;
+
+		if (this.id != rootId) {
+			this.id = rootId;
+			this.loadPage(rootId);
+			return;
+		};
 
 		this.resize();
 		this.setActive();
@@ -304,30 +314,25 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const { isPopup } = this.props;
-		const platform = Util.getPlatform();
+		const node = $(ReactDOM.findDOMNode(this));
 
 		raf(() => {
-			const win = $(window);
-			const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
-			const items = obj.find('.items');
-			const sides = obj.find('.sides');
-			const empty = obj.find('#empty');
-			const offset = 32;
-			const wh = win.height();
-			const ww = win.width();
+			const obj = $(isPopup ? '#popupPage #innerWrap' : window);
+			const header = node.find('#header');
+			const items = node.find('.items');
+			const sides = node.find('.sides');
+			const empty = node.find('#empty');
+			const offset = 16;
+			const hh = header.height();
+			const wh = obj.height();
 			
-			let oh = wh - 70;
-			if ([ I.Platform.Windows ].indexOf(platform) >= 0) {
-				oh -= 16;
-			};
-
+			let oh = wh - header.height();
 			let sh = oh - offset;
-			let width = Math.min(1136, Math.max(896, ww - 128));
 
+			node.css({ paddingTop: hh });
 			sides.css({ height: sh });
 			items.css({ height: sh });
 			empty.css({ height: sh, lineHeight: sh + 'px' });
-			obj.css({ width: width, marginLeft: -width / 2, height: oh });
 		});
 	};
 	
@@ -483,12 +488,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			this.panel = Panel.Center;
 			this.setState({ 
 				n: 0,
-				pageId: id,
 				loading: false,
 				info: this.getPage(message.object.info),
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
 			});
+
+			this.refHeader.forceUpdate();
 		});
 	};
 
@@ -498,7 +504,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	onClick (e: any, item: I.PageInfo) {
 		e.stopPropagation();
-		this.loadPage(item.id);
+
+		const { isPopup } = this.props;
+		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
+
+		isPopup ? DataUtil.objectOpenPopup(obj) : DataUtil.objectOpen(obj);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {

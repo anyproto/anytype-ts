@@ -19,6 +19,7 @@ import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
 import HeaderMainHistory from './header/main/history';
 import HeaderMainGraph from './header/main/graph';
+import HeaderMainNavigation from './header/main/navigation';
 
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
@@ -83,6 +84,7 @@ export {
 	HeaderMainEdit,
 	HeaderMainHistory,
 	HeaderMainGraph,
+	HeaderMainNavigation,
 	FooterAuth,
 	FooterMainIndex,
 	FooterMainEdit,
