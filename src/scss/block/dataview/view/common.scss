@@ -2,6 +2,22 @@
 
 .blocks {
 	.block.blockDataview {
+
+		.viewItem.viewGrid,
+		.viewItem.viewList {
+			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
+			.cell.add {
+				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
+				.btn:hover { color: $colorBlack; }
+				.btn:hover {
+					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+				}
+
+				.icon { vertical-align: top; margin: 0px 4px 0px 0px; }
+				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
+			}
+		}
+
 		.viewItem.viewGallery, 
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
