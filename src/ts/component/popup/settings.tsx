@@ -208,7 +208,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						) : (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { console.log(this.onConfirmPhrase); this.onConfirmPhrase(); }} />
+								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { this.onConfirmPhrase(); }} />
 							</div>
 						)}
 					</div>
