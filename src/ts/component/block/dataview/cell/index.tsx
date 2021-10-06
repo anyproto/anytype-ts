@@ -134,7 +134,7 @@ class Cell extends React.Component<Props, {}> {
 
 	checkIcon () {
 		const relation = this.getRelation();
-		if (relation.format == I.RelationType.ShortText) {
+		if (relation && (relation.format == I.RelationType.ShortText)) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const icon = node.find('.iconObject');
 

@@ -1052,11 +1052,11 @@ const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: 
 	dispatcher.request('objectGraph', request, callBack);
 };
 
-const ObjectToSet = (contextId: string, objectTypeUrl: string, callBack?: (message: any) => void) => {
+const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToSet.Request();
 	
 	request.setContextid(contextId);
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setSourceList(sources);
 
 	dispatcher.request('objectToSet', request, callBack);
 };

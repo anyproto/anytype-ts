@@ -39,7 +39,6 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 
 		const Row = (item: any) => {
 			const author = detailStore.get(rootId, item.creator, []);
-			console.log(item);
 			return (
 				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
