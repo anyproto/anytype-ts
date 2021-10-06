@@ -97,11 +97,18 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
-		const transform = (Storage.get('graph') || {}).transform;
-
+		//const transform = (Storage.get('graph') || {}).transform;
+		const transform: any = {};
+		
 		this.width = node.width();
 		this.height = node.height();
 		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
+
+		const scale = transform.k || 5;
+		const w = this.width * density;
+		const h = this.height * density;
+		const x = transform.x || -(1.6 * w);
+		const y = transform.y || -(1.6 * h);
 
 		this.edges = (data.edges || []).map((d: any) => {
 			d.type = Number(d.type) || 0;
@@ -162,7 +169,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(transform.x || -this.width * density, transform.y || -this.height * density).scale(transform.k || 5))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
 			this.send('onClick', { x: p[0], y: p[1] });
