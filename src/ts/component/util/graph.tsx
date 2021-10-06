@@ -116,7 +116,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
 			d.shortName = Util.shorten(d.name, 16);
-			d.radius = Math.max(3, Math.min(8, Math.sqrt(sourceCnt)));
+			d.radius = Math.max(3, Math.min(8, sourceCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
@@ -162,7 +162,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(transform.x || -this.width * density, transform.y || -this.height * density).scale(transform.k || 3.5))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(transform.x || -this.width * density, transform.y || -this.height * density).scale(transform.k || 5))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
 			this.send('onClick', { x: p[0], y: p[1] });
