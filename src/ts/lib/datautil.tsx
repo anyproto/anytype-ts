@@ -429,39 +429,12 @@ class DataUtil {
 
 		keyboard.setSource(null);
 
-		let action = '';
+		let action = this.actionByLayout(object.layout);
 		let id = object.id;
 
-		switch (object.layout) {
-			default:
-				if (object.id == root) {
-					action = 'index';
-					id = '';
-				} else {
-					action = 'edit';
-				};
-				break;
-
-			case I.ObjectLayout.Set:
-				action = 'set';
-				break;
-
-			case I.ObjectLayout.Type:
-				action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				action = 'relation';
-				break;
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:
-				action = 'media';
-				break;
-
-			case I.ObjectLayout.Navigation:
-				action = 'navigation';
-				break;
+		if ((action == 'edit') && (object.id == root)) {
+			action = 'index';
+			id = '';
 		};
 
 		if (action) {
@@ -470,43 +443,12 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any) {
-		const popupId = 'page';
-
-		let action = '';
-
-		switch (object.layout) {
-			default:
-				action = 'edit';
-				break;
-
-			case I.ObjectLayout.Set:
-				action = 'set';
-				break;
-
-			case I.ObjectLayout.Type:
-				action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				action = 'relation';
-				break;
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:
-				action = 'media';
-				break;
-			
-			case I.ObjectLayout.Navigation:
-				action = 'navigation';
-				break;
-		};
-
 		const param: any = { 
 			data: { 
 				matchPopup: { 
 					params: {
 						page: 'main',
-						action: action,
+						action: this.actionByLayout(object.layout),
 						id: object.id,
 					},
 				},
@@ -515,7 +457,23 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open(popupId, param);
+		popupStore.open('page', param);
+	};
+
+	actionByLayout (v: I.ObjectLayout): string {
+		let r = '';
+		switch (v) {
+			default:						 r = 'edit'; break;
+			case I.ObjectLayout.Set:		 r = 'set'; break;
+			case I.ObjectLayout.Type:		 r = 'type'; break;
+			case I.ObjectLayout.Relation:	 r = 'relation'; break;
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:		 r = 'media'; break;
+			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
+			case I.ObjectLayout.Graph:		 r = 'graph'; break;
+			case I.ObjectLayout.Store:		 r = 'store'; break;
+		};
+		return r;
 	};
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {

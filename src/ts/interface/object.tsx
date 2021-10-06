@@ -38,6 +38,8 @@ export enum ObjectLayout {
 	Database	 = 20,
 
 	Navigation	 = 100,
+	Graph		 = 101,
+	Store		 = 102,
 };
 
 export enum RelationType { 

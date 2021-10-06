@@ -142,15 +142,13 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
-				this.onPopupPage('navigation', this.getRootId());
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
-			if (config.sudo) {
-				this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
-					this.onPopupPage('graph', this.getRootId());
-				});
-			};
+			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+			});
 
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
@@ -277,7 +275,7 @@ class Keyboard {
 				break;
 
 			case 'graph':
-				this.onPopupPage('graph', this.getRootId());
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 				break;
 
 			case 'print':
@@ -306,20 +304,6 @@ class Keyboard {
 	onPrint () {
 		focus.clearRange(true);
 		window.print();
-	};
-
-	onPopupPage (page: string, id: string) {
-		popupStore.open('page', {
-			data: { 
-				matchPopup: { 
-					params: {
-						page: 'main',
-						action: page,
-						id: id,
-					},
-				},
-			}, 
-		});
 	};
 
 	onSearch () {

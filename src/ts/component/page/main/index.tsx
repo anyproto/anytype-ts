@@ -303,7 +303,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		keyboard.onPopupPage('store', '');
+		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
 	};
 	
 	onAdd (e: any) {

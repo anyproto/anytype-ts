@@ -26,6 +26,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
 		this.onOpen = this.onOpen.bind(this);
+		this.onNavigation = this.onNavigation.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -48,12 +49,14 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 					</div>
 				) : (
 					<div className="side left">
 						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
+						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 					</div>
 				)}
 
@@ -105,6 +108,10 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 	onOpen () {
 		const { rootId } = this.props;
 		this.props.history.push('/main/graph/' + rootId);
+	};
+
+	onNavigation (e: any) {
+		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 	
 	onSearch (e: any) {

@@ -5,6 +5,7 @@ import { Icon, IconObject, Sync } from 'ts/component';
 import { I, Util, DataUtil, crumbs, history as historyPopup, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { ObjectRelationOptionDelete } from '../../../lib/command';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -26,6 +27,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
 		this.onOpen = this.onOpen.bind(this);
+		this.onGraph = this.onGraph.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -48,12 +50,14 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+						<Icon className="graph big" tooltip="Open as graph" onClick={this.onGraph} />
 					</div>
 				) : (
 					<div className="side left">
 						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
+						<Icon className="graph big" tooltip="Open as graph" onClick={this.onGraph} />
 					</div>
 				)}
 
@@ -105,6 +109,10 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	onOpen () {
 		const { rootId } = this.props;
 		this.props.history.push('/main/navigation/' + rootId);
+	};
+
+	onGraph (e: any) {
+		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 	
 	onSearch (e: any) {

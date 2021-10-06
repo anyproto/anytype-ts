@@ -22,7 +22,7 @@ interface State {
 const $ = require('jquery');
 const Tabs = [
     { id: I.GraphView.Controls, name: 'View' },
-    { id: I.GraphView.Filter, name: 'Filters' },
+    //{ id: I.GraphView.Filter, name: 'Filters' },
 ];
 
 const GraphPanel = observer(class Graph extends React.Component<Props, State> {
