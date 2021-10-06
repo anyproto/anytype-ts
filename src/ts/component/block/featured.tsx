@@ -28,6 +28,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onType = this.onType.bind(this);
+		this.onSource = this.onSource.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -48,16 +49,33 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{type ? (
-					<div 
-						id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
-						className="cellContent type"
-						onClick={this.onType}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
-						onMouseLeave={this.onMouseLeave}
-					>
-						<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
-					</div>
+					<span className="cell canEdit">
+						<div 
+							id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
+							className="cellContent type"
+							onClick={this.onType}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
+						</div>
+					</span>
 				): ''}
+
+				{object.layout == I.ObjectLayout.Set ? (
+					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
+						{bullet}
+						<div 
+							id={DataUtil.cellId(PREFIX, Constant.relationKey.setOf, 0)} 
+							className="cellContent setOf"
+							onClick={this.onSource}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.setOf); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							<div className="empty">Source</div>
+						</div>
+					</span>
+				) : ''}
 
 				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX + block.id, relationKey, 0);
@@ -128,26 +146,23 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
+		const skipIds = [ 
+			Constant.relationKey.type, 
+			Constant.relationKey.description,
+			Constant.relationKey.setOf, 
+		];
 
 		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelation(rootId, rootId, it);
 			if (!relation) {
 				return false;
 			};
-			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
+			if (skipIds.indexOf(it) >=  0) {
 				return false;
 			};
 			if (relation.format == I.RelationType.Checkbox) {
 				return true;
 			};
-			/*
-			if (!object[it]) {
-				return false;
-			};
-			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
-				return false;
-			};
-			*/
 			return true;
 		});
 	};
@@ -238,6 +253,28 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);
 					}
+				}
+			}); 
+		});
+	};
+
+	onSource (e: any) {
+		const { rootId, block, readonly } = this.props;
+
+		if (readonly) {
+			return;
+		};
+
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+
+		menuStore.closeAll(null, () => { 
+			menuStore.open('dataviewSource', {
+				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.setOf, 0)}`,
+				className: 'big single',
+				horizontal: I.MenuDirection.Center,
+				data: {
+					rootId: rootId,
+					value: object.setOf,
 				}
 			}); 
 		});
