@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup: boolean;
 	onOpen?(): void;
-}
+};
 
 const { ipcRenderer } = window.require('electron');
 const { app } = window.require('electron').remote;
@@ -42,6 +42,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	uiHidden: boolean = false;
 	loading: boolean = false;
 	width: number = 0;
+	refHeader: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -86,6 +87,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 						<EditorHeaderPage 
 							{...this.props} 
+							ref={(ref: any) => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
@@ -998,8 +1000,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		// Enter
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || (!block.isText() && keyboard.isFocused)) {
+		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
+			if (block.isTextCode() && (pressed == 'enter')) {
+				return;
+			};
+
+			if (!block.isText() && keyboard.isFocused) {
 				return;
 			};
 
@@ -1672,15 +1678,24 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	onResize (v: number) {
+		v = Number(v) || 0;
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
+
+		if (this.refHeader) {
+			this.refHeader.refDrag.setValue(v);
+			this.refHeader.setPercent(v);
+		};
 	};
 
 	getWidth (w: number) {
+		w = Number(w) || 0;
+
 		const container = this.getScrollContainer();
 		const mw = container.width() - 120;
 		const { rootId } = this.props;
@@ -1690,10 +1705,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return container.width() - 192;
 		};
 
-		w = Number(w) || 0;
 		w = (mw - Constant.size.editor) * w;
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
-		
 		return w;
 	};
 

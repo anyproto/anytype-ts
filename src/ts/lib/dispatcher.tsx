@@ -396,6 +396,7 @@ class Dispatcher {
 				case 'blockSetLatex':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
