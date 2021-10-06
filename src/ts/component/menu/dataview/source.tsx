@@ -22,7 +22,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		this.save = this.save.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
-		this.onSortEnd = this.onSortEnd.bind(this);
 	};
 	
 	render () {
@@ -32,101 +31,17 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const items = this.getItems();
 		
 		const Item = (item: any) => {
-			const relation = item.relation;
-			const conditionOptions = DataUtil.filterConditionsByType(relation.format);
-			const condition: any = conditionOptions.find((it: any) => { return it.id == item.condition; }) || {};
-
-			let value = null;
-			let list = [];
-			let Item = null;
-
-			switch (relation.format) {
-
-				default:
-					value = `“${item.value}”`
-					break;
-
-				case I.RelationType.Number:
-					value = Number(item.value) || 0;
-					break;
-
-				case I.RelationType.Date:
-					value = item.value !== null ? Util.date('d.m.Y', item.value) : 'empty';
-					break;
-
-				case I.RelationType.Checkbox:
-					value = item.value ? 'checked' : 'unchecked';
-					break;
-
-				case I.RelationType.Tag:
-				case I.RelationType.Status:
-					list = (item.value || []).map((id: string, i: number) => { 
-						return (relation.selectDict || []).find((it: any) => { return it.id == id; });
-					});
-					list = list.filter((it: any) => { return it && it.id; });
-
-					if (list.length) {
-						value = (
-							<React.Fragment>
-								{list.map((item: any, i: number) => {
-									return <Tag {...item} key={item.id} className={DataUtil.tagClass(relation.format)} />;
-								})}
-							</React.Fragment>
-						);
-					} else {
-						value = 'empty';
-					};
-					break;
-
-				case I.RelationType.Object:
-					Item = (item: any) => {
-						return (
-							<div className="element">
-								<div className="flex">
-									<IconObject object={item} />
-									<div className="name">{item.name}</div>
-								</div>
-							</div>
-						);
-					};
-
-					list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
-					list = list.filter((it: any) => { return !it._empty_; });
-
-					value = (
-						<React.Fragment>
-							{list.map((item: any, i: number) => {
-								return <Item key={i} {...item} />;
-							})}
-						</React.Fragment>
-					);
-					break;
-			};
-
-			if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
-				value = null;
-			};
-
+			const canDelete = item.id != 'type';
 			return (
 				<form id={'item-' + item.id} className={[ 'item' ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
-					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
-
+					<IconObject size={40} object={item} />
 					<div className="txt" onClick={(e: any) => { this.onClick(e, item); }}>
-						<div className="name">{relation.name}</div>
-						<div className="flex">
-							<div className="condition grey">
-								{condition.name}
-							</div>
-							{value !== null ? (
-								<div className="value grey">
-									{value}
-								</div>
-							) : ''}
-						</div>
+						<div className="name">{item.name}</div>
+						<div className="value">{item.value}</div>
 					</div>
 					<div className="buttons">
 						<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
-						<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+						{canDelete ? <Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
 					</div>
 				</form>
 			);
@@ -135,7 +50,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const ItemAdd = (item: any) => (
 			<div className="item add" onClick={this.onAdd}>
 				<Icon className="plus" />
-				<div className="name">Add a filter</div>
+				<div className="name">Add a relation</div>
 			</div>
 		);
 		
@@ -143,7 +58,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			<div className="items">
 				<div className="scrollWrap">
 					{items.map((item: any, i: number) => (
-						<Item key={i} {...item} id={i} index={i} />
+						<Item key={i} {...item} />
 					))}
 					{!items.length ? (
 						<div className="item empty">
@@ -153,7 +68,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				</div>
 				<div className="bottom">
 					<div className="line" />
-					<ItemAdd index={items.length + 1} disabled={true} /> 
+					<ItemAdd disabled={true} /> 
 				</div>
 			</div>
 		);
@@ -188,42 +103,17 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	onAdd (e: any) {
-		const { param, getId } = this.props;
-		const { data } = param;
-		const { getView } = data;
-		const view = getView();
-		const relationOptions = this.getRelationOptions();
-
-		if (!relationOptions.length) {
-			return;
-		};
-
-		const obj = $(`#${getId()} .content`);
-		const first = relationOptions[0];
-		const conditions = DataUtil.filterConditionsByType(first.format);
-		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-
-		view.filters.push({ 
-			relationKey: first.id, 
-			operator: I.FilterOperator.And, 
-			condition: condition as I.FilterCondition,
-			value: DataUtil.formatRelationValue(first, null, false),
-		});
-
-		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
-		this.save();
 	};
 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
-		const view = getView();
+		const { rootId } = data;
 
-		view.filters = view.filters.filter((it: any, i: number) => { return i != item.id; });
-		this.save();
+		let value = DataUtil.getRelationArrayValue(data.value);
+		value = value.filter((it: string) => { return it != item.id; });
 
-		menuStore.close('select');
+		console.log(item, value);
 	};
 
 	onOver (e: any, item: any) {
@@ -233,60 +123,45 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	onClick (e: any, item: any) {
-		const { param, getId } = this.props;
-		const { data } = param;
-
-		menuStore.open('dataviewFilterValues', {
-			element: `#${getId()} #item-${item.id}`,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				...data,
-				save: this.save,
-				itemId: item.id,
-			}
-		});
-	};
-	
-	onSortEnd (result: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView } = data;
-		const view = getView();
-		const { oldIndex, newIndex } = result;
-
-		view.filters = arrayMove(view.filters, oldIndex, newIndex);
-		this.save();
+		
 	};
 
 	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, rootId, blockId, onSave } = data;
-		const view = getView();
-
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-			if (onSave) {
-				onSave(message);
-			};
-			window.setTimeout(() => { this.forceUpdate(); }, 50);
-		});
+	
 	};
 
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, value } = data;
-		
-		return [];
+		const { rootId } = data;
+		const value = DataUtil.getRelationArrayValue(data.value);
+		const items = [];
+
+		if (!value.length) {
+			items.push({
+				id: 'type',
+				name: 'Object type',
+				relationFormat: I.RelationType.Object,
+				layout: I.ObjectLayout.Relation,
+			});
+		} else {
+			value.forEach((it: string) => {
+				const object = detailStore.get(rootId, it);
+				if (object.type == Constant.typeId.type) {
+					items.push({
+						...object,
+						name: 'Object type',
+						value: object.name,
+					});
+				} else {
+					items.push(object);
+				};
+			});
+		};
+		return items;
 	};
 
 	getRelationOptions () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, getView } = data;
-
-		return DataUtil.getRelationOptions(rootId, blockId, getView());
 	};
 
 });
