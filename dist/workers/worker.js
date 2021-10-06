@@ -294,7 +294,9 @@ drawNode = (d) => {
 	ctx.fill();
 
 	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
-		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - 14, d.y + d.radius + 1, 28, 5);
+		const h = 5;
+		const div = 6.25;
+		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
 	};
 
 	if (!img) {

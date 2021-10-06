@@ -85,6 +85,7 @@
 		"id", 
 		"name", 
 		"description", 
+		"snippet",
 		"iconEmoji", 
 		"iconImage", 
 		"relationFormat", 

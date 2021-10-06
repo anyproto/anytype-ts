@@ -33,7 +33,7 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 		const { rootId, setState } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
-		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
+		const { name, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'preview', 'blocks', check.className, ];
@@ -51,7 +51,7 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 								<IconObject size={48} iconSize={32} object={object} />
 							)}
 							<div className="title">{name}</div>
-							<div className="description">{description}</div>
+							<div className="description">{description || snippet}</div>
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>

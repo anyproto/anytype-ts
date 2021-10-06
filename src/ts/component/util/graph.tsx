@@ -162,7 +162,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(transform.x || -this.width, transform.y || -this.height).scale(transform.k || 3))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(transform.x || -this.width, transform.y || -this.height).scale(transform.k || 3.5))
 		.on('click', (e: any) => {
 			const p = d3.pointer(e);
 			this.send('onClick', { x: p[0], y: p[1] });
