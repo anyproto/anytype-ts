@@ -94,7 +94,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		let set = dbStore.getObjectType(Constant.typeId.set);
 
 		if (set) {
-			items.push(set);
+			//items.push(set);
 		};
 
 		items.sort(DataUtil.sortByName);

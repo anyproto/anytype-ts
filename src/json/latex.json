@@ -308,7 +308,7 @@
           },
           {
              "symbol": "\\begingroup",
-             "comment": "`\\begingroup`"
+             "comment": "`\\begingroup...\\endgroup`"
           },
           {
              "symbol": "\\Beta",
@@ -1091,7 +1091,7 @@
           },
           {
              "symbol": "\\endgroup",
-             "comment": ""
+             "comment": "\\begingroup...\\endgroup"
           },
           {
              "symbol": "\\enspace",
@@ -1749,7 +1749,7 @@
           },
           {
              "symbol": "\\let",
-             "comment": ""
+             "comment": "\\def\\bar{hello} \\let\\fooi\\bar \\fooi"
           },
           {
              "symbol": "\\lfloor",
@@ -1845,7 +1845,7 @@
           },
           {
              "symbol": "\\long",
-             "comment": ""
+             "comment": "\\long\\def\\dummy#1{#1} \\dummy{First paragraph}"
           },
           {
              "symbol": "\\Longleftarrow",
@@ -2750,7 +2750,7 @@
           },
           {
              "symbol": "\\renewcommand",
-             "comment": "`\\def\\hail{Hi!}`'`\\renewcommand\\hail{\\text{Ahoy!}}`'`\\hail`"
+             "comment": "`\\providecommand\foo{} \\renewcommand\foo{...}`"
           },
           {
              "symbol": "\\restriction",
