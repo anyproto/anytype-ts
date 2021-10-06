@@ -291,14 +291,14 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	dispatcher.request('blockCreatePage', request, callBack);
 };
 
-const BlockCreateSet = (contextId: string, targetId: string, objectTypeId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreateSet = (contextId: string, targetId: string, sources: string[], details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.Block.CreateSet.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setObjecttypeurl(objectTypeId);
+	request.setSourceList(sources);
 	request.setPosition(position);
 	request.setDetails(Encode.encodeStruct(details));
 
@@ -908,10 +908,10 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
 };
 
-const SetCreate = (url: string, details: any, templateId: string, callBack?: (message: any) => void) => {
+const SetCreate = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Set.Create.Request();
 	
-	request.setObjecttypeurl(url);
+	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
 
@@ -1050,6 +1050,15 @@ const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: 
 	request.setObjecttypefilterList(types);
 
 	dispatcher.request('objectGraph', request, callBack);
+};
+
+const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToSet.Request();
+	
+	request.setContextid(contextId);
+	request.setSourceList(sources);
+
+	dispatcher.request('objectToSet', request, callBack);
 };
 
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
@@ -1212,6 +1221,7 @@ export {
 	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
+	ObjectToSet,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

@@ -136,7 +136,7 @@ export interface Cell {
 };
 
 export interface ContentDataview {
-	source: string;
+	sources: string[];
 	views: View[];
 };
 

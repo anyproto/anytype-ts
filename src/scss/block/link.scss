@@ -79,15 +79,24 @@
                 .archive { position: static; margin: 0px 0px 0px 8px; }
             }
         }
+        .linkCard.c24.withIcon {
+            .side.right { width: calc(100% - 30px); }
+        }
 
         .linkCard.c64 {
             .side.right { line-height: 64px; }
             .sides.bgColor .side.right { line-height: 56px; padding: 4px; }
         }
+        .linkCard.c64.withIcon {
+            .side.right { width: calc(100% - 80px); }
+        }
 
         .linkCard.c96 {
             .side.right { line-height: 96px; }
             .sides.bgColor .side.right { line-height: 88px; padding: 4px; }
+        }
+        .linkCard.c96.withIcon {
+            .side.right { width: calc(100% - 116px); }
         }
 
         .linkCard.card { margin: 3px 0px; }
@@ -105,6 +114,7 @@
         .linkCard.align1 {
             .sides { display: block; }
             .side.left { margin: 0px 0px 8px 0px; }
+            .side.right { width: 100% !important; }
             .iconObject { display: inline-block; }
         }
 

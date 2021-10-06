@@ -43,14 +43,15 @@
 		.tabWrap { width: 100%; height: 44px; margin-bottom: 24px; position: relative; }
 		.tabWrap {
 			.tabs { 
-				line-height: 44px; height: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; display: inline-block; @include text-paragraph; 
-				color: rgba(255,255,255,0.6); font-weight: 700; user-select: none; white-space: nowrap;
+				height: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; display: inline-block; @include text-paragraph; 
+				color: rgba(255,255,255,0.6); font-weight: 700; user-select: none; white-space: nowrap; line-height: 44px;
 			}
 			.tabs {
 				.tab { 
-					line-height: 44px; display: inline-block; vertical-align: middle; padding: 0px 16px; border-radius: 12px; transition: $transitionFast; 
+					display: inline-block; vertical-align: top; padding: 0px 16px; border-radius: 12px; transition: $transitionFast; 
 					cursor: pointer; 
 				}
+				.tab:hover { background: rgba(0,0,0,0.15); }
 				.tab.active { background: rgba(0,0,0,0.3); color: #fff; }
 			}
 

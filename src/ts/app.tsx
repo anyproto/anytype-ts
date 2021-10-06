@@ -419,6 +419,27 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
+		ipcRenderer.on('update-confirm', (e: any, auto: boolean) => {
+			commonStore.progressClear(); 
+
+			if (!auto) {
+				popupStore.open('confirm', {
+					data: {
+						title: 'Update available',
+						text: 'Do you want to update on a new version?',
+						textConfirm: 'Update',
+						textCancel: 'Later',
+						onConfirm: () => {
+							ipcRenderer.send('updateConfirm');
+						},
+						onCancel: () => {
+							ipcRenderer.send('updateCancel');
+						}, 
+					},
+				});
+			};
+		});
+
 		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
@@ -606,7 +627,7 @@ class App extends React.Component<Props, State> {
 			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
-			isUnlocked: false,
+			isUnlocked: true,
 		});
 	};
 

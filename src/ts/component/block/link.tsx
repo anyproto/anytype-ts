@@ -165,27 +165,11 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	resize () {
-		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
-		const sides = node.find('#sides');
-		const sideLeft = node.find('#sideLeft');
-		const sideRight = node.find('#sideRight');
+		const card = node.find('.linkCard');
+		const icon = node.find('.iconObject');
 
-		if (!sides.length) {
-			return;
-		};
-
-		sideLeft.css({ width: 'auto' });
-		sideRight.css({ width: 'auto' });
-
-		if (block.align == I.BlockAlign.Center) {
-			return;
-		};
-
-		raf(() => {
-			sideLeft.css({ width: 'auto' });
-			sideRight.css({ width: sides.width() - (sideLeft.length ? sideLeft.outerWidth(true) : 0) });
-		});
+		icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
 	};
 	
 });

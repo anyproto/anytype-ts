@@ -609,6 +609,11 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 
 			this.setActive(null, true);
+
+			let item = items[this.ref.n];
+			if (item && !item.arrow && this.ref.onOver) {
+				this.ref.onOver(e, item);
+			};
 		});
 
 		keyboard.shortcut('arrowdown', e, (pressed: string) => {
@@ -617,7 +622,13 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			if (this.ref.n > l - 1) {
 				this.ref.n = 0;
 			};
+
 			this.setActive(null, true);
+
+			let item = items[this.ref.n];
+			if (item && !item.arrow && this.ref.onOver) {
+				this.ref.onOver(e, item);
+			};
 		});
 
 		if (this.ref.onClick) {	
