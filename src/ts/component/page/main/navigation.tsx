@@ -66,8 +66,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const rootId = this.getRootId();
 		const isRoot = rootId == root;
 
-		console.log(rootId);
-
 		let confirm = translate('popupNavigationOpen');
 		let iconHome = (
 			<div className="iconObject isRelation c48">

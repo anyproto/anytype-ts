@@ -310,8 +310,6 @@ class Keyboard {
 		const popup = popupStore.get('page');
 		const popupMatch = this.getPopupMatch();
 
-		console.log(popupMatch);
-
 		// Do not allow in set or store
 		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popupMatch.action) >= 0))) {
 			return;
