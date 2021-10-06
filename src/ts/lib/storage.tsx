@@ -70,7 +70,9 @@ class Storage {
 	};
 
 	logout () {
-		const keys = [ 'accountId', 'scroll', 'toggle', 'crumbs', 'tabIndex', 'tabStore', 'linkSettings' ];
+		const keys = [ 
+			'accountId', 'scroll', 'toggle', 'crumbs', 'tabIndex', 'tabStore', 'linkSettings', 'popupIntroBlock'
+		];
 
 		for (let key of keys) {
 			this.delete(key);

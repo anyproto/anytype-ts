@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { I, Action } from 'ts/lib';
 import { ObjectPreviewBlock } from 'ts/component';
-import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 

@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<any> {
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Props, {}> {
+const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Props, {}> {
 
 	timeout: number = 0;
 
@@ -25,10 +25,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		this.onHome = this.onHome.bind(this);
 		this.onBack = this.onBack.bind(this);
 		this.onForward = this.onForward.bind(this);
-		this.onMore = this.onMore.bind(this);
-		this.onNavigation = this.onNavigation.bind(this);
-		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
+		this.onNavigation = this.onNavigation.bind(this);
 
 		this.onPathOver = this.onPathOver.bind(this);
 		this.onPathOut = this.onPathOut.bind(this);
@@ -37,14 +35,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	render () {
 		const { match, isPopup, rootId } = this.props;
 		const { breadcrumbs } = blockStore;
-		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return null;
-		};
-
 		const object = detailStore.get(breadcrumbs, rootId, [ 'templateIsBundled' ]);
-		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 
 		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
@@ -81,8 +72,6 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 				</div>
 
 				<div className="side right">
-					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
-					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
 				</div>
 			</div>
 		);
@@ -118,83 +107,18 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 	onOpen () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-
-		DataUtil.objectOpen(object);
-	};
-	
-	onMore (e: any) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
-		const { isPopup, match, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-more`;
-		const param: any = {
-			element: elementId,
-			horizontal: I.MenuDirection.Right,
-			subIds: Constant.menuIds.more,
-			data: {
-				rootId: rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
-				match: match,
-			}
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-
-			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
-		} else {
-			param.offsetY = 4;
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockMore', param); });
-	};
-
-	onSync (e: any) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
-		const { isPopup, rootId } = this.props;
-		const st = $(window).scrollTop();
-		const elementId = `${this.getContainer()} #button-header-sync`;
-		const param: any = {
-			element: elementId,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				rootId: rootId,
-			}
-		};
-
-		if (!isPopup) {
-			const element = $(elementId);
-			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
-		} else {
-			param.offsetY = 4;
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('threadList', param); });
+		this.props.history.push('/main/graph/' + rootId);
 	};
 
 	onNavigation (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
-
+	
 	onSearch (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { isPopup, rootId } = this.props;
+		const { rootId } = this.props;
 
 		popupStore.open('search', {
 			preventResize: true, 
@@ -228,4 +152,4 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	
 });
 
-export default HeaderMainEdit;
+export default HeaderMainGraph;

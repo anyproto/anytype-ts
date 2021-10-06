@@ -117,7 +117,7 @@
 			.iconObject { background: #f3f2ec; border-radius: 10px; margin-bottom: 15px; }
 			.line { border-radius: 2px; }
 			.line.lineName { width: 88px; height: 10px; background-color: $colorLightGrey; margin-bottom: 10px; }
-			.line.lineType { width: 56px; height: 8px; background-color: #eae9e0; }
+			.line.lineType { width: 56px; height: 8px; background-color: $colorLightGrey; }
 		}
 
 		.item.isTask { padding-left: 40px; }
