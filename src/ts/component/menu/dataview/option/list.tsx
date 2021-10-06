@@ -186,7 +186,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let ret = false;
 
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
-			console.log(item);
 			this.onEdit(e, item);
 			ret = true;
 		});

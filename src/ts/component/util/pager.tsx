@@ -41,7 +41,7 @@ class Pager extends React.Component<Props, {}> {
 		};
 
 		const Item = (item) => (
-			<div className={'page ' + (item.id == page ? 'active' : '')} onClick={() => { this.onChange(item.id); }}>
+			<div className={'pageItem ' + (item.id == page ? 'active' : '')} onClick={() => { this.onChange(item.id); }}>
 				{item.id}
 			</div>
 		);
