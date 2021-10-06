@@ -214,10 +214,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	onDragStart (e: any, d: any) {
 		this.isDragging = true;
 		this.send('onDragStart', { active: e.active });
+
+		$('body').addClass('grab');
 	};
 
 	onDragMove (e: any, d: any) {
-		const win = $(window);
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
@@ -234,6 +235,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.isDragging = false;
 		this.subject = null;
 		this.send('onDragEnd', { active: e.active });
+
+		$('body').removeClass('grab');
 	};
 
 	onZoom ({ transform }) {
@@ -243,9 +246,9 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 	onMessage ({ data }) {
 		const { onClick } = this.props;
+		const body = $('body');
 
 		switch (data.id) {
-
 			case 'onClick':
 				if (data.node.id == blockStore.root) {
 					break;
@@ -258,6 +261,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				const d = data.node;
 				if (!this.isDragging) {
 					this.subject = d;
+					d ? body.addClass('cp') : body.removeClass('cp');
 				};
 				break;
 
