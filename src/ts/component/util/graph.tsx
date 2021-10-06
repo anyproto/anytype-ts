@@ -62,7 +62,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			y: 0.5
 		},
 
-		orphans: false,
+		orphans: true,
 		markers: true,
 		labels: true,
 		relations: true,
@@ -105,10 +105,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 
 		const scale = transform.k || 5;
-		const w = this.width * density;
-		const h = this.height * density;
-		const x = transform.x || -(1.6 * w);
-		const y = transform.y || -(1.6 * h);
+		const w = this.width;
+		const h = this.height;
+		const x = transform.x || -w * 2;
+		const y = transform.y || -h * 2;
 
 		this.edges = (data.edges || []).map((d: any) => {
 			d.type = Number(d.type) || 0;
