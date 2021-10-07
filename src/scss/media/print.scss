@@ -4,6 +4,7 @@
 
 	body { -webkit-print-color-adjust: exact; }
 	#drag { display: none !important; }
+	.menu { display: none; }
 
 	.header { display: none; }
 	.footer { display: none; }
@@ -17,6 +18,13 @@
 				.side.center { margin: 0px; }
 				.side.right { display: none; }
 			}	
+		}
+	}
+
+	.popupPage {
+		#innerWrap { 
+			width: 100% !important; height: 100% !important; margin: 0px !important; left: 0px; top: 0px; 
+			border-radius: 0px; box-shadow: 0px 0px;
 		}
 	}
 
