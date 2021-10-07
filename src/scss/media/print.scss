@@ -4,7 +4,11 @@
 
 	body { -webkit-print-color-adjust: exact; }
 	#drag { display: none !important; }
-	.menu { display: none; }
+	#linkPreview { display: none !important; }
+	.menu { display: none !important; }
+	.editorControls { display: none !important; }
+	.controlButtons { display: none !important; }
+	html.withPopup .page.isFull { display: none !important; }
 
 	.header { display: none; }
 	.footer { display: none; }
@@ -27,9 +31,6 @@
 			border-radius: 0px; box-shadow: 0px 0px;
 		}
 	}
-
-	.editorControls { display: none; }
-	.controlButtons { display: none; }
 
 	.blocks {
 		#button-add { display: none; }
