@@ -364,7 +364,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		const cover = node.find('.block.blockCover');
 		const controls = node.find('.editorControls');
 		const wrapper = node.find('.blocks.wrapper');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
 
@@ -381,10 +381,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			wrapper.css({ paddingTop: 330 });
 		};
 
-		if (!isPopup) {
-			obj.css({ minHeight: win.height() });
-		};
-
+		obj.css({ minHeight: isPopup ? '' : win.height() });
 		node.css({ paddingTop: hh });
 	};
 
