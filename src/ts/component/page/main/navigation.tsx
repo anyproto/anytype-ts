@@ -320,17 +320,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const items = node.find('.items');
 			const sides = node.find('.sides');
 			const empty = node.find('#empty');
-			const offset = 16;
 			const hh = header.height();
-			const wh = obj.height();
-			
-			let oh = wh - header.height();
-			let sh = oh - offset;
+			const oh = obj.height() - hh;
 
 			node.css({ paddingTop: hh });
-			sides.css({ height: sh });
-			items.css({ height: sh });
-			empty.css({ height: sh, lineHeight: sh + 'px' });
+			sides.css({ height: oh });
+			items.css({ height: oh });
+			empty.css({ height: oh, lineHeight: oh + 'px' });
 		});
 	};
 	
