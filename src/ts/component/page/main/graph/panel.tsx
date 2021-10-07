@@ -94,7 +94,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
     resize () {
         const { isPopup } = this.props;
         const node = $(ReactDOM.findDOMNode(this));
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const tabs = node.find('.tabs');
 		const hh = header.height();

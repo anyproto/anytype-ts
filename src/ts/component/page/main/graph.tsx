@@ -138,7 +138,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	resize () {
 		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const wrapper = obj.find('.wrapper');
 
 		let height = 0;
@@ -151,8 +151,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		wrapper.find('.side').css({ height: height });
 		
 		if (isPopup) {
-			const obj = $('#popupPage .content');
-			obj.css({ minHeight: 'unset', height: '100%' });
+			const element = $('#popupPage .content');
+			element.css({ minHeight: 'unset', height: '100%' });
 		};
 
 		if (this.refGraph) {
