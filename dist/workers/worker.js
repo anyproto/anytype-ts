@@ -24,7 +24,8 @@ let Color = {
 	text: '#2c2b27',
 	link: {
 		0: '#dfddd0',
-		1: '#f09c0e',
+		1: '#8c9ea5',
+		'over': '#ffd15b',
 	},
 	node: {
 		common: '#f3f2ec',
@@ -60,7 +61,7 @@ init = (data) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
 			d.fy = height / 2;
-			d.radius = 10;
+			d.radius = 6;
 		};
 
 		octx.save();
@@ -78,6 +79,7 @@ init = (data) => {
 	initForces();
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
+	simulation.tick(1000);
 };
 
 image = ({ src, bitmap }) => {
@@ -170,13 +172,18 @@ redraw = () => {
 };
 
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
+	let source = nodes.find(it => it.id == d.source.id);
 	let x1 = d.source.x;
 	let y1 = d.source.y;
-	let r1 = d.source.radius + 1;
+	let r1 = d.source.radius + 3;
 	let x2 = d.target.x;
 	let y2 = d.target.y;
-	let r2 = d.target.radius + 1;
+	let r2 = d.target.radius + 3;
 	let bg = Color.link[d.type] || Color.link[0];
+
+	if (source.isOver) {
+		bg = Color.link.over;
+	};
 
     let a1 = Math.atan2(y2 - y1, x2 - x1);
 	let a2 = Math.atan2(y1 - y2, x1 - x2);
@@ -225,6 +232,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(a2);
+		ctx.font = 'italic 3px Helvetica';
 
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
@@ -263,13 +271,18 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver) {
-		stroke = Color.link[1];
+		stroke = Color.link.over;
 		width = 1;
 	};
 
-	ctx.beginPath();
-	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-	ctx.fillStyle = bg;
+	if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+		ctx.beginPath();
+		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+		ctx.closePath();
+	} else {
+		const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+		roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+	};
 
 	if (stroke) {
 		ctx.lineWidth = width;
@@ -277,10 +290,13 @@ drawNode = (d) => {
 		ctx.stroke();
 	};
 	
+	ctx.fillStyle = bg;
 	ctx.fill();
 
 	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
-		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - 14, d.y + d.radius + 1, 28, 5);
+		const h = 5;
+		const div = 6.25;
+		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
 	};
 
 	if (!img) {
@@ -298,11 +314,16 @@ drawNode = (d) => {
 		x = d.x - d.radius;
 		y = d.y - d.radius;
 
-		ctx.beginPath();
-		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-		ctx.closePath();
-		ctx.fill();
+		if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+			ctx.beginPath();
+			ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+			ctx.closePath();
+		} else {
+			const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+			roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+		};
 
+		ctx.fill();
 		ctx.clip();
 
 		if (img.width > img.height) {

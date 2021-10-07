@@ -594,11 +594,7 @@ function menuInit () {
 						setConfig({ experimental: !config.experimental });
 						win.reload();
 					}
-				},
-				{
-					label: 'Graph',
-					click: () => { send('popup', 'graph', {}); }
-				},
+				}
 			]
 		});
 	};

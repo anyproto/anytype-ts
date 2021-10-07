@@ -512,28 +512,27 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 		
 		const { rootId, block, readonly } = this.props;
-		const { id } = block;
-		const node = $(ReactDOM.findDOMNode(this));
-		
 		if (!block.isLayoutRow() || keyboard.isDragging || readonly) {
 			return;
 		};
 		
+		const sm = Constant.size.blockMenu;
+		const node = $(ReactDOM.findDOMNode(this));
 		const width = $('#editorWrapper').width();
-		const childrenIds = blockStore.getChildrenIds(rootId, id);
+		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
-		const children = blockStore.getChildren(rootId, id);
+		const children = blockStore.getChildren(rootId, block.id);
 		const rect = node.get(0).getBoundingClientRect() as DOMRect;
-		const p = (e.pageX - rect.x) / (width + Constant.size.blockMenu);
-		
+		const p = e.pageX - rect.x - sm;
+
 		let c = 0;
 		let num = 0;
 		
 		for (let i in children) {
 			const child = children[i];
-			
+
 			c += child.fields.width || 1 / length;
-			if ((p >= c - 0.1) && (p <= c + 0.1)) {
+			if ((p >= c * width - sm / 2) && (p <= c * width + sm / 2)) {
 				num = Number(i) + 1;
 				break;
 			};

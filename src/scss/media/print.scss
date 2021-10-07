@@ -1,23 +1,31 @@
 @media print {
-	@page {
-		size: A4;
-		margin: 0px 0px 2cm 0px;
-	}
+	@page { size: A4; margin: 2cm 0px; }
+	@page:first { margin-top: 0px; }
 
 	body { -webkit-print-color-adjust: exact; }
+	#drag { display: none !important; }
 
 	.header { display: none; }
 	.footer { display: none; }
 	
-	.block.blockCover { left: 0px; width: 100%; }
+	.block.blockCover { left: 0px; top: 0px; width: 100%; }
 	
-	.pageMainEdit .blocks { padding: 0px 1.5cm 2cm 1.5cm }
+	.pageMainEdit .blocks { padding: 0px 1.5cm 2cm 1.5cm; }
+	.pageMainType, .pageMainRelation {
+		.wrapper {
+			.head {
+				.side.center { margin: 0px; }
+				.side.right { display: none; }
+			}	
+		}
+	}
 
 	.editorControls { display: none; }
+	.controlButtons { display: none; }
 
 	.blocks {
 		#button-add { display: none; }
-	
+
 		.block {
 			.icon.dnd { display: none; }
 		}

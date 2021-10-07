@@ -142,24 +142,13 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
-				popupStore.open('navigation', { 
-					data: { 
-						type: I.NavigationType.Go, 
-						rootId: rootId,
-					}, 
-				});
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
-			if (config.sudo) {
-				this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
-					popupStore.open('graph', {
-						data: { 
-							rootId: rootId,
-						}, 
-					});
-				});
-			};
+			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+			});
 
 			// Go to dashboard
 			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
@@ -218,7 +207,9 @@ class Keyboard {
 	};
 
 	getRootId (): string {
-		return this.match?.params?.id || blockStore.root;
+		const isPopup = popupStore.isOpen('page');
+		const popupMatch = this.getPopupMatch();
+		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
 	};
 
 	onKeyUp (e: any) {
@@ -283,6 +274,10 @@ class Keyboard {
 				this.onSearch();
 				break;
 
+			case 'graph':
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				break;
+
 			case 'print':
 				this.onPrint();
 				break;
@@ -313,9 +308,10 @@ class Keyboard {
 
 	onSearch () {
 		const popup = popupStore.get('page');
+		const popupMatch = this.getPopupMatch();
 
 		// Do not allow in set or store
-		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0))) {
+		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popupMatch.action) >= 0))) {
 			return;
 		};
 
@@ -330,6 +326,11 @@ class Keyboard {
 				},
 			});
 		}, Constant.delay.menu);
+	};
+
+	getPopupMatch () {
+		const popup = popupStore.get('page');
+		return popup && popup?.param.data.matchPopup.params || {};
 	};
 
 	ctrlByPlatform (e: any) {

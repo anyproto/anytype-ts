@@ -58,6 +58,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
 					</div>
 				) : (
 					<div className="side left">
@@ -186,17 +187,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	};
 
 	onNavigation (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const { rootId } = this.props;
-
-		popupStore.open('navigation', {
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
-		});
+		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 
 	onSearch (e: any) {

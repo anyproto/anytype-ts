@@ -147,7 +147,7 @@ class DataUtil {
 		return c;
 	};
 
-	relationClass (v: I.RelationType): string {
+	relationTypeName (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
 			default:
@@ -155,8 +155,8 @@ class DataUtil {
 			case I.RelationType.ShortText:	 c = 'shortText'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Status:		 c = 'select isStatus'; break;
-			case I.RelationType.Tag:		 c = 'select isTag'; break;
+			case I.RelationType.Status:		 c = 'status'; break;
+			case I.RelationType.Tag:		 c = 'tag'; break;
 			case I.RelationType.File:		 c = 'file'; break;
 			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
 			case I.RelationType.Url:		 c = 'url'; break;
@@ -164,13 +164,20 @@ class DataUtil {
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
 		};
+		return c;
+	};
+
+	relationClass (v: I.RelationType): string {
+		let c = this.relationTypeName(v);
+		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
+			c = 'select ' + this.tagClass(v);
+		};
 		return 'c-' + c;
 	};
 
 	tagClass (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
-			default:
 			case I.RelationType.Status:		 c = 'isStatus'; break;
 			case I.RelationType.Tag:		 c = 'isTag'; break;
 		};
@@ -422,72 +429,26 @@ class DataUtil {
 
 		keyboard.setSource(null);
 
-		switch (object.layout) {
-			default:
-				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
-				break;
+		let action = this.actionByLayout(object.layout);
+		let id = object.id;
 
-			case I.ObjectLayout.Set:
-				this.history.push('/main/set/' + object.id);
-				break;
+		if ((action == 'edit') && (object.id == root)) {
+			action = 'index';
+			id = '';
+		};
 
-			case I.ObjectLayout.Type:
-				this.history.push('/main/type/' + object.id);
-				break;
-
-			case I.ObjectLayout.Relation:
-				this.history.push('/main/relation/' + object.id);
-				break;
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:
-				this.history.push('/main/media/' + object.id);
-				break;
-
-			case I.ObjectLayout.Store:
-				this.history.push('/main/store');
-				break;
+		if (action) {
+			this.history.push('/main/' + action + (id ? '/' + id : ''));
 		};
 	};
 
 	objectOpenPopup (object: any) {
-		const popupId = 'page';
-
-		let action = '';
-
-		switch (object.layout) {
-			default:
-				action = 'edit';
-				break;
-
-			case I.ObjectLayout.Set:
-				action = 'set';
-				break;
-
-			case I.ObjectLayout.Type:
-				action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				action = 'relation';
-				break;
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:
-				action = 'media';
-				break;
-
-			case I.ObjectLayout.Store:
-				action = 'store';
-				break;
-		};
-
 		const param: any = { 
 			data: { 
 				matchPopup: { 
 					params: {
 						page: 'main',
-						action: action,
+						action: this.actionByLayout(object.layout),
 						id: object.id,
 					},
 				},
@@ -496,7 +457,23 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open(popupId, param);
+		popupStore.open('page', param);
+	};
+
+	actionByLayout (v: I.ObjectLayout): string {
+		let r = '';
+		switch (v) {
+			default:						 r = 'edit'; break;
+			case I.ObjectLayout.Set:		 r = 'set'; break;
+			case I.ObjectLayout.Type:		 r = 'type'; break;
+			case I.ObjectLayout.Relation:	 r = 'relation'; break;
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:		 r = 'media'; break;
+			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
+			case I.ObjectLayout.Graph:		 r = 'graph'; break;
+			case I.ObjectLayout.Store:		 r = 'store'; break;
+		};
+		return r;
 	};
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {

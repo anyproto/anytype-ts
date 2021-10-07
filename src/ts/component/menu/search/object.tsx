@@ -237,13 +237,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
 		].concat(data.filters || []);
 
 		const sorts = [
