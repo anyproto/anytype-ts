@@ -11,6 +11,14 @@
 	.block.blockCover { left: 0px; top: 0px; width: 100%; }
 	
 	.pageMainEdit .blocks { padding: 0px 1.5cm 2cm 1.5cm; }
+	.pageMainType, .pageMainRelation {
+		.wrapper {
+			.head {
+				.side.center { margin: 0px; }
+				.side.right { display: none; }
+			}	
+		}
+	}
 
 	.editorControls { display: none; }
 	.controlButtons { display: none; }
