@@ -91,6 +91,12 @@ html.platformWindows {
 	}
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
+
+	.blocks {
+		.block.blockDataview {
+			.content .scroll::-webkit-scrollbar-thumb { border-width: 5px; border-radius: 10px; }
+		}
+	}
 }
 
 .dn { display: none !important; }
