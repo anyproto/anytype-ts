@@ -12,6 +12,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const PREFIX = 'blockFeatured';
+const BLOCK_ID_DATAVIEW = 'dataview';
 
 const BlockFeatured = observer(class BlockFeatured extends React.Component<Props, {}> {
 
@@ -305,6 +306,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				horizontal: I.MenuDirection.Center,
 				data: {
 					rootId: rootId,
+					blockId: BLOCK_ID_DATAVIEW,
 					value: object.setOf,
 				}
 			}); 

@@ -27,7 +27,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { value } = data;
 		const items = this.getItems();
 		
 		const Item = (item: any) => {
@@ -40,7 +40,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 						<div className="value">{item.value}</div>
 					</div>
 					<div className="buttons">
-						<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
 						{canDelete ? <Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
 					</div>
 				</form>
@@ -48,7 +47,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		};
 		
 		const ItemAdd = (item: any) => (
-			<div className="item add" onClick={this.onAdd}>
+			<div id="item-add" className="item add" onClick={this.onAdd}>
 				<Icon className="plus" />
 				<div className="name">Add a relation</div>
 			</div>
@@ -103,6 +102,25 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	onAdd (e: any) {
+		const { getId, getSize, param } = this.props;
+		const { data } = param;
+		const value = DataUtil.getRelationArrayValue(data.value);
+
+		menuStore.open('searchObject', { 
+			element: `#${getId()} #item-add`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			className: 'single',
+			data: {
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
+				],
+				onSelect: (item: any) => {
+					value.push(item.id);
+					this.save(value);
+				}
+			}
+		});
 	};
 
 	onRemove (e: any, item: any) {
@@ -113,7 +131,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.filter((it: string) => { return it != item.id; });
 
-		console.log(item, value);
+		this.save(value);
 	};
 
 	onOver (e: any, item: any) {
@@ -122,12 +140,15 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		};
 	};
 
-	onClick (e: any, item: any) {
-		
+	onClick (e: any, item: any) {	
 	};
 
-	save () {
-	
+	save (value: string[]) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+
+		C.BlockDataviewSetSource(rootId, blockId, value);
 	};
 
 	getItems () {
@@ -147,6 +168,10 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		} else {
 			value.forEach((it: string) => {
 				const object = detailStore.get(rootId, it);
+				if (object._empty_) {
+					return;
+				};
+
 				if (object.type == Constant.typeId.type) {
 					items.push({
 						...object,
@@ -159,9 +184,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			});
 		};
 		return items;
-	};
-
-	getRelationOptions () {
 	};
 
 });
