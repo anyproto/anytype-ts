@@ -980,7 +980,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page');
+			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 			pageContainer.unbind('click.context').on('click.context', () => { 
 				pageContainer.unbind('click.context');
 				menuStore.close('blockContext'); 

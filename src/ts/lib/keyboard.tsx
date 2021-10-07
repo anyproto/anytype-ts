@@ -302,8 +302,17 @@ class Keyboard {
 	};
 
 	onPrint () {
+		const isPopup = popupStore.isOpen('page');
+		const html = $('html');
+
+		if (isPopup) {
+			html.addClass('withPopup');
+		};
+
 		focus.clearRange(true);
 		window.print();
+
+		html.removeClass('withPopup');
 	};
 
 	onSearch () {

@@ -905,7 +905,7 @@ class Util {
 		switch (type) {
 			default:
 			case 'page':
-				return '.page';
+				return '.page.isFull';
 
 			case 'popup':
 				return '#popupPage';
