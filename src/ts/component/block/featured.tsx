@@ -40,11 +40,36 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured, Constant.relationKey.setOf ]);
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const setOf = DataUtil.getRelationArrayValue(object.setOf);
+		const types = [];
+		const relations = [];
+
+		setOf.forEach((it: string) => {
+			const o = detailStore.get(rootId, it, []);
+			if (o._empty_) {
+				return;
+			};
+
+			if (o.type == Constant.typeId.type) {
+				types.push(o.name);
+			};
+			if (o.type == Constant.typeId.relation) {
+				relations.push(o.name);
+			};
+		});
+
+		let setOfString = [];
+		if (types.length) {
+			setOfString.push('Object types: ' + types.join(', '));
+		};
+		if (relations.length) {
+			setOfString.push('Relations: ' + relations.join(', '));
+		};
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
@@ -72,7 +97,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.setOf); }}
 							onMouseLeave={this.onMouseLeave}
 						>
-							<div className="empty">Source</div>
+							{setOfString.length ? (
+								<div className="name">
+									{setOfString.join(' ')}
+								</div>
+							) : (
+								<div className="empty">Source</div>
+							)}
 						</div>
 					</span>
 				) : ''}

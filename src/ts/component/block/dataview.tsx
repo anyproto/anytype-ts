@@ -180,7 +180,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onRowAdd (e: any, dir: number) {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ], true);
+		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 
@@ -266,7 +266,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ((relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
+		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
 			DataUtil.objectOpenPopup(record);
 		} else {
 			ref.onClick(e);
