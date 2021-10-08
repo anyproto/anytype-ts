@@ -718,12 +718,12 @@ class Util {
 		
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		this.timeoutLinkPreviewShow = window.setTimeout(() => {
+			this.linkPreviewOpen = true;
 			commonStore.linkPreviewSet({
 				url: url,
 				element: node,
 				...param,
 			});
-			this.linkPreviewOpen = true;
 		}, 500);
 	};
 	
