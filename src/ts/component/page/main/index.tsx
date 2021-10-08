@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {}
@@ -189,14 +189,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onTab (id: Tab) {
-		if (!Tabs.find((it: any) => { return it.id == id; })) {
-			id = Tabs[0].id;
+		let tab = Tabs.find((it: any) => { return it.id == id; });
+		if (!tab) {
+			tab = Tabs[0];
+			id = tab.id;
 		};
 
 		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
 		Storage.set('tabIndex', id);
+		analytics.event('TabHome', { tab: tab.name });
 
 		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
 			this.load();

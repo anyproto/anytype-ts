@@ -234,6 +234,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					},
 					onSelect: (item: any) => {
 						create(item);
+
+						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
 					},
 				}
 			});

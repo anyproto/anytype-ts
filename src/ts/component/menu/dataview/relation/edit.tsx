@@ -406,11 +406,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { relationKey, getView } = data;
 
-		let relation = getView()?.getRelation(relationKey);
-		if (!relation) {
-			relation = new M.ViewRelation({ relationKey: relationKey });
-		};
-		return relation;
+		return getView()?.getRelation(relationKey);
 	};
 
 });
