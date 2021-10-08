@@ -3,7 +3,7 @@ import { I } from 'ts/lib';
 const sc = 'bgColor bgColor-grey textColor textColor-red nw'
 
 export default [
-
+	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
 	{ style: I.TextStyle.Header1, text: `Updates for 16 September, 2021` },
