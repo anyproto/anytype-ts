@@ -27,6 +27,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		this.onForward = this.onForward.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
+		this.onGraph = this.onGraph.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 
@@ -59,6 +60,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
 						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
 						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
+						<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
 					</div>
 				) : (
 					<div className="side left">
@@ -66,6 +68,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
 						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
+						<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
 					</div>
 				)}
 
@@ -188,6 +191,9 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 
 	onNavigation (e: any) {
 		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
+	};
+	onGraph (e: any) {
+		DataUtil.objectOpenPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch (e: any) {

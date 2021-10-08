@@ -1184,8 +1184,8 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '0').replace(/,\s?/g, '.');
-				value = parseFloat(value);
+				value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
+				value = Number(value);
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {

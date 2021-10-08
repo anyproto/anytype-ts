@@ -4,11 +4,22 @@
 
 	body { -webkit-print-color-adjust: exact; }
 	#drag { display: none !important; }
-
+	#linkPreview { display: none !important; }
+	.menu { display: none !important; }
+	.editorControls { display: none !important; }
+	.controlButtons { display: none !important; }
+	html.withPopup .page.isFull { display: none !important; }
 	.header { display: none; }
 	.footer { display: none; }
+
+	.overPopup, .overMenu { overflow: visible !important; }
 	
 	.block.blockCover { left: 0px; top: 0px; width: 100%; }
+
+	.popups {
+		.popup { position: relative; }
+		.dimmer { display: none !important; }
+	}
 	
 	.pageMainEdit .blocks { padding: 0px 1.5cm 2cm 1.5cm; }
 	.pageMainType, .pageMainRelation {
@@ -20,8 +31,12 @@
 		}
 	}
 
-	.editorControls { display: none; }
-	.controlButtons { display: none; }
+	.popupPage {
+		#innerWrap { 
+			width: 100% !important; height: auto !important; margin: 0px !important; left: 0px; top: 0px; 
+			border-radius: 0px; box-shadow: 0px 0px; overflow: visible; position: static;
+		}
+	}
 
 	.blocks {
 		#button-add { display: none; }
