@@ -78,6 +78,8 @@
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
 
+	.icon.nm { margin: 0px !important; }
+
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
