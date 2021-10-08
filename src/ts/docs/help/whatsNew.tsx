@@ -6,6 +6,42 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
+	{ style: I.TextStyle.Title, text: `0.20.0 Desktop` },
+	{ style: I.TextStyle.Header2, text: `Graph Mode` },
+	{ text: `Displays a graph representation of the Links and Relations between your objects. Now you can see the power of Anytype relations, with connections showing how each object relates to another! The more links and relations an object has, the more extensive its "network".  Especially useful both for the most referenced objects, and for hubs or content maps with many links to other objects.` },
+	{ text: `You can hover over each object to highlight its connections. Clicking on it will show additional information and options in a side panel.` },
+	{ text: `To pan around the canvas, drag the background.` },
+	{ text: `You can zoom in and out using a touchpad zoom function or by scrolling with a mouse wheel.` },
+	{ text: `Use the search function at the bottom of the panel to the right if you want to find a particular object. Matching objects will be highlighted in the network view.` },
+	{ text: `To access the Graph Mode, look for the <img src="./img/icon/graph.svg" class="icon" /> icon in the top-left corner from any opened object or just press ⌘ + Option + O / Ctrl + Alt + O.` },
+	{ text: `What does your graph look like? Share it in the community!` },
+
+	{ style: I.TextStyle.Header2, text: `LaTeX block` },
+	{ text: `LaTeX is here! Have you been frustrated trying to work with LaTeX functions in other tools? With Anytype, you don’t have to worry about errors ever again thanks to a real-time preview and example functions in the editor. You can write code and view the formula output at the same time. Now fully enjoy your studies using Anytype for your Math and Chemistry class notes!` },
+
+	{ style: I.TextStyle.Header2, text: `List & Gallery views` },
+	{ text: `Meet the new and highly-requested Views for Sets! To create a new view, click the <img src="./img/icon/plus.svg" class="icon" /> icon at the top-left of your Set (next to "All"), give it a name in the field at the top of the pop-up, then select the type of view you want (currently Grid, Gallery, or List, with more coming soon). After you create it, you can change options for the View by using the Customize View icon at the top-right of your set.` },
+	{ text: `For Gallery views, the card image can be shown from the Attachment Relation or the object’s cover image. You can set this in Customize View, and the selected image source will appear at the top of each gallery card. ` },
+	{ text: `You can also «right mouse» click on the view name to open options faster. ` },
+
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+	{ style: I.TextStyle.Bulleted, text: `Tabs: We did some research and rearranged the tabs in Home in order of popularity. The Inbox tab was removed and will come back reimagined later. Recent tab is now called History and no longer contains archived objects.` },
+	{ style: I.TextStyle.Bulleted, text: `Export to Print now separates blocks between pages without cropping them in the middle. If you choose Export to PDF after, then you will be able to copy text from there. Thanks, <a href="https://community.anytype.io/d/627-print-a-page-not-in-full-screen-create-buggy-pdfs/1">quietwalker</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Update System: The update progress bar will only be shown if you manually request an update. At the same time, the progress bar no longer blocks the application functions. Automatic updates now happen in the background. If a new version is available, you will be prompted to apply it. So Anytype won’t restart automatically at an inconvenient moment.` },
+
+	{ style: I.TextStyle.Header2, text: `Bug fixes` },
+	{ style: I.TextStyle.Bulleted, text: `Application may crash after re-login` },
+	{ style: I.TextStyle.Bulleted, text: `Audio block content upload may show an infinite loading spinner` },
+	{ style: I.TextStyle.Bulleted, text: `Search on the page doesn’t work in a modal view` },
+	{ style: I.TextStyle.Bulleted, text: `After changing the size of the image block it becomes selected and can’t be un-selected` },
+	{ style: I.TextStyle.Bulleted, text: `Code snippet: Pressing Shift + Enter creates a new code line instead of the new text block.` },
+	{ style: I.TextStyle.Bulleted, text: `The value at the width scale may not reset after using undo-redo` },
+	{ style: I.TextStyle.Bulleted, text: `Pressing ESC with an open full-screen image closes the modal in which it was opened` },
+	{ style: I.TextStyle.Bulleted, text: `<a href="https://community.anytype.io/d/961-linked-page-title-gets-removed-on-appearance-change/1">Linked Page Title gets removed on appearance change</a>` },
+	{ style: I.TextStyle.Bulleted, text: `<a href="https://community.anytype.io/d/1009-align-option-for-cards-does-not-use-the-full-layout-width/1">The text alignment option, when applied to a card, does not consider the entire layout’s width until the view is refreshed</a>` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
 	{ style: I.TextStyle.Header1, text: `Updates for 16 September, 2021` },
 
 	{ style: I.TextStyle.Header2, text: `Types, Sets, and Relations are now available!` },
