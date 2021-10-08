@@ -96,7 +96,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		items.sort(DataUtil.sortByName);
 
 		if (set) {
-			items.unshift(set);
+			//items.unshift(set);
 		};
 
 		if (filter) {
@@ -267,7 +267,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		if (item.id == Constant.typeId.set) {
 			C.ObjectToSet(rootId, [], (message: any) => {
-				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
+				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
