@@ -499,7 +499,7 @@ function menuInit () {
 					click: () => { send('commandGlobal', 'id'); }
 				},
 				{
-					label: 'Shortcuts',
+					label: 'Shortcuts', accelerator: 'Ctrl+Space',
 					click: () => { send('popup', 'shortcut'); }
 				},
 				{
