@@ -124,7 +124,11 @@ class Analytics {
 
 			case 'BlockDataviewViewCreate':
 			case 'BlockDataviewViewUpdate':
-				param.type = translate('viewName' +data.getView().getType());
+				param.type = translate('viewName' + data.getView().getType());
+				break;
+
+			case 'BlockDataviewViewSet':
+				param.type = translate('viewName' + data.type);
 				break;
 		};
 

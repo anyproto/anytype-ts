@@ -266,7 +266,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 
 		if (item.id == Constant.typeId.set) {
-			C.ObjectToSet(rootId, [ Constant.typeId.page ], (message: any) => {
+			C.ObjectToSet(rootId, [], (message: any) => {
 				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
 			});
 		} else {
