@@ -233,6 +233,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						});
 					},
 					onSelect: (item: any) => {
+						menuStore.close('previewObject');
 						create(item);
 					},
 				}
