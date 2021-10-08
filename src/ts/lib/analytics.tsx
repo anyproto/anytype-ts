@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Mapper, Util } from 'ts/lib';
+import { I, M, Mapper, Util, translate } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -8,7 +8,7 @@ const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
-const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template' ];
+const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template', 'tab' ];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
 
 class Analytics {
@@ -120,6 +120,11 @@ class Analytics {
 			case 'BlockListSetTextStyle':
 			case 'BlockListTurnInto':
 				param.style = this.getDictionary(I.BlockType.Text, converted.style);
+				break;
+
+			case 'BlockDataviewViewCreate':
+			case 'BlockDataviewViewUpdate':
+				param.type = translate('viewName' +data.getView().getType());
 				break;
 		};
 
