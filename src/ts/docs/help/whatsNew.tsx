@@ -26,7 +26,7 @@ export default [
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Tabs: We did some research and rearranged the tabs in Home in order of popularity. The Inbox tab was removed and will come back reimagined later. Recent tab is now called History and no longer contains archived objects.` },
-	{ style: I.TextStyle.Bulleted, text: `Export to Print now separates blocks between pages without cropping them in the middle. If you choose Export to PDF after, then you will be able to copy text from there. Thanks, <a href="https://community.anytype.io/d/627-print-a-page-not-in-full-screen-create-buggy-pdfs/1">quietwalker</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Export to Print now separates blocks between pages without cropping them in the middle. Thanks, <a href="https://community.anytype.io/d/627-print-a-page-not-in-full-screen-create-buggy-pdfs/1">quietwalker</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Update System: The update progress bar will only be shown if you manually request an update. At the same time, the progress bar no longer blocks the application functions. Automatic updates now happen in the background. If a new version is available, you will be prompted to apply it. So Anytype won’t restart automatically at an inconvenient moment.` },
 
 	{ style: I.TextStyle.Header2, text: `Bug fixes` },
