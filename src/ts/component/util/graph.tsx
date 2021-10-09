@@ -97,8 +97,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
-		//const transform = (Storage.get('graph') || {}).transform;
-		const transform: any = {};
+		const transform = (Storage.get('graph') || {}).transform;
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -336,7 +335,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.width = node.width();
 		this.height = node.height();
 
-		Storage.set('graph', { transform: {} });
 		this.send('onResize', { width: this.width, height: this.height, density: density });
 	};
 

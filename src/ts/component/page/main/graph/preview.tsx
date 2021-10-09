@@ -33,11 +33,16 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 		const { rootId, setState } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
-		const { name, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
+		const { layout, fileExt, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'preview', 'blocks', check.className, ];
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+
+		let name = object.name;
+		if ([ I.ObjectLayout.File, I.ObjectLayout.Image ].indexOf(layout) >= 0) {
+			name += '.' + fileExt;
+		};
 
 		return (
 			<div className={cn.join(' ')}>
