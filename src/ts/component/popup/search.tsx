@@ -81,9 +81,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				<div 
 					id={'item-' + item.id} 
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}
+					onMouseOver={(e: any) => { this.onOver(e, item); }} 
+					onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{item.isRoot ? iconHome : <IconObject object={item} size={18} /> }
+					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
 					
 					<div className="name">{item.name}</div>
 

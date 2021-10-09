@@ -71,8 +71,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 					</div>
 				</div>
 
-				<div className="side right">
-				</div>
+				<div className="side right" />
 			</div>
 		);
 	};

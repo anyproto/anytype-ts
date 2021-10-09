@@ -31,11 +31,11 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 					<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
 						{({ height, isScrolling, registerChild, scrollTop }) => {
 							return (
-								<AutoSizer disableHeight>
+								<AutoSizer disableHeight={true}>
 									{({ width }) => (
 										<List
 											ref={(ref: any) => { this.ref = ref; }}
-											autoHeight
+											autoHeight={true}
 											height={Number(height) || 0}
 											width={Number(width) || 0}
 											isScrolling={isScrolling}

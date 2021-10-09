@@ -57,7 +57,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			if (item.id == 'add') {
 				content =  (
 					<div 
-						id="item-add" className="item add" 
+						id="item-add" 
+						className="item add" 
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 						style={param.style}

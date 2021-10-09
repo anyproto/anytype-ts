@@ -70,13 +70,14 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		
 		return (
 			<React.Fragment>
-				{withFilter ?
+				{withFilter ? (
 					<Filter 
 						ref={(ref: any) => { this.refFilter = ref; }} 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
-				: ''}
+				) : ''}
+				
 				{!items.length ? (
 					<div className="item empty">No options found</div>
 				) : ''}
