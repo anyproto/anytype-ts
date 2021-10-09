@@ -15,14 +15,17 @@ export default [
 	{ text: `Use the search function at the bottom of the panel to the right if you want to find a particular object. Matching objects will be highlighted in the network view.` },
 	{ text: `To access the Graph Mode, look for the <img src="./img/icon/graph.svg" class="icon" /> icon in the top-left corner from any opened object or just press ⌘ + Option + O / Ctrl + Alt + O.` },
 	{ text: `What does your graph look like? Share it in the community!` },
+	{ text: `<img src="./img/help/graph.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `LaTeX block` },
 	{ text: `LaTeX is here! Have you been frustrated trying to work with LaTeX functions in other tools? With Anytype, you don’t have to worry about errors ever again thanks to a real-time preview and example functions in the editor. You can write code and view the formula output at the same time. Now fully enjoy your studies using Anytype for your Math and Chemistry class notes!` },
+	{ text: `<img src="./img/help/latex.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `List & Gallery views` },
 	{ text: `Meet the new and highly-requested Views for Sets! To create a new view, click the <img src="./img/icon/plus.svg" class="icon" /> icon at the top-left of your Set (next to "All"), give it a name in the field at the top of the pop-up, then select the type of view you want (currently Grid, Gallery, or List, with more coming soon). After you create it, you can change options for the View by using the Customize View icon at the top-right of your set.` },
 	{ text: `For Gallery views, the card image can be shown from the Attachment Relation or the object’s cover image. You can set this in Customize View, and the selected image source will appear at the top of each gallery card. ` },
 	{ text: `You can also «right mouse» click on the view name to open options faster. ` },
+	{ text: `<img src="./img/help/gallery.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `Tabs: We did some research and rearranged the tabs in Home in order of popularity. The Inbox tab was removed and will come back reimagined later. Recent tab is now called History and no longer contains archived objects.` },
