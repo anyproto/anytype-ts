@@ -107,12 +107,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 					Constant.typeId.relation,
 					Constant.typeId.type,
 					Constant.typeId.template,
-					/*
 					Constant.typeId.file,
 					Constant.typeId.image,
 					Constant.typeId.video,
 					Constant.typeId.audio,
-					*/
 				] 
 			},
 			{ 
