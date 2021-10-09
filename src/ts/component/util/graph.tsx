@@ -122,7 +122,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
 			d.shortName = Util.shorten(d.name, 16);
-			d.radius = Math.max(3, Math.min(12, sourceCnt + targetCnt));
+			d.radius = Math.max(3, Math.min(10, sourceCnt + targetCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
