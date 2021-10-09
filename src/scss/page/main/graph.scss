@@ -77,7 +77,7 @@
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
 		}
-		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; }
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; line-height: 22px; }
         .block.blockFeatured {
             .cellContent { padding: 2px 6px; }
             .cellContent {
