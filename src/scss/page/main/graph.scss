@@ -84,6 +84,7 @@
                 .over { display: inline; }
                 .tagItem { @include text-small; margin: 0px 6px 0px 0px; }
             }
+            .cellContent:hover { background: none; }
 
             .bullet { margin: 0px; }
         }
@@ -93,22 +94,27 @@
             .iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px #fff inset; }
             .title { display: block; @include text-header3; font-weight: bold; position: relative; }
             .icon.checkbox { 
-                position: absolute; top: 5px; left: -20px; width: 14px; height: 14px; background-image: url('~img/icon/object/checkbox0.svg') !important; 
+                position: static; width: 20px; height: 20px; background-image: url('~img/icon/object/checkbox0.svg') !important; 
+                margin-right: 6px;
             }
             .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
             .description { @include text-common; margin: 4px 0px 12px 0px; }
+            .description:empty { display: none; }
             .author { @include text-very-small; color: $colorMediumGrey; }
         }
 
         .buttons { margin-top: 24px; }
         .buttons {
-            .button { width: calc(50% - 4px); height: 32px; line-height: 32px; margin-right: 8px; border-radius: 4px; }
+            .button { width: calc(50% - 4px); height: 32px; line-height: 28px; margin-right: 8px; border-radius: 4px; }
             .button:last-child { margin: 0px; }
         }
     }
     .preview.withCover { padding-top: 164px; }
     .preview.withIconAndCover { padding-top: 106px; }
+    .preview.isTask {
+        .title { width: calc(100% - 26px); display: inline-block; vertical-align: middle; }
+    }
 
     .input-drag { height: 12px; }
     .input-drag {
