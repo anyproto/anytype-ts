@@ -37,10 +37,9 @@
     .footer { display: block !important; }
     .footer {
         .icon { 
-            width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; position: absolute; right: 20px; 
-            bottom: 20px; 
+            width: 44px; height: 44px; background-color: #fff; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 12px; 
+		    background-size: 20px 20px; position: absolute; right: 20px; bottom: 20px; 
         }
-        .icon:hover { background-color: #f3f2ec; }
         .icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
     }
 
