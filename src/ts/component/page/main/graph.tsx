@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, crumbs, Util } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainGraph as Header, Graph } from 'ts/component';
+import { HeaderMainGraph as Header, Graph, Icon } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -32,6 +32,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.onSwitch = this.onSwitch.bind(this);
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.togglePanel = this.togglePanel.bind(this);
 	};
 
 	render () {
@@ -64,9 +65,14 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 								data={ref.forceProps}
 								onFilterChange={this.onFilterChange}
 								onSwitch={this.onSwitch}
+								togglePanel={this.togglePanel}
 							/>
 						) : ''}
 					</div>
+				</div>
+
+				<div className="footer">
+					<Icon className="manager" onClick={() => { this.togglePanel(true); }} />
 				</div>
 			</div>
 		);
@@ -163,7 +169,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		};
 	};
 
+	togglePanel (v: boolean) {
+		const { isPopup } = this.props;
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+		const wrapper = obj.find('.wrapper');
+
+		v ? wrapper.addClass('withPanel') : wrapper.removeClass('withPanel');
+	};
+
 	onClickObject (object: any) {
+		this.togglePanel(true);
 		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
 	};
 
