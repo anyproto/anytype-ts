@@ -352,7 +352,7 @@ class Mark {
 		let marks: any[] = [];
 
 		// Fix browser markup bug
-		html.replace(/<\/?(i|b|font)>/g, (s: string, p: string) => {
+		html.replace(/<\/?(i|b|font|search)>/g, (s: string, p: string) => {
 			let r = '';
 			if (p == 'i') r = 'italic';
 			if (p == 'b') r = 'bold';

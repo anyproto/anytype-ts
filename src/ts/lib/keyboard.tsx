@@ -332,6 +332,7 @@ class Keyboard {
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
 				classNameWrap: 'fromHeader',
+				passThrough: true,
 				data: {
 					isPopup: popupStore.isOpen(),
 				},
