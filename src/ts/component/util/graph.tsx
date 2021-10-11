@@ -143,8 +143,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			return d;
 		});
 
-		console.log(this.nodes.map((d: any) => { return [ d.fx, d.fy ] }));
-
 		this.canvas = d3.select(elementId).append('canvas')
 		.attr('width', (this.width * density) + 'px')
 		.attr('height', (this.height * density) + 'px')
