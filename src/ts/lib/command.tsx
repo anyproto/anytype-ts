@@ -655,6 +655,17 @@ const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: str
 	dispatcher.request('blockDataviewViewDelete', request, callBack);
 };
 
+const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId: string, position: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewSetPosition.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setPosition(position);
+
+	dispatcher.request('blockDataviewViewSetPosition', request, callBack);
+};
+
 const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.ViewSetActive.Request();
 	
@@ -1173,6 +1184,7 @@ export {
 	BlockDataviewViewUpdate,
 	BlockDataviewViewDelete,
 	BlockDataviewViewSetActive,
+	BlockDataviewViewSetPosition,
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
