@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Util, analytics } from 'ts/lib';
+import { C, I, Util, analytics } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 
 interface Props extends I.ViewComponent {
 	className?: string;
@@ -241,6 +242,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { rootId, block } = this.props;
+
+		let views = dbStore.getViews(rootId, block.id);
+		let view = views[oldIndex];
+		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+
+		dbStore.viewsSort(rootId, block.id, ids);
+		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex);
 	};
 
 	resize () {

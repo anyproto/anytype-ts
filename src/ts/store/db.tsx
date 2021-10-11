@@ -23,6 +23,7 @@ class DbStore {
             relationUpdate: action,
             relationDelete: action,
             viewsSet: action,
+			viewsSort: action,
             viewsClear: action,
             viewAdd: action,
             viewUpdate: action,
@@ -151,6 +152,20 @@ class DbStore {
 		};
 		
 		this.viewMap.set(key, observable.array(views));
+	};
+
+	viewsSort (rootId: string, blockId: string, ids: string[]) {
+		const key = this.getId(rootId, blockId);
+		const views = this.getViews(rootId, blockId);
+
+		views.sort((c1: any, c2: any) => {
+			const i1 = ids.indexOf(c1.id);
+			const i2 = ids.indexOf(c2.id);
+
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+			return 0;
+		});
 	};
 
     viewsClear (rootId: string, blockId: string) {
