@@ -30,7 +30,7 @@ const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Recent, name: 'History' },
 	{ id: Tab.Set, name: 'Sets' },
-	{ id: Tab.Archive, name: 'Archive' },
+	{ id: Tab.Archive, name: 'Bin' },
 ];
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
@@ -347,9 +347,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (object.isArchived) {
 			link = null;
 			remove = { id: 'remove', icon: 'remove', name: 'Delete' };
-			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
+			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
+			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
 
 		if (object.isReadonly || object.templateIsBundled || (object.id == profile)) {

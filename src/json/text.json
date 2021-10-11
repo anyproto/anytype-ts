@@ -201,7 +201,7 @@
 	"blockFileDownload": { "en": "Download" },
 
 	"blockLinkSyncing": { "en": "Syncing..." },
-	"blockLinkArchived": { "en": "Archived" },
+	"blockLinkArchived": { "en": "Deleted" },
 
 	"blockDataviewNew": { "en": "New" },
 
