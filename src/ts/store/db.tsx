@@ -76,20 +76,16 @@ class DbStore {
 		const relations = this.getRelations(rootId, blockId);
 
 		// hack for done relation to exist in state
-		list = list.filter((it: any) => { return it.relationKey != 'done'; });
-		list.push({
-			objectId: '',
-			relationKey: 'done',
-			name: 'Done',
-			dataSource: 0,
-			format: I.RelationType.Checkbox,
-			isHidden: true,
-			isReadonlyRelation: true,
-			isReadonlyValue: false,
-			maxCount: 0,
-			scope: I.RelationScope.Object,
-			selectDict: [],
-		});
+		if (!list.find((it: any) => { return it.relationKey == 'done'; })) {
+			list.push({
+				relationKey: 'done',
+				name: 'Done',
+				format: I.RelationType.Checkbox,
+				isHidden: true,
+				isReadonlyRelation: true,
+				isReadonlyValue: false,
+			});
+		};
 
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
 		for (let item of list) {
