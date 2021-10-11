@@ -333,6 +333,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let menuContext = null;
 		let archive = null;
 		let link = null;
+		let remove = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		types = types.filter((it: string) => { return it != Constant.typeId.page; });
@@ -345,6 +346,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (object.isArchived) {
 			link = null;
+			remove = { id: 'remove', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
@@ -360,6 +362,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const options = [
 			archive,
+			remove,
 			move,
 			link,
 		];
@@ -439,6 +442,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 						case 'unfav':
 							C.ObjectSetIsFavorite(object.id, false);
+							break;
+
+						case 'remove':
+							C.ObjectListDelete([ object.id ]);
 							break;
 					};
 				},

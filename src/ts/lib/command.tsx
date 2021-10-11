@@ -615,15 +615,6 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.request('blockListSetAlign', request, callBack);
 };
 
-
-const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Delete.Page.Request();
-	
-	request.setBlockidsList(blockIds);
-
-	dispatcher.request('blockListDeletePage', request, callBack);
-};
-
 const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.ViewCreate.Request();
 	
@@ -1072,6 +1063,14 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
+const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Delete.Request();
+	
+	request.setObjectidsList(ids);
+
+	dispatcher.request('objectListDelete', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1178,7 +1177,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListDeletePage,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
@@ -1234,6 +1232,7 @@ export {
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 	ObjectToSet,
+	ObjectListDelete,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

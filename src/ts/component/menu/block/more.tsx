@@ -120,6 +120,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let template = null;
 		let archive = null;
 		let fav = null;
+		let removePage = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
@@ -138,7 +139,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (object.isArchived) {
-			//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
+			removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from archive' };
 			fav = null;
 		} else {
@@ -152,7 +153,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
 			sections = [
-				{ children: [ archive ] },
+				{ children: [ archive, removePage ] },
 				{ children: [ fav, link ] },
 				{ children: [ print ] },
 			];
@@ -186,7 +187,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			sections = [
-				{ children: [ undo, redo, history, archive ] },
+				{ children: [ undo, redo, history, archive, removePage ] },
 				{ children: [ fav, link, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
@@ -531,7 +532,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'removePage':
-				C.BlockListDeletePage([ blockId ], (message: any) => {
+				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (block.isPage()) {
 						history.push('/main/index');
 					};

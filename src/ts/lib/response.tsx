@@ -326,10 +326,6 @@ const BlockListSetAlign = (response: any) => {
 	return {};
 };
 
-const BlockListDeletePage = (response: any) => {
-	return {};
-};
-
 const BlockDataviewViewCreate = (response: any) => {
 	return {
 		viewId: response.getViewid(),
@@ -463,6 +459,10 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectListDelete = (response: any) => {
+	return {};
+};
+
 const MakeTemplate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -573,7 +573,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListDeletePage,
 
 	HistoryVersions,
 	HistoryShow,
@@ -592,6 +591,7 @@ export {
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
 	ObjectToSet,
+	ObjectListDelete,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
