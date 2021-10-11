@@ -8,6 +8,7 @@ interface Props {
 	className?: string;
 	arrow?: boolean;
 	tooltip?: string;
+	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	inner?: any;
 	draggable?: boolean;
@@ -25,6 +26,7 @@ const $ = require('jquery');
 class Icon extends React.Component<Props, {}> {
 	
 	public static defaultProps = {
+		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,
 	};
 	
@@ -64,11 +66,11 @@ class Icon extends React.Component<Props, {}> {
 	};
 	
 	onMouseEnter (e: any) {
-		const { tooltip, tooltipY, onMouseEnter } = this.props;
+		const { tooltip, tooltipX, tooltipY, onMouseEnter } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		
 		if (tooltip) {
-			Util.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);
+			Util.tooltipShow(tooltip, node, tooltipX, tooltipY);
 		};
 		
 		if (onMouseEnter) {

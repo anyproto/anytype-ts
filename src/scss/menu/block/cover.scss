@@ -6,7 +6,7 @@
 		.content { padding: 0px; overflow: visible; max-height: 366px; }
 		.sections { overflow: auto; height: 370px; }
 
-		.head { border-bottom: 1px solid #eae9e0; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; }
+		.head { border-bottom: 1px solid $colorLightGrey; padding: 11px 16px; font-weight: 500; color: $colorMediumGrey; }
 		.head {
 			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
 			.btn:hover { color: $colorBlack }

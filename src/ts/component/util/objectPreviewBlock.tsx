@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil, Action } from 'ts/lib';
+import { I, C, DataUtil } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props {

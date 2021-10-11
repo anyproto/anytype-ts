@@ -5,17 +5,17 @@ import View from '../view';
 
 class BlockContentDataview implements I.ContentDataview {
 	
-	source: string = '';
+	sources: string[] = [];
 	views: I.View[] = [];
 	
 	constructor (props: I.ContentDataview) {
 		let self = this;
 
-		self.source = String(props.source || '');
+		self.sources = props.sources || [];
 		self.views = (props.views || []).map((it: I.View) => { return new View(it); });
 		
 		makeObservable(self, {
-			source: observable,
+			sources: observable,
 			views: observable,
 		});
 

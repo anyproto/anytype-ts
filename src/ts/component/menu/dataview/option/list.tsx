@@ -169,7 +169,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const { getId } = this.props;
 
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
@@ -179,6 +179,22 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 
 		$(window).unbind('keydown.menu');
 		$(`#${getId()}`).unbind('click');
+	};
+
+	onKeyDown (e: any) {
+		let item = this.getItems(false)[this.n];
+		let ret = false;
+
+		keyboard.shortcut('arrowright', e, (pressed: string) => {
+			this.onEdit(e, item);
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
+
+		this.props.onKeyDown(e);
 	};
 
 	onFilterChange (v: string) {

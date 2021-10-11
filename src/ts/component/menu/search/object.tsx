@@ -100,7 +100,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				>
 					<MenuItemVertical 
 						{...props}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
 						className={cn.join(' ')}
@@ -237,13 +237,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
 		].concat(data.filters || []);
 
 		const sorts = [
@@ -305,14 +298,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		return true;
 	};
 
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+			this.onOver(e, item);
+		};
+	};
+
 	onOver (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onOver } = data;
-
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
 
 		if (onOver) {
 			onOver(e, this, item);

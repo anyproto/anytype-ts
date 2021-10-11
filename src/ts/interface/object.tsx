@@ -37,7 +37,9 @@ export enum ObjectLayout {
 	Video		 = 9,
 	Database	 = 20,
 
-	Store		 = 100,
+	Navigation	 = 100,
+	Graph		 = 101,
+	Store		 = 102,
 };
 
 export enum RelationType { 

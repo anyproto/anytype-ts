@@ -469,8 +469,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || menuOpen) {
+		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
+			if (block.isTextCode() && (pressed == 'enter')) {
+				return;
+			};
+
+			if (menuOpen) {
 				return;
 			};
 
@@ -976,7 +980,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
-			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page');
+			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 			pageContainer.unbind('click.context').on('click.context', () => { 
 				pageContainer.unbind('click.context');
 				menuStore.close('blockContext'); 

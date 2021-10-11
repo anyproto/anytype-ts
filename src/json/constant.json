@@ -85,6 +85,7 @@
 		"id", 
 		"name", 
 		"description", 
+		"snippet",
 		"iconEmoji", 
 		"iconImage", 
 		"relationFormat", 
@@ -93,6 +94,7 @@
 		"isHidden", 
 		"isArchived", 
 		"isReadonly", 
+		"isDraft",
 		"done", 
 		"fileExt", 
 		"fileMimeType" 
@@ -139,6 +141,7 @@
 		"image": "_otimage",
 		"file": "_otfile",
 		"video": "_otvideo",
+		"audio": "_otaudio",
 		"relation": "_otrelation"
 	},
 

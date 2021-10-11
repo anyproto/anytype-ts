@@ -43,8 +43,10 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
 					<td className="cell">
 						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
-							<IconObject object={item} />
-							<div className="name">{item.name}</div>
+							<div className="flex">
+								<IconObject object={item} />
+								<div className="name">{item.name}</div>
+							</div>
 						</div>
 					</td>
 					{!isFileType ? (

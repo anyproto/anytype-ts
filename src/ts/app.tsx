@@ -55,6 +55,8 @@ import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/store.scss';
 import 'scss/page/main/media.scss';
+import 'scss/page/main/graph.scss';
+import 'scss/page/main/navigation.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -81,7 +83,6 @@ import 'scss/block/latex.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
-import 'scss/popup/navigation.scss';
 import 'scss/popup/search.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
@@ -90,7 +91,6 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
-import 'scss/popup/graph.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -419,6 +419,27 @@ class App extends React.Component<Props, State> {
 			};
 		});
 
+		ipcRenderer.on('update-confirm', (e: any, auto: boolean) => {
+			commonStore.progressClear(); 
+
+			if (!auto) {
+				popupStore.open('confirm', {
+					data: {
+						title: 'Update available',
+						text: 'Do you want to update on a new version?',
+						textConfirm: 'Restart and update',
+						textCancel: 'Later',
+						onConfirm: () => {
+							ipcRenderer.send('updateConfirm');
+						},
+						onCancel: () => {
+							ipcRenderer.send('updateCancel');
+						}, 
+					},
+				});
+			};
+		});
+
 		ipcRenderer.on('update-not-available', (e: any, auto: boolean) => {
 			commonStore.progressClear(); 
 
@@ -606,7 +627,7 @@ class App extends React.Component<Props, State> {
 			status: Util.sprintf('Downloading update... %s/%s', Util.fileSize(progress.transferred), Util.fileSize(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
-			isUnlocked: false,
+			isUnlocked: true,
 		});
 	};
 

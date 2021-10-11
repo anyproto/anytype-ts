@@ -1,6 +1,7 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
+import { crumbs } from '.';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
@@ -107,6 +108,7 @@ class Dispatcher {
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
+		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -122,6 +124,7 @@ class Dispatcher {
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
 		if (v == V.OBJECTSHOW)					 t = 'objectShow';
+		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
 		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
 		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
 		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
@@ -190,6 +193,12 @@ class Dispatcher {
 
 				case 'objectShow':
 					this.onObjectShow(rootId, Response.ObjectShow(data));
+					break;
+
+				case 'objectRemove':
+					ids = data.getIdsList();
+					crumbs.removeItems(I.CrumbsType.Page, ids);
+					crumbs.removeItems(I.CrumbsType.Recent, ids);
 					break;
 
 				case 'blockAdd':
@@ -386,6 +395,7 @@ class Dispatcher {
 				case 'blockSetLatex':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
+
 					if (!block) {
 						break;
 					};
@@ -426,6 +436,16 @@ class Dispatcher {
 						dbStore.metaSet(rootId, id, { viewId: viewId });
 					};
 					break;
+
+				case 'blockDataviewViewOrder':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.viewsSort(rootId, block.id, data.getViewidsList());
+					break; 
 
 				case 'blockDataviewRecordsSet':
 					id = data.getId();
@@ -510,12 +530,8 @@ class Dispatcher {
 					details = Decode.decodeStruct(data.getDetails());
 					detailStore.update(rootId, { id: id, details: details }, true);
 
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-						
-						this.blockTypeCheck(rootId);
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -529,12 +545,8 @@ class Dispatcher {
 					};
 					detailStore.update(rootId, { id: id, details: details }, false);
 
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-						
-						this.blockTypeCheck(rootId);
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -653,35 +665,6 @@ class Dispatcher {
 		blockStore.setStructure(rootId, structure);
 		blockStore.setNumbers(rootId); 
 		blockStore.updateMarkup(rootId);
-
-		this.blockTypeCheck(rootId);
-	};
-
-	blockTypeCheck (rootId: string) {
-		const object = detailStore.get(rootId, rootId, []);
-
-		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
-
-		if ((object.type == Constant.typeId.page) && (childrenIds.length == 1)) {
-			childrenIds.push(Constant.blockId.type);
-
-			blockStore.add(rootId, { 
-				id: Constant.blockId.type, 
-				parentId: rootId,
-				type: I.BlockType.Type,
-				fields: {},
-				content: {},
-				childrenIds: [],
-			});
-
-			blockStore.updateStructure(rootId, rootId, childrenIds);
-		} else 
-		if (object.type && (object.type != Constant.typeId.page) && (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
-			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
-
-			blockStore.delete(rootId, Constant.blockId.type);
-			blockStore.updateStructure(rootId, rootId, childrenIds);
-		};
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

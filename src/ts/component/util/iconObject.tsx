@@ -109,6 +109,7 @@ Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg');
 Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg');
 Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg');
 
+const Home = 'img/icon/home.svg';
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 
@@ -231,6 +232,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			case I.ObjectLayout.File:
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
+				break;
+
+			case I.ObjectLayout.Dashboard:
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icon = <img src={Home} className={icn.join(' ')} />;
 				break;
 		};
 

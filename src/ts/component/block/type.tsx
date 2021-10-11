@@ -4,6 +4,7 @@ import { IconObject, Filter } from 'ts/component';
 import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
 import { dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { crumbs } from '../../lib';
 
 interface Props extends I.BlockComponent {}
 interface State {
@@ -92,11 +93,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
 		let set = dbStore.getObjectType(Constant.typeId.set);
 
-		if (set) {
-			items.push(set);
-		};
-
 		items.sort(DataUtil.sortByName);
+
+		if (set) {
+			//items.unshift(set);
+		};
 
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -265,7 +266,9 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 
 		if (item.id == Constant.typeId.set) {
-			console.log('CREATE SET');
+			C.ObjectToSet(rootId, [], (message: any) => {
+				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
 				if (message.records.length > 1) {

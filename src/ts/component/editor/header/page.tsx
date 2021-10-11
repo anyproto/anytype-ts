@@ -28,6 +28,7 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 	constructor (props: any) {
 		super(props);
 
+		this.setPercent = this.setPercent.bind(this);
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
@@ -48,6 +49,7 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const type: any = new M.Block({ id: rootId + '-type', type: I.BlockType.Type, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const templateIsBundled = object.templateIsBundled;
 
 		if (root.isObjectHuman()) {
@@ -98,6 +100,8 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 					onMenuAdd={onMenuAdd}
 					onPaste={onPaste}
 				/>
+
+				{object.isDraft ? <Block {...this.props} key={type.id} block={type} className="noPlus" /> : ''}
 			</div>
 		);
 	};
@@ -130,15 +134,12 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		const { selection } = dataset || {};
 		
 		selection.preventSelect(true);
+		this.setPercent(v);
 	};
 	
 	onScaleMove (e: any, v: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#dragValue');
-
-		value.text(Math.ceil(v * 100) + '%');
-
 		this.props.onResize(v);
+		this.setPercent(v);
 	};
 	
 	onScaleEnd (e: any, v: number) {
@@ -146,12 +147,20 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		const { selection } = dataset || {};
 
 		selection.preventSelect(false);
+		this.setPercent(v);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { width: v } },
 		], () => {
 			$('.resizable').trigger('resize', [ e ]);
 		});
+	};
+
+	setPercent (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#dragValue');
+
+		value.text(Math.ceil(v * 100) + '%');
 	};
 
 	onClone (e: any) {

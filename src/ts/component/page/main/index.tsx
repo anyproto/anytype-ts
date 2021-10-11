@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {}
@@ -24,7 +24,7 @@ enum Tab {
 	Recent		 = 'recent',
 	Set			 = 'set',
 	Archive		 = 'archive',
-}
+};
 
 const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
@@ -189,14 +189,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onTab (id: Tab) {
-		if (!Tabs.find((it: any) => { return it.id == id; })) {
-			id = Tabs[0].id;
+		let tab = Tabs.find((it: any) => { return it.id == id; });
+		if (!tab) {
+			tab = Tabs[0];
+			id = tab.id;
 		};
 
 		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
 		Storage.set('tabIndex', id);
+		analytics.event('TabHome', { tab: tab.name });
 
 		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
@@ -209,14 +212,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
-				value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
@@ -315,7 +310,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', {}, (message: any) => {
+		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 			this.load();
 
 			DataUtil.objectOpenPopup({ id: message.targetId });
@@ -494,6 +489,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const body = node.find('#body');
 		const documents = node.find('#documents');
 		const items = node.find('#documents .item');
+		const hh = Util.sizeHeader();
 
 		const maxWidth = ww - size.border * 2;
 		const cnt = Math.floor(maxWidth / (size.width + size.margin));
@@ -503,7 +499,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		items.css({ width: width }).removeClass('last');
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - size.titleY - height - 8 });
+		documents.css({ marginTop: wh - size.titleY - height - hh });
 
 		items.each((i: number, item: any) => {
 			item = $(item);

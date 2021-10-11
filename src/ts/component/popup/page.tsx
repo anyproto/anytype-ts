@@ -33,14 +33,21 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { matchPopup } = data;
+
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
+
+		historyPopup.pushMatch(matchPopup);
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
 		historyPopup.clear();
 	};
 

@@ -20,9 +20,12 @@ let forceProps = {};
 let images = {};
 let simulation = null;
 let Color = {
+	bg: '#fff',
+	text: '#2c2b27',
 	link: {
-		0: '#f3f2ec',
-		1: '#2aa7ee',
+		0: '#dfddd0',
+		1: '#8c9ea5',
+		'over': '#ffd15b',
 	},
 	node: {
 		common: '#f3f2ec',
@@ -31,6 +34,7 @@ let Color = {
 		over: '#d6f5f3',
 	},
 };
+let LineWidth = 0.25;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -57,21 +61,13 @@ init = (data) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
 			d.fy = height / 2;
-			d.radius = 10;
-		};
-
-		let color = '#929082';
-		if (forceProps.filter && d.name.match(forceProps.filter)) {
-			color = '#000';
-		};
-		if (d.isRoot) {
-			color = '#000';
+			d.radius = 6;
 		};
 
 		octx.save();
 		octx.clearRect(0, 0, 250, 40);
-		octx.font = '20px Arial';
-		octx.fillStyle = color;
+		octx.font = '20px Helvetica';
+		octx.fillStyle = Color.text;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 125, 20);
 		octx.restore();
@@ -83,6 +79,7 @@ init = (data) => {
 	initForces();
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
+	simulation.tick(1000);
 };
 
 image = ({ src, bitmap }) => {
@@ -156,8 +153,9 @@ draw = () => {
 			return;
 		};
 
-		drawBend(d, 0.05, 3, 2, false, forceProps.markers)
+		drawLine(d, 1, 1, false, forceProps.markers);
 	});
+
 	nodes.forEach(d => {
 		if (!forceProps.orphans && d.isOrphan && !d.isRoot) {
 			return;
@@ -165,6 +163,7 @@ draw = () => {
 
 		drawNode(d);
 	});
+	
 	ctx.restore();
 };
 
@@ -172,173 +171,83 @@ redraw = () => {
 	requestAnimationFrame(draw);
 };
 
-drawBend = (d, bend, aLen, aWidth, sArrow, eArrow) => {
+drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
+	let source = nodes.find(it => it.id == d.source.id);
 	let x1 = d.source.x;
 	let y1 = d.source.y;
+	let r1 = d.source.radius + 3;
 	let x2 = d.target.x;
 	let y2 = d.target.y;
-	let startRadius = d.source.radius;
-	let endRadius = d.target.radius;
-    let mx, my, dist, nx, ny, x3, y3, cx, cy, radius, a1, a2;
-    let arrowAng, aa1, aa2, b1;
+	let r2 = d.target.radius + 3;
 	let bg = Color.link[d.type] || Color.link[0];
 
-    // find mid point
-    mx = (x1 + x2) / 2;  
-    my = (y1 + y2) / 2;
+	if (source.isOver) {
+		bg = Color.link.over;
+	};
 
-    // get vector from start to end
-    nx = x2 - x1;
-    ny = y2 - y1;
-    
-    // find dist
-    dist = Math.sqrt(nx * nx + ny * ny);
-    
-    // normalise vector
-    nx /= dist;
-    ny /= dist;
-    
-    // The next section has some optional behaviours
-    // that set the dist from the line mid point to the arc mid point
-    // You should only use one of the following sets
-    
-    //-- Uncomment for behaviour of arcs
-    // This make the lines flatten at distance
-    //b1 =  (bend * 300) / Math.pow(dist,1/4);
+    let a1 = Math.atan2(y2 - y1, x2 - x1);
+	let a2 = Math.atan2(y1 - y2, x1 - x2);
 
-    //-- Uncomment for behaviour of arcs
-    // Arc bending amount close to constant
-    // b1 =  bend * dist * 0.5
+	let sx1 = x1 + r1 * Math.cos(a1);
+	let sy1 = y1 + r1 * Math.sin(a1);
+	let sx2 = x2 + r2 * Math.cos(a2);
+	let sy2 = y2 + r2 * Math.sin(a2);
+	let mx = (x1 + x2) / 2;  
+    let my = (y1 + y2) / 2;
 
-    b1 = bend * dist;
-
-    // Arc amount bend more at dist
-    x3 = mx + ny * b1;
-    y3 = my - nx * b1;
-   
-    // get the radius
-    radius = (0.5 * ((x1-x3) * (x1-x3) + (y1-y3) * (y1-y3)) / (b1));
-
-    // use radius to get arc center
-    cx = x3 - ny * radius;
-    cy = y3 + nx * radius;
-
-    // radius needs to be positive for the rest of the code
-    radius = Math.abs(radius);
-
-    // find angle from center to start and end
-    a1 = Math.atan2(y1 - cy, x1 - cx);
-    a2 = Math.atan2(y2 - cy, x2 - cx);
-    
-    // normalise angles
-    a1 = (a1 + Math.PI * 2) % (Math.PI * 2);
-    a2 = (a2 + Math.PI * 2) % (Math.PI * 2);
-
-    // ensure angles are in correct directions
-    if (bend < 0) {
-        if (a1 < a2) { 
-			a1 += Math.PI * 2;
-		};
-    } else {
-        if (a2 < a1) { 
-			a2 += Math.PI * 2;
-		};
-    };
-    
-    // convert arrow length to angular len
-    arrowAng = aLen / radius  * Math.sign(bend);
-    // get angular length of start and end circles and move arc start and ends
-    
-    a1 += startRadius / radius * Math.sign(bend);
-    a2 -= endRadius / radius * Math.sign(bend);
-    aa1 = a1;
-    aa2 = a2;
-   
-    // check for too close and no room for arc
-    if ((bend < 0 && a1 < a2) || (bend > 0 && a2 < a1)) {
-        return;
-    };
-
-    // is there a start arrow
-    if (sArrow) { aa1 += arrowAng } // move arc start to inside arrow
-    // is there an end arrow
-    if (eArrow) { aa2 -= arrowAng } // move arc end to inside arrow
-    
-    // check for too close and remove arrows if so
-    if ((bend < 0 && aa1 < aa2) || (bend > 0 && aa2 < aa1)) {
-        sArrow = false;
-        eArrow = false;
-        aa1 = a1;
-        aa2 = a2;
-    };
-
-    // draw arc
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, aa1, aa2, bend < 0);
-	ctx.lineWidth = 0.5;
+	ctx.lineCap = 'round';
+	ctx.lineWidth = LineWidth;
 	ctx.strokeStyle = bg;
-    ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(sx1, sy1);
+	ctx.lineTo(sx2, sy2);
+	ctx.stroke();
 
-    ctx.beginPath();
-
-    // draw start arrow if needed
-    if (sArrow){
-        ctx.moveTo(
-            Math.cos(a1) * radius + cx,
-            Math.sin(a1) * radius + cy
-        );
-        ctx.lineTo(
-            Math.cos(aa1) * (radius + aWidth / 2) + cx,
-            Math.sin(aa1) * (radius + aWidth / 2) + cy
-        );
-        ctx.lineTo(
-            Math.cos(aa1) * (radius - aWidth / 2) + cx,
-            Math.sin(aa1) * (radius - aWidth / 2) + cy
-        );
-        ctx.closePath();
-    };
-    
-    // draw end arrow if needed
-    if (eArrow){
-        ctx.moveTo(
-            Math.cos(a2) * radius + cx,
-            Math.sin(a2) * radius + cy
-        );
-        ctx.lineTo(
-            Math.cos(aa2) * (radius - aWidth / 2) + cx,
-            Math.sin(aa2) * (radius - aWidth / 2) + cy
-        );
-        ctx.lineTo(
-            Math.cos(aa2) * (radius + aWidth / 2) + cx,
-            Math.sin(aa2) * (radius + aWidth / 2) + cy
-        );
-        ctx.closePath();
+	if (arrowStart) {
+		ctx.save();
+		ctx.translate(sx1, sy1);
+		ctx.rotate(a1);
+		ctx.beginPath();
+		ctx.moveTo(aLength, -aWidth);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(aLength, aWidth);
+		ctx.stroke();
+		ctx.restore();
     };
 
-	ctx.lineWidth = 0.5;
-	ctx.fillStyle = bg;
-    ctx.fill();
+    if (arrowEnd) {
+		ctx.save();
+		ctx.translate(sx2, sy2);
+		ctx.rotate(a2);
+		ctx.beginPath();
+		ctx.moveTo(aLength, -aWidth);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(aLength, aWidth);
+		ctx.stroke();
+		ctx.restore();
+    };
 
 	// draw name
-	if (d.name && forceProps.labels && (transform.k > 2.5)) {
-		let angle = 0;
-		let dy = 0;
-
-		if ((y1 > y2) && (x1 > x2)) {
-			angle = Math.atan2(y1 - y2, x1 - x2);
-			dy = b1;
-		} else {
-			angle = Math.atan2(y2 - y1, x2 - x1);
-			dy = -b1;
-		};
-		
+	if (d.name && forceProps.labels && (transform.k > 1.5)) {
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.rotate(angle);
+		ctx.rotate(a2);
+		ctx.font = 'italic 3px Helvetica';
+
+		const metrics = ctx.measureText(d.name);
+		const left = metrics.actualBoundingBoxLeft * -1;
+		const top = metrics.actualBoundingBoxAscent * -1;
+		const right = metrics.actualBoundingBoxRight;
+		const bottom = metrics.actualBoundingBoxDescent;
+		const width = right - left;
+		const height = bottom - top;
+
+		ctx.fillStyle = Color.bg;
+		ctx.fillRect(left - width / 2 - 1, top + 0.5, width + 2, height + 1);
 
 		ctx.fillStyle = bg;
 		ctx.textAlign = 'center';
-		ctx.fillText(d.name, 0, dy - 1.5);
+		ctx.fillText(d.name, 0, 1);
 
 		ctx.restore();
 	};
@@ -348,11 +257,12 @@ drawNode = (d) => {
 	let bg = Color.node.common;
 	let stroke = '';
 	let width = 0;
+	let img = images[d.src];
 
 	if (forceProps.filter && d.name.match(forceProps.filter)) {
 		bg = Color.node.filter;
 		stroke = '#000';
-		width = 0.5;
+		width = LineWidth;
 	};
 
 	if (d.isRoot) {
@@ -361,12 +271,18 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver) {
-		bg = Color.node.over;
+		stroke = Color.link.over;
+		width = 1;
 	};
 
-	ctx.beginPath();
-	ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-	ctx.fillStyle = bg;
+	if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+		ctx.beginPath();
+		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+		ctx.closePath();
+	} else {
+		const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+		roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+	};
 
 	if (stroke) {
 		ctx.lineWidth = width;
@@ -374,37 +290,69 @@ drawNode = (d) => {
 		ctx.stroke();
 	};
 	
+	ctx.fillStyle = bg;
 	ctx.fill();
 
 	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
-		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - 14, d.y + d.radius + 1, 28, 5);
+		const h = 5;
+		const div = 6.25;
+		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
 	};
 
-	if (!images[d.src]) {
+	if (!img) {
 		return;
 	};
 
 	let x = d.x - d.radius / 2;
 	let y = d.y - d.radius / 2;
 	let w = d.radius;
+	let h = d.radius;
 
 	ctx.save();
 
 	if (d.iconImage) {
 		x = d.x - d.radius;
 		y = d.y - d.radius;
-		w = d.radius * 2;
 
-		ctx.beginPath();
-		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-		ctx.closePath();
+		if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+			ctx.beginPath();
+			ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+			ctx.closePath();
+		} else {
+			const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+			roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+		};
+
 		ctx.fill();
-
 		ctx.clip();
+
+		if (img.width > img.height) {
+			h = d.radius * 2;
+			w = h * (img.width / img.height)
+			x -= (w - d.radius * 2) / 2;
+		} else {
+			w = d.radius * 2;
+			h = w * (img.height / img.width);
+			y -= (h - d.radius * 2) / 2;
+		};
 	};
 
-	ctx.drawImage(images[d.src], 0, 0, images[d.src].width, images[d.src].width, x, y, w, w);
+	ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	ctx.restore();
+};
+
+roundedRect = (x, y, width, height, radius) => {
+	ctx.beginPath();
+	ctx.moveTo(x + radius, y);
+	ctx.lineTo(x + width - radius, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	ctx.lineTo(x + width, y + height - radius);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	ctx.lineTo(x + radius, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	ctx.lineTo(x, y + radius);
+	ctx.quadraticCurveTo(x, y, x + radius, y);
+	ctx.closePath();
 };
 
 onZoom = (data) => {

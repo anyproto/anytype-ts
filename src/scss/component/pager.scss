@@ -3,12 +3,12 @@
 .pager { text-align: center; margin: 13px 0px 0px 0px; color: $colorMediumGrey; white-space: nowrap; @include text-common; }
 
 .pager {
-    .page { 
+    .pageItem { 
         min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionFast; text-align: center; margin-right: 8px; 
         vertical-align: top; line-height: 24px; cursor: pointer;
     }
-    .page:last-child { margin: 0px; }
-    .page:hover, .page.active { color: $colorBlack; }
+    .pageItem:last-child { margin: 0px; }
+    .pageItem:hover, .pageItem.active { color: $colorBlack; }
 	
 	.dots { min-width: 24px; display: inline-block; padding: 0px 2px; text-align: center; margin-right: 8px; vertical-align: top; line-height: 24px; }
 

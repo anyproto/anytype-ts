@@ -109,6 +109,7 @@ class PopupShortcut extends React.Component<Props, State> {
 					name: 'Basics', children: [
 						{ mac: '&#8984; + N',			 com: 'Ctrl + N',			 name: 'Create a new page on the dashboard' },
 						{ mac: '&#8984; + O',			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
+						{ mac: '&#8984; + Option + O',	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
 						{ mac: '&#8984; + S',			 com: 'Ctrl + S',			 name: 'Open the search pane' },
 						{ mac: '&#8984; + Enter',		 com: 'Alt + H',			 name: 'Return to the home screen' },
 						{ mac: '&#8984; + [',			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
@@ -276,9 +277,11 @@ class PopupShortcut extends React.Component<Props, State> {
 			return;
 		};
 
+		const { getId } = this.props;
+
 		raf(() => {
 			const win = $(window);
-			const obj = $('#popupShortcut #innerWrap');
+			const obj = $(`#${getId()} #innerWrap`);
 			const width = Math.max(732, Math.min(960, win.width() - 128));
 
 			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });

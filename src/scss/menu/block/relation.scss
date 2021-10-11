@@ -49,7 +49,7 @@
 
 		#section-featured::after { display: block; }
 
-		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: scroll; }
+		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: overlay; }
 		.item { padding: 0px 32px; cursor: default; }
 		.item {
 			.icon.plus { margin-right: 4px; }
@@ -82,6 +82,7 @@
 			.cell.c-select { padding: 5px 8px; }
 			.cell.c-select {
 				.tagItem { margin: 2px 6px 3px 0px; } 
+				.over { overflow: visible !important; width: 100%; }
 			}
 
 			.cell.isEditing { padding: 0px; }
@@ -120,7 +121,7 @@
 			}
 
 			.cell.c-object, .cell.c-file {
-				.column3 { column-count: 3; }
+				.columns { column-count: 2; }
 			}
 
 			.cell.c-longText {

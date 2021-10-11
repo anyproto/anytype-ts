@@ -291,14 +291,14 @@ const BlockCreatePage = (contextId: string, targetId: string, details: any, posi
 	dispatcher.request('blockCreatePage', request, callBack);
 };
 
-const BlockCreateSet = (contextId: string, targetId: string, objectTypeId: string, details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
+const BlockCreateSet = (contextId: string, targetId: string, sources: string[], details: any, position: I.BlockPosition, callBack?: (message: any) => void) => {
 	details = details || {};
 
 	const request = new Rpc.Block.CreateSet.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setObjecttypeurl(objectTypeId);
+	request.setSourceList(sources);
 	request.setPosition(position);
 	request.setDetails(Encode.encodeStruct(details));
 
@@ -655,6 +655,17 @@ const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: str
 	dispatcher.request('blockDataviewViewDelete', request, callBack);
 };
 
+const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId: string, position: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewSetPosition.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setPosition(position);
+
+	dispatcher.request('blockDataviewViewSetPosition', request, callBack);
+};
+
 const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.ViewSetActive.Request();
 	
@@ -908,10 +919,10 @@ const ObjectTypeRelationRemove = (objectTypeId: string, relationKey: string, cal
 	dispatcher.request('objectTypeRelationRemove', request, callBack);
 };
 
-const SetCreate = (url: string, details: any, templateId: string, callBack?: (message: any) => void) => {
+const SetCreate = (sources: string[], details: any, templateId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Set.Create.Request();
 	
-	request.setObjecttypeurl(url);
+	request.setSourceList(sources);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
 
@@ -1052,6 +1063,15 @@ const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: 
 	dispatcher.request('objectGraph', request, callBack);
 };
 
+const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToSet.Request();
+	
+	request.setContextid(contextId);
+	request.setSourceList(sources);
+
+	dispatcher.request('objectToSet', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1164,6 +1184,7 @@ export {
 	BlockDataviewViewUpdate,
 	BlockDataviewViewDelete,
 	BlockDataviewViewSetActive,
+	BlockDataviewViewSetPosition,
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,
@@ -1212,6 +1233,7 @@ export {
 	ObjectGraph,
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
+	ObjectToSet,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
