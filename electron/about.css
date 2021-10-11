@@ -1,11 +1,35 @@
-body { color: #2c2b27; background-color: #fff; font-family: Helvetica, Arial, sans-serif; }
+body, html { width: 100%; height: 100%; -webkit-user-select: none; user-select: none; -webkit-app-region: drag; }
+
+body { 
+    margin: 0; color: #2c2b27; background: #fff; font-family: Helvetica, Arial, sans-serif; display: flex;
+    flex-direction: column; justify-content: center; align-items: center; font-size: 12px;
+}
 
 :focus { outline: 0px; }
 
-.logo { width: 100px; height: 100px; }
+.logo { width: 100px; height: 100px; -webkit-user-select: none; user-select: none; }
 .logo img { width: 100% !important; height: 100% !important; }
-.description { font-weight: 400; }
+
+.title,
+.copyright,
+.description { margin: 0.2em; font-weight: 400; }
 .footer { display: none; }
+
+.clickable { cursor: pointer; }
+.description { margin-bottom: 1em; text-align: center; }
+.versions { border-collapse: collapse; margin-top: 1em; }
+
+.copyright,
+.versions { color: #999; }
+
+.buttons { margin-bottom: 1em; text-align: center; }
+.buttons button { margin-top: 1em; width: 100px; height: 24px; }
+.link { cursor: pointer; color: #80a0c2; }
+.bug-report-link { position: absolute; right: 0.5em; bottom: 0.5em; }
+
+.clickable,
+.bug-report-link,
+.buttons button { -webkit-app-region: no-drag; }
 
 .buttons button {
     display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none; cursor: pointer;

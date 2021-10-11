@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+		<title>Anytype</title>
+		<link rel="stylesheet" href="about.css" />
+	</head>
+	<body>
+		<div class="logo">
+			<img src="icon.png" />
+		</div>
+		<h2 class="title">Anytype</h2>
+		<h3 class="description">Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.</h3>
+		<div class="copyright">Copyright (c) <span id="year" /> Anytype Inc.</div>
+		<div class="buttons">
+			<button id="close">Close</button>
+		</div>
+
+		<script type="text/javascript">
+			document.title = 'Anytype';
+			document.getElementById('year').innerText = new Date().getFullYear();
+			document.getElementById('close').addEventListener('click', e => {
+				e.preventDefault();
+				window.close();
+			});
+		</script>
+	</body>
+</html>

@@ -14,7 +14,6 @@ const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
 const port = process.env.SERVER_PORT;
-const openAboutWindow = require('about-window').default;
 const keytar = require('keytar');
 const bindings = require('bindings');
 const envPath = path.join(__dirname, 'electron', 'env.json');
@@ -375,28 +374,47 @@ function createWindow () {
 	});
 };
 
+function openAboutWindow () {
+    let window = new BrowserWindow({
+        width: 400,
+        height: 400,
+        useContentSize: true,
+        titleBarStyle: 'hidden-inset',
+        show: true,
+        icon: path.join(__dirname, 'electron', 'icon.png'),
+        webPreferences: {},
+    });
+
+    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html'));
+
+	window.once('closed', () => {
+        window = null;
+    });
+
+    window.webContents.on('will-navigate', (e, url) => {
+        e.preventDefault();
+        shell.openExternal(url);
+    });
+
+    window.webContents.on('new-window', (e, url) => {
+        e.preventDefault();
+        shell.openExternal(url);
+    });
+
+	window.once('ready-to-show', () => {
+        window.show();
+    });
+
+    window.setMenu(null);
+    return window;
+};
+
 function menuInit () {
 	let menuParam = [
 		{
 			label: 'Anytype',
 			submenu: [
-				{
-					label: 'About Anytype',
-					click: () => {
-						openAboutWindow({
-							icon_path: path.join(__dirname, '/electron/icon.png'),
-							css_path: path.join(__dirname, '/electron/about.css'),
-							product_name: 'Anytype',
-							description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
-							copyright: `Copyright (c) ${new Date().getFullYear()} Anytype Inc.`,
-							homepage: 'https://anytype.io',
-							package_json_dir: __dirname,
-							use_version_info: false,
-							show_close_button: 'Close',
-							adjust_window_size: true,
-						});
-					}
-				},
+				{ label: 'About Anytype', click: () => { openAboutWindow(); } },
 				{ type: 'separator' },
 				{ role: 'services' },
 				{ type: 'separator' },
