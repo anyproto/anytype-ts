@@ -70,7 +70,7 @@
 				.cellContent.isName { padding: 0px 14px; }
 				.cellContent.isName {
 					.iconObject { margin: 14px 4px 14px 0px; }
-					.input-text { height: 47px; }
+					.input-text { height: 47px; width: calc(100% - 26px) !important; }
 					.name { width: 100%; }
 				}
 			}
