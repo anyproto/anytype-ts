@@ -110,6 +110,7 @@ class Dispatcher {
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
+		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -437,6 +438,16 @@ class Dispatcher {
 						dbStore.metaSet(rootId, id, { viewId: viewId });
 					};
 					break;
+
+				case 'blockDataviewViewOrder':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.viewsSort(rootId, block.id, data.getViewidsList());
+					break; 
 
 				case 'blockDataviewRecordsSet':
 					id = data.getId();

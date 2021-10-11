@@ -118,7 +118,9 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 		};
 		
 		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
-		this.show();
+		if (Util.linkPreviewOpen) {
+			this.show();
+		};
 	};
 	
 	onClick (e: any) {

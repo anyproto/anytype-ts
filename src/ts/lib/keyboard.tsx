@@ -182,9 +182,11 @@ class Keyboard {
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
+		let details: any = { isDraft: true };
 		
 		if (this.isMainEditor()) {
 			rootId = this.getRootId();
+			details = {};
 
 			const fb = blockStore.getLeaf(rootId, focused);
 			if (fb) {
@@ -201,7 +203,7 @@ class Keyboard {
 			};
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', {}, (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};

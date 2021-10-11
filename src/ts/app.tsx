@@ -428,7 +428,7 @@ class App extends React.Component<Props, State> {
 					data: {
 						title: 'Update available',
 						text: 'Do you want to update on a new version?',
-						textConfirm: 'Update',
+						textConfirm: 'Restart and update',
 						textCancel: 'Later',
 						onConfirm: () => {
 							ipcRenderer.send('updateConfirm');

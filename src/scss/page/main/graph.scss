@@ -80,6 +80,11 @@
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; }
         .block.blockFeatured {
             .cellContent { padding: 2px 6px; }
+            .cellContent {
+                .over { display: inline; }
+                .tagItem { @include text-small; margin: 0px 6px 0px 0px; }
+            }
+
             .bullet { margin: 0px; }
         }
 
