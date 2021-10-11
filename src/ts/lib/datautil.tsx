@@ -1096,7 +1096,7 @@ class DataUtil {
 				break;
 		};
 
-		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
+		if (object.isDraft) {
 			ret.className.push('noSystemBlocks');
 		};
 
