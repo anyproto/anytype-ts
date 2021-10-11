@@ -31,9 +31,9 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const items = this.getItems();
 		
 		const Item = (item: any) => {
-			const canDelete = item.id != 'type';
+			const canDelete = item.itemId != 'type';
 			return (
-				<form id={'item-' + item.id} className={[ 'item' ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<IconObject size={40} object={item} />
 					<div className="txt" onClick={(e: any) => { this.onClick(e, item); }}>
 						<div className="name">{item.name}</div>
@@ -140,7 +140,43 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		};
 	};
 
-	onClick (e: any, item: any) {	
+	onClick (e: any, item: any) {
+		const { param, getId, getSize } = this.props;
+		const { data } = param;
+		const { rootId, blockId, readonly } = data;
+
+		console.log(item, readonly);
+
+		if (item.itemId == 'type') {
+			if (readonly) {
+				return;
+			};
+
+			const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
+			const filters = [
+				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+			];
+	
+			menuStore.open('searchObject', {
+				element: `#${getId()} #item-${item.itemId}`,
+				className: 'big single',
+				horizontal: I.MenuDirection.Center,
+				offsetX: getSize().width,
+				offsetY: -56,
+				data: {
+					isBig: true,
+					rootId: rootId,
+					blockId: blockId,
+					blockIds: [ blockId ],
+					placeholder: 'Change object type',
+					placeholderFocus: 'Change object type',
+					filters: filters,
+					onSelect: (item: any) => {
+						this.save([ item.id ]);
+					}
+				}
+			}); 
+		};
 	};
 
 	save (value: string[]) {
@@ -148,6 +184,9 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 
+		console.log(value);
+
+		data.value = value;
 		C.BlockDataviewSetSource(rootId, blockId, value);
 	};
 
@@ -160,10 +199,11 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 
 		if (!value.length) {
 			items.push({
-				id: 'type',
+				itemId: 'type',
 				name: 'Object type',
 				relationFormat: I.RelationType.Object,
 				layout: I.ObjectLayout.Relation,
+				value: 'All',
 			});
 		} else {
 			value.forEach((it: string) => {
@@ -175,11 +215,15 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				if (object.type == Constant.typeId.type) {
 					items.push({
 						...object,
+						itemId: 'type',
 						name: 'Object type',
 						value: object.name,
 					});
 				} else {
-					items.push(object);
+					items.push({
+						...object,
+						itemId: object.id,
+					});
 				};
 			});
 		};

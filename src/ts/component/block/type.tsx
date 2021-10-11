@@ -96,7 +96,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		items.sort(DataUtil.sortByName);
 
 		if (set) {
-			//items.unshift(set);
+			items.unshift(set);
 		};
 
 		if (filter) {
