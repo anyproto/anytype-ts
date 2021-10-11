@@ -499,9 +499,6 @@
 		"dmg": {
 			"sign": false
 		},
-		"electronDownload": {
-			"arch": "arm64"
-		},
 		"mac": {
 			"icon": "electron/icon.icns",
 			"type": "distribution",
