@@ -258,14 +258,6 @@ drawNode = (d) => {
 	let width = 0;
 	let img = images[d.src];
 
-	/*
-	if (forceProps.filter && d.name.match(forceProps.filter)) {
-		bg = Color.node.filter;
-		stroke = '#000';
-		width = LineWidth;
-	};
-	*/
-
 	if (forceProps.filter && !d.name.match(forceProps.filter)) {
 		return;
 	};
