@@ -1069,12 +1069,13 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
-const ObjectAddWithShareLink = (link: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.AddWithShareLink.Request();
+const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.AddWithObjectId.Request();
 
-	request.setLink(link);
+	request.setObjectid(objectId);
+	request.setPayload(payload);
 
-	dispatcher.request('objectAddWithShareLink', request, callBack);
+	dispatcher.request('objectAddWithObjectId', request, callBack);
 };
 
 const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
@@ -1263,7 +1264,7 @@ export {
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 	ObjectToSet,
-	ObjectAddWithShareLink,
+	ObjectAddWithObjectId,
 	ObjectShareByLink,
 
 	MakeTemplate,

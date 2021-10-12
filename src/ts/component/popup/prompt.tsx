@@ -23,13 +23,13 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { placeholder, value, maxLength, title, label } = data;
+		const { placeholder, value, maxLength, title, label, readonly } = data;
 		
 		return (
 			<form onSubmit={this.onSubmit}>
 				{title ? <Title text={title} /> : ''}
 				{label ? <Label text={label} /> : ''}
-				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} placeholder={placeholder} maxLength={maxLength} />
+				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} readonly={readonly} placeholder={placeholder} maxLength={maxLength} />
 				<Button type="input" text={translate('commonOk')} />
 				<Button text={translate('commonCancel')} color="grey" onClick={this.onCancel} />
 			</form>
@@ -39,11 +39,16 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, select } = data;
+		const length = String(value || '').length;
 		
 		this.refValue.setValue(value);
 		this.refValue.focus();
 		this.resize();
+
+		if (select) {
+			this.refValue.setRange({ from: 0, to: length });
+		};
 	};
 	
 	onSubmit (e: any) {

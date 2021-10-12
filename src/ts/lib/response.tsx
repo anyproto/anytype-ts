@@ -463,6 +463,12 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectShareByLink = (response: any) => {
+	return {
+		link: response.getLink(),
+	};
+};
+
 const MakeTemplate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -512,6 +518,7 @@ export {
 	ExternalDropFiles,
 
 	PageCreate,
+	SetCreate,
 
 	NavigationGetObjectInfoWithLinks,
 
@@ -591,13 +598,13 @@ export {
 	ObjectTypeCreate,
 	ObjectTypeRelationAdd,
 
-	SetCreate,
 	ObjectSearch,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
 	ObjectToSet,
+	ObjectShareByLink,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

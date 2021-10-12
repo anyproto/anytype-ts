@@ -772,7 +772,7 @@ app.on('open-url', (e, url) => {
 	if (process.platform == 'win32') {
 		url = process.argv.slice(1);
 	};
-	send('route', url.replace(`${protocol}://`, ''));
+	send('route', url.replace(`${protocol}://`, '/'));
 });
 
 function send () {

@@ -953,6 +953,18 @@ class Util {
 		fs.rmdirSync(p);
 	};
 
+	searchParam (url: string): any {
+		var a = url.replace(/^\?/, '').split('&');
+		var param: any = {};
+		
+		a.forEach((s) => {
+			var kv = s.split('=');
+			param[kv[0]] = kv[1];
+		});
+
+		return param;
+	};
+
 };
 
 export default new Util();

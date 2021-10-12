@@ -15,6 +15,7 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
+import PageAuthShare from './auth/share';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
@@ -45,6 +46,8 @@ const Components: any = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
+	'auth/share':			 PageAuthShare,
+	'object/share':			 PageAuthShare,
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
@@ -73,6 +76,8 @@ class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const match = this.getMatch();
+
+		console.log(match);
 
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
