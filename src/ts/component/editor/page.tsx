@@ -61,7 +61,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 		
 		const { rootId } = this.props;
