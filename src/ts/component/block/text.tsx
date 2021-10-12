@@ -692,6 +692,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				reg = new RegExp(`^(${k} )`);
 				const style = Markdown[k];
 
+				if ((style == I.TextStyle.Numbered) && block.isTextHeader()) {
+					continue;
+				};
+
 				if (value.match(reg) && (content.style != style)) {
 					value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 					this.marks = Mark.adjust(this.getMarksFromHtml().marks, 0, -(Length[style] + 1));

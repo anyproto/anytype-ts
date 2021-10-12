@@ -49,8 +49,8 @@ class Drag extends React.Component<Props, {}> {
 		
 		return (
 			<div id={id} className={cn.join(' ')} onMouseDown={this.start}>
-				<div id="back" className="back"></div>
-				<div id="fill" className="fill"></div>
+				<div id="back" className="back" />
+				<div id="fill" className="fill" />
 				<div id="icon" className="icon">
 					<div className="bullet" />
 				</div>

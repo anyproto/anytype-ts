@@ -97,8 +97,9 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
-		//const transform = (Storage.get('graph') || {}).transform;
-		const transform: any = {};
+		const stored = Storage.get('graph') || {} as any;
+		const transform = stored.transform || {};
+		const nodes = stored.nodes || {};
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -127,6 +128,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
+
+			if (nodes[d.id]) {
+				d.fx = nodes[d.id].x;
+				d.fy = nodes[d.id].y;
+			};
 
 			// Clear icon props to fix image size
 			if (d.layout == I.ObjectLayout.Task) {
@@ -229,12 +235,24 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
+		const id = this.subject.id;
+		const nodes = Storage.get('graph').nodes || {};
+		const x = p[0] - offset.left;
+		const y = p[1] - offset.top;
+
+		if (id) {
+			nodes[id] = nodes[id] || {};
+			nodes[id].x = x;
+			nodes[id].y = y;
+
+			//Storage.set('graph', { nodes });
+		};
 
 		this.send('onDragMove', { 
-			subjectId: this.subject.id, 
+			subjectId: id, 
 			active: e.active, 
-			x: p[0] - offset.left, 
-			y: p[1] - offset.top,
+			x: x, 
+			y: y,
 		});
 	};
 			
@@ -336,7 +354,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		this.width = node.width();
 		this.height = node.height();
 
-		Storage.set('graph', { transform: {} });
 		this.send('onResize', { width: this.width, height: this.height, density: density });
 	};
 

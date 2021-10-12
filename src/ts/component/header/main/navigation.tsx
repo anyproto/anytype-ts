@@ -72,8 +72,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 					</div>
 				</div>
 
-				<div className="side right">
-				</div>
+				<div className="side right" />
 			</div>
 		);
 	};

@@ -44,11 +44,13 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 							action.checkbox = action.value == this.color;
 						};
 
-						return <MenuItemVertical 
-							key={i} 
-							{...action} 
-							onClick={(e: any) => { this.onClick(e, action); }}
-						/>;
+						return (
+							<MenuItemVertical 
+								key={i} 
+								{...action} 
+								onClick={(e: any) => { this.onClick(e, action); }}
+							/>
+						);
 					})}
 				</div>
 			</div>
