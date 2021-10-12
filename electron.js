@@ -407,7 +407,6 @@ function openAboutWindow () {
 
 	window.once('ready-to-show', () => {
         window.show();
-		window.openDevTools();
     });
 
     window.setMenu(null);
