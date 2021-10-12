@@ -35,6 +35,7 @@ export enum ObjectLayout {
 	Dashboard	 = 7,
 	Image		 = 8,
 	Video		 = 9,
+	Audio		 = 10,
 	
 	Database	 = 20,
 	Space		 = 21,

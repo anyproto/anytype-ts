@@ -105,10 +105,12 @@ export interface Block {
 	isObjectHuman?(): boolean;
 	isObjectTask?(): boolean;
 	isObjectSet?(): boolean;
+	isObjectSpace?(): boolean;
 	isObjectFileKind?(): boolean;
 	isObjectFile?(): boolean;
 	isObjectImage?(): boolean;
 	isObjectVideo?(): boolean;
+	isObjectAudio?(): boolean;
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
 
