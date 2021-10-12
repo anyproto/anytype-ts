@@ -155,22 +155,6 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 	dispatcher.request('accountSelect', request, callBack);
 };
 
-const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Create.Request();
-
-	request.setName(name);
-
-	dispatcher.request('workspaceCreate', request, callBack);
-};
-
-const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Select.Request();
-	
-	request.setWorkspaceid(workspaceId);
-
-	dispatcher.request('workspaceSelect', request, callBack);
-};
-
 const AccountStop = (removeData: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Stop.Request();
 	
@@ -1132,6 +1116,22 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 	request.setContextid(contextId);
 
 	dispatcher.request('cloneTemplate', request, callBack);
+};
+
+const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Create.Request();
+
+	request.setName(name);
+
+	dispatcher.request('workspaceCreate', request, callBack);
+};
+
+const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Select.Request();
+	
+	request.setWorkspaceid(workspaceId);
+
+	dispatcher.request('workspaceSelect', request, callBack);
 };
 
 export {

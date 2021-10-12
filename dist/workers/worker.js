@@ -181,6 +181,11 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let r2 = d.target.radius + 3;
 	let bg = Color.link[d.type] || Color.link[0];
 
+	ctx.globalAlpha = 1;
+	if (forceProps.filter && !d.source.name.match(forceProps.filter) && !d.target.name.match(forceProps.filter)) {
+		ctx.globalAlpha = 0.2;
+	};
+
 	if (source.isOver) {
 		bg = Color.link.over;
 	};
@@ -257,9 +262,12 @@ drawNode = (d) => {
 	let stroke = '';
 	let width = 0;
 	let img = images[d.src];
+	
+
+	ctx.globalAlpha = 1;
 
 	if (forceProps.filter && !d.name.match(forceProps.filter)) {
-		return;
+		ctx.globalAlpha = 0.2;
 	};
 
 	if (d.isRoot) {
