@@ -576,6 +576,23 @@ function menuInit () {
 		menuParam.push({
 			label: 'Debug',
 			submenu: [
+				{ label: 'Flags', submenu: flagMenu },
+				{
+					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
+					click: () => { win.reload(); }
+				},
+				{
+					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
+					click: () => { win.webContents.openDevTools(); }
+				}
+			]
+		});
+	};
+
+	if (config.sudo) {
+		menuParam.push({
+			label: 'Sudo',
+			submenu: [
 				{
 					label: 'Version',
 					submenu: [
@@ -589,33 +606,16 @@ function menuInit () {
 						},
 					]
 				},
-				{ label: 'Flags', submenu: flagMenu },
-				{
-					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
-					click: () => { win.reload(); }
-				},
-				{
-					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-					click: () => { win.webContents.openDevTools(); }
-				},
-				{
-					label: 'Export templates',
-					click: () => { send('command', 'exportTemplates'); }
-				}
-			]
-		});
-	};
-
-	if (config.sudo) {
-		menuParam.push({
-			label: 'Sudo',
-			submenu: [
 				{
 					label: 'Experimental', type: 'checkbox', checked: config.experimental,
 					click: () => { 
 						setConfig({ experimental: !config.experimental });
 						win.reload();
 					}
+				},
+				{
+					label: 'Export templates',
+					click: () => { send('command', 'exportTemplates'); }
 				}
 			]
 		});
