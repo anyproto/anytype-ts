@@ -82,7 +82,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
-						{isRoot ? iconHome : <IconObject object={item.details} size={48} /> }
+						{isRoot ? iconHome : <IconObject object={item.details} size={48} />}
 						<div className="info">
 							<div className="name">{name}</div>
 							<div className="descr">{item.snippet}</div>
@@ -163,7 +163,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			<div className="wrapper">
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 				<div key="sides" className="sides">
 					<div id={'panel-' + Panel.Left} className="items left">
 						{!isRoot ? (

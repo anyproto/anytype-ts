@@ -231,7 +231,6 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	if (d.name && forceProps.labels && (transform.k > 1.5)) {
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.rotate(a2);
 		ctx.font = 'italic 3px Helvetica';
 
 		const metrics = ctx.measureText(d.name);
@@ -259,10 +258,8 @@ drawNode = (d) => {
 	let width = 0;
 	let img = images[d.src];
 
-	if (forceProps.filter && d.name.match(forceProps.filter)) {
-		bg = Color.node.filter;
-		stroke = '#000';
-		width = LineWidth;
+	if (forceProps.filter && !d.name.match(forceProps.filter)) {
+		return;
 	};
 
 	if (d.isRoot) {

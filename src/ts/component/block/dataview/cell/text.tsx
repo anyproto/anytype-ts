@@ -191,10 +191,13 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 						/>
 					) : ''}
 					<Name name={value} />
-					<Icon className="edit" onMouseDown={(e: any) => { 
-						e.stopPropagation(); 
-						onParentClick(e);
-					}} />
+					<Icon 
+						className="edit" 
+						onMouseDown={(e: any) => { 
+							e.stopPropagation(); 
+							onParentClick(e);
+						}} 
+					/>
 				</React.Fragment>
 			);
 		} else {

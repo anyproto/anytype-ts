@@ -38,7 +38,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });
 
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });

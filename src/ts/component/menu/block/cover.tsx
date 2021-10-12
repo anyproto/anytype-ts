@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {}
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, {}> {

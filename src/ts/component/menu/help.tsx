@@ -7,11 +7,8 @@ interface Props extends I.Menu {
 	history?: any;
 };
 
-const { ipcRenderer, remote } = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 const Url = require('json/url.json');
-const { app, process } = remote;
-const version = app.getVersion();
-const systemVersion = process.getSystemVersion();
 
 class MenuHelp extends React.Component<Props, {}> {
 

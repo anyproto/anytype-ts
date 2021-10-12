@@ -1,6 +1,6 @@
 import { I } from 'ts/lib';
 
-const { app } = window.require('electron').remote;
+const { app } = window.require('@electron/remote');
 const path = app.getPath('userData');
 
 export default [

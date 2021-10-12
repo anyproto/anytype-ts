@@ -15,7 +15,7 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 
 const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
 	

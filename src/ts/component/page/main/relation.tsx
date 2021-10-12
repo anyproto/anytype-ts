@@ -26,7 +26,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const { isPopup } = this.props;

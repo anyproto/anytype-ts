@@ -11,6 +11,7 @@ class History {
 	push (route: string) {
 		const last = this.list[this.list.length - 1];
 		if (last && (last == route)) {
+			this.index = this.list.length - 1;
 			return;
 		};
 

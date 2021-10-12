@@ -11,7 +11,7 @@
 
 		.loading { color: $colorMediumGrey; }
 		.loading {
-			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; }
+			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; position: relative; }
 			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 			.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
 		}

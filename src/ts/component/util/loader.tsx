@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 interface Props {
+	id?: string;
 	className?: string;
 };
 
@@ -11,10 +12,10 @@ class Loader extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { className } = this.props;
+		const { id, className } = this.props;
 
 		return (
-			<div className={[ 'loaderWrapper', className ].join(' ')}>
+			<div id={id} className={[ 'loaderWrapper', className ].join(' ')}>
 				<div className="loader" />
 			</div>
 		);

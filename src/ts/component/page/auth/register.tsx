@@ -10,7 +10,7 @@ interface State {
 	error: string;
 }
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 
 const PageAuthRegister = observer(class PageAuthRegister extends React.Component<Props, State> {
