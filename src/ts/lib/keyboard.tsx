@@ -1,4 +1,4 @@
-import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
@@ -297,6 +297,17 @@ class Keyboard {
 						textConfirm: 'Ok',
 						canConfirm: true,
 						canCancel: false,
+					}
+				});
+				break;
+
+			case 'workspace':
+				popupStore.open('prompt', {
+					data: {
+						title: 'Create Space',
+						onChange: (v: string) => {
+							C.WorkspaceCreate(v);
+						},
 					}
 				});
 				break;

@@ -601,6 +601,10 @@ function menuInit () {
 				{
 					label: 'Export templates',
 					click: () => { send('command', 'exportTemplates'); }
+				},
+				{
+					label: 'Create workspace',
+					click: () => { send('commandGlobal', 'workspace');	}
 				}
 			]
 		});
