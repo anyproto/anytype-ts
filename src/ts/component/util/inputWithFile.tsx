@@ -21,7 +21,7 @@ interface State {
 	size: Size;
 };
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const $ = require('jquery');
 const raf = require('raf');
 const SMALL_WIDTH = 248;

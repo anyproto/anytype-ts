@@ -134,7 +134,7 @@ class Cell extends React.Component<Props, {}> {
 
 	checkIcon () {
 		const relation = this.getRelation();
-		if (relation.format == I.RelationType.ShortText) {
+		if (relation && (relation.format == I.RelationType.ShortText)) {
 			const node = $(ReactDOM.findDOMNode(this));
 			const icon = node.find('.iconObject');
 
@@ -313,11 +313,12 @@ class Cell extends React.Component<Props, {}> {
 					onSelect: (event: any, item: any) => {
 						let value = '';
 
-						if (this.ref) {
+						if (this.ref && this.ref.ref) {
 							value = this.ref.ref.getValue();
 						};
 
 						const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
+						
 						if (item.id == 'go') {
 							ipcRenderer.send('urlOpen', scheme + value);
 						};

@@ -23,6 +23,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
 		const idPrefix = 'dataviewCell';
+		const { hideIcon } = view;
 
 		return (
 			<div className="row" style={style}>

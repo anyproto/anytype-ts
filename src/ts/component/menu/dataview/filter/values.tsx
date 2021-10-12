@@ -38,7 +38,12 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
-		const item = getView().getFilter(itemId);
+		const view = getView();
+		if (!view) {
+			return null;
+		};
+
+		const item = view.getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = DataUtil.filterConditionsByType(relation.format);
@@ -63,7 +68,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				onMouseEnter={() => { 
 					menuStore.close('select'); 
 					this.props.setHover({ id: 'add' }); 
-				}}>
+				}}
+			>
 				<Icon className="plus" />
 				<div className="name">Add</div>
 			</div>

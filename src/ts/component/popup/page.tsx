@@ -33,14 +33,21 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { matchPopup } = data;
+
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
+
+		historyPopup.pushMatch(matchPopup);
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
 		historyPopup.clear();
 	};
 
@@ -69,7 +76,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, {}> {
 		raf(() => {
 			const win = $(window);
 			const obj = $(`#${getId()} #innerWrap`);
-			const loader = obj.find('.loaderWrapper');
+			const loader = obj.find('#loader');
 			const width = Math.max(1096, Math.min(1096, win.width() - 128));
 
 			obj.css({ width: width });

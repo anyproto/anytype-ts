@@ -15,7 +15,7 @@ interface State {
 	entropy: string;
 }
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const { ipcRenderer } = window.require('electron');
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
@@ -86,10 +86,13 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Icon className="arrow" />
 							</div>
 
-							<div className="row" onClick={() => { 
-								this.onConfirmPhrase = null; 
-								this.onPage('phrase'); 
-							}}>
+							<div 
+								className="row" 
+								onClick={() => { 
+									this.onConfirmPhrase = null; 
+									this.onPage('phrase'); 
+								}}
+							>
 								<Icon className="phrase" />
 								<Label text={translate('popupSettingsPhraseTitle')} />
 								<Icon className="arrow" />
@@ -208,7 +211,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						) : (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { console.log(this.onConfirmPhrase); this.onConfirmPhrase(); }} />
+								<Button text={translate('popupSettingsPhraseOk')} onClick={() => { this.onConfirmPhrase(); }} />
 							</div>
 						)}
 					</div>
@@ -224,20 +227,33 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 						{pin ? (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPinOff')} className="blank" onClick={() => {
-									this.onConfirmPin = this.onTurnOffPin;
-									this.onPage('pinConfirm');
-								}} />
-								<Button text={translate('popupSettingsPinChange')} className="blank" onClick={() => {
-									this.onConfirmPin = () => { this.onPage('pinSelect'); };
-									this.onPage('pinConfirm');
-								}} />
+								<Button 
+									text={translate('popupSettingsPinOff')} 
+									className="blank" 
+									onClick={() => {
+										this.onConfirmPin = this.onTurnOffPin;
+										this.onPage('pinConfirm');
+									}} 
+								/>
+
+								<Button 
+									text={translate('popupSettingsPinChange')} 
+									className="blank" 
+									onClick={() => {
+										this.onConfirmPin = () => { this.onPage('pinSelect'); };
+										this.onPage('pinConfirm');
+									}} 
+								/>
 							</div>
 						): (
 							<div className="buttons">
-								<Button text={translate('popupSettingsPinOn')} className="blank" onClick={() => {
-									this.onPage('pinSelect');
-								}} />
+								<Button 
+									text={translate('popupSettingsPinOn')} 
+									className="blank" 
+									onClick={() => {
+										this.onPage('pinSelect');
+									}} 
+								/>
 							</div>
 						)}
 
@@ -285,11 +301,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				];
 
 				Item = (item: any) => (
-					<div className={[ 'item', item.id, (item.disabled ? 'disabled' : '') ].join(' ')} onClick={() => {
-						if (!item.disabled) {
-							this.onPage(Util.toCamelCase('import-' + item.id));
-						};
-					}}>
+					<div 
+						className={[ 'item', item.id, (item.disabled ? 'disabled' : '') ].join(' ')} 
+						onClick={() => {
+							if (!item.disabled) {
+								this.onPage(Util.toCamelCase('import-' + item.id));
+							};
+						}}
+					>
 						{item.disabled ? <div className="soon">{translate('commonSoon')}</div> : ''}
 						<div className="txt">
 							<Icon />

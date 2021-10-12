@@ -27,7 +27,7 @@ class Tag extends React.Component<Props, {}> {
 		return (
 			<span contentEditable={false} className={cn.join(' ')}>
 				<span className="inner">{text}</span>
-				{canEdit ? <Icon className="remove" onMouseDown={(e: any) => { onRemove(e, text); }} /> : '' }
+				{canEdit ? <Icon className="remove" onMouseDown={(e: any) => { onRemove(e, text); }} /> : ''}
 			</span>
 		);
 	};

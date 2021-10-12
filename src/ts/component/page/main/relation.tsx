@@ -26,7 +26,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const { isPopup } = this.props;
@@ -45,13 +45,15 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 							<IconObject size={96} object={object} />
 						</div>
 						<div className="side center">
-							<div className="title">{object.name}</div>
-							<div className="descr">{object.description}</div>
+							<div className="txt">
+								<div className="title">{object.name}</div>
+								<div className="descr">{object.description}</div>
 
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+							</div>
 						</div>
 						<div className="side right">
-							<Button id="button-create" text="Create set" onClick={this.onCreate} />
+							<Button id="button-create" text="Create set" onClick={this.onCreate} className="dn" />
 						</div>
 					</div>
 

@@ -1,32 +1,59 @@
 @media print {
-	@page {
-		size: A4;
-		margin: 0px 0px 2cm 0px;
-	}
+	@page { size: A4; margin: 1.5cm 0px; }
+	@page:first { margin-top: 0px; }
 
 	body { -webkit-print-color-adjust: exact; }
-
+	#drag { display: none !important; }
+	#linkPreview { display: none !important; }
+	.menu { display: none !important; }
+	.editorControls { display: none !important; }
+	.controlButtons { display: none !important; }
+	html.withPopup .page.isFull { display: none !important; }
 	.header { display: none; }
 	.footer { display: none; }
-	
-	.block.blockCover { left: 0px; width: 100%; }
-	
-	.pageMainEdit .blocks { padding: 0px 1.5cm 2cm 1.5cm }
 
-	.editorControls { display: none; }
+	.overPopup, .overMenu { overflow: visible !important; }
+
+	.popups {
+		.popup { position: relative; }
+		.dimmer { display: none !important; }
+	}
+	
+	#editorWrapper { width: 100% !important; }
+
+	.pageMainEdit .blocks { padding: 0px 1.5cm; }
+	.pageMainType, .pageMainRelation {
+		.wrapper {
+			.head {
+				.side.center { margin: 0px; }
+				.side.right { display: none; }
+			}	
+		}
+	}
+
+	.popupPage {
+		#innerWrap { 
+			width: 100% !important; height: auto !important; margin: 0px !important; left: 0px; top: 0px; 
+			border-radius: 0px; box-shadow: 0px 0px; overflow: visible; position: static;
+		}
+	}
+
+	.block.blockCover { left: 0px; top: 0px; width: 100%; }
 
 	.blocks {
 		#button-add { display: none; }
-	
+
 		.block {
 			.icon.dnd { display: none; }
 		}
 		
+		.block.blockMedia { break-inside: avoid-page; }
 		.block.blockMedia {
 			.icon.play { display: none; }
 		}
 		
 		.block.blockText {
+			#value { overflow: visible; break-inside: avoid-page; }
 			.placeholder { display: none !important; }
 		}
 		

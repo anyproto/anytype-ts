@@ -1,5 +1,6 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
+import children from '../component/list/children';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -147,7 +148,7 @@ class DataUtil {
 		return c;
 	};
 
-	relationClass (v: I.RelationType): string {
+	relationTypeName (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
 			default:
@@ -155,8 +156,8 @@ class DataUtil {
 			case I.RelationType.ShortText:	 c = 'shortText'; break;
 			case I.RelationType.Number:		 c = 'number'; break;
 			case I.RelationType.Date:		 c = 'date'; break;
-			case I.RelationType.Status:		 c = 'select isStatus'; break;
-			case I.RelationType.Tag:		 c = 'select isTag'; break;
+			case I.RelationType.Status:		 c = 'status'; break;
+			case I.RelationType.Tag:		 c = 'tag'; break;
 			case I.RelationType.File:		 c = 'file'; break;
 			case I.RelationType.Checkbox:	 c = 'checkbox'; break;
 			case I.RelationType.Url:		 c = 'url'; break;
@@ -164,13 +165,20 @@ class DataUtil {
 			case I.RelationType.Phone:		 c = 'phone'; break;
 			case I.RelationType.Object:		 c = 'object'; break;
 		};
+		return c;
+	};
+
+	relationClass (v: I.RelationType): string {
+		let c = this.relationTypeName(v);
+		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
+			c = 'select ' + this.tagClass(v);
+		};
 		return 'c-' + c;
 	};
 
 	tagClass (v: I.RelationType): string {
 		let c = '';
 		switch (v) {
-			default:
 			case I.RelationType.Status:		 c = 'isStatus'; break;
 			case I.RelationType.Tag:		 c = 'isTag'; break;
 		};
@@ -422,72 +430,26 @@ class DataUtil {
 
 		keyboard.setSource(null);
 
-		switch (object.layout) {
-			default:
-				this.history.push(object.id == root ? '/main/index' : '/main/edit/' + object.id);
-				break;
+		let action = this.actionByLayout(object.layout);
+		let id = object.id;
 
-			case I.ObjectLayout.Set:
-				this.history.push('/main/set/' + object.id);
-				break;
+		if ((action == 'edit') && (object.id == root)) {
+			action = 'index';
+			id = '';
+		};
 
-			case I.ObjectLayout.Type:
-				this.history.push('/main/type/' + object.id);
-				break;
-
-			case I.ObjectLayout.Relation:
-				this.history.push('/main/relation/' + object.id);
-				break;
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:
-				this.history.push('/main/media/' + object.id);
-				break;
-
-			case I.ObjectLayout.Store:
-				this.history.push('/main/store');
-				break;
+		if (action) {
+			this.history.push('/main/' + action + (id ? '/' + id : ''));
 		};
 	};
 
 	objectOpenPopup (object: any) {
-		const popupId = 'page';
-
-		let action = '';
-
-		switch (object.layout) {
-			default:
-				action = 'edit';
-				break;
-
-			case I.ObjectLayout.Set:
-				action = 'set';
-				break;
-
-			case I.ObjectLayout.Type:
-				action = 'type';
-				break;
-
-			case I.ObjectLayout.Relation:
-				action = 'relation';
-				break;
-
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image:
-				action = 'media';
-				break;
-
-			case I.ObjectLayout.Store:
-				action = 'store';
-				break;
-		};
-
 		const param: any = { 
 			data: { 
 				matchPopup: { 
 					params: {
 						page: 'main',
-						action: action,
+						action: this.actionByLayout(object.layout),
 						id: object.id,
 					},
 				},
@@ -496,7 +458,23 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open(popupId, param);
+		popupStore.open('page', param);
+	};
+
+	actionByLayout (v: I.ObjectLayout): string {
+		let r = '';
+		switch (v) {
+			default:						 r = 'edit'; break;
+			case I.ObjectLayout.Set:		 r = 'set'; break;
+			case I.ObjectLayout.Type:		 r = 'type'; break;
+			case I.ObjectLayout.Relation:	 r = 'relation'; break;
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image:		 r = 'media'; break;
+			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
+			case I.ObjectLayout.Graph:		 r = 'graph'; break;
+			case I.ObjectLayout.Store:		 r = 'store'; break;
+		};
+		return r;
 	};
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
@@ -623,8 +601,6 @@ class DataUtil {
 	};
 
 	menuGetBlockMedia () {
-		const { config } = commonStore;
-
 		let ret: any[] = [
 			{ type: I.BlockType.File, id: I.FileType.File, icon: 'file', lang: 'File' },
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
@@ -632,14 +608,8 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
+			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
 		];
-
-		if (config.experimental) {
-			ret = ret.concat([
-				{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
-			]);
-		};
-
 		return ret.map(this.menuMapperBlock);
 	};
 
@@ -842,10 +812,11 @@ class DataUtil {
 	};
 	
 	menuSectionsFilter (sections: any[], filter: string) {
-		const reg = new RegExp(Util.filterFix(filter), 'gi');
+		const regS = new RegExp('/^' + Util.filterFix(filter) + '/', 'gi');
+		const regC = new RegExp(Util.filterFix(filter), 'gi');
 		
 		sections = sections.filter((s: any) => {
-			if (s.name.match(reg)) {
+			if (s.name.match(regC)) {
 				return true;
 			};
 			s._sortWeight_ = 0;
@@ -856,17 +827,17 @@ class DataUtil {
 				if (c.skipFilter) {
 					ret = true;
 				} else 
-				if (c.name && c.name.match(reg)) {
+				if (c.name && c.name.match(regC)) {
 					ret = true;
-					c._sortWeight_ = 100;
+					c._sortWeight_ = (c.name.match(regS) ? 10000 : 1000);
 				} else 
-				if (c.description && c.description.match(reg)) {
+				if (c.description && c.description.match(regC)) {
 					ret = true;
-					c._sortWeight_ = 10;
+					c._sortWeight_ = (c.description.match(regS) ? 100 : 10);
 				} else
 				if (c.aliases && c.aliases.length) {
 					for (let alias of c.aliases) {
-						if (alias.match(reg)) {
+						if (alias.match(regC)) {
 							ret = true;
 							break;
 						};
@@ -971,37 +942,29 @@ class DataUtil {
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		let forceKeys = [ Constant.relationKey.done ];
 		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && (relation.format != I.RelationType.File);
+			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
 		});
 		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
 
-		for (let key of forceKeys) {
-			const relation = dbStore.getRelation(rootId, blockId, key);
-			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
-				relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, relation);
-			};
-		};
+		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
+			relationKey: Constant.relationKey.done,
+		});
 
-		return relations.map((it: I.ViewRelation) => {
+		let ret: any[] = [];
+		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			
-			let isHidden = relation.isHidden;
-			if (forceKeys.indexOf(relation.relationKey) >= 0) {
-				isHidden = false;
-			};
-
-			return { 
+			ret.push({ 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
 				name: relation.name, 
-				isHidden: isHidden,
+				isHidden: relation.isHidden,
 				format: relation.format,
 				maxCount: relation.maxCount,
-			};
+			});
 		});
+		return ret;
 	};
 
 	getRelationArrayValue (value: any): string[] {
@@ -1133,7 +1096,7 @@ class DataUtil {
 				break;
 		};
 
-		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
+		if (object.isDraft) {
 			ret.className.push('noSystemBlocks');
 		};
 
@@ -1206,8 +1169,8 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '0').replace(/,\s?/g, '.');
-				value = parseFloat(value);
+				value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
+				value = Number(value);
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {

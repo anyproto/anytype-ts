@@ -55,6 +55,8 @@ import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/store.scss';
 import 'scss/page/main/media.scss';
+import 'scss/page/main/graph.scss';
+import 'scss/page/main/navigation.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/dataview.scss';
@@ -81,7 +83,6 @@ import 'scss/block/latex.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/settings.scss';
-import 'scss/popup/navigation.scss';
 import 'scss/popup/search.scss';
 import 'scss/popup/prompt.scss';
 import 'scss/popup/preview.scss';
@@ -90,7 +91,6 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
-import 'scss/popup/graph.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -141,7 +141,7 @@ interface State {
 
 const $ = require('jquery');
 const path = require('path');
-const { app, dialog, process } = window.require('electron').remote;
+const { app, dialog, process } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 const { ipcRenderer } = window.require('electron');
@@ -427,7 +427,7 @@ class App extends React.Component<Props, State> {
 					data: {
 						title: 'Update available',
 						text: 'Do you want to update on a new version?',
-						textConfirm: 'Update',
+						textConfirm: 'Restart and update',
 						textCancel: 'Later',
 						onConfirm: () => {
 							ipcRenderer.send('updateConfirm');

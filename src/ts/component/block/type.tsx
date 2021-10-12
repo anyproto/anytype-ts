@@ -39,7 +39,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		const Item = (item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} onMouseLeave={this.onOut}>
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onClick={(e: any) => { this.onClick(e, item); }} 
+					onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+					onMouseLeave={this.onOut}
+				>
 					<IconObject size={48} iconSize={32} object={{ ...item, layout: I.ObjectLayout.Type }} />
 					<div className="info">
 						<div className="txt">
@@ -93,11 +99,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
 		let set = dbStore.getObjectType(Constant.typeId.set);
 
-		if (set) {
-			items.push(set);
-		};
-
 		items.sort(DataUtil.sortByName);
+
+		if (set) {
+			//items.unshift(set);
+		};
 
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -207,8 +213,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		el.addClass('hover');
 
 		this.ref.blur();
-		focus.clear(true);
-
 		if (scroll) {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
 			const st = container.scrollTop();
@@ -266,8 +270,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 
 		if (item.id == Constant.typeId.set) {
-			C.ObjectToSet(rootId, Constant.typeId.page, (message: any) => {
-				DataUtil.objectOpen({ id: message.id, layout: I.ObjectLayout.Set });
+			C.ObjectToSet(rootId, [], (message: any) => {
+				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {

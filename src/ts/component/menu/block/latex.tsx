@@ -22,6 +22,7 @@ const LIMIT = 40;
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, {}> {
 	
 	_isMounted: boolean = false;
+	emptyLength: number = 0;
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
@@ -58,6 +59,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 					displayMode: true, 
 					throwOnError: false,
 					output: 'html',
+					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				});
 
 				content = (
@@ -160,6 +162,15 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 			this.filter = filter.text;
 		};
 
+		if (!items.length && !this.emptyLength) {
+			this.emptyLength = filter.text.length;
+		};
+
+		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
+			this.props.close();
+			return;
+		};
+
 		this.resize();
 		this.props.position();
 
@@ -194,6 +205,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { data } = param;
 		const { isTemplate } = data;
 
+		if (isTemplate) {
+			return;
+		};
+
 		menuStore.open('previewLatex', {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width - (isTemplate ? 14 : 0),
@@ -201,6 +216,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 			isSub: true,
 			data: {
 				text: item.comment || item.symbol,
+				example: item.comment == "" ? false : true
 			}
 		});
 	};
@@ -239,11 +255,13 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 				c.comment = String(c.comment || '').replace(/`/g, '');
 				return c;
 			});
+			it.children.sort(DataUtil.sortByName);
 			return it;
 		});
 
 		if (filter.text) {
 			sections = DataUtil.menuSectionsFilter(sections, filter.text);
+			sections.sort(DataUtil.sortByName);
 		};
 		return sections;
 	};

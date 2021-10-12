@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon } from 'ts/component';
-import { I, Util, keyboard, Key } from 'ts/lib';
+import { I, C, Util, keyboard } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import arrayMove from 'array-move';
 
 interface Props extends I.Menu {}
 
@@ -198,7 +199,17 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	};
 
 	onSortEnd (result: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
 		const { oldIndex, newIndex } = result;
+
+		let views = dbStore.getViews(rootId, blockId);
+		let view = views[oldIndex];
+		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+
+		dbStore.viewsSort(rootId, blockId, ids);
+		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
 	};
 
 });

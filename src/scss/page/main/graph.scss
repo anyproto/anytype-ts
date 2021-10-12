@@ -1,0 +1,147 @@
+@import "~scss/_vars";
+
+.pageMainGraph {
+
+    .wrapper { display: flex; height: 100%; overflow: hidden; }
+    .wrapper {
+        .side { height: 100%; }
+        .side.left { width: 100%; }
+        .side.right { 
+            width: 268px; overflow: auto; border-left: 1px solid $colorLightGrey; position: relative; 
+            z-index: 21; position: absolute; right: 0px; top: 0px; display: none; background: #fff;
+        }
+        .side.right {
+            .bottom { 
+                position: absolute; left: 0px; bottom: 0px; padding: 14px 16px; width: 100%; border-top: 1px solid $colorLightGrey;
+            }
+            .bottom {
+                .icon.search { 
+                    width: 20px; height: 20px; margin-right: 8px; vertical-align: top; background-image: url('~img/icon/graph/search.svg');
+                }
+
+                .filter { padding: 0px; background: #fff; width: calc(100% - 28px); display: inline-block; vertical-align: top; }
+                .filter {
+                    .inner { height: auto; }
+                    .input { height: 20px; line-height: 20px; }
+                    .icon.clear { top: 0px; }
+                    .line { display: none; }
+                }
+            }
+        }
+    }
+
+    .wrapper.withPanel {
+        .side.right { display: block; }
+    }
+
+    .footer { display: block !important; }
+    .footer {
+        .icon { 
+            width: 44px; height: 44px; background-color: #fff; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 12px; 
+		    background-size: 20px 20px; position: absolute; right: 20px; bottom: 20px; 
+        }
+        .icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
+    }
+
+    #graphWrapper { height: 100%; }
+    #graph { width: 100%; height: 100%; }
+    canvas { width: 100%; height: 100%; background: #fff; }
+
+    .tabs { 
+        padding: 0px 16px; border-bottom: 1px solid $colorLightGrey; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; 
+        position: relative; cursor: pointer;
+    }
+    .tabs {
+        .tab { display: inline-block; vertical-align: middle; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
+        .tab:hover, .tab.active { color: $colorBlack; }
+        .tab:last-child { margin: 0px; }
+
+        .icon.close { 
+            width: 28px; height: 28px; position: absolute; right: 10px; top: 50%; margin-top: -14px; 
+            background-image: url('~img/icon/graph/close.svg'); background-size: 20px 20px; border-radius: 6px;
+        }
+        .icon.close:hover { background-color: #f3f2ec; }
+    }
+
+    .sections { overflow: auto; padding: 14px 0px; }
+    .section { padding: 11px 0px 0px 0px; }
+    .section::after { content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block; }
+    .section:first-child { padding: 0px; }
+    .section:last-child { border: 0px; }
+    .section:last-child::after { display: none; }
+    .section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; font-weight: 500; }
+    .section {
+        .item { padding: 4px 16px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: #fff; }
+        .item::before {
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
+			transition: background 0.2s ease-in-out; pointer-events: none;
+		}
+        .item:hover::before { background: rgba(172, 169, 150, 0.1); }
+
+        .item {
+			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
+			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+		}
+
+        .icon.label { background-image: url('~img/icon/graph/label.svg'); }
+        .icon.link { background-image: url('~img/icon/graph/link.svg'); }
+        .icon.relation { background-image: url('~img/icon/graph/relation.svg'); }
+        .icon.orphan { background-image: url('~img/icon/graph/orphan.svg'); }
+    }
+
+    .preview { padding: 24px; }
+    .preview {
+        .loaderWrapper { width: 100%; height: 100%; }
+        .cover { position: absolute; height: 146px; }
+
+        .block {
+			.wrapMenu { display: none; }
+			.wrapContent { width: 100%; }
+		}
+		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; line-height: 22px; }
+        .block.blockFeatured {
+            .cellContent { padding: 2px 6px; }
+            .cellContent {
+                .over { display: inline; }
+                .tagItem { @include text-small; margin: 0px 6px 0px 0px; }
+            }
+            .cellContent:hover { background: none; }
+
+            .bullet { margin: 0px; }
+        }
+
+        .heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; word-wrap: break-word; }
+        .heading {
+            .iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px #fff inset; }
+            .title { display: block; @include text-header3; font-weight: bold; position: relative; }
+            .icon.checkbox { 
+                position: static; width: 20px; height: 20px; background-image: url('~img/icon/object/checkbox0.svg') !important; 
+                margin-right: 6px;
+            }
+            .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
+
+            .description { @include text-common; margin: 4px 0px 12px 0px; }
+            .description:empty { display: none; }
+            .author { @include text-very-small; color: $colorMediumGrey; }
+        }
+
+        .buttons { margin-top: 24px; }
+        .buttons {
+            .button { width: calc(50% - 4px); height: 32px; line-height: 28px; margin-right: 8px; border-radius: 4px; }
+            .button:last-child { margin: 0px; }
+        }
+    }
+    .preview.withCover { padding-top: 164px; }
+    .preview.withIconAndCover { padding-top: 106px; }
+    .preview.isTask {
+        .title { width: calc(100% - 26px); display: inline-block; vertical-align: middle; }
+    }
+
+    .input-drag { height: 12px; }
+    .input-drag {
+        .icon { border-color: $colorBlack; background: $colorBlack; }
+        .fill { background: $colorBlack; }
+        .back { background: $colorLightGrey; }
+    }
+}

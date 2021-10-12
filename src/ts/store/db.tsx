@@ -1,5 +1,6 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
 import { I, M, DataUtil, Util } from 'ts/lib';
+import children from '../component/list/children';
 
 class DbStore {
 
@@ -22,6 +23,7 @@ class DbStore {
             relationUpdate: action,
             relationDelete: action,
             viewsSet: action,
+			viewsSort: action,
             viewsClear: action,
             viewAdd: action,
             viewUpdate: action,
@@ -73,6 +75,18 @@ class DbStore {
     relationsSet (rootId: string, blockId: string, list: I.Relation[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = this.getRelations(rootId, blockId);
+
+		// hack for done relation to exist in state
+		if (!list.find((it: any) => { return it.relationKey == 'done'; })) {
+			list.push({
+				relationKey: 'done',
+				name: 'Done',
+				format: I.RelationType.Checkbox,
+				isHidden: true,
+				isReadonlyRelation: true,
+				isReadonlyValue: false,
+			});
+		};
 
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
 		for (let item of list) {
@@ -138,6 +152,20 @@ class DbStore {
 		};
 		
 		this.viewMap.set(key, observable.array(views));
+	};
+
+	viewsSort (rootId: string, blockId: string, ids: string[]) {
+		const key = this.getId(rootId, blockId);
+		const views = this.getViews(rootId, blockId);
+
+		views.sort((c1: any, c2: any) => {
+			const i1 = ids.indexOf(c1.id);
+			const i2 = ids.indexOf(c2.id);
+
+			if (i1 > i2) return 1; 
+			if (i1 < i2) return -1;
+			return 0;
+		});
 	};
 
     viewsClear (rootId: string, blockId: string) {

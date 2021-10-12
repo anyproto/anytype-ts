@@ -5,7 +5,7 @@ import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('electron').remote;
+const { process } = window.require('@electron/remote');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
@@ -718,12 +718,12 @@ class Util {
 		
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		this.timeoutLinkPreviewShow = window.setTimeout(() => {
+			this.linkPreviewOpen = true;
 			commonStore.linkPreviewSet({
 				url: url,
 				element: node,
 				...param,
 			});
-			this.linkPreviewOpen = true;
 		}, 500);
 	};
 	
@@ -905,7 +905,7 @@ class Util {
 		switch (type) {
 			default:
 			case 'page':
-				return '.page';
+				return '.page.isFull';
 
 			case 'popup':
 				return '#popupPage';

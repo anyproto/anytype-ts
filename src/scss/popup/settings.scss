@@ -30,7 +30,7 @@
 		.tabIndex { padding: 45px 48px 28px 48px; }
 		.tabIndex {
 			.row { 
-				padding: 18px 0px 17px 0px; border-bottom: 1px solid #eae9e0; cursor: pointer; position: relative; 
+				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
 			}
 			.row.flex { display: flex; }
@@ -57,7 +57,7 @@
 			.logout:hover { color: $colorBlack; }
 		}
 		
-		.tabWallpaper { overflow-y: scroll; height: 520px; }
+		.tabWallpaper { overflow-y: overlay; height: 520px; }
 		
 		.tabWallpaper {
 			.covers { margin-left: -2px; width: 596px; }
@@ -122,7 +122,7 @@
 			
 			.button.blank { 
 				padding: 20px 0px; width: 100%; display: block; height: auto; line-height: 24px; background: none; color: #e89d00;
-				border: 0px; border-radius: 0px; border-bottom: 1px solid #eae9e0; @include text-paragraph; font-weight: 400;
+				border: 0px; border-radius: 0px; border-bottom: 1px solid $colorLightGrey; @include text-paragraph; font-weight: 400;
 			}
 			.button.blank:hover { color: $colorBlack; }
 

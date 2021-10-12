@@ -44,7 +44,7 @@
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
-	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
+	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
 
 	.side { position: absolute; top: 5px; height: 28px; line-height: 28px; }
 
@@ -75,8 +75,10 @@
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
-	.icon.big.nav { width: 32px; margin-left: 10px; }
+	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
+
+	.icon.nm { margin: 0px !important; }
 
 	.path { 
 		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 

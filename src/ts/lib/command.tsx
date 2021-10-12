@@ -666,6 +666,17 @@ const BlockDataviewViewDelete = (contextId: string, blockId: string, viewId: str
 	dispatcher.request('blockDataviewViewDelete', request, callBack);
 };
 
+const BlockDataviewViewSetPosition = (contextId: string, blockId: string, viewId: string, position: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.ViewSetPosition.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setPosition(position);
+
+	dispatcher.request('blockDataviewViewSetPosition', request, callBack);
+};
+
 const BlockDataviewViewSetActive = (contextId: string, blockId: string, viewId: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.ViewSetActive.Request();
 	
@@ -1063,11 +1074,11 @@ const ObjectGraph = (filters: any[], limit: number, types: string[], callBack?: 
 	dispatcher.request('objectGraph', request, callBack);
 };
 
-const ObjectToSet = (contextId: string, objectTypeUrl: string, callBack?: (message: any) => void) => {
+const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToSet.Request();
 	
 	request.setContextid(contextId);
-	request.setObjecttypeurl(objectTypeUrl);
+	request.setSourceList(sources);
 
 	dispatcher.request('objectToSet', request, callBack);
 };
@@ -1200,6 +1211,7 @@ export {
 	BlockDataviewViewUpdate,
 	BlockDataviewViewDelete,
 	BlockDataviewViewSetActive,
+	BlockDataviewViewSetPosition,
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationUpdate,

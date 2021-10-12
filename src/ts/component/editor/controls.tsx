@@ -12,7 +12,7 @@ interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 }
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 

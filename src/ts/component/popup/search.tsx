@@ -81,9 +81,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				<div 
 					id={'item-' + item.id} 
 					className={[ 'item', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-					onMouseOver={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }}
+					onMouseOver={(e: any) => { this.onOver(e, item); }} 
+					onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{item.isRoot ? iconHome : <IconObject object={item} size={18} /> }
+					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
 					
 					<div className="name">{item.name}</div>
 
@@ -388,13 +389,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
