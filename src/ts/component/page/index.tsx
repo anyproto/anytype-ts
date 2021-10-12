@@ -20,6 +20,7 @@ import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
+import PageMainSpace from './main/space';
 import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
@@ -49,6 +50,7 @@ const Components: any = {
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
+	'main/space':			 PageMainSpace,
 	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
