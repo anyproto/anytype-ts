@@ -163,7 +163,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			<div className="wrapper">
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 				<div key="sides" className="sides">
 					<div id={'panel-' + Panel.Left} className="items left">
 						{!isRoot ? (
