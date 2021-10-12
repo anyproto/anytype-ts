@@ -23,6 +23,7 @@ enum Tab {
 	Favorite	 = 'favorite',
 	Recent		 = 'recent',
 	Set			 = 'set',
+	Space		 = 'space',
 	Archive		 = 'archive',
 };
 
@@ -30,6 +31,7 @@ const Tabs = [
 	{ id: Tab.Favorite, name: 'Favorites' },
 	{ id: Tab.Recent, name: 'History' },
 	{ id: Tab.Set, name: 'Sets' },
+	{ id: Tab.Space, name: 'Spaces' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
 
@@ -201,7 +203,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		Storage.set('tabIndex', id);
 		analytics.event('TabHome', { tab: tab.name });
 
-		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
+		if ([ Tab.Archive, Tab.Set, Tab.Space ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
@@ -219,6 +221,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
+		};
+
+		if (tab == Tab.Space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space });
 		};
 
 		if (!config.debug.ho) {
@@ -578,6 +584,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case Tab.Archive:
 			case Tab.Set:
+			case Tab.Space:
 				list = pages;
 				break;
 		};

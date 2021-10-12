@@ -136,6 +136,7 @@
 	"typeId": {
 		"page": "_otpage",
 		"set": "_otset",
+		"space": "_otspace",
 		"template": "_ottemplate",
 		"type": "_otobjectType",
 		"image": "_otimage",
