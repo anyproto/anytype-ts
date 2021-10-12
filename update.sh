@@ -10,8 +10,10 @@ arch="";
 
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux";
-elif [ "$platform" = "macos-latest" ]; then
-  arch="darwin";
+elif [ "$platform" = "macos-10.15" ]; then
+  arch="darwin-amd";
+elif [ "$platform" = "macos-11" ]; then
+  arch="darwin-arm";
 elif [ "$platform" = "windows-latest" ]; then
   arch="windows";
   FILE="addon.zip"
@@ -43,6 +45,7 @@ printf "Version: $tag\n"
 printf "Found asset: $asset_id\n"
 echo -n "Downloading file..."
 curl -sL -H "Authorization: token $token" -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id" > $FILE
+
 printf "Done\n"
 
 if [ "$platform" = "windows-latest" ]; then
@@ -53,7 +56,7 @@ if [ "$platform" = "windows-latest" ]; then
   echo "Moving... "
   mv -fv grpc-server.exe dist/anytypeHelper.exe
 else 
-  echo -n "Uncompressing... "
+  echo -n "Uncompressing... " 
   tar -zxf $FILE
   printf "Done\n"
 

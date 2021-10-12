@@ -68,7 +68,9 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			<div 
 				tabIndex={0} 
 				className={cn.join(' ')}
-				onKeyDown={this.onKeyDownBlock} onKeyUp={this.onKeyUpBlock} onFocus={this.onFocusBlock}
+				onKeyDown={this.onKeyDownBlock} 
+				onKeyUp={this.onKeyUpBlock} 
+				onFocus={this.onFocusBlock}
 			>
 				<div id="select" className="select" onClick={this.onTemplate}>
 					<div className="name">Template formula</div>

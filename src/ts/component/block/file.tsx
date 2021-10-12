@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.BlockComponent {}
 
 const { ipcRenderer } = window.require('electron');
-const { app } = window.require('electron').remote
+const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
 

@@ -15,7 +15,7 @@ interface State {
 const $ = require('jquery');
 const EmojiData = require('json/emoji.json');
 const Constant = require('json/constant.json');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;

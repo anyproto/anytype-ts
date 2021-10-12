@@ -60,13 +60,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.object = { ...action, layout: I.ObjectLayout.Type };
 						};
 
-						return <MenuItemVertical 
-							key={i} 
-							{...action} 
-							withCaption={action.caption} 
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
-						/>;
+						return (
+							<MenuItemVertical 
+								key={i} 
+								{...action} 
+								withCaption={action.caption} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+								onClick={(e: any) => { this.onClick(e, action); }} 
+							/>
+						);
 					})}
 				</div>
 			</div>

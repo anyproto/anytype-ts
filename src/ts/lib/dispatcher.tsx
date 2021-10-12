@@ -7,14 +7,12 @@ const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
-const { remote } = window.require('electron');
 const Constant = require('json/constant.json');
-const raf = require('raf');
+const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
-const { app } = remote;
 const bindings = window.require('bindings')({
 	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
@@ -44,7 +42,7 @@ class Dispatcher {
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			let serverAddr = remote.getGlobal('serverAddr');
+			let serverAddr = getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
