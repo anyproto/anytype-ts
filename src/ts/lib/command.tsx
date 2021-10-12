@@ -155,8 +155,10 @@ const AccountSelect = (id: string, path: string, callBack?: (message: any) => vo
 	dispatcher.request('accountSelect', request, callBack);
 };
 
-const WorkspaceCreate = (callBack?: (message: any) => void) => {
+const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
+
+	request.setName(name);
 
 	dispatcher.request('workspaceCreate', request, callBack);
 };

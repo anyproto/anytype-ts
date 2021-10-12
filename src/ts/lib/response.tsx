@@ -481,6 +481,12 @@ const CloneTemplate = (response: any) => {
 	};
 };
 
+const WorkspaceCreate = (response: any) => {
+	return {
+		id: response.getWorkspaceid(),
+	};
+};
+
 export {
 	VersionGet,
 	DebugSync,
@@ -597,4 +603,5 @@ export {
 	MakeTemplateByObjectType,
 	CloneTemplate,
 
+	WorkspaceCreate,
 };
