@@ -85,6 +85,23 @@
 			}
 		}
 
+		#selectWrap {
+			.tabs { width: 100%; display: flex; padding: 0px 12px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
+			.side { width: 50%; line-height: 40px; white-space: nowrap; }
+			.side.right { text-align: right; }
+
+			.element { display: inline-block; vertical-align: top; margin-right: 28px; cursor: pointer; }
+			.element:last-child { margin: 0px; }
+			.element {
+				.icon { width: 20px; height: 20px; margin-right: 6px; }
+				.icon.delete { background-image: url('~img/icon/index/delete.svg'); }
+				.icon.restore { background-image: url('~img/icon/index/restore.svg'); }
+				.icon.all { background-image: url('~img/icon/index/all.svg'); }
+				.icon.close { background-image: url('~img/icon/index/close.svg'); }
+				.name { display: inline-block; vertical-align: middle; }
+			}
+		}
+
 		.item { 
 			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
@@ -106,6 +123,14 @@
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
 			.icon.more.hover { background-image: url('~img/icon/index/more1.svg'); opacity: 1; }
+
+			.icon.checkbox { 
+				width: 20px; height: 20px; position: absolute; right: 10px; top: 10px; z-index: 2; cursor: pointer;
+				background-image: url('~img/icon/index/checkbox0.svg'); display: none; opacity: 0; transition: none;
+			}
+		}
+		.item.isSelected {
+			.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); }
 		}
 		.item.withIcon {
 			.name { -webkit-line-clamp: 1; }
@@ -128,6 +153,7 @@
 		
 		.item.active, .item.hover {
 			.icon.more { opacity: 1; }
+			.icon.checkbox { opacity: 1; }
 		}
 		.item.active {
 			.icon.more { background-image: url('~img/icon/index/more1.svg'); }
@@ -136,8 +162,16 @@
 
 	#documents.tabArchive {
 		.item { cursor: default; }
+		.item {
+			.icon.checkbox { display: block; }
+		}
 	}
-	
+
+	#documents.isSelecting {
+		.item {
+			.icon.checkbox { opacity: 1; }
+		}
+	}
 }
 
 html.platformMac.version11 {
