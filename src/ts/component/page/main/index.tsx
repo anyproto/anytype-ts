@@ -203,6 +203,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const title = node.find('#title');
 		const list = node.find('#documents');
 		const selectWrap = node.find('#selectWrap');
+		const header = node.find('#header');
 		const hh = Util.sizeHeader();
 
 		if (!list.length) {
@@ -220,9 +221,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (list.hasClass('isSelecting')) {
 			if (oy - top <= hh) {
+				header.addClass('selectFixed');
 				list.addClass('selectFixed');
 				selectWrap.css({ top: hh });
 			} else {
+				header.removeClass('selectFixed');
 				list.removeClass('selectFixed');
 				selectWrap.css({ top: '' });
 			};
@@ -367,6 +370,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
+		this.onScroll();
 	};
 
 	selectionRender () {
