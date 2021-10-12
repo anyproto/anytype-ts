@@ -1071,6 +1071,15 @@ const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
 	dispatcher.request('objectListDelete', request, callBack);
 };
 
+const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Set.IsArchived.Request();
+	
+	request.setObjectidsList(ids);
+	request.setIsarchived(isArchived);
+
+	dispatcher.request('objectListSetIsArchived', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1232,7 +1241,9 @@ export {
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 	ObjectToSet,
+	
 	ObjectListDelete,
+	ObjectListSetIsArchived,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

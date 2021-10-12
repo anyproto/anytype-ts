@@ -85,6 +85,7 @@
 			}
 		}
 
+		#selectWrap { display: none; }
 		#selectWrap {
 			.tabs { width: 100%; display: flex; padding: 0px 12px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
 			.side { width: 50%; line-height: 40px; white-space: nowrap; }
@@ -170,6 +171,16 @@
 	#documents.isSelecting {
 		.item {
 			.icon.checkbox { opacity: 1; }
+		}
+		#tabWrap { display: none; }
+		#selectWrap { display: block; }
+	}
+
+	#documents.selectFixed { padding-top: 68px; }
+	#documents.selectFixed {
+		#selectWrap { position: fixed; width: 100%; left: 0px; top: 0px; z-index: 10; }
+		#selectWrap {
+			.tabs { border-radius: 0px; }
 		}
 	}
 }

@@ -202,21 +202,34 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const node = $(ReactDOM.findDOMNode(this));
 		const title = node.find('#title');
 		const list = node.find('#documents');
+		const selectWrap = node.find('#selectWrap');
+		const hh = Util.sizeHeader();
+
 		if (!list.length) {
 			return;
 		};
 
 		const oy = list.offset().top;
 		const menu = $('#menuSelect.add');
-		const offset = 256;
+		const offsetTitle = 256;
 
-		let y = 0;
-		if (oy - top <= offset) {
-			y = oy - top - offset;
+		let yt = 0;
+		if (oy - top <= offsetTitle) {
+			yt = oy - top - offsetTitle;
 		};
 
-		title.css({ transform: `translate3d(0px,${y}px,0px)` });
-		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
+		if (list.hasClass('isSelecting')) {
+			if (oy - top <= hh) {
+				list.addClass('selectFixed');
+				selectWrap.css({ top: hh });
+			} else {
+				list.removeClass('selectFixed');
+				selectWrap.css({ top: '' });
+			};
+		};
+
+		title.css({ transform: `translate3d(0px,${yt}px,0px)` });
+		menu.css({ transform: `translate3d(0px,${yt}px,0px)`, transition: 'none' });
 	};
 
 	onTab (id: Tab) {
@@ -362,7 +375,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const cnt = node.find('#selectCnt');
 		const l = this.selected.length;
 
-		l ? wrapper.addClass('isSelecting') : wrapper.removeClass('isSelected');
+		l ? wrapper.addClass('isSelecting') : wrapper.removeClass('isSelecting');
 		cnt.text(`Selected ${l} ${Util.cntWord(l, 'object', 'objects')}`);
 
 		node.find('.item.isSelected').removeClass('isSelected');
@@ -378,7 +391,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onSelectionRestore (e: any) {
-
+		C.ObjectListSetIsArchived(this.selected, false, () => {
+			this.load();
+		});
 	};
 
 	onSelectionAll (e: any) {
