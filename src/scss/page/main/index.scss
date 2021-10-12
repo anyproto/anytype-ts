@@ -180,7 +180,7 @@
 	#documents.selectFixed {
 		#selectWrap { position: fixed; width: 100%; left: 0px; top: 0px; z-index: 10; }
 		#selectWrap {
-			.tabs { border-radius: 0px; }
+			.tabs { border-radius: 0px; background: rgba(0,0,0,0.7); }
 		}
 	}
 }
