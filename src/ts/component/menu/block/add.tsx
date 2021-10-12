@@ -114,10 +114,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				let icn: string[] = [ 'inner' ];
 					
 				if (item.isTextColor) {
-					icn.push('textColor textColor-' + item.value);
+					icn.push('textColor textColor-' + (item.value || 'default'));
 				};
 				if (item.isBgColor) {
-					icn.push('bgColor bgColor-' + item.value);
+					icn.push('bgColor bgColor-' + (item.value || 'default'));
 				};
 				
 				if (item.isTextColor || item.isBgColor) {

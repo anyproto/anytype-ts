@@ -25,7 +25,7 @@ let Color = {
 	link: {
 		0: '#dfddd0',
 		1: '#8c9ea5',
-		'over': '#ffd15b',
+		over: '#ffd15b',
 	},
 	node: {
 		common: '#f3f2ec',
@@ -260,24 +260,29 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 drawNode = (d) => {
 	let bg = Color.node.common;
 	let stroke = '';
-	let width = 0;
 	let img = images[d.src];
-	
+	let isMatched = forceProps.filter && d.name.match(forceProps.filter);
 
+	ctx.save();
+	ctx.lineWidth = 0;
 	ctx.globalAlpha = 1;
-
-	if (forceProps.filter && !d.name.match(forceProps.filter)) {
-		ctx.globalAlpha = 0.2;
-	};
 
 	if (d.isRoot) {
 		bg = Color.node.focused;
-		width = 0;
 	};
 
 	if (d.isOver) {
 		stroke = Color.link.over;
-		width = 1;
+		ctx.lineWidth = 1;
+	};
+
+	if (isMatched) {
+		stroke = Color.link.over;
+		ctx.lineWidth = 2;
+	};
+
+	if (forceProps.filter && !isMatched) {
+		ctx.globalAlpha = 0.4;
 	};
 
 	if ([ 1, 2 ].indexOf(d.layout) >= 0) {
@@ -290,7 +295,6 @@ drawNode = (d) => {
 	};
 
 	if (stroke) {
-		ctx.lineWidth = width;
 		ctx.strokeStyle = stroke;
 		ctx.stroke();
 	};
@@ -304,45 +308,42 @@ drawNode = (d) => {
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
 	};
 
-	if (!img) {
-		return;
+	if (img) {
+		let x = d.x - d.radius / 2;
+		let y = d.y - d.radius / 2;
+		let w = d.radius;
+		let h = d.radius;
+	
+		if (d.iconImage) {
+			x = d.x - d.radius;
+			y = d.y - d.radius;
+	
+			if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+				ctx.beginPath();
+				ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
+				ctx.closePath();
+			} else {
+				const r = d.iconImage ? d.radius / 8 : d.radius / 4;
+				roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
+			};
+	
+			ctx.fill();
+			ctx.clip();
+	
+			if (img.width > img.height) {
+				h = d.radius * 2;
+				w = h * (img.width / img.height)
+				x -= (w - d.radius * 2) / 2;
+			} else {
+				w = d.radius * 2;
+				h = w * (img.height / img.width);
+				y -= (h - d.radius * 2) / 2;
+			};
+		};
+	
+		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	};
 
-	let x = d.x - d.radius / 2;
-	let y = d.y - d.radius / 2;
-	let w = d.radius;
-	let h = d.radius;
-
-	ctx.save();
-
-	if (d.iconImage) {
-		x = d.x - d.radius;
-		y = d.y - d.radius;
-
-		if ([ 1, 2 ].indexOf(d.layout) >= 0) {
-			ctx.beginPath();
-			ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
-			ctx.closePath();
-		} else {
-			const r = d.iconImage ? d.radius / 8 : d.radius / 4;
-			roundedRect(d.x - d.radius, d.y - d.radius, d.radius * 2, d.radius * 2, r);
-		};
-
-		ctx.fill();
-		ctx.clip();
-
-		if (img.width > img.height) {
-			h = d.radius * 2;
-			w = h * (img.width / img.height)
-			x -= (w - d.radius * 2) / 2;
-		} else {
-			w = d.radius * 2;
-			h = w * (img.height / img.width);
-			y -= (h - d.radius * 2) / 2;
-		};
-	};
-
-	ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	ctx.restore();
 };
 

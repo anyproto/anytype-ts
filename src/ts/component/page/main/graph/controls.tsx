@@ -10,6 +10,8 @@ interface Props {
 
 const GraphControls = observer(class GraphControls extends React.Component<Props, {}> {
 
+    refFilter: any = null;
+
 	render () {
         const { data, onSwitch, onFilterChange } = this.props;
 		const itemsAppearance: any[] = [
@@ -38,10 +40,22 @@ const GraphControls = observer(class GraphControls extends React.Component<Props
 
                 <div className="bottom">
                     <Icon className="search" />
-                    <Filter placeholder="Search for an object" onChange={onFilterChange} />
+                    <Filter ref={(ref: any) => { this.refFilter = ref; }} placeholder="Search for an object" onChange={onFilterChange} />
                 </div>
 			</div>
 		);
+	};
+
+    componentDidMount () {
+       this.focus();
+    };
+
+    focus () {
+		window.setTimeout(() => { 
+			if (this.refFilter) {
+				this.refFilter.focus(); 
+			};
+		}, 15);
 	};
 
 });

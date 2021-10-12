@@ -10,6 +10,8 @@ arch="";
 
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux";
+elif [ "$platform" = "macos-latest" ]; then
+  arch="darwin-amd";
 elif [ "$platform" = "macos-10.15" ]; then
   arch="darwin-amd";
 elif [ "$platform" = "macos-11" ]; then

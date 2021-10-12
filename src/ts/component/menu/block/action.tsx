@@ -44,11 +44,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 						let icn: string[] = [ 'inner' ];
 						
 						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
+							icn.push('textColor textColor-' + (action.value || 'default'));
 						};
 
 						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
+							icn.push('bgColor bgColor-' + (action.value || 'default'));
 						};
 
 						if (action.isTextColor || action.isBgColor) {

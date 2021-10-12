@@ -61,7 +61,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 		
 		const { rootId } = this.props;
@@ -563,7 +563,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
-				menuStore.close('blockContext', () => {
+				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					menuStore.open('blockAction', { 
 						element: '#block-' + ids[0],
 						offsetX: Constant.size.blockMenu,
