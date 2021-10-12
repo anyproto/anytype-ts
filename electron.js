@@ -384,10 +384,12 @@ function openAboutWindow () {
         titleBarStyle: 'hidden-inset',
         show: true,
         icon: path.join(__dirname, 'electron', 'icon.png'),
-        webPreferences: {},
+        webPreferences: {
+			nodeIntegration: true,
+		},
     });
 
-    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html'));
+    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html?version=' + version));
 
 	window.once('closed', () => {
         window = null;
@@ -405,6 +407,7 @@ function openAboutWindow () {
 
 	window.once('ready-to-show', () => {
         window.show();
+		window.openDevTools();
     });
 
     window.setMenu(null);
