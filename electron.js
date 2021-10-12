@@ -385,8 +385,6 @@ function menuInit () {
 				{
 					label: 'About Anytype',
 					click: () => {
-						console.log(path.join(__dirname, '/electron/icon.png'));
-
 						openAboutWindow({
 							icon_path: path.join(__dirname, '/electron/icon.png'),
 							css_path: path.join(__dirname, '/electron/about.css'),
