@@ -61,6 +61,7 @@ class Block implements I.Block {
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		return self;
 	};
 
 	canHaveChildren (): boolean {

@@ -493,6 +493,19 @@ class BlockStore {
 		};
 	};
 
+	checkDraft (rootId: string) {
+		const object = detailStore.get(rootId, rootId, [ 'isDraft' ], true);
+		const footer = this.getMapElement(rootId, Constant.blockId.footer);
+
+		if (object.isDraft) {
+			footer.childrenIds.push(Constant.blockId.type);
+		} else {
+			footer.childrenIds = footer.childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
+		};
+		
+		this.updateStructure(rootId, Constant.blockId.footer, footer.childrenIds);
+	};
+
 };
 
 export let blockStore: BlockStore = new BlockStore();
