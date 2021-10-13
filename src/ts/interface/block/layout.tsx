@@ -5,6 +5,7 @@ export enum LayoutStyle {
 	Column	 = 1,
 	Div		 = 2,
 	Header	 = 3,
+	Footer	 = 4,
 };
 
 export interface ContentLayout {
