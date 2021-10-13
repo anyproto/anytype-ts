@@ -241,10 +241,6 @@
 				"to": "node_modules/@electron"
 			},
 			{
-				"from": "node_modules/about-window",
-				"to": "node_modules/about-window"
-			},
-			{
 				"from": "node_modules/async",
 				"to": "node_modules/async"
 			},
