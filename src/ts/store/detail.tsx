@@ -131,6 +131,7 @@ class DetailStore {
 			object.coverId = '';
 			object.iconEmoji = '';
 			object.iconImage = '';
+			object.description = object.description || object.snippet;
 		};
 
 		return {
