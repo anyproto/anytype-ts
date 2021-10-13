@@ -234,9 +234,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 		const { filter } = commonStore;
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelect, isTemplate } = data;
 		
-		onSelect(filter.from - 1, filter.from + filter.text.length, item);
+		let from = filter.from;
+		let to = filter.from;
+
+		if (!isTemplate) {
+			from--;
+			to += filter.text.length;
+		};
+
+		onSelect(from, to, item);
 		close();
 	};
 
