@@ -21,7 +21,8 @@
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; }
 	.blocks.vertical {
 		.side { width: 50%; }
-		.side.left { margin-right: 32px; }
+		.side.left { margin-right: 32px; overflow: overlay; }
+
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia * { width: 100%; height: 100%; }
 		.block.blockMedia {
