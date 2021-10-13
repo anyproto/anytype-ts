@@ -480,6 +480,7 @@ class DataUtil {
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
+		details.type = details.type || commonStore.type;
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
