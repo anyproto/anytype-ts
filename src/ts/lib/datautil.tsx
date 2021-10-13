@@ -144,6 +144,7 @@ class DataUtil {
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 			case I.ObjectLayout.File:		 c = 'isFile'; break;
+			case I.ObjectLayout.Note:		 c = 'isNote'; break;
 		};
 		return c;
 	};
@@ -757,6 +758,7 @@ class DataUtil {
 			{ id: I.ObjectLayout.Image, icon: 'image' },
 			{ id: I.ObjectLayout.Type, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
+			{ id: I.ObjectLayout.Note, icon: 'note' },
 		].map((it: any) => {
 			it.icon = 'layout c-' + it.icon;
 			it.name = translate('layout' + it.id);
@@ -766,7 +768,7 @@ class DataUtil {
 
 	menuTurnLayouts () {
 		return this.menuGetLayouts().filter((it: any) => {
-			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
+			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ].indexOf(it.id) >= 0;
 		});
 	};
 
