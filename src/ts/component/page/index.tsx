@@ -76,9 +76,6 @@ class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-
-		console.log(match);
-
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 
