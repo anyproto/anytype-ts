@@ -17,10 +17,10 @@ body {
 
 .clickable { cursor: pointer; }
 .description { margin-bottom: 1em; text-align: center; }
-.versions { border-collapse: collapse; margin-top: 1em; }
+.version { border-collapse: collapse; margin-top: 1em; }
 
 .copyright,
-.versions { color: #999; }
+.version { color: #999; }
 
 .buttons { margin-bottom: 1em; text-align: center; }
 .buttons button { margin-top: 1em; width: 100px; height: 24px; }

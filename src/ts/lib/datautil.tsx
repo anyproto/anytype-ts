@@ -725,7 +725,7 @@ class DataUtil {
 	
 	menuGetBgColors () {
 		let items: any[] = [
-			{ id: 'color-default', name: 'Default', value: '', className: 'default', isBgColor: true }
+			{ id: 'bgColor-default', name: 'Default', value: '', className: 'default', isBgColor: true }
 		];
 		for (let color of Constant.textColor) {
 			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });

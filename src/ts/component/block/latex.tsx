@@ -333,7 +333,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 					rootId: rootId,
 					blockId: block.id,
 					onSelect: (from: number, to: number, item: any) => {
-						this.setValue(Util.stringInsert(this.getValue(), item.symbol || item.comment, from, to));
+						let text = item.symbol || item.comment;
+						if (isTemplate) {
+							text = ' ' + text;
+						};
+						this.setValue(Util.stringInsert(this.getValue(), text, from, to));
 
 						const length = this.getValue().length;
 						this.range = { start: length, end: length };

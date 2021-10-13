@@ -2,7 +2,7 @@
 
 .pageMainMedia {
 
-	.blocks { margin: 0px auto; padding: 60px 0px; display: flex; }
+	.blocks { margin: 0px auto; padding: 60px 0px 0px 0px; display: flex; }
 	.blocks {
 		.side.right { padding-top: 25px; }
 	}
@@ -21,13 +21,18 @@
 	.blocks.vertical { width: calc(100% - 56px); flex-direction: row; }
 	.blocks.vertical {
 		.side { width: 50%; }
-		.side.left { margin-right: 32px; }
+		.side.left { margin-right: 32px; overflow: hidden; }
+
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia * { width: 100%; height: 100%; }
 		.block.blockMedia {
 			img.media { width: auto; height: auto; max-width: 100%; }
 		}
 		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: rgba(172,169,150,0.1); }
+
+		.react-pdf__Page__svg { width: 100% !important; height: 100% !important; overflow: hidden; }
+		.react-pdf__Page__svg svg { width: 100%; height: auto; }
+		.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
 	}
 
 	.blocks {
@@ -54,7 +59,11 @@
 			.info .name { color: $colorDarkGrey; }
 		}
 
-		.button.download { @include text-paragraph; height: 36px; line-height: 30px; margin: 17px 0px 40px 0px; }
+		.buttons { margin: 16px 0px 40px 0px; }
+		.buttons {
+			.button { @include text-paragraph; height: 36px; line-height: 30px;  margin-right: 16px; }
+			.button:last-child { margin: 0px; }
+		}
 	}
 }
 

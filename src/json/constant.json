@@ -150,7 +150,8 @@
 		"description": "description",
 		"featured": "featuredRelations",
 		"dataview": "dataview",
-		"type": "type"
+		"type": "type",
+		"footer": "footer"
 	},
 
 	"size": {

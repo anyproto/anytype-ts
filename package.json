@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.20.2",
+	"version": "0.20.6-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -75,7 +75,6 @@
 		"webpack-dev-server": "^3.11.0"
 	},
 	"dependencies": {
-		"@dennisameling/keytar-temp": "^7.6.99-gh-desktop",
 		"@electron/remote": "^2.0.1",
 		"@sentry/browser": "^5.27.4",
 		"@types/bindings": "^1.3.0",
@@ -138,6 +137,7 @@
 		"npm-run-all": "^4.1.5",
 		"object-assign": "^4.1.1",
 		"os": "^0.1.1",
+		"pdfjs-dist": "^2.10.377",
 		"portfinder-sync": "0.0.2",
 		"prismjs": "^1.21.0",
 		"protobufjs": "^6.10.1",
@@ -151,6 +151,7 @@
 		"react-hot-loader": "^4.13.0",
 		"react-katex": "^2.0.2",
 		"react-latex-next": "^2.1.0",
+		"react-pdf": "^5.4.0",
 		"react-router-dom": "^5.2.0",
 		"react-sortable-hoc": "^1.11.0",
 		"react-virtualized": "^9.22.3",
@@ -195,6 +196,9 @@
 			"dist/anytypeHelper.exe",
 			"dist/workers/**/*",
 			"electron/icon*",
+			"electron/about.css",
+			"electron/about.html",
+			"electron/about.js",
 			"build",
 			"dist/*.node",
 			"node_modules/keytar/build/Release/keytar.node",
@@ -208,6 +212,8 @@
 			"electron/env.json",
 			"electron/icon*",
 			"electron/about.css",
+			"electron/about.html",
+			"electron/about.js",
 			"build",
 			"!dist/*",
 			"dist/index.html",
