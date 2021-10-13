@@ -152,6 +152,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				const value = this.ref.getValue();
 				this.ref.setRange({ from: value.length, to: value.length });
 			} else {
+				focus.clear(true);
 				this.setHover(items[this.n], true);
 			};
 		});
@@ -164,6 +165,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				this.n = 0;
 				focus.scroll(isPopup);
 			};
+
+			focus.clear(true);
 			this.setHover(items[this.n], true);
 		});
 
@@ -212,7 +215,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
 
-		this.ref.blur();
 		if (scroll) {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
 			const st = container.scrollTop();
