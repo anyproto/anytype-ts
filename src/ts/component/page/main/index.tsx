@@ -64,6 +64,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
 		this.onSelectionRestore = this.onSelectionRestore.bind(this);
 		this.onSelectionAll = this.onSelectionAll.bind(this);
+		this.onSelectionNone = this.onSelectionNone.bind(this);
 		this.onSelectionClose = this.onSelectionClose.bind(this);
 	};
 	
@@ -140,12 +141,19 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										<Icon className="restore" />
 										<div className="name">Restore</div>
 									</div>
-									<div className="element" onClick={this.onSelectionAll}>
-										<Icon className="all" />
-										<div className="name">Select all</div>
-									</div>
+									{list.length != this.selected.length ? (
+										<div className="element" onClick={this.onSelectionAll}>
+											<Icon className="all" />
+											<div className="name">Select all</div>
+										</div>
+									) : (
+										<div className="element" onClick={this.onSelectionNone}>
+											<Icon className="all" />
+											<div className="name">Deselect all</div>
+										</div>
+									)}
 									<div className="element" onClick={this.onSelectionClose}>
-										<Icon className="close" />
+										<Icon className="close" tooltip="Close" />
 									</div>
 								</div>
 							</div>
@@ -402,7 +410,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 	onSelectionAll (e: any) {
 		const items = this.getList();
-		
+
 		this.selected = [];
 
 		items.forEach((it: any) => {
@@ -410,7 +418,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			this.selected.push(object.id);
 		});
 
-		this.selectionRender();
+		this.forceUpdate();
+	};
+
+	onSelectionNone (e: any) {
+		this.selected = [];
+		this.forceUpdate();
 	};
 
 	onSelectionClose (e: any) {

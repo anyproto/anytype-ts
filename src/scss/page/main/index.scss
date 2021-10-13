@@ -88,8 +88,9 @@
 		#selectWrap { display: none; }
 		#selectWrap {
 			.tabs { width: 100%; display: flex; padding: 0px 12px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
-			.side { width: 50%; line-height: 40px; white-space: nowrap; }
-			.side.right { text-align: right; }
+			.side { width: 50%; white-space: nowrap; }
+			.side.left { line-height: 44px; }
+			.side.right { text-align: right; line-height: 40px; }
 
 			.element { display: inline-block; vertical-align: top; margin-right: 28px; cursor: pointer; }
 			.element:last-child { margin: 0px; }
@@ -98,7 +99,7 @@
 				.icon.delete { background-image: url('~img/icon/index/delete.svg'); }
 				.icon.restore { background-image: url('~img/icon/index/restore.svg'); }
 				.icon.all { background-image: url('~img/icon/index/all.svg'); }
-				.icon.close { background-image: url('~img/icon/index/close.svg'); }
+				.icon.close { margin: 0px; background-image: url('~img/icon/index/close.svg'); }
 				.name { display: inline-block; vertical-align: middle; }
 			}
 		}
