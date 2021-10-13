@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'ts/component';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, keyboard } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -14,13 +14,13 @@ const Constant = require('json/constant.json');
 
 const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, {}> {
 	
-	top: number = 0;
+	n: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onAdd = this.onAdd.bind(this);
-		this.onEdit = this.onEdit.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSwitch = this.onSwitch.bind(this);
 	};
@@ -28,13 +28,11 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly, rootId, blockId, getView } = data;
-		const view = getView();
-		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
+		const { readonly, rootId, blockId } = data;
+		const items = this.getItems();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
-		relations.map((it: any) => {
-			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
+		items.map((it: any) => {
 			const { format, name } = it.relation;
 		});
 
@@ -55,41 +53,41 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			};
 
 			return (
-				<div id={'item-' + item.relationKey} className={cn.join(' ')}>
+				<div id={'item-' + item.relationKey} className={cn.join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}>
 					{allowedView ? <Handle /> : ''}
-					<span className="clickable" onClick={(e: any) => { this.onEdit(e, item.relationKey); }}>
+					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
 						<div className="name">{item.relation.name}</div>
 					</span>
 					{canHide ? (
 						<Switch 
 							value={item.isVisible} 
-							onChange={(e: any, v: boolean) => { this.onSwitch(e, item.relationKey, v); }} 
+							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
 						/>
 					 ) : ''}
 				</div>
 			);
 		});
 		
-		const ItemAdd = SortableElement((item: any) => (
+		const ItemAdd = (item: any) => (
 			<div id="item-add" className="item add" onClick={this.onAdd}>
 				<Icon className="plus" />
 				<div className="name">New relation</div>
 			</div>
-		));
+		);
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
 					<div id="scrollWrap" className="scrollWrap">
-						{relations.map((item: any, i: number) => {
+						{items.map((item: any, i: number) => {
 							return <Item key={item.relationKey} {...item} index={i} />;
 						})}
 					</div>
-					{!readonly ? (
+					{!readonly && allowedView ? (
 						<div className="bottom">
 							<div className="line" />
-							<ItemAdd index={relations.length + 1} disabled={true} /> 
+							<ItemAdd /> 
 						</div>
 					) : ''}
 				</div>
@@ -112,19 +110,11 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	componentDidMount() {
-		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('#scrollWrap');
-
-		scroll.unbind('scroll').on('scroll', (e: any) => {
-			this.top = scroll.scrollTop();
-		});
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const scroll = node.find('#scrollWrap');
-
-		scroll.scrollTop(this.top);
+		this.props.setActive(null, true);
 		this.props.position();
 	};
 
@@ -132,8 +122,35 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		menuStore.closeAll(Constant.menuIds.cell);
 	};
 
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		window.setTimeout(() => { this.props.setActive(); }, 15);
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		let ret = false;
+		let items = this.getItems();
+		let item = items[this.n];
+
+		keyboard.shortcut('space', e, (pressed: string) => {
+			this.onSwitch(e, item, !item.isVisible);
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
+
+		this.props.onKeyDown(e);
+	};
+
 	onAdd (e: any) {
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, onAdd } = data;
 		const view = getView();
@@ -142,7 +159,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
-			offsetX: 256,
+			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {
@@ -160,8 +177,14 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			}
 		});
 	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
+	};
 	
-	onEdit (e: any, id: string) {
+	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly } = data;
@@ -171,16 +194,16 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		};
 		
 		menuStore.open('dataviewRelationEdit', { 
-			element: `#${getId()} #item-${id}`,
+			element: `#${getId()} #item-${item.relationKey}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			data: {
 				...data,
-				relationKey: id,
+				relationKey: item.relationKey,
 			}
 		});
 	};
-	
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
 		const { param } = this.props;
@@ -192,11 +215,11 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		this.save();
 	};
 
-	onSwitch (e: any, id: string, v: boolean) {
+	onSwitch (e: any, item: any, v: boolean) {
 		const { param } = this.props;
 		const { data } = param;
 		const { getView } = data;
-		const relation = getView().getRelation(id);
+		const relation = getView().getRelation(item.relationKey);
 
 		if (relation) {
 			relation.isVisible = v;
@@ -211,6 +234,19 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const view = getView();
 
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
+	};
+
+	getItems () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId, getView } = data;
+		const view = getView();
+
+		return DataUtil.viewGetRelations(rootId, blockId, view).map((it: any) => {
+			it.id = it.relationKey;
+			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
+			return it;
+		});
 	};
 	
 });

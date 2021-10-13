@@ -2,31 +2,70 @@
 
 .blocks {
 	.block.blockDataview {
-        .viewItem.viewList { padding: 20px 0px 0px 0px; }
+		.viewItem.viewList { padding: 20px 0px 0px 14px; }
 		.viewItem.viewList {
-		    .row { width: 100%; display: inline-block; margin-bottom: 8px; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
+
+		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; }
 			.row:last-child { margin: 0px; }
 
-			.cellContent { display: inline; vertical-align: top; margin-right: 8px; line-height: 24px; cursor: default !important; }
+			.cellContent { 
+				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
+				cursor: default !important; color: $colorDarkGrey;
+			}
 			.cellContent:last-child { margin: 0px; }
-			.cellContent:empty { display: none; }
+			.cellContent:empty, .cellContent.isEmpty { display: none; }
 
-            .cellContent.c-shortText { @include text-paragraph; }
-			.cellContent.c-shortText {
-				.name { @include text-overflow-nw; max-width: 200px; display: inline; line-height: 24px; }
+			.cellContent::before { 
+				content: ""; width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; 
+				vertical-align: middle; margin: 0px 6px; 
+			}
+			.cellContent.first::before { display: none; }
+
+			.cellContent {
+				.name { @include text-overflow-nw; max-width: 200px; }
 			}
 
+            .cellContent.isName { @include text-paragraph; display: inline-block; color: $colorBlack; }
+			.cellContent.isName {
+				.name { display: inline-block; line-height: 24px; vertical-align: top; max-width: 500px; }
+			}
+
+			.cellContent.c-select, 
+			.cellContent.c-object { 	
+				line-height: 24px; vertical-align: middle;
+			}
+
+			.cellContent.c-select, 
+			.cellContent.c-object, 
 			.cellContent.c-file {
-				.inputWithFile { display: none; }
+				.wrap { display: inline-block; line-height: 24px; vertical-align: top; }
+				.over { display: inline-block; line-height: 24px; vertical-align: top; overflow: visible; }
+				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 100px; vertical-align: top; @include text-small; }
+				.more { margin-top: 3px; }
+				.element { margin-top: 2px; }
+				.tagItem { margin-top: 3px; }
+				.tagItem:last-child, .element:last-child { margin-right: 0px; }
+			}
+			.cellContent.c-file {
+				.iconObject { margin: 0px; }
+				.name { display: none; }
 			}
 
-			.cellContent.c-select, .cellContent.c-object { line-height: 24px; vertical-align: middle; }
-			.cellContent.c-select, .cellContent.c-object {
-				.wrap { display: inline; line-height: 24px; vertical-align: middle; }
-				.tagItem, .item { margin-bottom: 0px; }
+			.cellContent.c-url, 
+			.cellContent.c-email, 
+			.cellContent.c-phone { color: $colorDarkGrey; cursor: pointer !important; }
+
+			.cellContent.c-url:hover, 
+			.cellContent.c-email:hover, 
+			.cellContent.c-phone:hover {
+				.name { text-decoration: underline; }
 			}
 
-			.icon.checkbox { width: 24px; height: 24px; vertical-align: top; }
+			.cellContent.c-checkbox {
+				.icon.checkbox { width: 20px; height: 20px; vertical-align: top; margin-top: 2px; }
+			}
+			.cellContent.c-checkbox.canEdit { cursor: pointer !important; }
         }
     }
 }

@@ -15,10 +15,10 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup: boolean;
 	onOpen?(): void;
-}
+};
 
 const { ipcRenderer } = window.require('electron');
-const { app } = window.require('electron').remote;
+const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
@@ -42,6 +42,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	uiHidden: boolean = false;
 	loading: boolean = false;
 	width: number = 0;
+	refHeader: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -60,7 +61,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 		
 		const { rootId } = this.props;
@@ -86,6 +87,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 						<EditorHeaderPage 
 							{...this.props} 
+							ref={(ref: any) => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
@@ -231,8 +233,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			this.forceUpdate();
 			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
-			dispatcher.setNumbers(rootId);
-
 			if (onOpen) {
 				onOpen();
 			};
@@ -347,9 +347,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
-		if (!root || !allowed || (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
+		if (!root || !allowed || object.isDraft) {
 			return;
 		};
 		
@@ -377,6 +377,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// Find hovered block by mouse coords
 		items.each((i: number, item: any) => {
+			let obj = $(item);
+			if (obj.hasClass('noPlus')) {
+				return;
+			};
+
 			let rect = item.getBoundingClientRect() as DOMRect;
 			rect.y += st;
 
@@ -488,6 +493,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Mark-up
 		if (ids.length) {
 			let type = null;
+			let param = '';
 
 			// Bold
 			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
@@ -514,6 +520,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				type = I.MarkType.Link;
 			});
 
+			// BgColor
+			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
+				param = Storage.get('bgColor');
+				type = I.MarkType.BgColor;
+			});
+
+			// Color
+			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
+				param = Storage.get('color');
+				type = I.MarkType.Color;
+			});
+
 			if (type !== null) {
 				e.preventDefault();
 
@@ -532,7 +550,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						}
 					});
 				} else {
-					C.BlockListSetTextMark(rootId, ids, { type: type, param: '', range: { from: 0, to: 0 } });
+					C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
 				};
 			};
 
@@ -545,7 +563,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
-				menuStore.close('blockContext', () => {
+				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					menuStore.open('blockAction', { 
 						element: '#block-' + ids[0],
 						offsetX: Constant.size.blockMenu,
@@ -746,6 +764,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		// Mark-up
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
+			let param = '';
 
 			// Bold
 			keyboard.shortcut(`${cmd}+b`, e, (pressed: string) => {
@@ -761,7 +780,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			keyboard.shortcut(`${cmd}+shift+s`, e, (pressed: string) => {
 				type = I.MarkType.Strike;
 			});
-
+			
 			// Link
 			keyboard.shortcut(`${cmd}+k`, e, (pressed: string) => {
 				type = I.MarkType.Link;
@@ -772,11 +791,24 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				type = I.MarkType.Code;
 			});
 
+			// BgColor
+			keyboard.shortcut(`${cmd}+shift+h`, e, (pressed: string) => {
+				param = Storage.get('bgColor');
+				type = I.MarkType.BgColor;
+			});
+
+			// Color
+			keyboard.shortcut(`${cmd}+shift+c`, e, (pressed: string) => {
+				param = Storage.get('color');
+				type = I.MarkType.Color;
+			});
+
 			if (type !== null) {
 				e.preventDefault();
 
+				const mark = Mark.getInRange(marks, type, range);
+
 				if (type == I.MarkType.Link) {
-					const mark = Mark.getInRange(marks, type, range);
 					const el = $(`#block-${block.id}`);
 
 					let rect = Util.selectionRect();
@@ -804,7 +836,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						});
 					});
 				} else {
-					marks = Mark.toggle(marks, { type: type, range: range });
+					marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
 					DataUtil.blockSetText(rootId, block, text, marks, true, () => {
 						focus.apply();
 					});
@@ -968,8 +1000,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		});
 
 		// Enter
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (block.isTextCode() || (!block.isText() && keyboard.isFocused)) {
+		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
+			if (block.isTextCode() && (pressed == 'enter')) {
+				return;
+			};
+
+			if (!block.isText() && keyboard.isFocused) {
 				return;
 			};
 
@@ -1023,11 +1059,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		// If block is closed toggle - find next block on the same level
 		if (block && block.isTextToggle() && !Storage.checkToggle(rootId, block.id)) {
-			const element = blockStore.getMapElement(rootId, block.parentId);
-			if (element) {
-				const idx = element.childrenIds.indexOf(block.id);
-				next = blockStore.getLeaf(rootId, element.childrenIds[idx + dir]);
-			};
+			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.parentId != block.id && it.isFocusable(); });
 		} else {
 			next = blockStore.getNextBlock(rootId, focused, dir, (it: I.Block) => { return it.isFocusable(); });
 		};
@@ -1105,6 +1137,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			element: $('#block-' + blockId),
 			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 			offsetX: rect ? 0 : Constant.size.blockMenu,
+			commonFilter: true,
 			onClose: () => {
 				focus.apply();
 				commonStore.filterSet(0, '');
@@ -1273,9 +1306,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
-		if (url && !force) {
+		if (url && !force && !block.isTextTitle() && !block.isTextDescription()) {
 			menuStore.open('select', { 
-				element: '#block-' + focused,
+				element: `#block-${focused}`,
 				offsetX: Constant.size.blockMenu,
 				onOpen: () => {
 					if (block) {
@@ -1324,8 +1357,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		let to = 0;
 
 		C.BlockPaste(rootId, focused, range, selection.get(true), data.anytype.range.to > 0, { text: data.text, html: data.html, anytype: data.anytype.blocks, files: data.files }, (message: any) => {
-			commonStore.progressSet({ status: 'Processing...', current: 1, total: 1 });
-
 			if (message.error.code) {
 				return;
 			};
@@ -1478,6 +1509,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const isTitle = focused.isTextTitle();
 		const isToggle = focused.isTextToggle();
 		const isList = focused.isTextList();
+		const isCode = focused.isTextCode();
 		const isOpen = Storage.checkToggle(rootId, focused.id);
 		const childrenIds = blockStore.getChildrenIds(rootId, focused.id);
 		const length = focused.getLength();
@@ -1493,7 +1525,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			mode = I.BlockSplitMode.Inner;
 		};
 
-		if (isToggle && isOpen) {
+		if (isCode || (isToggle && isOpen)) {
 			style = I.TextStyle.Paragraph;
 		};
 
@@ -1599,7 +1631,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
 		const wrapper = $('.pageMainEdit .wrapper');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
 		const container = this.getScrollContainer();
@@ -1646,15 +1678,24 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	onResize (v: number) {
+		v = Number(v) || 0;
+
 		const node = $(ReactDOM.findDOMNode(this));
 		const width = this.getWidth(v);
 		const elements = node.find('#elements');
 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
+
+		if (this.refHeader) {
+			this.refHeader.refDrag.setValue(v);
+			this.refHeader.setPercent(v);
+		};
 	};
 
 	getWidth (w: number) {
+		w = Number(w) || 0;
+
 		const container = this.getScrollContainer();
 		const mw = container.width() - 120;
 		const { rootId } = this.props;
@@ -1664,10 +1705,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			return container.width() - 192;
 		};
 
-		w = Number(w) || 0;
 		w = (mw - Constant.size.editor) * w;
 		this.width = w = Math.max(Constant.size.editor, Math.min(mw, Constant.size.editor + w));
-		
 		return w;
 	};
 

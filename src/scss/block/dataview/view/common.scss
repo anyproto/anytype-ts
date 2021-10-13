@@ -2,29 +2,48 @@
 
 .blocks {
 	.block.blockDataview {
+
+		.viewItem.viewGrid,
+		.viewItem.viewList {
+			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
+			.cell.add {
+				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
+				.btn:hover { color: $colorBlack; }
+				.btn:hover {
+					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+				}
+
+				.icon { vertical-align: top; margin: 0px 4px 0px 0px; }
+				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
+			}
+		}
+
 		.viewItem.viewGallery, 
 		.viewItem.viewBoard {
 			.card { white-space: normal; }
 			.card {
-				.cellContent { margin-bottom: 6px; cursor: default !important; }
-				.cellContent:last-child { margin-bottom: 0px; }
-				
-				.cellContent.c-date { color: $colorVeryDarkGrey; }
+				.cellContent { cursor: pointer; margin-bottom: 6px; @include text-small; color: $colorDarkGrey; }
+				.cellContent:empty, .cellContent.isEmpty { display: none; }
+				.cellContent.last { margin: 0px; }
 
-				.cellContent.c-shortText { @include text-paragraph; margin-bottom: 6px; }
-				.cellContent.c-shortText {
-					.iconObject { margin-bottom: 10px; }
-					.name { height: 24px; width: 100% !important; }
+				.cellContent.isName { @include text-paragraph; color: $colorBlack; }
+				.cellContent.isName {
+					.iconObject { margin-right: 6px; }
+					.name { line-height: 24px; vertical-align: top; }
 				}
 
-				.cellContent.c-select { margin-bottom: 0px; }
-
-				.cellContent.c-file {
-					.inputWithFile { display: none; }
+				.cellContent.isName.withIcon {
+					.name { width: calc(100% - 30px); }
 				}
 
-				.cellContent.c-object {
-					.element { width: 100%; }
+				.cellContent.c-select { line-height: 18px; }
+				.cellContent.c-select {
+					.tagItem { max-width: 140px; margin-bottom: 0px; @include text-small; }
+				}
+
+				.cellContent.c-object, .cellContent.c-file {
+					.element { margin: 0px 6px 0px 0px; }
+					.element:last-child { margin-right: 0px; }
 				}
 			}
 		}

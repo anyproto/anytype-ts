@@ -1,8 +1,9 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Util, Storage } from 'ts/lib';
+import { I, M, Util, Storage, Mark } from 'ts/lib';
+import { detailStore } from 'ts/store';
 
 const $ = require('jquery');
-const raf = require('raf');
+const Constant = require('json/constant.json');
 
 class BlockStore {
 
@@ -106,7 +107,7 @@ class BlockStore {
     recentSet (id: string) {
 		this.recentId = String(id || '');
 	};
-
+	
     set (rootId: string, blocks: I.Block[]) {
 		this.blockMap.set(rootId, blocks);
 	};
@@ -397,9 +398,13 @@ class BlockStore {
 			};
 
 			let cb = item.childBlocks;
-			delete(item.childBlocks);
 
+			if (cb) {
+				delete(item.childBlocks);
+			};
+			
 			ret.push(item);
+			
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
@@ -435,7 +440,70 @@ class BlockStore {
 
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');
 		Storage.setToggle(rootId, blockId, v);
+		
 		$(window).trigger('resize.editor');
+		element.find('.resizable').trigger('resize', [ $.Event('resize') ]);
+	};
+
+	updateMarkup (rootId: string) {
+		let blocks = Util.objectCopy(this.getBlocks(rootId, (it: I.Block) => { return it.isText(); }));
+		for (let block of blocks) {
+			let text = block.content.text;
+			let marks = block.content.marks || [];
+
+			if (!marks.length) {
+				continue;
+			};
+
+			marks.sort(Mark.sort);
+
+			for (let n = 0; n < marks.length; ++n) {
+				let mark = marks[n];
+				if ((mark.type != I.MarkType.Mention) || !mark.param) {
+					continue;
+				};
+
+				const { from, to } = mark.range;
+				const object = detailStore.get(rootId, mark.param, [ Constant.relationKey.name ], true);
+				const old = text.substr(from, to - from);
+
+				if (old != object.name) {
+					const d = String(old || '').length - String(object.name || '').length;
+
+					text = Util.stringInsert(text, object.name, mark.range.from, mark.range.to);
+
+					if (d != 0) {
+						mark.range.to -= d;
+
+						for (let i = 0; i < marks.length; ++i) {
+							let m = marks[i];
+							if ((n == i) || (m.range.to <= from)) {
+								continue;
+							};
+							if (m.range.from >= to) {
+								marks[i].range.from -= d;
+							};
+							marks[i].range.to -= d;
+						};
+					};
+				};
+			};
+
+			this.update(rootId, { id: block.id, content: { ...block.content, text: text, marks: marks } });
+		};
+	};
+
+	checkDraft (rootId: string) {
+		const object = detailStore.get(rootId, rootId, [ 'isDraft' ], true);
+		const footer = this.getMapElement(rootId, Constant.blockId.footer);
+
+		if (object.isDraft) {
+			footer.childrenIds.push(Constant.blockId.type);
+		} else {
+			footer.childrenIds = footer.childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
+		};
+		
+		this.updateStructure(rootId, Constant.blockId.footer, footer.childrenIds);
 	};
 
 };

@@ -1,19 +1,18 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
+import { crumbs } from '.';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
-const { remote } = window.require('electron');
 const Constant = require('json/constant.json');
-const raf = require('raf');
+const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
-const { app } = remote;
 const bindings = window.require('bindings')({
 	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
@@ -25,7 +24,8 @@ class Dispatcher {
 	service: any = null;
 	stream: any = null;
 	timeoutStream: number = 0;
-	timeoutNumber: any = {};
+	timeoutEvent: any = {};
+	reconnects: number = 0;
 
 	constructor () {
 		/// #if USE_ADDON
@@ -42,7 +42,7 @@ class Dispatcher {
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			let serverAddr = remote.getGlobal('serverAddr');
+			let serverAddr = getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
@@ -71,8 +71,17 @@ class Dispatcher {
 		this.stream.on('end', () => {
 			console.error('[Dispatcher.stream] end, restarting');
 
+			let t = 1000;
+			if (this.reconnects == 10) {
+				t = 30000;
+				this.reconnects = 0;
+			};
+
 			window.clearTimeout(this.timeoutStream);
-			this.timeoutStream = window.setTimeout(() => { this.listenEvents(); }, 1000);
+			this.timeoutStream = window.setTimeout(() => { 
+				this.listenEvents(); 
+				this.reconnects++;
+			}, t);
 		});
 	};
 
@@ -95,9 +104,11 @@ class Dispatcher {
 		if (v == V.BLOCKSETALIGN)				 t = 'blockSetAlign';
 		if (v == V.BLOCKSETDIV)					 t = 'blockSetDiv';
 		if (v == V.BLOCKSETRELATION)			 t = 'blockSetRelation';
+		if (v == V.BLOCKSETLATEX)				 t = 'blockSetLatex';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
+		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -113,6 +124,7 @@ class Dispatcher {
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
 		if (v == V.OBJECTSHOW)					 t = 'objectShow';
+		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
 		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
 		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
 		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
@@ -183,6 +195,12 @@ class Dispatcher {
 					this.onObjectShow(rootId, Response.ObjectShow(data));
 					break;
 
+				case 'objectRemove':
+					ids = data.getIdsList();
+					crumbs.removeItems(I.CrumbsType.Page, ids);
+					crumbs.removeItems(I.CrumbsType.Recent, ids);
+					break;
+
 				case 'blockAdd':
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
@@ -231,7 +249,7 @@ class Dispatcher {
 				case 'blockSetText':
 					id = data.getId();
 					block = Util.objectCopy(blockStore.getLeaf(rootId, id));
-					if (!block) {
+					if (!block || !block.id) {
 						break;
 					};
 
@@ -374,6 +392,21 @@ class Dispatcher {
 					blockStore.update(rootId, block);
 					break;
 
+				case 'blockSetLatex':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+
+					if (!block) {
+						break;
+					};
+
+					if (data.hasText()) {
+						block.content.text = data.getText().getValue();
+					};
+
+					blockStore.update(rootId, block);
+					break;
+
 				case 'blockDataviewViewSet':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -403,6 +436,16 @@ class Dispatcher {
 						dbStore.metaSet(rootId, id, { viewId: viewId });
 					};
 					break;
+
+				case 'blockDataviewViewOrder':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					dbStore.viewsSort(rootId, block.id, data.getViewidsList());
+					break; 
 
 				case 'blockDataviewRecordsSet':
 					id = data.getId();
@@ -487,12 +530,8 @@ class Dispatcher {
 					details = Decode.decodeStruct(data.getDetails());
 					detailStore.update(rootId, { id: id, details: details }, true);
 
-					if ((id == rootId) && block) {
-						if ((undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-						
-						this.blockTypeCheck(rootId);
+					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
+						blockStore.update(rootId, { id: rootId, layout: details.layout });
 					};
 					break;
 
@@ -510,8 +549,9 @@ class Dispatcher {
 						if ((undefined !== details.layout) && (block.layout != details.layout)) {
 							blockStore.update(rootId, { id: rootId, layout: details.layout });
 						};
-						
-						this.blockTypeCheck(rootId);
+						if ((undefined !== details.isDraft)) {
+							blockStore.checkDraft(rootId);
+						};
 					};
 					break;
 
@@ -520,6 +560,7 @@ class Dispatcher {
 					keys = data.getKeysList() || [];
 					
 					detailStore.delete(rootId, id, keys);
+					blockStore.checkDraft(rootId);
 					break;
 
 				case 'objectRelationsSet':
@@ -556,17 +597,17 @@ class Dispatcher {
 
 					switch (state) {
 						case I.ProgressState.Running:
-						case I.ProgressState.Done:
 							commonStore.progressSet({
 								id: process.getId(),
 								status: translate('progress' + pt),
 								current: progress.getDone(),
 								total: progress.getTotal(),
 								isUnlocked: true,
-								canCancel: true,
+								canCancel: pt != I.ProgressType.Recover,
 							});
 							break;
 
+						case I.ProgressState.Done:
 						case I.ProgressState.Canceled:
 							commonStore.progressClear();
 							break;
@@ -575,12 +616,11 @@ class Dispatcher {
 			};
 		};
 		
-		this.setNumbers(rootId);
-	};
-
-	setNumbers (rootId: string) {
-		window.clearTimeout(this.timeoutNumber[rootId]);
-		this.timeoutNumber[rootId] = window.setTimeout(() => { blockStore.setNumbers(rootId); }, 10);
+		window.clearTimeout(this.timeoutEvent[rootId]);
+		this.timeoutEvent[rootId] = window.setTimeout(() => { 
+			blockStore.setNumbers(rootId); 
+			blockStore.updateMarkup(rootId);
+		}, 10);
 	};
 
 	sort (c1: any, c2: any) {
@@ -608,9 +648,8 @@ class Dispatcher {
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
 
+		let object = detailStore.get(rootId, rootId, []);
 		if (root) {
-			const object = detailStore.get(rootId, rootId, []);
-
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 		};
@@ -622,48 +661,43 @@ class Dispatcher {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
 				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
-			structure.push({ id: it.id, childrenIds: it.childrenIds });
 
+			if (it.id == rootId) {
+				it.childrenIds.push(Constant.blockId.footer);
+				structure.push({ id: Constant.blockId.footer, childrenIds: [] });
+			};
+
+			structure.push({ id: it.id, childrenIds: it.childrenIds });
 			return new M.Block(it);
 		});
 
+		// Footer
+		blocks.push(new M.Block({
+			id: Constant.blockId.footer,
+			parentId: rootId,
+			type: I.BlockType.Layout,
+			fields: {},
+			childrenIds: [],
+			content: {
+				style: I.LayoutStyle.Footer,
+			}
+		}));
+
+		// BlockType
+		blocks.push(new M.Block({
+			id: Constant.blockId.type,
+			parentId: Constant.blockId.footer,
+			type: I.BlockType.Type,
+			fields: {},
+			childrenIds: [],
+			content: {}
+		}));
+
 		blockStore.set(rootId, blocks);
 		blockStore.setStructure(rootId, structure);
-
-		this.blockTypeCheck(rootId);
-	};
-
-	blockTypeCheck (rootId: string) {
-		const { config } = commonStore;
-		
-		if (!config.allowDataview) {
-			return;
-		};
-
-		const object = detailStore.get(rootId, rootId, []);
-
-		let childrenIds = Util.objectCopy(blockStore.getChildrenIds(rootId, rootId));
-
-		if ((object.type == Constant.typeId.page) && (childrenIds.length == 1)) {
-			childrenIds.push(Constant.blockId.type);
-
-			blockStore.add(rootId, { 
-				id: Constant.blockId.type, 
-				parentId: rootId,
-				type: I.BlockType.Type,
-				fields: {},
-				content: {},
-				childrenIds: [],
-			});
-
-			blockStore.updateStructure(rootId, rootId, childrenIds);
-		} else 
-		if (object.type && (object.type != Constant.typeId.page) && (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
-			childrenIds = childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
-
-			blockStore.delete(rootId, Constant.blockId.type);
-			blockStore.updateStructure(rootId, rootId, childrenIds);
-		};
+		blockStore.setNumbers(rootId); 
+		blockStore.updateMarkup(rootId);
+		blockStore.checkDraft(rootId);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

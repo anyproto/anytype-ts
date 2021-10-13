@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFeatured { @include text-common; line-height: 28px; color: $colorDarkGrey; white-space: nowrap; padding: 2px 0px 30px 0px; display: none; }
+	.block.blockFeatured { @include text-common; line-height: 28px; color: $colorDarkGrey; white-space: nowrap; padding: 2px 0px 30px 0px; display: flex; }
 	.block.blockFeatured {
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: middle; margin-top: -4px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
@@ -18,7 +18,7 @@
 			.element { margin: -1px 6px 0px 0px; vertical-align: top; line-height: inherit; background: none !important; display: inline; }
 			.element:last-child { margin-right: 0px; }
 
-			.tagItem { margin-top: -3px; margin-right: 6px; vertical-align: middle; }
+			.tagItem { margin: 5px 6px 0px 0px; vertical-align: top; }
 			.tagItem:last-child { margin-right: 0px; }
 
 			.iconObject { display: none; }
@@ -53,8 +53,4 @@
 
 .editorWrapper.noSystemBlocks {
 	.blocks .block.blockFeatured { display: none; }
-}
-
-html.withDataview {
-	.blocks .block.blockFeatured { display: flex; }
 }

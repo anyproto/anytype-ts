@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, keyboard, Key, Util } from 'ts/lib';
 import { Dimmer } from 'ts/component';
 import { menuStore, popupStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import MenuHelp from './help';
 import MenuAccount from './account';
@@ -15,6 +16,7 @@ import MenuSearchText from './search/text';
 import MenuSearchObject from './search/object';
 
 import MenuPreviewObject from './preview/object';
+import MenuPreviewLatex from './preview/latex';
 
 import MenuThreadList from './thread/list';
 import MenuThreadStatus from './thread/status';
@@ -31,9 +33,10 @@ import MenuBlockAlign from './block/align';
 import MenuBlockLink from './block/link';
 import MenuBlockMention from './block/mention';
 import MenuBlockLayout from './block/layout';
+import MenuBlockLatex from './block/latex';
+import MenuBlockLinkSettings from './block/link/settings';
 
 import MenuBlockRelationEdit from './block/relation/edit';
-import MenuBlockRelationList from './block/relation/list';
 import MenuBlockRelationView from './block/relation/view';
 
 import MenuRelationSuggest from './relation/suggest';
@@ -81,6 +84,7 @@ const Components: any = {
 	searchObject:			 MenuSearchObject,
 
 	previewObject:			 MenuPreviewObject,
+	previewLatex:			 MenuPreviewLatex,
 
 	threadList:				 MenuThreadList,
 	threadStatus:			 MenuThreadStatus,
@@ -97,9 +101,10 @@ const Components: any = {
 	blockCover:				 MenuBlockCover,
 	blockMention:			 MenuBlockMention,
 	blockLayout:			 MenuBlockLayout,
+	blockLatex:				 MenuBlockLatex,
+	blockLinkSettings:		 MenuBlockLinkSettings,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
-	blockRelationList:		 MenuBlockRelationList,
 	blockRelationView:		 MenuBlockRelationView,
 
 	relationSuggest:		 MenuRelationSuggest,
@@ -123,7 +128,7 @@ const Components: any = {
 	dataviewText:			 MenuDataviewText,
 };
 
-class Menu extends React.Component<Props, State> {
+const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	timeoutPoly: number = 0;
@@ -139,6 +144,7 @@ class Menu extends React.Component<Props, State> {
 		
 		this.position = this.position.bind(this);
 		this.close = this.close.bind(this);
+		this.setHover = this.setHover.bind(this);
 		this.setActive = this.setActive.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.getId = this.getId.bind(this);
@@ -148,7 +154,8 @@ class Menu extends React.Component<Props, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { tabs, type, vertical, horizontal, passThrough, noDimmer } = param;
+		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer } = param;
+		const { data } = param;
 		
 		let tab = '';
 		if (tabs.length) {
@@ -209,6 +216,7 @@ class Menu extends React.Component<Props, State> {
 							ref={(ref: any) => { this.ref = ref; }}
 							{...this.props} 
 							setActive={this.setActive}
+							setHover={this.setHover}
 							onKeyDown={this.onKeyDown}
 							getId={this.getId} 
 							getSize={this.getSize}
@@ -343,7 +351,7 @@ class Menu extends React.Component<Props, State> {
 			if (!this._isMounted) {
 				return;
 			};
-			
+
 			const win = $(window);
 			const node = $(ReactDOM.findDOMNode(this));
 			const menu = node.find('.menu');
@@ -457,7 +465,7 @@ class Menu extends React.Component<Props, State> {
 				css.width = param.width;
 			};
 			menu.css(css);
-			
+
 			if (isSub && (type == I.MenuType.Vertical)) {
 				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
@@ -518,56 +526,168 @@ class Menu extends React.Component<Props, State> {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		const k = e.key.toLowerCase();
+		const { param } = this.props;
+		const { commonFilter } = param;
+		const refInput = this.ref.refFilter || this.ref.refName;
+
+		let ret = false;
+
+		if (refInput) {
+			if (refInput.isFocused && (this.ref.n < 0)) {
+				keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+					ret = true;
+				});
+
+				keyboard.shortcut('arrowdown', e, (pressed: string) => {
+					this.ref.n = 0;
+					refInput.blur();
+					this.setActive(null, true);
+
+					ret = true;
+				});
+
+				keyboard.shortcut('arrowup', e, (pressed: string) => {
+					if (!this.ref.getItems) {
+						return;
+					};
+
+					this.ref.n = this.ref.getItems().length - 1;
+					refInput.blur();
+					this.setActive(null, true);
+
+					ret = true;
+				});
+			} else {
+				keyboard.shortcut('arrowup', e, (pressed: string) => {
+					if (!this.ref.n) {
+						this.ref.n = -1;
+						refInput.focus();
+						this.setActive(null, true);
+
+						ret = true;
+					};
+				});
+			};
+		};
+
+		if (ret) {
+			return;
+		};
+
+		const shortcutClose = [ 'escape' ];
+		const shortcutSelect = [ 'tab', 'enter' ];
+
+		if (!commonFilter) {
+			shortcutClose.push('arrowleft');
+			shortcutSelect.push('arrowright');
+		};
+
+		keyboard.shortcut(shortcutClose.join(', '), e, (pressed: string) => {
+			e.preventDefault();
+			this.close();
+		});
+
+		if (!this.ref.getItems) {
+			return;
+		};
+
 		const items = this.ref.getItems();
 		const l = items.length;
 		const item = items[this.ref.n];
 
-		switch (k) {
-			case Key.up:
-				e.preventDefault();
-				this.ref.n--;
-				if (this.ref.n < 0) {
+		keyboard.shortcut('arrowup', e, (pressed: string) => {
+			e.preventDefault();
+			
+			this.ref.n--;
+			if (this.ref.n < 0) {
+				if ((this.ref.n == -1) && refInput) {
+					this.ref.n = -1;
+					refInput.focus();
+				} else {
 					this.ref.n = l - 1;
 				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.down:
-				e.preventDefault();
-				this.ref.n++;
-				if (this.ref.n > l - 1) {
-					this.ref.n = 0;
-				};
-				this.setActive(null, true);
-				break;
-				
-			case Key.tab:
-			case Key.enter:
+			};
+
+			this.setActive(null, true);
+
+			let item = items[this.ref.n];
+			if (item && !item.arrow && this.ref.onOver) {
+				this.ref.onOver(e, item);
+			};
+		});
+
+		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+			e.preventDefault();
+			this.ref.n++;
+			if (this.ref.n > l - 1) {
+				this.ref.n = 0;
+			};
+
+			this.setActive(null, true);
+
+			let item = items[this.ref.n];
+			if (item && !item.arrow && this.ref.onOver) {
+				this.ref.onOver(e, item);
+			};
+		});
+
+		if (this.ref.onClick) {	
+			keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
 				e.preventDefault();
 				if (item) {
-					item.arrow ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
+					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
 				};
-				break;
-
-			case Key.right:
-				e.preventDefault();
-				if (item && item.arrow) {
-					this.ref.onOver(e, item);
-				};
-				break;
-				
-			case Key.left:
-			case Key.escape:
-				e.preventDefault();
-				this.close();
-				break;
+			});
 		};
+
+		if (this.ref.onSortEnd) {
+			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
+				e.preventDefault();
+				this.onSortMove(-1);
+			});
+
+			keyboard.shortcut('shift+arrowdown', e, (pressed: string) => {
+				e.preventDefault();
+				this.onSortMove(1);
+			});
+		};
+
+		if (this.ref.onRemove && refInput && !refInput.isFocused) {
+			keyboard.shortcut('backspace', e, (pressed: string) => {
+				e.preventDefault();
+
+				this.ref.n--;
+				this.checkIndex();
+				this.ref.onRemove(e, item);
+				this.setActive(null, true);
+			});
+		};
+	};
+
+	onSortMove (dir: number) {
+		const n = this.ref.n;
+
+		this.ref.n = n + dir;
+		this.checkIndex();
+
+		this.ref.onSortEnd({ oldIndex: n, newIndex: this.ref.n });
+	};
+
+	checkIndex () {
+		const items = this.ref.getItems();
+
+		this.ref.n = Math.max(0, this.ref.n);
+		this.ref.n = Math.min(items.length - 1, this.ref.n);
 	};
 
 	setActive (item?: any, scroll?: boolean) {
 		if (!this.ref || !this.ref.getItems) {
 			return;
+		};
+
+		const refInput = this.ref.refFilter || this.ref.refName;
+		if ((this.ref.n == -1) && refInput) {
+			refInput.focus();
 		};
 
 		const items = this.ref.getItems();
@@ -582,7 +702,7 @@ class Menu extends React.Component<Props, State> {
 			if (this.ref.recalcIndex) {
 				idx = this.ref.recalcIndex();
 			};
-			this.ref.refList.scrollToRow(idx);
+			this.ref.refList.scrollToRow(Math.max(0, idx));
 		};
 	};
 	
@@ -612,14 +732,18 @@ class Menu extends React.Component<Props, State> {
 		el.addClass('hover');
 
 		if (scroll) {
-			const content = node.find('.content');
-			const st = content.scrollTop();
+			let scrollWrap = node.find('.scrollWrap');
+			if (!scrollWrap.length) {
+				scrollWrap = node.find('.content');
+			};
+
+			const st = scrollWrap.scrollTop();
 			const pt = el.position().top;
 			const eh = el.outerHeight();
-			const ch = content.height();
+			const ch = scrollWrap.height();
 			const top = Math.max(0, st + pt + eh - BORDER - ch);
 			
-			content.stop(true, true).animate({ scrollTop: top }, 100);
+			scrollWrap.scrollTop(top);
 		};
 	};
 
@@ -658,6 +782,6 @@ class Menu extends React.Component<Props, State> {
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
-};
+});
 
 export default Menu;

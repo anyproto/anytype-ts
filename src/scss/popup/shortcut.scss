@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupShortcut {
-		.innerWrap { width: 672px; height: calc(100% - 128px); padding: 48px 0px 0px 0px; }
+		.innerWrap { width: 672px; height: calc(100% - 72px); padding: 48px 0px 0px 0px; overflow: visible; }
 		.content { position: relative; padding-top: 38px; height: 100%; }
 		.wrapper { height: 100%; }
 
@@ -16,15 +16,15 @@
 			}
 		}
 
-		.body { overflow-y: auto; height: 100%; padding: 24px 48px 48px 48px; }
+		.body { overflow-y: overlay; height: 100%; padding: 24px 48px 48px 48px; }
 		.body {
 			.section { margin-bottom: 25px; }
 			.section:last-child { margin-bottom: 0px; }
 			.section {
-				.name { @include text-paragraph; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid #eae9e0; }
+				.name { @include text-paragraph; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid $colorLightGrey; }
 
 				.items {
-					.item { display: flex; padding: 12px 0px; border-bottom: 1px solid #eae9e0; }
+					.item { display: flex; padding: 12px 0px; border-bottom: 1px solid $colorLightGrey; }
 					.item {
 						.key { width: 180px; font-weight: 500; color: $colorMediumGrey; }
 						.descr { width: calc(100% - 180px); }
@@ -32,7 +32,7 @@
 				}
 			}
 
-			.section > .descr { padding-bottom: 12px; border-bottom: 1px solid #eae9e0; }
+			.section > .descr { padding-bottom: 12px; border-bottom: 1px solid $colorLightGrey; }
 
 			.section.separator { padding-top: 27px; margin-bottom: 41px; }
 			.section.separator > .descr { border: 0px; }

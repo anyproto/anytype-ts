@@ -1,16 +1,19 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Util } from 'ts/lib';
+import { C, I, Util, analytics } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 
-interface Props extends I.ViewComponent {}
+interface Props extends I.ViewComponent {
+	className?: string;
+};
 
 interface State {
 	page: number;
-}
+};
 
 const $ = require('jquery');
 
@@ -29,7 +32,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { getData, rootId, block, getView, readonly, onRowAdd } = this.props;
+		const { className, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const { viewId } = dbStore.getMeta(rootId, block.id);
@@ -41,6 +44,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const filterCnt = filters.length;
 		const allowedObject = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
+		const cn = [ 'dataviewControls', (className ? className : '') ];
 
 		const buttons: any[] = [
 			//{ id: 'search', name: 'Search', menu: '' },
@@ -63,8 +67,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			<div 
 				id={'view-item-' + item.id} 
 				className={'viewItem ' + (item.active ? 'active' : '')} 
-				onClick={(e: any) => { getData(item.id, 0); }} 
-				onContextMenu={(e: any) => { this.onView(e, item); }}
+				onClick={(e: any) => { this.onViewSet(item); }} 
+				onContextMenu={(e: any) => { this.onViewEdit(e, item); }}
 			>
 				{item.name}
 			</div>
@@ -86,18 +90,17 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		));
 		
 		return (
-			<div className="dataviewControls">
-				<div className="buttons">
+			<div className={cn.join(' ')}>
+				<div className="sides">
 					<div id="sideLeft" className="side left">
 						<div className="first">
 							<div 
 								id={'view-item-' + view.id} 
 								className="viewItem active" 
 								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-								onContextMenu={(e: any) => { this.onView(e, view); }}
+								onContextMenu={(e: any) => { this.onViewEdit(e, view); }}
 							>
 								{view.name}
-
 								<Icon className="arrow" />
 							</div>
 						</div>
@@ -121,11 +124,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 						{!readonly && allowedObject ? <Icon className="plus" tooltip="New object" onClick={(e: any) => { onRowAdd(e, -1); }} /> : ''}
 					</div>
 				</div>
+
+				<div className="line" />
 			</div>
 		);
 	};
 
 	componentDidMount () {
+		this.resize();
 		$(window).unbind('resize.controls').on('resize.controls', () => { this.resize(); });
 	};
 
@@ -209,7 +215,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 
-	onView (e: any, item: any) {
+	onViewSet (item: any) {
+		this.props.getData(item.id, 0);
+		analytics.event('BlockDataviewViewSet', { type: item.type });
+	};
+
+	onViewEdit (e: any, item: any) {
 		e.stopPropagation();
 
 		const { rootId, block, getView } = this.props;
@@ -231,6 +242,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { rootId, block } = this.props;
+
+		let views = dbStore.getViews(rootId, block.id);
+		let view = views[oldIndex];
+		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+
+		dbStore.viewsSort(rootId, block.id, ids);
+		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex);
 	};
 
 	resize () {
@@ -239,7 +258,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const sideLeft = node.find('#sideLeft');
 
 		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
-		views.width() > sideLeft.width() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
+		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 
 });

@@ -12,7 +12,7 @@ interface Props extends RouteComponentProps<any> {
 	dataset?: any;
 }
 
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
@@ -71,12 +71,10 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						</div>
 					) : ''}
 
-					{config.allowDataview ? (
-						<div id="button-relation" className="btn" onClick={this.onRelation}>
-							<Icon className="relation" />
-							<div className="txt">{translate('editorControlRelation')}</div>
-						</div>
-					) : ''}
+					<div id="button-relation" className="btn" onClick={this.onRelation}>
+						<Icon className="relation" />
+						<div className="txt">{translate('editorControlRelation')}</div>
+					</div>
 				</div>
 			</div>
 		);

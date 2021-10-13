@@ -17,3 +17,4 @@ electron/env.json
 src/json/schema
 dist/bundle-back.js
 dist/builder-debug.yml
+dist/mac-arm64/

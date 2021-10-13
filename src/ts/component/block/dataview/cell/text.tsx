@@ -46,10 +46,12 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			return null;
 		};
 
+		let view = null;
 		let viewRelation: any = {};
 
 		if (getView) {
-			viewRelation = getView().getRelation(relation.relationKey);
+			view = getView();
+			viewRelation = view.getRelation(relation.relationKey);
 		};
 
 		let Name = null;
@@ -133,13 +135,21 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			if (relation.format == I.RelationType.Date) {
-				const format = [ DataUtil.dateFormat(viewRelation.dateFormat) ];
+				if (value !== null) {
+					value = Number(value) || 0;
 
-				if (viewRelation.includeTime) {
-					format.push(DataUtil.timeFormat(viewRelation.timeFormat));
+					const day = Util.day(value);
+					const date = day ? day : Util.date(DataUtil.dateFormat(viewRelation.dateFormat), value);
+					const time = Util.date(DataUtil.timeFormat(viewRelation.timeFormat), value);
+					
+					if (viewRelation.includeTime) {
+						value = [ date, time ].join((day ? ', ' : ' '));
+					} else {
+						value = date;
+					};
+				} else {
+					value = '';
 				};
-
-				value = value !== null ? Util.date(format.join(' '), Number(value)) : '';
 			};
 		};
 
@@ -147,15 +157,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			let size = iconSize;
+			let is = undefined;
 
 			switch (viewType) {
+				case I.ViewType.Gallery:
 				case I.ViewType.List:
 					size = 24;
 					break;
 
-				case I.ViewType.Gallery:
 				case I.ViewType.Board:
 					size = 48;
+					if (record.layout == I.ObjectLayout.Task) {
+						is = 24;
+					};
 					break;
 			};
 
@@ -163,21 +177,27 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			content = (
 				<React.Fragment>
-					<IconObject 
-						id={[ relation.relationKey, record.id ].join('-')} 
-						onSelect={this.onIconSelect} 
-						onUpload={this.onIconUpload}
-						onCheckbox={this.onCheckbox}
-						size={size} 
-						canEdit={canEdit} 
-						offsetY={4} 
-						object={record} 
-					/>
+					{!view || (view && !view.hideIcon) ? (
+						<IconObject 
+							id={[ relation.relationKey, record.id ].join('-')} 
+							onSelect={this.onIconSelect} 
+							onUpload={this.onIconUpload}
+							onCheckbox={this.onCheckbox}
+							size={size} 
+							iconSize={is}
+							canEdit={canEdit} 
+							offsetY={4} 
+							object={record} 
+						/>
+					) : ''}
 					<Name name={value} />
-					<Icon className="edit" onMouseDown={(e: any) => { 
-						e.stopPropagation(); 
-						onParentClick(e);
-					}} />
+					<Icon 
+						className="edit" 
+						onMouseDown={(e: any) => { 
+							e.stopPropagation(); 
+							onParentClick(e);
+						}} 
+					/>
 				</React.Fragment>
 			);
 		} else {
@@ -203,6 +223,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if (isEditing) {
 			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+			let length = String(value || '').length;
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
@@ -213,7 +234,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				this.ref.setValue(value);
 
 				if (this.ref.setRange) {
-					this.ref.setRange(this.range || { from: value.length, to: value.length });
+					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};
 
@@ -271,6 +292,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			if (onChange) {
 				onChange(value, () => {
 					menuStore.closeAll(Constant.menuIds.cell);
+					this.range = null;
 					this.setState({ isEditing: false });
 				});
 			};
@@ -306,6 +328,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let record = getRecord(index);
 
 		keyboard.setFocus(false);
+		this.range = null;
 
 		if (keyboard.isBlurDisabled) {
 			return;

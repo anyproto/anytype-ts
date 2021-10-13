@@ -54,7 +54,8 @@
 
 .iconObject.withLetter { background-color: #f3f2ec; }
 
-.iconObject.isHuman { border-radius: 100% !important; }
 .iconObject.withImage { border-radius: 2px !important; }
+.iconObject.isHuman { border-radius: 100% !important; }
+.iconObject.isHuman.withImage { background-color: unset !important; }
 
 .iconObject.canEdit { cursor: pointer; }

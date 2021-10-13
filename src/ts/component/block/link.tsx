@@ -1,15 +1,23 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Loader } from 'ts/component';
+import { Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { focus } from 'ts/lib';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {}
+import LinkCard from './link/card';
+
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+
+const $ = require('jquery');
+const raf = require('raf');
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
+	_isMounted: boolean = false;
+
 	constructor (props: any) {
 		super(props);
 		
@@ -23,11 +31,13 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	};
 
 	render() {
-		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
-		const object = detailStore.get(rootId, content.targetBlockId, []);
-		const { _empty_, name, isArchived, done, layout } = object;
-		const cn = [ 'focusable', 'c' + id ];
+		const { rootId, block } = this.props;
+		const { id, content, align } = block;
+		const object = detailStore.get(rootId, content.targetBlockId);
+		const { _empty_, isArchived, done, layout } = object;
+		const cn = [ 'focusable', 'c' + id, 'resizable' ];
+		const fields = DataUtil.checkLinkSettings(block.fields, layout);
+		const readonly = this.props.readonly || object.isReadonly || object.templateIsBundled;
 
 		if ((layout == I.ObjectLayout.Task) && done) {
 			cn.push('isDone');
@@ -38,31 +48,62 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus} onClick={this.onClick}>
+			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{_empty_ ? (
 					<div className="loading" data-target-block-id={content.targetBlockId}>
 						<Loader />
 						<div className="name">{translate('blockLinkSyncing')}</div>
 					</div>
 				) : (
-					<React.Fragment>
-						<IconObject 
-							object={object} 
-							id={'block-page-' + id} 
-							size={24} 
-							canEdit={!readonly} 
-							onSelect={this.onSelect} 
-							onUpload={this.onUpload}
-							onCheckbox={this.onCheckbox}
-						/>
-						<div className="name">
-							<div className="txt">{name}</div>
-						</div>
-						<div className="archive">{translate('blockLinkArchived')}</div>
-					</React.Fragment>
+					<LinkCard 
+						{...this.props} 
+						{...fields}
+						className={DataUtil.linkCardClass(fields.style)}
+						object={object} 
+						canEdit={!readonly} 
+						onClick={this.onClick}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload}
+						onCheckbox={this.onCheckbox} 
+					/>
 				)}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this._isMounted = true;
+		this.resize();
+		this.rebind();
+	};
+	
+	componentDidUpdate () {
+		this.resize();
+		this.rebind();
+	};
+	
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		this.unbind();
+		const node = $(ReactDOM.findDOMNode(this));
+		node.on('resize', (e: any) => { this.resize(); });
+	};
+	
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.unbind('resize');
 	};
 
 	onKeyDown (e: any) {
@@ -121,6 +162,14 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, targetBlockId, []);
 
 		DataUtil.pageSetDone(targetBlockId, !object.done);
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const card = node.find('.linkCard');
+		const icon = node.find('.iconObject');
+
+		icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
 	};
 	
 });

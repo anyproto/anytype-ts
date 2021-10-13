@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Url = require('json/url.json');
 

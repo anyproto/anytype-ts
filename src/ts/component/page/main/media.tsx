@@ -5,6 +5,10 @@ import { observer } from 'mobx-react';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject } from 'ts/component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
+import { Document, Page } from 'react-pdf';
+import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.js';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -13,6 +17,9 @@ interface Props extends RouteComponentProps<any> {
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
+const { app } = window.require('@electron/remote')
+const path = window.require('path');
+const userPath = app.getPath('userData');
 
 const MAX_HEIGHT = 396;
 
@@ -26,6 +33,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	constructor (props: any) {
 		super(props);
 		
+		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 	};
 
@@ -38,17 +46,19 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });
 
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
+		const isAudio = file?.isFileAudio();
+		const isPdf = file?.content.mime == 'application/pdf';
 		const cn = [ 'blocks' ];
 
-		if (isVideo || isImage) {
-			if (isVideo || (object.widthInPixels > object.heightInPixels)) {
+		if (isVideo || isImage || isAudio) {
+			if (isVideo || isAudio || (object.widthInPixels > object.heightInPixels)) {
 				cn.push('horizontal');
 			} else {
 				cn.push('vertical');
@@ -59,12 +69,35 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 			if (isImage) {
 				cn.push('isImage');
 			};
+			if (isAudio) {
+				cn.push('isAudio');
+			};
 		} else {
 			cn.push('vertical');
 		};
 
 		if (file) {
 			file.align = I.BlockAlign.Center;
+		};
+
+		let content = null;
+		if (file) {
+			if (isVideo || isImage || isAudio) {
+				content = <Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />;
+			} else 
+			if (isPdf) {
+				content = (
+					<Document
+						file={commonStore.fileUrl(file.content.hash)}
+						onLoadSuccess={() => {  }}
+						renderMode="svg"
+					>
+						<Page pageNumber={1} />
+					</Document>
+				);
+			} else {
+				content = <IconObject object={object} size={96} />;
+			};
 		};
 
 		return (
@@ -75,11 +108,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 					{file ? (
 						<React.Fragment>
 							<div className="side left">
-								{isVideo || isImage ? (
-									<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
-								) : (
-									<IconObject object={object} size={96} />
-								)}
+								{content}
 							</div>
 
 							<div className="side right">
@@ -89,7 +118,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-									<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+									<div className="buttons">
+										<Button text="Open" color="blank" className="download" onClick={this.onOpen} />
+										<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+									</div>
 								</div>
 
 								<div className="section">
@@ -201,6 +233,19 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 				};
 			});
 		};
+	};
+
+	onOpen (e: any) {
+		const rootId = this.getRootId();
+		const blocks = blockStore.getBlocks(rootId);
+		const block = blocks.find((it: I.Block) => { return it.isFile(); });
+		const { content } = block;
+
+		C.DownloadFile(content.hash, path.join(userPath, 'tmp'), (message: any) => {
+			if (message.path) {
+				ipcRenderer.send('pathOpen', message.path);
+			};
+		});
 	};
 
 	onDownload (e: any) {

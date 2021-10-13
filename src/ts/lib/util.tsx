@@ -5,7 +5,7 @@ import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('electron').remote;
+const { process } = window.require('@electron/remote');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
@@ -15,11 +15,7 @@ const fileType = window.require('file-type');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const os = window.require('os');
-const sprintf = require('sprintf-kit')({
-	d: require('sprintf-kit/modifiers/d'),
-	s: require('sprintf-kit/modifiers/s'),
-	f: require('sprintf-kit/modifiers/f'),
-});
+const path = window.require('path');
 
 class Util {
 	
@@ -29,7 +25,116 @@ class Util {
 	linkPreviewOpen: boolean = false;
 	
 	sprintf (...args: any[]) {
-		return sprintf.apply(this, args);
+		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
+		let a = arguments, i = 0, format = a[i++];
+		let pad = function (str, len, chr, leftJustify) {
+			let padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
+			return leftJustify ? str + padding : padding + str;
+		};
+
+		let justify = function (value, prefix, leftJustify, minWidth, zeroPad) {
+			let diff = minWidth - value.length;
+			if (diff > 0) {
+				if (leftJustify || !zeroPad) {
+					value = pad(value, minWidth, ' ', leftJustify);
+				} else {
+					value = value.slice(0, prefix.length) + pad('', diff, '0', true) + value.slice(prefix.length);
+				};
+			};
+			return value;
+		};
+
+		let formatBaseX = function (value, base, prefix, leftJustify, minWidth, precision, zeroPad) {
+			let number = value >>> 0;
+			prefix = prefix && number && {'2': '0b', '8': '0', '16': '0x'}[base] || '';
+			value = prefix + pad(number.toString(base), precision || 0, '0', false);
+			return justify(value, prefix, leftJustify, minWidth, zeroPad);
+		};
+		
+		let formatString = function (value, leftJustify, minWidth, precision, zeroPad) {
+			if (precision != null) {
+				value = value.slice(0, precision);
+			};
+			return justify(value, '', leftJustify, minWidth, zeroPad);
+		};
+		
+		let doFormat = function (substring, valueIndex, flags, minWidth, _, precision, type) {
+			if (substring == '%%') return '%';
+			let leftJustify = false, positivePrefix = '', zeroPad = false, prefixBaseX = false;
+			for (let j = 0; flags && j < flags.length; j++) switch (flags.charAt(j)) {
+				case ' ': positivePrefix = ' '; break;
+				case '+': positivePrefix = '+'; break;
+				case '-': leftJustify = true; break;
+				case '0': zeroPad = true; break;
+				case '#': prefixBaseX = true; break;
+			};
+		
+			if (!minWidth) {
+				minWidth = 0;
+			} else if (minWidth == '*') {
+				minWidth = +a[i++];
+			} else if (minWidth.charAt(0) == '*') {
+				minWidth = +a[minWidth.slice(1, -1)];
+			} else {
+				minWidth = +minWidth;
+			};
+		
+			if (minWidth < 0) {
+				minWidth = -minWidth;
+				leftJustify = true;
+			};
+		
+			if (!isFinite(minWidth)) {
+				throw new Error('sprintf: (minimum-)width must be finite');
+			};
+		
+			if (!precision) {
+				precision = 'fFeE'.indexOf(type) > -1 ? 6 : (type == 'd') ? 0 : void(0);
+			} else if (precision == '*') {
+				precision = +a[i++];
+			} else if (precision.charAt(0) == '*') {
+				precision = +a[precision.slice(1, -1)];
+			} else {
+				precision = +precision;
+			};
+		
+			let value: any = valueIndex ? a[valueIndex.slice(0, -1)] : a[i++];
+		
+			switch (type) {
+				case 's': return formatString(String(value), leftJustify, minWidth, precision, zeroPad);
+				case 'c': return formatString(String.fromCharCode(+value), leftJustify, minWidth, precision, zeroPad);
+				case 'b': return formatBaseX(value, 2, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'o': return formatBaseX(value, 8, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'x': return formatBaseX(value, 16, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'X': return formatBaseX(value, 16, prefixBaseX, leftJustify, minWidth, precision, zeroPad).toUpperCase();
+				case 'u': return formatBaseX(value, 10, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
+				case 'i':
+				case 'd': {
+					let number = +value;
+					number = parseInt(String(number));
+					let prefix = number < 0 ? '-' : positivePrefix;
+					value = prefix + pad(String(Math.abs(number)), precision, '0', false);
+					return justify(value, prefix, leftJustify, minWidth, zeroPad);
+				};
+				case 'e':
+				case 'E':
+				case 'f':
+				case 'F':
+				case 'g':
+				case 'G': {
+					let number = +value;
+					let prefix = number < 0 ? '-' : positivePrefix;
+					let method = ['toExponential', 'toFixed', 'toPrecision']['efg'.indexOf(type.toLowerCase())];
+					let textTransform = ['toString', 'toUpperCase']['eEfFgG'.indexOf(type) % 2];
+
+					value = prefix + Math.abs(number)[method](precision);
+					return justify(value, prefix, leftJustify, minWidth, zeroPad)[textTransform]();
+				};
+				default: return substring;
+			}
+		};
+		
+		return format.replace(regex, doFormat);
 	};
 	
 	toUpperCamelCase (str: string) {
@@ -396,6 +501,22 @@ class Util {
 		});
 	};
 
+	day (t: any): string {
+		t = Number(t) || 0;
+
+		const ct = this.date('d.m.Y', t);
+		if (ct == this.date('d.m.Y', this.time())) {
+			return 'Today';
+		};
+		if (ct == this.date('d.m.Y', this.time() + 86400)) {
+			return 'Tomorrow';
+		};
+		if (ct == this.date('d.m.Y', this.time() - 86400)) {
+			return 'Yesterday';
+		};
+		return '';
+	};
+
 	timeAgo (t: number): string {
 		if (!t) {
 			return '';
@@ -414,16 +535,16 @@ class Util {
 		let s = delta;
 
 		if (d > 0) {
-			return sprintf('%d days ago', d);
+			return this.sprintf('%d days ago', d);
 		};
 		if (h > 0) {
-			return sprintf('%d hours ago', h);
+			return this.sprintf('%d hours ago', h);
 		};
 		if (m > 0) {
-			return sprintf('%d minutes ago', m);
+			return this.sprintf('%d minutes ago', m);
 		};
 		if (s > 0) {
-			return sprintf('%d seconds ago', s);
+			return this.sprintf('%d seconds ago', s);
 		};
 		return '';
 	};
@@ -440,13 +561,13 @@ class Util {
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g > 1) {
-			v = sprintf('%fGB', this.round(g, 2));
+			v = this.sprintf('%0.2fGB', this.round(g, 2));
 		} else if (m > 1) {
-			v = sprintf('%fMB', this.round(m, 2));
+			v = this.sprintf('%0.2fMB', this.round(m, 2));
 		} else if (k > 1) {
-			v = sprintf('%fKB', this.round(k, 2));
+			v = this.sprintf('%0.2fKB', this.round(k, 2));
 		} else {
-			v = sprintf('%dB', this.round(v, 0));
+			v = this.sprintf('%dB', this.round(v, 0));
 		};
 		return v;
 	};
@@ -511,7 +632,7 @@ class Util {
 		return String(icon || 'other');
 	};
 	
-	tooltipShow (text: string, node: any, typeY: I.MenuDirection) {
+	tooltipShow (text: string, node: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
 		if (!node.length || keyboard.isResizing) {
 			return;
 		};
@@ -522,23 +643,45 @@ class Util {
 			let obj = $('#tooltip');
 			let offset = node.offset();
 			let st = win.scrollTop(); 
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
+			let nw = node.outerWidth();
+			let nh = node.outerHeight();
 
 			text = text.toString().replace(/\\n/, '\n');
 			
 			obj.find('.txt').html(this.lbBr(text));
 			obj.show().css({ opacity: 0 });
 			
-			let x = offset.left - obj.outerWidth() / 2 + node.outerWidth() / 2;
+			let x = 0;
 			let y = 0;
-			
-			if (typeY == I.MenuDirection.Top) {
-				y = offset.top - obj.outerHeight() - 6 - st;
-			};
-			
-			if (typeY == I.MenuDirection.Bottom) {
-				y = offset.top + node.outerHeight() + 6 - st;
+
+			switch (typeX) {
+				case I.MenuDirection.Left:
+					x = offset.left;
+					break;
+
+				default:
+				case I.MenuDirection.Center:
+					x = offset.left - ow / 2 + nw / 2;
+					break;
+
+				case I.MenuDirection.Right:
+					x = offset.left + ow - nw;
+					break;
 			};
 
+			switch (typeY) {
+				default:
+				case I.MenuDirection.Top:
+					y = offset.top - oh - 6 - st;
+					break;
+				
+				case I.MenuDirection.Bottom:
+					y = offset.top + nh + 6 - st;
+					break;
+			};
+			
 			x = Math.max(12, x);
 			x = Math.min(win.width() - obj.outerWidth() - 12, x);
 
@@ -575,12 +718,12 @@ class Util {
 		
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		this.timeoutLinkPreviewShow = window.setTimeout(() => {
+			this.linkPreviewOpen = true;
 			commonStore.linkPreviewSet({
 				url: url,
 				element: node,
 				...param,
 			});
-			this.linkPreviewOpen = true;
 		}, 500);
 	};
 	
@@ -591,6 +734,7 @@ class Util {
 
 		const obj = $('#linkPreview');
 		
+		this.linkPreviewOpen = false;
 		window.clearTimeout(this.timeoutLinkPreviewShow);
 		
 		if (force) {
@@ -601,7 +745,6 @@ class Util {
 		obj.css({ opacity: 0 });
 		this.timeoutLinkPreviewHide = window.setTimeout(() => { 
 			obj.hide();
-			this.linkPreviewOpen = false;
 			obj.removeClass('top bottom withImage'); 
 		}, 250);
 	};
@@ -630,7 +773,7 @@ class Util {
 	};
 	
 	filterFix (v: string) {
-		return escapeStringRegexp(String(v || ''));
+		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	};
 	
 	lengthFixOut (text: string, len: number): number {
@@ -678,7 +821,12 @@ class Util {
 	};
 
 	cntWord (cnt: any, w1: string, w2?: string) {
-		return String(cnt || '').substr(-1) == '1' ? w1 : (w2 ? w2 : w1 + 's');
+		cnt = String(cnt || '');
+		w2 = w2 ? w2 : w1 + 's';
+		if (cnt.substr(-2) == 11) {
+			return w2;
+		};
+		return cnt.substr(-1) == '1' ? w1 : w2;
 	};
 
 	uuid () {
@@ -747,7 +895,7 @@ class Util {
 			case 'popup':
 				return '#popupPage #innerWrap';
 			
-			case 'menuBlockRelationList':
+			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
 				return `#${type} .content`;
 		};
@@ -757,12 +905,12 @@ class Util {
 		switch (type) {
 			default:
 			case 'page':
-				return '.page';
+				return '.page.isFull';
 
 			case 'popup':
 				return '#popupPage';
 
-			case 'menuBlockRelationList':
+			case 'menuBlockAdd':
 			case 'menuBlockRelationView':
 				return '#' + type;
 		};
@@ -787,6 +935,22 @@ class Util {
 			s = 52;
 		};
 		return s;
+	};
+
+	deleteFolderRecursive (p: string) {
+		if (!fs.existsSync(p) ) {
+			return;
+		};
+
+		fs.readdirSync(p).forEach((file: any) => {
+			const cp = path.join(p, file);
+			if (fs.lstatSync(cp).isDirectory()) {
+				this.deleteFolderRecursive(cp);
+			} else {
+				fs.unlinkSync(cp);
+			};
+		});
+		fs.rmdirSync(p);
 	};
 
 };

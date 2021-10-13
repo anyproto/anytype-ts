@@ -88,8 +88,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						</div>
 						<div
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(item.format), 'canEdit' ].join(' ')} 
-							onClick={(e: any) => { this.onClick(e, item); }}
+							className={[ 'cell', DataUtil.relationClass(item.format) ].join(' ')} 
 						>
 							<Cell 
 								rootId={rootId}
@@ -101,8 +100,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								scrollContainer={Util.getScrollContainer('menuBlockRelationList')}
-								pageContainer={Util.getPageContainer('menuBlockRelationList')}
+								scrollContainer={Util.getScrollContainer('menuBlockAdd')}
+								pageContainer={Util.getPageContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
 								placeholder={translate('placeholderCellCommon')}
@@ -115,10 +114,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				let icn: string[] = [ 'inner' ];
 					
 				if (item.isTextColor) {
-					icn.push('textColor textColor-' + item.value);
+					icn.push('textColor textColor-' + (item.value || 'default'));
 				};
 				if (item.isBgColor) {
-					icn.push('bgColor bgColor-' + item.value);
+					icn.push('bgColor bgColor-' + (item.value || 'default'));
 				};
 				
 				if (item.isTextColor || item.isBgColor) {
@@ -332,14 +331,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			return s;
 		});
 
-		if (config.allowDataview) {
-			sections = sections.concat([
-				{ id: 'relation', name: 'Relations', children: this.relations },
-			]);
-		};
+		sections = sections.concat([
+			{ id: 'relation', name: 'Relations', children: this.relations },
+		]);
 		
 		if (filter && filter.text) {
-			const actions = DataUtil.menuGetActions(false);
+			const actions = DataUtil.menuGetActions(false, false);
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
@@ -403,10 +400,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
 		];
 
-		if (!config.allowDataview) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-		};
-
 		const text = Util.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
@@ -420,6 +413,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			isSub: true,
 			className: param.className,
 			data: {
+				rebind: this.rebind,
 				rootId: rootId,
 				skipId: rootId,
 				blockId: blockId,
@@ -461,9 +455,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+				];
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
@@ -563,7 +557,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				if (item.type == I.BlockType.File) {
 					param.content.type = item.itemId;
 				};
-				
+
 				if (item.type == I.BlockType.Div) {
 					param.content.style = item.itemId;
 				};
@@ -583,7 +577,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, (message: any) => {
+						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), (message: any) => {
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
 							analytics.event('ObjectCreate', {
@@ -612,7 +606,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					});
 				} else 
 				if (item.type == I.BlockType.Page) {
-					DataUtil.pageCreate(rootId, blockId, details, position, '', (message: any) => {
+					DataUtil.pageCreate(rootId, blockId, details, position, '', DataUtil.defaultLinkSettings(), (message: any) => {
 						DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 					});
 				} else {

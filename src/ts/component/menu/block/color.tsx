@@ -18,7 +18,9 @@ class MenuBlockColor extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const active = this.getActive();
+		const { param } = this.props;
+		const { data } = param;
+		const { value } = data;
 		const items = this.getItems();
 		
 		let id = 0;
@@ -33,7 +35,7 @@ class MenuBlockColor extends React.Component<Props, {}> {
 							{...action} 
 							icon="color" 
 							inner={inner} 
-							checkbox={action.value == active} 
+							checkbox={action.value == value} 
 							onClick={(e: any) => { this.onClick(e, action); }} 
 							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
 						/>
@@ -57,15 +59,6 @@ class MenuBlockColor extends React.Component<Props, {}> {
 		$(window).unbind('keydown.menu');
 	};
 
-	getActive () {
-		const { param } = this.props;
-		const { data } = param;
-		const { blockId, rootId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
-		
-		return block ? block.content.color : 0;
-	};
-	
 	getItems () {
 		return DataUtil.menuGetTextColors();
 	};

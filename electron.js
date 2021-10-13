@@ -14,11 +14,12 @@ const version = app.getVersion();
 const Util = require('./electron/util.js');
 const windowStateKeeper = require('electron-window-state');
 const port = process.env.SERVER_PORT;
-const openAboutWindow = require('about-window').default;
 const keytar = require('keytar');
 const bindings = require('bindings');
 const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
+const protocol = 'anytype';
+const remote = require('@electron/remote/main');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,6 +29,9 @@ const CONFIG_NAME = 'devconfig';
 
 let env = {};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
+
+app.setAsDefaultProtocolClient(protocol);
+remote.initialize();
 
 let isUpdating = false;
 let userPath = app.getPath('userData');
@@ -162,7 +166,6 @@ function initTray () {
 };
 
 function createWindow () {
-	const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
 	const image = nativeImage.createFromPath(path.join(__dirname, '/electron/icon512x512.png'));
 
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -177,8 +180,8 @@ function createWindow () {
 	initTray();
 
 	let state = windowStateKeeper({
-		defaultWidth: width,
-		defaultHeight: height
+		defaultWidth: 800,
+		defaultHeight: 600
 	});
 
 	let param = {
@@ -192,9 +195,9 @@ function createWindow () {
 		minHeight: MIN_HEIGHT,
 		webPreferences: {
 			nativeWindowOpen: true,
-			enableRemoteModule: true,
 			nodeIntegration: true,
 			contextIsolation: false,
+			spellcheck: false
 		},
 	};
 
@@ -208,9 +211,9 @@ function createWindow () {
 
 		const a = systemVersion.split('.');
 		if (a.length && (a[0] == 11)) {
-			param.trafficLightPosition = { x: 20, y: 36 };
+			param.trafficLightPosition = { x: 20, y: 18 };
 		} else {
-			param.trafficLightPosition = { x: 20, y: 21 };
+			param.trafficLightPosition = { x: 20, y: 10 };
 		};
 	};
 
@@ -224,6 +227,7 @@ function createWindow () {
 	};
 
 	win = new BrowserWindow(param);
+	remote.enable(win.webContents);
 
 	state.manage(win);
 
@@ -304,6 +308,10 @@ function createWindow () {
 		autoUpdater.downloadUpdate();
 	});
 
+	ipcMain.on('updateConfirm', (e) => {
+		exit(true);
+	});
+
 	ipcMain.on('updateCancel', (e) => {
 		isUpdating = false;
 		clearTimeout(timeoutUpdate);
@@ -368,28 +376,49 @@ function createWindow () {
 	});
 };
 
+function openAboutWindow () {
+    let window = new BrowserWindow({
+        width: 400,
+        height: 400,
+        useContentSize: true,
+        titleBarStyle: 'hidden-inset',
+        show: true,
+        icon: path.join(__dirname, 'electron', 'icon.png'),
+        webPreferences: {
+			nodeIntegration: true,
+		},
+    });
+
+    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html?version=' + version));
+
+	window.once('closed', () => {
+        window = null;
+    });
+
+    window.webContents.on('will-navigate', (e, url) => {
+        e.preventDefault();
+        shell.openExternal(url);
+    });
+
+    window.webContents.on('new-window', (e, url) => {
+        e.preventDefault();
+        shell.openExternal(url);
+    });
+
+	window.once('ready-to-show', () => {
+        window.show();
+    });
+
+    window.setMenu(null);
+    return window;
+};
+
 function menuInit () {
 	let menuParam = [
 		{
 			label: 'Anytype',
 			submenu: [
-				{
-					label: 'About Anytype',
-					click: () => {
-						openAboutWindow({
-							icon_path: path.join(__dirname, '/electron/icon.png'),
-							css_path: path.join(__dirname, '/electron/about.css'),
-							product_name: 'Anytype',
-							description: 'Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.',
-							copyright: `Copyright (c) ${new Date().getFullYear()} Anytype Inc.`,
-							homepage: 'https://anytype.io',
-							package_json_dir: __dirname,
-							use_version_info: false,
-							show_close_button: 'Close',
-							adjust_window_size: true,
-						});
-					}
-				},
+				{ label: 'About Anytype', click: () => { openAboutWindow(); } },
 				{ type: 'separator' },
 				{ role: 'services' },
 				{ type: 'separator' },
@@ -492,16 +521,16 @@ function menuInit () {
 					click: () => { send('commandGlobal', 'id'); }
 				},
 				{
-					label: 'Status',
-					click: () => { send('popup', 'help', { data: { document: 'status' } }); }
-				},
-				{
-					label: 'Shortcuts',
+					label: 'Shortcuts', accelerator: 'Ctrl+Space',
 					click: () => { send('popup', 'shortcut'); }
 				},
 				{
 					label: 'What\'s new',
 					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
+				},
+				{
+					label: 'Introduction',
+					click: () => { send('popup', 'help', { data: { document: 'intro' } }); }
 				},
 			]
 		},
@@ -547,6 +576,23 @@ function menuInit () {
 		menuParam.push({
 			label: 'Debug',
 			submenu: [
+				{ label: 'Flags', submenu: flagMenu },
+				{
+					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
+					click: () => { win.reload(); }
+				},
+				{
+					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
+					click: () => { win.webContents.openDevTools(); }
+				}
+			]
+		});
+	};
+
+	if (config.sudo) {
+		menuParam.push({
+			label: 'Sudo',
+			submenu: [
 				{
 					label: 'Version',
 					submenu: [
@@ -560,33 +606,16 @@ function menuInit () {
 						},
 					]
 				},
-				{ label: 'Flags', submenu: flagMenu },
 				{
-					label: 'Refresh', accelerator: 'CmdOrCtrl+R',
-					click: () => { win.reload(); }
-				},
-				{
-					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
-					click: () => { win.webContents.openDevTools(); }
+					label: 'Experimental', type: 'checkbox', checked: config.experimental,
+					click: () => { 
+						setConfig({ experimental: !config.experimental });
+						win.reload();
+					}
 				},
 				{
 					label: 'Export templates',
 					click: () => { send('command', 'exportTemplates'); }
-				}
-			]
-		});
-	};
-
-	if (config.sudo) {
-		menuParam.push({
-			label: 'Sudo',
-			submenu: [
-				{
-					label: 'Dataview', type: 'checkbox', checked: config.allowDataview,
-					click: () => { 
-						setConfig({ allowDataview: !config.allowDataview });
-						win.reload();
-					}
 				}
 			]
 		});
@@ -689,7 +718,12 @@ function autoUpdaterInit () {
 		isUpdating = false;
 		Util.log('info', 'Update downloaded: ' +  JSON.stringify(info, null, 3));
 		send('update-downloaded');
-		exit(true);
+
+		if (!autoUpdate) {
+			exit(true);
+		} else {
+			send('update-confirm');
+		};
 	});
 };
 
@@ -728,6 +762,13 @@ app.on('before-quit', (e) => {
 
 app.on('activate', () => {
 	win ? win.show() : createWindow();
+});
+
+app.on('open-url', (e, url) => {
+	if (process.platform == 'win32') {
+		url = process.argv.slice(1);
+	};
+	send('route', url.replace(`${protocol}://`, ''));
 });
 
 function send () {

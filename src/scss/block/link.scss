@@ -1,40 +1,153 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockLink { white-space: nowrap; }
 	.block.blockLink {
 		.focusable { cursor: pointer; }
 
-		.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
-		.name {
-			.txt { line-height: inherit; vertical-align: top; @include text-overflow-nw; width: 100%; display: inline; position: relative; }
-			.txt::before {
-				content: ""; width: 100%; height: 0px; border-bottom: 1px solid $colorMediumGrey; transition: $transitionFast;
-				position: absolute; bottom: 0px; left: 0px; z-index: 1;
-			}
-		}
-		.iconObject { margin-right: 6px; }
-		
-		.archive {
-			border-radius: 3px; background-color: #f3f2ec; display: inline-block; vertical-align: middle; margin: 0px 0px 0px 8px;
-			@include text-small; color: $colorMediumGrey; padding: 0px 6px; display: none;
+		.isArchived {
+			.cardName { color: $colorMediumGrey; }
+			.archive { display: inline-block !important; }
 		}
 
+		.loading { color: $colorMediumGrey; }
 		.loading {
-			color: $colorMediumGrey;
-		}
-		.loading {
-			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; }
+			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; position: relative; }
 			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+			.name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
 		}
+
+		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
+        .linkCard {
+            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; }
+            .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
+            .side.left:empty { display: none; }
+            .side.right { width: 100%; position: relative; }
+
+            .iconObject { margin: 0px; }
+            .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
+
+            .side.right {
+                .txt { width: 100%; }
+
+                .cardName { 
+                    @include text-paragraph; @include text-overflow-nw; max-width: 100%; overflow: hidden; 
+                    display: inline-block; vertical-align: middle; 
+                }
+                .cardName span { position: relative; }
+                .cardName span::before {
+                    content: ""; width: 100%; height: 1px; transition: $transitionFast; position: absolute; bottom: 0px; left: 0px; z-index: 1;
+                }
+
+                .cardDescription { 
+                    @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
+                    -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 0px 0px;
+                }
+                .cardDescription:empty { display: none; }
+
+                .archive {
+                    border-radius: 3px; background-color: #f3f2ec; @include text-small; color: $colorMediumGrey; 
+                    padding: 0px 6px; display: none; position: absolute; right: 0px; top: 0px; vertical-align: middle;
+                }
+            }
+
+            .block.blockFeatured { @include text-small; margin: 0px; padding: 0px; }
+            .block.blockFeatured {
+                .wrapMenu { display: none; }
+                .wrapContent { width: 100%; }
+
+                .cellContent { padding: 1.5px 4px; }
+                .cellContent {
+                    .iconObject { display: none; }
+                }
+                .cellContent.type { margin-left: -4px; }
+                .cellContent.c-file { font-size: 18px; line-height: 18px; padding: 1.5px 2px; }
+                .cellContent.c-file {
+                    .iconObject { display: inline-block; margin-top: -3px; }
+                }
+            }
+        }
+
+        .linkCard.c24.text {
+            .sides.bgColor .side { padding: 2px; }
+        }
+
+        .linkCard.c24 {
+            .cardName { font-weight: 400 !important; }
+            .side.left { margin-right: 6px; }
+            .side.right {
+                .txt { vertical-align: top; }
+                .archive { position: static; margin: 0px 0px 0px 8px; }
+            }
+        }
+        .linkCard.c24.withIcon {
+            .side.right { width: calc(100% - 30px); }
+        }
+
+        .linkCard.c64 {
+            .side.right { line-height: 64px; }
+            .sides.bgColor .side.right { line-height: 56px; padding: 4px; }
+        }
+        .linkCard.c64.withIcon {
+            .side.right { width: calc(100% - 80px); }
+        }
+
+        .linkCard.c96 {
+            .side.right { line-height: 96px; }
+            .sides.bgColor .side.right { line-height: 88px; padding: 4px; }
+        }
+        .linkCard.c96.withIcon {
+            .side.right { width: calc(100% - 116px); }
+        }
+
+        .linkCard.card { margin: 3px 0px; }
+        .linkCard.card {
+            .sides { border: 1px solid #dfddd0; }
+        }
+        .linkCard.withCover {
+            .sides { border: 0px; }
+        }
+        .linkCard.card, .linkCard.withCover {
+            .sides { padding: 16px; background: #fff; border-radius: 6px; }
+        }
+
+        .linkCard.align1 { text-align: center; }
+        .linkCard.align1 {
+            .sides { display: block; }
+            .side.left { margin: 0px 0px 8px 0px; }
+            .side.right { width: 100% !important; }
+            .iconObject { display: inline-block; }
+        }
+
+        .linkCard.align2 { text-align: right; }
+        .linkCard.align2 {
+            .side.left { margin: 0px 0px 0px 16px; }
+            .iconObject { display: inline-block; }
+            .block.blockFeatured {
+                .cell.last .cellContent { margin-right: -4px; }
+            }
+        }
+
+        .linkCard.isTask {
+            .iconObject { width: 24px; height: 24px; }
+            .side.left { margin: 0px 6px 0px 0px; }
+        }
+        .linkCard.isTask.align1 {
+            .side { display: inline-block; }
+        }
+        .linkCard.isTask.align2 {
+            .side.left { margin: 0px 0px 0px 6px; }
+        }
+
+        .linkCard.isHuman {
+            .cardName { font-weight: 600; }
+        }
 	}
-	.block.blockLink:hover {
-		.name .txt:before { border-color: $colorBlack; }
-	}
-	
-	.block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
-	.block.blockLink > .wrapContent > .selectable > .dropTarget > .isArchived {
-		.name { color: $colorMediumGrey; border-color: $colorLightGrey; }
-		.archive { display: inline-block; }
-	}
+
+    .block.blockLink:hover {
+        .sides { border-color: $colorBlack !important; }
+        .cardName span::before { background: $colorBlack; }
+    }
+
+    .block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+    .block.blockLink > .wrapContent > .selectable > .dropTarget.isOver.middle .sides { background: #ffebc0 !important; }
 }

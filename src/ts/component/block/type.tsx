@@ -4,6 +4,7 @@ import { IconObject, Filter } from 'ts/component';
 import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
 import { dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { crumbs } from '../../lib';
 
 interface Props extends I.BlockComponent {}
 interface State {
@@ -38,7 +39,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		const Item = (item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} onMouseLeave={this.onOut}>
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onClick={(e: any) => { this.onClick(e, item); }} 
+					onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+					onMouseLeave={this.onOut}
+				>
 					<IconObject size={48} iconSize={32} object={{ ...item, layout: I.ObjectLayout.Type }} />
 					<div className="info">
 						<div className="txt">
@@ -77,7 +84,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		this.unbind();
 	};
 
-	bind () {
+	rebind () {
 		this.unbind();
 		$(window).on('keydown.blockType', (e: any) => { this.onKeyDown(e); });
 	};
@@ -90,8 +97,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		const { filter } = this.state;
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
+		let set = dbStore.getObjectType(Constant.typeId.set);
 
 		items.sort(DataUtil.sortByName);
+
+		if (set) {
+			//items.unshift(set);
+		};
 
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -140,6 +152,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				const value = this.ref.getValue();
 				this.ref.setRange({ from: value.length, to: value.length });
 			} else {
+				focus.clear(true);
 				this.setHover(items[this.n], true);
 			};
 		});
@@ -152,6 +165,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				this.n = 0;
 				focus.scroll(isPopup);
 			};
+
+			focus.clear(true);
 			this.setHover(items[this.n], true);
 		});
 
@@ -199,9 +214,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
-
-		this.ref.blur();
-		focus.clear(true);
 
 		if (scroll) {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);
@@ -259,20 +271,26 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			});
 		};
 
-		DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
-			if (message.records.length > 1) {
-				showMenu();
-			} else {
-				create(message.records.length ? message.records[0] : '');
-			};
-		});
+		if (item.id == Constant.typeId.set) {
+			C.ObjectToSet(rootId, [], (message: any) => {
+				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+			});
+		} else {
+			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
+				if (message.records.length > 1) {
+					showMenu();
+				} else {
+					create(message.records.length ? message.records[0] : '');
+				};
+			});
+		};
 	};
 
 	onFilterFocus (e: any) {
 		const node = $(ReactDOM.findDOMNode(this));
 		node.find('.item.hover').removeClass('hover');
 
-		this.bind();
+		this.rebind();
 	};
 
 	onFilterChange (e: any) {

@@ -4,7 +4,7 @@
 	.menu.menuDataviewRelationList { width: 360px; }
 	.menu.menuDataviewRelationList {
 		.content { overflow: visible; max-height: unset; padding: 0px; }
-		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: auto; max-height: 350px; }
+		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: overlay; max-height: 350px; }
 
 		.item { padding: 4px 10px; }
 		.item {
@@ -12,6 +12,7 @@
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 
 		.bottom { padding: 0px 0px 8px 0px; }
 		.bottom {
@@ -25,6 +26,7 @@
 		.button { width: 100%; margin-top: 8px; }
 		.button.grey { cursor: default; }
 
+		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
 		.item.disabled { cursor: default; opacity: 1 !important; }
 		.item.disabled:hover::before { opacity: 0; }
 

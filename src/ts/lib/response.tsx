@@ -29,8 +29,10 @@ const Shutdown = () => {
 	return {};
 };
 
-const Export = () => {
-	return {};
+const Export = (response: any) => {
+	return {
+		path: response.getPath(),
+	};
 };
 
 const LinkPreview = (response: any) => {
@@ -42,6 +44,12 @@ const LinkPreview = (response: any) => {
 const UploadFile = (response: any) => {
 	return {
 		hash: response.getHash(),
+	};
+};
+
+const DownloadFile = (response: any) => {
+	return {
+		path: response.getLocalpath(),
 	};
 };
 
@@ -318,10 +326,6 @@ const BlockListSetAlign = (response: any) => {
 	return {};
 };
 
-const BlockListSetPageIsArchived = (response: any) => {
-	return {};
-};
-
 const BlockListDeletePage = (response: any) => {
 	return {};
 };
@@ -424,9 +428,14 @@ const SetCreate = (response: any) => {
 
 const ObjectSearch = (response: any) => {
 	return {
-		records: (response.getRecordsList() || []).map((it: any) => {
-			return Decode.decodeStruct(it);
-		}),
+		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+	};
+};
+
+const ObjectGraph = (response: any) => {
+	return {
+		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
+		nodes: (response.getNodesList() || []).map(Mapper.From.GraphNode),
 	};
 };
 
@@ -445,6 +454,12 @@ const ObjectRelationListAvailable = (response: any) => {
 const ObjectRelationOptionAdd = (response: any) => {
 	return {
 		option: Mapper.From.SelectOption(response.getOption()),
+	};
+};
+
+const ObjectToSet = (response: any) => {
+	return {
+		id: response.getSetid(),
 	};
 };
 
@@ -475,6 +490,7 @@ export {
 	Export,
 	Shutdown,
 	UploadFile,
+	DownloadFile,
 	ProcessCancel,
 	LinkPreview,
 
@@ -548,7 +564,6 @@ export {
 	BlockListMoveToNewPage,
 	BlockListDuplicate,
 	BlockListConvertChildrenToPages,
-	BlockListSetPageIsArchived,
 
 	BlockListSetBackgroundColor,
 	BlockListSetTextColor,
@@ -572,9 +587,11 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
+	ObjectToSet,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

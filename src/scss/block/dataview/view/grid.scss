@@ -2,10 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.rowHead { 
-			display: block; box-shadow: 0px 1px #e0ded2 inset; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; 
-			height: 48px;
-		}
+		.rowHead { display: block; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 48px; }
 
 		.cellHead { 
 			text-align: left; color: $colorDarkGrey; padding: 14px; font-weight: 400; line-height: 20px; position: relative; 
@@ -73,7 +70,7 @@
 				.cellContent.isName { padding: 0px 14px; }
 				.cellContent.isName {
 					.iconObject { margin: 14px 4px 14px 0px; }
-					.input-text { height: 47px; }
+					.input-text { height: 47px; width: calc(100% - 26px) !important; }
 					.name { width: 100%; }
 				}
 			}
@@ -90,19 +87,9 @@
 				.cellContent { min-width: unset; }
 			}
 
-			.cell.add { color: $colorMediumGrey; line-height: 20px; padding: 14px; width: 100%; display: block; }
-			.cell.add {
-				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
-				.btn:hover { color: $colorBlack; }
-				.btn:hover {
-					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
-				}
-
-				.icon { vertical-align: top; margin: 0px 4px 0px 0px; }
-				.name { vertical-align: top; display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: calc(100% - 24px) }
+			.cellContent.c-select {
+				.tagItem { margin-bottom: 0px; }
 			}
-
-			.cell.c-select { padding-bottom: 8px; }
 		}
     }
 }

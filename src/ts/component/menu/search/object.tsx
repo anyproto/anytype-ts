@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Filter, Loader, Label } from 'ts/component';
-import { I, C, Key, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, keyboard, Util, crumbs, DataUtil, translate, Storage } from 'ts/lib';
+import { commonStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -100,7 +100,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				>
 					<MenuItemVertical 
 						{...props}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
 						className={cn.join(' ')}
@@ -236,18 +236,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false }
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		].concat(data.filters || []);
 
 		const sorts = [
-			{ relationKey: 'name', type: I.SortType.Asc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		].concat(data.sorts || []);
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
-		};
-		if (!config.allowDataview) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.template ] });
 		};
 		if (type == I.NavigationType.Move) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
@@ -295,33 +292,23 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if (it.id == skipId) {
 			return false;
 		};
-
-		if (!config.allowDataview) {
-			if (it.type == Constant.typeId.template) {
-				return false;
-			};
-			if ((it.layout != I.ObjectLayout.Page) && (it.id != Constant.typeId.page)) {
-				return false;
-			};
-			if ((type == I.NavigationType.Link) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.layout) < 0)) {
-				return false;
-			};
-		};
-
 		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
 			return false;
 		};
 		return true;
 	};
 
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+			this.onOver(e, item);
+		};
+	};
+
 	onOver (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { onOver } = data;
-
-		if (!keyboard.isMouseDisabled) {
-			this.props.setActive(item, false);
-		};
 
 		if (onOver) {
 			onOver(e, this, item);
@@ -365,7 +352,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					type: I.BlockType.Link,
 					content: {
 						targetBlockId: String(item.id || ''),
-					}
+					},
+					fields: DataUtil.defaultLinkSettings(),
 				};
 				C.BlockCreate(newBlock, rootId, blockId, position);
 				break;

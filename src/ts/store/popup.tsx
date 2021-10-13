@@ -120,6 +120,12 @@ class PopupStore {
 		};
 	};
 
+	closeLast () {
+		if (this.popupList.length) {
+			this.close(this.popupList[this.popupList.length - 1].id);
+		};
+	};
+
     clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};

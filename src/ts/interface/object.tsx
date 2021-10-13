@@ -37,7 +37,9 @@ export enum ObjectLayout {
 	Video		 = 9,
 	Database	 = 20,
 
-	Store		 = 100,
+	Navigation	 = 100,
+	Graph		 = 101,
+	Store		 = 102,
 };
 
 export enum RelationType { 
@@ -68,7 +70,6 @@ export enum RelationScope {
 export enum OptionScope {
     Local	 = 0,
 	Relation = 1,
-	Format	 = 2,
 };
 
 export interface ObjectType {
@@ -85,18 +86,18 @@ export interface ObjectType {
 };
 
 export interface Relation {
-	objectId: string;
 	relationKey: string;
 	format: RelationType;
 	name: string;
-	dataSource: number;
 	isHidden: boolean;
-	isReadonlyValue: boolean;
-	isReadonlyRelation: boolean;
-	objectTypes: string[];
-	selectDict: any[];
-	maxCount: number;
-	scope: RelationScope;
+	isReadonlyValue?: boolean;
+	isReadonlyRelation?: boolean;
+	objectId?: string;
+	dataSource?: number;
+	objectTypes?: string[];
+	selectDict?: any[];
+	maxCount?: number;
+	scope?: RelationScope;
 	includeTime?: boolean;
 	dateFormat?: I.DateFormat;
 	timeFormat?: I.TimeFormat;

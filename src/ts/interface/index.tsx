@@ -1,4 +1,4 @@
-import { Account, AccountConfig, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat, Source } from './common';
+import { Account, AccountConfig, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat, Source, EdgeType, GraphView } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
@@ -8,6 +8,7 @@ import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockAlign, BlockComponent, Block, BlockStructure } from './block';
 import {
+	CardSize,
 	DateFormat,
 	TimeFormat,
 	ViewRelation,
@@ -27,12 +28,13 @@ import {
 import { BlockPage } from './block/page';
 import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
-import { LinkStyle, ContentLink, BlockLink } from './block/link';
+import { LinkStyle, LinkIconSize, LinkCardStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
-import { FileType, FileState, File, BlockFile } from './block/file';
+import { FileType, FileState, ContentFile, BlockFile } from './block/file';
 import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
+import { ContentLatex, BlockLatex } from './block/latex';
 
 export {
 	Account,
@@ -47,6 +49,8 @@ export {
 	LinkPreview,
 	ExportFormat,
 	Source,
+	EdgeType,
+	GraphView,
 	
 	ThreadStatus,
 	ThreadSummary,
@@ -91,6 +95,7 @@ export {
 	Block,
 	BlockStructure,
 
+	CardSize,
 	DateFormat,
 	TimeFormat,
 	ViewRelation,
@@ -116,6 +121,8 @@ export {
 	BlockIcon,
 
 	LinkStyle,
+	LinkIconSize,
+	LinkCardStyle,
 	ContentLink,
 	BlockLink,
 
@@ -132,7 +139,7 @@ export {
 
 	FileType,
 	FileState,
-	File,
+	ContentFile,
 	BlockFile,
 
 	ContentBookmark,
@@ -140,4 +147,7 @@ export {
 
 	ContentRelation, 
 	BlockRelation,
+
+	ContentLatex,
+	BlockLatex,
 }

@@ -24,6 +24,7 @@ export enum BlockType {
 	Relation	 = 'relation',
 	Featured	 = 'featured',
 	Type		 = 'type',
+	Latex		 = 'latex',
 };
 
 export enum BlockPosition {
@@ -121,6 +122,7 @@ export interface Block {
 	isLayoutColumn?(): boolean;
 	isLayoutDiv?(): boolean;
 	isLayoutHeader?(): boolean;
+	isLayoutFooter?(): boolean;
 
 	isLink?(): boolean;
 	isLinkPage?(): boolean;
@@ -137,6 +139,9 @@ export interface Block {
 	isFileFile?(): boolean;
 	isFileImage?(): boolean;
 	isFileVideo?(): boolean;
+	isFileAudio?(): boolean;
+
+	isLatex?(): boolean;
 
 	isText?(): boolean;
 	isTextTitle?(): boolean;

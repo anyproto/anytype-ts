@@ -7,11 +7,8 @@ interface Props extends I.Menu {
 	history?: any;
 };
 
-const { ipcRenderer, remote } = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 const Url = require('json/url.json');
-const { app, process } = remote;
-const version = app.getVersion();
-const systemVersion = process.getSystemVersion();
 
 class MenuHelp extends React.Component<Props, {}> {
 
@@ -23,11 +20,11 @@ class MenuHelp extends React.Component<Props, {}> {
 
 	render () {
 		const items: any[] = [
+			{ id: 'feedback', name: 'Send Feedback' },
+			{ id: 'help', name: 'Welcome to Anytype', document: 'intro' },
 			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
-			{ id: 'help', name: 'Status', document: 'status' },
-			{ id: 'shortcut', name: 'Shortcuts' },
-			{ id: 'feedback', name: 'Give feedback' },
-			{ id: 'community', name: 'Help' },
+			{ id: 'shortcut', name: 'Keyboard Shortcuts' },
+			{ id: 'community', name: 'Knowledge base & FAQ' },
 		];
 
 		return (

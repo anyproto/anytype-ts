@@ -13,7 +13,7 @@ const Constant = require('json/constant.json');
 
 class MenuBlockMore extends React.Component<Props, {}> {
 	
-	n: number = -1;
+	n: number = 0;
 	
 	constructor (props: any) {
 		super(props);
@@ -42,33 +42,33 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
-						return <MenuItemVertical 
-							key={i} 
-							{...action} 
-							icon={action.icon || action.id}
-							withCaption={action.caption} 
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
-						/>;
+						return (
+							<MenuItemVertical 
+								key={i} 
+								{...action} 
+								icon={action.icon || action.id}
+								withCaption={action.caption} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+								onClick={(e: any) => { this.onClick(e, action); }} 
+							/>
+						);
 					})}
 				</div>
 			</div>
 		);
 
 		let sectionPage = null;
-		if (block && block.isPage() && config.allowDataview) {
+		if (block && block.isPage() && config.sudo && restr.length) {
 			sectionPage = (
 				<React.Fragment>
-					{config.sudo && restr.length ? (
-						<div className="section">
-							<div className="name">Restrictions</div>
-							<div className="items">
-								{restr.map((item: any, i: number) => (
-									<div className="item" key={i}>{item || 'Empty'}</div>
-								))}
-							</div>
+					<div className="section">
+						<div className="name">Restrictions</div>
+						<div className="items">
+							{restr.map((item: any, i: number) => (
+								<div className="item" key={i}>{item || 'Empty'}</div>
+							))}
 						</div>
-					) : ''}
+					</div>
 				</React.Fragment>
 			);
 		};
@@ -104,9 +104,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { blockId, rootId, objectId } = data;
+		const { blockId, rootId } = data;
 		const { config } = commonStore;
+		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
+		const platform = Util.getPlatform();
 
 		if (!block) {
 			return [];
@@ -119,7 +121,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		let template = null;
 		let archive = null;
-		let linkRoot = null;
+		let fav = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
@@ -129,25 +131,23 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let link = { id: 'link', name: 'Link to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', withCaption: true, caption: `${cmd}+Y` };
-		let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-			return it.isLink() && (it.content.targetBlockId == rootId);
-		});
+		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 
-		if (favorites.length) {
-			linkRoot = { id: 'unlinkRoot', icon: 'unfav', name: 'Remove from Favorites' };
+		if (object.isFavorite) {
+			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			linkRoot = { id: 'linkRoot', icon: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (object.isArchived) {
 			//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from archive' };
+			fav = null;
 		} else {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (!allowedDetails) {
+		if (!allowedDetails || object.isReadonly || (object.id == profile)) {
 			archive = null;
 		};
 
@@ -155,7 +155,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
 			sections = [
 				{ children: [ archive ] },
-				{ children: [ linkRoot, link ] },
+				{ children: [ fav, link ] },
 				{ children: [ print ] },
 			];
 
@@ -183,13 +183,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (!config.allowDataview || (object.type == Constant.typeId.page)) {
+			if (object.type == Constant.typeId.page) {
 				template = null;
 			};
 
 			sections = [
 				{ children: [ undo, redo, history, archive ] },
-				{ children: [ linkRoot, link, template ] },
+				{ children: [ fav, link, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
@@ -245,6 +245,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { rootId, blockId, onMenuSelect } = data;
 		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!block) {
+			return;
+		};
 		
 		let filters = [];
 		let menuId = '';
@@ -265,9 +270,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
-		};
+		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		switch (item.id) {
 			case 'turnObject':
@@ -277,10 +280,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
 				];
-
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
@@ -304,10 +303,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
@@ -330,10 +325,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 				];
 
-				if (!config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-				};
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.LinkTo,
@@ -353,6 +344,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuId = 'blockAlign';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: block.align,
 					onSelect: (align: I.BlockAlign) => {
 						C.BlockListSetAlign(rootId, [ blockId ], align);
 						close();
@@ -472,7 +464,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'archivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], true, (message: any) => {
+				C.ObjectSetIsArchived(rootId, true, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -493,7 +485,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'unarchivePage':
-				C.BlockListSetPageIsArchived(rootId, [ blockId ], false, (message: any) => {
+				C.ObjectSetIsArchived(rootId, false, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -504,24 +496,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'linkRoot':
-				const newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: block.id,
-					}
-				};
-				C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+			case 'fav':
+				C.ObjectSetIsFavorite(rootId, true);
 				break;
 
-			case 'unlinkRoot':
-				let favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => { 
-					return it.isLink() && (it.content.targetBlockId == rootId);
-				}).map((it: I.Block) => { return it.id; });
-
-				if (favorites.length) {
-					C.BlockUnlink(blockStore.root, favorites);
-				};
+			case 'unfav':
+				C.ObjectSetIsFavorite(rootId, false);
 				break;
 
 			case 'remove':
@@ -533,7 +513,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'createPage':
-				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, (message: any) => {
+				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, (message: any) => {
 					DataUtil.objectOpen({ id: message.targetId });
 
 					analytics.event('ObjectCreate', {

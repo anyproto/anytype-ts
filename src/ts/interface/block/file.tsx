@@ -5,6 +5,7 @@ export enum FileType {
 	File	 = 1,
 	Image	 = 2,
 	Video	 = 3,
+	Audio	 = 4,
 };
 
 export enum FileState {
@@ -14,7 +15,7 @@ export enum FileState {
 	Error		 = 3,
 };
 
-export interface File {
+export interface ContentFile {
 	hash: string;
 	name: string;
 	mime: string;
@@ -24,5 +25,5 @@ export interface File {
 };
 
 export interface BlockFile extends I.Block {
-	content: File;
+	content: ContentFile;
 };

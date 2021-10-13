@@ -31,6 +31,7 @@ export interface MenuParam {
 	noDimmer?: boolean;
 	noFlipX?: boolean;
 	noFlipY?: boolean;
+	commonFilter?: boolean;
 	onClose?(): void;
 	onOpen?(component?: any): void;
 };
@@ -39,6 +40,7 @@ export interface Menu {
 	id: string;
 	param: MenuParam;
 	setActive?(item?: any, scroll?: boolean): void;
+	setHover?(item?: any, scroll?: boolean): void;
 	onKeyDown?(e: any): void;
 	getId?(): string;
 	getSize?(): any;
@@ -61,8 +63,13 @@ export interface MenuItem {
 	isActive?: boolean;
 	withDescription?: boolean;
 	withCaption?: boolean;
+	withSwitch?: boolean;
+	switchValue?: boolean;
+	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
+	onSwitch?(e: any, v: boolean): void;
 };

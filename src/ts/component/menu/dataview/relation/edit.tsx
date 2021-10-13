@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil, Util, translate } from 'ts/lib';
-import { Icon, Input, Switch, MenuItemVertical, Button } from 'ts/component';
-import { commonStore, blockStore, dbStore, menuStore } from 'ts/store';
+import { I, C, M, DataUtil, Util, translate } from 'ts/lib';
+import { Icon, Input, MenuItemVertical, Button } from 'ts/component';
+import { blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {
@@ -12,7 +12,7 @@ interface Props extends I.Menu {
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-class MenuRelationEdit extends React.Component<Props, {}> {
+const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component<Props, {}> {
 
 	format: I.RelationType = I.RelationType.LongText;
 	objectTypes: string[] = [];
@@ -66,11 +66,15 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 
 				{isDate && relation ? (
 					<div className="section">
-						<div className="item" onMouseEnter={this.menuClose}>
-							<Icon className="clock" />
-							<div className="name">Include time</div>
-							<Switch value={viewRelation ? viewRelation.includeTime : false} onChange={(e: any, v: boolean) => { this.onChangeTime(v); }} />
-						</div>
+						<MenuItemVertical 
+							id="includeTime" 
+							icon="clock" 
+							name="Include time" 
+							onMouseEnter={this.menuClose}
+							withSwitch={true}
+							switchValue={viewRelation?.includeTime}
+							onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
+						/>
 
 						<MenuItemVertical 
 							id="date-settings" 
@@ -110,7 +114,7 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 						id="relation-type" 
 						icon={'relation ' + DataUtil.relationClass(this.format)} 
 						name={translate('relationName' + this.format)} 
-						className={this.isReadonly() ? 'isReadonly' : ''}
+						readonly={this.isReadonly()}
 						onMouseEnter={this.onRelationType} 
 						arrow={!relation}
 					/>
@@ -405,6 +409,6 @@ class MenuRelationEdit extends React.Component<Props, {}> {
 		return getView()?.getRelation(relationKey);
 	};
 
-};
+});
 
 export default MenuRelationEdit;

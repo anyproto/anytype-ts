@@ -1,5 +1,11 @@
 import { I } from 'ts/lib';
 
+export enum CardSize {
+	Small	 = 0,
+	Medium	 = 1,
+	Large	 = 2,
+};
+
 export enum DateFormat {
 	MonthAbbrBeforeDay	 = 0, // Jul 30, 2020
 	MonthAbbrAfterDay	 = 1, // 30 Jul 2020
@@ -62,11 +68,11 @@ export interface Filter {
 
 export interface ViewRelation {
 	relationKey: string;
-	isVisible: boolean;
-	width: number;
-	includeTime: boolean;
-	dateFormat: I.DateFormat;
-	timeFormat: I.TimeFormat;
+	isVisible?: boolean;
+	width?: number;
+	includeTime?: boolean;
+	dateFormat?: I.DateFormat;
+	timeFormat?: I.TimeFormat;
 };
 
 export interface ViewComponent {
@@ -90,6 +96,10 @@ export interface View {
 	id: string;
 	name: string;
 	type: ViewType;
+	coverRelationKey: string;
+	coverFit: boolean;
+	cardSize: I.CardSize;
+	hideIcon: boolean;
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];
@@ -122,10 +132,11 @@ export interface Cell {
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	cellPosition?: (cellId: string) => void;
 	elementMapper?: (relation: any, item: any) => any;
+	arrayLimit?: number;
 };
 
 export interface ContentDataview {
-	source: string;
+	sources: string[];
 	views: View[];
 };
 

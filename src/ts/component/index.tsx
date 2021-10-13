@@ -18,6 +18,9 @@ import HeaderAuth from './header/auth';
 import HeaderMainIndex from './header/main/index';
 import HeaderMainEdit from './header/main/edit';
 import HeaderMainHistory from './header/main/history';
+import HeaderMainGraph from './header/main/graph';
+import HeaderMainNavigation from './header/main/navigation';
+
 import FooterAuth from './footer/auth';
 import FooterMainIndex from './footer/main/index';
 import FooterMainEdit from './footer/main/edit';
@@ -59,6 +62,8 @@ import IconObject from './util/iconObject';
 import LinkPreview from './util/linkPreview';
 import ObjectPreviewBlock from './util/objectPreviewBlock';
 
+import Graph from './util/graph';
+
 import Cell from './block/dataview/cell';
 
 export {
@@ -78,6 +83,8 @@ export {
 	HeaderMainIndex,
 	HeaderMainEdit,
 	HeaderMainHistory,
+	HeaderMainGraph,
+	HeaderMainNavigation,
 	FooterAuth,
 	FooterMainIndex,
 	FooterMainEdit,
@@ -113,5 +120,6 @@ export {
 	IconObject,
 	LinkPreview,
 	ObjectPreviewBlock,
+	Graph,
 	Cell,
 };

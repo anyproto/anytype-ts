@@ -13,6 +13,8 @@ interface State {
 }
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
+
 const HEIGHT = 28;
 const LIMIT = 20;
 
@@ -55,7 +57,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			if (item.id == 'add') {
 				content =  (
 					<div 
-						id="item-add" className="item add" 
+						id="item-add" 
+						className="item add" 
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 						style={param.style}
@@ -150,6 +153,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			this.load();
 			this.filter = filter;
 			this.n = -1;
+			this.props.setActive();
 			return;
 		};
 
@@ -190,7 +194,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const skipIds = data.skipIds || [];
+		const skipIds = (data.skipIds || []).concat(Constant.systemRelationKeys);
 
 		let ret: any[] = [];
 		let name = 'Create from scratch';
@@ -203,9 +207,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			name = `Create relation "${data.filter}"`;
 		};
 
-		if (skipIds.length) {
-			ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
-		};
+		ret = ret.filter((it: any) => { return skipIds.indexOf(it.relationKey) < 0; });
 
 		if (!config.debug.ho) {
 			ret = ret.filter((it: I.Relation) => { return !it.isHidden; });

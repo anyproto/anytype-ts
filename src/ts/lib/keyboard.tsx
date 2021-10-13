@@ -1,5 +1,5 @@
 import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
-import { authStore, blockStore, menuStore, popupStore } from 'ts/store';
+import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -54,6 +54,8 @@ class Keyboard {
 	};
 
 	onMouseDown (e: any) {
+		const { focused } = focus.state;
+
 		// Mouse back
 		if (e.buttons & 8) {
 			e.preventDefault();
@@ -65,9 +67,15 @@ class Keyboard {
 			e.preventDefault();
 			this.forward();
 		};
+
+		// Remove isFocusable from focused block
+		if ($(e.target).parents(`#block-${focused}`).length <= 0) {
+			$('.focusable.c' + focused).removeClass('isFocused');
+		};
 	};
 	
 	onKeyDown (e: any) {
+		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
@@ -95,9 +103,14 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			popupStore.closeAll();
+			popupStore.closeLast();
 			menuStore.closeAll();
 			Util.linkPreviewHide(false);
+		});
+
+		// Shortcuts
+		this.shortcut('ctrl+space', e, (pressed: string) => {
+			popupStore.open('shortcut', {});
 		});
 
 		if (isMain) {
@@ -129,12 +142,12 @@ class Keyboard {
 
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
-				popupStore.open('navigation', { 
-					data: { 
-						type: I.NavigationType.Go, 
-						rootId: rootId,
-					}, 
-				});
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+			});
+
+			// Graph
+			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
@@ -169,9 +182,11 @@ class Keyboard {
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
+		let details: any = { isDraft: true };
 		
 		if (this.isMainEditor()) {
 			rootId = this.getRootId();
+			details = {};
 
 			const fb = blockStore.getLeaf(rootId, focused);
 			if (fb) {
@@ -188,13 +203,15 @@ class Keyboard {
 			};
 		};
 		
-		DataUtil.pageCreate(rootId, targetId, {}, position, '', (message: any) => {
+		DataUtil.pageCreate(rootId, targetId, details, position, '', {}, (message: any) => {
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 
 	getRootId (): string {
-		return this.match?.params?.id || blockStore.root;
+		const isPopup = popupStore.isOpen('page');
+		const popupMatch = this.getPopupMatch();
+		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
 	};
 
 	onKeyUp (e: any) {
@@ -259,6 +276,10 @@ class Keyboard {
 				this.onSearch();
 				break;
 
+			case 'graph':
+				DataUtil.objectOpenPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				break;
+
 			case 'print':
 				this.onPrint();
 				break;
@@ -283,15 +304,25 @@ class Keyboard {
 	};
 
 	onPrint () {
+		const isPopup = popupStore.isOpen('page');
+		const html = $('html');
+
+		if (isPopup) {
+			html.addClass('withPopup');
+		};
+
 		focus.clearRange(true);
 		window.print();
+
+		html.removeClass('withPopup');
 	};
 
 	onSearch () {
 		const popup = popupStore.get('page');
+		const popupMatch = this.getPopupMatch();
 
 		// Do not allow in set or store
-		if (this.isMainSet() || this.isMainStore() || ([ 'set', 'store' ].indexOf(popup?.param.data.matchPopup.params.action) >= 0)) {
+		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popupMatch.action) >= 0))) {
 			return;
 		};
 
@@ -306,6 +337,11 @@ class Keyboard {
 				},
 			});
 		}, Constant.delay.menu);
+	};
+
+	getPopupMatch () {
+		const popup = popupStore.get('page');
+		return popup && popup?.param.data.matchPopup.params || {};
 	};
 
 	ctrlByPlatform (e: any) {

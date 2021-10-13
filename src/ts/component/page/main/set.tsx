@@ -36,7 +36,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const { isPopup } = this.props;
@@ -141,7 +141,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		};
 
 		window.setTimeout(() => { focus.apply(); }, 10);
-
 		this.resize();
 	};
 
@@ -243,6 +242,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 				readonly: false,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
+				},
+				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectRelationDelete(rootId, relationKey);
 				},
 			}
 		});
@@ -354,6 +356,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			return;
 		};
 		
+		const win = $(window);
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
@@ -361,7 +364,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		const cover = node.find('.block.blockCover');
 		const controls = node.find('.editorControls');
 		const wrapper = node.find('.blocks.wrapper');
-		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page');
+		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
 
@@ -378,6 +381,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			wrapper.css({ paddingTop: 330 });
 		};
 
+		obj.css({ minHeight: isPopup ? '' : win.height() });
 		node.css({ paddingTop: hh });
 	};
 

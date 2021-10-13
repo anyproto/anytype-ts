@@ -20,6 +20,16 @@ html.debug {
 		.block.blockFeatured {
 			.cellContent { background-color: rgba(0, 0, 255, 0.1); }
 		}
+
+		.block.blockDataview {
+			.viewItem.viewList {
+				.row { background-color: rgba(0, 0, 255, 0.1); }
+				.cellContent {
+					.iconObject { background-color: rgba(0, 0, 255, 0.1); }
+					.name { background-color: rgba(0, 0, 255, 0.1); }
+				}
+			}
+		}
 	}
 
 	.blockLast { background: rgba(0,0,255,0.1); }

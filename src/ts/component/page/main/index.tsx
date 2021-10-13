@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {}
@@ -13,24 +13,22 @@ interface State {
 	tab: Tab;
 	filter: string;
 	pages: any[];
-}
+};
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
 enum Tab {
-	None = '',
-	Favorite = 'favorite',
-	Recent = 'recent',
-	Draft = 'draft',
-	Set = 'Set',
-	Archive = 'archive',
-}
+	None		 = '',
+	Favorite	 = 'favorite',
+	Recent		 = 'recent',
+	Set			 = 'set',
+	Archive		 = 'archive',
+};
 
 const Tabs = [
-	{ id: Tab.Draft, name: 'Inbox' },
-	{ id: Tab.Recent, name: 'Recent' },
 	{ id: Tab.Favorite, name: 'Favorites' },
+	{ id: Tab.Recent, name: 'History' },
 	{ id: Tab.Set, name: 'Sets' },
 	{ id: Tab.Archive, name: 'Archive' },
 ];
@@ -42,7 +40,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	timeoutFilter: number = 0;
 
 	state = {
-		tab: Tab.Draft,
+		tab: Tab.Favorite,
 		filter: '',
 		pages: [],
 	};
@@ -98,33 +96,30 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						<div className="rightMenu">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
-							{config.allowDataview ? (
-								<Icon id="button-store" className="store" tooltip="Store" onClick={this.onStore} />
-							) : ''}
+							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
 							<IconObject getObject={() => { return { ...object, layout: I.ObjectLayout.Human } }} size={56} tooltip="Your profile" onClick={this.onProfile} />
 						</div>
 					</div>
 					
-					<div id="documents"> 
+					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
 						<div className="tabWrap">
 							<div className="tabs">
-								{Tabs.map((item: any, i: number) => {
-									if (!config.allowDataview && ([ Tab.Draft, Tab.Set ].indexOf(item.id) >= 0)) {
-										return null;
-									};
-
-									return <TabItem key={i} {...item} />
-								})}
+								{Tabs.map((item: any, i: number) => (
+									<TabItem key={i} {...item} />
+								))}
 							</div>
-							<div id="searchWrap" className="searchWrap" onClick={this.onSearch}>
-								<Icon className="search" />
-								<Filter 
-									ref={(ref: any) => { this.refFilter = ref; }} 
-									placeholder="" 
-									placeholderFocus="" 
-									value={filter}
-									onChange={this.onFilterChange}
-								/>
+							<div className="btns">
+								<div id="searchWrap" className="btn searchWrap" onClick={this.onSearch}>
+									<Icon className="search" />
+									<Filter 
+										ref={(ref: any) => { this.refFilter = ref; }} 
+										placeholder="" 
+										placeholderFocus="" 
+										value={filter}
+										onChange={this.onFilterChange}
+									/>
+								</div>
+								{(tab == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
 						<ListIndex 
@@ -194,12 +189,19 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onTab (id: Tab) {
-		this.state.tab = id;
+		let tab = Tabs.find((it: any) => { return it.id == id; });
+		if (!tab) {
+			tab = Tabs[0];
+			id = tab.id;
+		};
+
+		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
 		Storage.set('tabIndex', id);
+		analytics.event('TabHome', { tab: tab.name });
 
-		if ([ Tab.Archive, Tab.Draft, Tab.Set ].indexOf(id) >= 0) {
+		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
 			this.load();
 		};
 	};
@@ -210,22 +212,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive },
-			{ 
-				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
-				value: [
-					blockStore.storeType,
-					blockStore.storeTemplate,
-					blockStore.storeRelation,
-				] 
-			},
 		];
 		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc }
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
-
-		if (tab == Tab.Draft) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page });
-		};
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
@@ -235,7 +225,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
-		C.ObjectSearch(filters, sorts, [ ...Constant.defaultRelationKeys, 'lastOpenedDate' ], filter, 0, 100, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -303,7 +293,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 		e.persist();
 
+		const { tab } = this.state;
 		const object = item.isBlock ? item._object_ : item;
+
+		if (tab == Tab.Archive) {
+			return;
+		};
 
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, object);
@@ -315,7 +310,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onAdd (e: any) {
-		DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, '', (message: any) => {
+		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 			this.load();
 
 			DataUtil.objectOpenPopup({ id: message.targetId });
@@ -327,33 +322,25 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 
 		const { tab } = this.state;
-		const { root, recent } = blockStore;
-		const { config } = commonStore;
+		const { root, recent, profile } = blockStore;
 		const object = item.isBlock ? item._object_ : item;
 		const rootId = tab == Tab.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
+		const favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
+			return it.isLink() && (it.content.targetBlockId == object.id);
+		});
 
 		let menuContext = null;
-		let favorites = []; 
 		let archive = null;
 		let link = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-
-		if (config.allowDataview) {
-			types = types.filter((it: string) => { return it != Constant.typeId.page; });
-		};
-
-		if (item.isBlock) {
-			favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
-				return it.isLink() && (it.content.targetBlockId == object.id);
-			});
-		};
+		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		if (favorites.length) {
-			link = { id: 'unlink', icon: 'unfav', name: 'Remove from Favorites' };
+			link = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			link = { id: 'link', icon: 'fav', name: 'Add to Favorites' };
+			link = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (object.isArchived) {
@@ -363,7 +350,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
 		};
 
-		if (object.isReadonly) {
+		if (object.isReadonly || object.templateIsBundled || (object.id == profile)) {
 			archive = null;
 		};
 
@@ -390,7 +377,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				this.load();
 			};
 
-			C.BlockListSetPageIsArchived(rootId, [ object.id ], v, cb);
+			C.ObjectSetIsArchived(object.id, v, cb);
 		};
 
 		menuStore.open('select', { 
@@ -404,23 +391,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			},
 			data: {
 				options: options,
-				onMouseEnter: (e: any, el: any) => {
+				onOver: (e: any, el: any) => {
 					menuStore.closeAll(subIds, () => {
 						if (el.id == 'move') {
 							const filters = [
 								{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
 							];
 
-							if (!config.allowDataview) {
-								filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.page ] });
-							};
-
 							menuStore.open('searchObject', {
 								element: `#menuSelect #item-${el.id}`,
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
+
 								data: {
+									rebind: menuContext.ref.rebind,
 									rootId: rootId,
 									blockId: item.id,
 									blockIds: [ item.id ],
@@ -448,24 +433,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 							onArchive(false);
 							break;
 
-						case 'link':
-							const newBlock = {
-								type: I.BlockType.Link,
-								content: {
-									targetBlockId: object.id,
-								}
-							};
-							C.BlockCreate(newBlock, root, '', I.BlockPosition.Bottom);
+						case 'fav':
+							C.ObjectSetIsFavorite(object.id, true);
 							break;
 
-						case 'unlink':
-							let favorites = blockStore.getChildren(root, root, (it: I.Block) => { 
-								return it.isLink() && (it.content.targetBlockId == object.id);
-							}).map((it: I.Block) => { return it.id; });
-
-							if (favorites.length) {
-								C.BlockUnlink(root, favorites);
-							};
+						case 'unfav':
+							C.ObjectSetIsFavorite(object.id, false);
 							break;
 					};
 				},
@@ -516,6 +489,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const body = node.find('#body');
 		const documents = node.find('#documents');
 		const items = node.find('#documents .item');
+		const hh = Util.sizeHeader();
 
 		const maxWidth = ww - size.border * 2;
 		const cnt = Math.floor(maxWidth / (size.width + size.margin));
@@ -525,7 +499,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		items.css({ width: width }).removeClass('last');
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
-		documents.css({ marginTop: wh - size.titleY - height - 8 });
+		documents.css({ marginTop: wh - size.titleY - height - hh });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -576,16 +550,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { layout, name, _empty_, isArchived } = object;
+					const { name, isArchived } = object;
 
-					if (!config.allowDataview && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(layout) < 0) && !_empty_) {
-						return false;
-					};
 					if (reg && name && !name.match(reg)) {
 						return false;
-					};
-					if (tab == Tab.Recent) {
-						return true;
 					};
 					return !isArchived;
 				}).map((it: any) => {
@@ -593,7 +561,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
-					it._object_ = detailStore.get(rootId, it.content.targetBlockId, []);
+					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled' ]);
 					it.isBlock = true;
 					return it;
 				});
@@ -610,12 +578,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case Tab.Archive:
 			case Tab.Set:
-			case Tab.Draft:
 				list = pages;
 				break;
 		};
 
 		return list;
+	};
+
+	onClear () {
+		const recent = crumbs.get(I.CrumbsType.Recent);
+		recent.ids = [];
+		crumbs.save(I.CrumbsType.Recent, recent);
 	};
 
 });

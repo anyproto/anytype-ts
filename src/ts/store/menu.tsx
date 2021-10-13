@@ -54,6 +54,7 @@ class MenuStore {
 
     update (id: string, param: any) {
 		const item = this.get(id);
+
 		if (item) {
 			set(item, { param: Object.assign(item.param, param) });
 		};

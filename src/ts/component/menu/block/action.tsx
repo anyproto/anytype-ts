@@ -15,9 +15,8 @@ const Constant = require('json/constant.json');
 class MenuBlockAction extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
-	isFocused: boolean = false;
 	n: number = -1;
-	ref: any = null;
+	refFilter: any = null;
 	state = {
 		filter: '',
 	};
@@ -30,7 +29,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		this.onClick = this.onClick.bind(this);
 		
 		this.onFilterFocus = this.onFilterFocus.bind(this);
-		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 
@@ -46,11 +44,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 						let icn: string[] = [ 'inner' ];
 						
 						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
+							icn.push('textColor textColor-' + (action.value || 'default'));
 						};
 
 						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
+							icn.push('bgColor bgColor-' + (action.value || 'default'));
 						};
 
 						if (action.isTextColor || action.isBgColor) {
@@ -62,13 +60,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.object = { ...action, layout: I.ObjectLayout.Type };
 						};
 
-						return <MenuItemVertical 
-							key={i} 
-							{...action} 
-							withCaption={action.caption} 
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
-						/>;
+						return (
+							<MenuItemVertical 
+								key={i} 
+								{...action} 
+								withCaption={action.caption} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+								onClick={(e: any) => { this.onClick(e, action); }} 
+							/>
+						);
 					})}
 				</div>
 			</div>
@@ -77,11 +77,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return (
 			<div>
 				<Filter 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={(ref: any) => { this.refFilter = ref; }} 
 					placeholderFocus="Filter actions..." 
 					value={filter}
 					onFocus={this.onFilterFocus} 
-					onBlur={this.onFilterBlur} 
 					onChange={this.onFilterChange} 
 				/>
 				
@@ -119,21 +118,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 	focus () {
 		window.setTimeout(() => {
-			if (this.ref) {
-				this.ref.focus();
+			if (this.refFilter) {
+				this.refFilter.focus();
 			};
 		}, 15);
 	};
 	
 	onFilterFocus (e: any) {
 		menuStore.closeAll(Constant.menuIds.action);
-		
-		this.isFocused = true;
 		this.props.setActive();
-	};
-	
-	onFilterBlur (e: any) {
-		this.isFocused = false;
 	};
 	
 	onFilterChange (v: string) {
@@ -143,7 +136,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 	
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
@@ -152,13 +145,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 	
 	getSections () {
-		const { config } = commonStore;
 		const { filter } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const cmd = keyboard.ctrlSymbol();
+		const { config } = commonStore;
 		
 		if (!block) {
 			return [];
@@ -184,7 +177,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnList = true;
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
-			let hasFile = false;
+			let hasFile = true;
+			let hasLink = true;
 			let hasQuote = false;
 			let hasAction = true;
 			let hasAlign = true;
@@ -200,12 +194,13 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
+				if (!block.isFile())			 hasFile = false;
+				if (!block.isLink())			 hasLink = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
 				if (block.isFeatured())			 hasAction = false;
 				if (block.isTextQuote())		 hasQuote = true;
-				if (block.isFile())				 hasFile = true;
 			};
 
 			if (hasTurnText)	 sections.push(turnText);
@@ -221,7 +216,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions(hasFile);
+				action.children = DataUtil.menuGetActions(hasFile, hasLink);
 				sections.push(action);
 			};
 
@@ -246,6 +241,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
+			let hasLink = true;
 			let hasTitle = false;
 			let hasAlign = true;
 			let hasColor = true;
@@ -261,6 +257,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				};
 				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isFile())			 hasFile = false;
+				if (!block.isLink())			 hasLink = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -278,6 +275,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
+			};
+
+			if (hasLink) {
+				sections[0].children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 			};
 
 			if (hasTitle) {
@@ -319,34 +320,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		return items;
 	};
 	
-	onKeyDown (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const k = e.key.toLowerCase();
-
-		if (this.isFocused) {
-			if (k == Key.down) {
-				this.ref.blur();
-				this.n = -1;
-			} else 
-			if ([ Key.enter, Key.space, Key.tab ].indexOf(k) >= 0) {
-				this.ref.blur();
-			} else {
-				return;
-			};
-		} else {
-			if ((k == Key.up) && !this.n) {
-				this.ref.focus();
-				this.n = -1;
-				return;
-			};
-		};
-		
-		this.props.onKeyDown(e);
-	};
-	
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.onOver(e, item);
@@ -370,13 +343,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		
-		let types = [ Constant.typeId.page ]; 
+		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; }); 
 
-		if (config.allowDataview) {
-			types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		};
-		
 		setActive(item, false);
 
 		if (!item.arrow) {
@@ -387,7 +355,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#item-' + item.id);
 		const offsetX = node.outerWidth();
-		const offsetY = -el.outerHeight() - 8;
 		
 		let filters = [];
 		let menuId = '';
@@ -395,7 +362,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
-			offsetY: offsetY,
+			offsetY: node.offset().top - el.offset().top - 36,
 			isSub: true,
 			data: {
 				rootId: rootId,
@@ -434,12 +401,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				menuParam.className = 'single';
 
 				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] }
 				];
-
-				if (config.allowDataview) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] });
-				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					placeholder: 'Find a type of object...',
@@ -470,7 +434,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'color':
 				menuId = 'blockColor';
-				menuParam.offsetY = node.offset().top - el.offset().top - 40;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: color,
@@ -486,7 +449,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'background':
 				menuId = 'blockBackground';
-				menuParam.offsetY = node.offset().top - el.offset().top - 40;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: bgColor,
@@ -502,6 +464,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'align':
 				menuId = 'blockAlign';
+				menuParam.offsetY = 0;
+				menuParam.vertical = I.MenuDirection.Center;
 
 				menuParam.data = Object.assign(menuParam.data, {
 					value: align,
@@ -513,6 +477,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 						close();
 					}
 				});
+				break;
+
+			case 'linkSettings':
+				menuId = 'blockLinkSettings';
 				break;
 		};
 

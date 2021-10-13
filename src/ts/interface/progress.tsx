@@ -1,6 +1,9 @@
 export enum ProgressType {
-	File = 0,
-	Import = 1,
+	File	 = 0,
+	Import	 = 1,
+	Export	 = 2,
+	Download = 3,
+	Recover	 = 4,
 };
 
 export enum ProgressState {

@@ -58,7 +58,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				<Frame>
 					<IconObject size={64} object={{ iconEmoji: icon }} />
 					<Title text={title} />
-					<Label id="label" text="Migration in progress. It can take up to 5 minutes..." />
 					<Error text={error} />
 					{error ? <Button text={translate('authSetupBack')} onClick={() => { history.goBack(); }} /> : ''}
 				</Frame>
@@ -160,7 +159,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				authStore.previewSet('');
 
-				Storage.delete('popupNewBlock');
 				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {

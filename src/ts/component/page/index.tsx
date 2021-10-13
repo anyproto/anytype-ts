@@ -24,9 +24,11 @@ import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
 import PageMainStore from './main/store';
+import PageMainGraph from './main/graph';
+import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('electron').remote;
+const { process } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -51,6 +53,8 @@ const Components: any = {
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
 	'main/store':			 PageMainStore,
+	'main/graph':			 PageMainGraph,
+	'main/navigation':		 PageMainNavigation,
 };
 
 interface Props extends RouteComponentProps<any> {
@@ -70,7 +74,7 @@ class Page extends React.Component<Props, {}> {
 
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		
+
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
 			Storage.set('firstRun', 1);
@@ -101,10 +105,15 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	componentWillUnmount () {
+		const { isPopup } = this.props;
+
 		this._isMounted = false;
 		this.unbind();
 
-		popupStore.closeAll();
+		if (!isPopup) {
+			popupStore.closeAll();
+		};
+
 		menuStore.closeAll();
 		Util.linkPreviewHide(true);
 	};
@@ -119,6 +128,7 @@ class Page extends React.Component<Props, {}> {
 		const { isPopup, history } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
+		const popupIntroBlock = Storage.get('popupIntroBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -154,8 +164,14 @@ class Page extends React.Component<Props, {}> {
 
 		window.setTimeout(() => {
 			if (isMain && account) {
+				if (!popupIntroBlock) {
+					popupStore.open('help', { data: { document: 'intro' } });
+					Storage.set('popupIntroBlock', 1);
+					Storage.set('popupNewBlock', 1);
+				} else
 				if (!popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
+					Storage.set('popupNewBlock', 1);
 				};
 
 				Storage.set('redirect', history.location.pathname);
@@ -203,6 +219,7 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	getClass (prefix: string) {
+		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
@@ -210,6 +227,7 @@ class Page extends React.Component<Props, {}> {
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
 			Util.toCamelCase([ prefix, page, action ].join('-')),
+			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
 	};
 	
@@ -234,9 +252,6 @@ class Page extends React.Component<Props, {}> {
 		};
 		if (config.debug.dm) {
 			cn.push('dark');
-		};
-		if (config.allowDataview) {
-			cn.push('withDataview');
 		};
 
 		obj.attr({ class: cn.join(' ') });

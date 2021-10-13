@@ -45,7 +45,7 @@ class Crumbs {
 	
 	add (key: I.CrumbsType, item: CrumbsObject, id: string, callBack?: () => void): CrumbsObject {
 		if (!id) {
-			return;
+			return item;
 		};
 		
 		this.savePrev(key, item);
@@ -154,6 +154,16 @@ class Crumbs {
 		item.ids = Util.arrayUnique(item.ids);
 
 		this.save(I.CrumbsType.Recent, item);
+	};
+
+	removeItems (key: I.CrumbsType, ids: string[]) {
+		if (!ids || !ids.length) {
+			return;
+		};
+
+		let item = this.get(key);
+		item.ids = item.ids.filter((it: string) => { return ids.indexOf(it) < 0; });
+		this.save(key, item);
 	};
 		
 };

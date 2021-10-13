@@ -109,10 +109,9 @@ Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg');
 Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg');
 Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg');
 
+const Home = 'img/icon/home.svg';
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
-
-const ObjectType = require('img/icon/object/default.svg');
 
 const Color = {
 	grey:	 '#dfddd0',
@@ -128,7 +127,6 @@ const Color = {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const IconObject = observer(class IconObject extends React.Component<Props, {}> {
 
@@ -179,6 +177,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				break;
 
 			case I.ObjectLayout.Human:
+				if (iconImage) {
+					cn.push('withImage');
+				};
+				
 				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
@@ -231,6 +233,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[Util.fileIcon(object)]} className={icn.join(' ')} />;
 				break;
+
+			case I.ObjectLayout.Dashboard:
+				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+				icon = <img src={Home} className={icn.join(' ')} />;
+				break;
 		};
 
 		if (!icon) {
@@ -266,13 +273,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		if (canEdit) {
-			e.stopPropagation();
-
 			if (layout == I.ObjectLayout.Task) {
+				e.stopPropagation();
 				onCheckbox(e);
 			};
 
 			if (layoutsEmoji.indexOf(layout) >= 0) {
+				e.stopPropagation();
 				this.onEmoji(e);
 			};
 		};
@@ -326,7 +333,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = 28;
 		};
 
-		if (layout == I.ObjectLayout.Human) {
+		if ((layout == I.ObjectLayout.Human) && (size >= 40)) {
 			s = size;
 		};
 
@@ -334,7 +341,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = size;
 		};
 
-		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji) {
+		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji && (size >= 40)) {
 			s = size;
 		};
 
@@ -395,7 +402,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 
 		if (tooltip) {
-			Util.tooltipShow(tooltip, node, tooltipY);
+			Util.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);
 		};
 		
 		if (onMouseEnter) {

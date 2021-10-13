@@ -63,21 +63,25 @@
 
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 400;
-	src: url('~font/inter/regular.woff') format('woff');
+	src: url('~font/inter/regular.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Inter'; font-style: italic; font-weight: 400;
-	src: url('~font/inter/italic.woff') format('woff');
+	src: url('~font/inter/italic.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 500;
-	src: url('~font/inter/medium.woff') format('woff');
+	src: url('~font/inter/medium.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Inter'; font-style: italic; font-weight: 500;
+	src: url('~font/inter/mediumitalic.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Inter'; font-style: bold; font-weight: 600;
-	src: url('~font/inter/bold.woff') format('woff');
+	src: url('~font/inter/bold.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Inter'; font-style: italic; font-weight: 600;
-	src: url('~font/inter/bolditalic.woff') format('woff');
+	src: url('~font/inter/bolditalic.ttf') format('truetype');
 }

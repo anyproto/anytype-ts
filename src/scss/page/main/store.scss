@@ -8,7 +8,7 @@
 	.head { width: 100%; height: 40px; padding: 8px 0px; text-align: center; position: absolute; top: 0px; left: 0px; z-index: 1; background: #fff; }
 	.head {
 		.tabs { 
-			white-space: nowrap; background: #eae9e0; display: inline-block; height: 28px; padding: 2px; border-radius: 6px;
+			white-space: nowrap; background: $colorLightGrey; display: inline-block; height: 28px; padding: 2px; border-radius: 6px;
 		}
 		.tabs {
 			.item { 
@@ -20,7 +20,7 @@
 		}
 	}
 
-	.body { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; }
+	.body { width: 100%; height: 100%; overflow-y: overlay; display: flex; flex-direction: column; }
 	.body {
 		.mid { text-align: center; padding: 44px 0px 56px 0px; margin: 0px auto; }
 		.mid {
@@ -61,7 +61,7 @@
 					.name { @include text-overflow-nw; line-height: 22px; }
 					.descr { width: 100%; @include text-small; color: $colorDarkGrey; @include text-overflow-nw; margin: 2px 0px; }
 					.author { @include text-small; color: $colorDarkGrey; line-height: 18px; margin-bottom: 2px; }
-					.line { width: 100%; height: 1px; background: #eae9e0; position: absolute; left: 0px; }
+					.line { width: 100%; height: 1px; background: $colorLightGrey; position: absolute; left: 0px; }
 				}
 
 				.button { height: 28px; line-height: 24px; position: absolute; right: 0px; top: 50%; margin-top: -14px; display: none; }

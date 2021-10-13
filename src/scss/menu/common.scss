@@ -38,7 +38,7 @@
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: auto; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
+		.content { overflow-y: overlay; max-height: 450px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__Grid__innerScrollContainer { margin: 8px 0px; }
 
 		.loaderWrapper { 
@@ -46,7 +46,7 @@
 			background: rgba(255,255,255, 0.7);
 		}
 
-		.tabs { padding: 10px 0px; border-bottom: 1px solid #eae9e0; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
+		.tabs { padding: 10px 0px; border-bottom: 1px solid $colorLightGrey; margin: 0px 14px; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
@@ -77,7 +77,7 @@
 		.item.add { color: $colorDarkGrey; line-height: 20px; }
 		
 		.item {
-			.name { display: inline-block; vertical-align: top; position: relative; }
+			.name { display: inline-block; vertical-align: top; position: relative; line-height: 20px; }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: top; transition: none; flex-shrink: 0; }
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
@@ -97,6 +97,8 @@
 			}
 			
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
+
+			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 		}
 
 		.item.empty { cursor: default; }
@@ -108,7 +110,6 @@
 			.descr:empty { display: none; }
 			.info { padding-left: 52px; line-height: 40px; width: 100%; }
 			.txt { width: 100%; }
-			.name { line-height: 20px; }
 		}
 
 		.item.withCaption { display: flex; }

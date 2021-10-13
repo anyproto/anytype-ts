@@ -19,12 +19,12 @@
 			.side.left { width: 100%; border-radius: 0px; }
 			.side.right { 
 				position: absolute; top: 0px; left: 0px; height: 112px; width: 100%; border-radius: 6px 6px 0px 0px;
-				border-bottom: 1px solid #eae9e0; 
+				border-bottom: 1px solid $colorLightGrey; 
 			}
 		}
 
 		.inner.withImage {
-			.side.left { width: 66.67%; }
+			.side.left { width: 66.68%; }
 			.side.right { width: 33.33%; display: block; }
 		}
 

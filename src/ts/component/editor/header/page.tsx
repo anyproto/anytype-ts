@@ -28,6 +28,7 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 	constructor (props: any) {
 		super(props);
 
+		this.setPercent = this.setPercent.bind(this);
 		this.onScaleStart = this.onScaleStart.bind(this);
 		this.onScaleMove = this.onScaleMove.bind(this);
 		this.onScaleEnd = this.onScaleEnd.bind(this);
@@ -84,8 +85,8 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 					</div>
 				) : ''}
 
-				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} /> : ''}
-				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} /> : ''}
+				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} className="noPlus" /> : ''}
+				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} className="noPlus" /> : ''}
 
 				<Block 
 					key={header.id} 
@@ -125,31 +126,38 @@ const EditorHeaderPage = observer(class EditorHeaderPage extends React.Component
 		$(window).trigger('resize.editor');
 	};
 
-	onScaleStart (v: number) {
+	onScaleStart (e: any, v: number) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
 		selection.preventSelect(true);
+		this.setPercent(v);
 	};
 	
-	onScaleMove (v: number) {
-		const node = $(ReactDOM.findDOMNode(this));
-		const value = node.find('#dragValue');
-
-		value.text(Math.ceil(v * 100) + '%');
-
+	onScaleMove (e: any, v: number) {
 		this.props.onResize(v);
+		this.setPercent(v);
 	};
 	
-	onScaleEnd (v: number) {
+	onScaleEnd (e: any, v: number) {
 		const { rootId, dataset } = this.props;
 		const { selection } = dataset || {};
 
 		selection.preventSelect(false);
+		this.setPercent(v);
 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { width: v } },
-		]);
+		], () => {
+			$('.resizable').trigger('resize', [ e ]);
+		});
+	};
+
+	setPercent (v: number) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#dragValue');
+
+		value.text(Math.ceil(v * 100) + '%');
 	};
 
 	onClone (e: any) {

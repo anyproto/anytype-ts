@@ -58,7 +58,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const { config } = commonStore;
@@ -203,7 +203,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 									id="recommendedLayout" 
 									value={object.recommendedLayout} 
 									options={DataUtil.menuTurnLayouts()} 
-									arrowClassName="light" onChange={this.onLayout} 
+									arrowClassName="light" 
+									onChange={this.onLayout} 
 								/>
 							) : (
 								<React.Fragment>
@@ -387,7 +388,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 
 		const create = (template: any) => {
-			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, (message: any) => {
+			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, {}, (message: any) => {
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
 				analytics.event('ObjectCreate', {
@@ -420,7 +421,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.SetCreate(rootId, { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
+		C.SetCreate([ rootId ], { name: object.name + ' set', iconEmoji: object.iconEmoji }, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
 				DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
@@ -463,6 +464,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				readonly: !allowed,
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
+				},
+				addCommand: (rootId: string, blockId: string, relation: any) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation ]);
+				},
+				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
+					C.ObjectTypeRelationRemove(rootId, relationKey);
 				},
 			}
 		});
