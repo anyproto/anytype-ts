@@ -190,6 +190,9 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 
+			case I.ObjectLayout.Note:
+				break;
+
 			case I.ObjectLayout.Type:
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;

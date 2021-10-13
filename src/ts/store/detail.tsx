@@ -125,19 +125,21 @@ class DetailStore {
 		};
 
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
+		let name = String(object.name || DataUtil.defaultName('page'))
 
 		if (layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
 			object.coverId = '';
 			object.iconEmoji = '';
 			object.iconImage = '';
-			object.description = object.description || object.snippet;
+
+			name = object.snippet;
 		};
 
 		return {
 			...object,
 			id: id,
-			name: String(object.name || DataUtil.defaultName('page')),
+			name: name,
 			type: DataUtil.convertRelationValueToString(object.type),
 			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
 			layout: layout,
