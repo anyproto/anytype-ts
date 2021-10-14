@@ -5,6 +5,8 @@
 	"electron/env.json",
 	"electron/icon*",
 	"electron/about.css",
+	"electron/about.html",
+	"electron/about.js",
 	"build",
 	"!dist/*",
 	"dist/index.html",
