@@ -219,6 +219,14 @@ class Dispatcher {
 				case 'blockDelete':
 					let blockIds = data.getBlockidsList() || [];
 					for (let blockId of blockIds) {
+						const block = blockStore.getLeaf(rootId, blockId);
+
+						if (block.type == I.BlockType.Dataview) {
+							dbStore.relationsClear(rootId, blockId);
+							dbStore.viewsClear(rootId, blockId);
+							dbStore.metaClear(rootId, blockId);
+						};
+
 						blockStore.delete(rootId, blockId);
 					};
 					break;

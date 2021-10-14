@@ -42,9 +42,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
-
+		const view = this.getView();
 		if (!view) {
 			return null;
 		};

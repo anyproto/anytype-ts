@@ -35,8 +35,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { className, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const { page } = this.state;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter((it: any) => {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
@@ -80,7 +78,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					<ViewItem 
 						key={i} 
 						{...item} 
-						active={item.id == viewId} 
+						active={item.id == view.id} 
 						index={i} 
 					/>
 				))}
