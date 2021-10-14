@@ -46,7 +46,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const setOf = DataUtil.getRelationArrayValue(object.setOf);
+		const setOf = DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]);
 	
 		let types = [];
 		let relations = [];
@@ -182,7 +182,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 	
 	componentDidMount () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const setOf = DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]);
+
 		this._isMounted = true;
+
+		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
+			this.onSource();
+		};
 	};
 
 	componentWillUnmount () {
@@ -309,7 +317,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 	};
 
-	onSource (e: any) {
+	onSource () {
 		const { rootId, block, readonly } = this.props;
 
 		if (readonly) {
