@@ -142,7 +142,8 @@
 		"file": "_otfile",
 		"video": "_otvideo",
 		"audio": "_otaudio",
-		"relation": "_otrelation"
+		"relation": "_otrelation",
+		"note": "_otnote"
 	},
 
 	"blockId": {

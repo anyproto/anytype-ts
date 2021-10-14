@@ -72,6 +72,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				cn.push('active');
 			};
 
+			let name = item.name || DataUtil.defaultName('page');
+			if (item.layout == I.ObjectLayout.Note) {
+				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+			};
+
 			const props = {
 				...item,
 				object: (item.id == 'add' ? undefined : item),
@@ -100,6 +105,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				>
 					<MenuItemVertical 
 						{...props}
+						name={name}
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
@@ -124,7 +130,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{loading ? <Loader /> : ''}
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="empty">
+					<div id="empty" key="empty" className="emptySearch">
 						<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 					</div>
 				) : ''}
@@ -284,15 +290,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	filterMapper (it: any, config: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { type, skipId } = data;
+		const { skipId } = data;
 
-		if (it.isArchived) {
-			return false;
-		};
-		if (it.id == skipId) {
-			return false;
-		};
-		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
+		if (it.isArchived || (it.id == skipId)) {
 			return false;
 		};
 		return true;
