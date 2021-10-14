@@ -56,9 +56,15 @@ const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<P
 							) : (
 								<IconObject size={48} iconSize={32} object={object} />
 							)}
-							<div className="title">{name}</div>
-							<div className="description">{description || snippet}</div>
 
+							{layout == I.ObjectLayout.Note ? (
+								<div className="description">{name}</div>
+							) : (
+								<React.Fragment>
+									<div className="title">{name}</div>
+									<div className="description">{description || snippet}</div>
+								</React.Fragment>
+							)}
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="buttons">

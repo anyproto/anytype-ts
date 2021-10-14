@@ -34,7 +34,9 @@ export enum ObjectLayout {
 	File		 = 6,
 	Dashboard	 = 7,
 	Image		 = 8,
-	Video		 = 9,
+	Note		 = 9,
+	Video		 = 10,
+	
 	Database	 = 20,
 
 	Navigation	 = 100,

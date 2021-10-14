@@ -273,6 +273,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasFile) {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
+				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
 			};
@@ -511,6 +512,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 		switch (item.itemId) {
 			case 'download':
 				Action.download(block);
+				break;
+
+			case 'openFileAsObject':
+				DataUtil.objectOpenPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 				break;
 					
 			case 'copy':
