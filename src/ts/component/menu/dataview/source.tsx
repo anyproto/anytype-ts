@@ -109,6 +109,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			vertical: I.MenuDirection.Center,
 			className: 'single',
 			data: {
+				skipIds: value,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 				],

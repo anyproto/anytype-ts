@@ -426,7 +426,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipId: rootId,
+					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 					filters: filters,
 					onSelect: () => { close(); }

@@ -306,7 +306,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
-					skipId: rootId,
+					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {
 						close();
@@ -328,7 +328,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.LinkTo,
-					skipId: rootId,
+					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {
 						close();
