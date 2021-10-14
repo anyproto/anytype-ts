@@ -185,13 +185,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this._isMounted = true;
 	};
 
-	componentDidUpdate () {
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-
-		menuStore.updateData('dataviewSource', { value: object[Constant.relationKey.setOf] });
-	};
-	
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -323,8 +316,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-
 		menuStore.closeAll(null, () => { 
 			menuStore.open('dataviewSource', {
 				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.setOf, 0)}`,
@@ -333,7 +324,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				data: {
 					rootId: rootId,
 					blockId: BLOCK_ID_DATAVIEW,
-					value: object.setOf,
 				}
 			}); 
 		});

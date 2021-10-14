@@ -101,7 +101,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	onAdd (e: any) {
 		const { getId, getSize, param } = this.props;
 		const { data } = param;
-		const value = DataUtil.getRelationArrayValue(data.value);
+		const value = this.getValue();
 
 		menuStore.open('searchObject', { 
 			element: `#${getId()} #item-add`,
@@ -124,9 +124,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-
-		let value = DataUtil.getRelationArrayValue(data.value);
-		value = value.filter((it: string) => { return it != item.id; });
+		const value = this.getValue().filter((it: string) => { return it != item.id; });
 
 		this.save(value);
 	};
@@ -179,22 +177,26 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 
-		C.BlockDataviewSetSource(rootId, blockId, value, (message: any) => {
-			if (!message.error.code) {
-				data.value = value;
-			};
-		});
+		C.BlockDataviewSetSource(rootId, blockId, value);
+	};
+
+	getValue () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+
+		return Util.arrayUnique(DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]).filter((it: string) => {
+			const object = detailStore.get(rootId, it, []);
+			return !object._empty_;
+		}));
 	};
 
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const length = data.value.length;
-		const value = DataUtil.getRelationArrayValue(data.value).filter((it: string) => {
-			const object = detailStore.get(rootId, it);
-			return !object._empty_;
-		});
+		const value = this.getValue();
 		const items = [];
 
 		if (!value.length) {
