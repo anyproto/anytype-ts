@@ -76,14 +76,14 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			type: 'GET',
 			contentType: 'application/json',
 			success: (data: any) => {
-				console.log(data);
-
 				for (let item of data) {
 					this.items.push({
 						id: item.id,
 						type: I.CoverType.Source,
 						src: item.urls.thumb,
 						full: item.urls.full,
+						download: item.links.download,
+						user: item.user,
 					});
 				};
 
@@ -161,6 +161,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				onUploadStart();
 			};
 
+			console.log(item);
+
+			/*
 			C.UploadFile(item.full, '', I.FileType.Image, true, (message: any) => {
 				if (message.error.code) {
 					return;
@@ -170,6 +173,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 					onUpload(message.hash);
 				};
 			});
+			*/
 		} else
 		if (onSelect) {
 			onSelect(item);
