@@ -194,7 +194,10 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
-		const value = DataUtil.getRelationArrayValue(data.value);
+		const value = DataUtil.getRelationArrayValue(data.value).filter((it: string) => {
+			const object = detailStore.get(rootId, it);
+			return !object._empty_;
+		});
 		const items = [];
 
 		if (!value.length) {
@@ -208,10 +211,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		} else {
 			value.forEach((it: string) => {
 				const object = detailStore.get(rootId, it);
-				if (object._empty_) {
-					return;
-				};
-
 				if (object.type == Constant.typeId.type) {
 					items.push({
 						...object,
