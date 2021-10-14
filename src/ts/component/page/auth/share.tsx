@@ -16,31 +16,15 @@ const PageAuthShare = observer(class PageAuthShare extends React.Component<Props
 	};
 
 	render () {
-		const { cover } = commonStore;
-		const { history } = this.props;
-
 		return (
 			<div>
-				<Cover {...cover} />
-				<Header />
-				<Footer />
-				
-				<Frame>
-					<IconObject size={64} object={{ iconEmoji: '🔗' }} />
-					<Title text="Adding document" />
-					<Label text="Some text" />
-					<Button text="Ok" onClick={() => { history.push('/main/index'); }} />
-				</Frame>
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		const { history, location } = this.props;
-		const param = Util.searchParam(location.search);
-
-		C.ObjectAddWithObjectId(param.id, param.payload, () => {
-		});
+		history.push('/auth/setup/share' + location.search);
 	};
 
 });

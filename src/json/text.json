@@ -104,6 +104,7 @@
 	"authSetupLogin": { "en": "Logging in..." },
 	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
+	"authSetupShare": { "en": "Adding space" },
 	"authSetupBack": { "en": "Back" },
 
 	"authSuccessTitle": { "en": "Congratulations!" },
