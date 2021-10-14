@@ -179,15 +179,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRowAdd (e: any, dir: number) {
+		e.persist();
+
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
+		const view = this.getView();
 
 		const create = (template: any) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
 				if (!message.error.code) {
-					dbStore.recordAdd(rootId, block.id, message.record, dir);
+					const index = dbStore.recordAdd(rootId, block.id, message.record, dir);
+					const id = DataUtil.cellId('dataviewCell', 'name', index);
+					const ref = this.cellRefs.get(id);
+
+					if (ref && (view.type == I.ViewType.Grid)) {
+						window.setTimeout(() => { ref.onClick(e); });
+					};
 				};
 
 				if (template) {
