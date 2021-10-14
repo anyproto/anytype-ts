@@ -114,8 +114,6 @@ class BlockStore {
 
     add (rootId: string, block: I.Block) {
 		let blocks = this.getBlocks(rootId);
-
-		block = new M.Block(block);
 		blocks.push(block);
 	};
 
