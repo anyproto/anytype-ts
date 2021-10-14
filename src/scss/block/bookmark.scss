@@ -24,8 +24,8 @@
 		}
 
 		.inner.withImage {
-			.side.left { width: 66.68%; }
-			.side.right { width: 33.33%; display: block; }
+			.side.left { width: calc(100% - 250px); }
+			.side.right { width: 250px; display: block; }
 		}
 
 		.inner.withImage.vertical { padding-top: 112px; }

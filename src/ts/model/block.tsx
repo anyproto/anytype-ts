@@ -85,7 +85,7 @@ class Block implements I.Block {
 	};
 
 	canHaveHistory (): boolean {
-		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask();
+		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask() || this.isObjectNote();
 	};
 
 	canTurn (): boolean {

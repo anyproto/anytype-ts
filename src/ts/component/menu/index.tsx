@@ -500,7 +500,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				this.timeoutPoly = window.setTimeout(() => { 
 					win.trigger('mousemove');
 					poly.hide(); 
-				}, 1000);
+				}, 500);
 			};
 		});
 	};
