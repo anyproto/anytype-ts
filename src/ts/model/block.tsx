@@ -61,6 +61,7 @@ class Block implements I.Block {
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+		return self;
 	};
 
 	canHaveChildren (): boolean {
@@ -217,6 +218,10 @@ class Block implements I.Block {
 
 	isLayoutHeader (): boolean {
 		return this.isLayout() && (this.content.style == I.LayoutStyle.Header);
+	};
+
+	isLayoutFooter (): boolean {
+		return this.isLayout() && (this.content.style == I.LayoutStyle.Footer);
 	};
 	
 	isLink (): boolean {
