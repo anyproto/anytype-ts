@@ -25,13 +25,10 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 	
 	render () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
 		const items = this.getItems();
 		
 		const Item = (item: any) => {
-			const canDelete = item.itemId != 'type';
+			const canDelete = item.id != 'type';
 			return (
 				<form id={'item-' + item.itemId} className={[ 'item' ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					<IconObject size={40} object={item} />
@@ -126,7 +123,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
 
 		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.filter((it: string) => { return it != item.id; });
@@ -144,8 +140,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, readonly } = data;
-
-		console.log(item, readonly);
 
 		if (item.itemId == 'type') {
 			if (readonly) {
@@ -184,16 +178,18 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 		const { data } = param;
 		const { rootId, blockId } = data;
 
-		console.log(value);
-
-		data.value = value;
-		C.BlockDataviewSetSource(rootId, blockId, value);
+		C.BlockDataviewSetSource(rootId, blockId, value, (message: any) => {
+			if (!message.error.code) {
+				data.value = value;
+			};
+		});
 	};
 
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const length = data.value.length;
 		const value = DataUtil.getRelationArrayValue(data.value).filter((it: string) => {
 			const object = detailStore.get(rootId, it);
 			return !object._empty_;
@@ -202,6 +198,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 
 		if (!value.length) {
 			items.push({
+				id: 'type',
 				itemId: 'type',
 				name: 'Object type',
 				relationFormat: I.RelationType.Object,
@@ -222,6 +219,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					items.push({
 						...object,
 						itemId: object.id,
+						value: 'All',
 					});
 				};
 			});

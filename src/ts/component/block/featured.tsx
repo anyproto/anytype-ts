@@ -47,8 +47,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const setOf = DataUtil.getRelationArrayValue(object.setOf);
-		const types = [];
-		const relations = [];
+	
+		let types = [];
+		let relations = [];
 
 		setOf.forEach((it: string) => {
 			const o = detailStore.get(rootId, it, []);
@@ -65,11 +66,24 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		});
 
 		let setOfString = [];
-		if (types.length) {
+		let tl = types.length;
+		let rl = relations.length;
+
+		if (tl) {
+			types = types.slice(0, 2);
 			setOfString.push('Object types: ' + types.join(', '));
+
+			if (tl > 2) {
+				setOfString.push(<div className="more">+{tl - 2}</div>);
+			};
 		};
-		if (relations.length) {
+		if (rl) {
+			relations = relations.slice(0, 2);
 			setOfString.push('Relations: ' + relations.join(', '));
+
+			if (rl > 2) {
+				setOfString.push(<div className="more">+{rl - 2}</div>);
+			};
 		};
 
 		return (
@@ -100,7 +114,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						>
 							{setOfString.length ? (
 								<div className="name">
-									{setOfString.join(' ')}
+									{setOfString.map((it: any, i: number) => (
+										<span key={i}>{it}</span>
+									))}
 								</div>
 							) : (
 								<div className="empty">Source</div>
@@ -167,6 +183,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	
 	componentDidMount () {
 		this._isMounted = true;
+	};
+
+	componentDidUpdate () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+
+		menuStore.updateData('dataviewSource', { value: object[Constant.relationKey.setOf] });
 	};
 	
 	componentWillUnmount () {
