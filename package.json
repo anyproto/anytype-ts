@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.20.6-alpha",
+	"version": "0.20.10-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -239,10 +239,6 @@
 			{
 				"from": "node_modules/@electron",
 				"to": "node_modules/@electron"
-			},
-			{
-				"from": "node_modules/about-window",
-				"to": "node_modules/about-window"
 			},
 			{
 				"from": "node_modules/async",

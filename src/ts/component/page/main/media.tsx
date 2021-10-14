@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject } from 'ts/component';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Pager } from 'ts/component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 import { Document, Page } from 'react-pdf';
@@ -13,7 +13,12 @@ pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.js';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
-}
+};
+
+interface State {
+	pages: number;
+	page: number;
+};
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
@@ -23,12 +28,17 @@ const userPath = app.getPath('userData');
 
 const MAX_HEIGHT = 396;
 
-const PageMainMedia = observer(class PageMainMedia extends React.Component<Props, {}> {
+const PageMainMedia = observer(class PageMainMedia extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
+
+	state = {
+		pages: 0,
+		page: 1,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -38,6 +48,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	render () {
+		const { page, pages } = this.state;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
@@ -81,19 +92,33 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		};
 
 		let content = null;
+		let pager = null;
+
 		if (file) {
 			if (isVideo || isImage || isAudio) {
 				content = <Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />;
 			} else 
 			if (isPdf) {
 				content = (
-					<Document
-						file={commonStore.fileUrl(file.content.hash)}
-						onLoadSuccess={() => {  }}
-						renderMode="svg"
-					>
-						<Page pageNumber={1} />
-					</Document>
+					<div className="pdfWrapper">
+						<Document
+							file={commonStore.fileUrl(file.content.hash)}
+							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
+							renderMode="svg"
+						>
+							<Page pageNumber={page} />
+						</Document>
+					</div>
+				);
+
+				pager = (
+					<Pager 
+						offset={page - 1} 
+						limit={1} 
+						total={pages} 
+						pageLimit={5}
+						onChange={(page: number) => { this.setState({ page }); }} 
+					/>
 				);
 			} else {
 				content = <IconObject object={object} size={96} />;
@@ -109,6 +134,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 						<React.Fragment>
 							<div className="side left">
 								{content}
+								{pager}
 							</div>
 
 							<div className="side right">

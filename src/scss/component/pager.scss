@@ -1,7 +1,6 @@
 @import "~scss/_vars";
 
-.pager { text-align: center; margin: 13px 0px 0px 0px; color: $colorMediumGrey; white-space: nowrap; @include text-common; }
-
+.pager { text-align: center; color: $colorMediumGrey; white-space: nowrap; @include text-common; user-select: none; }
 .pager {
     .pageItem { 
         min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionFast; text-align: center; margin-right: 8px; 
