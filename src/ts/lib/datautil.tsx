@@ -144,6 +144,7 @@ class DataUtil {
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 			case I.ObjectLayout.File:		 c = 'isFile'; break;
+			case I.ObjectLayout.Note:		 c = 'isNote'; break;
 		};
 		return c;
 	};
@@ -479,6 +480,7 @@ class DataUtil {
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
+		details.type = details.type || commonStore.type;
 		
 		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
 		
@@ -697,6 +699,7 @@ class DataUtil {
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
+			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
@@ -757,6 +760,7 @@ class DataUtil {
 			{ id: I.ObjectLayout.Image, icon: 'image' },
 			{ id: I.ObjectLayout.Type, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
+			{ id: I.ObjectLayout.Note, icon: 'note' },
 		].map((it: any) => {
 			it.icon = 'layout c-' + it.icon;
 			it.name = translate('layout' + it.id);
@@ -766,7 +770,7 @@ class DataUtil {
 
 	menuTurnLayouts () {
 		return this.menuGetLayouts().filter((it: any) => {
-			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
+			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ].indexOf(it.id) >= 0;
 		});
 	};
 

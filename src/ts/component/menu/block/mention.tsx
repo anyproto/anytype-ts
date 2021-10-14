@@ -47,6 +47,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
 
+			let name = item.name || DataUtil.defaultName('page');
+			if (item.layout == I.ObjectLayout.Note) {
+				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -60,7 +65,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						id={item.id}
 						object={item.id == 'add' ? undefined : item}
 						icon={item.icon}
-						name={item.name}
+						name={name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}
@@ -177,12 +182,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map((it: any) => {
-				return {
-					...it, 
-					name: String(it.name || DataUtil.defaultName('page')),
-				};
-			}));
+			this.items = this.items.concat(message.records);
 			this.setState({ loading: false });
 		});
 	};
