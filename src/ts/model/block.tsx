@@ -148,6 +148,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
 
+	isObjectNote (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Note);
+	};
+
 	isObjectSet (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};

@@ -75,7 +75,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		const Item = (item: any) => {
 			let type = dbStore.getObjectType(item.type);
-			let description = item.description || item.snippet;
+			let description = item.description;
+			let name = item.name || DataUtil.defaultName('page');
+
+			if (item.layout == I.ObjectLayout.Note) {
+				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+			};
 
 			return (
 				<div 
@@ -86,7 +91,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				>
 					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
 					
-					<div className="name">{item.name}</div>
+					<div className="name">{name}</div>
 
 					{type ? (
 						<React.Fragment>
@@ -146,7 +151,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				</form>
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="empty">
+					<div id="empty" key="empty" className="emptySearch">
 						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
 					</div>
 				) : ''}
@@ -434,7 +439,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return { 
 				...it, 
 				isRoot: it.id == root, 
-				name: String(it.name || DataUtil.defaultName('page')) 
+				name: String(it.name || '') 
 			};
 		});
 	};

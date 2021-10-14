@@ -44,6 +44,9 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const allowIcon = !root.isObjectTask() && !root.isObjectNote();
+		const allowCover = !root.isObjectNote();
+
 		return (
 			<div 
 				className="editorControls"
@@ -52,17 +55,19 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				onDrop={this.onDrop}
 			>
 				<div className="controlButtons">
-					{!root.isObjectTask() ? (
+					{allowIcon ? (
 						<div id="button-icon" className="btn" onClick={this.onIcon}>
 							<Icon className="icon" />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 					) : ''}
 
-					<div id="button-cover" className="btn" onClick={this.onCover}>
-						<Icon className="addCover" />
-						<div className="txt">{translate('editorControlCover')}</div>
-					</div>
+					{allowCover ? (
+						<div id="button-cover" className="btn" onClick={this.onCover}>
+							<Icon className="addCover" />
+							<div className="txt">{translate('editorControlCover')}</div>
+						</div>
+					) : ''}
 
 					{!root.isObjectSet() && allowedLayout ? (
 						<div id="button-layout" className="btn" onClick={this.onLayout}>

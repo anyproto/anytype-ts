@@ -162,8 +162,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(rootId, block.id);
+		const item = data[index] || {};
 
-		return data[index] || {};
+		if (item.layout == I.ObjectLayout.Note) {
+			item.name = item.snippet;
+		};
+		return item;
 	};
 
 	getView (viewId?: string) {

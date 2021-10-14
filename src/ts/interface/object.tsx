@@ -34,8 +34,7 @@ export enum ObjectLayout {
 	File		 = 6,
 	Dashboard	 = 7,
 	Image		 = 8,
-	Video		 = 9,
-	Audio		 = 10,
+	Note		 = 9,
 	
 	Database	 = 20,
 	Space		 = 21,
@@ -43,6 +42,9 @@ export enum ObjectLayout {
 	Navigation	 = 100,
 	Graph		 = 101,
 	Store		 = 102,
+
+	Video		 = 1000,
+	Audio		 = 1001,
 };
 
 export enum RelationType { 

@@ -271,7 +271,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const block = blockStore.getLeaf(rootId, Constant.blockId.title);
+		const object = detailStore.get(rootId, rootId, []);
+
+		let block = null;
+		if (object.layout == I.ObjectLayout.Note) {
+			block = blockStore.getFirstBlock(rootId, 1, (it: any) => {
+				return it.isText();
+			});
+		} else {
+			block = blockStore.getLeaf(rootId, Constant.blockId.title);
+		};
 		if (!block) {
 			return;
 		};
