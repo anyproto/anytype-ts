@@ -39,11 +39,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured, Constant.relationKey.space ]);
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+
+		console.log(object);
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
@@ -143,14 +145,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			if (relation.format == I.RelationType.Checkbox) {
 				return true;
 			};
-			/*
-			if (!object[it]) {
+			if (object[Constant.relationKey.space] && ([ Constant.relationKey.creator ].indexOf(it) >= 0)) {
 				return false;
 			};
-			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
-				return false;
-			};
-			*/
 			return true;
 		});
 	};
