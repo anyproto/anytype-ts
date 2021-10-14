@@ -68,7 +68,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				onMouseEnter={() => { 
 					menuStore.close('select'); 
 					this.props.setHover({ id: 'add' }); 
-				}}>
+				}}
+			>
 				<Icon className="plus" />
 				<div className="name">Add</div>
 			</div>

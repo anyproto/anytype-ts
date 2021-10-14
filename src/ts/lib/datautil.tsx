@@ -1,5 +1,6 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
+import children from '../component/list/children';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -724,7 +725,7 @@ class DataUtil {
 	
 	menuGetBgColors () {
 		let items: any[] = [
-			{ id: 'color-default', name: 'Default', value: '', className: 'default', isBgColor: true }
+			{ id: 'bgColor-default', name: 'Default', value: '', className: 'default', isBgColor: true }
 		];
 		for (let color of Constant.textColor) {
 			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
@@ -941,37 +942,29 @@ class DataUtil {
 	};
 
 	getRelationOptions (rootId: string, blockId: string, view: I.View) {
-		let forceKeys = [ Constant.relationKey.done ];
 		let relations: any[] = this.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
 			const relation = dbStore.getRelation(rootId, blockId, it.relationKey);
-			return relation && (relation.format != I.RelationType.File);
+			return relation && (relation.format != I.RelationType.File) && (it.relationKey != Constant.relationKey.done);
 		});
 		let idxName = relations.findIndex((it: any) => { return it.relationKey == Constant.relationKey.name; });
 
-		for (let key of forceKeys) {
-			const relation = dbStore.getRelation(rootId, blockId, key);
-			if (relation && !relations.find((it: any) => { return it.relationKey == key; })) {
-				relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, relation);
-			};
-		};
+		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
+			relationKey: Constant.relationKey.done,
+		});
 
-		return relations.map((it: I.ViewRelation) => {
+		let ret: any[] = [];
+		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
-			
-			let isHidden = relation.isHidden;
-			if (forceKeys.indexOf(relation.relationKey) >= 0) {
-				isHidden = false;
-			};
-
-			return { 
+			ret.push({ 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
 				name: relation.name, 
-				isHidden: isHidden,
+				isHidden: relation.isHidden,
 				format: relation.format,
 				maxCount: relation.maxCount,
-			};
+			});
 		});
+		return ret;
 	};
 
 	getRelationArrayValue (value: any): string[] {
@@ -1103,7 +1096,7 @@ class DataUtil {
 				break;
 		};
 
-		if (childrenIds.indexOf(Constant.blockId.type) >= 0) {
+		if (object.isDraft) {
 			ret.className.push('noSystemBlocks');
 		};
 

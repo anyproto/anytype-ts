@@ -54,7 +54,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 							{({ height, isScrolling, registerChild, scrollTop }) => {
 								return (
 									<AutoSizer 
-										disableHeight 
+										disableHeight={true}
 										onResize={this.onResize} 
 										overscanByPixels={200}
 									>
@@ -67,7 +67,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 												<div ref={registerChild}>
 													<Masonry
 														ref={(ref: any) => { this.ref = ref; }}
-														autoHeight
+														autoHeight={true}
 														height={Number(height) || 0}
 														width={Number(width) || 0}
 														isScrolling={isScrolling}

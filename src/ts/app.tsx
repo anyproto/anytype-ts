@@ -142,7 +142,7 @@ interface State {
 
 const $ = require('jquery');
 const path = require('path');
-const { app, dialog, process } = window.require('electron').remote;
+const { app, dialog, process } = window.require('@electron/remote');
 const version = app.getVersion();
 const userPath = app.getPath('userData');
 const { ipcRenderer } = window.require('electron');

@@ -44,11 +44,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 						let icn: string[] = [ 'inner' ];
 						
 						if (action.isTextColor) {
-							icn.push('textColor textColor-' + action.value);
+							icn.push('textColor textColor-' + (action.value || 'default'));
 						};
 
 						if (action.isBgColor) {
-							icn.push('bgColor bgColor-' + action.value);
+							icn.push('bgColor bgColor-' + (action.value || 'default'));
 						};
 
 						if (action.isTextColor || action.isBgColor) {
@@ -60,13 +60,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 							action.object = { ...action, layout: I.ObjectLayout.Type };
 						};
 
-						return <MenuItemVertical 
-							key={i} 
-							{...action} 
-							withCaption={action.caption} 
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
-						/>;
+						return (
+							<MenuItemVertical 
+								key={i} 
+								{...action} 
+								withCaption={action.caption} 
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+								onClick={(e: any) => { this.onClick(e, action); }} 
+							/>
+						);
 					})}
 				</div>
 			</div>

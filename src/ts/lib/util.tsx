@@ -5,7 +5,7 @@ import { translate } from '.';
 
 const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('electron').remote;
+const { process } = window.require('@electron/remote');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I } from 'ts/lib';
+import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
 
@@ -12,6 +13,7 @@ interface Props extends RouteComponentProps<any> {
     data: any;
     onFilterChange: (v: string) => void;
     onSwitch: (id: string, v: string) => void;
+    togglePanel: (v: boolean) => void;
 };
 
 interface State {
@@ -36,6 +38,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
 		super(props);
 
         this.setState = this.setState.bind(this);
+        this.onCancel = this.onCancel.bind(this);
 	};
 
 	render () {
@@ -53,6 +56,8 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
                         {item.name}
                     </div>
                 ))}
+
+                <Icon className="close" onClick={this.onCancel} />
             </div>
         );
 
@@ -64,7 +69,7 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
 
             case I.GraphView.Preview:
                 tabs = null;
-                content = <Preview {...this.props} rootId={rootId} setState={this.setState} />;
+                content = <Preview {...this.props} rootId={rootId} onCancel={this.onCancel} />;
                 break;
             
             case I.GraphView.Filter:
@@ -89,6 +94,11 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
 
     onTab (view: I.GraphView) {
         this.setState({ view });
+    };
+
+    onCancel () {
+        this.props.togglePanel(false);
+        this.onTab(I.GraphView.Controls);
     };
 
     resize () {

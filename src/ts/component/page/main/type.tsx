@@ -58,7 +58,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const { config } = commonStore;
@@ -203,7 +203,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 									id="recommendedLayout" 
 									value={object.recommendedLayout} 
 									options={DataUtil.menuTurnLayouts()} 
-									arrowClassName="light" onChange={this.onLayout} 
+									arrowClassName="light" 
+									onChange={this.onLayout} 
 								/>
 							) : (
 								<React.Fragment>

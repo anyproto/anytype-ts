@@ -10,7 +10,7 @@ import arrayMove from 'array-move';
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
-const { dialog } = window.require('electron').remote;
+const { dialog } = window.require('@electron/remote');
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
 

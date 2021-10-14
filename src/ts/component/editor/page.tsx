@@ -18,7 +18,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 const { ipcRenderer } = window.require('electron');
-const { app } = window.require('electron').remote;
+const { app } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const $ = require('jquery');
@@ -61,7 +61,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 	render () {
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 		
 		const { rootId } = this.props;
@@ -347,9 +347,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const object = detailStore.get(rootId, rootId);
 
-		if (!root || !allowed || (childrenIds.indexOf(Constant.blockId.type) >= 0)) {
+		if (!root || !allowed || object.isDraft) {
 			return;
 		};
 		
@@ -563,7 +563,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
-				menuStore.close('blockContext', () => {
+				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					menuStore.open('blockAction', { 
 						element: '#block-' + ids[0],
 						offsetX: Constant.size.blockMenu,

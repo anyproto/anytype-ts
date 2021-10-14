@@ -39,7 +39,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		const Item = (item: any) => {
 			return (
-				<div id={'item-' + item.id} className="item" onClick={(e: any) => { this.onClick(e, item); }} onMouseEnter={(e: any) => { this.onOver(e, item); }} onMouseLeave={this.onOut}>
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onClick={(e: any) => { this.onClick(e, item); }} 
+					onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+					onMouseLeave={this.onOut}
+				>
 					<IconObject size={48} iconSize={32} object={{ ...item, layout: I.ObjectLayout.Type }} />
 					<div className="info">
 						<div className="txt">
@@ -146,6 +152,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				const value = this.ref.getValue();
 				this.ref.setRange({ from: value.length, to: value.length });
 			} else {
+				focus.clear(true);
 				this.setHover(items[this.n], true);
 			};
 		});
@@ -158,6 +165,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				this.n = 0;
 				focus.scroll(isPopup);
 			};
+
+			focus.clear(true);
 			this.setHover(items[this.n], true);
 		});
 
@@ -205,9 +214,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		node.find('.item.hover').removeClass('hover');
 		el.addClass('hover');
-
-		this.ref.blur();
-		focus.clear(true);
 
 		if (scroll) {
 			const container = isPopup ? $('#popupPage #innerWrap') : $(window);

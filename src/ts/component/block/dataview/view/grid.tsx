@@ -47,12 +47,12 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 							<WindowScroller scrollElement={isPopup ? $('#popupPage #innerWrap').get(0) : window}>
 								{({ height, isScrolling, registerChild, scrollTop }) => {
 									return (
-										<AutoSizer disableHeight>
+										<AutoSizer disableHeight={true}>
 											{({ width }) => {
 												return (
 													<div ref={registerChild}>
 														<List
-															autoHeight
+															autoHeight={true}
 															height={Number(height) || 0}
 															width={Number(width) || 0}
 															isScrolling={isScrolling}

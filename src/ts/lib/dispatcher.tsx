@@ -7,14 +7,12 @@ const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
 const Events = require('lib/pb/protos/events_pb');
 const path = require('path');
-const { remote } = window.require('electron');
 const Constant = require('json/constant.json');
-const raf = require('raf');
+const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
 
 /// #if USE_ADDON
-const { app } = remote;
 const bindings = window.require('bindings')({
 	bindings: 'addon.node',
 	module_root: path.join(app.getAppPath(), 'build'),
@@ -44,7 +42,7 @@ class Dispatcher {
 			this.service.client_.rpcCall = this.napiCall;
 			bindings.setEventHandler(handler);
 		/// #else
-			let serverAddr = remote.getGlobal('serverAddr');
+			let serverAddr = getGlobal('serverAddr');
 			console.log('[Dispatcher] Server address: ', serverAddr);
 			this.service = new Service.ClientCommandsClient(serverAddr, null, null);
 
@@ -547,8 +545,13 @@ class Dispatcher {
 					};
 					detailStore.update(rootId, { id: id, details: details }, false);
 
-					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-						blockStore.update(rootId, { id: rootId, layout: details.layout });
+					if ((id == rootId) && block) {
+						if ((undefined !== details.layout) && (block.layout != details.layout)) {
+							blockStore.update(rootId, { id: rootId, layout: details.layout });
+						};
+						if ((undefined !== details.isDraft)) {
+							blockStore.checkDraft(rootId);
+						};
 					};
 					break;
 
@@ -557,6 +560,7 @@ class Dispatcher {
 					keys = data.getKeysList() || [];
 					
 					detailStore.delete(rootId, id, keys);
+					blockStore.checkDraft(rootId);
 					break;
 
 				case 'objectRelationsSet':
@@ -644,9 +648,8 @@ class Dispatcher {
 		detailStore.set(rootId, details);
 		blockStore.restrictionsSet(rootId, restrictions);
 
+		let object = detailStore.get(rootId, rootId, []);
 		if (root) {
-			const object = detailStore.get(rootId, rootId, []);
-
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 		};
@@ -658,15 +661,43 @@ class Dispatcher {
 				dbStore.relationsSet(rootId, it.id, it.content.relations);
 				dbStore.viewsSet(rootId, it.id, it.content.views);
 			};
-			structure.push({ id: it.id, childrenIds: it.childrenIds });
 
+			if (it.id == rootId) {
+				it.childrenIds.push(Constant.blockId.footer);
+				structure.push({ id: Constant.blockId.footer, childrenIds: [] });
+			};
+
+			structure.push({ id: it.id, childrenIds: it.childrenIds });
 			return new M.Block(it);
 		});
+
+		// Footer
+		blocks.push(new M.Block({
+			id: Constant.blockId.footer,
+			parentId: rootId,
+			type: I.BlockType.Layout,
+			fields: {},
+			childrenIds: [],
+			content: {
+				style: I.LayoutStyle.Footer,
+			}
+		}));
+
+		// BlockType
+		blocks.push(new M.Block({
+			id: Constant.blockId.type,
+			parentId: Constant.blockId.footer,
+			type: I.BlockType.Type,
+			fields: {},
+			childrenIds: [],
+			content: {}
+		}));
 
 		blockStore.set(rootId, blocks);
 		blockStore.setStructure(rootId, structure);
 		blockStore.setNumbers(rootId); 
 		blockStore.updateMarkup(rootId);
+		blockStore.checkDraft(rootId);
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {

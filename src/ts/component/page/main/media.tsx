@@ -2,34 +2,53 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject } from 'ts/component';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Pager } from 'ts/component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
+import { Document, Page } from 'react-pdf';
+import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.js';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
-}
+};
+
+interface State {
+	pages: number;
+	page: number;
+};
 
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
+const { app } = window.require('@electron/remote')
+const path = window.require('path');
+const userPath = app.getPath('userData');
 
 const MAX_HEIGHT = 396;
 
-const PageMainMedia = observer(class PageMainMedia extends React.Component<Props, {}> {
+const PageMainMedia = observer(class PageMainMedia extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
 
+	state = {
+		pages: 0,
+		page: 1,
+	};
+
 	constructor (props: any) {
 		super(props);
 		
+		this.onOpen = this.onOpen.bind(this);
 		this.onDownload = this.onDownload.bind(this);
 	};
 
 	render () {
+		const { page, pages } = this.state;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
@@ -38,7 +57,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const file = blocks.find((it: I.Block) => { return it.isFile(); });
 
 		if (this.loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
@@ -46,6 +65,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
 		const isAudio = file?.isFileAudio();
+		const isPdf = file?.content.mime == 'application/pdf';
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio) {
@@ -71,6 +91,40 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 			file.align = I.BlockAlign.Center;
 		};
 
+		let content = null;
+		let pager = null;
+
+		if (file) {
+			if (isVideo || isImage || isAudio) {
+				content = <Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />;
+			} else 
+			if (isPdf) {
+				content = (
+					<div className="pdfWrapper">
+						<Document
+							file={commonStore.fileUrl(file.content.hash)}
+							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
+							renderMode="svg"
+						>
+							<Page pageNumber={page} />
+						</Document>
+					</div>
+				);
+
+				pager = (
+					<Pager 
+						offset={page - 1} 
+						limit={1} 
+						total={pages} 
+						pageLimit={5}
+						onChange={(page: number) => { this.setState({ page }); }} 
+					/>
+				);
+			} else {
+				content = <IconObject object={object} size={96} />;
+			};
+		};
+
 		return (
 			<div>
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
@@ -79,11 +133,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 					{file ? (
 						<React.Fragment>
 							<div className="side left">
-								{isVideo || isImage || isAudio ? (
-									<Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />
-								) : (
-									<IconObject object={object} size={96} />
-								)}
+								{content}
+								{pager}
 							</div>
 
 							<div className="side right">
@@ -93,7 +144,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 
-									<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+									<div className="buttons">
+										<Button text="Open" color="blank" className="download" onClick={this.onOpen} />
+										<Button text="Download" color="blank" className="download" onClick={this.onDownload} />
+									</div>
 								</div>
 
 								<div className="section">
@@ -205,6 +259,19 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 				};
 			});
 		};
+	};
+
+	onOpen (e: any) {
+		const rootId = this.getRootId();
+		const blocks = blockStore.getBlocks(rootId);
+		const block = blocks.find((it: I.Block) => { return it.isFile(); });
+		const { content } = block;
+
+		C.DownloadFile(content.hash, path.join(userPath, 'tmp'), (message: any) => {
+			if (message.path) {
+				ipcRenderer.send('pathOpen', message.path);
+			};
+		});
 	};
 
 	onDownload (e: any) {
