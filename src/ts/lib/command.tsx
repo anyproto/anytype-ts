@@ -737,15 +737,6 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request('blockRelationSetKey', request, callBack);
 };
 
-const BlockRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Relation.Add.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request('blockRelationAdd', request, callBack);
-};
 
 const BlockRelationRemove = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Remove.Request();
@@ -1213,7 +1204,6 @@ export {
 
 	BlockRelationSetKey,
 	BlockRelationList,
-	BlockRelationAdd,
 	BlockRelationUpdate,
 	BlockRelationRemove,
 
