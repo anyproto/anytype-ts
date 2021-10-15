@@ -218,7 +218,19 @@ class Dispatcher {
 					break;
 
 				case 'blockSetChildrenIds':
-					blockStore.updateStructure(rootId, data.getId(), data.getChildrenidsList());
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					const childrenIds = data.getChildrenidsList();
+
+					if ((id == rootId) && childrenIds.indexOf(Constant.blockId.footer) < 0) {
+						childrenIds.push(Constant.blockId.footer);
+					};
+
+					blockStore.updateStructure(rootId, id, childrenIds);
 					break;
 
 				case 'blockSetFields':

@@ -12,6 +12,7 @@ import 'prismjs/themes/prism.css';
 import 'katex/dist/katex.min.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
+	index?: any;
 	onToggle?(e: any): void;
 };
 
@@ -67,7 +68,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, readonly } = this.props;
+		const { rootId, block, readonly, index } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -77,6 +78,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let ct = color ? 'textColor textColor-' + color : '';
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
 		let additional = null;
+
+		if (root.isObjectNote() && (index == 1)) {
+			placeholder = 'Type something to proceed with Note';
+		};
 
 		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {

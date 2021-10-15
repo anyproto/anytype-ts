@@ -35,6 +35,7 @@ export enum BlockPosition {
 	Right	 = 4,
 	Inner	 = 5,
 	Replace	 = 6,
+	InnerFirst = 7,
 };
 
 export enum BlockSplitMode {

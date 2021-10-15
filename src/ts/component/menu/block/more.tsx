@@ -105,7 +105,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { config } = commonStore;
 		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const platform = Util.getPlatform();

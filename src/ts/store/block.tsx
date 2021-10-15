@@ -496,7 +496,6 @@ class BlockStore {
 	checkDraft (rootId: string) {
 		const object = detailStore.get(rootId, rootId, [ 'isDraft' ], true);
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
-
 		if (!footer) {
 			return;
 		};
