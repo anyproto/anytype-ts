@@ -240,13 +240,14 @@ class DbStore {
 		this.dataMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordAdd (rootId: string, blockId: string, obj: any, dir: number) {
+    recordAdd (rootId: string, blockId: string, obj: any, dir: number): number {
 		const data = this.getData(rootId, blockId);
 		obj = observable(obj);
 
 		intercept(obj as any, (change: any) => { return Util.intercept(obj, change); });
 
 		dir > 0 ? data.push(obj) : data.unshift(obj);
+		return dir > 0 ? data.length - 1 : 0;
 	};
 
     recordUpdate (rootId: string, blockId: string, obj: any) {

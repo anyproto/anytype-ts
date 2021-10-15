@@ -411,6 +411,9 @@ class Cell extends React.Component<Props, {}> {
 		if (relation.format == I.RelationType.Checkbox) {
 			return true;
 		};
+		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == Constant.relationKey.name)) {
+			return false;
+		};
 		return (viewType == I.ViewType.Grid);
 	};
 	

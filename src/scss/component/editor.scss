@@ -134,3 +134,8 @@
 .editorWrapper.align2, .editorWrapper.isHuman.align2 { 
 	.controlButtons { left: 0px !important; }
 }
+
+/* Note */ 
+.editorWrapper.isNote {
+	.editorControls { height: 70px; }
+}

@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockType { margin-top: 42px !important; }
 	.block.blockType { 
 		.wrapMenu { visibility: hidden; }
 

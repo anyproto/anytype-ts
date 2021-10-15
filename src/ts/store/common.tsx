@@ -34,6 +34,7 @@ class CommonStore {
     public linkPreviewObj: LinkPreview = null;
     public configObj:any = {};
     public cellId: string = '';
+	public typeId: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -91,6 +92,10 @@ class CommonStore {
 		return String(this.gatewayUrl || Storage.get('gateway') || '');
 	};
 
+	get type(): string {
+		return String(this.typeId || Storage.get('defaultType') || Constant.typeId.note);
+	};
+
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id: id, image: image, type: type };
 		Storage.set('cover', this.coverObj);
@@ -144,6 +149,11 @@ class CommonStore {
 
     linkPreviewSet (param: LinkPreview) {
 		this.linkPreviewObj = param;
+	};
+
+	typeSet (v: string) {
+		this.typeId = v;
+		Storage.set('defaultType', v);
 	};
 
 	configSet (config: any, force: boolean) {

@@ -50,10 +50,14 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				targetId = item.id;
 			};
 
-			const { _empty_, layout, iconEmoji, iconImage } = object;
+			const { _empty_, layout, iconEmoji, iconImage, snippet } = object;
 			const type = dbStore.getObjectType(object.type);
 			const cn = [ 'item' ];
-			const name = object.name || DataUtil.defaultName('page');
+			
+			let name: any = object.name || DataUtil.defaultName('page');
+			if (!object.name && (layout == I.ObjectLayout.Note)) {
+				name = <div className="empty">Empty</div>;
+			};
 
 			if (_empty_) {
 				return (
@@ -82,6 +86,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 					data-target-block-id={targetId}
 				>
 					{icon}
+
 					<div className="name">{name}</div>
 					<div className="type">{type ? type.name : ''}</div>
 
