@@ -202,6 +202,7 @@ declare global {
 		Analytics: any;
 		I: any;
 		Go: any;
+		Graph: any;
 	}
 };
 
@@ -212,6 +213,7 @@ window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
 window.Go = (route: string) => { history.push(route); };
+window.Graph = {};
 
 class App extends React.Component<Props, State> {
 	
