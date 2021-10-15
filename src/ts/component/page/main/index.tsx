@@ -141,17 +141,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										<Icon className="restore" />
 										<div className="name">Restore</div>
 									</div>
-									{list.length != this.selected.length ? (
-										<div className="element" onClick={this.onSelectionAll}>
-											<Icon className="all" />
-											<div className="name">Select all</div>
-										</div>
-									) : (
-										<div className="element" onClick={this.onSelectionNone}>
-											<Icon className="all" />
-											<div className="name">Deselect all</div>
-										</div>
-									)}
+									<div id="selectAll" className="element" onClick={this.onSelectionAll}>
+										<Icon className="all" />
+										<div className="name">Select all</div>
+									</div>
+									<div id="selectNone" className="element" onClick={this.onSelectionNone}>
+										<Icon className="all" />
+										<div className="name">Deselect all</div>
+									</div>
 									<div className="element" onClick={this.onSelectionClose}>
 										<Icon className="close" tooltip="Close" />
 									</div>
@@ -182,6 +179,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.onScroll();
 		this.onTab(Storage.get('tabIndex') || Tabs[0].id);
+		this.selectionRender();
 
 		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
 	};
@@ -385,7 +383,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#documents');
 		const cnt = node.find('#selectCnt');
+		const selectAll = node.find('#selectAll');
+		const selectNone = node.find('#selectNone');
+		const items = this.getList();
 		const l = this.selected.length;
+
+		if (l == items.length) {
+			selectAll.hide();
+			selectNone.show();
+		} else {
+			selectAll.show();
+			selectNone.hide();
+		};
 
 		l ? wrapper.addClass('isSelecting') : wrapper.removeClass('isSelecting');
 		cnt.text(`Selected ${l} ${Util.cntWord(l, 'object', 'objects')}`);
@@ -398,12 +407,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 	onSelectionDelete (e: any) {
 		C.ObjectListDelete(this.selected, () => {
+			this.selected = [];
+			this.selectionRender();
+
 			this.load();
 		});
 	};
 	
 	onSelectionRestore (e: any) {
 		C.ObjectListSetIsArchived(this.selected, false, () => {
+			this.selected = [];
+			this.selectionRender();
+			
 			this.load();
 		});
 	};
@@ -418,12 +433,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			this.selected.push(object.id);
 		});
 
-		this.forceUpdate();
+		this.selectionRender();
 	};
 
 	onSelectionNone (e: any) {
 		this.selected = [];
-		this.forceUpdate();
+		this.selectionRender();
 	};
 
 	onSelectionClose (e: any) {
