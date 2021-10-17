@@ -546,8 +546,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 				if (type == I.MarkType.Link) {
 					menuStore.open('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: '#block-' + ids[0],
+						element: `#block-${ids[0]}`,
 						offsetY: -4,
 						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
@@ -829,7 +828,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						menuStore.open('blockLink', {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-							type: I.MenuType.Horizontal,
 							offsetY: -4,
 							vertical: I.MenuDirection.Top,
 							horizontal: I.MenuDirection.Center,

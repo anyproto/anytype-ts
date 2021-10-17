@@ -72,7 +72,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							if (Mark.getInRange(marks, action.type, range)) {
 								cn.push('active');
 							};
-							return <Icon key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
+							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} onClick={(e: any) => { this.onMark(e, action.type); }} />;
 						})}
 					</div>
 				) : ''}
@@ -187,17 +187,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				break;
 				
 			case I.MarkType.Link:
-				const offset = obj.offset();
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
-
-				menuParam = Object.assign(menuParam, {
-					type: I.MenuType.Horizontal,
-					element: node,
-					fixedX: offset.left,
-					fixedY: offset.top,
-					vertical: I.MenuDirection.Top,
-					horizontal: I.MenuDirection.Center,
-				});
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),
 					onChange: (param: string) => {
