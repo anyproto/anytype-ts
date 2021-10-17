@@ -35,6 +35,32 @@
 			.side.left { width: 96px; }
 			.side.right { width: calc(100% - 128px); }
 		}
+
+		.section { margin-bottom: 32px; }
+		.section:last-child { margin: 0px; }
+
+		.section {
+			.title { @include text-header3; margin-bottom: 14px; position: relative; }
+		}
+
+		.section.template {
+			.btn { 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
+				cursor: pointer; transition: $transitionFast;
+			}
+			.btn {
+				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
+			}
+			.btn:hover { color: $colorBlack; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
+			}
+
+			.listTemplate {
+				.icon.arrow.left { left: -32px; }
+				.icon.arrow.right { right: -32px; }
+			}
+		}
 	}
 
 	.setWrapper.withIcon, .setWrapper.withIconAndCover {

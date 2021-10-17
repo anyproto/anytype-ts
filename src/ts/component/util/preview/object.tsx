@@ -16,7 +16,7 @@ interface State {
 const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 
-const ObjectPreviewBlock = observer(class ObjectPreviewBlock extends React.Component<Props, State> {
+const PreviewObject = observer(class PreviewObject extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
@@ -41,7 +41,7 @@ const ObjectPreviewBlock = observer(class ObjectPreviewBlock extends React.Compo
 		const author = detailStore.get(rootId, object.creator, []);
 		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
-		const cn = [ 'objectPreviewBlock' , check.className, className, ];
+		const cn = [ 'previewObject' , check.className, className, ];
 
 		let n = 0;
 		let c = 0;
@@ -340,4 +340,4 @@ const ObjectPreviewBlock = observer(class ObjectPreviewBlock extends React.Compo
 
 });
 
-export default ObjectPreviewBlock;
+export default PreviewObject;

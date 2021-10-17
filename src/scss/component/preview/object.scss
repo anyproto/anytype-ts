@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.objectPreviewBlock { width: 344px; height: 216px; border-radius: 8px; overflow: hidden; position: relative; }
-.objectPreviewBlock {
+.previewObject { width: 344px; height: 216px; border-radius: 8px; overflow: hidden; position: relative; }
+.previewObject {
 	.loaderWrapper { width: 100%; height: 100%; border: 1px solid $colorLightGrey; border-radius: 8px; }
 	.icon.logo { position: absolute; right: 6px; top: 6px; width: 28px; height: 28px; background-image: url('~img/icon/type/logo.svg'); z-index: 1; }
 
@@ -111,12 +111,12 @@
 	}
 }
 
-.objectPreviewBlock.withCover .scroller { padding-top: 104px; }
-.objectPreviewBlock.withIconAndCover .scroller { padding-top: 46px; }
+.previewObject.withCover .scroller { padding-top: 104px; }
+.previewObject.withIconAndCover .scroller { padding-top: 46px; }
 
-.objectPreviewBlock.align1 {
+.previewObject.align1 {
 	.heading { text-align: center; }
 }
-.objectPreviewBlock.align2 {
+.previewObject.align2 {
 	.heading { text-align: right; }
 }

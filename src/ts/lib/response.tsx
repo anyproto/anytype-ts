@@ -37,7 +37,7 @@ const Export = (response: any) => {
 
 const LinkPreview = (response: any) => {
 	return {
-		linkPreview: response.hasLinkpreview() ? Mapper.From.LinkPreview(response.getLinkpreview()) : {},
+		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
 	};
 };
 

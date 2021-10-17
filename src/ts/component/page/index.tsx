@@ -119,7 +119,7 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
-		Util.linkPreviewHide(true);
+		Util.previewLinkHide(true);
 	};
 
 	getMatch () {
@@ -155,7 +155,7 @@ class Page extends React.Component<Props, {}> {
 		this.event();
 		this.unbind();
 
-		Util.linkPreviewHide(true);
+		Util.previewLinkHide(true);
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
 		if (isPopup) {

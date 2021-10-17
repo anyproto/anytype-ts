@@ -181,7 +181,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		node.addClass('isDragging');
 		keyboard.setDrag(true);
-		Util.linkPreviewHide(false);
+		Util.previewLinkHide(false);
 
 		win.on('dragend.drag', (e: any) => { this.onDragEnd(e); });
 		win.on('drag.drag', throttle((e: any) => { this.onDragMove(e); }, THROTTLE));

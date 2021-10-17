@@ -45,8 +45,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		console.log(object);
-
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{type ? (
@@ -144,9 +142,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			};
 			if (relation.format == I.RelationType.Checkbox) {
 				return true;
-			};
-			if (object[Constant.relationKey.space] && ([ Constant.relationKey.creator ].indexOf(it) >= 0)) {
-				return false;
 			};
 			return true;
 		});

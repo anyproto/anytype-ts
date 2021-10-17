@@ -52,7 +52,7 @@ export interface HistoryVersion {
 	time: number;
 };
 
-export interface LinkPreview {
+export interface PreviewLink {
 	type: string;
 	title: string;
 	description: string;
