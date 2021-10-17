@@ -8,7 +8,7 @@ const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
-const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template', 'tab' ];
+const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template', 'tab', 'document', 'page' ];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
 
 class Analytics {
@@ -130,6 +130,15 @@ class Analytics {
 			case 'BlockDataviewViewSet':
 				param.type = translate('viewName' + data.type);
 				break;
+
+			case 'PopupHelp':
+				param.document = data.document;
+				break;
+
+			case 'PopupPage':
+				param.page = data.matchPopup.params.page;
+				param.action = data.matchPopup.params.action;
+				break;
 		};
 
 		if (this.debug()) {
@@ -161,6 +170,7 @@ class Analytics {
 		data.file[I.FileType.File]			 = 'File';
 		data.file[I.FileType.Image]			 = 'Image';
 		data.file[I.FileType.Video]			 = 'Video';
+		data.file[I.FileType.Audio]			 = 'Audio';
 		
 		data.div[I.DivStyle.Line]			 = 'Line';
 		data.div[I.DivStyle.Dot]			 = 'Dot';

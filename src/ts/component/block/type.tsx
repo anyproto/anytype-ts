@@ -61,7 +61,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
 				<div className="placeholder">
-					Choose object type (↓↑ to select) or press ENTER to continue with Draft type
+					Choose object type (↓↑ to select) or press ENTER to continue with Note type
 				</div>
 
 				<Filter 
