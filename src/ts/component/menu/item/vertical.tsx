@@ -109,6 +109,14 @@ class MenuItemVertical extends React.Component<Props, {}> {
     };
 
 	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	resize () {
 		const node = $(ReactDOM.findDOMNode(this));
 		const icon = node.find('.iconObject');
 

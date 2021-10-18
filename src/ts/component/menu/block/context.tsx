@@ -190,7 +190,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),
-					onChange: (param: string) => {
+					onChange: (type: I.MarkType, param: string) => {
 						if (!mark && !param) {
 							return;
 						};

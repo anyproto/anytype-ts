@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { MenuItemVertical, Loader } from 'ts/component';
-import { I, C, keyboard, Util, DataUtil, Mark } from 'ts/lib';
-import { commonStore, dbStore, blockStore } from 'ts/store';
+import { MenuItemVertical, Loader, Filter } from 'ts/component';
+import { I, C, keyboard, DataUtil } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import { menuStore } from '../../../store';
 
 interface Props extends I.Menu {}
 
@@ -14,7 +15,8 @@ interface State {
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 56;
+const HEIGHT_SECTION = 28;
+const HEIGHT_ITEM = 56;
 const LIMIT = 10;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props, State> {
@@ -30,27 +32,33 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	items: any = [];
 	n: number = -1;
 	refList: any = null;
+	refFilter: any = null;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
 	};
 	
 	render () {
 		const { loading } = this.state;
-		const items = this.getItems();
-		const { filter } = commonStore;
-		const { text } = filter;
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+		const items = this.getItems(true);
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
 			const cn = [ 'isBig' ];
-			
-			if (item.id == 'add') {
-				cn.push('add');
+
+			let object = item;
+			if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
+				cn.push(item.itemId);
+				object = null;
 			};
+
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
@@ -58,6 +66,28 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			let name = item.name || DataUtil.defaultName('page');
 			if (item.layout == I.ObjectLayout.Note) {
 				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+			};
+
+			let content = null;
+
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else {
+				content = (
+					<MenuItemVertical 
+						id={item.id}
+						object={object}
+						icon={item.icon}
+						name={name}
+						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onClick={(e: any) => { this.onClick(e, item); }}
+						withDescription={true}
+						description={type ? type.name : undefined}
+						style={param.style}
+						iconSize={40}
+						className={cn.join(' ')}
+					/>
+				);
 			};
 
 			return (
@@ -69,51 +99,51 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<MenuItemVertical 
-						id={item.id}
-						object={item.id == 'add' ? undefined : item}
-						icon={item.icon}
-						name={name}
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }}
-						withDescription={true}
-						description={type ? type.name : undefined}
-						style={param.style}
-						iconSize={40}
-						className={cn.join(' ')}
-					/>
+					{content}
 				</CellMeasurer>
 			);
 		};
 
 		return (
-			<div className="items">
-				{loading ? <Loader /> : (
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={({ index }) => index < items.length}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<List
-										ref={(ref: any) => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				)}
+			<div className="wrap">
+				<Filter 
+					ref={(ref: any) => { this.refFilter = ref; }} 
+					placeholder="Paste link or search objects" 
+					value={filter}
+					onChange={this.onFilterChange}
+				/>
+
+				<div className="items">
+					{loading ? <Loader /> : (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={({ index }) => index < items.length}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<List
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={({ index }) => {
+												const item = items[index];
+												return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+											}}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={10}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
+				</div>
 			</div>
 		);
 	};
@@ -127,7 +157,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
-		const items = this.getItems();
+		const items = this.getItems(false);
 
 		if (this.filter != filter.text) {
 			this.load(true);
@@ -138,7 +168,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 
@@ -160,10 +190,53 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		$(window).unbind('keydown.menu');
 	};
 
-	getItems () {
-		return [
-			{ id: 'add', name: 'Create new object', icon: 'plus', skipFilter: true }
-		].concat(this.items);
+	onFilterChange (e: any) {
+		menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+	};
+
+	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
+
+		let text = 'Create new object';
+
+		if (filter) {
+			text = `Create object “${filter}”`;
+		};
+		
+		let sections: any[] = [
+			{ id: I.MarkType.Object, name: 'Objects', children: [
+				{ id: 'add', name: text, icon: 'plus', skipFilter: true }
+			].concat(this.items) }
+		];
+
+		if (filter) {
+			sections.unshift({ 
+				id: I.MarkType.Link, name: 'Web sites', 
+				children: [
+					{ id: 'link', name: filter, icon: 'link', skipFilter: true }
+				] 
+			});
+			
+			sections = DataUtil.menuSectionsFilter(sections, filter);
+		};
+		
+		sections = DataUtil.menuSectionsMap(sections);
+		return sections;
+	};
+
+	getItems (withSections: boolean) {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			if (withSections) {
+				items.push({ id: section.id, name: section.name, isSection: true });
+			};
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -211,47 +284,34 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			return;
 		};
 
-		const { param } = this.props;
-		const { filter } = commonStore;
+		const { param, close } = this.props;
 		const { data } = param;
-		const { onChange } = data;
+		const { filter, onChange } = data;
 
-		const cb = (id: string, name: string) => {
-			let from = filter.from;
-			let to = from + name.length + 1;
-			let marks = Util.objectCopy(data.marks || []);
-
-			marks = Mark.adjust(marks, from, name.length);
-			marks = Mark.toggle(marks, { 
-				type: I.MarkType.Mention, 
-				param: id, 
-				range: { from: from, to: from + name.length },
-			});
-	
-			onChange(name + ' ', marks, from, to);
-		};
-
-		if (item.id == 'add') {
+		if (item.itemId == 'link') {
+			onChange(I.MarkType.Link, filter);
+		} else
+		if (item.itemId == 'add') {
 			C.PageCreate({ name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				cb(message.pageId, (name || DataUtil.defaultName('page')));
+				onChange(I.MarkType.Object, message.pageId);
 			});
 		} else {
-			cb(item.id, item.name);
+			onChange(I.MarkType.Object, item.id);
 		};
 
-		this.props.close();
+		close();
 	};
 
 	resize () {
 		const { getId, position } = this.props;
-		const items = this.getItems();
+		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = Math.max(HEIGHT * 1 + offset, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT_ITEM * 1 + offset, Math.min(HEIGHT_ITEM * LIMIT, items.length * HEIGHT_ITEM + offset));
 
 		obj.css({ height: height });
 		position();

@@ -760,7 +760,7 @@ class DataUtil {
 			{ id: I.ObjectLayout.Image, icon: 'image' },
 			{ id: I.ObjectLayout.Type, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
-			{ id: I.ObjectLayout.Note, icon: 'page' },
+			{ id: I.ObjectLayout.Note, icon: 'note' },
 		].map((it: any) => {
 			it.icon = 'layout c-' + it.icon;
 			it.name = translate('layout' + it.id);
