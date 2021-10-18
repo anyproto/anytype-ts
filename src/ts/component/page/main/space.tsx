@@ -167,11 +167,18 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		const rootId = this.getRootId();
+		const highlighted = dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED);
+
 		this._isMounted = false;
 		this.close();
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
+
+		for (let item of highlighted) {
+			Action.pageClose(item.id, false);
+		};
 	};
 
 	open () {
