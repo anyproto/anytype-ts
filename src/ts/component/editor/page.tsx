@@ -1696,7 +1696,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
 
-		if (this.refHeader) {
+		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
 		};

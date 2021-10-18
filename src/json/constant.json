@@ -130,7 +130,8 @@
 		"description": "description",
 		"featured": "featuredRelations",
 		"type": "type",
-		"done": "done"
+		"done": "done",
+		"setOf": "setOf"
 	},
 
 	"typeId": {
