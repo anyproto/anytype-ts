@@ -597,7 +597,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						});
 					};
 
-					DataUtil.checkTemplateCnt([ item.objectTypeId ], 2, (message: any) => {
+					DataUtil.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
 						if (message.records.length > 1) {
 							showMenu();
 						} else {

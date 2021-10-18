@@ -384,7 +384,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
-			className: 'fromIndex',
 			subIds: subIds,
 			onOpen: (context: any) => {
 				menuContext = context;
@@ -411,6 +410,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 									blockIds: [ item.id ],
 									type: I.NavigationType.Move, 
 									skipIds: [ rootId ],
+									filters: filters,
 									position: I.BlockPosition.Bottom,
 									onSelect: (el: any) => { menuContext.close(); }
 								}

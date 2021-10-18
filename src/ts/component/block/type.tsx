@@ -276,7 +276,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 			});
 		} else {
-			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
+			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
 					showMenu();
 				} else {
