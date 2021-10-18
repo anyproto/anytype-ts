@@ -17,7 +17,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 56;
-const LIMIT = 10;
+const LIMIT = 6;
 
 const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props, State> {
 
@@ -53,7 +53,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			const type: any = dbStore.getObjectType(item.type);
 			const cn = [ 'isBig' ];
 
-			let object = item;
+			let object = { ...item, id: item.itemId };
 			if ([ 'add', 'link' ].indexOf(item.itemId) >= 0) {
 				cn.push(item.itemId);
 				object = null;
@@ -152,7 +152,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		this._isMounted = true;
 		this.rebind();
 		this.resize();
-		this.load(false);
+		this.load();
 	};
 
 	componentDidUpdate () {
@@ -160,7 +160,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const items = this.getItems(false);
 
 		if (this.filter != filter.text) {
-			this.load(true);
+			this.load();
 			this.filter = filter.text;
 			this.n = -1;
 			return;
@@ -208,19 +208,25 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		let sections: any[] = [
 			{ id: I.MarkType.Object, name: 'Objects', children: [
 				{ id: 'add', name: text, icon: 'plus', skipFilter: true }
-			].concat(this.items) }
+			].concat(this.items), order: 2 }
 		];
 
 		if (filter) {
 			sections.unshift({ 
-				id: I.MarkType.Link, name: 'Web sites', 
+				id: I.MarkType.Link, name: 'Web sites', order: 1,
 				children: [
 					{ id: 'link', name: filter, icon: 'link', skipFilter: true }
 				] 
 			});
-			
+
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		};
+
+		sections.sort((c1: any, c2: any) => {
+			if (c1.order > c2.order) return 1;
+			if (c1.order < c2.order) return -1;
+			return 0;
+		});
 		
 		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
@@ -239,7 +245,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		return items;
 	};
 	
-	load (clear: boolean, callBack?: (message: any) => void) {
+	load () {
 		const { filter } = commonStore;
 		const { config } = commonStore;
 		const filters: any[] = [
@@ -256,15 +262,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		this.setState({ loading: true });
 
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text.replace(/\\/g, ''), 0, 0, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
-			if (clear) {
-				this.items = [];
-			};
-
-			this.items = this.items.concat(message.records);
+			this.items = message.records;
 			this.setState({ loading: false });
 		});
 	};
@@ -292,7 +290,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			C.PageCreate({ name: filter.text }, (message: any) => {
+			C.PageCreate({ name: filter }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -310,7 +308,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { getId, position } = this.props;
 		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
-		const offset = 16;
+		const offset = 6;
 		const height = Math.max(HEIGHT_ITEM * 1 + offset, Math.min(HEIGHT_ITEM * LIMIT, items.length * HEIGHT_ITEM + offset));
 
 		obj.css({ height: height });
