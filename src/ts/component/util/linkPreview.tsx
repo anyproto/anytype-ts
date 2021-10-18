@@ -147,7 +147,6 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 
 		menuStore.open('blockLink', {
 			rect: { ...rect, height: 0, y: rect.y + $(window).scrollTop() },
-			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				Util.linkPreviewHide(true);

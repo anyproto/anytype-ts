@@ -547,7 +547,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				if (type == I.MarkType.Link) {
 					menuStore.open('blockLink', {
 						element: `#block-${ids[0]}`,
-						vertical: I.MenuDirection.Top,
 						horizontal: I.MenuDirection.Center,
 						data: {
 							filter: '',
@@ -827,7 +826,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						menuStore.open('blockLink', {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-							vertical: I.MenuDirection.Top,
 							horizontal: I.MenuDirection.Center,
 							data: {
 								filter: (mark ? mark.param : ''),
