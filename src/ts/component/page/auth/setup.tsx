@@ -40,12 +40,18 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			case 'init':
 				title = translate('authSetupLogin'); 
 				break;
+
 			case 'register':
 			case 'add': 
 				title = translate('authSetupRegister');
 				break;
+
 			case 'select': 
 				title = translate('authSetupSelect');
+				break;
+
+			case 'share': 
+				title = translate('authSetupShare');
 				break;
 		};
 		
@@ -79,12 +85,18 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			case 'init': 
 				this.init(); 
 				break;
+
 			case 'register':
 			case 'add': 
 				this.add();
 				break;
+
 			case 'select': 
 				this.select();
+				break;
+
+			case 'share': 
+				this.share();
 				break;
 		};
 	};
@@ -193,6 +205,20 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				});
 			};
 		}); 
+	};
+
+	share () {
+		const { history, location } = this.props;
+		const param = Util.searchParam(location.search);
+
+		C.ObjectAddWithObjectId(param.id, param.payload, (message: any) => {
+			if (message.error.code) {
+				this.setError(message.error.description);
+			} else {
+				Storage.set('tabIndex', 'shared');
+				history.push('/main/index');
+			};
+		});
 	};
 	
 	setError (v: string) {

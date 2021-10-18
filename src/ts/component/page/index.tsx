@@ -15,11 +15,13 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
+import PageAuthShare from './auth/share';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
+import PageMainSpace from './main/space';
 import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
@@ -44,11 +46,14 @@ const Components: any = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
+	'auth/share':			 PageAuthShare,
+	'object/share':			 PageAuthShare,
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
+	'main/space':			 PageMainSpace,
 	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
@@ -71,7 +76,6 @@ class Page extends React.Component<Props, {}> {
 	render () {
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 
@@ -115,7 +119,7 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
-		Util.linkPreviewHide(true);
+		Util.previewLinkHide(true);
 	};
 
 	getMatch () {
@@ -151,7 +155,7 @@ class Page extends React.Component<Props, {}> {
 		this.event();
 		this.unbind();
 
-		Util.linkPreviewHide(true);
+		Util.previewLinkHide(true);
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
 		if (isPopup) {

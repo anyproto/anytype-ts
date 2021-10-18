@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Router, Route } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListMenu, Progress, Tooltip, LinkPreview, Icon } from './component';
+import { Page, ListMenu, Progress, Tooltip, PreviewLink, Icon } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
@@ -37,8 +37,6 @@ import 'scss/component/loader.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
-import 'scss/component/linkPreview.scss';
-import 'scss/component/objectPreviewBlock.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
@@ -46,11 +44,15 @@ import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
 import 'scss/component/list/template.scss';
 
+import 'scss/component/preview/link.scss';
+import 'scss/component/preview/object.scss';
+
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
 import 'scss/page/main/history.scss';
 import 'scss/page/main/set.scss';
+import 'scss/page/main/space.scss';
 import 'scss/page/main/type.scss';
 import 'scss/page/main/relation.scss';
 import 'scss/page/main/store.scss';
@@ -250,7 +252,7 @@ class App extends React.Component<Props, State> {
 				<Provider {...rootStore}>
 					<div>
 						<ListMenu history={history} />
-						<LinkPreview />
+						<PreviewLink />
 						<Progress />
 						<Tooltip />
 						
@@ -559,7 +561,7 @@ class App extends React.Component<Props, State> {
 		
 		win.on('blur.common', () => {
 			Util.tooltipHide(true);
-			Util.linkPreviewHide(true);
+			Util.previewLinkHide(true);
 		});
 	};
 

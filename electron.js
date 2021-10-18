@@ -584,7 +584,7 @@ function menuInit () {
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
 					click: () => { win.webContents.openDevTools(); }
-				}
+				},
 			]
 		});
 	};
@@ -616,7 +616,11 @@ function menuInit () {
 				{
 					label: 'Export templates',
 					click: () => { send('command', 'exportTemplates'); }
-				}
+				},
+				{
+					label: 'Create workspace',
+					click: () => { send('commandGlobal', 'workspace');	}
+				},
 			]
 		});
 	};
@@ -768,7 +772,7 @@ app.on('open-url', (e, url) => {
 	if (process.platform == 'win32') {
 		url = process.argv.slice(1);
 	};
-	send('route', url.replace(`${protocol}://`, ''));
+	send('route', url.replace(`${protocol}://`, '/'));
 });
 
 function send () {

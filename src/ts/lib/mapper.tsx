@@ -46,7 +46,7 @@ const Mapper = {
 			};
 		},
 
-		LinkPreview: (obj: any) => {
+		PreviewLink: (obj: any) => {
             return {
                 type: obj.getType(),
                 title: obj.getTitle(),

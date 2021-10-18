@@ -11,7 +11,7 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListIndex from './list/index';
 import ListChildren from './list/children';
-import ListTemplate from './list/template';
+import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
 
 import HeaderAuth from './header/auth';
@@ -59,8 +59,8 @@ import Filter from './util/filter';
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
 
-import LinkPreview from './util/linkPreview';
-import ObjectPreviewBlock from './util/objectPreviewBlock';
+import PreviewLink from './util/preview/link';
+import PreviewObject from './util/preview/object';
 
 import Graph from './util/graph';
 
@@ -77,7 +77,7 @@ export {
 	ListMenu,
 	ListIndex,
 	ListChildren,
-	ListTemplate,
+	ListObjectPreview,
 	ListObject,
 	HeaderAuth,
 	HeaderMainIndex,
@@ -118,8 +118,8 @@ export {
 	Error,
 	Icon,
 	IconObject,
-	LinkPreview,
-	ObjectPreviewBlock,
+	PreviewLink,
+	PreviewObject,
 	Graph,
 	Cell,
 };

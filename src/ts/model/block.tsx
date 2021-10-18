@@ -156,8 +156,12 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
+	isObjectSpace (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Space);
+	};
+
 	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo());
+		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio());
 	};
 
 	isObjectFile (): boolean { 
@@ -170,6 +174,10 @@ class Block implements I.Block {
 
 	isObjectVideo (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Video);
+	};
+
+	isObjectAudio (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
 	};
 
 	isObjectType (): boolean { 

@@ -37,7 +37,7 @@ const Export = (response: any) => {
 
 const LinkPreview = (response: any) => {
 	return {
-		linkPreview: response.hasLinkpreview() ? Mapper.From.LinkPreview(response.getLinkpreview()) : {},
+		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
 	};
 };
 
@@ -459,6 +459,12 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectShareByLink = (response: any) => {
+	return {
+		link: response.getLink(),
+	};
+};
+
 const MakeTemplate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -474,6 +480,12 @@ const MakeTemplateByObjectType = (response: any) => {
 const CloneTemplate = (response: any) => {
 	return {
 		id: response.getId(),
+	};
+};
+
+const WorkspaceCreate = (response: any) => {
+	return {
+		id: response.getWorkspaceid(),
 	};
 };
 
@@ -502,6 +514,7 @@ export {
 	ExternalDropFiles,
 
 	PageCreate,
+	SetCreate,
 
 	NavigationGetObjectInfoWithLinks,
 
@@ -579,16 +592,17 @@ export {
 	ObjectTypeCreate,
 	ObjectTypeRelationAdd,
 
-	SetCreate,
 	ObjectSearch,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
 	ObjectToSet,
+	ObjectShareByLink,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
 	CloneTemplate,
 
+	WorkspaceCreate,
 };

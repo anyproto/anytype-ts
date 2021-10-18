@@ -7,7 +7,7 @@
 
 	.item { display: inline-block; vertical-align: top; margin-right: 16px; position: relative; }
 	.item {
-		.objectPreviewBlock { width: 344px; height: 216px; cursor: pointer; }
+		.previewObject { width: 344px; height: 216px; cursor: pointer; }
 		.icon.plus { width: 28px; height: 28px; position: absolute; left: 50%; top: 50%; margin: -14px 0px 0px -14px; background-image: url('~img/icon/plus/templateBig.svg'); }
 	}
 	.item:before {

@@ -23,15 +23,10 @@ enum Tab {
 	Favorite	 = 'favorite',
 	Recent		 = 'recent',
 	Set			 = 'set',
+	Space		 = 'space',
+	Shared		 = 'shared',
 	Archive		 = 'archive',
 };
-
-const Tabs = [
-	{ id: Tab.Favorite, name: 'Favorites' },
-	{ id: Tab.Recent, name: 'History' },
-	{ id: Tab.Set, name: 'Sets' },
-	{ id: Tab.Archive, name: 'Archive' },
-];
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
@@ -76,6 +71,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
+		const tabs = this.getTabs();
 
 		const TabItem = (item: any) => (
 			<div className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
@@ -104,7 +100,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
 						<div className="tabWrap">
 							<div className="tabs">
-								{Tabs.map((item: any, i: number) => (
+								{tabs.map((item: any, i: number) => (
 									<TabItem key={i} {...item} />
 								))}
 							</div>
@@ -140,11 +136,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	componentDidMount () {
 		const win = $(window);
+		const tabs = this.getTabs();
 
 		crumbs.delete(I.CrumbsType.Page);
 
 		this.onScroll();
-		this.onTab(Storage.get('tabIndex') || Tabs[0].id);
+		this.onTab(Storage.get('tabIndex') || tabs[0].id);
 
 		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
 	};
@@ -188,10 +185,29 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
 	};
 
+	getTabs () {
+		const { config } = commonStore;
+
+		let tabs: any[] = [
+			{ id: Tab.Favorite, name: 'Favorites' },
+			{ id: Tab.Recent, name: 'History' },
+			{ id: Tab.Set, name: 'Sets', load: true },
+		];
+
+		if (config.sudo) {
+			tabs.push({ id: Tab.Space, name: 'Spaces', load: true });
+			tabs.push({ id: Tab.Shared, name: 'Shared', load: true });
+		};
+
+		tabs.push({ id: Tab.Archive, name: 'Archive', load: true });
+		return tabs;
+	};
+
 	onTab (id: Tab) {
-		let tab = Tabs.find((it: any) => { return it.id == id; });
+		let tabs = this.getTabs();
+		let tab = tabs.find((it: any) => { return it.id == id; });
 		if (!tab) {
-			tab = Tabs[0];
+			tab = tabs[0];
 			id = tab.id;
 		};
 
@@ -201,7 +217,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		Storage.set('tabIndex', id);
 		analytics.event('TabHome', { tab: tab.name });
 
-		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
+		if (tab.load) {
 			this.load();
 		};
 	};
@@ -219,6 +235,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (tab == Tab.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
+		};
+
+		if (tab == Tab.Space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space });
+		};
+
+		if (tab == Tab.Shared) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: Constant.typeId.space });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.NotEmpty, value: null });
 		};
 
 		if (!config.debug.ho) {
@@ -468,7 +493,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (!current || !target || !element) {
 			return;
 		};
-
 		
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		const oidx = element.childrenIds.indexOf(current.id);
@@ -578,6 +602,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case Tab.Archive:
 			case Tab.Set:
+			case Tab.Space:
+			case Tab.Shared:
 				list = pages;
 				break;
 		};

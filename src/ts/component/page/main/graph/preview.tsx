@@ -16,7 +16,7 @@ interface State {
 	loading: boolean;
 };
 
-const GraphPreview = observer(class ObjectPreviewBlock extends React.Component<Props, State> {
+const GraphPreview = observer(class PreviewObject extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,

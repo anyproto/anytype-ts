@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader, Title, Label, ListTemplate } from 'ts/component';
+import { Loader, Title, Label, ListObjectPreview } from 'ts/component';
 import { I, C, focus, Util, Action } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
@@ -53,7 +53,7 @@ class PopupTemplate extends React.Component<Props, State> {
 					<Label text={`Type “${Util.shorten(type.name, 32)}” has ${length} ${Util.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
 				</div>
 
-				<ListTemplate 
+				<ListObjectPreview 
 					ref={(ref: any) => { this.ref = ref; }}
 					items={items}
 					offsetX={-128}

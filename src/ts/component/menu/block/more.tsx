@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -131,6 +131,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
+		let share = { id: 'sharePage', name: 'Share' };
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
@@ -151,17 +152,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive ] },
 				{ children: [ fav, link ] },
 				{ children: [ print ] },
 			];
 
-			if (block.isObjectSet()) {
-				sections.unshift({ children: [ undo, redo ] });
-			} else {
+			if (!block.isObjectSet() && !block.isObjectSpace()) {
 				sections.splice(1, 0, { children: [ search ] });
+			};
+
+			if (block.isObjectSpace()) {
+				sections.push({ children: [ share ] });
 			};
 		} else
 		if (block.isPage()) {
@@ -536,6 +539,23 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if (block.isPage()) {
 						history.push('/main/index');
 					};
+				});
+				break;
+
+			case 'sharePage':
+				C.ObjectShareByLink(object.id, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					popupStore.open('prompt', {
+						data: {
+							title: 'Link to share',
+							value: message.link,
+							readonly: true,
+							select: true,
+						}
+					});
 				});
 				break;
 		};

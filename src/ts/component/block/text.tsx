@@ -294,7 +294,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				ipcRenderer.send('urlOpen', $(this).attr('href'));
 			});
 			
-			Util.linkPreviewShow(url, $(this), {
+			Util.previewLinkShow(url, $(this), {
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 

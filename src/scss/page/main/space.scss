@@ -1,0 +1,79 @@
+@import "~scss/_vars";
+
+.pageMainSpace {
+	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 74px 0px 80px 0px; user-select: none; }
+	.wrapper {
+
+		.block {
+			.wrapMenu { display: none; }	
+			.wrapContent { width: 100%; }
+		}
+		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }
+		.block.blockFeatured {
+			.cellContent { padding: 2.5px 6px; }
+		}
+
+		.editorControls { width: 704px; }
+
+		.head { width: 704px; margin: 0px auto 40px auto; display: flex; }
+		.head {
+			.side.left { flex-shrink: 0; margin-right: 32px; }
+			.side.right { width: 100%; line-height: 96px; }
+			.side.right.big { line-height: 112px; }
+
+			.side.right {
+				.txt { width: 100%; }
+				.editor { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; }
+				.wrap { position: relative; }
+
+				.title { @include text-header1; }
+				.descr { @include text-paragraph; margin: 7px 0px; }
+			}
+		}
+
+		.head.withIcon {
+			.side.left { width: 96px; }
+			.side.right { width: calc(100% - 128px); }
+		}
+
+		.section { margin-bottom: 32px; }
+		.section:last-child { margin: 0px; }
+
+		.section {
+			.title { @include text-header3; margin-bottom: 14px; position: relative; }
+		}
+
+		.section.template {
+			.btn { 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
+				cursor: pointer; transition: $transitionFast;
+			}
+			.btn {
+				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
+			}
+			.btn:hover { color: $colorBlack; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
+			}
+
+			.listTemplate {
+				.icon.arrow.left { left: -32px; }
+				.icon.arrow.right { right: -32px; }
+			}
+		}
+	}
+
+	.setWrapper.withIcon, .setWrapper.withIconAndCover {
+		.head {
+			.side.left { width: 96px; }
+			.side.right { width: calc(100% - 128px); }
+		}
+	}
+
+	.setWrapper.withCover, .setWrapper.withIconAndCover {
+		.wrapper { padding-top: 322px; }
+		.editorControls { display: none; }
+	}
+}
+
+.pageMainSet > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }

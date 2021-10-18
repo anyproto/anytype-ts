@@ -41,7 +41,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured, Constant.relationKey.setOf ]);
+		const object = detailStore.get(rootId, rootId, [ 
+			Constant.relationKey.featured, 
+			Constant.relationKey.space, 
+			Constant.relationKey.setOf, 
+		]);
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
