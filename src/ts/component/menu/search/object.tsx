@@ -236,10 +236,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper } = data;
+		const { type, dataMapper, skipIds } = data;
 		const { filter } = this.state;
 		const { config } = commonStore;
-		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -249,6 +248,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		].concat(data.sorts || []);
 
+		if (skipIds && skipIds.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+		};
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
@@ -277,7 +279,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					name: String(it.name || DataUtil.defaultName('page')),
 				};
 			}));
-			this.items = this.items.filter(filterMapper);
 
 			if (dataMapper) {
 				this.items = this.items.map(dataMapper);
@@ -285,17 +286,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			this.setState({ loading: false });
 		});
-	};
-
-	filterMapper (it: any, config: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { skipId } = data;
-
-		if (it.isArchived || (it.id == skipId)) {
-			return false;
-		};
-		return true;
 	};
 
 	onMouseEnter (e: any, item: any) {

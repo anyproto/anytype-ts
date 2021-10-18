@@ -146,16 +146,13 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
 
 		menuStore.open('blockLink', {
-			type: I.MenuType.Horizontal,
 			rect: { ...rect, height: 0, y: rect.y + $(window).scrollTop() },
-			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
-			offsetY: 44,
 			onOpen: () => {
 				Util.previewLinkHide(true);
 			},
 			data: {
-				value: (mark ? mark.param : ''),
+				filter: (mark ? mark.param : ''),
 				onChange: (param: string) => {
 					marks = Mark.toggle(marks, { type: I.MarkType.Link, param: param, range: range });
 					onChange(marks);

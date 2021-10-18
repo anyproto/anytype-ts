@@ -132,7 +132,8 @@
 		"type": "type",
 		"done": "done",
 		"space": "workspaceId",
-		"creator": "creator"
+		"creator": "creator",
+		"setOf": "setOf"
 	},
 
 	"typeId": {

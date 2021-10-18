@@ -1215,14 +1215,34 @@ class DataUtil {
 		};
 	};
 
-	checkTemplateCnt (typeIds: string[], limit: number, callBack?: (message: any) => void) {
+	// Check if there are at least 2 templates for object types
+	checkTemplateCnt (typeIds: string[], callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeIds },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
-		C.ObjectSearch(filters, [], [], '', 0, limit, (message: any) => {
+		C.ObjectSearch(filters, [], [], '', 0, 2, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
+	// Check if there is at least 1 set for object types
+	checkSetCnt (typeIds: string[], callBack?: (message: any) => void) {
+		const filters: I.Filter[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+			{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: typeIds },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+		];
+
+		C.ObjectSearch(filters, [], [], '', 0, 1, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

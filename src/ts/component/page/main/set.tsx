@@ -107,7 +107,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 								<Editor className="title" id="name" />
 								<Editor className="descr" id="description" />
 
-								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} className="small" />
 							</div>
 						</div>
 					</div>

@@ -222,10 +222,6 @@ const BlockUpload = (response: any) => {
 	return {};
 };
 
-const BlockRelationAdd = (response: any) => {
-	return {};
-};
-
 const BlockBookmarkFetch = (response: any) => {
 	return {};
 };
@@ -540,8 +536,6 @@ export {
 	BlockCut,
 	BlockPaste,
 	BlockUpload,
-
-	BlockRelationAdd,
 
 	BlockFileCreateAndUpload,
 	BlockBookmarkFetch,

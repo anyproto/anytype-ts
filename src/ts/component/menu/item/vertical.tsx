@@ -1,8 +1,11 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon, IconObject, Switch } from 'ts/component';
 import { I } from 'ts/lib';
 
 interface Props extends I.MenuItem {};
+
+const $ = require('jquery');
 
 class MenuItemVertical extends React.Component<Props, {}> {
 
@@ -104,6 +107,21 @@ class MenuItemVertical extends React.Component<Props, {}> {
 			</div>
 		);
     };
+
+	componentDidMount () {
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	resize () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const icon = node.find('.iconObject');
+
+		icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+	};
 
 };
 

@@ -114,8 +114,6 @@ class BlockStore {
 
     add (rootId: string, block: I.Block) {
 		let blocks = this.getBlocks(rootId);
-
-		block = new M.Block(block);
 		blocks.push(block);
 	};
 
@@ -400,7 +398,7 @@ class BlockStore {
 			let cb = item.childBlocks;
 
 			if (cb) {
-				delete(item.childBlocks);
+				try { delete(item.childBlocks); } catch (e) {};
 			};
 			
 			ret.push(item);
@@ -500,13 +498,20 @@ class BlockStore {
 			return;
 		};
 
+		let change = false;
 		if (object.isDraft) {
-			footer.childrenIds.push(Constant.blockId.type);
+			if (footer.childrenIds.indexOf(Constant.blockId.type) < 0) {
+				footer.childrenIds.push(Constant.blockId.type);
+				change = true;
+			};
 		} else {
 			footer.childrenIds = footer.childrenIds.filter((it: string) => { return it != Constant.blockId.type; });
+			change = true;
 		};
 		
-		this.updateStructure(rootId, Constant.blockId.footer, footer.childrenIds);
+		if (change) {
+			this.updateStructure(rootId, Constant.blockId.footer, footer.childrenIds);
+		};
 	};
 
 };

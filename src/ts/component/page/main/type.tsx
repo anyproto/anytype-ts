@@ -408,7 +408,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			});
 		};
 
-		DataUtil.checkTemplateCnt([ rootId ], 2, (message: any) => {
+		DataUtil.checkTemplateCnt([ rootId ], (message: any) => {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {

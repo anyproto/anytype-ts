@@ -64,7 +64,7 @@ html.platformWindows {
 		.name { color: #fff; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
 
 		.icon { cursor: pointer; -webkit-app-region: none; }
-		.icon.menu { width: 20px; height: 20px; margin-right: 16px; background-image: url('~img/icon/header/windows/menu0.svg'); }
+		.icon.menu { width: 20px; height: 20px; margin: -2px 16px 0px 0px; background-image: url('~img/icon/header/windows/menu0.svg'); }
 		.icon.min { background-image: url('~img/icon/header/windows/min0.svg'); }
 		.icon.max { background-image: url('~img/icon/header/windows/max0.svg'); }
 		.icon.close { background-image: url('~img/icon/header/windows/close0.svg'); }
@@ -91,6 +91,12 @@ html.platformWindows {
 	}
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
+
+	.blocks {
+		.block.blockDataview {
+			.content .scroll::-webkit-scrollbar-thumb { border-width: 5px; border-radius: 10px; }
+		}
+	}
 }
 
 .dn { display: none !important; }
