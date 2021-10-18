@@ -252,7 +252,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		DataUtil.checkTemplateCnt(setOf, 2, (message: any) => {
+		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
