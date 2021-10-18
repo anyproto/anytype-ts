@@ -546,13 +546,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 				if (type == I.MarkType.Link) {
 					menuStore.open('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: '#block-' + ids[0],
-						offsetY: -4,
-						vertical: I.MenuDirection.Top,
+						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
 						data: {
-							value: '',
+							filter: '',
 							onChange: (param: string) => {
 								C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
 							}
@@ -829,12 +826,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						menuStore.open('blockLink', {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-							type: I.MenuType.Horizontal,
-							offsetY: -4,
-							vertical: I.MenuDirection.Top,
 							horizontal: I.MenuDirection.Center,
 							data: {
-								value: (mark ? mark.param : ''),
+								filter: (mark ? mark.param : ''),
 								onChange: (param: string) => {
 									marks = Mark.toggle(marks, { type: type, param: param, range: range });
 									DataUtil.blockSetText(rootId, block, text, marks, true, () => {

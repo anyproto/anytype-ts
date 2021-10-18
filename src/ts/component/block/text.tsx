@@ -257,6 +257,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			raf(() => {
 				this.renderLinks();
+				this.renderObjects();
 				this.renderMentions();
 				this.renderEmoji();
 			});
@@ -302,6 +303,39 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				onChange: (marks: I.Mark[]) => {
 					self.setMarks(marks);
 				}
+			});
+		});
+	};
+
+	renderObjects () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { rootId } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+		const value = node.find('#value');
+		const items = value.find('obj');
+
+		if (!items.length) {
+			return;
+		};
+
+		items.unbind('click.object mouseenter.object');
+			
+		items.on('mouseenter.object', function (e: any) {
+			const el = $(this);
+			const data = el.data();
+
+			if (!data.param) {
+				return;
+			};
+
+			el.on('click.object', function (e: any) {
+				e.preventDefault();
+
+				const object = detailStore.get(rootId, data.param, []);
+				DataUtil.objectOpenEvent(e, object);
 			});
 		});
 	};

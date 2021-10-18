@@ -398,7 +398,7 @@ class BlockStore {
 			let cb = item.childBlocks;
 
 			if (cb) {
-				delete(item.childBlocks);
+				try { delete(item.childBlocks); } catch (e) {};
 			};
 			
 			ret.push(item);

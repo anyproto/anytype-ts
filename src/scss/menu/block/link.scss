@@ -1,15 +1,32 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuBlockLink { width: 400px; height: 44px; padding: 11px 16px; transform-origin: 50% 50% !important; }
+	.menu.menuBlockLink { width: 360px; }
 	.menu.menuBlockLink {
-		.flex { width: 100%; }
-		.input { width: 100%; height: 22px; padding: 0px; flex: auto; width: calc(100% - 100px); }
-		.buttons { flex: auto; white-space: nowrap; width: 100px; text-align: right; color: $colorMediumGrey; font-weight: 500; }
-		.buttons {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionFast; }
-			.btn:last-child { margin: 0px; }
-			.btn:hover { color: $colorBlack; }
+		.content { transition: none; padding: 0px; max-height: 420px; padding: 8px 0px 0px 0px;  }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.wrap.withLabel {
+			.ReactVirtualized__Grid__innerScrollContainer { margin-top: 0px; }
 		}
+
+		.items { height: 100%; }
+
+		.filter { flex-shrink: 0; }
+
+		.item {
+			.name { @include text-overflow-nw; width: 100%; }
+
+			.icon.plus { background-image: url('~img/icon/menu/link/object.svg'); }
+			.icon.link { background-image: url('~img/icon/menu/link/url.svg'); }
+		}
+
+		.item.withDescription {
+			.info { padding: 0px; }
+		}
+		.item.withDescription.withIcon, .item.add, .item.link {
+			.info { padding-left: 52px; }
+		}
+
+		.item.add, .item.link { color: $colorDarkGrey; }
 	}
 }

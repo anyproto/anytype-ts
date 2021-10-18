@@ -1,7 +1,19 @@
 import { I, Util, SmileUtil, Storage } from 'ts/lib';
 
 const $ = require('jquery');
-const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
+const Tags = [ 
+	'strike', 
+	'kbd', 
+	'italic', 
+	'bold', 
+	'underline', 
+	'lnk', 
+	'color', 
+	'bgcolor', 
+	'mention', 
+	'emoji', 
+	'obj',
+];
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -230,7 +242,7 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-		let hasParam = [ I.MarkType.Link, I.MarkType.Color, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
+		let hasParam = [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Color, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
