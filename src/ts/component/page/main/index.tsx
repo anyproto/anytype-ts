@@ -427,7 +427,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
-
 								data: {
 									rebind: menuContext.ref.rebind,
 									rootId: rootId,

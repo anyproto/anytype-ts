@@ -327,6 +327,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 										className: 'big single',
 										vertical: I.MenuDirection.Center,
 										offsetX: menuContext.getSize().width,
+										isSub: true,
 										data: {
 											isBig: true,
 											rootId: rootId,
