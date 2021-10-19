@@ -159,12 +159,15 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { filter } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const items = this.getItems(false);
 
-		if (this.filter != filter.text) {
+		if (this.filter != filter) {
 			this.load();
-			this.filter = filter.text;
+			this.filter = filter;
+			this.top = 0;
 			this.n = -1;
 			return;
 		};

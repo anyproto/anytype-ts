@@ -502,6 +502,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let remove = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
+		
 		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		if (favorites.length) {
@@ -571,7 +572,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
-
 								data: {
 									rebind: menuContext.ref.rebind,
 									rootId: rootId,
