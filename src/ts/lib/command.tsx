@@ -45,6 +45,14 @@ const Shutdown = (callBack?: (message: any) => void) => {
 	dispatcher.request('shutdown', request, callBack);
 };
 
+const FileOffloadAll = (notPinned: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Ipfs.File.OffloadAll.Request();
+
+	request.setIncludenotpinned(notPinned);
+
+	dispatcher.request('filesOffloadAll', request, callBack);
+};
+
 const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.LinkPreview.Request();
 
@@ -1158,6 +1166,7 @@ export {
 	ProcessCancel,
 	Export,
 	ExportTemplates,
+	FileOffloadAll,
 
 	WalletCreate,
 	WalletRecover,

@@ -35,6 +35,13 @@ const Export = (response: any) => {
 	};
 };
 
+const FileOffloadAll = (response: any) => {
+	return {
+		files: Number(response.getOffloadedfiles()) || 0,
+		bytes: Number(response.getBytesoffloaded()) || 0,
+	};
+};
+
 const LinkPreview = (response: any) => {
 	return {
 		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
@@ -501,6 +508,7 @@ export {
 	DownloadFile,
 	ProcessCancel,
 	LinkPreview,
+	FileOffloadAll,
 
 	WalletCreate,
 	WalletRecover,
