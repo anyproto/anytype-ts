@@ -287,6 +287,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	onType (e: any) {
 		e.persist();
+		e.preventDefault();
+		e.stopPropagation();
 
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
@@ -320,29 +322,29 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					options: options,
 					onOver: (e: any, el: any) => {
 						menuStore.closeAll(subIds, () => {
-							menuStore.closeAll(subIds, () => { 
-								if (el.id == 'change') {
-									menuStore.open('searchObject', {
-										element: `#menuSelect #item-${el.id}`,
-										className: 'big single',
-										vertical: I.MenuDirection.Center,
-										offsetX: menuContext.getSize().width,
-										data: {
-											isBig: true,
-											rootId: rootId,
-											blockId: block.id,
-											blockIds: [ block.id ],
-											placeholder: 'Change object type',
-											placeholderFocus: 'Change object type',
-											filters: filters,
-											onSelect: (item: any) => {
-												C.BlockObjectTypeSet(rootId, item.id);
-												menuStore.close('select');
-											}
+							if (el.id == 'change') {
+								menuStore.open('searchObject', {
+									element: `#menuSelect #item-${el.id}`,
+									className: 'big single',
+									vertical: I.MenuDirection.Center,
+									offsetX: menuContext.getSize().width,
+									isSub: true,
+									data: {
+										rebind: menuContext.ref.rebind,
+										isBig: true,
+										rootId: rootId,
+										blockId: block.id,
+										blockIds: [ block.id ],
+										placeholder: 'Change object type',
+										placeholderFocus: 'Change object type',
+										filters: filters,
+										onSelect: (item: any) => {
+											C.BlockObjectTypeSet(rootId, item.id);
+											menuContext.close();
 										}
-									}); 
-								};
-							});
+									}
+								}); 
+							};
 						});
 					},
 					onSelect: (e: any, el: any) => {
@@ -374,7 +376,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		DataUtil.checkSetCnt([ object.type ], (message: any) => {
-			if (message.records.length == 1) {
+			if (message.records.length > 0) {
 				setId = message.records[0].id;
 				options.push({ id: 'setOpen', name: 'Open set' });
 			} else {

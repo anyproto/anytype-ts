@@ -173,5 +173,15 @@
 			.button { margin-top: 25px; }
 		}
 
+		.tabOther {
+			.row { 
+				width: 100%; display: flex; padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; 
+				@include text-paragraph; line-height: 28px;
+			}
+
+			.side { width: 50%; line-height: 28px; }
+			.side.right { text-align: right; }
+		}
+
 	}
 }

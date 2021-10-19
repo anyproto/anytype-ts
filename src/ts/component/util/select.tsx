@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
-import { Icon } from 'ts/component';
+import { Icon, MenuItemVertical } from 'ts/component';
 import { commonStore, menuStore } from 'ts/store';
 
 interface Props {
@@ -60,8 +60,7 @@ class Select extends React.Component<Props, State> {
 			<div id={'select-' + id} className={cn.join(' ')} onClick={this.show}>
 				{current ? (
 					<React.Fragment>
-						{current.icon ? <Icon className={current.icon} /> : ''}
-						<div className="name">{current.name}</div>
+						<MenuItemVertical {...current} />
 						<Icon className={acn.join(' ')} />
 					</React.Fragment>
 				) : ''}

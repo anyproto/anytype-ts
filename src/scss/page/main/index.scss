@@ -87,7 +87,7 @@
 
 		.item { 
 			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
-			margin: 0px 16px 16px 0px; padding: 16px; position: relative; cursor: pointer; user-select: none;
+			margin: 0px 16px 16px 0px; padding: 14px 16px; position: relative; cursor: pointer; user-select: none;
 		}
 		
 		.item {
@@ -95,10 +95,10 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; width: 100%; word-break: break-word; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; 
-				display: -webkit-box;
+				@include text-common; width: 100%; word-break: break-word; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; 
+				display: -webkit-box; line-height: 20px;
 			}
-			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 0px; left: 0px; padding: 0px 16px 11px 16px; }
+			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 11px; left: 0px; padding: 0px 16px; }
 			
 			.icon.more { 
 				background-image: url('~img/icon/index/more0.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;

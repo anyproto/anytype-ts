@@ -33,12 +33,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	n: number = -1;
 	refList: any = null;
 	refFilter: any = null;
+	top: number = 0;
 
 	constructor (props: any) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -137,6 +139,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
+											onScroll={this.onScroll}
 										/>
 									)}
 								</AutoSizer>
@@ -156,12 +159,15 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const { filter } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { filter } = data;
 		const items = this.getItems(false);
 
-		if (this.filter != filter.text) {
+		if (this.filter != filter) {
 			this.load();
-			this.filter = filter.text;
+			this.filter = filter;
+			this.top = 0;
 			this.n = -1;
 			return;
 		};
@@ -171,6 +177,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
 
 		this.resize();
 		this.props.setActive();
@@ -298,10 +308,16 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 				onChange(I.MarkType.Object, message.pageId);
 			});
 		} else {
-			onChange(I.MarkType.Object, item.id);
+			onChange(I.MarkType.Object, item.itemId);
 		};
 
 		close();
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
 	};
 
 	resize () {
