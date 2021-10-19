@@ -828,7 +828,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
 							horizontal: I.MenuDirection.Center,
 							data: {
-								filter: (mark ? mark.param : ''),
+								filter: (mark && (mark.type == I.MarkType.Link) ? mark.param : ''),
 								onChange: (newType: I.MarkType, param: string) => {
 									if (mark && (mark.type != newType)) {
 										marks = Mark.toggle(marks, { type: mark.type, param: '', range: range });	
