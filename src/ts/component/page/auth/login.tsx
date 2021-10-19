@@ -66,7 +66,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 		
 		const { history } = this.props;
 		const { path } = authStore;
-		const phrase = this.phraseRef.getValue();
+		const phrase = this.phraseRef.getValue().trim();
 		
 		this.phraseRef.setError(false);
 		
