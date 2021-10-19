@@ -636,12 +636,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				textConfirm: 'Yes',
 				textCancel: 'Cancel',
 				onConfirm: () => {
-					C.FileOffloadAll(false, (message: any) => {
+					this.setState({ loading: true });
+
+
+					C.FileListOffload([], false, (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						console.log(message);
+						this.setState({ loading: false });
 
 						popupStore.open('confirm',{
 							data: {

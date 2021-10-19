@@ -8,12 +8,6 @@ const DebugSync = (response: any) => {
 	return response.toObject();
 };
 
-const ImageGetBlob = (response: any) => {
-	return {
-		blob: response.getBlob(),
-	};
-};
-
 const ConfigGet = (response: any) => {
 	return {
 		homeBlockId: response.getHomeblockid(),
@@ -35,10 +29,10 @@ const Export = (response: any) => {
 	};
 };
 
-const FileOffloadAll = (response: any) => {
+const FileListOffload = (response: any) => {
 	return {
-		files: Number(response.getOffloadedfiles()) || 0,
-		bytes: Number(response.getBytesoffloaded()) || 0,
+		files: response.getFilesoffloaded(),
+		bytes: response.getBytesoffloaded(),
 	};
 };
 
@@ -500,7 +494,6 @@ export {
 	VersionGet,
 	DebugSync,
 
-	ImageGetBlob,
 	ConfigGet,
 	Export,
 	Shutdown,
@@ -508,7 +501,7 @@ export {
 	DownloadFile,
 	ProcessCancel,
 	LinkPreview,
-	FileOffloadAll,
+	FileListOffload,
 
 	WalletCreate,
 	WalletRecover,

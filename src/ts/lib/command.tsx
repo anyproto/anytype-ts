@@ -26,15 +26,6 @@ const DebugTree = (blockId: string, path: string, callBack?: (message: any) => v
 	dispatcher.request('debugTree', request, callBack);
 };
 
-const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
-	
-	request.setHash(hash);
-    request.setSize(size);
-
-	dispatcher.request('imageGetBlob', request, callBack);
-};
-
 const ConfigGet = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('configGet', request, callBack);
@@ -45,12 +36,13 @@ const Shutdown = (callBack?: (message: any) => void) => {
 	dispatcher.request('shutdown', request, callBack);
 };
 
-const FileOffloadAll = (notPinned: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Ipfs.File.OffloadAll.Request();
+const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.FileList.Offload.Request();
 
+	request.setOnlyidsList(ids);
 	request.setIncludenotpinned(notPinned);
 
-	dispatcher.request('filesOffloadAll', request, callBack);
+	dispatcher.request('fileListOffload', request, callBack);
 };
 
 const LinkPreview = (url: string, callBack?: (message: any) => void) => {
@@ -1157,7 +1149,6 @@ export {
 	DebugSync,
 	DebugTree,
 
-	ImageGetBlob,
 	ConfigGet,
 	Shutdown,
 	LinkPreview,
@@ -1166,7 +1157,7 @@ export {
 	ProcessCancel,
 	Export,
 	ExportTemplates,
-	FileOffloadAll,
+	FileListOffload,
 
 	WalletCreate,
 	WalletRecover,
