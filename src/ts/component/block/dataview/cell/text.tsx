@@ -23,6 +23,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 	range: any = null;
 	ref: any = null;
+	value: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -208,7 +209,11 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
+		const { relation, index, getRecord } = this.props;
+		const record = getRecord(index);
+
 		this._isMounted = true;
+		this.value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 	};
 
 	componentWillUnmount () {
@@ -217,21 +222,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, index, getRecord, cellPosition } = this.props;
+		const { id, relation, cellPosition } = this.props;
 		const cell = $(`#${id}`);
-		const record = getRecord(index);
 
 		if (isEditing) {
-			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
-			let length = String(value || '').length;
+			let length = String(this.value || '').length;
 
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
-				value = value !== null ? Util.date(format.join(' ').trim(), value) : '';
+				this.value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
 			};
 
 			if (this.ref) {
-				this.ref.setValue(value);
+				this.ref.setValue(this.value);
 
 				if (this.ref.setRange) {
 					this.ref.setRange(this.range || { from: length, to: length });
@@ -286,6 +289,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			menuStore.updateData('button', { disabled: !value });
 		};
 
+		this.value = value;
+
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
@@ -301,17 +306,16 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
+		this.value = this.fixDateValue(value);
 
-		value = String(value || '').replace(/_/g, '');
-		value = value ? Util.parseDate(value) : null;
-		if (value) {
-			menuStore.updateData(MENU_ID, { value: value });
+		if (this.value) {
+			menuStore.updateData(MENU_ID, { value: this.value });
 		};
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 			if (onChange) {
-				onChange(value, () => {
+				onChange(this.value, () => {
 					menuStore.close(MENU_ID);
 				});
 			};
@@ -328,6 +332,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let record = getRecord(index);
 
 		keyboard.setFocus(false);
+		
 		this.range = null;
 
 		if (keyboard.isBlurDisabled) {
@@ -335,7 +340,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		};
 
 		if (relation.format == I.RelationType.Date) {
-			value = value ? Util.parseDate(value) : null;
+			value = this.fixDateValue(value);
 		} else 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
 			this.setState({ isEditing: false });
@@ -349,6 +354,11 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				};
 			});
 		};
+	};
+
+	fixDateValue (v: any) {
+		v = String(v || '').replace(/_/g, '');
+		return v ? Util.parseDate(v) : null;
 	};
 
 	onIconSelect (icon: string) {
