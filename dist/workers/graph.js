@@ -260,7 +260,6 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 drawNode = (d) => {
 	let bg = Color.node.common;
 	let stroke = '';
-	let width = 0;
 	let img = images[d.src];
 	let isMatched = forceProps.filter && d.name.match(forceProps.filter);
 

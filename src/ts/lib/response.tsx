@@ -37,7 +37,7 @@ const Export = (response: any) => {
 
 const LinkPreview = (response: any) => {
 	return {
-		linkPreview: response.hasLinkpreview() ? Mapper.From.LinkPreview(response.getLinkpreview()) : {},
+		previewLink: response.hasLinkpreview() ? Mapper.From.PreviewLink(response.getLinkpreview()) : {},
 	};
 };
 
@@ -219,10 +219,6 @@ const BlockSplit = (response: any) => {
 };
 
 const BlockUpload = (response: any) => {
-	return {};
-};
-
-const BlockRelationAdd = (response: any) => {
 	return {};
 };
 
@@ -463,6 +459,12 @@ const ObjectListDelete = (response: any) => {
 	return {};
 };
 
+const ObjectShareByLink = (response: any) => {
+	return {
+		link: response.getLink(),
+	};
+};
+
 const MakeTemplate = (response: any) => {
 	return {
 		id: response.getId(),
@@ -478,6 +480,12 @@ const MakeTemplateByObjectType = (response: any) => {
 const CloneTemplate = (response: any) => {
 	return {
 		id: response.getId(),
+	};
+};
+
+const WorkspaceCreate = (response: any) => {
+	return {
+		id: response.getWorkspaceid(),
 	};
 };
 
@@ -506,6 +514,7 @@ export {
 	ExternalDropFiles,
 
 	PageCreate,
+	SetCreate,
 
 	NavigationGetObjectInfoWithLinks,
 
@@ -527,8 +536,6 @@ export {
 	BlockCut,
 	BlockPaste,
 	BlockUpload,
-
-	BlockRelationAdd,
 
 	BlockFileCreateAndUpload,
 	BlockBookmarkFetch,
@@ -584,17 +591,19 @@ export {
 	ObjectTypeCreate,
 	ObjectTypeRelationAdd,
 
-	SetCreate,
 	ObjectSearch,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,
 	ObjectRelationOptionAdd,
 	ObjectToSet,
+	ObjectShareByLink,
+
 	ObjectListDelete,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
 	CloneTemplate,
 
+	WorkspaceCreate,
 };

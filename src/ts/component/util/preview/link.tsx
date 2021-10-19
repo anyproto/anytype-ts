@@ -22,7 +22,7 @@ const { ipcRenderer } = window.require('electron');
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const LinkPreview = observer(class LinkPreview extends React.Component<Props, State> {
+const PreviewLink = observer(class PreviewLink extends React.Component<Props, State> {
 	
 	state = {
 		loading: false,
@@ -45,7 +45,7 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 	
 	render () {
 		let { loading, title, description, url, faviconUrl, imageUrl } = this.state;
-		const { linkPreview } = commonStore;
+		const { previewLink } = commonStore;
 		
 		let content = null;
 		let style: any = {};
@@ -60,9 +60,9 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 			content = (
 				<React.Fragment>
 					<div className="head">
-						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('linkPreviewCopy')}</div>
-						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('linkPreviewEdit')}</div>
-						<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('linkPreviewUnlink')}</div>
+						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('previewLinkCopy')}</div>
+						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewLinkEdit')}</div>
+						<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewLinkUnlink')}</div>
 					</div>
 					<div className="cp" onClick={this.onClick}>
 						{imageUrl ? <div className="img" style={style} /> : ''}
@@ -80,7 +80,7 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 		};
 		
 		return (
-			<div id="linkPreview" className="linkPreview">
+			<div id="previewLink" className="previewLink">
 				<div className="polygon" onClick={this.onClick} />
 				<div className="content">{content}</div>
 			</div>
@@ -89,36 +89,36 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 	
 	componentDidUpdate () {
 		const { loading, url, imageUrl } = this.state;
-		const { linkPreview } = commonStore;
+		const { previewLink } = commonStore;
 		const node = $(ReactDOM.findDOMNode(this));
 		
-		if (!loading && (this.lastUrl != linkPreview.url)) {
+		if (!loading && (this.lastUrl != previewLink.url)) {
 			this.setState({ 
 				loading: true,
-				url: linkPreview.url,
+				url: previewLink.url,
 				title: '',
 				description: '',
 				faviconUrl: '',
 				imageUrl: '',
 			});
 
-			this.lastUrl = linkPreview.url;
+			this.lastUrl = previewLink.url;
 			
-			C.LinkPreview(linkPreview.url, (message: any) => {
+			C.LinkPreview(previewLink.url, (message: any) => {
 				if (message.error.code) {
 					this.setState({ loading: false });
 					return;
 				};
 
 				this.setState({
-					...message.linkPreview,
+					...message.previewLink,
 					loading: false,
 				});
 			});
 		};
 		
 		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
-		if (Util.linkPreviewOpen) {
+		if (Util.previewLinkOpen) {
 			this.show();
 		};
 	};
@@ -129,33 +129,30 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 	};
 	
 	onCopy (e: any) {
-		const { linkPreview } = commonStore;
+		const { previewLink } = commonStore;
 		
-		Util.clipboardCopy({ text: linkPreview.url });
-		Util.linkPreviewHide(true);
+		Util.clipboardCopy({ text: previewLink.url });
+		Util.previewLinkHide(true);
 	};
 	
 	onEdit (e: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { linkPreview } = commonStore;
-		const rect = Util.objectCopy($('#linkPreview').get(0).getBoundingClientRect());
+		const { previewLink } = commonStore;
+		const rect = Util.objectCopy($('#previewLink').get(0).getBoundingClientRect());
 
-		let { marks, range, onChange } = linkPreview;
+		let { marks, range, onChange } = previewLink;
 		let mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
 
 		menuStore.open('blockLink', {
-			type: I.MenuType.Horizontal,
 			rect: { ...rect, height: 0, y: rect.y + $(window).scrollTop() },
-			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
-			offsetY: 44,
 			onOpen: () => {
-				Util.linkPreviewHide(true);
+				Util.previewLinkHide(true);
 			},
 			data: {
-				value: (mark ? mark.param : ''),
+				filter: (mark ? mark.param : ''),
 				onChange: (param: string) => {
 					marks = Mark.toggle(marks, { type: I.MarkType.Link, param: param, range: range });
 					onChange(marks);
@@ -165,20 +162,20 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 	};
 	
 	onUnlink (e: any) {
-		const { linkPreview } = commonStore;
-		let { marks, range, onChange } =  linkPreview;
+		const { previewLink } = commonStore;
+		let { marks, range, onChange } =  previewLink;
 		
 		marks = Mark.toggle(marks, { type: I.MarkType.Link, param: '', range: { from: range.from, to: range.to } });
 		onChange(marks);
 		
-		Util.linkPreviewHide(true);
+		Util.previewLinkHide(true);
 	};
 	
 	show () {
-		const { linkPreview } = commonStore;
-		const { element } = linkPreview;
+		const { previewLink } = commonStore;
+		const { element } = previewLink;
 		const win = $(window);
-		const obj = $('#linkPreview');
+		const obj = $('#previewLink');
 		const poly = obj.find('.polygon');
 		const ww = win.width();
 		const wh = win.height();
@@ -241,4 +238,4 @@ const LinkPreview = observer(class LinkPreview extends React.Component<Props, St
 	
 });
 
-export default LinkPreview;
+export default PreviewLink;

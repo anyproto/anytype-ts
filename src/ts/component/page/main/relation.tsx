@@ -53,7 +53,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 							</div>
 						</div>
 						<div className="side right">
-							<Button id="button-create" text="Create set" onClick={this.onCreate} className="dn" />
+							<Button id="button-create" text="Create set" onClick={this.onCreate} />
 						</div>
 					</div>
 

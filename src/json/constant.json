@@ -130,12 +130,16 @@
 		"description": "description",
 		"featured": "featuredRelations",
 		"type": "type",
-		"done": "done"
+		"done": "done",
+		"space": "workspaceId",
+		"creator": "creator",
+		"setOf": "setOf"
 	},
 
 	"typeId": {
 		"page": "_otpage",
 		"set": "_otset",
+		"space": "_otspace",
 		"template": "_ottemplate",
 		"type": "_otobjectType",
 		"image": "_otimage",

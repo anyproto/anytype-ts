@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { ObjectPreviewBlock, Icon } from 'ts/component';
+import { PreviewObject, Icon } from 'ts/component';
 import { keyboard, Action } from 'ts/lib';
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 
 const $ = require('jquery');
 
-class ListTemplate extends React.Component<Props, {}> {
+class ListObjectPreview extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		offsetX: 0,
@@ -37,7 +37,7 @@ class ListTemplate extends React.Component<Props, {}> {
 				onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 				onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
 			>
-				<ObjectPreviewBlock rootId={item.id} onClick={(e: any) => { this.onClick(e, item); }} />
+				<PreviewObject rootId={item.id} onClick={(e: any) => { this.onClick(e, item); }} />
 			</div>
 		);
 
@@ -162,4 +162,4 @@ class ListTemplate extends React.Component<Props, {}> {
 	
 };
 
-export default ListTemplate;
+export default ListObjectPreview;

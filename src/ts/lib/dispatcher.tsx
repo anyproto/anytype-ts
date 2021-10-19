@@ -205,7 +205,13 @@ class Dispatcher {
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
 						block = Mapper.From.Block(block);
-						blockStore.add(rootId, block);
+
+						if (block.type == I.BlockType.Dataview) {
+							dbStore.relationsSet(rootId, block.id, block.content.relations);
+							dbStore.viewsSet(rootId, block.id, block.content.views);
+						};
+
+						blockStore.add(rootId, new M.Block(block));
 						blockStore.updateStructure(rootId, block.id, block.childrenIds);
 					};
 					break;
@@ -213,6 +219,14 @@ class Dispatcher {
 				case 'blockDelete':
 					let blockIds = data.getBlockidsList() || [];
 					for (let blockId of blockIds) {
+						const block = blockStore.getLeaf(rootId, blockId);
+
+						if (block.type == I.BlockType.Dataview) {
+							dbStore.relationsClear(rootId, blockId);
+							dbStore.viewsClear(rootId, blockId);
+							dbStore.metaClear(rootId, blockId);
+						};
+
 						blockStore.delete(rootId, blockId);
 					};
 					break;

@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.pageMainSet {
+.pageMainSpace {
 	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 74px 0px 80px 0px; user-select: none; }
 	.wrapper {
 
@@ -8,7 +8,11 @@
 			.wrapMenu { display: none; }	
 			.wrapContent { width: 100%; }
 		}
-		
+		.block.blockFeatured { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }
+		.block.blockFeatured {
+			.cellContent { padding: 2.5px 6px; }
+		}
+
 		.editorControls { width: 704px; }
 
 		.head { width: 704px; margin: 0px auto 40px auto; display: flex; }
@@ -30,6 +34,32 @@
 		.head.withIcon {
 			.side.left { width: 96px; }
 			.side.right { width: calc(100% - 128px); }
+		}
+
+		.section { margin-bottom: 32px; }
+		.section:last-child { margin: 0px; }
+
+		.section {
+			.title { @include text-header3; margin-bottom: 14px; position: relative; }
+		}
+
+		.section.template {
+			.btn { 
+				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
+				cursor: pointer; transition: $transitionFast;
+			}
+			.btn {
+				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
+			}
+			.btn:hover { color: $colorBlack; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/icon/plus/template1.svg'); }
+			}
+
+			.listTemplate {
+				.icon.arrow.left { left: -32px; }
+				.icon.arrow.right { right: -32px; }
+			}
 		}
 	}
 

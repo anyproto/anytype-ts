@@ -42,9 +42,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
-
+		const view = this.getView();
 		if (!view) {
 			return null;
 		};
@@ -254,7 +252,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		DataUtil.checkTemplateCnt(setOf, 2, (message: any) => {
+		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
@@ -281,7 +279,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ((relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
+		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
 			DataUtil.objectOpenPopup(record);
 		} else {
 			ref.onClick(e);

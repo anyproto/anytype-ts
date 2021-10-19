@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObjectPreview } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -18,8 +18,9 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
+const BLOCK_ID_HIGHLIGHTED = 'highlighted';
 
-const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}> {
+const PageMainSpace = observer(class PageMainSpace extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	id: string = '';
@@ -52,6 +53,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const highlighted = dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED);
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -107,9 +109,29 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 								<Editor className="title" id="name" />
 								<Editor className="descr" id="description" />
 
-								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} className="small" />
+								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
 							</div>
 						</div>
+					</div>
+
+					<div className="section template">
+						<div className="title">
+							{highlighted.length} highlighted {Util.cntWord(highlighted.length, 'object', 'objects')}
+						</div>
+						{highlighted.length ? (
+							<div className="content">
+								<ListObjectPreview 
+									key="listTemplate"
+									items={highlighted}
+									canAdd={false}
+									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
+								/>
+							</div>
+						) : (
+							<div className="empty">
+								This space doesn't have any highlighted objects
+							</div>
+						)}
 					</div>
 					
 					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
@@ -145,11 +167,18 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 	};
 
 	componentWillUnmount () {
+		const rootId = this.getRootId();
+		const highlighted = dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED);
+
 		this._isMounted = false;
 		this.close();
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
+
+		for (let item of highlighted) {
+			Action.pageClose(item.id, false);
+		};
 	};
 
 	open () {
@@ -387,4 +416,4 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 
 });
 
-export default PageMainSet;
+export default PageMainSpace;

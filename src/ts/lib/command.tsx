@@ -1,10 +1,7 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
-import { commonStore } from 'ts/store';
 
-const Errors = require('json/error.json');
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const { ipcRenderer } = window.require('electron');
 const Rpc = Commands.Rpc;
 
 const VersionGet = (callBack?: (message: any) => void) => {
@@ -728,15 +725,6 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request('blockRelationSetKey', request, callBack);
 };
 
-const BlockRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Relation.Add.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request('blockRelationAdd', request, callBack);
-};
 
 const BlockRelationRemove = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Remove.Request();
@@ -831,6 +819,16 @@ const BlockDataviewRecordRelationOptionDelete = (contextId: string, blockId: str
 	request.setOptionid(optionId);
 
 	dispatcher.request('blockDataviewRecordRelationOptionDelete', request, callBack);
+};
+
+const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.SetSource.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setSourceList(sources);
+
+	dispatcher.request('blockDataviewSetSource', request, callBack);
 };
 
 const BlockObjectTypeSet = (contextId: string, url: string, callBack?: (message: any) => void) => {
@@ -1080,6 +1078,23 @@ const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: 
 	dispatcher.request('objectListSetIsArchived', request, callBack);
 };
 
+const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.AddWithObjectId.Request();
+
+	request.setObjectid(objectId);
+	request.setPayload(payload);
+
+	dispatcher.request('objectAddWithObjectId', request, callBack);
+};
+
+const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ShareByLink.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request('objectShareByLink', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1111,6 +1126,22 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 	request.setContextid(contextId);
 
 	dispatcher.request('cloneTemplate', request, callBack);
+};
+
+const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Create.Request();
+
+	request.setName(name);
+
+	dispatcher.request('workspaceCreate', request, callBack);
+};
+
+const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Select.Request();
+	
+	request.setWorkspaceid(workspaceId);
+
+	dispatcher.request('workspaceSelect', request, callBack);
 };
 
 export {
@@ -1206,9 +1237,10 @@ export {
 	BlockDataviewRecordUpdate,
 	BlockDataviewRecordDelete,
 
+	BlockDataviewSetSource,
+
 	BlockRelationSetKey,
 	BlockRelationList,
-	BlockRelationAdd,
 	BlockRelationUpdate,
 	BlockRelationRemove,
 
@@ -1241,6 +1273,8 @@ export {
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 	ObjectToSet,
+	ObjectAddWithObjectId,
+	ObjectShareByLink,
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,
@@ -1249,4 +1283,7 @@ export {
 	MakeTemplateByObjectType,
 	ApplyTemplate,
 	CloneTemplate,
+
+	WorkspaceCreate,
+	WorkspaceSelect,
 };

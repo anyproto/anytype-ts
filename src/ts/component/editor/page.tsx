@@ -546,13 +546,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 				if (type == I.MarkType.Link) {
 					menuStore.open('blockLink', {
-						type: I.MenuType.Horizontal,
-						element: '#block-' + ids[0],
-						offsetY: -4,
-						vertical: I.MenuDirection.Top,
+						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
 						data: {
-							value: '',
+							filter: '',
 							onChange: (param: string) => {
 								C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
 							}
@@ -829,12 +826,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						menuStore.open('blockLink', {
 							element: el,
 							rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
-							type: I.MenuType.Horizontal,
-							offsetY: -4,
-							vertical: I.MenuDirection.Top,
 							horizontal: I.MenuDirection.Center,
 							data: {
-								value: (mark ? mark.param : ''),
+								filter: (mark ? mark.param : ''),
 								onChange: (param: string) => {
 									marks = Mark.toggle(marks, { type: type, param: param, range: range });
 									DataUtil.blockSetText(rootId, block, text, marks, true, () => {
@@ -1171,7 +1165,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
-		Util.linkPreviewHide(false);
+		Util.previewLinkHide(false);
 	};
 	
 	onCopy (e: any, cut: boolean) {
@@ -1696,7 +1690,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		node.css({ width: width });
 		elements.css({ width: width, marginLeft: -width / 2 });
 
-		if (this.refHeader) {
+		if (this.refHeader && this.refHeader.refDrag) {
 			this.refHeader.refDrag.setValue(v);
 			this.refHeader.setPercent(v);
 		};

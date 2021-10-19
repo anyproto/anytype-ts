@@ -20,9 +20,9 @@ const path = window.require('path');
 class Util {
 	
 	timeoutTooltip: number = 0;
-	timeoutLinkPreviewShow: number = 0;
-	timeoutLinkPreviewHide: number = 0;
-	linkPreviewOpen: boolean = false;
+	timeoutPreviewLinkShow: number = 0;
+	timeoutPreviewLinkHide: number = 0;
+	previewLinkOpen: boolean = false;
 	
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
@@ -699,27 +699,27 @@ class Util {
 		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
 	
-	linkPreviewShow (url: string, node: any, param: any) {
+	previewLinkShow (url: string, node: any, param: any) {
 		if (!node.length || keyboard.isPreviewDisabled) {
 			return;
 		};
 		
-		const obj = $('#linkPreview');
+		const obj = $('#previewLink');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutLinkPreviewShow);
+			window.clearTimeout(this.timeoutPreviewLinkShow);
 		});
 		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			this.linkPreviewHide(false);
+			this.previewLinkHide(false);
 		});
 		
-		this.linkPreviewHide(false);
+		this.previewLinkHide(false);
 		
-		window.clearTimeout(this.timeoutLinkPreviewShow);
-		this.timeoutLinkPreviewShow = window.setTimeout(() => {
-			this.linkPreviewOpen = true;
-			commonStore.linkPreviewSet({
+		window.clearTimeout(this.timeoutPreviewLinkShow);
+		this.timeoutPreviewLinkShow = window.setTimeout(() => {
+			this.previewLinkOpen = true;
+			commonStore.previewLinkSet({
 				url: url,
 				element: node,
 				...param,
@@ -727,15 +727,15 @@ class Util {
 		}, 500);
 	};
 	
-	linkPreviewHide (force: boolean) {
-		if (!this.linkPreviewOpen) {
+	previewLinkHide (force: boolean) {
+		if (!this.previewLinkOpen) {
 			return;
 		};
 
-		const obj = $('#linkPreview');
+		const obj = $('#previewLink');
 		
-		this.linkPreviewOpen = false;
-		window.clearTimeout(this.timeoutLinkPreviewShow);
+		this.previewLinkOpen = false;
+		window.clearTimeout(this.timeoutPreviewLinkShow);
 		
 		if (force) {
 			obj.hide();
@@ -743,7 +743,7 @@ class Util {
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutLinkPreviewHide = window.setTimeout(() => { 
+		this.timeoutPreviewLinkHide = window.setTimeout(() => { 
 			obj.hide();
 			obj.removeClass('top bottom withImage'); 
 		}, 250);
@@ -951,6 +951,18 @@ class Util {
 			};
 		});
 		fs.rmdirSync(p);
+	};
+
+	searchParam (url: string): any {
+		var a = url.replace(/^\?/, '').split('&');
+		var param: any = {};
+		
+		a.forEach((s) => {
+			var kv = s.split('=');
+			param[kv[0]] = kv[1];
+		});
+
+		return param;
 	};
 
 };

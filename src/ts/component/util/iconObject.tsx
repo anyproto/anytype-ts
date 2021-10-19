@@ -37,6 +37,7 @@ const IDS40 = [
 	I.ObjectLayout.File, 
 	I.ObjectLayout.Image, 
 	I.ObjectLayout.Type,
+	I.ObjectLayout.Space,
 ];
 
 const IconSize = {

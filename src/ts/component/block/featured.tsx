@@ -12,6 +12,7 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const PREFIX = 'blockFeatured';
+const BLOCK_ID_DATAVIEW = 'dataview';
 
 const BlockFeatured = observer(class BlockFeatured extends React.Component<Props, {}> {
 
@@ -28,6 +29,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onType = this.onType.bind(this);
+		this.onSource = this.onSource.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -39,25 +41,93 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
+		const object = detailStore.get(rootId, rootId, [ 
+			Constant.relationKey.featured, 
+			Constant.relationKey.space, 
+			Constant.relationKey.setOf, 
+		]);
 		const items = this.getItems();
 		const type: any = dbStore.getObjectType(object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const setOf = DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]);
+	
+		let types = [];
+		let relations = [];
+
+		setOf.forEach((it: string) => {
+			const o = detailStore.get(rootId, it, []);
+			if (o._empty_) {
+				return;
+			};
+
+			if (o.type == Constant.typeId.type) {
+				types.push(o.name);
+			};
+			if (o.type == Constant.typeId.relation) {
+				relations.push(o.name);
+			};
+		});
+
+		let setOfString = [];
+		let tl = types.length;
+		let rl = relations.length;
+
+		if (tl) {
+			types = types.slice(0, 2);
+			setOfString.push('Object types: ' + types.join(', '));
+
+			if (tl > 2) {
+				setOfString.push(<div className="more">+{tl - 2}</div>);
+			};
+		};
+		if (rl) {
+			relations = relations.slice(0, 2);
+			setOfString.push('Relations: ' + relations.join(', '));
+
+			if (rl > 2) {
+				setOfString.push(<div className="more">+{rl - 2}</div>);
+			};
+		};
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
 				{type ? (
-					<div 
-						id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
-						className="cellContent type"
-						onClick={this.onType}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
-						onMouseLeave={this.onMouseLeave}
-					>
-						<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
-					</div>
+					<span className="cell canEdit">
+						<div 
+							id={DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)} 
+							className="cellContent type"
+							onClick={this.onType}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.type); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							<div className="name">{Util.shorten(type.name || DataUtil.defaultName('page'), 32)}</div>
+						</div>
+					</span>
 				): ''}
+
+				{object.layout == I.ObjectLayout.Set ? (
+					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
+						{bullet}
+						<div 
+							id={DataUtil.cellId(PREFIX, Constant.relationKey.setOf, 0)} 
+							className="cellContent setOf"
+							onClick={this.onSource}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, Constant.relationKey.setOf); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							{setOfString.length ? (
+								<div className="name">
+									{setOfString.map((it: any, i: number) => (
+										<span key={i}>{it}</span>
+									))}
+								</div>
+							) : (
+								<div className="empty">Source</div>
+							)}
+						</div>
+					</span>
+				) : ''}
 
 				{items.map((relationKey: any, i: any) => {
 					const id = DataUtil.cellId(PREFIX + block.id, relationKey, 0);
@@ -116,9 +186,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 	
 	componentDidMount () {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const setOf = DataUtil.getRelationArrayValue(object[Constant.relationKey.setOf]);
+
 		this._isMounted = true;
+
+		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
+			this.onSource();
+		};
 	};
-	
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
@@ -131,26 +209,23 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
+		const skipIds = [ 
+			Constant.relationKey.type, 
+			Constant.relationKey.description,
+			Constant.relationKey.setOf, 
+		];
 
 		return (object[Constant.relationKey.featured] || []).filter((it: any) => {
 			const relation = dbStore.getRelation(rootId, rootId, it);
 			if (!relation) {
 				return false;
 			};
-			if ([ Constant.relationKey.type, Constant.relationKey.description ].indexOf(it) >=  0) {
+			if (skipIds.indexOf(it) >=  0) {
 				return false;
 			};
 			if (relation.format == I.RelationType.Checkbox) {
 				return true;
 			};
-			/*
-			if (!object[it]) {
-				return false;
-			};
-			if ([ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Object ].indexOf(relation.format) >= 0 && !object[it].length) {
-				return false;
-			};
-			*/
 			return true;
 		});
 	};
@@ -211,36 +286,120 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onType (e: any) {
+		e.persist();
+
 		const { rootId, block, readonly } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
-
-		if (readonly || !allowed) {
-			const object = detailStore.get(rootId, rootId, []);
-			DataUtil.objectOpenEvent(e, { id: object.type, layout: I.ObjectLayout.Type });
-			return;
-		};
-
+		const options: any[] = [
+			{ id: 'open', name: 'Open type' }
+		];
+		const subIds = [ 'searchObject' ];
+		const type: any = dbStore.getObjectType(object.type);
 		const filters = [
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 		];
+		
+		if (!readonly && allowed) {
+			options.push({ id: 'change', name: 'Change type', arrow: true });
+		};
+
+		let setId = '';
+		let menuContext = null;
+
+		const showMenu = () => {
+			menuStore.open('select', { 
+				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)}`,
+				offsetY: 8,
+				subIds: subIds,
+				onOpen: (context: any) => {
+					menuContext = context;
+				},
+				data: {
+					options: options,
+					onOver: (e: any, el: any) => {
+						menuStore.closeAll(subIds, () => {
+							menuStore.closeAll(subIds, () => { 
+								if (el.id == 'change') {
+									menuStore.open('searchObject', {
+										element: `#menuSelect #item-${el.id}`,
+										className: 'big single',
+										vertical: I.MenuDirection.Center,
+										offsetX: menuContext.getSize().width,
+										data: {
+											isBig: true,
+											rootId: rootId,
+											blockId: block.id,
+											blockIds: [ block.id ],
+											placeholder: 'Change object type',
+											placeholderFocus: 'Change object type',
+											filters: filters,
+											onSelect: (item: any) => {
+												C.BlockObjectTypeSet(rootId, item.id);
+												menuStore.close('select');
+											}
+										}
+									}); 
+								};
+							});
+						});
+					},
+					onSelect: (e: any, el: any) => {
+						if (el.arrow) {
+							menuStore.closeAll(subIds);
+							return;
+						};
+
+						switch (el.id) {
+							case 'open':
+								DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+								break;
+	
+							case 'setOpen':
+								DataUtil.objectOpenPopup({ id: setId, layout: I.ObjectLayout.Set });
+								break;
+	
+							case 'setCreate':
+								C.SetCreate([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
+									if (!message.error.code) {
+										DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
+									};
+								});
+								break;
+						};
+					},
+				},
+			});
+		};
+
+		DataUtil.checkSetCnt([ object.type ], (message: any) => {
+			if (message.records.length == 1) {
+				setId = message.records[0].id;
+				options.push({ id: 'setOpen', name: 'Open set' });
+			} else {
+				options.push({ id: 'setCreate', name: 'Create set' });
+			};
+
+			showMenu();
+		});
+	};
+
+	onSource () {
+		const { rootId, block, readonly } = this.props;
+
+		if (readonly) {
+			return;
+		};
 
 		menuStore.closeAll(null, () => { 
-			menuStore.open('searchObject', {
-				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)}`,
+			menuStore.open('dataviewSource', {
+				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.setOf, 0)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				data: {
-					isBig: true,
 					rootId: rootId,
-					blockId: block.id,
-					blockIds: [ block.id ],
-					placeholder: 'Change object type',
-					placeholderFocus: 'Change object type',
-					filters: filters,
-					onSelect: (item: any) => {
-						C.BlockObjectTypeSet(rootId, item.id);
-					}
+					blockId: BLOCK_ID_DATAVIEW,
 				}
 			}); 
 		});

@@ -3,7 +3,7 @@ import { I, Storage, Util } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
-interface LinkPreview {
+interface PreviewLink {
 	url: string;
 	element: any;
 	rootId: string;
@@ -31,7 +31,7 @@ class CommonStore {
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
-    public linkPreviewObj: LinkPreview = null;
+    public previewLinkObj: PreviewLink = null;
     public configObj:any = {};
     public cellId: string = '';
 	public typeId: string = '';
@@ -43,11 +43,11 @@ class CommonStore {
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
-            linkPreviewObj: observable,
+            previewLinkObj: observable,
             configObj: observable,
             config: computed,
             progress: computed,
-            linkPreview: computed,
+            previewLink: computed,
             filter: computed,
             cover: computed,
             coverImage: computed,
@@ -60,7 +60,7 @@ class CommonStore {
             filterSetFrom: action,
             filterSetText: action,
             filterSet: action,
-            linkPreviewSet: action
+            previewLinkSet: action
         });
     };
 
@@ -72,8 +72,8 @@ class CommonStore {
 		return this.progressObj;
 	};
 
-    get linkPreview(): LinkPreview {
-		return this.linkPreviewObj;
+    get previewLink(): PreviewLink {
+		return this.previewLinkObj;
 	};
 
     get filter(): Filter {
@@ -147,8 +147,8 @@ class CommonStore {
 		this.filterSetText(text);
 	};
 
-    linkPreviewSet (param: LinkPreview) {
-		this.linkPreviewObj = param;
+    previewLinkSet (param: PreviewLink) {
+		this.previewLinkObj = param;
 	};
 
 	typeSet (v: string) {

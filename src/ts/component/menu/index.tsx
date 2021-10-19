@@ -58,6 +58,7 @@ import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewOptionValues from './dataview/option/values';
 import MenuDataviewDate from './dataview/date';
 import MenuDataviewText from './dataview/text';
+import MenuDataviewSource from './dataview/source';
 
 interface Props extends I.Menu {
 	history: any;
@@ -126,6 +127,7 @@ const Components: any = {
 	dataviewCalendar:		 MenuDataviewCalendar,
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
+	dataviewSource:			 MenuDataviewSource,
 };
 
 const Menu = observer(class Menu extends React.Component<Props, State> {

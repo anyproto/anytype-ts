@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { Input, Button } from 'ts/component';
+import { Title, Label, Input, Button } from 'ts/component';
 import { I, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup {
 	history: any;
-}
+};
+
+const $ = require('jquery');
 
 const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}> {
 	
@@ -21,11 +23,13 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { placeholder, value, maxLength } = data;
+		const { placeholder, value, maxLength, title, label, readonly } = data;
 		
 		return (
 			<form onSubmit={this.onSubmit}>
-				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} placeholder={placeholder} maxLength={maxLength} />
+				{title ? <Title text={title} /> : ''}
+				{label ? <Label text={label} /> : ''}
+				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} readonly={readonly} placeholder={placeholder} maxLength={maxLength} />
 				<Button type="input" text={translate('commonOk')} />
 				<Button text={translate('commonCancel')} color="grey" onClick={this.onCancel} />
 			</form>
@@ -35,10 +39,16 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, select } = data;
+		const length = String(value || '').length;
 		
 		this.refValue.setValue(value);
 		this.refValue.focus();
+		this.resize();
+
+		if (select) {
+			this.refValue.setRange({ from: 0, to: length });
+		};
 	};
 	
 	onSubmit (e: any) {
@@ -56,6 +66,13 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, {}
 	
 	onCancel (e: any) {
 		this.props.close();
+	};
+
+	resize () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()} #innerWrap`);
+
+		obj.css({ marginTop: -obj.outerHeight() / 2, marginLeft: -obj.outerWidth() / 2 });
 	};
 	
 });

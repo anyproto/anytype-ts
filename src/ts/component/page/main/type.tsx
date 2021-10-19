@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject, Select } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListObjectPreview, ListObject, Select } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, analytics } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -174,7 +174,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 							</div>
 							{templates.length ? (
 								<div className="content">
-									<ListTemplate 
+									<ListObjectPreview 
 										key="listTemplate"
 										items={templates}
 										canAdd={allowedTemplate}
@@ -408,7 +408,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			});
 		};
 
-		DataUtil.checkTemplateCnt([ rootId ], 2, (message: any) => {
+		DataUtil.checkTemplateCnt([ rootId ], (message: any) => {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
