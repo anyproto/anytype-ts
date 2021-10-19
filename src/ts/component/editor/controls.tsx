@@ -38,13 +38,13 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, []);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = !object.isDraft && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
-		const allowedRelation = !object.isDraft;
 
 		if (!root || !allowedDetails) {
 			return null;
 		};
 
+		const allowedLayout = !object.isDraft && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedRelation = !object.isDraft;
 		const allowIcon = !root.isObjectTask() && !root.isObjectNote();
 		const allowCover = !root.isObjectNote();
 
