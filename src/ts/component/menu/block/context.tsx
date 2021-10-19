@@ -187,13 +187,17 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			case I.MarkType.Link:
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
-					value: (mark ? mark.param : ''),
-					onChange: (type: I.MarkType, param: string) => {
+					filter: (mark ? mark.param : ''),
+					onChange: (newType: I.MarkType, param: string) => {
 						if (!mark && !param) {
 							return;
 						};
 
-						marks = Mark.toggle(marks, { type: type, param: param, range: { from: from, to: to } });
+						if (mark && (mark.type != newType)) {
+							marks = Mark.toggle(marks, { type: mark.type, param: '', range: range });	
+						};
+						marks = Mark.toggle(marks, { type: newType, param: param, range: { from: from, to: to } });
+						
 						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 

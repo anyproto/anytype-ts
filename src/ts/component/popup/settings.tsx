@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
-import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
+import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}
@@ -118,6 +118,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text={translate('popupSettingsExportTitle')} />
 								<Icon className="arrow" />
 							</div>
+
+							<div className="row" onClick={() => { this.onPage('other'); }}>
+								<Icon className="other" />
+								<Label text={translate('popupSettingsOtherTitle')} />
+								<Icon className="arrow" />
+							</div>
 						</div>
 
 						<div className="logout" onClick={this.onLogout}>{translate('popupSettingsLogout')}</div>
@@ -185,8 +191,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
+						
 						<Title text={translate('popupSettingsPhraseTitle')} />
 						<Label text={translate('popupSettingsPhraseText')} />
+						
 						<div className="inputs">
 							<Textarea 
 								ref={(ref: any) => this.phraseRef = ref} 
@@ -199,6 +207,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								readonly={true} 
 							/>
 						</div>
+
 						{!this.onConfirmPhrase ? (
 							<div className="path">
 								<div className="side left">
@@ -222,6 +231,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
+
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinText')} />
 
@@ -265,8 +275,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				content = (
 					<div>
 						<Head id="pinIndex" name={translate('commonCancel')} />
+
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinText')} />
+
 						<Pin onSuccess={this.onSelectPin} />
 					</div>
 				);
@@ -276,6 +288,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				content = (
 					<div>
 						<Head name={translate('commonCancel')} />
+
 						<Title text={translate('popupSettingsPinTitle')} />
 						<Label text={translate('popupSettingsPinVerify')} />
 						<Error text={error} />
@@ -320,8 +333,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
+
 						<Title text={translate('popupSettingsImportTitle')} />
 						<Label text={translate('popupSettingsImportText')} />
+
 						<div className="items">
 							{items.map((item: any, i: number) => (
 								<Item key={i} {...item} />
@@ -365,6 +380,30 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Label text={translate('popupSettingsExportMarkdownText')} />
 
 						<Button text={translate('popupSettingsExportOk')} onClick={() => { this.onExport(I.ExportFormat.Markdown); }} />
+					</div>
+				);
+				break;
+
+			case 'other':
+				const options = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => {
+					it.layout = I.ObjectLayout.Type;
+					return { ...it, object: it };
+				});
+
+				content = (
+					<div>
+						<Head id="index" name={translate('popupSettingsTitle')} />
+
+						<Title text={translate('popupSettingsOtherTitle')} />
+
+						<div className="row" onClick={() => { this.onPage('other'); }}>
+							<div className="side left">
+								<Label text="Default Object type" />
+							</div>
+							<div className="side right">
+								<Select id="defaultType" options={options} value={commonStore.type} onChange={(id: string) => { commonStore.typeSet(id); }}/>
+							</div>
+						</div>
 					</div>
 				);
 				break;

@@ -14,6 +14,10 @@
 		background-image: url('~img/arrow/select/dark.svg') !important; 
 	}
 	.icon.arrow.light { background-image: url('~img/arrow/select/light.svg') !important; }
-	
-	.name { @include text-overflow-nw; }
+
+	.item { display: flex; }
+	.item {
+		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
+		.name { width: 100%; @include text-overflow-nw; }
+	}
 }
