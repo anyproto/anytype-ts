@@ -132,9 +132,9 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { content } = block;
 		const { targetBlockId } = content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _empty_ } = object;
-		
-		if (!_empty_ && (targetBlockId != rootId)) {
+		const { _empty_ , isArchived } = object;
+
+		if (!_empty_ && !isArchived && (targetBlockId != rootId)) {
 			DataUtil.objectOpenEvent(e, object);
 		};
 	};

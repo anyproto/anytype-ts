@@ -120,9 +120,9 @@ class MenuStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 
-		window.setTimeout(() => {
+		const onTimeout = () => {
 			this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
-			
+				
 			if (onClose) {
 				onClose();
 			};
@@ -130,7 +130,13 @@ class MenuStore {
 			if (callBack) {
 				callBack();
 			};
-		}, t);
+		};
+
+		if (t) {
+			window.setTimeout(onTimeout, t);
+		} else {
+			onTimeout();
+		};
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
@@ -149,6 +155,10 @@ class MenuStore {
 
     clearTimeout () {
 		window.clearTimeout(this.timeout);
+	};
+
+	checkKey (key: string) {
+		return this.menuList.find((it: I.Menu) => { return it.param.menuKey == key; }) ? true : false;
 	};
 
 };
