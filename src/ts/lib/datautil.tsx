@@ -1215,15 +1215,14 @@ class DataUtil {
 		};
 	};
 
-	// Check if there are at least 2 templates for object types
-	checkTemplateCnt (typeIds: string[], callBack?: (message: any) => void) {
+	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeIds },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
+			{ operator: I.FilterOperator.And, relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
-		C.ObjectSearch(filters, [], [], '', 0, 2, (message: any) => {
+		C.ObjectSearch(filters, [], [], '', 0, limit, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -1234,23 +1233,14 @@ class DataUtil {
 		});
 	};
 
+	// Check if there are at least 2 templates for object types
+	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
+		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 2, callBack);
+	};
+
 	// Check if there is at least 1 set for object types
-	checkSetCnt (typeIds: string[], callBack?: (message: any) => void) {
-		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-			{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: typeIds },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-		];
-
-		C.ObjectSearch(filters, [], [], '', 0, 1, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			if (callBack) {
-				callBack(message);
-			};
-		});
+	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
+		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 1, callBack);
 	};
 
 	defaultName (key: string) {

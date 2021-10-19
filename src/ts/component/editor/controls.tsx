@@ -34,11 +34,12 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { config } = commonStore;
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, []);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedLayout = !object.isDraft && !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
+		const allowedRelation = !object.isDraft;
 
 		if (!root || !allowedDetails) {
 			return null;
@@ -69,17 +70,19 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 						</div>
 					) : ''}
 
-					{!root.isObjectSet() && allowedLayout ? (
+					{allowedLayout ? (
 						<div id="button-layout" className="btn" onClick={this.onLayout}>
 							<Icon className="layout" />
 							<div className="txt">{translate('editorControlLayout')}</div>
 						</div>
 					) : ''}
 
-					<div id="button-relation" className="btn" onClick={this.onRelation}>
-						<Icon className="relation" />
-						<div className="txt">{translate('editorControlRelation')}</div>
-					</div>
+					{allowedRelation ? (
+						<div id="button-relation" className="btn" onClick={this.onRelation}>
+							<Icon className="relation" />
+							<div className="txt">{translate('editorControlRelation')}</div>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
