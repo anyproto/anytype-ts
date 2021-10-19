@@ -390,6 +390,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 					return { ...it, object: it };
 				});
 
+				options.sort(DataUtil.sortByName);
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
