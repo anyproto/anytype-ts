@@ -550,8 +550,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 						horizontal: I.MenuDirection.Center,
 						data: {
 							filter: '',
-							onChange: (param: string) => {
-								C.BlockListSetTextMark(rootId, ids, { type: type, param: param, range: { from: 0, to: 0 } });
+							onChange: (newType: I.MarkType, param: string) => {
+								C.BlockListSetTextMark(rootId, ids, { type: newType, param: param, range: { from: 0, to: 0 } });
 							}
 						}
 					});
@@ -829,8 +829,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 							horizontal: I.MenuDirection.Center,
 							data: {
 								filter: (mark ? mark.param : ''),
-								onChange: (param: string) => {
-									marks = Mark.toggle(marks, { type: type, param: param, range: range });
+								onChange: (newType: I.MarkType, param: string) => {
+									marks = Mark.toggle(marks, { type: newType, param: param, range: range });
 									DataUtil.blockSetText(rootId, block, text, marks, true, () => {
 										focus.apply();
 									});
