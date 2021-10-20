@@ -233,13 +233,8 @@ class Dispatcher {
 
 				case 'blockSetChildrenIds':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
 
 					const childrenIds = data.getChildrenidsList();
-
 					if ((id == rootId) && !childrenIds.includes(Constant.blockId.footer)) {
 						childrenIds.push(Constant.blockId.footer);
 					};
@@ -425,7 +420,6 @@ class Dispatcher {
 				case 'blockSetLatex':
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
-
 					if (!block) {
 						break;
 					};
@@ -449,15 +443,9 @@ class Dispatcher {
 
 				case 'blockDataviewViewDelete':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
 					viewId = dbStore.getMeta(rootId, id).viewId;
 					
 					const deleteId = data.getViewid();
-
 					dbStore.viewDelete(rootId, id, deleteId);
 
 					if (deleteId == viewId) {
@@ -469,21 +457,11 @@ class Dispatcher {
 
 				case 'blockDataviewViewOrder':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
-					dbStore.viewsSort(rootId, block.id, data.getViewidsList());
+					dbStore.viewsSort(rootId, id, data.getViewidsList());
 					break; 
 
 				case 'blockDataviewRecordsSet':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
 					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
 					dbStore.recordsSet(rootId, id, data.records);
 					dbStore.metaSet(rootId, id, { viewId: data.getViewid(), total: data.getTotal() });
@@ -491,51 +469,35 @@ class Dispatcher {
 
 				case 'blockDataviewRecordsInsert':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
 					data.records = data.getRecordsList() || [];
+
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordAdd(rootId, block.id, item, 1);
+						dbStore.recordAdd(rootId, id, item, 1);
 					};
 					break;
 
 				case 'blockDataviewRecordsUpdate':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
 					data.records = data.getRecordsList() || [];
+
 					for (let item of data.records) {
 						item = Decode.decodeStruct(item) || {};
-						dbStore.recordUpdate(rootId, block.id, item);
+						dbStore.recordUpdate(rootId, id, item);
 					};
 					break;
 
 				case 'blockDataviewRecordsDelete':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
 					ids = data.getRemovedList() || [];
-					for (let id of ids) {
-						dbStore.recordDelete(rootId, block.id, id);
+
+					for (let recordId of ids) {
+						dbStore.recordDelete(rootId, id, recordId);
 					};
 					break;
 
 				case 'blockDataviewRelationSet':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
 
 					const relation = Mapper.From.Relation(data.getRelation());
 					const item = dbStore.getRelation(rootId, id, relation.relationKey);
@@ -545,11 +507,6 @@ class Dispatcher {
 
 				case 'blockDataviewRelationDelete':
 					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-					if (!block) {
-						break;
-					};
-
 					dbStore.relationDelete(rootId, id, data.getRelationkey());
 					break;
 
