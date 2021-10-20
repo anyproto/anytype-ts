@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
 import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
-import { dbStore, popupStore } from 'ts/store';
+import { dbStore, popupStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { crumbs } from '../../lib';
 
 interface Props extends I.BlockComponent {}
 interface State {
@@ -95,14 +94,26 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 	getItems () {
 		const { filter } = this.state;
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, []);
 
-		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
+		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
+			return [ Constant.typeId.note, Constant.typeId.page, Constant.typeId.set ].indexOf(it.id) < 0;
+		});
+		let page = dbStore.getObjectType(Constant.typeId.page);
+		let note = dbStore.getObjectType(Constant.typeId.note);
 		let set = dbStore.getObjectType(Constant.typeId.set);
 
 		items.sort(DataUtil.sortByName);
 
 		if (set) {
 			items.unshift(set);
+		};
+
+		if (object.type == Constant.typeId.note) {
+			items.unshift(page);
+		} else {
+			items.unshift(note);
 		};
 
 		if (filter) {
