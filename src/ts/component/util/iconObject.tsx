@@ -166,8 +166,6 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		let icon = null;
 		let icn = [];
 
-		console.log(this.props);
-
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page:

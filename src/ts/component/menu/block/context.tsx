@@ -69,7 +69,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					<div className="section">
 						{markActions.map((action: any, i: number) => {
 							let cn = [ action.icon ];
-							if (Mark.getInRange(marks, action.type, range)) {
+							let isSet = false;
+
+							if (action.type == I.MarkType.Link) {
+								isSet = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
+							} else {
+								isSet = Mark.getInRange(marks, action.type, range);
+							};
+							if (isSet) {
 								cn.push('active');
 							};
 							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} onMouseDown={(e: any) => { this.onMark(e, action.type); }} />;
@@ -187,17 +194,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			case I.MarkType.Link:
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
-					filter: (mark ? mark.param : ''),
+					filter: mark ? mark.param : '',
+					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
-						if (!mark && !param) {
-							return;
-						};
-
-						if (mark && (mark.type != newType)) {
-							marks = Mark.toggle(marks, { type: mark.type, param: '', range: range });	
-						};
-						marks = Mark.toggle(marks, { type: newType, param: param, range: { from: from, to: to } });
-						
+						marks = Mark.toggleLink({ type: newType, param: param, range: { from: from, to: to } }, marks);
 						menuStore.updateData(this.props.id, { marks: marks });
 						onChange(marks);
 
