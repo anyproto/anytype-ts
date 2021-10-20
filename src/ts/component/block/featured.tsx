@@ -320,42 +320,43 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				},
 				data: {
 					options: options,
-					onOver: (e: any, el: any) => {
-						menuStore.closeAll(subIds, () => {
-							if (el.id == 'change') {
-								menuStore.open('searchObject', {
-									element: `#menuSelect #item-${el.id}`,
-									className: 'big single',
-									vertical: I.MenuDirection.Center,
-									offsetX: menuContext.getSize().width,
-									isSub: true,
-									data: {
-										rebind: menuContext.ref.rebind,
-										isBig: true,
-										rootId: rootId,
-										blockId: block.id,
-										blockIds: [ block.id ],
-										placeholder: 'Change object type',
-										placeholderFocus: 'Change object type',
-										filters: filters,
-										onSelect: (item: any) => {
-											C.BlockObjectTypeSet(rootId, item.id);
-											menuContext.close();
-										}
-									}
-								}); 
-							};
-						});
-					},
+					noClose: true,
 					onSelect: (e: any, el: any) => {
-						if (el.arrow) {
-							menuStore.closeAll(subIds);
-							return;
-						};
+						menuStore.closeAll(subIds);
+
+						let close = true;
 
 						switch (el.id) {
 							case 'open':
 								DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+								break;
+
+							case 'change':
+								window.setTimeout(() => {
+									menuStore.open('searchObject', {
+										element: `#menuSelect #item-${el.id}`,
+										className: 'big single',
+										vertical: I.MenuDirection.Center,
+										offsetX: menuContext.getSize().width,
+										isSub: true,
+										data: {
+											rebind: menuContext.ref.rebind,
+											isBig: true,
+											rootId: rootId,
+											blockId: block.id,
+											blockIds: [ block.id ],
+											placeholder: 'Change object type',
+											placeholderFocus: 'Change object type',
+											filters: filters,
+											onSelect: (item: any) => {
+												C.BlockObjectTypeSet(rootId, item.id);
+												menuContext.close();
+											}
+										}
+									});
+								}, Constant.delay.menu);
+
+								close = false;
 								break;
 	
 							case 'setOpen':
@@ -369,6 +370,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									};
 								});
 								break;
+						};
+
+						if (close) {
+							menuContext.close();
 						};
 					},
 				},
