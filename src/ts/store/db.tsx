@@ -155,7 +155,6 @@ class DbStore {
 	};
 
 	viewsSort (rootId: string, blockId: string, ids: string[]) {
-		const key = this.getId(rootId, blockId);
 		const views = this.getViews(rootId, blockId);
 
 		views.sort((c1: any, c2: any) => {

@@ -140,7 +140,7 @@ class MenuStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.menuList;
+		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.includes(it.id); }) : this.menuList;
 
 		for (let item of items) {
 			this.close(item.id);

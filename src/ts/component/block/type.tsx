@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
 import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
-import { dbStore, popupStore, detailStore } from 'ts/store';
+import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
@@ -255,11 +255,18 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 
 		const create = (template: any) => {
+			const onBlock = (id: string) => {
+				focus.set(id, { from: 0, to: 0 });
+				focus.apply();
+			};
+
 			const onTemplate = () => {
-				C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
-					focus.set(message.blockId, { from: 0, to: 0 });
-					focus.apply();
-				});
+				const block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				if (!block) {
+					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
+				} else {
+					onBlock(block.id);
+				};
 			};
 
 			if (template) {

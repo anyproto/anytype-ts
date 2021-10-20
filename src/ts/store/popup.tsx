@@ -107,7 +107,7 @@ class PopupStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.popupList.filter((it: I.Popup) => { return ids.indexOf(it.id) >= 0; }) : this.popupList;
+		const items = ids && ids.length ? this.popupList.filter((it: I.Popup) => { return ids.includes(it.id); }) : this.popupList;
 
 		for (let item of items) {
 			this.close(item.id);

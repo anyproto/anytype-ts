@@ -505,7 +505,7 @@ class BlockStore {
 
 		let change = false;
 		if (checkBlocks) {
-			if (footer.childrenIds.indexOf(Constant.blockId.type) < 0) {
+			if (!footer.childrenIds.includes(Constant.blockId.type)) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;
 			};
