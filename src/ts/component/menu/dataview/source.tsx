@@ -99,8 +99,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	onAdd (e: any) {
-		const { getId, getSize, param } = this.props;
-		const { data } = param;
+		const { getId, getSize } = this.props;
 		const value = this.getValue();
 
 		menuStore.open('searchObject', { 
@@ -114,6 +113,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.relation }
 				],
 				onSelect: (item: any) => {
+					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
 					value.push(item.id);
 					this.save(value);
 				}
@@ -122,10 +122,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 
 	onRemove (e: any, item: any) {
-		const { param } = this.props;
-		const { data } = param;
 		const value = this.getValue().filter((it: string) => { return it != item.id; });
-
 		this.save(value);
 	};
 
@@ -190,6 +187,14 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			const object = detailStore.get(rootId, it, []);
 			return !object._empty_;
 		}));
+	};
+
+	getObjects () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const value = this.getValue();
+		return value.map((it: string) => { return detailStore.get(rootId, it, []); });
 	};
 
 	getItems () {

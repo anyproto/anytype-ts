@@ -72,6 +72,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
+		const footer = blockStore.getMapElement(rootId, Constant.blockId.footer);
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
@@ -79,7 +80,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		let cv: string[] = [ 'value', 'focusable', 'c' + id, ct, (readonly ? 'isReadonly' : '') ];
 		let additional = null;
 
-		if (root.isObjectNote() && (index == 1)) {
+		if (root.isObjectNote() && (index == 1) && (footer.childrenIds.indexOf(Constant.blockId.type) >= 0)) {
 			placeholder = 'Type something to proceed with Note';
 		};
 
@@ -117,7 +118,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				additional = (
 					<React.Fragment>
 						<Select id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
-						<Icon className="codeWrap" onClick={this.onToggleWrap} />
+						<Icon className="codeWrap" tooltip="Wrap / Unwrap" onClick={this.onToggleWrap} />
 					</React.Fragment>
 				);
 				break;

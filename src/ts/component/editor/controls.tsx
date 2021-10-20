@@ -39,12 +39,12 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, rootId, []);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (!root || !allowedDetails) {
+		if (!root || !allowedDetails || object.isDraft) {
 			return null;
 		};
 
-		const allowedLayout = !object.isDraft && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedRelation = !object.isDraft;
+		const allowedLayout = !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedRelation = true;
 		const allowIcon = !root.isObjectTask() && !root.isObjectNote();
 		const allowCover = !root.isObjectNote();
 

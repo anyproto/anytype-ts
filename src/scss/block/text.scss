@@ -135,7 +135,9 @@
 			}
 			.select:hover, .select.active { background: none; }
 			
-			.icon.codeWrap { width: 20px; height: 20px; }
+			.icon.codeWrap { 
+				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/wrap0.svg'); cursor: pointer;
+			}
 		}
 	}
 

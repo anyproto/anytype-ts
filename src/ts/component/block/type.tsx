@@ -32,9 +32,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	render (): any {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const items = this.getItems();
 		const { filter } = this.state;
+		const object = detailStore.get(rootId, rootId, []);
+		const type: any = dbStore.getObjectType(object.type) || {};
 
 		const Item = (item: any) => {
 			return (
@@ -60,7 +62,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
 				<div className="placeholder">
-					Choose object type (↓↑ to select) or press ENTER to continue with Note type
+					Choose object type (↓↑ to select) or press ENTER to continue with "{type.name}" type
 				</div>
 
 				<Filter 

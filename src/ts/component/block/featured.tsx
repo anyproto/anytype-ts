@@ -75,7 +75,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (tl) {
 			types = types.slice(0, 2);
-			setOfString.push('Object types: ' + types.join(', '));
+			setOfString.push(`Object ${Util.cntWord(tl, 'type', 'types')}: ${types.join(', ')}`);
 
 			if (tl > 2) {
 				setOfString.push(<div className="more">+{tl - 2}</div>);
@@ -83,7 +83,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 		if (rl) {
 			relations = relations.slice(0, 2);
-			setOfString.push('Relations: ' + relations.join(', '));
+			setOfString.push(`${Util.cntWord(rl, 'Relation', 'Relations')}: ${relations.join(', ')}`);
 
 			if (rl > 2) {
 				setOfString.push(<div className="more">+{rl - 2}</div>);
