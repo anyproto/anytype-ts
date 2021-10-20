@@ -68,6 +68,7 @@ export interface MenuItem {
 	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
+	forceLetter?: boolean;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;

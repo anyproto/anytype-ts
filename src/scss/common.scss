@@ -115,7 +115,7 @@ html.platformWindows {
 .empty { color: #cbc9bd; }
 .isDone { color: $colorMediumGrey; }
 .placeholder { 
-	@include text-common; pointer-events: none; color: #cbc9bd; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
+	pointer-events: none; color: #cbc9bd; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
 	overflow: hidden; white-space: nowrap;
 }
 ::-webkit-input-placeholder { color: #cbc9bd !important; }
