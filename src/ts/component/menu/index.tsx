@@ -371,6 +371,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			let ox = 0;
 			let oy = 0;
 			let minY = Util.sizeHeader();
+
 			if (platform == I.Platform.Windows) {
 				minY += 30;
 			};
