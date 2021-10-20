@@ -34,7 +34,8 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId, className, onClick } = this.props;
+		const { className, onClick } = this.props;
+		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
@@ -318,7 +319,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, (message: any) => {
+		C.BlockShow(rootId, 'preview', (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -336,6 +337,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			n = 0;
 		};
 		return n;
+	};
+
+	getRootId () {
+		const { rootId } = this.props;
+		return [ rootId, 'preview' ].join('-');
 	};
 
 });

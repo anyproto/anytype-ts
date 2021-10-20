@@ -333,7 +333,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.state.tab = id;
 		this.setState({ tab: id, loading: true });
 
-		C.BlockOpen(this.getRootId(), (message: any) => {
+		C.BlockOpen(this.getRootId(), '', (message: any) => {
 			this.getData('library', true);
 			this.setState({ loading: false });
 		});

@@ -137,7 +137,14 @@ class Dispatcher {
 
 	event (event: any, skipDebug?: boolean) {
 		const { config } = commonStore;
-		const rootId = event.getContextid();
+		const traceId = event.getTraceid();
+		const ctx: string[] = [ event.getContextid() ];
+		
+		if (traceId) {
+			ctx.push(traceId);
+		};
+
+		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
 		const debugCommon = config.debug.mw && !skipDebug;
 		const debugThread = config.debug.th && !skipDebug;

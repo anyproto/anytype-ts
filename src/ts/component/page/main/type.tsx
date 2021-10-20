@@ -291,7 +291,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		crumbs.addPage(rootId);
 		crumbs.addRecent(rootId);
 
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				history.push('/main/index');
 				return;

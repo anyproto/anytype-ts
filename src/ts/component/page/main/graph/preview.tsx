@@ -101,7 +101,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, (message: any) => {
+		C.BlockShow(rootId, '', (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
