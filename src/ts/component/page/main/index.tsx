@@ -33,6 +33,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	refFilter: any = null;
 	id: string = '';
 	timeoutFilter: number = 0;
+	selected: string[] = [];
 
 	state = {
 		tab: Tab.Favorite,
@@ -47,6 +48,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onStore = this.onStore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
@@ -54,6 +56,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onSelectionDelete = this.onSelectionDelete.bind(this);
+		this.onSelectionRestore = this.onSelectionRestore.bind(this);
+		this.onSelectionAll = this.onSelectionAll.bind(this);
+		this.onSelectionNone = this.onSelectionNone.bind(this);
+		this.onSelectionClose = this.onSelectionClose.bind(this);
 	};
 	
 	render () {
@@ -98,7 +105,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					</div>
 					
 					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
-						<div className="tabWrap">
+						<div id="tabWrap" className="tabWrap">
 							<div className="tabs">
 								{tabs.map((item: any, i: number) => (
 									<TabItem key={i} {...item} />
@@ -118,7 +125,34 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								{(tab == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
+						<div id="selectWrap" className="tabWrap">
+							<div className="tabs">
+								<div id="selectCnt" className="side left"></div>
+								<div className="side right">
+									<div className="element" onClick={this.onSelectionDelete}>
+										<Icon className="delete" />
+										<div className="name">Delete</div>
+									</div>
+									<div className="element" onClick={this.onSelectionRestore}>
+										<Icon className="restore" />
+										<div className="name">Restore</div>
+									</div>
+									<div id="selectAll" className="element" onClick={this.onSelectionAll}>
+										<Icon className="all" />
+										<div className="name">Select all</div>
+									</div>
+									<div id="selectNone" className="element" onClick={this.onSelectionNone}>
+										<Icon className="all" />
+										<div className="name">Deselect all</div>
+									</div>
+									<div className="element" onClick={this.onSelectionClose}>
+										<Icon className="close" tooltip="Close" />
+									</div>
+								</div>
+							</div>
+						</div>
 						<ListIndex 
+							onClick={this.onClick} 
 							onSelect={this.onSelect} 
 							onAdd={this.onAdd}
 							onMore={this.onMore}
@@ -140,8 +174,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		crumbs.delete(I.CrumbsType.Page);
 
-		this.onScroll();
 		this.onTab(Storage.get('tabIndex') || tabs[0].id);
+		this.onScroll();
+		this.selectionRender();
 
 		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
 	};
@@ -155,6 +190,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			item.addClass('hover');
 		};
+
+		this.selectionRender();
 	};
 
 	componentWillUnmount () {
@@ -168,21 +205,37 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const node = $(ReactDOM.findDOMNode(this));
 		const title = node.find('#title');
 		const list = node.find('#documents');
+		const selectWrap = node.find('#selectWrap');
+		const header = node.find('#header');
+		const hh = Util.sizeHeader();
+
 		if (!list.length) {
 			return;
 		};
 
 		const oy = list.offset().top;
 		const menu = $('#menuSelect.add');
-		const offset = 256;
+		const offsetTitle = 256;
 
-		let y = 0;
-		if (oy - top <= offset) {
-			y = oy - top - offset;
+		let yt = 0;
+		if (oy - top <= offsetTitle) {
+			yt = oy - top - offsetTitle;
 		};
 
-		title.css({ transform: `translate3d(0px,${y}px,0px)` });
-		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
+		if (list.hasClass('isSelecting')) {
+			if (oy - top <= hh) {
+				header.addClass('selectFixed');
+				list.addClass('selectFixed');
+				selectWrap.css({ top: hh });
+			} else {
+				header.removeClass('selectFixed');
+				list.removeClass('selectFixed');
+				selectWrap.css({ top: '' });
+			};
+		};
+
+		title.css({ transform: `translate3d(0px,${yt}px,0px)` });
+		menu.css({ transform: `translate3d(0px,${yt}px,0px)`, transition: 'none' });
 	};
 
 	getTabs () {
@@ -314,7 +367,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
-	onSelect (e: any, item: any) {
+	onClick (e: any, item: any) {
 		e.stopPropagation();
 		e.persist();
 
@@ -328,6 +381,94 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, object);
 		});
+	};
+
+	getObject (item: any) {
+		return item.isBlock ? item._object_ : item;
+	};
+
+	onSelect (e: any, item: any) {
+		e.stopPropagation();
+		e.persist();
+
+		let object = this.getObject(item);
+		let idx = this.selected.indexOf(object.id);
+		if (idx >= 0) {
+			this.selected.splice(idx, 1);
+		} else {
+			this.selected.push(object.id);
+		};
+
+		this.selected = Util.arrayUnique(this.selected);
+		this.selectionRender();
+		this.onScroll();
+	};
+
+	selectionRender () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrapper = node.find('#documents');
+		const cnt = node.find('#selectCnt');
+		const selectAll = node.find('#selectAll');
+		const selectNone = node.find('#selectNone');
+		const items = this.getList();
+		const l = this.selected.length;
+
+		if (l == items.length) {
+			selectAll.hide();
+			selectNone.show();
+		} else {
+			selectAll.show();
+			selectNone.hide();
+		};
+
+		l ? wrapper.addClass('isSelecting') : wrapper.removeClass('isSelecting');
+		cnt.text(`Selected ${l} ${Util.cntWord(l, 'object', 'objects')}`);
+
+		node.find('.item.isSelected').removeClass('isSelected');
+		this.selected.forEach((id: string) => {
+			node.find(`#item-${id}`).addClass('isSelected');
+		});
+	};
+
+	onSelectionDelete (e: any) {
+		C.ObjectListDelete(this.selected, () => {
+			this.selected = [];
+			this.selectionRender();
+
+			this.load();
+		});
+	};
+	
+	onSelectionRestore (e: any) {
+		C.ObjectListSetIsArchived(this.selected, false, () => {
+			this.selected = [];
+			this.selectionRender();
+			
+			this.load();
+		});
+	};
+
+	onSelectionAll (e: any) {
+		const items = this.getList();
+
+		this.selected = [];
+
+		items.forEach((it: any) => {
+			let object = this.getObject(it);
+			this.selected.push(object.id);
+		});
+
+		this.selectionRender();
+	};
+
+	onSelectionNone (e: any) {
+		this.selected = [];
+		this.selectionRender();
+	};
+
+	onSelectionClose (e: any) {
+		this.selected = [];
+		this.selectionRender();
 	};
 
 	onStore (e: any) {
@@ -358,6 +499,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let menuContext = null;
 		let archive = null;
 		let link = null;
+		let remove = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		
@@ -371,9 +513,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (object.isArchived) {
 			link = null;
-			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
+			remove = { id: 'remove', icon: 'remove', name: 'Delete' };
+			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
+			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
 
 		if (object.isReadonly || object.templateIsBundled || (object.id == profile) || ([ Constant.typeId.relation ].indexOf(object.type) >= 0)) {
@@ -386,6 +529,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const options = [
 			archive,
+			remove,
 			move,
 			link,
 		];
@@ -464,6 +608,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 						case 'unfav':
 							C.ObjectSetIsFavorite(object.id, false);
+							break;
+
+						case 'remove':
+							C.ObjectListDelete([ object.id ], (message: any) => {
+								this.load();
+							});
 							break;
 					};
 				},

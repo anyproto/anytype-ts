@@ -165,7 +165,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.layout, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};

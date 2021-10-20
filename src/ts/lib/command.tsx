@@ -26,15 +26,6 @@ const DebugTree = (blockId: string, path: string, callBack?: (message: any) => v
 	dispatcher.request('debugTree', request, callBack);
 };
 
-const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
-	
-	request.setHash(hash);
-    request.setSize(size);
-
-	dispatcher.request('imageGetBlob', request, callBack);
-};
-
 const ConfigGet = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('configGet', request, callBack);
@@ -43,6 +34,15 @@ const ConfigGet = (callBack?: (message: any) => void) => {
 const Shutdown = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('shutdown', request, callBack);
+};
+
+const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.FileList.Offload.Request();
+
+	request.setOnlyidsList(ids);
+	request.setIncludenotpinned(notPinned);
+
+	dispatcher.request('fileListOffload', request, callBack);
 };
 
 const LinkPreview = (url: string, callBack?: (message: any) => void) => {
@@ -612,15 +612,6 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	dispatcher.request('blockListSetAlign', request, callBack);
 };
 
-
-const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Delete.Page.Request();
-	
-	request.setBlockidsList(blockIds);
-
-	dispatcher.request('blockListDeletePage', request, callBack);
-};
-
 const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.ViewCreate.Request();
 	
@@ -1070,6 +1061,23 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
+const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Delete.Request();
+	
+	request.setObjectidsList(ids);
+
+	dispatcher.request('objectListDelete', request, callBack);
+};
+
+const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Set.IsArchived.Request();
+	
+	request.setObjectidsList(ids);
+	request.setIsarchived(isArchived);
+
+	dispatcher.request('objectListSetIsArchived', request, callBack);
+};
+
 const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.AddWithObjectId.Request();
 
@@ -1141,7 +1149,6 @@ export {
 	DebugSync,
 	DebugTree,
 
-	ImageGetBlob,
 	ConfigGet,
 	Shutdown,
 	LinkPreview,
@@ -1150,6 +1157,7 @@ export {
 	ProcessCancel,
 	Export,
 	ExportTemplates,
+	FileListOffload,
 
 	WalletCreate,
 	WalletRecover,
@@ -1209,7 +1217,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListDeletePage,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
@@ -1268,6 +1275,9 @@ export {
 	ObjectToSet,
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
+	
+	ObjectListDelete,
+	ObjectListSetIsArchived,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
