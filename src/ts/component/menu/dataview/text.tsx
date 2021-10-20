@@ -58,6 +58,13 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 	};
 
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { onChange } = data;
+
+		keyboard.setFocus(false);
+		onChange(this.getValue());
+
 		this._isMounted = false;
 	};
 
@@ -76,6 +83,9 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 
 		keyboard.setFocus(false);
 		onChange(this.getValue());
+
+		console.log(this.getValue(), onChange);
+
 		close();
 	};
 
