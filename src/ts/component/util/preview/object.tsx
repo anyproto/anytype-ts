@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
 import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -34,15 +34,16 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	
 	render () {
 		const { loading } = this.state;
-		const { className, onClick } = this.props;
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
+		const { rootId, className, onClick } = this.props;
+		const contextId = this.getRootId();
+
+		const check = DataUtil.checkDetails(contextId, rootId);
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
-		const author = detailStore.get(rootId, object.creator, []);
-		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
+		const author = detailStore.get(contextId, object.creator, []);
+		const childBlocks = blockStore.getChildren(contextId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
-		const cn = [ 'previewObject' , check.className, className, ];
+		const cn = [ 'previewObject' , check.className, className ];
 
 		let n = 0;
 		let c = 0;
@@ -307,6 +308,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		Action.pageClose(this.getRootId(), false);
 	};
 
 	open () {

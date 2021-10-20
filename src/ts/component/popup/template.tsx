@@ -84,10 +84,6 @@ class PopupTemplate extends React.Component<Props, State> {
 
 		this._isMounted = false;
 		this.unbind();
-
-		for (let item of items) {
-			Action.pageClose(item.id, false);
-		};
 	};
 
 	unbind () {

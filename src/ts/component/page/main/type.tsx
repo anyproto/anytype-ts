@@ -270,10 +270,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		for (let item of templates) {
-			Action.pageClose(item.id, false);
-		};
 	};
 
 	open () {
