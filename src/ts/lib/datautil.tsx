@@ -1059,6 +1059,7 @@ class DataUtil {
 	checkDetails (rootId: string) {
 		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+		const checkType = blockStore.checkBlockType(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
 			object: object,
@@ -1101,7 +1102,7 @@ class DataUtil {
 				break;
 		};
 
-		if (object.isDraft) {
+		if (checkType) {
 			ret.className.push('noSystemBlocks');
 		};
 

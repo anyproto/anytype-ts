@@ -240,11 +240,15 @@ class Dispatcher {
 
 					const childrenIds = data.getChildrenidsList();
 
-					if ((id == rootId) && childrenIds.indexOf(Constant.blockId.footer) < 0) {
+					if ((id == rootId) && !childrenIds.includes(Constant.blockId.footer)) {
 						childrenIds.push(Constant.blockId.footer);
 					};
 
 					blockStore.updateStructure(rootId, id, childrenIds);
+
+					if (id == rootId) {
+						blockStore.checkDraft(rootId);
+					};
 					break;
 
 				case 'blockSetFields':
@@ -574,9 +578,6 @@ class Dispatcher {
 					if ((id == rootId) && block) {
 						if ((undefined !== details.layout) && (block.layout != details.layout)) {
 							blockStore.update(rootId, { id: rootId, layout: details.layout });
-						};
-						if ((undefined !== details.isDraft)) {
-							blockStore.checkDraft(rootId);
 						};
 					};
 					break;

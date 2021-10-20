@@ -275,9 +275,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		let block = null;
 		if (object.layout == I.ObjectLayout.Note) {
-			block = blockStore.getFirstBlock(rootId, 1, (it: any) => {
-				return it.isText();
-			});
+			block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
 		} else {
 			block = blockStore.getLeaf(rootId, Constant.blockId.title);
 		};
@@ -357,8 +355,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const object = detailStore.get(rootId, rootId);
+		const checkType = blockStore.checkBlockType(rootId);
 
-		if (!root || !allowed || object.isDraft) {
+		if (!root || !allowed || checkType) {
 			return;
 		};
 		

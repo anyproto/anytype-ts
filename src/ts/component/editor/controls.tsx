@@ -36,10 +36,10 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, []);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const checkType = blockStore.checkBlockType(rootId);
 
-		if (!root || !allowedDetails || object.isDraft) {
+		if (!root || !allowedDetails || checkType) {
 			return null;
 		};
 

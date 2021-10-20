@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, Util, Storage, Mark } from 'ts/lib';
-import { detailStore } from 'ts/store';
+import { detailStore, commonStore } from 'ts/store';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -492,14 +492,19 @@ class BlockStore {
 	};
 
 	checkDraft (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'isDraft' ], true);
+		const object = detailStore.get(rootId, rootId, []);
+		const root = this.getMapElement(rootId, rootId);
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
 		if (!footer) {
 			return;
 		};
 
+		const cnt = object.type == Constant.typeId.note ? 3 : 2;
+		const checkType = object.type == commonStore.type;
+		const checkBlocks = checkType && (root.childrenIds.length <= cnt);
+
 		let change = false;
-		if (object.isDraft) {
+		if (checkBlocks) {
 			if (footer.childrenIds.indexOf(Constant.blockId.type) < 0) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;
@@ -512,6 +517,14 @@ class BlockStore {
 		if (change) {
 			this.updateStructure(rootId, Constant.blockId.footer, footer.childrenIds);
 		};
+	};
+
+	checkBlockType (rootId: string): boolean {
+		const footer = this.getMapElement(rootId, Constant.blockId.footer);
+		if (!footer) {
+			return false;
+		};
+		return footer.childrenIds.includes(Constant.blockId.type);
 	};
 
 };
