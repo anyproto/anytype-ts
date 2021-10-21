@@ -10,6 +10,7 @@ interface Preview {
 	element: any;
 	range: I.TextRange;
 	marks: I.Mark[];
+	noUnlink?: boolean;
 	onChange?(marks: I.Mark[]): void;
 };
 

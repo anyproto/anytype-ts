@@ -34,7 +34,8 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 	
 	render () {
 		const { preview } = commonStore;
-		const { type, param } = preview;
+		const { type, param, noUnlink } = preview;
+		const cn = [ 'preview' ];
 
 		let head = null;
 		let content = null;
@@ -45,7 +46,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 					<div className="head">
 						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('previewCopy')}</div>
 						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div>
-						<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div> : ''}
 					</div>
 				);
 
@@ -53,18 +54,24 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 				break;
 
 			case I.MarkType.Object:
-				head = (
-					<div className="head">
-						<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
-					</div>
-				);
+				if (!noUnlink) {
+					head = (
+						<div className="head">
+							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+						</div>
+					);
+				};
 
 				content = <PreviewObject ref={(ref: any) => { this.ref = ref; }} rootId={param} />;
 				break;
 		};
 
+		if (head) {
+			cn.push('withHead');
+		};
+
 		return (
-			<div id="preview" className="preview">
+			<div id="preview" className={cn.join(' ')}>
 				<div className="polygon" onClick={this.onClick} />
 				<div className="content">
 					{head}

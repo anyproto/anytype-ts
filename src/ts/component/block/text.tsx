@@ -442,6 +442,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 					to: Number(range[1]) || 0, 
 				},
 				marks: self.marks,
+				noUnlink: true,
 				onChange: (marks: I.Mark[]) => {
 					self.setMarks(marks);
 				}
