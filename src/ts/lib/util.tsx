@@ -892,8 +892,10 @@ class Util {
 				return '#popupPage #innerWrap';
 			
 			case 'menuBlockAdd':
-			case 'menuBlockRelationView':
 				return `#${type} .content`;
+
+			case 'menuBlockRelationView':
+				return `#${type} .scrollWrap`;
 		};
 	};
 
