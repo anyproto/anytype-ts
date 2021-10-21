@@ -374,7 +374,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 											blockId: block.id,
 											blockIds: [ block.id ],
 											filters: [
-												{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
+												{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.type, condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+												{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.setOf, condition: I.FilterCondition.In, value: [ object.type ] }
 											],
 											onSelect: (item: any) => {
 												DataUtil.objectOpenPopup({ id: item.id, layout: I.ObjectLayout.Set });
