@@ -13,6 +13,7 @@ const Constant = require('json/constant.json');
 
 const PREFIX = 'blockFeatured';
 const BLOCK_ID_DATAVIEW = 'dataview';
+const SOURCE_LIMIT = 1;
 
 const BlockFeatured = observer(class BlockFeatured extends React.Component<Props, {}> {
 
@@ -74,19 +75,19 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let rl = relations.length;
 
 		if (tl) {
-			types = types.slice(0, 2);
+			types = types.slice(0, SOURCE_LIMIT);
 			setOfString.push(`Object ${Util.cntWord(tl, 'type', 'types')}: ${types.join(', ')}`);
 
-			if (tl > 1) {
-				setOfString.push(<div className="more">+{tl - 1}</div>);
+			if (tl > SOURCE_LIMIT) {
+				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
 			};
 		};
 		if (rl) {
-			relations = relations.slice(0, 2);
+			relations = relations.slice(0, SOURCE_LIMIT);
 			setOfString.push(`${Util.cntWord(rl, 'Relation', 'Relations')}: ${relations.join(', ')}`);
 
-			if (rl > 1) {
-				setOfString.push(<div className="more">+{rl - 1}</div>);
+			if (rl > SOURCE_LIMIT) {
+				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
 			};
 		};
 
