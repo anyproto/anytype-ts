@@ -97,7 +97,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		crumbs.addPage(rootId);
 		crumbs.addRecent(rootId);
 
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				history.push('/main/index');
 				return;

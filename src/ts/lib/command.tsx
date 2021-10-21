@@ -198,18 +198,20 @@ const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => vo
 	dispatcher.request('blockGetPublicWebURL', request, callBack);
 };
 
-const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
+const BlockOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
+	request.setTraceid(traceId);
 
 	dispatcher.request('blockOpen', request, callBack);
 };
 
-const BlockShow = (blockId: string, callBack?: (message: any) => void) => {
+const BlockShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
+	request.setTraceid(traceId);
 
 	dispatcher.request('blockShow', request, callBack);
 };

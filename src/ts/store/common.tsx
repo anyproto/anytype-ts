@@ -3,13 +3,14 @@ import { I, Storage, Util } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
-interface PreviewLink {
-	url: string;
+interface Preview {
+	type: I.MarkType,
+	param: string;
+	object: any;
 	element: any;
-	rootId: string;
-	blockId: string;
 	range: I.TextRange;
 	marks: I.Mark[];
+	noUnlink?: boolean;
 	onChange?(marks: I.Mark[]): void;
 };
 
@@ -31,7 +32,7 @@ class CommonStore {
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
-    public previewLinkObj: PreviewLink = null;
+    public previewObj: Preview = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
     public configObj:any = {};
     public cellId: string = '';
 	public typeId: string = '';
@@ -43,11 +44,11 @@ class CommonStore {
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
-            previewLinkObj: observable,
+            previewObj: observable,
             configObj: observable,
             config: computed,
             progress: computed,
-            previewLink: computed,
+            preview: computed,
             filter: computed,
             cover: computed,
             coverImage: computed,
@@ -60,7 +61,7 @@ class CommonStore {
             filterSetFrom: action,
             filterSetText: action,
             filterSet: action,
-            previewLinkSet: action
+            previewSet: action
         });
     };
 
@@ -72,8 +73,8 @@ class CommonStore {
 		return this.progressObj;
 	};
 
-    get previewLink(): PreviewLink {
-		return this.previewLinkObj;
+    get preview(): Preview {
+		return this.previewObj;
 	};
 
     get filter(): Filter {
@@ -147,8 +148,8 @@ class CommonStore {
 		this.filterSetText(text);
 	};
 
-    previewLinkSet (param: PreviewLink) {
-		this.previewLinkObj = param;
+    previewSet (preview: Preview) {
+		this.previewObj = preview;
 	};
 
 	typeSet (v: string) {

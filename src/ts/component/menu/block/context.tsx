@@ -72,7 +72,8 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							let isSet = false;
 
 							if (action.type == I.MarkType.Link) {
-								isSet = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
+								const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
+								isSet = inRange && inRange.param;
 							} else {
 								isSet = Mark.getInRange(marks, action.type, range);
 							};

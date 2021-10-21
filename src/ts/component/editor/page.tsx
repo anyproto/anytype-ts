@@ -218,7 +218,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.id = rootId;
 
-		C.BlockOpen(this.id, (message: any) => {
+		C.BlockOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate(() => { history.push('/main/index'); });
@@ -1162,7 +1162,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
-		Util.previewLinkHide(false);
+		Util.previewHide(false);
 	};
 	
 	onCopy (e: any, cut: boolean) {

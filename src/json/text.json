@@ -319,9 +319,9 @@
 
 	"menuDataviewViewEditName": { "en": "View name" },
 
-	"previewLinkCopy": { "en": "Copy link" },
-	"previewLinkEdit": { "en": "Edit link" },
-	"previewLinkUnlink": { "en": "Unlink" },
+	"previewCopy": { "en": "Copy link" },
+	"previewEdit": { "en": "Edit link" },
+	"previewUnlink": { "en": "Unlink" },
 
 	"filterConditionNone": { "en": "All" },
 	"filterConditionEqual": { "en": "Is" },

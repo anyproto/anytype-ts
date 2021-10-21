@@ -379,7 +379,7 @@ class DataUtil {
 			});
 			
 			if (profile) {
-				C.BlockOpen(profile, (message: any) => {
+				C.BlockOpen(profile, '', (message: any) => {
 					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 						Util.onErrorUpdate();
 						return;
@@ -391,7 +391,7 @@ class DataUtil {
 
 			crumbs.init();
 
-			C.BlockOpen(root, (message: any) => {
+			C.BlockOpen(root, '', (message: any) => {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate();
 					return;
@@ -1056,9 +1056,11 @@ class DataUtil {
 		});
 	};
 
-	checkDetails (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+	checkDetails (rootId: string, blockId?: string) {
+		blockId = blockId || rootId;
+
+		const object = detailStore.get(rootId, blockId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
+		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockType(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {

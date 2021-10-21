@@ -105,7 +105,7 @@ class Keyboard {
 			e.preventDefault();
 			popupStore.closeLast();
 			menuStore.closeAll();
-			Util.previewLinkHide(false);
+			Util.previewHide(false);
 		});
 
 		// Shortcuts

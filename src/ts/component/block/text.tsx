@@ -295,7 +295,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				ipcRenderer.send('urlOpen', $(this).attr('href'));
 			});
 			
-			Util.previewLinkShow(url, $(this), {
+			Util.previewShow($(this), {
+				param: url,
+				type: I.MarkType.Link,
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
@@ -317,6 +319,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
 		const items = value.find('obj');
+		const self = this;
 
 		if (!items.length) {
 			return;
@@ -327,16 +330,31 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
 			const data = el.data();
+			const range = data.range.split('-');
 
 			if (!data.param) {
 				return;
 			};
 
+			const object = detailStore.get(rootId, data.param, []);
+
 			el.on('click.object', function (e: any) {
 				e.preventDefault();
-
-				const object = detailStore.get(rootId, data.param, []);
 				DataUtil.objectOpenEvent(e, object);
+			});
+
+			Util.previewShow($(this), {
+				param: object.id,
+				object: object,
+				type: I.MarkType.Object,
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				marks: self.marks,
+				onChange: (marks: I.Mark[]) => {
+					self.setMarks(marks);
+				}
 			});
 		});
 	};
@@ -356,6 +374,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		const { rootId, block } = this.props;
 		const size = this.emojiParam(block.content.style);
+		const self = this;
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -394,15 +413,40 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		});
 		
-		items.unbind('click.mention').on('click.mention', function (e: any) {
-			e.preventDefault();
+		items.unbind('click.mention mouseenter.mention');
 
+		items.on('mouseenter.mention', function (e: any) {
 			const el = $(this);
-			const param = el.data('param');
-			if (!el.hasClass('dis') && param) {
-				const object = detailStore.get(rootId, param, []);
-				DataUtil.objectOpenEvent(e, object);
+			const data = el.data();
+			const range = data.range.split('-');
+
+			if (!data.param) {
+				return;
 			};
+
+			const object = detailStore.get(rootId, data.param, []);
+
+			if (!el.hasClass('dis')) {
+				el.on('click.mention', function (e: any) {
+					e.preventDefault();
+					DataUtil.objectOpenEvent(e, object);
+				});
+			};
+
+			Util.previewShow($(this), {
+				param: object.id,
+				object: object,
+				type: I.MarkType.Object,
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				marks: self.marks,
+				noUnlink: true,
+				onChange: (marks: I.Mark[]) => {
+					self.setMarks(marks);
+				}
+			});
 		});
 	};
 

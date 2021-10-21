@@ -137,7 +137,7 @@ class Popup extends React.Component<Props, {}> {
 	};
 
 	close () {
-		Util.previewLinkHide(true);
+		Util.previewHide(true);
 		Util.tooltipHide(true);
 
 		menuStore.closeAll();

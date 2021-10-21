@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
-import { commonStore, detailStore, blockStore } from 'ts/store';
-import { I, C, DataUtil } from 'ts/lib';
+import { commonStore, detailStore, blockStore, dbStore } from 'ts/store';
+import { I, C, DataUtil, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props {
@@ -23,6 +23,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 	isOpen: boolean = false;
 	_isMounted: boolean = false;
+	id: string = '';
 
 	public static defaultProps = {
 		className: '',
@@ -35,13 +36,16 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	render () {
 		const { loading } = this.state;
 		const { rootId, className, onClick } = this.props;
-		const check = DataUtil.checkDetails(rootId);
+		const contextId = this.getRootId();
+
+		const check = DataUtil.checkDetails(contextId, rootId);
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
-		const author = detailStore.get(rootId, object.creator, []);
-		const childBlocks = blockStore.getChildren(rootId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
+		const author = detailStore.get(contextId, object.creator, []);
+		const type: any = dbStore.getObjectType(object.type) || {};
+		const childBlocks = blockStore.getChildren(contextId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
-		const cn = [ 'previewObject' , check.className, className, ];
+		const cn = [ 'previewObject' , check.className, className ];
 
 		let n = 0;
 		let c = 0;
@@ -272,7 +276,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								)}
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
-								<div className="author">{author.name}</div>
+								<div className="featured">
+									{type.name}
+									<div className="bullet" />
+									{author.name}
+								</div>
 							</div>
 							<div className="blocks">
 								{childBlocks.map((child: any, i: number) => {
@@ -304,21 +312,27 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.open();
 	};
 
+	componentDidUpdate () {
+		this.open();
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
+		Action.pageClose(this.getRootId(), false);
 	};
 
 	open () {
 		const { loading } = this.state;
 		const { rootId } = this.props;
 
-		if (!this._isMounted || loading) {
+		if (!this._isMounted || loading || (this.id == rootId)) {
 			return;
 		};
 
+		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, (message: any) => {
+		C.BlockShow(rootId, 'preview', (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -336,6 +350,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			n = 0;
 		};
 		return n;
+	};
+
+	getRootId () {
+		const { rootId } = this.props;
+		return [ rootId, 'preview' ].join('-');
 	};
 
 });
