@@ -69,8 +69,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { config } = commonStore;
 		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
-		const { tab, filter } = this.state;
-		const canDrag = [ Tab.Favorite ].indexOf(tab) >= 0
+		const { filter } = this.state;
+		const tabs = this.getTabs();
+		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
+		const canDrag = [ Tab.Favorite ].indexOf(tab.id) >= 0
 
 		if (!element) {
 			return null;
@@ -79,10 +81,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
-		const tabs = this.getTabs();
 
 		const TabItem = (item: any) => (
-			<div className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
+			<div className={[ 'tab', (tab.id == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
 				{item.name}
 			</div>
 		);
@@ -105,7 +106,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						</div>
 					</div>
 					
-					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
+					<div id="documents" className={Util.toCamelCase('tab-' + tab.id)}> 
 						<div id="tabWrap" className="tabWrap">
 							<div className="tabs">
 								{tabs.map((item: any, i: number) => (
@@ -123,7 +124,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										onChange={this.onFilterChange}
 									/>
 								</div>
-								{(tab == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
+								{(tab.id == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
 						<div id="selectWrap" className="tabWrap">
@@ -152,17 +153,23 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								</div>
 							</div>
 						</div>
-						<ListIndex 
-							onClick={this.onClick} 
-							onSelect={this.onSelect} 
-							onAdd={this.onAdd}
-							onMore={this.onMore}
-							onSortStart={this.onSortStart}
-							onSortEnd={this.onSortEnd}
-							getList={this.getList}
-							helperContainer={() => { return $('#documents').get(0); }} 
-							canDrag={canDrag}
-						/>
+						{list.length ? (
+							<ListIndex 
+								onClick={this.onClick} 
+								onSelect={this.onSelect} 
+								onAdd={this.onAdd}
+								onMore={this.onMore}
+								onSortStart={this.onSortStart}
+								onSortEnd={this.onSortEnd}
+								getList={this.getList}
+								helperContainer={() => { return $('#documents').get(0); }} 
+								canDrag={canDrag}
+							/>
+						) : (
+							<div className="emptySearch">
+								There are no objects in {tab.name} tab
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
