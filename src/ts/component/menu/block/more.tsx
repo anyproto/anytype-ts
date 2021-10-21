@@ -134,7 +134,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 		let share = { id: 'sharePage', name: 'Share' };
-		let highlight = { id: 'highlight', name: 'Highlight' };
+		let highlight = null;
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
@@ -152,6 +152,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		if (!allowedDetails || object.isReadonly || (object.id == profile)) {
 			archive = null;
+		};
+
+		if (object.isHightlighted) {
+			highlight = { id: 'unhighlight', name: 'Unhighlight' };
+		} else {
+			highlight = { id: 'highlight', name: 'Highlight' };
 		};
 
 		if (!config.sudo) {
@@ -572,8 +578,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'highlight':
-				C.WorkspaceSetIsHighlighted(object.id, !object.isHightlighted, (message: any) => {
-				});
+				C.WorkspaceSetIsHighlighted(object.id, true);
+				break;
+
+			case 'unhighlight':
+				C.WorkspaceSetIsHighlighted(object.id, false);
 				break;
 		};
 		
