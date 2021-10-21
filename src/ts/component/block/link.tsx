@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Loader } from 'ts/component';
+import { Icon, Loader } from 'ts/component';
 import { I, DataUtil, translate } from 'ts/lib';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -34,7 +34,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 		const { id, content, align } = block;
 		const object = detailStore.get(rootId, content.targetBlockId);
-		const { _empty_, isArchived, done, layout } = object;
+		const { _empty_, isArchived, isDeleted, done, layout } = object;
 		const cn = [ 'focusable', 'c' + id, 'resizable' ];
 		const fields = DataUtil.checkLinkSettings(block.fields, layout);
 		const readonly = this.props.readonly || object.isReadonly || object.templateIsBundled;
@@ -47,26 +47,45 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			cn.push('isArchived');
 		};
 
+		let element = null;
+		if (_empty_) {
+			element = (
+				<div className="loading" data-target-block-id={content.targetBlockId}>
+					<Loader />
+					<div className="name">{translate('blockLinkSyncing')}</div>
+				</div>
+			);
+		} else 
+		if (isDeleted) {
+			element = (
+				<div className="deleted">
+					<Icon className="ghost" />
+					<div className="name">Deleted</div>
+				</div>
+			);
+		} else {
+			if (!isArchived) {
+				cn.push('cp');
+			};
+
+			element = (
+				<LinkCard 
+					{...this.props} 
+					{...fields}
+					className={DataUtil.linkCardClass(fields.style)}
+					object={object} 
+					canEdit={!readonly} 
+					onClick={this.onClick}
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload}
+					onCheckbox={this.onCheckbox} 
+				/>
+			);
+		};
+
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
-				{_empty_ ? (
-					<div className="loading" data-target-block-id={content.targetBlockId}>
-						<Loader />
-						<div className="name">{translate('blockLinkSyncing')}</div>
-					</div>
-				) : (
-					<LinkCard 
-						{...this.props} 
-						{...fields}
-						className={DataUtil.linkCardClass(fields.style)}
-						object={object} 
-						canEdit={!readonly} 
-						onClick={this.onClick}
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload}
-						onCheckbox={this.onCheckbox} 
-					/>
-				)}
+				{element}
 			</div>
 		);
 	};
