@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader, Filter } from 'ts/component';
-import { I, C, keyboard, DataUtil } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, C, Util, keyboard, DataUtil } from 'ts/lib';
+import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
-import { menuStore } from '../../../store';
 
 interface Props extends I.Menu {}
 
@@ -209,36 +208,39 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
+		const reg = new RegExp(Util.filterFix(filter), 'gi');
 
 		let text = 'Create new object';
+		let items = this.items;
 
 		if (filter) {
 			text = `Create object “${filter}”`;
+			items = items.filter((it: any) => {
+				let ret = false;
+				if (it.name && it.name.match(reg)) {
+					ret = true;
+				} else 
+				if (it.description && it.description.match(reg)) {
+					ret = true;
+				};
+				return ret;
+			});
 		};
+		items.unshift({ id: 'add', name: text, icon: 'plus' });
 		
 		let sections: any[] = [
-			{ id: I.MarkType.Object, name: 'Objects', children: this.items, order: 2 }
+			{ id: I.MarkType.Object, name: 'Objects', children: items }
 		];
 
 		if (filter) {
 			sections.unshift({ 
-				id: I.MarkType.Link, name: 'Web sites', order: 1,
+				id: I.MarkType.Link, name: 'Web sites',
 				children: [
-					{ id: 'link', name: filter, icon: 'link', skipFilter: true }
+					{ id: 'link', name: filter, icon: 'link' }
 				] 
 			});
-
-			sections = DataUtil.menuSectionsFilter(sections, filter);
 		};
 
-		sections[0].children.unshift({ id: 'add', name: text, icon: 'plus', skipFilter: true });
-
-		sections.sort((c1: any, c2: any) => {
-			if (c1.order > c2.order) return 1;
-			if (c1.order < c2.order) return -1;
-			return 0;
-		});
-		
 		sections = DataUtil.menuSectionsMap(sections);
 		return sections;
 	};

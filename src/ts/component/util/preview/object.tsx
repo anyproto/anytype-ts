@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Loader, IconObject, Cover, Icon } from 'ts/component';
-import { commonStore, detailStore, blockStore } from 'ts/store';
+import { commonStore, detailStore, blockStore, dbStore } from 'ts/store';
 import { I, C, DataUtil, Action } from 'ts/lib';
 import { observer } from 'mobx-react';
 
@@ -23,6 +23,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 	isOpen: boolean = false;
 	_isMounted: boolean = false;
+	id: string = '';
 
 	public static defaultProps = {
 		className: '',
@@ -41,10 +42,13 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const object = check.object;
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
+		const type: any = dbStore.getObjectType(object.type) || {};
 		const childBlocks = blockStore.getChildren(contextId, rootId, (it: I.Block) => { return !it.isLayoutHeader(); }).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
 
+		console.log(object, type);
+	
 		let n = 0;
 		let c = 0;
 
@@ -274,7 +278,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								)}
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
-								<div className="author">{author.name}</div>
+								<div className="featured">
+									{type.name}
+									<div className="bullet" />
+									{author.name}
+								</div>
 							</div>
 							<div className="blocks">
 								{childBlocks.map((child: any, i: number) => {
@@ -306,6 +314,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		this.open();
 	};
 
+	componentDidUpdate () {
+		this.open();
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
 		Action.pageClose(this.getRootId(), false);
@@ -315,10 +327,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { loading } = this.state;
 		const { rootId } = this.props;
 
-		if (!this._isMounted || loading) {
+		if (!this._isMounted || loading || (this.id == rootId)) {
 			return;
 		};
 
+		this.id = rootId;
 		this.setState({ loading: true });
 
 		C.BlockShow(rootId, 'preview', (message: any) => {

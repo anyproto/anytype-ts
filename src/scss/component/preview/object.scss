@@ -19,7 +19,10 @@
 		.icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
 		.description { @include text-small; @include text-overflow-nw; }
-		.author { @include text-very-small; color: $colorMediumGrey; }
+		.featured { @include text-very-small; color: $colorMediumGrey; }
+		.featured {
+			.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorMediumGrey; display: inline-block; vertical-align: middle; margin: -2px 4px 0px 4px; }
+		}
 	}
 
 	.blocks { z-index: 1; }

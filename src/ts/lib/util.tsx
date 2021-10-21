@@ -22,7 +22,7 @@ class Util {
 	timeoutTooltip: number = 0;
 	timeoutPreviewLinkShow: number = 0;
 	timeoutPreviewLinkHide: number = 0;
-	previewLinkOpen: boolean = false;
+	previewOpen: boolean = false;
 	
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
@@ -699,42 +699,38 @@ class Util {
 		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
 	
-	previewLinkShow (url: string, node: any, param: any) {
+	previewShow (node: any, param: any) {
 		if (!node.length || keyboard.isPreviewDisabled) {
 			return;
 		};
 		
-		const obj = $('#previewLink');
+		const obj = $('#preview');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
 			window.clearTimeout(this.timeoutPreviewLinkShow);
 		});
 		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			this.previewLinkHide(false);
+			this.previewHide(false);
 		});
 		
-		this.previewLinkHide(false);
+		this.previewHide(false);
 		
 		window.clearTimeout(this.timeoutPreviewLinkShow);
 		this.timeoutPreviewLinkShow = window.setTimeout(() => {
-			this.previewLinkOpen = true;
-			commonStore.previewLinkSet({
-				url: url,
-				element: node,
-				...param,
-			});
+			this.previewOpen = true;
+			commonStore.previewSet({ ...param, element: node });
 		}, 500);
 	};
 	
-	previewLinkHide (force: boolean) {
-		if (!this.previewLinkOpen) {
+	previewHide (force: boolean) {
+		if (!this.previewOpen) {
 			return;
 		};
 
-		const obj = $('#previewLink');
+		const obj = $('#preview');
 		
-		this.previewLinkOpen = false;
+		this.previewOpen = false;
 		window.clearTimeout(this.timeoutPreviewLinkShow);
 		
 		if (force) {

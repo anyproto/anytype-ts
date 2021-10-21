@@ -1162,7 +1162,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 
 		this.scrollTop = top;
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
-		Util.previewLinkHide(false);
+		Util.previewHide(false);
 	};
 	
 	onCopy (e: any, cut: boolean) {
