@@ -636,7 +636,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			data: {
 				title: 'Are you sure?',
 				textConfirm: 'Yes',
-				textCancel: 'Cancel',
 				onConfirm: () => {
 					this.setState({ loading: true });
 

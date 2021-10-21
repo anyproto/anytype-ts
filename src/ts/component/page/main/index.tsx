@@ -6,6 +6,7 @@ import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/sto
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
+import { popupStore } from '../../../store';
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -252,7 +253,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			tabs.push({ id: Tab.Shared, name: 'Shared', load: true });
 		};
 
-		tabs.push({ id: Tab.Archive, name: 'Archive', load: true });
+		tabs.push({ id: Tab.Archive, name: 'Bin', load: true });
 		return tabs;
 	};
 
@@ -431,11 +432,22 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onSelectionDelete (e: any) {
-		C.ObjectListDelete(this.selected, () => {
-			this.selected = [];
-			this.selectionRender();
+		const l = this.selected.length;
 
-			this.load();
+		popupStore.open('confirm', {
+			data: {
+				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
+				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+				textConfirm: 'Delete',
+				onConfirm: () => {
+					C.ObjectListDelete(this.selected, () => {
+						this.selected = [];
+						this.selectionRender();
+			
+						this.load();
+					});
+				}
+			},
 		});
 	};
 	
