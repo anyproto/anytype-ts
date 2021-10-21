@@ -384,12 +384,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = item.isBlock ? item._object_ : item;
 
 		if (tab == Tab.Archive) {
-			return;
+			this.onSelect(e, item);
+		} else {
+			crumbs.cut(I.CrumbsType.Page, 0, () => {
+				DataUtil.objectOpenEvent(e, object);
+			});
 		};
-
-		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, object);
-		});
 	};
 
 	getObject (item: any) {
