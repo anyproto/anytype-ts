@@ -476,7 +476,7 @@ class Mark {
 			for (let i = 0; i < marks.length; ++i) {
 				let mark = marks[i];
 				if ((mark.range.from >= from) && (mark.range.to <= from + p1.length + p2.length + 4)) {
-					if (mark.type == I.MarkType.Link) {
+					if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type)) {
 						marks.splice(i, 1);
 						i--;
 					} else {
