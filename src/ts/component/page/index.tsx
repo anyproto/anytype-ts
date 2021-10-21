@@ -144,6 +144,18 @@ class Page extends React.Component<Props, {}> {
 		const askSurvey = Number(Storage.get('askSurvey')) || 0;
 		const days = lastSurveyTime ? 30 : 14;
 		const win = $(window);
+		const path = [ match.params.page, match.params.action ].join('/');
+		const Component = Components[path];
+
+		if (!Component) {
+			history.push('/main/index');
+			return;
+		};
+
+		if (isMain && !account) {
+			history.push('/');
+			return;
+		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
 			history.push('/auth/pin-check');
