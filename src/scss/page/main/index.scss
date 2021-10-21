@@ -163,6 +163,11 @@
 		.item.active {
 			.icon.more { background-image: url('~img/icon/index/more1.svg'); }
 		}
+
+		.emptySearch { 
+			width: 100%; height: 90px; line-height: 90px; background: #fff; border-radius: 12px; padding: 32px 36px;
+			@include text-header3; color: #cbc9bd;
+		}
 	}
 
 	#documents.tabArchive {
