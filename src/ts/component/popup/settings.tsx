@@ -408,7 +408,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row cp" onClick={this.onFileOffload}>
+						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
 							<div className="side left">
 								<Label text="Clear file cache" />
 							</div>
