@@ -643,8 +643,6 @@ class Util {
 			let obj = $('#tooltip');
 			let offset = node.offset();
 			let st = win.scrollTop(); 
-			let ow = obj.outerWidth();
-			let oh = obj.outerHeight();
 			let nw = node.outerWidth();
 			let nh = node.outerHeight();
 
@@ -653,6 +651,8 @@ class Util {
 			obj.find('.txt').html(this.lbBr(text));
 			obj.show().css({ opacity: 0 });
 			
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
 			let x = 0;
 			let y = 0;
 
