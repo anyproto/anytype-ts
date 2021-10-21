@@ -435,10 +435,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs, (it: I.Block) => { return it.isLink(); });
 		const prev = children[children.length - 2];
 		const object = detailStore.get(rootId, rootId);
-		
+
 		let close = true;
 		
 		if (onSelect) {

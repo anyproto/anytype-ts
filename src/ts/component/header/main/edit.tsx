@@ -140,10 +140,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 			horizontal: I.MenuDirection.Right,
 			subIds: Constant.menuIds.more,
 			data: {
-				rootId: rootId,
+				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				match: match,
+				match,
+				isPopup,
 			}
 		};
 
