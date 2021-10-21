@@ -90,8 +90,8 @@
         .icon.orphan { background-image: url('~img/icon/graph/orphan.svg'); }
     }
 
-    .preview { padding: 24px; }
-    .preview {
+    .panelPreview { padding: 24px; }
+    .panelPreview {
         .loaderWrapper { width: 100%; height: 100%; }
         .cover { position: absolute; height: 146px; }
 
@@ -132,9 +132,9 @@
             .button:last-child { margin: 0px; }
         }
     }
-    .preview.withCover { padding-top: 164px; }
-    .preview.withIconAndCover { padding-top: 106px; }
-    .preview.isTask {
+    .panelPreview.withCover { padding-top: 164px; }
+    .panelPreview.withIconAndCover { padding-top: 106px; }
+    .panelPreview.isTask {
         .title { width: calc(100% - 26px); display: inline-block; vertical-align: middle; }
     }
 

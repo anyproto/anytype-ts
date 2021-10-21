@@ -37,7 +37,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		const { layout, fileExt, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(rootId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
-		const cn = [ 'preview', 'blocks', check.className, ];
+		const cn = [ 'panelPreview', 'blocks', check.className, ];
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 
 		let name = object.name;
