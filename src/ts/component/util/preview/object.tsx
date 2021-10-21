@@ -47,8 +47,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'previewObject' , check.className, className ];
 
-		console.log(object, type);
-	
 		let n = 0;
 		let c = 0;
 
