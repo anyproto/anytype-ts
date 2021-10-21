@@ -84,6 +84,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			if (isBig) {
 				props.withDescription = true;
+				props.forceLetter = true;
 				props.iconSize = 40;
 			} else {
 				props.withCaption = true;

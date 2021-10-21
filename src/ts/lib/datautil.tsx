@@ -1243,7 +1243,7 @@ class DataUtil {
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 1, callBack);
+		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 2, callBack);
 	};
 
 	defaultName (key: string) {

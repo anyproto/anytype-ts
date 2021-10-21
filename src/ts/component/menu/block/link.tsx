@@ -87,6 +87,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 						description={type ? type.name : undefined}
 						style={param.style}
 						iconSize={40}
+						forceLetter={true}
 						className={cn.join(' ')}
 					/>
 				);
@@ -216,9 +217,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		};
 		
 		let sections: any[] = [
-			{ id: I.MarkType.Object, name: 'Objects', children: [
-				{ id: 'add', name: text, icon: 'plus', skipFilter: true }
-			].concat(this.items), order: 2 }
+			{ id: I.MarkType.Object, name: 'Objects', children: this.items, order: 2 }
 		];
 
 		if (filter) {
@@ -231,6 +230,8 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		};
+
+		sections[0].children.unshift({ id: 'add', name: text, icon: 'plus', skipFilter: true });
 
 		sections.sort((c1: any, c2: any) => {
 			if (c1.order > c2.order) return 1;
@@ -258,6 +259,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 	load () {
 		const { filter } = commonStore;
 		const { config } = commonStore;
+		const { param } = this.props;
+		const { data } = param;
+		const { skipIds } = data;
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
@@ -265,6 +270,9 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
 
+		if (skipIds && skipIds.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+		};
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};

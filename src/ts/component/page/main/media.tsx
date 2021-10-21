@@ -105,8 +105,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 							file={commonStore.fileUrl(file.content.hash)}
 							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
 							renderMode="svg"
+							loading={<Loader />}
 						>
-							<Page pageNumber={page} />
+							<Page pageNumber={page} loading={<Loader />} />
 						</Document>
 					</div>
 				);

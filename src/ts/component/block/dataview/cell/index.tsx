@@ -145,7 +145,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition } = this.props;
+		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
@@ -156,12 +156,10 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const win = $(window);
-		const cell = $(`#${cellId}`);
+		const cell = $(`#${cellId}`).addClass('isEditing');
 		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.edit);
-		const height = cell.outerHeight();
 		const value = record[relation.relationKey] || '';
-
-		cell.addClass('isEditing');
+		const height = cell.outerHeight();
 
 		if (cellPosition) {
 			cellPosition(cellId);
@@ -214,6 +212,7 @@ class Cell extends React.Component<Props, {}> {
 				relation: observable.box(relation),
 				record: record,
 				optionCommand: optionCommand,
+				placeholder: placeholder,
 				onChange: (value: any) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);

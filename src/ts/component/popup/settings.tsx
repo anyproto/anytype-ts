@@ -51,6 +51,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.onTurnOffPin = this.onTurnOffPin.bind(this);
 		this.onFileClick = this.onFileClick.bind(this);
 		this.elementBlur = this.elementBlur.bind(this);
+		this.onFileOffload = this.onFileOffload.bind(this);
 	};
 
 	render () {
@@ -398,12 +399,20 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 						<Title text={translate('popupSettingsOtherTitle')} />
 
-						<div className="row" onClick={() => { this.onPage('other'); }}>
+						<div className="row">
 							<div className="side left">
 								<Label text="Default Object type" />
 							</div>
 							<div className="side right">
 								<Select id="defaultType" options={options} value={commonStore.type} onChange={(id: string) => { commonStore.typeSet(id); }}/>
+							</div>
+						</div>
+
+						<div className="row cp" onClick={this.onFileOffload}>
+							<div className="side left">
+								<Label text="Clear file cache" />
+							</div>
+							<div className="side right">
 							</div>
 						</div>
 					</div>
@@ -620,6 +629,39 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				});
 				break;
 		};
+	};
+
+	onFileOffload (e: any) {
+		popupStore.open('confirm',{
+			data: {
+				title: 'Are you sure?',
+				textConfirm: 'Yes',
+				textCancel: 'Cancel',
+				onConfirm: () => {
+					this.setState({ loading: true });
+
+
+					C.FileListOffload([], false, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						this.setState({ loading: false });
+
+						popupStore.open('confirm',{
+							data: {
+								title: 'Files offloaded',
+								text: Util.sprintf('Files: %s, Size: %s', message.files, Util.fileSize(message.bytes)),
+								textConfirm: 'Ok',
+								canCancel: false,
+							}
+						});
+					});
+				},
+				onCancel: () => {
+				}, 
+			}
+		});
 	};
 
 	init () {

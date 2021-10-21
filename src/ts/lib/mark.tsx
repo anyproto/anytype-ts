@@ -532,6 +532,18 @@ class Mark {
 		
 		return attr;
 	};
+
+	toggleLink (newMark: I.Mark, marks: I.Mark[]) {
+		for (let i = 0; i < marks.length; ++i) {
+			let mark = marks[i];
+			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && (mark.range.from >= newMark.range.from) && (mark.range.to <= newMark.range.to)) {
+				marks.splice(i, 1);
+				i--;
+			};
+		};
+
+		return this.toggle(marks, newMark);
+	};
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {
 		if (a.from == b.from && a.to == b.to) {

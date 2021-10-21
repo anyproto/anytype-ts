@@ -8,12 +8,6 @@ const DebugSync = (response: any) => {
 	return response.toObject();
 };
 
-const ImageGetBlob = (response: any) => {
-	return {
-		blob: response.getBlob(),
-	};
-};
-
 const ConfigGet = (response: any) => {
 	return {
 		homeBlockId: response.getHomeblockid(),
@@ -32,6 +26,13 @@ const Shutdown = () => {
 const Export = (response: any) => {
 	return {
 		path: response.getPath(),
+	};
+};
+
+const FileListOffload = (response: any) => {
+	return {
+		files: response.getFilesoffloaded(),
+		bytes: response.getBytesoffloaded(),
 	};
 };
 
@@ -322,10 +323,6 @@ const BlockListSetAlign = (response: any) => {
 	return {};
 };
 
-const BlockListDeletePage = (response: any) => {
-	return {};
-};
-
 const BlockDataviewViewCreate = (response: any) => {
 	return {
 		viewId: response.getViewid(),
@@ -459,6 +456,10 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectListDelete = (response: any) => {
+	return {};
+};
+
 const ObjectShareByLink = (response: any) => {
 	return {
 		link: response.getLink(),
@@ -493,7 +494,6 @@ export {
 	VersionGet,
 	DebugSync,
 
-	ImageGetBlob,
 	ConfigGet,
 	Export,
 	Shutdown,
@@ -501,6 +501,7 @@ export {
 	DownloadFile,
 	ProcessCancel,
 	LinkPreview,
+	FileListOffload,
 
 	WalletCreate,
 	WalletRecover,
@@ -580,7 +581,6 @@ export {
 	BlockListSetDivStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListDeletePage,
 
 	HistoryVersions,
 	HistoryShow,
@@ -599,6 +599,8 @@ export {
 	ObjectRelationOptionAdd,
 	ObjectToSet,
 	ObjectShareByLink,
+
+	ObjectListDelete,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

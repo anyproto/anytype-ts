@@ -23,6 +23,7 @@ interface Props {
 	tooltipY?: I.MenuDirection;
 	color?: string;
 	getObject?(): any;
+	forceLetter?: boolean;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -63,7 +64,7 @@ const FontSize = {
 	24: 14,
 	26: 16,
 	32: 18,	
-	40: 28,
+	40: 24,
 	48: 28,
 	56: 34,
 	64: 44,
@@ -148,7 +149,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	render () {
-		const { className, size, canEdit } = this.props;
+		const { className, size, canEdit, forceLetter } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
@@ -174,6 +175,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+				} else 
+				if (forceLetter) {
+					cn.push('withLetter');
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -200,7 +206,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				} else {
 					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
+					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -211,7 +217,12 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-				};
+				} else 
+				if (forceLetter) {
+					cn.push('withLetter');
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+				};;
 				break;
 
 			case I.ObjectLayout.Relation:
@@ -321,7 +332,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	iconSize () {
-		const { size, iconSize } = this.props;
+		const { size, iconSize, forceLetter } = this.props;
 		const object = this.getObject();
 		const { layout, iconImage, iconEmoji } = object;
 
@@ -346,6 +357,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		if (([ I.ObjectLayout.Set, I.ObjectLayout.Type ].indexOf(layout) >= 0) && !iconImage && !iconEmoji && (size >= 40)) {
+			s = size;
+		};
+
+		if (([ I.ObjectLayout.Task, I.ObjectLayout.Relation ].indexOf(layout) < 0) && forceLetter && !iconImage && !iconEmoji && (size >= 40)) {
 			s = size;
 		};
 
@@ -379,7 +394,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	typeSvg (): string {
+	commonSvg (): string {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const iconSize = this.iconSize();

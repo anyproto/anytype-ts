@@ -26,6 +26,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	
 	render () {
 		const items = this.getItems();
+		const types = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.type; })
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -62,10 +63,12 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 						</div>
 					) : ''}
 				</div>
-				<div className="bottom">
-					<div className="line" />
-					<ItemAdd disabled={true} /> 
-				</div>
+				{!types.length ? (
+					<div className="bottom">
+						<div className="line" />
+						<ItemAdd disabled={true} /> 
+					</div>
+				) : ''}
 			</div>
 		);
 	};
@@ -114,6 +117,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				],
 				onSelect: (item: any) => {
 					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
+					
 					value.push(item.id);
 					this.save(value);
 				}

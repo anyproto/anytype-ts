@@ -299,9 +299,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		];
 		const subIds = [ 'searchObject' ];
 		const type: any = dbStore.getObjectType(object.type);
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-		];
 		
 		if (!readonly && allowed) {
 			options.push({ id: 'change', name: 'Change type', arrow: true });
@@ -320,42 +317,73 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				},
 				data: {
 					options: options,
-					onOver: (e: any, el: any) => {
-						menuStore.closeAll(subIds, () => {
-							if (el.id == 'change') {
-								menuStore.open('searchObject', {
-									element: `#menuSelect #item-${el.id}`,
-									className: 'big single',
-									vertical: I.MenuDirection.Center,
-									offsetX: menuContext.getSize().width,
-									isSub: true,
-									data: {
-										rebind: menuContext.ref.rebind,
-										isBig: true,
-										rootId: rootId,
-										blockId: block.id,
-										blockIds: [ block.id ],
-										placeholder: 'Change object type',
-										placeholderFocus: 'Change object type',
-										filters: filters,
-										onSelect: (item: any) => {
-											C.BlockObjectTypeSet(rootId, item.id);
-											menuContext.close();
-										}
-									}
-								}); 
-							};
-						});
-					},
+					noClose: true,
 					onSelect: (e: any, el: any) => {
-						if (el.arrow) {
-							menuStore.closeAll(subIds);
-							return;
-						};
+						menuStore.closeAll(subIds);
+
+						let close = true;
 
 						switch (el.id) {
 							case 'open':
 								DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+								break;
+
+							case 'change':
+								window.setTimeout(() => {
+									menuStore.open('searchObject', {
+										element: `#menuSelect #item-${el.id}`,
+										className: 'big single',
+										vertical: I.MenuDirection.Center,
+										offsetX: menuContext.getSize().width,
+										isSub: true,
+										data: {
+											rebind: menuContext.ref.rebind,
+											isBig: true,
+											rootId: rootId,
+											blockId: block.id,
+											blockIds: [ block.id ],
+											placeholder: 'Change object type',
+											placeholderFocus: 'Change object type',
+											filters: [
+												{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+											],
+											onSelect: (item: any) => {
+												C.BlockObjectTypeSet(rootId, item.id);
+												menuContext.close();
+											}
+										}
+									});
+								}, Constant.delay.menu);
+
+								close = false;
+								break;
+
+							case 'setOpenMenu':
+								window.setTimeout(() => {
+									menuStore.open('searchObject', {
+										element: `#menuSelect #item-${el.id}`,
+										className: 'big single',
+										vertical: I.MenuDirection.Center,
+										offsetX: menuContext.getSize().width,
+										isSub: true,
+										data: {
+											rebind: menuContext.ref.rebind,
+											isBig: true,
+											rootId: rootId,
+											blockId: block.id,
+											blockIds: [ block.id ],
+											filters: [
+												{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set }
+											],
+											onSelect: (item: any) => {
+												DataUtil.objectOpenPopup({ id: item.id, layout: I.ObjectLayout.Set });
+												menuContext.close();
+											}
+										}
+									});
+								}, Constant.delay.menu);
+
+								close = false;
 								break;
 	
 							case 'setOpen':
@@ -370,15 +398,22 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								});
 								break;
 						};
+
+						if (close) {
+							menuContext.close();
+						};
 					},
 				},
 			});
 		};
 
 		DataUtil.checkSetCnt([ object.type ], (message: any) => {
-			if (message.records.length > 0) {
+			if (message.records.length == 1) {
 				setId = message.records[0].id;
 				options.push({ id: 'setOpen', name: 'Open set' });
+			} else 
+			if (message.records.length == 2) {
+				options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
 			} else {
 				options.push({ id: 'setCreate', name: 'Create set' });
 			};

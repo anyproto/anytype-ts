@@ -85,6 +85,28 @@
 			}
 		}
 
+		#selectWrap { display: none; }
+		#selectWrap {
+			.tabs { width: 100%; display: flex; padding: 0px 0px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
+			.side { width: 50%; white-space: nowrap; line-height: 44px; }
+			.side.right { text-align: right;}
+
+			.element { 
+				display: inline-block; height: 100%; line-height: 40px; vertical-align: top; padding: 0px 14px; 
+				cursor: pointer; transition: $transitionFast; border-radius: 12px;
+			}
+			.element:last-child { margin: 0px; }
+			.element {
+				.icon { width: 20px; height: 20px; margin-right: 6px; }
+				.icon.delete { background-image: url('~img/icon/index/delete.svg'); }
+				.icon.restore { background-image: url('~img/icon/index/restore.svg'); }
+				.icon.all { background-image: url('~img/icon/index/all.svg'); }
+				.icon.close { margin: 0px; background-image: url('~img/icon/index/close.svg'); }
+				.name { display: inline-block; vertical-align: middle; }
+			}
+			.element:hover { background: rgba(0,0,0,0.15); }
+		}
+
 		.item { 
 			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 14px 16px; position: relative; cursor: pointer; user-select: none;
@@ -106,6 +128,14 @@
 			}
 			.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
 			.icon.more.hover { background-image: url('~img/icon/index/more1.svg'); opacity: 1; }
+
+			.icon.checkbox { 
+				width: 20px; height: 20px; position: absolute; right: 10px; top: 10px; z-index: 2; cursor: pointer;
+				background-image: url('~img/icon/index/checkbox0.svg'); display: none; opacity: 0; transition: none;
+			}
+		}
+		.item.isSelected {
+			.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); }
 		}
 		.item.withIcon {
 			.name { -webkit-line-clamp: 1; }
@@ -128,6 +158,7 @@
 		
 		.item.active, .item.hover {
 			.icon.more { opacity: 1; }
+			.icon.checkbox { opacity: 1; }
 		}
 		.item.active {
 			.icon.more { background-image: url('~img/icon/index/more1.svg'); }
@@ -136,8 +167,26 @@
 
 	#documents.tabArchive {
 		.item { cursor: default; }
+		.item {
+			.icon.checkbox { display: block; }
+		}
 	}
-	
+
+	#documents.isSelecting {
+		.item {
+			.icon.checkbox { opacity: 1; }
+		}
+		#tabWrap { display: none; }
+		#selectWrap { display: block; }
+	}
+
+	#documents.selectFixed { padding-top: 68px; }
+	#documents.selectFixed {
+		#selectWrap { position: fixed; width: 100%; left: 0px; top: 0px; z-index: 10; }
+		#selectWrap {
+			.tabs { border-radius: 0px; }
+		}
+	}
 }
 
 html.platformMac.version11 {

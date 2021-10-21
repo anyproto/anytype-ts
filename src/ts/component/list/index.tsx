@@ -9,6 +9,7 @@ import { I, DataUtil } from 'ts/lib';
 interface Props {
 	canDrag: boolean;
 	getList?(): void;
+	onClick?(e: any, item: any): void;
 	onSelect?(e: any, item: any): void;
 	onAdd?(e: any): void;
 	onMore?(e: any, item: any): void;
@@ -18,14 +19,13 @@ interface Props {
 }
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 	
 	timeout: number = 0;
 
 	render () {
-		const { onSelect, onAdd, onMore, helperContainer, getList, onSortStart, onSortEnd, canDrag } = this.props;
+		const { onClick, onSelect, onMore, helperContainer, getList, onSortStart, onSortEnd, canDrag } = this.props;
 		const { root } = blockStore;
 		const element = blockStore.getLeaf(root, root);
 		
@@ -91,8 +91,9 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 					<div className="type">{type ? type.name : ''}</div>
 
 					<Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />
+					<Icon className="checkbox" onClick={(e: any) => { onSelect(e, item); }} />
 
-					<div className="click" onClick={(e: any) => { onSelect(e, item); }} onContextMenu={(e: any) => { onMore(e, item); }} />
+					<div className="click" onClick={(e: any) => { onClick(e, item); }} onContextMenu={(e: any) => { onMore(e, item); }} />
 				</div>
 			);
 		});

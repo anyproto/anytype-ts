@@ -87,7 +87,7 @@
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
-				.cellContent { position: relative; height: auto !important; min-height: 30px; }
+				.cellContent { position: relative; height: auto !important; min-height: 32px; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; }
 				.icon.clear { right: 8px; }
 				.icon.fav { display: none !important; }
@@ -125,7 +125,10 @@
 			}
 
 			.cell.c-longText {
-				.name, span { -webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; word-wrap: break-word; }
+				.name, span { 
+					-webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; word-wrap: break-word; 
+					line-height: 22px;
+				}
 			}
 			.cell.isEditing.c-longText {
 				.cellContent { box-shadow: 0px 0px; visibility: hidden; }
