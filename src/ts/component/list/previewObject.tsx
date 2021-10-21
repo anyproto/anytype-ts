@@ -81,7 +81,7 @@ class ListObjectPreview extends React.Component<Props, {}> {
 		const { items, canAdd } = this.props;
 		const length = items.length + (canAdd ? 1 : 0);
 		const node = $(ReactDOM.findDOMNode(this));
-		const cnt = Math.floor(node.width() / (WIDTH + MARGIN));
+		const cnt = Math.floor(node.width() / WIDTH);
 
 		return Math.max(0, Math.ceil(length / cnt) - 1);
 	};
