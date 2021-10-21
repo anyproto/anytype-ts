@@ -108,6 +108,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const platform = Util.getPlatform();
+		const { config } = commonStore;
 
 		if (!block) {
 			return [];
@@ -133,6 +134,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 		let share = { id: 'sharePage', name: 'Share' };
+		let highlight = { id: 'highlight', name: 'Highlight' };
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
@@ -152,11 +154,20 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = null;
 		};
 
+		if (!config.sudo) {
+			share = null;
+			highlight = null;
+		};
+
+		if (!object.workspaceId || block.isObjectSpace()) {
+			highlight = null;
+		};
+
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive, removePage ] },
-				{ children: [ fav, link ] },
+				{ children: [ fav, link, highlight ] },
 				{ children: [ print ] },
 			];
 
@@ -192,7 +203,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			sections = [
 				{ children: [ undo, redo, history, archive, removePage ] },
-				{ children: [ fav, link, template ] },
+				{ children: [ fav, link, template, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
@@ -246,7 +257,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onMenuSelect } = data;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = detailStore.get(rootId, rootId, [ 'isHightlighted' ]);
 		const { config } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -557,6 +568,11 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							select: true,
 						}
 					});
+				});
+				break;
+
+			case 'highlight':
+				C.WorkspaceSetIsHighlighted(object.id, !object.isHightlighted, (message: any) => {
 				});
 				break;
 		};
