@@ -4,6 +4,7 @@
 	.block.blockLink {
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
+            .cardName span::before { display: none; }
 			.archive { display: inline-block !important; }
 		}
 
@@ -72,6 +73,7 @@
         }
 
         .linkCard.c24.text {
+            .cardName span::before { background: $colorMediumGrey; }
             .sides.bgColor .side { padding: 2px; }
         }
 
@@ -149,7 +151,7 @@
 
     .block.blockLink:hover {
         .sides { border-color: $colorBlack !important; }
-        .cardName span::before { background: $colorBlack; }
+        .cardName span::before { background: $colorBlack !important; }
     }
 
     .block.blockLink > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }

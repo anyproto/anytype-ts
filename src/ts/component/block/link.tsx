@@ -74,7 +74,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 					{...fields}
 					className={DataUtil.linkCardClass(fields.style)}
 					object={object} 
-					canEdit={!readonly} 
+					canEdit={!readonly && !isArchived} 
 					onClick={this.onClick}
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload}
