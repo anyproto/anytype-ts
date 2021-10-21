@@ -13,6 +13,9 @@ interface Props {
 
 const $ = require('jquery');
 
+const WIDTH = 344;
+const MARGIN = 16;
+
 class ListObjectPreview extends React.Component<Props, {}> {
 
 	public static defaultProps = {
@@ -23,12 +26,13 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	
 	n: number = 0;
 	page: number = 0;
+	maxPage: number = 0;
 	timeout: number = 0;
 
 	render () {
 		const { items, canAdd, onAdd } = this.props;
 		const isFirst = this.page == 0;
-		const isLast = this.page == this.getMaxPage();
+		const isLast = this.page == this.maxPage;
 
 		const Item = (item: any) => (
 			<div 
@@ -65,7 +69,8 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		this.setActive();
+		this.resize();
+		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
@@ -75,7 +80,10 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	getMaxPage () {
 		const { items, canAdd } = this.props;
 		const length = items.length + (canAdd ? 1 : 0);
-		return Math.max(0, Math.ceil(length / 2) - 1);
+		const node = $(ReactDOM.findDOMNode(this));
+		const cnt = Math.floor(node.width() / (WIDTH + MARGIN));
+
+		return Math.max(0, Math.ceil(length / cnt) - 1);
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -158,6 +166,10 @@ class ListObjectPreview extends React.Component<Props, {}> {
 		let x = -this.page * (w + 16 + offsetX);
 
 		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
+	};
+
+	resize () {
+		this.maxPage = this.getMaxPage();
 	};
 	
 };
