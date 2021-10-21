@@ -23,7 +23,7 @@ const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
 const NO_TEMPLATES = [ 
-	Constant.typeId.page, 
+	Constant.typeId.note, 
 	Constant.typeId.image, 
 	Constant.typeId.file, 
 	Constant.typeId.video, 
@@ -79,6 +79,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
+		const allowCreate = [ Constant.typeId.set ].indexOf(rootId) < 0;
 		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
 
 		if (object.name == DataUtil.defaultName('page')) {
@@ -156,9 +157,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
-						<div className="side right">
-							<Button id="button-create" text="Create" onClick={this.onCreate} />
-						</div>
+						{allowCreate ? (
+							<div className="side right">
+								<Button id="button-create" text="Create" onClick={this.onCreate} />
+							</div>
+						) : ''}
 					</div>
 
 					{showTemplates ? (
