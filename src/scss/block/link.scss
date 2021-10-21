@@ -9,15 +9,15 @@
 
         .loading, .deleted { color: $colorMediumGrey; }
         .loading, .deleted {
-            .name { display: inline-block; vertical-align: top; max-width: calc(100% - 28px); position: relative; @include text-overflow-nw; }
+            .name { display: inline-block; vertical-align: top; max-width: calc(100% - 30px); position: relative; @include text-overflow-nw; }
         }
 
 		.loading {
-			.loaderWrapper { width: 24px; height: 24px; margin: 0px 4px 0px 0px; display: inline-block; vertical-align: top; position: relative; }
+			.loaderWrapper { width: 24px; height: 24px; margin: 0px 6px 0px 0px; display: inline-block; vertical-align: top; position: relative; }
 			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 		}
         .deleted {
-            .icon.ghost { width: 24px; height: 24px; margin: 0px 4px 0px 0px; }
+            .icon.ghost { width: 24px; height: 24px; margin: 0px 6px 0px 0px; }
         }
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
