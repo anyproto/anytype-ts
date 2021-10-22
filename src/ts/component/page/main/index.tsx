@@ -60,7 +60,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
-		this.onSelectionRestore = this.onSelectionRestore.bind(this);
+		this.onSelectionArchive = this.onSelectionArchive.bind(this);
 		this.onSelectionAll = this.onSelectionAll.bind(this);
 		this.onSelectionNone = this.onSelectionNone.bind(this);
 		this.onSelectionClose = this.onSelectionClose.bind(this);
@@ -161,7 +161,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										<Icon className="delete" />
 										<div className="name">Delete</div>
 									</div>
-									<div className="element" onClick={this.onSelectionRestore}>
+									<div className="element" onClick={(e: any) => { this.onSelectionArchive(e, false); }}>
 										<Icon className="restore" />
 										<div className="name">Restore</div>
 									</div>
@@ -471,11 +471,22 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		});
 	};
 	
-	onSelectionRestore (e: any) {
-		C.ObjectListSetIsArchived(this.selected, false, () => {
+	onSelectionArchive (e: any, v: boolean) {
+		const items = this.getList().filter((it: any) => {
+			const object = this.getObject(it);
+			return this.selected.includes(object.id);
+		});
+
+		C.ObjectListSetIsArchived(this.selected, v, () => {
+			items.forEach((it: any) => {
+				const object = this.getObject(it);
+				if (object.type == Constant.typeId.type) {
+					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
+				};
+			});
+
 			this.selected = [];
 			this.selectionRender();
-			
 			this.load();
 		});
 	};
@@ -568,22 +579,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			link,
 		];
 
-		const onArchive = (v: boolean) => {
-			const cb = (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				if (object.type == Constant.typeId.type) {
-					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
-				};
-
-				this.load();
-			};
-
-			C.ObjectSetIsArchived(object.id, v, cb);
-		};
-
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
@@ -629,11 +624,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 					switch (el.id) {
 						case 'archive':
-							onArchive(true);
+							this.selected = [ object.id ];
+							this.onSelectionArchive(e, true);
 							break;
 
 						case 'unarchive':
-							onArchive(false);
+							this.selected = [ object.id ];
+							this.onSelectionArchive(e, false);
 							break;
 
 						case 'fav':
