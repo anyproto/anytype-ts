@@ -645,9 +645,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 							break;
 
 						case 'remove':
-							C.ObjectListDelete([ object.id ], (message: any) => {
-								this.load();
-							});
+							this.selected = [ object.id ];
+							this.onSelectionDelete(e);
 							break;
 					};
 				},
