@@ -1024,7 +1024,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	onLang (v: string) {
 		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
+		const { id, fields, content } = block;
 		const l = String(content.text || '').length;
 
 		if (readonly) {
@@ -1032,7 +1032,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { lang: v } },
+			{ blockId: id, fields: { ...fields, lang: v } },
 		], (message: any) => {
 			Storage.set('codeLang', v);
 
