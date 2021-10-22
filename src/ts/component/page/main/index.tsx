@@ -265,7 +265,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			{ id: Tab.Set, name: 'Sets', load: true },
 		];
 
-		if (config.sudo) {
+		if (config.experimental) {
 			tabs.push({ id: Tab.Space, name: 'Spaces', load: true });
 			tabs.push({ id: Tab.Shared, name: 'Shared', load: true });
 		};
