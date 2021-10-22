@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, crumbs, Util } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainGraph as Header, Graph, Icon } from 'ts/component';
+import { HeaderMainGraph as Header, Graph, Icon, Loader } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -13,11 +13,18 @@ interface Props extends RouteComponentProps<any> {
 	matchPopup?: any;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, State> {
 
+	state = {
+		loading: false,
+	};
 	data: any = {
 		nodes: [],
 		edges: [],
@@ -36,13 +43,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	render () {
+		const { loading } = this.state;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const ref = this.refGraph;
 
 		return (
-			<div>
+			<div className="body">
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+
+				{loading ? <Loader /> : ''}
 
 				<div className="wrapper">
 					<div className="side left">
@@ -128,6 +138,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			},
 		];
 
+		this.setState({ loading: true });
+
 		C.ObjectGraph(filters, 0, [], (message: any) => {
 			if (message.error.code) {
 				return;
@@ -135,9 +147,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 
 			this.data.edges = message.edges.filter(d => { return d.source !== d.target; });
 			this.data.nodes = message.nodes;
-			
-			this.forceUpdate();
 			this.refGraph.init();
+
+			window.setTimeout(() => { this.setState({ loading: false }); }, 250);
 		});
 	};
 
