@@ -117,7 +117,15 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				
 				additional = (
 					<React.Fragment>
-						<Select id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
+						<Select 
+							id={'lang-' + id} 
+							arrowClassName="light" 
+							value={fields.lang} 
+							ref={(ref: any) => { this.refLang = ref; }} 
+							options={options} 
+							onChange={this.onLang}
+							noFilter={false} 
+						/>
 						<Icon className="codeWrap" tooltip="Wrap / Unwrap" onClick={this.onToggleWrap} />
 					</React.Fragment>
 				);
