@@ -35,9 +35,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				name = <div className="empty">Empty</div>;
 			};
 
+            let style: any = {};
+            if (item.depth == 0) {
+                style.paddingLeft = 14;
+                style.paddingRight = 14;
+            } else {
+                style.paddingLeft = item.depth * 26;
+                style.paddingRight = 14;
+            };
+
             return (
                 <div className={[ 'item', 'depth' + item.depth ].join(' ')}>
-                    <div className="flex">
+                    <div className="flex" style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
                         <IconObject object={...item} />
                         <div className="name">{name}</div>
                     </div>
