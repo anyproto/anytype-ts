@@ -155,6 +155,10 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
+	previewClear () {
+		this.previewObj = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
+	};
+
 	typeSet (v: string) {
 		Storage.set('defaultType', v);
 	};

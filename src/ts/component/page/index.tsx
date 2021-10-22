@@ -102,10 +102,12 @@ class Page extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
+		Util.previewHide(true);
 	};
 
 	componentDidUpdate () {
 		this.init();
+		Util.previewHide(true);
 	};
 	
 	componentWillUnmount () {
@@ -167,7 +169,6 @@ class Page extends React.Component<Props, {}> {
 		this.event();
 		this.unbind();
 
-		Util.previewHide(true);
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
 		if (isPopup) {

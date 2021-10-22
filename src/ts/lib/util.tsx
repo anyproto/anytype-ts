@@ -20,9 +20,9 @@ const path = window.require('path');
 class Util {
 	
 	timeoutTooltip: number = 0;
-	timeoutPreviewLinkShow: number = 0;
-	timeoutPreviewLinkHide: number = 0;
-	previewOpen: boolean = false;
+	timeoutPreviewShow: number = 0;
+	timeoutPreviewHide: number = 0;
+	isPreviewOpen: boolean = false;
 	
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
@@ -738,7 +738,7 @@ class Util {
 		const obj = $('#preview');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutPreviewLinkShow);
+			window.clearTimeout(this.timeoutPreviewShow);
 		});
 		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
@@ -747,32 +747,29 @@ class Util {
 		
 		this.previewHide(false);
 		
-		window.clearTimeout(this.timeoutPreviewLinkShow);
-		this.timeoutPreviewLinkShow = window.setTimeout(() => {
-			this.previewOpen = true;
+		window.clearTimeout(this.timeoutPreviewShow);
+		this.timeoutPreviewShow = window.setTimeout(() => {
+			this.isPreviewOpen = true;
 			commonStore.previewSet({ ...param, element: node });
 		}, 500);
 	};
 	
 	previewHide (force: boolean) {
-		if (!this.previewOpen) {
-			return;
-		};
+		this.isPreviewOpen = false;
+		window.clearTimeout(this.timeoutPreviewShow);
 
 		const obj = $('#preview');
-		
-		this.previewOpen = false;
-		window.clearTimeout(this.timeoutPreviewLinkShow);
-		
 		if (force) {
 			obj.hide();
 			return;
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutPreviewLinkHide = window.setTimeout(() => { 
+		this.timeoutPreviewHide = window.setTimeout(() => { 
 			obj.hide();
 			obj.removeClass('top bottom withImage'); 
+
+			commonStore.previewClear();
 		}, 250);
 	};
 	

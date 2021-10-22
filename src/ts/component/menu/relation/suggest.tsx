@@ -232,7 +232,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		if (listCommand) {
 			listCommand(rootId, blockId, (message: any) => {
-				this.items = message.relations.sort(DataUtil.sortByName);
+				this.items = (message.relations || []).sort(DataUtil.sortByName);
 				this.setState({ loading: false });
 			});
 		};
