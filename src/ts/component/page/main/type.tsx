@@ -340,10 +340,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			focus.clear(true);
 			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 			analytics.event('TemplateCreate', { objectType: rootId });
-			
-			window.setTimeout(() => {
-				DataUtil.objectOpenPopup(message.record);
-			}, 50);
+			DataUtil.objectOpenPopup(message.record);
 		});
 	};
 
