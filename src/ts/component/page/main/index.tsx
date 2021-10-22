@@ -504,14 +504,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
+		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store }, {
+			onClose: () => { this.load(); }
+		});
 	};
 	
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 			this.load();
 
-			DataUtil.objectOpenPopup({ id: message.targetId });
+			DataUtil.objectOpenPopup({ id: message.targetId }{
+				onClose: () => { this.load(); }
+			});
 		});
 	};
 
