@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { ListPopup } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
 
@@ -71,7 +71,7 @@ interface Props extends RouteComponentProps<any> {
 class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	childRef: any;
+	refChild: any;
 
 	render () {
 		const { isPopup } = this.props;
@@ -93,7 +93,7 @@ class Page extends React.Component<Props, {}> {
 			<React.Fragment>
 				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
 				<div className={'page ' + this.getClass('page')}>
-					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
+					<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
 				</div>
 			</React.Fragment>
 		);
@@ -215,12 +215,35 @@ class Page extends React.Component<Props, {}> {
 					});
 				};
 
+				this.shareCheck();
+
 				Storage.delete('redirect');
 			};
 		}, Constant.delay.popup);
-		
 	};
-	
+
+	shareCheck () {
+		const shareSuccess = Storage.get('shareSuccess');
+
+		if (!shareSuccess) {
+			return;
+		};
+
+		Storage.delete('shareSuccess');
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Anytype shared information with you',
+				text: 'New objects are syncing. You can find them in Shared tab in Home within a few minute',
+				textConfirm: 'Ok',
+				canCancel: false,
+				onConfirm: () => {
+					this.refChild.onTab(I.TabIndex.Shared);
+				}
+			},
+		});
+	};
+
 	unbind () {
 		const { isPopup } = this.props;
 		$(window).unbind('resize.page' + (isPopup ? 'Popup' : ''));
@@ -280,8 +303,8 @@ class Page extends React.Component<Props, {}> {
 				return;
 			};
 
-			if (this.childRef && this.childRef.resize) {
-				this.childRef.resize();			
+			if (this.refChild && this.refChild.resize) {
+				this.refChild.resize();			
 			};			
 		});
 	};

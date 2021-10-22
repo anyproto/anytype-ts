@@ -11,7 +11,7 @@ import { popupStore } from '../../../store';
 interface Props extends RouteComponentProps<any> {}
 
 interface State {
-	tab: Tab;
+	tab: I.TabIndex;
 	filter: string;
 	pages: any[];
 	loading: boolean;
@@ -19,16 +19,6 @@ interface State {
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
-
-enum Tab {
-	None		 = '',
-	Favorite	 = 'favorite',
-	Recent		 = 'recent',
-	Set			 = 'set',
-	Space		 = 'space',
-	Shared		 = 'shared',
-	Archive		 = 'archive',
-};
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
@@ -38,7 +28,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	selected: string[] = [];
 
 	state = {
-		tab: Tab.Favorite,
+		tab: I.TabIndex.Favorite,
 		filter: '',
 		pages: [],
 		loading: false,
@@ -73,7 +63,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
 		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
-		const canDrag = [ Tab.Favorite ].indexOf(tab.id) >= 0
+		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0
 
 		if (!element) {
 			return null;
@@ -150,7 +140,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										onChange={this.onFilterChange}
 									/>
 								</div>
-								{(tab.id == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
+								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
 						<div id="selectWrap" className="tabWrap">
@@ -260,21 +250,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { config } = commonStore;
 
 		let tabs: any[] = [
-			{ id: Tab.Favorite, name: 'Favorites' },
-			{ id: Tab.Recent, name: 'History' },
-			{ id: Tab.Set, name: 'Sets', load: true },
+			{ id: I.TabIndex.Favorite, name: 'Favorites' },
+			{ id: I.TabIndex.Recent, name: 'History' },
+			{ id: I.TabIndex.Set, name: 'Sets', load: true },
 		];
 
 		if (config.experimental) {
-			tabs.push({ id: Tab.Space, name: 'Spaces', load: true });
-			tabs.push({ id: Tab.Shared, name: 'Shared', load: true });
+			tabs.push({ id: I.TabIndex.Space, name: 'Spaces', load: true });
+			tabs.push({ id: I.TabIndex.Shared, name: 'Shared', load: true });
 		};
 
-		tabs.push({ id: Tab.Archive, name: 'Bin', load: true });
+		tabs.push({ id: I.TabIndex.Archive, name: 'Bin', load: true });
 		return tabs;
 	};
 
-	onTab (id: Tab) {
+	onTab (id: I.TabIndex) {
 		let tabs = this.getTabs();
 		let tab = tabs.find((it: any) => { return it.id == id; });
 		if (!tab) {
@@ -302,21 +292,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == I.TabIndex.Archive },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
 
-		if (tab.id == Tab.Set) {
+		if (tab.id == I.TabIndex.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
 		};
 
-		if (tab.id == Tab.Space) {
+		if (tab.id == I.TabIndex.Space) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space });
 		};
 
-		if (tab.id == Tab.Shared) {
+		if (tab.id == I.TabIndex.Shared) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: Constant.typeId.space });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.NotEmpty, value: null });
 		};
@@ -398,7 +388,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { tab } = this.state;
 		const object = item.isBlock ? item._object_ : item;
 
-		if (tab == Tab.Archive) {
+		if (tab == I.TabIndex.Archive) {
 			this.onSelect(e, item);
 		} else {
 			crumbs.cut(I.CrumbsType.Page, 0, () => {
@@ -540,7 +530,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { tab } = this.state;
 		const { root, recent, profile } = blockStore;
 		const object = item.isBlock ? item._object_ : item;
-		const rootId = tab == Tab.Recent ? recent : root;
+		const rootId = tab == I.TabIndex.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
 		const favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
 			return it.isLink() && (it.content.targetBlockId == object.id);
@@ -571,7 +561,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			archive = null;
 		};
 
-		if ([ Tab.Favorite ].indexOf(tab) < 0) {
+		if ([ I.TabIndex.Favorite ].indexOf(tab) < 0) {
 			move = null;
 		};
 
@@ -744,9 +734,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		switch (tab) {
 			default:
-			case Tab.Favorite:
-			case Tab.Recent:
-				if (tab == Tab.Recent) {
+			case I.TabIndex.Favorite:
+			case I.TabIndex.Recent:
+				if (tab == I.TabIndex.Recent) {
 					rootId = recent;
 					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
 				};
@@ -764,7 +754,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 					return !isArchived;
 				}).map((it: any) => {
-					if (tab == Tab.Recent) {
+					if (tab == I.TabIndex.Recent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
@@ -773,7 +763,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					return it;
 				});
 
-				if (tab == Tab.Recent) {
+				if (tab == I.TabIndex.Recent) {
 					list.sort((c1: any, c2: any) => {
 						if (c1._order > c2._order) return -1;
 						if (c2._order < c1._order) return 1;
@@ -783,10 +773,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 				break;
 
-			case Tab.Archive:
-			case Tab.Set:
-			case Tab.Space:
-			case Tab.Shared:
+			case I.TabIndex.Archive:
+			case I.TabIndex.Set:
+			case I.TabIndex.Space:
+			case I.TabIndex.Shared:
 				list = pages;
 				break;
 		};

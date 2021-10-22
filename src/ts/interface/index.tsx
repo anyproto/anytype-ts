@@ -1,4 +1,20 @@
-import { Account, AccountConfig, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, PreviewLink, ExportFormat, Source, EdgeType, GraphView } from './common';
+import { 
+	Account, 
+	AccountConfig, 
+	Platform, 
+	DragItem, 
+	CoverType, 
+	CrumbsType, 
+	NavigationType, 
+	Option, 
+	HistoryVersion, 
+	PreviewLink, 
+	ExportFormat, 
+	Source, 
+	EdgeType, 
+	GraphView, 
+	TabIndex 
+} from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
@@ -51,6 +67,7 @@ export {
 	Source,
 	EdgeType,
 	GraphView,
+	TabIndex,
 	
 	ThreadStatus,
 	ThreadSummary,

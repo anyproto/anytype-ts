@@ -215,7 +215,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			if (message.error.code) {
 				this.setError(message.error.description);
 			} else {
-				Storage.set('tabIndex', 'shared');
+				Storage.set('shareSuccess', 1);
 				history.push('/main/index');
 			};
 		});

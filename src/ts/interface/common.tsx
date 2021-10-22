@@ -83,3 +83,13 @@ export enum GraphView {
     Preview	 = 2,
     Filter	 = 3,
 };
+
+export enum TabIndex {
+	None		 = '',
+	Favorite	 = 'favorite',
+	Recent		 = 'recent',
+	Set			 = 'set',
+	Space		 = 'space',
+	Shared		 = 'shared',
+	Archive		 = 'archive',
+};
