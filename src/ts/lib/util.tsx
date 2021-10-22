@@ -548,6 +548,37 @@ class Util {
 		};
 		return '';
 	};
+
+	duration (t: number): string {
+		if (!t) {
+			return '';
+		};
+
+		let d = Math.floor(t / 86400);
+
+		t -= d * 86400;
+		let h = Math.floor(t / 3600);
+
+		t -= h * 3600;
+		let m = Math.floor(t / 60);
+
+		t -= m * 60;
+		let s = t;
+
+		if (d > 0) {
+			return this.sprintf('%dd', d);
+		};
+		if (h > 0) {
+			return this.sprintf('%dh', h);
+		};
+		if (m > 0) {
+			return this.sprintf('%dmin', m);
+		};
+		if (s > 0) {
+			return this.sprintf('%ds', s);
+		};
+		return '';
+	};
 	
 	round (v: number, l: number) {
 		let d = Math.pow(10, l);

@@ -15,7 +15,8 @@
 	"default": {
 		"lang": "en",
 		"cover": 12,
-		"codeLang": "javascript"
+		"codeLang": "javascript",
+		"pinTime": 600
 	},
 	
 	"langs": [

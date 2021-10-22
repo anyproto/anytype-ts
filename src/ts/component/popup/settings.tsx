@@ -386,12 +386,21 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
-				const options = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => {
+				const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => {
 					it.layout = I.ObjectLayout.Type;
 					return { ...it, object: it };
 				});
+				types.sort(DataUtil.sortByName);
 
-				options.sort(DataUtil.sortByName);
+				const times: any[] = [
+					{ id: 60 },
+					{ id: 300 },
+					{ id: 600 },
+					{ id: 3600 },
+				].map((it: any) => {
+					it.name = Util.duration(it.id);
+					return it;
+				});
 
 				content = (
 					<div>
@@ -404,7 +413,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="Default Object type" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={options} value={commonStore.type} onChange={(id: string) => { commonStore.typeSet(id); }}/>
+								<Select id="defaultType" options={types} value={commonStore.type} onChange={(id: string) => { commonStore.typeSet(id); }}/>
+							</div>
+						</div>
+
+						<div className="row">
+							<div className="side left">
+								<Label text="PIN code check time-out" />
+							</div>
+							<div className="side right">
+								<Select id="defaultType" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 							</div>
 						</div>
 
