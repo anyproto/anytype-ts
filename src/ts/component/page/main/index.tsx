@@ -14,6 +14,7 @@ interface State {
 	tab: Tab;
 	filter: string;
 	pages: any[];
+	loading: boolean;
 };
 
 const $ = require('jquery');
@@ -40,6 +41,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		tab: Tab.Favorite,
 		filter: '',
 		pages: [],
+		loading: false,
 	};
 
 	constructor (props: any) {
@@ -65,11 +67,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	render () {
-		const { cover } = commonStore;
-		const { config } = commonStore;
+		const { cover, config } = commonStore;
 		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
-		const { filter } = this.state;
+		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
 		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
 		const canDrag = [ Tab.Favorite ].indexOf(tab.id) >= 0
@@ -87,6 +88,31 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				{item.name}
 			</div>
 		);
+
+		let content = null;
+		if (!loading) {
+			if (!list.length) {
+				content = (
+					<div className="emptySearch">
+						There are no objects in {tab.name} tab
+					</div>
+				);
+			} else {
+				content = (
+					<ListIndex 
+						onClick={this.onClick} 
+						onSelect={this.onSelect} 
+						onAdd={this.onAdd}
+						onMore={this.onMore}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEnd}
+						getList={this.getList}
+						helperContainer={() => { return $('#documents').get(0); }} 
+						canDrag={canDrag}
+					/>
+				);
+			};
+		};
 
 		return (
 			<div>
@@ -153,23 +179,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								</div>
 							</div>
 						</div>
-						{list.length ? (
-							<ListIndex 
-								onClick={this.onClick} 
-								onSelect={this.onSelect} 
-								onAdd={this.onAdd}
-								onMore={this.onMore}
-								onSortStart={this.onSortStart}
-								onSortEnd={this.onSortEnd}
-								getList={this.getList}
-								helperContainer={() => { return $('#documents').get(0); }} 
-								canDrag={canDrag}
-							/>
-						) : (
-							<div className="emptySearch">
-								There are no objects in {tab.name} tab
-							</div>
-						)}
+						{content}
 					</div>
 				</div>
 			</div>
@@ -312,12 +322,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
+		this.setState({ loading: true });
+
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			this.setState({ pages: message.records });
+			this.setState({ loading: false, pages: message.records });
 		});
 	};
 
