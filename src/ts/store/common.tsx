@@ -35,7 +35,6 @@ class CommonStore {
     public previewObj: Preview = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
     public configObj:any = {};
     public cellId: string = '';
-	public typeId: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -94,7 +93,11 @@ class CommonStore {
 	};
 
 	get type(): string {
-		return String(this.typeId || Storage.get('defaultType') || Constant.typeId.note);
+		return String(Storage.get('defaultType') || Constant.typeId.note);
+	};
+
+	get pinTime(): number {
+		return (Number(Storage.get('pinTime')) || Constant.default.pinTime) * 1000;
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -152,9 +155,16 @@ class CommonStore {
 		this.previewObj = preview;
 	};
 
+	previewClear () {
+		this.previewObj = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
+	};
+
 	typeSet (v: string) {
-		this.typeId = v;
 		Storage.set('defaultType', v);
+	};
+
+	pinTimeSet (v: string) {
+		Storage.set('pinTime', v);
 	};
 
 	configSet (config: any, force: boolean) {

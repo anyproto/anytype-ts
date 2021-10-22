@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
+import { Select, Marker, Loader, IconObject, Icon, Button } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -117,8 +117,21 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				
 				additional = (
 					<React.Fragment>
-						<Select id={'lang-' + id} arrowClassName="light" value={fields.lang} ref={(ref: any) => { this.refLang = ref; }} options={options} onChange={this.onLang} />
-						<Icon className="codeWrap" tooltip="Wrap / Unwrap" onClick={this.onToggleWrap} />
+						<Select 
+							id={'lang-' + id} 
+							arrowClassName="light" 
+							value={fields.lang} 
+							ref={(ref: any) => { this.refLang = ref; }} 
+							options={options} 
+							onChange={this.onLang}
+							noFilter={false} 
+						/>
+						<div className="buttons">
+							<div className="btn" onClick={this.onToggleWrap}>
+								<Icon className="codeWrap" />
+								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
+							</div>
+						</div>
 					</React.Fragment>
 				);
 				break;
@@ -394,7 +407,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			let icon = null;
 			if (_empty_) {
-				item.addClass('dis');
+				item.addClass('disabled');
 				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = <IconObject size={size} object={object} />;
@@ -420,7 +433,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			const data = el.data();
 			const range = data.range.split('-');
 
-			if (!data.param) {
+			if (!data.param || el.hasClass('disabled')) {
 				return;
 			};
 
@@ -1011,7 +1024,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	onLang (v: string) {
 		const { rootId, block, readonly } = this.props;
-		const { id, content } = block;
+		const { id, fields, content } = block;
 		const l = String(content.text || '').length;
 
 		if (readonly) {
@@ -1019,7 +1032,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 		
 		C.BlockListSetFields(rootId, [
-			{ blockId: id, fields: { lang: v } },
+			{ blockId: id, fields: { ...fields, lang: v } },
 		], (message: any) => {
 			Storage.set('codeLang', v);
 

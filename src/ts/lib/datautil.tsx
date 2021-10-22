@@ -415,7 +415,7 @@ class DataUtil {
 		});
 	};
 
-	objectOpenEvent (e: any, object: any) {
+	objectOpenEvent (e: any, object: any, popupParam?: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -444,19 +444,19 @@ class DataUtil {
 		};
 	};
 
-	objectOpenPopup (object: any) {
-		const param: any = { 
-			data: { 
-				matchPopup: { 
-					params: {
-						page: 'main',
-						action: this.actionByLayout(object.layout),
-						id: object.id,
-					},
+	objectOpenPopup (object: any, popupParam?: any) {
+		let param: any = Object.assign(popupParam || {}, {});
+		
+		param.data = Object.assign(param.data || {}, { 
+			matchPopup: { 
+				params: {
+					page: 'main',
+					action: this.actionByLayout(object.layout),
+					id: object.id,
 				},
 			},
-		};
-
+		});
+		
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		popupStore.open('page', param);

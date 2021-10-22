@@ -20,9 +20,9 @@ const path = window.require('path');
 class Util {
 	
 	timeoutTooltip: number = 0;
-	timeoutPreviewLinkShow: number = 0;
-	timeoutPreviewLinkHide: number = 0;
-	previewOpen: boolean = false;
+	timeoutPreviewShow: number = 0;
+	timeoutPreviewHide: number = 0;
+	isPreviewOpen: boolean = false;
 	
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
@@ -548,6 +548,37 @@ class Util {
 		};
 		return '';
 	};
+
+	duration (t: number): string {
+		if (!t) {
+			return '';
+		};
+
+		let d = Math.floor(t / 86400);
+
+		t -= d * 86400;
+		let h = Math.floor(t / 3600);
+
+		t -= h * 3600;
+		let m = Math.floor(t / 60);
+
+		t -= m * 60;
+		let s = t;
+
+		if (d > 0) {
+			return this.sprintf('%dd', d);
+		};
+		if (h > 0) {
+			return this.sprintf('%dh', h);
+		};
+		if (m > 0) {
+			return this.sprintf('%dmin', m);
+		};
+		if (s > 0) {
+			return this.sprintf('%ds', s);
+		};
+		return '';
+	};
 	
 	round (v: number, l: number) {
 		let d = Math.pow(10, l);
@@ -707,7 +738,7 @@ class Util {
 		const obj = $('#preview');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutPreviewLinkShow);
+			window.clearTimeout(this.timeoutPreviewShow);
 		});
 		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
@@ -716,32 +747,29 @@ class Util {
 		
 		this.previewHide(false);
 		
-		window.clearTimeout(this.timeoutPreviewLinkShow);
-		this.timeoutPreviewLinkShow = window.setTimeout(() => {
-			this.previewOpen = true;
+		window.clearTimeout(this.timeoutPreviewShow);
+		this.timeoutPreviewShow = window.setTimeout(() => {
+			this.isPreviewOpen = true;
 			commonStore.previewSet({ ...param, element: node });
 		}, 500);
 	};
 	
 	previewHide (force: boolean) {
-		if (!this.previewOpen) {
-			return;
-		};
+		this.isPreviewOpen = false;
+		window.clearTimeout(this.timeoutPreviewShow);
 
 		const obj = $('#preview');
-		
-		this.previewOpen = false;
-		window.clearTimeout(this.timeoutPreviewLinkShow);
-		
 		if (force) {
 			obj.hide();
 			return;
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutPreviewLinkHide = window.setTimeout(() => { 
+		this.timeoutPreviewHide = window.setTimeout(() => { 
 			obj.hide();
 			obj.removeClass('top bottom withImage'); 
+
+			commonStore.previewClear();
 		}, 250);
 	};
 	

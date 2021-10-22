@@ -357,6 +357,11 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		return [ rootId, 'preview' ].join('-');
 	};
 
+	update () {
+		this.id = '';
+		this.open();
+	};
+
 });
 
 export default PreviewObject;

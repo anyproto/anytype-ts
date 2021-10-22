@@ -55,7 +55,7 @@ class PopupTemplate extends React.Component<Props, State> {
 
 				<ListObjectPreview 
 					ref={(ref: any) => { this.ref = ref; }}
-					items={items}
+					getItems={() => { return items; }}
 					offsetX={-128}
 					onClick={this.onClick} 
 				/>
@@ -66,11 +66,9 @@ class PopupTemplate extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.load();
-		focus.clear(true);
 
-		window.setTimeout(() => {
-			this.rebind();
-		}, Constant.delay.popup + 100);
+		focus.clear(true);
+		window.setTimeout(() => { this.rebind(); }, Constant.delay.popup + 100);
 	};
 
 	componentDidUpdate () {

@@ -88,7 +88,7 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 		const { preview } = commonStore;
 		const { type, param } = preview;
 
-		if (type && param) {
+		if (type && param && Util.isPreviewOpen) {
 			this.show();
 		};
 	};
