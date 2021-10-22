@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
 import { Page, ListMenu, Progress, Tooltip, Preview, Icon } from './component';
@@ -272,9 +272,13 @@ class App extends React.Component<Props, State> {
 							</div>
 						</div>
 
-						{Routes.map((item: RouteElement, i: number) => (
-							<Route path={item.path} exact={true} key={i} component={Page} />
-						))}
+						<Switch>
+							{Routes.map((item: RouteElement, i: number) => (
+								<Route path={item.path} exact={true} key={i} component={Page} />
+							))}
+
+							<Redirect to='/main/index' />
+						</Switch>
 					</div>
 				</Provider>
 			</Router>
