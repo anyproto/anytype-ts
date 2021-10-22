@@ -320,6 +320,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
 			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
 			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
+			{ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() },
 			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
 
@@ -564,6 +565,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 				if (item.type == I.BlockType.Relation) {
 					param.content.key = item.relationKey;
+				};
+
+				if (item.type == I.BlockType.Dataview) {
+					param.content.views = [
+						{ 
+							name: item.name,
+							type: item.itemId,
+						}
+					];
 				};
 
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {

@@ -494,6 +494,14 @@ const Mapper = {
 				block.setLatex(content);
 			};
 
+			if (obj.type == I.BlockType.Dataview) {
+				content = new Model.Block.Content.Dataview();
+	
+				content.setViewsList(obj.content.views.map(Mapper.To.View));
+	
+				block.setDataview(content);
+			};
+
 			return block;
 		},
 
