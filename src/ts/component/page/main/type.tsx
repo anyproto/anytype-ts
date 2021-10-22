@@ -36,6 +36,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
+	refListPreview: any = null;
 	loading: boolean = false;
 	timeout: number = 0;
 	page: number = 0;
@@ -179,7 +180,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 								<div className="content">
 									<ListObjectPreview 
 										key="listTemplate"
-										items={templates}
+										ref={(ref: any) => { this.refListPreview = ref; }}
+										getItems={() => { return dbStore.getData(rootId, BLOCK_ID_TEMPLATE); }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
@@ -340,7 +342,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			focus.clear(true);
 			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 			analytics.event('TemplateCreate', { objectType: rootId });
-			DataUtil.objectOpenPopup(message.record);
+
+			DataUtil.objectOpenPopup(message.record, {
+				onClose: () => {
+					this.refListPreview.updateItem(message.record.id);
+				}
+			});
 		});
 	};
 

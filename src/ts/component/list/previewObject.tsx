@@ -4,7 +4,7 @@ import { PreviewObject, Icon } from 'ts/component';
 import { keyboard, Action } from 'ts/lib';
 
 interface Props {
-	items: any[];
+	getItems: () => any[];
 	offsetX: number;
 	canAdd?: boolean;
 	onClick?: (e: any, item: any) => void;
@@ -14,13 +14,11 @@ interface Props {
 const $ = require('jquery');
 
 const WIDTH = 344;
-const MARGIN = 16;
 
 class ListObjectPreview extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		offsetX: 0,
-		items: [],
 		canAdd: false,
 	};
 	
@@ -28,22 +26,28 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	page: number = 0;
 	maxPage: number = 0;
 	timeout: number = 0;
+	refObj: any = {};
 
 	render () {
-		const { items, canAdd, onAdd } = this.props;
-		const isFirst = this.page == 0;
-		const isLast = this.page == this.maxPage;
+		const { getItems, canAdd, onAdd } = this.props;
+		const items = getItems();
 
-		const Item = (item: any) => (
-			<div 
-				id={'item-' + item.id} 
-				className="item" 
-				onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-				onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
-			>
-				<PreviewObject rootId={item.id} onClick={(e: any) => { this.onClick(e, item); }} />
-			</div>
-		);
+		const Item = (item: any) => {
+			return (
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+				>
+					<PreviewObject 
+						ref={(ref: any) => { this.refObj[item.id] = ref; }} 
+						rootId={item.id} 
+						onClick={(e: any) => { this.onClick(e, item); }} 
+					/>
+				</div>
+			);
+		};
 
 		const ItemAdd = () => (
 			<div className="item add" onClick={onAdd}>
@@ -62,23 +66,24 @@ class ListObjectPreview extends React.Component<Props, {}> {
 					</div>
 				</div>
 
-				<Icon id="arrowLeft" className={[ 'arrow', 'left', (isFirst ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(-1); }} />
-				<Icon id="arrowRight" className={[ 'arrow', 'right', (isLast ? 'dn' : '') ].join(' ')} onClick={() => { this.onArrow(1); }} />	
+				<Icon id="arrowLeft" className="arrow left" onClick={() => { this.onArrow(-1); }} />
+				<Icon id="arrowRight" className="arrow right" onClick={() => { this.onArrow(1); }} />	
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		this.resize();
-		this.forceUpdate();
 	};
 
 	componentDidUpdate () {
+		this.resize();
 		this.setActive();
 	};
 
 	getMaxPage () {
-		const { items, canAdd } = this.props;
+		const { getItems, canAdd } = this.props;
+		const items = getItems();
 		const length = items.length + (canAdd ? 1 : 0);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cnt = Math.floor(node.width() / WIDTH);
@@ -87,7 +92,10 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		this.n = this.props.items.findIndex((it: any) => { return it.id == item.id; });
+		const { getItems } = this.props;
+		const items = getItems();
+
+		this.n = items.findIndex((it: any) => { return it.id == item.id; });
 		this.setActive();
 	};
 
@@ -104,7 +112,8 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	};
 
 	setActive () {
-		const { items } = this.props;
+		const { getItems } = this.props;
+		const items = getItems();
 		const item = items[this.n];
 
 		if (!item) {
@@ -118,7 +127,8 @@ class ListObjectPreview extends React.Component<Props, {}> {
 	};
 
 	onKeyUp (e: any) {
-		const { items } = this.props;
+		const { getItems } = this.props;
+		const items = getItems();
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;
@@ -168,8 +178,21 @@ class ListObjectPreview extends React.Component<Props, {}> {
 		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
 	};
 
+	updateItem (id: string) {
+		if (this.refObj[id]) {
+			this.refObj[id].update();
+		};
+	};
+
 	resize () {
-		this.maxPage = this.getMaxPage();
+		const node = $(ReactDOM.findDOMNode(this));
+		const arrowLeft = node.find('#arrowLeft');
+		const arrowRight = node.find('#arrowRight');
+		const isFirst = this.page == 0;
+		const isLast = this.page == this.getMaxPage();
+
+		isFirst ? arrowLeft.addClass('dn') : arrowRight.removeClass('dn');
+		isLast ? arrowRight.addClass('dn') : arrowRight.removeClass('dn');
 	};
 	
 };
