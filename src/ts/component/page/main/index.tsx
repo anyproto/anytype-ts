@@ -319,7 +319,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (tab.id == Tab.Shared) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: Constant.typeId.space });
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.NotEmpty, value: null });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHighlighted', condition: I.FilterCondition.Equal, value: true });
 		};
 
 		if (!config.debug.ho) {
