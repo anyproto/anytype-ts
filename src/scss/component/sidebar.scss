@@ -1,0 +1,15 @@
+@import "~scss/_vars";
+
+.sidebar { 
+    width: 300px; height: 100%; position: fixed; left: 0px; top: 0px; background-color: #eee; overflow-x: hidden; 
+    overflow-y: overlay; z-index: 10; padding: 10px 14px;
+}
+
+.sidebar {
+    .item { padding: 4px 0px 4px 26px; }
+    .item.depth0 { padding: 4px 0px; }
+    .item {
+        .iconObject { flex-shrink: 0; margin-right: 6px; }
+        .name { @include text-overflow-nw; display: inline-block; }
+    }
+}

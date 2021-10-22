@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage, Sidebar } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -33,6 +33,8 @@ class PageMainEdit extends React.Component<Props, {}> {
 						</div>
 					</DragProvider>
 				</SelectionProvider>
+
+				<Sidebar />
 				
 				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 			</React.Fragment>
