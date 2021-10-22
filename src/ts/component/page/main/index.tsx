@@ -513,7 +513,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
 			this.load();
 
-			DataUtil.objectOpenPopup({ id: message.targetId }{
+			DataUtil.objectOpenPopup({ id: message.targetId }, {
 				onClose: () => { this.load(); }
 			});
 		});
