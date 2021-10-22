@@ -465,6 +465,10 @@ class BlockStore {
 				const object = detailStore.get(rootId, mark.param, [ Constant.relationKey.name ], true);
 				const old = text.substr(from, to - from);
 
+				if (object._empty_) {
+					continue;
+				};
+
 				if (old != object.name) {
 					const d = String(old || '').length - String(object.name || '').length;
 

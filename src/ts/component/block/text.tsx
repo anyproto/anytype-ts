@@ -407,7 +407,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			let icon = null;
 			if (_empty_) {
-				item.addClass('dis');
+				item.addClass('disabled');
 				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = <IconObject size={size} object={object} />;
@@ -433,7 +433,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			const data = el.data();
 			const range = data.range.split('-');
 
-			if (!data.param) {
+			if (!data.param || el.hasClass('disabled')) {
 				return;
 			};
 

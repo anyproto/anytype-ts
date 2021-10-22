@@ -137,7 +137,7 @@ class Dispatcher {
 
 	event (event: any, skipDebug?: boolean) {
 		const { config } = commonStore;
-		const traceId = event.getTraceid();
+		const traceId = '';//event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
 		
 		if (traceId) {

@@ -202,7 +202,7 @@ const BlockOpen = (blockId: string, traceId: string, callBack?: (message: any) =
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
-	request.setTraceid(traceId);
+	//request.setTraceid(traceId);
 
 	dispatcher.request('blockOpen', request, callBack);
 };
@@ -211,7 +211,7 @@ const BlockShow = (blockId: string, traceId: string, callBack?: (message: any) =
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
-	request.setTraceid(traceId);
+	//request.setTraceid(traceId);
 
 	dispatcher.request('blockShow', request, callBack);
 };
