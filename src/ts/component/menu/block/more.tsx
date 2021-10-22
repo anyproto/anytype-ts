@@ -203,7 +203,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				redo = null;
 			};
 
-			if (object.type == Constant.typeId.page) {
+			if (object.type == Constant.typeId.note) {
 				template = null;
 			};
 
@@ -271,6 +271,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 		
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -288,9 +289,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				blockIds: [ blockId ],
 			},
 		};
-
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		switch (item.id) {
 			case 'turnObject':
