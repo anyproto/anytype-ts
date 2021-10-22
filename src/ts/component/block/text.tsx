@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
+import { Select, Marker, Loader, IconObject, Icon, Button } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
@@ -126,7 +126,12 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 							onChange={this.onLang}
 							noFilter={false} 
 						/>
-						<Icon className="codeWrap" tooltip="Wrap / Unwrap" onClick={this.onToggleWrap} />
+						<div className="buttons">
+							<div className="btn" onClick={this.onToggleWrap}>
+								<Icon className="codeWrap" />
+								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
+							</div>
+						</div>
 					</React.Fragment>
 				);
 				break;

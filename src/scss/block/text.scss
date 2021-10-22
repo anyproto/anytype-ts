@@ -127,7 +127,9 @@
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex {
 		.value { font-family: 'Plex'; @include text-common; tab-size: 4; }
-		.additional { position: absolute; top: 9px; left: 16px; z-index: 1; display: block; }
+		.additional { 
+			position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%;
+		}
 		.additional {
 			.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
 			.select {
@@ -135,6 +137,15 @@
 			}
 			.select:hover, .select.active { background: none; }
 			
+			.buttons { position: absolute; right: 16px; top: 0px; }
+			.buttons {
+				.btn { padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; }
+				.btn {
+					.icon { margin-right: 4px; vertical-align: top; }
+					.txt { line-height: 20px; vertical-align: top; }
+				}
+			}
+
 			.icon.codeWrap { 
 				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/wrap0.svg'); cursor: pointer;
 			}
