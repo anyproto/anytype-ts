@@ -7,6 +7,7 @@ import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import { popupStore } from '../../../store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -152,7 +153,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					{withButtons ? (
 						<div className="buttons">
 							<Button text={confirm} onClick={(e: any) => { this.onConfirm(e, item); }} />
-							<Button text={translate('popupNavigationCancel')} color="blank" onClick={(e: any) => { close(); }} />
+							{isPopup ? <Button text={translate('popupNavigationCancel')} color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
 						</div>
 					) : ''}
 				</div>
