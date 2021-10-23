@@ -80,6 +80,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 			if (item.layout == I.ObjectLayout.Note) {
 				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+			} else {
+				description = item.description || item.snippet;
 			};
 
 			return (

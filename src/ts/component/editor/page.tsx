@@ -1306,7 +1306,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
-		if (url && !force && !block.isTextTitle() && !block.isTextDescription()) {
+		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
 			menuStore.open('select', { 
 				element: `#block-${focused}`,
 				offsetX: Constant.size.blockMenu,
