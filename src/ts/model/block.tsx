@@ -10,6 +10,7 @@ import BlockContentBookmark from './content/bookmark';
 import BlockContentText from './content/text';
 import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
+import BlockContentTable from './content/table';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,
@@ -21,6 +22,7 @@ const ContentModel = {
 	text:		 BlockContentText,
 	file:		 BlockContentFile,
 	dataview:	 BlockContentDataview,
+	table:		 BlockContentTable,
 };
 
 class Block implements I.Block {

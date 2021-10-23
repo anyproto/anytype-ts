@@ -1,0 +1,11 @@
+@import "~scss/_vars";
+
+.blocks {
+	.block.blockTable { padding: 6px 0px; }
+	.block.blockTable { 
+		table { width: 100%; border-collapse: collapse; }
+		table, th, td { border: 1px solid $colorMediumGrey; }
+
+		th, td { padding: 4px; }
+	}
+}

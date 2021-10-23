@@ -72,6 +72,7 @@ const Mapper = {
 			if (v == V.RELATION)			 t = I.BlockType.Relation;
 			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
 			if (v == V.LATEX)				 t = I.BlockType.Latex;
+			if (v == V.TABLE)				 t = I.BlockType.Table;
 			return t;
 		},
 
@@ -169,8 +170,33 @@ const Mapper = {
 					text: content.getText(),
 				};
 			};
+
+			if (type == I.BlockType.Table) {
+				item.content = {
+					columns: (content.getColumnsList() || []).map(Mapper.From.TableColumn),
+					rows: (content.getRowsList() || []).map(Mapper.From.TableRow),
+				};
+			};
 	
 			return item;
+		},
+
+		TableColumn: (obj: any): any => {
+			return {
+				name: obj.getName(),
+			};
+		},
+
+		TableRow: (obj: any): any => {
+			return {
+				data: (obj.getDataList() || []).map(Mapper.From.TableRowData),
+			};
+		},
+
+		TableRowData: (obj: any): any => {
+			return {
+				value: obj.getValue(),
+			};
 		},
 
 		Restrictions: (obj: any): any => {
@@ -494,7 +520,40 @@ const Mapper = {
 				block.setLatex(content);
 			};
 
+			if (obj.type == I.BlockType.Table) {
+				content = new Model.Block.Content.Table();
+		
+				content.setColumnsList(obj.content.columns.map(Mapper.To.TableColumn));
+				content.setRowsList(obj.content.rows.map(Mapper.To.TableRow));
+
+				block.setTable(content);
+			};
+
 			return block;
+		},
+
+		TableColumn: (obj: any) => {
+			const item = new Model.Block.Content.Table.Column();
+
+			item.setName(obj.name);
+
+			return item;
+		},
+
+		TableRow: (obj: any) => {
+			const item = new Model.Block.Content.Table.Row();
+
+			item.setDataList(obj.data.map(Mapper.To.TableRowData));
+
+			return item;
+		},
+
+		TableRowData: (obj: any) => {
+			const item = new Model.Block.Content.Table.RowData();
+
+			item.setValue(obj.value);
+
+			return item;
 		},
 
 		ViewRelation: (obj: any) => {

@@ -566,6 +566,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					param.content.key = item.relationKey;
 				};
 
+				if (item.type == I.BlockType.Table) {
+					param.content.columns = [ { name: '' } ];
+					param.content.rows = [ 
+						{ data: [] },
+						{ data: [] },
+						{ data: [] },
+					];
+				};
+
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
 				} else 

@@ -22,6 +22,7 @@ import BlockRelation from './relation';
 import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockLatex from './latex';
+import BlockTable from './table';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -177,6 +178,10 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 			case I.BlockType.Latex:
 				blockComponent = <BlockLatex ref={setRef} {...this.props} />;
+				break;
+
+			case I.BlockType.Table:
+				blockComponent = <BlockTable ref={setRef} {...this.props} />;
 				break;
 		};
 		

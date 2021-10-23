@@ -25,6 +25,7 @@ export enum BlockType {
 	Featured	 = 'featured',
 	Type		 = 'type',
 	Latex		 = 'latex',
+	Table		 = 'table',
 };
 
 export enum BlockPosition {

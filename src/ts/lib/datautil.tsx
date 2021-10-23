@@ -107,6 +107,7 @@ class DataUtil {
 			case I.BlockType.Featured:	 c.push('blockFeatured'); break;
 			case I.BlockType.Type:		 c.push('blockType'); break;
 			case I.BlockType.Latex:		 c.push('blockLatex'); break;
+			case I.BlockType.Table:		 c.push('blockTable'); break;
 		};
 
 		return c.join(' ');
@@ -611,7 +612,8 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
-			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
+			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
+			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' }
 		];
 		return ret.map(this.menuMapperBlock);
 	};

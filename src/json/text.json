@@ -197,6 +197,9 @@
 	"blockNameLatex": { "en": "LaTex" },
 	"blockTextLatex": { "en": "Display a math equations" },
 
+	"blockNameSimpleTable": { "en": "Simple table" },
+	"blockTextSimpleTable": { "en": "Create a simple table" },
+
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },
