@@ -8,7 +8,7 @@
 
 		th, td { padding: 4px; @include text-common; line-height: 20px; vertical-align: top; }
 
-		th { @include text-overflow-nw; background-color: rgba(134, 125, 66, 0.08); }
+		th { background-color: rgba(134, 125, 66, 0.08); }
 		th {
 			.value { 
 				display: inline-block; @include text-overflow-nw; vertical-align: top; width: calc(100% - 26px); margin-right: 6px; 
