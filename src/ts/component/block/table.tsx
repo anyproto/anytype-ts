@@ -189,13 +189,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.focusApply();
 	};
 
-	onFocus () {
+	onFocus (e: any) {
 		keyboard.setFocus(true);
 	};
 
-	onBlur () {
-		const { row, column } = this.focusObj;
-		const target = this.getTarget(row, column);
+	onBlur (e: any) {
+		const target = $(e.currentTarget);
+		const { row, column } = this.getTargetIds(target);
 		const value = this.getValue(target);
 
 		window.clearTimeout(this.timeout);
@@ -279,7 +279,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			if (range.to) {
 				return;
 			};
-			
+
 			e.preventDefault();
 
 			if ((row > 0) && (column == 0) && !value) {
@@ -368,6 +368,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const key = this.getKey(row);
+
+		console.log('saveValue', row, column, value);
 
 		if (key == Key.Column) {
 			content[key][column].value = value;
