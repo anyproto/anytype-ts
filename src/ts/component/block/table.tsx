@@ -47,7 +47,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let Editor = null;
 		if (readonly) {
 			Editor = (item: any) => (
-				<div className="value">{item.value || '\u00A0'}</div>
+				<div className="value">{item.value}</div>
 			);
 		} else {
 			Editor = (item: any) => (
@@ -69,7 +69,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					onCompositionEnd={() => {}}
 					onDragStart={(e: any) => { e.preventDefault(); }}
 				>
-					{item.value || '\u00A0'}
+					{item.value}
 				</div>
 			);
 		};
@@ -158,6 +158,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return Number(l) || 0;
 	};
 
+	getMaxRow (key: Key) {
+		const { block } = this.props;
+		const { rows } = block.content;
+
+		return key == Key.Column ? 0 : rows.length - 1;
+	};
+
 	focusApply () {
 		const { key, row, column, range } = this.focusObj;
 		const target = this.getTarget(key, row, column);
@@ -166,6 +173,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	focusSet (key: Key, row: number, column: number, range: I.TextRange): void {
+		const { block } = this.props;
+		const { columns } = block.content;
+
+		column = Math.max(0, Math.min(columns.length - 1, column));
+		row = Math.max(0, Math.min(this.getMaxRow(key), row));
+
 		this.focusObj = { key, row, column, range: range };
 		this.focusApply();
 	};
@@ -188,7 +201,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	onKeyDown (e: any) {
 		const { block } = this.props;
 		const { columns, rows } = block.content;
+		const target = $(e.currentTarget);
+		const value = this.getValue(target);
 		const { key, row, column, range } = this.focusObj;
+
+		const isFirstCol = column == 0;
+		const isLastCol = column == columns.length - 1;
 
 		let k = key;
 		let r = 0;
@@ -199,6 +217,31 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
+			const length = this.getLength(key, row, column);
+			if (range.from != length) {
+				return;
+			};
+
+			if ((key == Key.Column) && isLastCol) {
+				k = Key.Row;
+			};
+
+			if ((key == Key.Row) && isLastCol) {
+				r = row + 1;
+			};
+
+			if ((key == Key.Row) && (row == this.getMaxRow(k)) && isLastCol) {
+				return;
+			};
+
+			if (!isLastCol) {
+				c = column + 1;
+			};
+
+			if (k != Key.None) {
+				e.preventDefault();
+				this.focusSet(k, r, c, { from: l, to: l });
+			};
 		});
 
 		keyboard.shortcut('arrowleft', e, (pressed: string) => {
@@ -206,7 +249,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				return;
 			};
 
-			if ((key == Key.Row) && (column == 0)) {
+			if ((key == Key.Row) && isFirstCol) {
 				if (row - 1 >= 0) {
 					k = Key.Row;
 					r = row - 1;
@@ -217,11 +260,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				c = columns.length - 1;
 			};
 
-			if (column > 0) {
+			if (!isFirstCol) {
 				c = column - 1;
 			};
 
-			if ((key == Key.Column) && (column == 0)) {
+			if ((key == Key.Column) && isFirstCol) {
 				return;
 			};
 
@@ -233,27 +276,12 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 		});
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			e.preventDefault();
-		});
-	};
-
-	onKeyUp (e: any) {
-		const target = $(e.currentTarget);
-		const value = this.getValue(target);
-		const { key, row, column, range } = this.focusObj;
-
-		let ret = false;
-		window.clearTimeout(this.timeout);
-
 		if (key == Key.Row) {
 			keyboard.shortcut('backspace', e, (pressed: string) => {
 				if ((column == 0) && !range.to && !value) {
 					e.preventDefault();
 					
 					this.rowRemove(row);
-
-					ret = true;
 				};
 			});
 
@@ -262,10 +290,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 				this.save(key, row, column, value);
 				this.rowAdd(row);
-
-				ret = true;
 			});
 		};
+	};
+
+	onKeyUp (e: any) {
+		const target = $(e.currentTarget);
+		const value = this.getValue(target);
+		const { key, row, column, range } = this.focusObj;
+
+		window.clearTimeout(this.timeout);
+
+		let ret = false;
+
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright, backspace, enter', e, (pressed: string) => {
+			ret = true;
+		});
 
 		if (ret) {
 			return;
