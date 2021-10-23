@@ -136,6 +136,10 @@ class DetailStore {
 			name = object.snippet;
 		};
 
+		if (object.isDeleted) {
+			name = 'Deleted';
+		};
+
 		return {
 			...object,
 			id: id,

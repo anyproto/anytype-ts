@@ -95,6 +95,7 @@
 		"isHidden", 
 		"isArchived", 
 		"isReadonly", 
+		"isDeleted",
 		"done", 
 		"fileExt", 
 		"fileMimeType" 

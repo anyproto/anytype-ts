@@ -462,7 +462,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ Constant.relationKey.name ], true);
+				const object = detailStore.get(rootId, mark.param, []);
 				const old = text.substr(from, to - from);
 
 				if (object._empty_) {
