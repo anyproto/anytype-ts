@@ -4,7 +4,7 @@
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
 		table { width: 100%; border-collapse: collapse; }
-		table, th, td { border: 1px solid $colorMediumGrey; }
+		table, th, td { border: 1px solid $colorMediumGrey; font-family: 'Inter'; }
 
 		th, td { padding: 4px; @include text-common; line-height: 20px; vertical-align: top; }
 

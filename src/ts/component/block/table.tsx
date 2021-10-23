@@ -224,8 +224,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let r = row;
 		let c = column;
 		let left = () => {
-			const l = this.getLength(r, c);
-
 			if (!isFirstCol) {
 				c--;
 			} else {
@@ -233,6 +231,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				c = columns.length - 1;
 			};
 
+			const l = this.getLength(r, c);
 			this.focusSet(r, c, { from: l, to: l });
 		};
 
@@ -277,14 +276,16 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (!range.to && !value) {
-				e.preventDefault();
+			if (range.to) {
+				return;
+			};
+			
+			e.preventDefault();
 
-				if ((row > 0) && (column == 0)) {
-					this.rowRemove(row - 1);
-				} else {
-					left();
-				};
+			if ((row > 0) && (column == 0) && !value) {
+				this.rowRemove(row - 1);
+			} else {
+				left();
 			};
 		});
 
@@ -367,8 +368,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 		const { content } = block;
 		const key = this.getKey(row);
-
-		console.log('SAVE', key, column, row, value);
 
 		if (key == Key.Column) {
 			content[key][column].value = value;
