@@ -134,7 +134,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	getKey (row: number) {
-		return row == 0 ? Key.Column : Key.Row;
+		return row <= 0 ? Key.Column : Key.Row;
 	};
 
 	getTarget (row: number, column: number) {
@@ -223,6 +223,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		let r = row;
 		let c = column;
+		let left = () => {
+			const l = this.getLength(r, c);
+
+			if (!isFirstCol) {
+				c--;
+			} else {
+				r--;
+				c = columns.length - 1;
+			};
+
+			this.focusSet(r, c, { from: l, to: l });
+		};
 
 		keyboard.shortcut('arrowup', e, (pressed: string) => {
 			e.preventDefault();
@@ -261,34 +273,27 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			e.preventDefault();
-			const l = this.getLength(r, c);
-
-			if (!isFirstCol) {
-				c--;
-			} else {
-				r--;
-				c = columns.length - 1;
-			};
-
-			this.focusSet(r, c, { from: l, to: l });
+			left();
 		});
 
-		if (row > 0) {
-			keyboard.shortcut('backspace', e, (pressed: string) => {
-				if ((column == 0) && !range.to && !value) {
-					e.preventDefault();
-					
-					this.rowRemove(row);
-				};
-			});
-
-			keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, (pressed: string) => {
+			if (!range.to && !value) {
 				e.preventDefault();
 
-				this.saveValue(row, column, value);
-				this.rowAdd(row);
-			});
-		};
+				if ((row > 0) && (column == 0)) {
+					this.rowRemove(row - 1);
+				} else {
+					left();
+				};
+			};
+		});
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			e.preventDefault();
+			
+			this.saveValue(row, column, value);
+			this.rowAdd(row);
+		});
 	};
 
 	onKeyUp (e: any) {
@@ -322,33 +327,27 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	rowAdd (index: number) {
-		index--;
-
 		const { block } = this.props;
 		const { rows } = block.content;
+		const { column } = this.focusObj;
 		const row: I.TableRow = this.fillRow({ data: [] });
 
-		this.focusSet(index + 1, 0, { from: 0, to: 0 });
 		rows.splice(index + 1, 0, row);
 
+		this.focusSet(index + 1, column, { from: 0, to: 0 });
 		this.saveContent();
 	};
 
 	rowRemove (index: number) {
-		index--;
-
 		const { block } = this.props;
 		const { columns, rows } = block.content;
-		const prev = rows[index - 1];
-
-		if (prev) {
-			const col = columns.length - 1;
-			const length = this.getLength(index - 1, col);
-
-			this.focusSet(index - 1, col, { from: length, to: length });
-		};
+		const pr = index;
+		const pc = columns.length - 1;
+		const l = this.getLength(pr, pc);
 
 		rows.splice(index, 1);
+
+		this.focusSet(pr, pc, { from: l, to: l });
 		this.saveContent();
 	};
 
@@ -385,7 +384,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	saveContent () {
 		const { rootId, block } = this.props;
-		const { content } = block;
 
 		C.BlockUpdateContent({ ...block }, rootId, block.id);
 	};
