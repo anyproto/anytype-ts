@@ -59,7 +59,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 			element = (
 				<div className="deleted">
 					<Icon className="ghost" />
-					<div className="name">Deleted</div>
+					<div className="name">{translate('commonDeleted')}</div>
 				</div>
 			);
 		} else {
