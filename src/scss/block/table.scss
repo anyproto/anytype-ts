@@ -6,6 +6,22 @@
 		table { width: 100%; border-collapse: collapse; }
 		table, th, td { border: 1px solid $colorMediumGrey; }
 
-		th, td { padding: 4px; }
+		th, td { padding: 4px; @include text-common; line-height: 20px; vertical-align: top; }
+
+		th { white-space: nowrap; }
+		th {
+			.value { 
+				display: inline-block; white-space: normal; vertical-align: top; width: calc(100% - 26px); margin-right: 6px; 
+			}
+			.icon.plus { 
+				width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/button/plus0.svg'); 
+				cursor: pointer;
+			}
+			.icon.plus:hover { background-image: url('~img/icon/dataview/button/plus1.svg'); }
+		}
+
+		td {
+			.value { height: 100%; }
+		}
 	}
 }
