@@ -1,7 +1,7 @@
 import { I } from 'ts/lib';
 
 export interface TableColumn {
-	name: string;
+	value: string;
 };
 
 export interface TableRow {

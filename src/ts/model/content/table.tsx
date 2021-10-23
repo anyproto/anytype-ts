@@ -3,12 +3,12 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class TableColumn implements I.TableColumn {
 	
-	name: string = '';
+	value: string = '';
 	
 	constructor (props: I.TableColumn) {
 		let self = this;
 		
-		self.name = String(props.name || '');
+		self.value = String(props.value || '');
 	};
 
 };

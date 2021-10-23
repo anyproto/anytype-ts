@@ -183,7 +183,7 @@ const Mapper = {
 
 		TableColumn: (obj: any): any => {
 			return {
-				name: obj.getName(),
+				value: obj.getValue(),
 			};
 		},
 
@@ -535,7 +535,7 @@ const Mapper = {
 		TableColumn: (obj: any) => {
 			const item = new Model.Block.Content.Table.Column();
 
-			item.setName(obj.name);
+			item.setValue(obj.value);
 
 			return item;
 		},

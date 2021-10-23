@@ -83,7 +83,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						<th key={i} style={{ width: (1 / cl) * 100 + '%' }}>
 							<Editor 
 								id={[ Key.Column, 0, i ].join('-')} 
-								value={item.name} 
+								value={item.value} 
 							/>
 							<Icon className="plus" onClick={() => { this.columnAdd(i); }} />
 						</th>
@@ -154,7 +154,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		let l = 0;
 		if (key == Key.Column) {
-			l = columns[column]?.name.length;
+			l = columns[column]?.value.length;
 		} else {
 			l = rows[row]?.data[column].value.length;
 		};
@@ -325,10 +325,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { block } = this.props;
 		const { columns } = block.content;
 
-		columns.splice(index + 1, 0, { name: '' });
-
-		console.log(columns);
-
+		columns.splice(index + 1, 0, { value: '' });
 		this.saveContent();
 	};
 
@@ -383,7 +380,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		console.log('SAVE', key, column, row, value);
 
 		if (key == Key.Column) {
-			content[key][column].name = value;
+			content[key][column].value = value;
 		} else 
 		if (key == Key.Row) {
 			content[key][row] = this.fillRow(content[key][row] || { data: [] });

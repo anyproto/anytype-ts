@@ -8,10 +8,10 @@
 
 		th, td { padding: 4px; @include text-common; line-height: 20px; vertical-align: top; }
 
-		th { white-space: nowrap; }
+		th { @include text-overflow-nw; }
 		th {
 			.value { 
-				display: inline-block; white-space: normal; vertical-align: top; width: calc(100% - 26px); margin-right: 6px; 
+				display: inline-block; @include text-overflow-nw; vertical-align: top; width: calc(100% - 26px); margin-right: 6px; 
 			}
 			.icon.plus { 
 				width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/button/plus0.svg'); 
