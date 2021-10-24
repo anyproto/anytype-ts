@@ -3,8 +3,8 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
-		table { height: 100%; border-collapse: collapse; font-family: 'Inter'; }
-		table, th, td { border: 1px solid $colorMediumGrey; }
+		table { height: 100%; border-collapse: collapse; font-family: 'Inter'; box-shadow: 1px 1px 0px 0px $colorMediumGrey inset; }
+		td { box-shadow: -1px -1px 0px 0px $colorMediumGrey inset; }
 
 		tr, td { height: 100%; }
 
@@ -21,6 +21,8 @@
 		td.align-v2 { vertical-align: middle; }
 		td.align-v3 { vertical-align: top; }
 		td.align-v4 { vertical-align: bottom; }
+
+		td.isDragging { box-shadow: -1px -1px 0px 0px $colorMediumGrey inset, 1px 0px 0px 0px $colorMediumGrey inset; }
 
 		.value { padding: 6px 20px; width: 100%; display: inline-block; vertical-align: inherit; }
 
