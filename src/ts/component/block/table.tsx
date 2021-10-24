@@ -387,7 +387,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	columnRemove (index: number) {
 		const { rootId, block } = this.props;
-		const { rows } = block.content;
+		const { columnCount, rows } = block.content;
 
 		for (let row of rows) {
 			row.cells.splice(index, 1);
@@ -396,7 +396,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		blockStore.update(rootId, { 
 			...block, 
 			content: { 
-				columnCount: block.content.columnCount--, 
+				columnCount: columnCount - 1, 
 				rows: rows,
 			},
 		});
