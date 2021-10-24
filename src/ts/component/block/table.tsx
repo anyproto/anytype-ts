@@ -83,7 +83,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const Row = (row: any) => (
 			<tr>
 				<td 
-					className="first"
+					className="dark first"
 					onClick={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
 					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
 				>
@@ -94,6 +94,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					const cn = [ 'column' + i, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 					const css: any = {};
 
+					if (row.index == 0) {
+						cn.push('head');
+					};
 					if (cell.color) {
 						cn.push('textColor textColor-' + cell.color);
 					};
@@ -109,7 +112,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							key={i} 
 							className={cn.join(' ')}
 							style={css}
-							onContextMenu={(e: any) => { this.onOptions(e, (row.index > 0 ? Key.Cell : Key.Column), row.index, i); }}
+							onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, row.index, i); }}
 						>
 							<Editor 
 								id={[ 'value', row.index, i ].join('-')} 
@@ -129,6 +132,21 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			>
 				<table>
 					<tbody>
+						<tr>
+							<td className="dark">&nbsp;</td>
+							{columns.map((column: any, i: number) => {
+								return (
+									<td 
+										key={i} 
+										className="dark"
+										onClick={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
+										onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
+									>
+										&nbsp;
+									</td>
+								);
+							})}
+						</tr>
 						{rows.map((item: any, i: number) => (
 							<Row key={i} index={i} {...item} />
 						))}
@@ -195,12 +213,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	onBlur (e: any) {
 		const target = $(e.currentTarget);
 		const { row, column } = this.getTargetIds(target);
-		const value = this.getValue(target);
 
 		window.clearTimeout(this.timeout);
 		keyboard.setFocus(false);
 
-		this.saveValue(row, column, value);
+		this.saveValue(row, column, this.getValue(target));
 	};
 
 	onSelect (e: any) {
@@ -212,7 +229,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onKeyDown (e: any) {
 		const { block } = this.props;
-		const { columnCount, rows } = block.content;
+		const { columnCount } = block.content;
 		const { row, column, range } = this.focusObj;
 		const target = this.getTarget(row, column);
 		const value = this.getValue(target);
@@ -299,7 +316,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	columnAdd (index: number, dir: number) {
 		const { rootId, block } = this.props;
-		const { rows } = block.content;
+		const { columnCount, rows } = block.content;
 		const idx = index + (dir > 0 ? 1 : 0);
 
 		for (let row of rows) {
@@ -310,7 +327,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		blockStore.update(rootId, { 
 			...block, 
 			content: { 
-				columnCount: block.content.columnCount++, 
+				columnCount: columnCount + 1, 
 				rows: rows,
 			},
 		});
@@ -483,6 +500,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
+		const win = $(window);
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const color = this.getProperty(key, row, column, 'color');
 		const background = this.getProperty(key, row, column, 'background');
@@ -550,7 +568,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		menuStore.open('select1', {
 			component: 'select',
-			element: $(e.currentTarget),
+			rect: { x: e.pageX, y: e.pageY, width: 1, height: 1 },
+			offsetY: 10,
+			horizontal: I.MenuDirection.Center,
 			onOpen: (context: any) => {
 				menuContext = context;
 			},

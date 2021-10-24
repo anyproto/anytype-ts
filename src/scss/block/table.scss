@@ -23,16 +23,17 @@
 
 		.value { padding: 6px 8px; }
 
-		tr:first-child {
-			td { background-color: rgba(134, 125, 66, 0.08); font-weight: bold; white-space: nowrap; }
-			td {
-				.value { 
-					display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
-				}
+		td.head { font-weight: bold; white-space: nowrap; }
+		td.head {
+			.value { 
+				display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
 			}
-			td.first { width: 20px; cursor: default; }
 		}
+		td.head.dark { cursor: default; }
 
-		td.first { cursor: pointer; background-color: rgba(134, 125, 66, 0.08); }
+		td.first { width: 10px; }
+		td.dark { 
+			cursor: pointer; background-color: rgba(134, 125, 66, 0.08); font-size: 0px; line-height: 0px; height: 10px;
+		}
 	}
 }
