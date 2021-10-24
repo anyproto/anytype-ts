@@ -550,6 +550,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
+		const { block } = this.props;
+		const { columnCount, rows } = block.content;
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const color = this.getProperty(row, column, 'color');
 		const background = this.getProperty(row, column, 'background');
@@ -567,12 +569,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let optionsColumn = [
 			{ id: 'columnBefore', name: 'Column before' },
 			{ id: 'columnAfter', name: 'Column after' },
-			{ id: 'columnRemove', name: 'Remove column' },
 		];
 		let optionsRow = [
 			{ id: 'rowBefore', name: 'Row before' },
 			{ id: 'rowAfter', name: 'Row after' },
-			{ id: 'rowRemove', name: 'Remove row' },
 		];
 		let optionsColor = [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
@@ -596,6 +596,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			it.icon = 'align ' + this.alignIcon(it.id);
 			return it;
 		});
+
+		if (columnCount > 1) {
+			optionsColumn.push({ id: 'columnRemove', name: 'Remove column' });
+		};
+		if (rows.length > 1) {
+			optionsRow.push({ id: 'rowRemove', name: 'Remove row' });
+		};
 
 		switch (key) {
 			case Key.Column:
