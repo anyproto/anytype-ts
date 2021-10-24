@@ -89,8 +89,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							css.width = item.width;
 						};
 
-						console.log(item);
-
 						return (
 							<th 
 								id={'column-' + i} 
@@ -114,6 +112,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const Row = (row: any) => (
 			<tr>
 				<td 
+					className="first"
 					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
 				>
 					&nbsp;
@@ -574,6 +573,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			onOpen: (context: any) => {
 				menuContext = context;
 			},
+			subIds: [ 'select2' ],
 			data: {
 				options: options,
 				onOver: (e: any, item: any) => {

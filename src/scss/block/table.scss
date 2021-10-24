@@ -12,8 +12,7 @@
 		th, td {
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 1; }
 		}
-		th.first { width: 20px; }
-
+		
 		th.align-h0, td.align-h0 { text-align: left; }
 		th.align-h1, td.align-h1 { text-align: right; }
 		th.align-h2, td.align-h2 { text-align: center; }
@@ -30,5 +29,8 @@
 				display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
 			}
 		}
+		th.first { width: 20px; }
+
+		td.first { background-color: rgba(134, 125, 66, 0.08); }
 	}
 }
