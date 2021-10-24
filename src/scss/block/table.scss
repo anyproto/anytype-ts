@@ -3,12 +3,16 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
-		table { width: 100%; border-collapse: collapse; }
-		table, th, td { border: 1px solid $colorMediumGrey; font-family: 'Inter'; }
+		table { width: 100%; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
+		table, th, td { border: 1px solid $colorMediumGrey; }
 
-		th, td { padding: 4px; @include text-common; line-height: 20px; vertical-align: top; }
+		tr { height: 100%; }
 
-		th { background-color: rgba(134, 125, 66, 0.08); }
+		th, td { @include text-common; line-height: 20px; vertical-align: top; }
+
+		.value { padding: 6px 8px; }
+
+		th { background-color: rgba(134, 125, 66, 0.08); color: $colorDarkGrey; }
 		th {
 			.value { 
 				display: inline-block; @include text-overflow-nw; vertical-align: top; width: calc(100% - 26px); margin-right: 6px; 

@@ -281,12 +281,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			e.preventDefault();
-
-			if ((row > 0) && (column == 0) && !value) {
-				this.rowRemove(row - 1);
-			} else {
-				left();
-			};
+			left();
 		});
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
