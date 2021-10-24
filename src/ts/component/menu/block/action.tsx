@@ -170,12 +170,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', color: '', arrow: true, children: DataUtil.menuGetTextColors() };
+			const color = { id: 'color', icon: 'color', name: 'Color', color: '', children: DataUtil.menuGetTextColors() };
 
 			let hasTurnText = true;
 			let hasTurnPage = true;
 			let hasTurnList = true;
-			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasLink = true;

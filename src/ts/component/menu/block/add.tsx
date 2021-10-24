@@ -567,11 +567,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Table) {
-					param.content.columns = [ {}, {}, {} ];
+					param.content.columnCount = 3;
 					param.content.rows = [ 
-						{ data: [] },
-						{ data: [] },
-						{ data: [] },
+						{ cells: [] },
+						{ cells: [] },
+						{ cells: [] },
 					];
 				};
 

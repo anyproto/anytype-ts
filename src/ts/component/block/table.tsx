@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { I, C, keyboard } from 'ts/lib';
+import { I, C, M, Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { Icon } from 'ts/component';
 import { getRange, setRange } from 'selection-ranges';
-import { menuStore } from '../../store';
+import { menuStore, blockStore } from '../../store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
@@ -42,10 +41,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	render () {
 		const { readonly, block } = this.props;
-		const { columns, rows } = block.content;
+		const { columnCount, rowCount, rows } = block.content;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
-		const cl = columns.length;
+		const columns = [];
 		const cr = rows.length;
+
+		for (let i = 0; i < columnCount; ++i) {
+			columns.push(i);
+		};
 
 		let Editor = null;
 		if (readonly) {
@@ -77,38 +80,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			);
 		};
 
-		const Head = () => (
-			<thead>
-				<tr>
-					<th className="first">&nbsp;</th>
-					{columns.map((item: any, i: number) => {
-						const css: any = {};
-						const cn = [ 'align-v' + item.vertical, 'align-h' + item.horizontal ];
-
-						if (item.width) {
-							css.width = item.width;
-						};
-
-						return (
-							<th 
-								id={'column-' + i} 
-								key={i} 
-								style={css} 
-								className={cn.join(' ')}
-								onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
-							>
-								<Editor 
-									id={[ 'value', 0, i ].join('-')} 
-									value={item.value} 
-								/>
-								<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
-							</th>
-						);
-					})}
-				</tr>
-			</thead>
-		);
-
 		const Row = (row: any) => (
 			<tr>
 				<td 
@@ -120,14 +91,24 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				</td>
 				{columns.map((column: any, i: number) => {
 					const cell = row.cells[i] || {};
-					const ah = cell.horizontal || column.horizontal || row.horizontal;
-					const av = cell.vertical || column.vertical || row.vertical;
-					const cn = [ 'align-v' + av, 'align-h' + ah ];
+					const cn = [ 'column' + i, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
+					const css: any = {};
+
+					if (cell.color) {
+						cn.push('textColor textColor-' + cell.color);
+					};
+					if (cell.background) {
+						cn.push('bgColor bgColor-' + cell.background);
+					};
+					if (cell.width) {
+						css.width = cell.width;
+					};
 
 					return (
 						<td 
 							key={i} 
 							className={cn.join(' ')}
+							style={css}
 							onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, row.index, i); }}
 						>
 							<Editor 
@@ -147,7 +128,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				className={cn.join(' ')}
 			>
 				<table>
-					<Head />
 					<tbody>
 						{rows.map((item: any, i: number) => (
 							<Row key={i} index={i} {...item} />
@@ -163,17 +143,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
-		window.setTimeout(() => {
-			this.focusApply();
-		});
+		this.focusApply();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
-
-	getKey (row: number) {
-		return row <= 0 ? Key.Column : Key.Row;
 	};
 
 	getTarget (row: number, column: number) {
@@ -191,16 +165,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	getLength (row: number, column: number) {
 		const { block } = this.props;
-		const { columns, rows } = block.content;
-		const key = this.getKey(row);
+		const { rows } = block.content;
 
-		let l = 0;
-		if (key == Key.Column) {
-			l = columns[column]?.value.length;
-		} else {
-			l = rows[row - 1]?.cells[column].value.length;
-		};
-		return Number(l) || 0;
+		return Number(rows[row]?.cells[column]?.value.length) || 0;
 	};
 
 	getMaxRow () {
@@ -219,9 +186,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	focusSet (row: number, column: number, range: I.TextRange): void {
 		const { block } = this.props;
-		const { columns } = block.content;
+		const { columnCount } = block.content;
 
-		column = Math.max(0, Math.min(columns.length - 1, column));
+		column = Math.max(0, Math.min(columnCount - 1, column));
 		row = Math.max(0, Math.min(this.getMaxRow(), row));
 
 		this.focusObj = { row, column, range };
@@ -252,13 +219,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	onKeyDown (e: any) {
 		const { block } = this.props;
-		const { columns, rows } = block.content;
+		const { columnCount, rows } = block.content;
 		const { row, column, range } = this.focusObj;
 		const target = this.getTarget(row, column);
 		const value = this.getValue(target);
 
 		const isFirstCol = column == 0;
-		const isLastCol = column == columns.length - 1;
+		const isLastCol = column == columnCount - 1;
 
 		let r = row;
 		let c = column;
@@ -267,7 +234,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				c--;
 			} else {
 				r--;
-				c = columns.length - 1;
+				c = columnCount - 1;
 			};
 
 			const l = this.getLength(r, c);
@@ -318,7 +285,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			e.preventDefault();
 			
 			this.saveValue(row, column, value);
-			this.rowAdd(row);
+			this.rowAdd(row, 1);
 		});
 	};
 
@@ -339,24 +306,40 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		};
 	};
 
-	columnAdd (index: number) {
-		const { block } = this.props;
-		const { columns, rows } = block.content;
+	columnAdd (index: number, dir: number) {
+		console.log('[columnAdd]', index, dir);
 
-		columns.splice(index + 1, 0, { value: '', width: 50 });
-		
+		const { rootId, block } = this.props;
+		const { rows } = block.content;
+		const idx = index + (dir > 0 ? 1 : 0);
+
 		for (let row of rows) {
-			row.cells.splice(index + 1, 0, { value: '' });
+			const cell = Util.objectCopy(row.cells[index]);
+			row.cells.splice(idx, 0, { ...cell, value: '', width: 50 });
 		};
+
+		blockStore.update(rootId, { 
+			...block, 
+			content: { 
+				columnCount: block.content.columnCount++, 
+				rows: rows,
+			},
+		});
+
+		console.log({ 
+			...block, 
+			content: { 
+				columnCount: block.content.columnCount++, 
+				rows: rows,
+			},
+		});
 
 		this.saveContent();
 	};
 
 	columnRemove (index: number) {
 		const { block } = this.props;
-		const { columns, rows } = block.content;
-
-		columns.splice(index, 1);
+		const { rows } = block.content;
 
 		for (let row of rows) {
 			row.cells.splice(index, 1);
@@ -365,19 +348,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.saveContent();
 	};
 
-	rowAdd (index: number) {
+	rowAdd (index: number, dir: number) {
+		index = Math.max(0, index);
+
 		const { block } = this.props;
 		const { rows } = block.content;
-		const { column } = this.focusObj;
-		const row: I.TableRow = this.fillRow({ 
-			cells: [] as I.TableCell[],
-			horizontal: I.TableAlign.Left,
-			vertical: I.TableAlign.Top,
+		const idx = index + (dir > 0 ? 1 : 0);
+
+		let row: I.TableRow = new M.TableRow(rows[index] || {});
+		
+		row = this.fillRow(row);
+		row.cells.map((it: I.TableCell) => {
+			it.value = '';
+			return it;
 		});
+		rows.splice(idx, 0, row);
 
-		rows.splice(index + 1, 0, row);
-
-		this.focusSet(index + 1, column, { from: 0, to: 0 });
 		this.saveContent();
 	};
 
@@ -395,37 +381,32 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	fillRow (row: I.TableRow) {
 		const { block } = this.props;
-		const { content } = block;
-		const { columns } = content;
+		const { columnCount } = block.content;
 
-		columns.forEach((col: any, i: number) => {
-			row.cells[i] = row.cells[i] || { 
-				value: '',  
+		for (let i = 0; i < columnCount; ++i) {
+			row.cells[i] = Object.assign({
+				value: '', 
 				horizontal: I.TableAlign.Left,
 				vertical: I.TableAlign.Top,
-			};
-		});
+				color: '',
+				background: '',
+				width: 0,
+			}, row.cells[i] || {});
+		};
 
 		return row;
 	};
 
 	saveValue (row: number, column: number, value: string) {
 		const { rootId, block } = this.props;
-		const { content } = block;
-		const key = this.getKey(row);
+		const { rows } = block.content;
 
 		console.log('saveValue', row, column, value);
 
-		if (key == Key.Column) {
-			content[key][column].value = value;
-		} else 
-		if (key == Key.Row) {
-			row--;
-			content[key][row] = this.fillRow(content[key][row] || { data: [] });
-			content[key][row].cells[column].value = value;
-		};
+		rows[row] = this.fillRow(rows[row] || { data: [] });
+		rows[row].cells[column].value = value;
 
-		C.BlockUpdateContent({ ...block, content }, rootId, block.id);
+		C.BlockUpdateContent({ ...block }, rootId, block.id);
 	};
 
 	saveContent () {
@@ -437,6 +418,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	getValue (obj: any): string {
+		if (!obj.length) {
+			return '';
+		};
 		return String(obj.get(0).innerText || '').trim();
 	};
 
@@ -463,6 +447,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
+		const { block } = this.props;
+		const { rows } = block.content;
+
+		rows.forEach((row: I.TableRow) => {
+			row = this.fillRow(row);
+		});
+
 		const win = $(window);
 
 		$('body').addClass('colResize');
@@ -478,16 +469,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		const { block } = this.props;
-		const { columns } = block.content;
+		const { rows } = block.content;
 		const node = $(ReactDOM.findDOMNode(this));
-		const w = node.width();
-		const el = node.find(`#column-${index}`);
-		const offset = el.offset();
+		const el = node.find(`.column${index}`);
+		const offset = el.first().offset();
 
 		let width = e.pageX - offset.left;
 		width = Math.max(20, Math.min(500, width)); 
 
-		columns[index].width = width;
+		rows.forEach((row: I.TableRow) => {
+			row.cells[index].width = width;
+		});
+
 		el.css({ width: width });
 	};
 
@@ -503,13 +496,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block } = this.props;
-		const { columns, rows } = block.content;
+		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
+		const color = this.getProperty(key, row, column, 'color');
+		const background = this.getProperty(key, row, column, 'background');
+		const ah = this.getProperty(key, row, column, 'horizontal');
+		const av = this.getProperty(key, row, column, 'vertical');
+
+		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (color || 'default') ].join(' ')} />;
+		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (background || 'default') ].join(' ')} />;
 
 		let menuContext: any = null;
 		let options: any[] = [
-			{ id: 'horizontal', name: 'Horizontal align', arrow: true },
-			{ id: 'vertical', name: 'Vertical align', arrow: true },
+			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
+			{ id: 'vertical', icon: 'align ' + this.alignIcon(av), name: 'Vertical align', arrow: true },
 		];
 		let optionsColumn = [
 			{ id: 'columnBefore', name: 'Column before' },
@@ -521,48 +520,45 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			{ id: 'rowAfter', name: 'Row after' },
 			{ id: 'rowRemove', name: 'Remove row' },
 		];
-		let optionsVertical = [
+		let optionsColor = [
+			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
+			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
+		];
+
+		let optionsHorizontal = [
 			{ id: I.TableAlign.Left, name: 'Left' },
 			{ id: I.TableAlign.Center, name: 'Center' },
 			{ id: I.TableAlign.Right, name: 'Right' },
-		];
-		let optionsHorizontal = [
+		].map((it: any) => {
+			it.icon = 'align ' + this.alignIcon(it.id);
+			return it;
+		});
+
+		let optionsVertical = [
 			{ id: I.TableAlign.Top, name: 'Top' },
 			{ id: I.TableAlign.Center, name: 'Center' },
 			{ id: I.TableAlign.Bottom, name: 'Bottom' },
-		];
+		].map((it: any) => {
+			it.icon = 'align ' + this.alignIcon(it.id);
+			return it;
+		});
 
 		switch (key) {
 			case Key.Column:
 				options = optionsColumn.concat(options);
+				options = optionsColor.concat(options);
 				break;
 
 			case Key.Row:
 				options = optionsRow.concat(options);
+				options = optionsColor.concat(options);
 				break;
 
 			case Key.Cell:
 				options = optionsColumn.concat(options);
 				options = optionsRow.concat(options);
+				options = optionsColor.concat(options);
 				break;
-		};
-
-		const setAlign = (k: string, v: I.TableAlign) => {
-			switch (key) {
-				case Key.Column:
-					columns[column][k] = v;
-					break;
-
-				case Key.Row:
-					rows[row][k] = v;
-					break;
-
-				case Key.Cell:
-					rows[row].cells[column][k] = v;
-					break;
-			};
-
-			this.saveContent();
 		};
 
 		menuStore.open('select1', {
@@ -571,40 +567,74 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			onOpen: (context: any) => {
 				menuContext = context;
 			},
-			subIds: [ 'select2' ],
+			subIds: subIds,
 			data: {
 				options: options,
 				onOver: (e: any, item: any) => {
 					if (!item.arrow) {
-						menuStore.close('select2');
+						menuStore.closeAll(subIds);
 						return;
 					};
 
-					let options: any[] = [];
-
-					switch (item.id) {
-						case 'horizontal':
-							options = options.concat(optionsVertical);
-							break;
-
-						case 'vertical':
-							options = options.concat(optionsHorizontal);
-							break;
-					};
-
-					menuStore.open('select2', {
-						component: 'select',
+					let menuId = '';
+					let menuParam: any = {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
 						isSub: true,
 						data: {
-							options: options,
-							onSelect: (e: any, el: any) => {
-								setAlign(item.id, el.id);
-								menuContext.close();
-							}
-						},
+							value: this.getProperty(key, row, column, item.id),
+						}
+					};
+
+					switch (item.id) {
+						case 'horizontal':
+							menuId = 'select2';
+							menuParam.component = 'select';
+							menuParam.data = Object.assign(menuParam.data, {
+								options: optionsHorizontal,
+								onSelect: (e: any, el: any) => {
+									this.setProperty(key, row, column, item.id, el.id);
+									menuContext.close();
+								}
+							});
+							break;
+
+						case 'vertical':
+							menuId = 'select2';
+							menuParam.component = 'select';
+							menuParam.data = Object.assign(menuParam.data, {
+								options: optionsVertical,
+								onSelect: (e: any, el: any) => {
+									this.setProperty(key, row, column, item.id, el.id);
+									menuContext.close();
+								}
+							});
+							break;
+
+						case 'color':
+							menuId = 'blockColor';
+							menuParam.data = Object.assign(menuParam.data, {
+								onChange: (id: string) => {
+									this.setProperty(key, row, column, item.id, id);
+									menuContext.close();
+								}
+							});
+							break;
+
+						case 'background':
+							menuId = 'blockBackground';
+							menuParam.data = Object.assign(menuParam.data, {
+								onChange: (id: string) => {
+									this.setProperty(key, row, column, item.id, id);
+									menuContext.close();
+								}
+							});
+							break;
+					};
+
+					menuStore.closeAll(subIds, () => {
+						menuStore.open(menuId, menuParam);
 					});
 				},
 				onSelect: (e: any, item: any) => {
@@ -614,11 +644,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 					switch (item.id) {
 						case 'columnBefore':
-							this.columnAdd(column - 1);
+							this.columnAdd(column, -1);
 							break;
 
 						case 'columnAfter':
-							this.columnAdd(column);
+							this.columnAdd(column, 1);
 							break;
 
 						case 'columnRemove':
@@ -626,11 +656,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							break;
 
 						case 'rowBefore':
-							this.rowAdd(row - 1);
+							this.rowAdd(row, -1);
 							break;
 
 						case 'rowAfter':
-							this.rowAdd(row);
+							this.rowAdd(row, 1);
 							break;
 
 						case 'rowRemove':
@@ -640,9 +670,54 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				}
 			},
 		});
+	};
 
-		console.log('[onOptions]', key, row, column);
+	getProperty (key: Key, row: number, column: number, k: string): any {
+		const { block } = this.props;
+		const { rows } = block.content;
+		const rowObj = this.fillRow(rows[row]);
 
+		return rowObj.cells[column][k];
+	};
+
+	setProperty (key: Key, row: number, column: number, k: string, v: any) {
+		const { block } = this.props;
+		const { rows } = block.content;
+
+		switch (key) {
+			case Key.Column:
+				rows.forEach((row: I.TableRow) => {
+					row = this.fillRow(row);
+					row.cells[column][k] = v;
+				});
+				break;
+
+			case Key.Row:
+				rows[row].cells.map((it: I.TableCell) => {
+					it[k] = v;
+					return it;
+				});
+				break;
+
+			case Key.Cell:
+				rows[row].cells[column][k] = v;
+				break;
+		};
+
+		this.saveContent();
+	};
+
+	alignIcon (v: I.TableAlign): string {
+		let icon = '';
+		switch (v) {
+			default:
+			case I.TableAlign.Left:		 icon = 'left'; break;
+			case I.TableAlign.Center:	 icon = 'center'; break;
+			case I.TableAlign.Right:	 icon = 'right'; break;
+			case I.TableAlign.Top:		 icon = 'top'; break;
+			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
+		};
+		return icon;
 	};
 
 });

@@ -8,28 +8,30 @@
 
 		tr { height: 100%; }
 
-		th, td { @include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text; }
-		th, td {
+		td { @include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text; }
+		td {
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 1; }
 		}
 		
-		th.align-h0, td.align-h0 { text-align: left; }
-		th.align-h1, td.align-h1 { text-align: right; }
-		th.align-h2, td.align-h2 { text-align: center; }
+		td.align-h0 { text-align: left; }
+		td.align-h1 { text-align: right; }
+		td.align-h2 { text-align: center; }
 
-		th.align-v2, td.align-v2 { vertical-align: middle; }
-		th.align-v3, td.align-v3 { vertical-align: top; }
-		th.align-v4, td.align-v4 { vertical-align: bottom; }
+		td.align-v2 { vertical-align: middle; }
+		td.align-v3 { vertical-align: top; }
+		td.align-v4 { vertical-align: bottom; }
 
 		.value { padding: 6px 8px; }
 
-		th { background-color: rgba(134, 125, 66, 0.08); color: $colorDarkGrey; white-space: nowrap; }
-		th {
-			.value { 
-				display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
+		tr:first-child {
+			td { background-color: rgba(134, 125, 66, 0.08); font-weight: bold; white-space: nowrap; }
+			td {
+				.value { 
+					display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
+				}
 			}
+			td.first { width: 20px; cursor: default; }
 		}
-		th.first { width: 20px; cursor: default; }
 
 		td.first { cursor: pointer; background-color: rgba(134, 125, 66, 0.08); }
 	}

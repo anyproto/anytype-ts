@@ -1,36 +1,24 @@
 import { I, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
-class TableColumn implements I.TableColumn {
-	
-	value: string = '';
-	width: number = 0;
-	horizontal: I.TableAlign = I.TableAlign.Left;
-	vertical: I.TableAlign = I.TableAlign.Top;
-	
-	constructor (props: I.TableColumn) {
-		let self = this;
-		
-		self.value = String(props.value || '');
-		self.width = Number(props.width) || 0;
-		self.horizontal = Number(props.horizontal) || 0;
-		self.vertical = Number(props.vertical) || 0;
-	};
-
-};
-
 class TableCell implements I.TableCell {
 	
 	value: string = '';
 	horizontal: I.TableAlign = I.TableAlign.Left;
 	vertical: I.TableAlign = I.TableAlign.Top;
+	color: string = '';
+	background: string = '';
+	width: number = 0;
 	
 	constructor (props: I.TableCell) {
 		let self = this;
 		
 		self.value = String(props.value || '');
-		self.horizontal = Number(props.horizontal) || 0;
-		self.vertical = Number(props.vertical) || 0;
+		self.horizontal = Number(props.horizontal) || I.TableAlign.Left;
+		self.vertical = Number(props.vertical) || I.TableAlign.Top;
+		self.color = String(props.color || '');
+		self.background = String(props.background || '');
+		self.width = Number(props.width) || 0;
 	};
 
 };
@@ -38,32 +26,28 @@ class TableCell implements I.TableCell {
 class TableRow implements I.TableRow {
 	
 	cells: TableCell[] = [];
-	horizontal: I.TableAlign = I.TableAlign.Left;
-	vertical: I.TableAlign = I.TableAlign.Top;
 	
 	constructor (props: I.TableRow) {
 		let self = this;
 		
 		self.cells = (props.cells || []).map((it: I.TableCell) => { return new TableCell(it); });
-		self.horizontal = Number(props.horizontal) || 0;
-		self.vertical = Number(props.vertical) || 0;
 	};
 
 };
 
 class BlockContentTable implements I.ContentTable {
 	
-	columns: I.TableColumn[] = [];
+	columnCount: number = 0;
 	rows: I.TableRow[] = [];
 	
 	constructor (props: I.ContentTable) {
 		let self = this;
 		
-		self.columns = (props.columns || []).map((it: I.TableColumn) => { return new TableColumn(it); });
+		self.columnCount = Number(props.columnCount) || 0;
 		self.rows = (props.rows || []).map((it: I.TableRow) => { return new TableRow(it); });
 
 		makeObservable(self, {
-			columns: observable,
+			columnCount: observable,
 			rows: observable,
 		});
 
@@ -72,4 +56,8 @@ class BlockContentTable implements I.ContentTable {
 
 };
 
-export default BlockContentTable;
+export {
+	TableRow,
+	TableCell,
+	BlockContentTable,
+};

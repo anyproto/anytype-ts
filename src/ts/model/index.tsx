@@ -1,4 +1,5 @@
 import BlockContentLayout from './content/layout';
+import { TableRow, TableCell } from './content/table';
 
 import Block from './block';
 import BlockStructure from './blockStructure';
@@ -23,4 +24,6 @@ export {
 	Filter,
 	Sort,
 	ObjectType,
+	TableRow, 
+	TableCell,
 };

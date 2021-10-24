@@ -173,7 +173,7 @@ const Mapper = {
 
 			if (type == I.BlockType.Table) {
 				item.content = {
-					columns: (content.getColumnsList() || []).map(Mapper.From.TableColumn),
+					columnCount: content.getColumncount(),
 					rows: (content.getRowsList() || []).map(Mapper.From.TableRow),
 				};
 			};
@@ -181,20 +181,9 @@ const Mapper = {
 			return item;
 		},
 
-		TableColumn: (obj: any): any => {
-			return {
-				value: obj.getValue(),
-				width: obj.getWidth(),
-				horizontal: obj.getHorizontal(),
-				vertical: obj.getVertical(),
-			};
-		},
-
 		TableRow: (obj: any): any => {
 			return {
 				cells: (obj.getCellsList() || []).map(Mapper.From.TableCell),
-				horizontal: obj.getHorizontal(),
-				vertical: obj.getVertical(),
 			};
 		},
 
@@ -203,6 +192,9 @@ const Mapper = {
 				value: obj.getValue(),
 				horizontal: obj.getHorizontal(),
 				vertical: obj.getVertical(),
+				color: obj.getColor(),
+				background: obj.getBackground(),
+				width: obj.getWidth(),
 			};
 		},
 
@@ -530,7 +522,7 @@ const Mapper = {
 			if (obj.type == I.BlockType.Table) {
 				content = new Model.Block.Content.Table();
 		
-				content.setColumnsList(obj.content.columns.map(Mapper.To.TableColumn));
+				content.setColumncount(obj.content.columnCount);
 				content.setRowsList(obj.content.rows.map(Mapper.To.TableRow));
 
 				block.setTable(content);
@@ -539,23 +531,11 @@ const Mapper = {
 			return block;
 		},
 
-		TableColumn: (obj: any) => {
-			const item = new Model.Block.Content.Table.Column();
-
-			item.setValue(obj.value);
-			item.setWidth(obj.width);
-			item.setHorizontal(obj.horizontal);
-			item.setVertical(obj.vertical);
-
-			return item;
-		},
 
 		TableRow: (obj: any) => {
 			const item = new Model.Block.Content.Table.Row();
 
 			item.setCellsList(obj.cells.map(Mapper.To.TableCell));
-			item.setHorizontal(obj.horizontal);
-			item.setVertical(obj.vertical);
 
 			return item;
 		},
@@ -566,6 +546,9 @@ const Mapper = {
 			item.setValue(obj.value);
 			item.setHorizontal(obj.horizontal);
 			item.setVertical(obj.vertical);
+			item.setColor(obj.color);
+			item.setBackground(obj.background);
+			item.setWidth(obj.width);
 
 			return item;
 		},

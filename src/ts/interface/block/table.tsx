@@ -8,27 +8,21 @@ export enum TableAlign {
 	Bottom	 = 4,
 };
 
-export interface TableColumn {
-	value: string;
-	horizontal: TableAlign;
-	vertical: TableAlign;
-	width: number;
-};
-
 export interface TableCell {
 	value: string;
 	horizontal: TableAlign;
 	vertical: TableAlign;
+	color: string;
+	background: string;
+	width: number;
 };
 
 export interface TableRow {
 	cells: TableCell[];
-	horizontal: TableAlign;
-	vertical: TableAlign;
 };
 
 export interface ContentTable {
-	columns: TableColumn[];
+	columnCount: number;
 	rows: TableRow[];
 };
 
