@@ -109,10 +109,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							key={i} 
 							className={cn.join(' ')}
 							style={css}
-							onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, row.index, i); }}
+							onContextMenu={(e: any) => { this.onOptions(e, (row.index > 0 ? Key.Cell : Key.Column), row.index, i); }}
 						>
 							<Editor 
-								id={[ 'value', row.index + 1, i ].join('-')} 
+								id={[ 'value', row.index, i ].join('-')} 
 								value={cell.value} 
 							/>
 							<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
@@ -170,13 +170,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		return Number(rows[row]?.cells[column]?.value.length) || 0;
 	};
 
-	getMaxRow () {
-		const { block } = this.props;
-		const { rows } = block.content;
-
-		return rows.length;
-	};
-
 	focusApply () {
 		const { row, column, range } = this.focusObj;
 		const target = this.getTarget(row, column);
@@ -186,10 +179,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	focusSet (row: number, column: number, range: I.TextRange): void {
 		const { block } = this.props;
-		const { columnCount } = block.content;
+		const { columnCount, rows } = block.content;
 
 		column = Math.max(0, Math.min(columnCount - 1, column));
-		row = Math.max(0, Math.min(this.getMaxRow(), row));
+		row = Math.max(0, Math.min(rows.length - 1, row));
 
 		this.focusObj = { row, column, range };
 		this.focusApply();
@@ -229,17 +222,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		let r = row;
 		let c = column;
-		let left = () => {
-			if (!isFirstCol) {
-				c--;
-			} else {
-				r--;
-				c = columnCount - 1;
-			};
-
-			const l = this.getLength(r, c);
-			this.focusSet(r, c, { from: l, to: l });
-		};
 
 		keyboard.shortcut('arrowup', e, (pressed: string) => {
 			e.preventDefault();
@@ -278,7 +260,15 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			e.preventDefault();
-			left();
+			if (!isFirstCol) {
+				c--;
+			} else {
+				r--;
+				c = columnCount - 1;
+			};
+
+			const l = this.getLength(r, c);
+			this.focusSet(r, c, { from: l, to: l });
 		});
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
@@ -286,6 +276,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			
 			this.saveValue(row, column, value);
 			this.rowAdd(row, 1);
+			this.focusSet(row + 1, column, { from: 0, to: 0 });
 		});
 	};
 
@@ -307,8 +298,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	columnAdd (index: number, dir: number) {
-		console.log('[columnAdd]', index, dir);
-
 		const { rootId, block } = this.props;
 		const { rows } = block.content;
 		const idx = index + (dir > 0 ? 1 : 0);
@@ -326,24 +315,24 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			},
 		});
 
-		console.log({ 
-			...block, 
-			content: { 
-				columnCount: block.content.columnCount++, 
-				rows: rows,
-			},
-		});
-
 		this.saveContent();
 	};
 
 	columnRemove (index: number) {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const { rows } = block.content;
 
 		for (let row of rows) {
 			row.cells.splice(index, 1);
 		};
+
+		blockStore.update(rootId, { 
+			...block, 
+			content: { 
+				columnCount: block.content.columnCount--, 
+				rows: rows,
+			},
+		});
 
 		this.saveContent();
 	};
@@ -400,8 +389,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	saveValue (row: number, column: number, value: string) {
 		const { rootId, block } = this.props;
 		const { rows } = block.content;
-
-		console.log('saveValue', row, column, value);
 
 		rows[row] = this.fillRow(rows[row] || { data: [] });
 		rows[row].cells[column].value = value;
