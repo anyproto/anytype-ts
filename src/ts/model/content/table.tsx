@@ -37,14 +37,14 @@ class TableCell implements I.TableCell {
 
 class TableRow implements I.TableRow {
 	
-	data: TableCell[] = [];
+	cells: TableCell[] = [];
 	horizontal: I.TableAlign = I.TableAlign.Left;
 	vertical: I.TableAlign = I.TableAlign.Top;
 	
 	constructor (props: I.TableRow) {
 		let self = this;
 		
-		self.data = (props.data || []).map((it: I.TableCell) => { return new TableCell(it); });
+		self.cells = (props.cells || []).map((it: I.TableCell) => { return new TableCell(it); });
 		self.horizontal = Number(props.horizontal) || 0;
 		self.vertical = Number(props.vertical) || 0;
 	};

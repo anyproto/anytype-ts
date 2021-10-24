@@ -192,7 +192,7 @@ const Mapper = {
 
 		TableRow: (obj: any): any => {
 			return {
-				data: (obj.getDataList() || []).map(Mapper.From.TableCell),
+				cells: (obj.getCellsList() || []).map(Mapper.From.TableCell),
 				horizontal: obj.getHorizontal(),
 				vertical: obj.getVertical(),
 			};
@@ -553,7 +553,7 @@ const Mapper = {
 		TableRow: (obj: any) => {
 			const item = new Model.Block.Content.Table.Row();
 
-			item.setDataList(obj.data.map(Mapper.To.TableCell));
+			item.setCellsList(obj.cells.map(Mapper.To.TableCell));
 			item.setHorizontal(obj.horizontal);
 			item.setVertical(obj.vertical);
 

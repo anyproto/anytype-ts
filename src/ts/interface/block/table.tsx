@@ -22,7 +22,7 @@ export interface TableCell {
 };
 
 export interface TableRow {
-	data: TableCell[];
+	cells: TableCell[];
 	horizontal: TableAlign;
 	vertical: TableAlign;
 };

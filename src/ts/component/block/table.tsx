@@ -113,12 +113,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			<tr>
 				<td 
 					className="first"
+					onClick={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
 					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
 				>
 					&nbsp;
 				</td>
 				{columns.map((column: any, i: number) => {
-					const cell = row.data[i] || {};
+					const cell = row.cells[i] || {};
 					const ah = cell.horizontal || column.horizontal || row.horizontal;
 					const av = cell.vertical || column.vertical || row.vertical;
 					const cn = [ 'align-v' + av, 'align-h' + ah ];
@@ -197,7 +198,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (key == Key.Column) {
 			l = columns[column]?.value.length;
 		} else {
-			l = rows[row - 1]?.data[column].value.length;
+			l = rows[row - 1]?.cells[column].value.length;
 		};
 		return Number(l) || 0;
 	};
@@ -345,7 +346,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		columns.splice(index + 1, 0, { value: '', width: 50 });
 		
 		for (let row of rows) {
-			row.data.splice(index + 1, 0, { value: '' });
+			row.cells.splice(index + 1, 0, { value: '' });
 		};
 
 		this.saveContent();
@@ -358,7 +359,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		columns.splice(index, 1);
 
 		for (let row of rows) {
-			row.data.splice(index, 1);
+			row.cells.splice(index, 1);
 		};
 
 		this.saveContent();
@@ -369,7 +370,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rows } = block.content;
 		const { column } = this.focusObj;
 		const row: I.TableRow = this.fillRow({ 
-			data: [] as I.TableCell[],
+			cells: [] as I.TableCell[],
 			horizontal: I.TableAlign.Left,
 			vertical: I.TableAlign.Top,
 		});
@@ -398,7 +399,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { columns } = content;
 
 		columns.forEach((col: any, i: number) => {
-			row.data[i] = row.data[i] || { 
+			row.cells[i] = row.cells[i] || { 
 				value: '',  
 				horizontal: I.TableAlign.Left,
 				vertical: I.TableAlign.Top,
@@ -421,7 +422,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (key == Key.Row) {
 			row--;
 			content[key][row] = this.fillRow(content[key][row] || { data: [] });
-			content[key][row].data[column].value = value;
+			content[key][row].cells[column].value = value;
 		};
 
 		C.BlockUpdateContent({ ...block, content }, rootId, block.id);
@@ -557,12 +558,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					break;
 
 				case Key.Cell:
-					rows[row].data[column][k] = v;
+					rows[row].cells[column][k] = v;
 					break;
 			};
-
-			console.log(columns);
-			console.log(rows);
 
 			this.saveContent();
 		};

@@ -29,8 +29,8 @@
 				display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
 			}
 		}
-		th.first { width: 20px; }
+		th.first { width: 20px; cursor: default; }
 
-		td.first { background-color: rgba(134, 125, 66, 0.08); }
+		td.first { cursor: pointer; background-color: rgba(134, 125, 66, 0.08); }
 	}
 }
