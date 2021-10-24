@@ -2,9 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, C, M, Util, keyboard } from 'ts/lib';
+import { Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
-import { menuStore, blockStore } from '../../store';
+import { menuStore, blockStore } from 'ts/store';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
@@ -37,11 +40,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
+		this.onSortEndColumn = this.onSortEndColumn.bind(this)
 	};
 
 	render () {
 		const { readonly, block } = this.props;
-		const { columnCount, rowCount, rows } = block.content;
+		const { columnCount, rows } = block.content;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const columns = [];
 		const cr = rows.length;
@@ -80,50 +85,72 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			);
 		};
 
+		const Handle = SortableHandle(() => (
+			<Icon className="drag" />
+		));
+
+		const Cell = (item: any) => {
+			const cell = (item.row.cells || [])[item.id] || {};
+			const cn = [ 'column' + item.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
+			const css: any = {};
+			const isHead = item.row.id == 0;
+
+			if (isHead) {
+				cn.push('head');
+			};
+			if (cell.color) {
+				cn.push('textColor textColor-' + cell.color);
+			};
+			if (cell.background) {
+				cn.push('bgColor bgColor-' + cell.background);
+			};
+			if (cell.width) {
+				css.width = cell.width;
+			};
+
+			return (
+				<td 
+					className={cn.join(' ')}
+					style={css}
+					onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
+				>
+					{isHead ? <Handle /> : ''}
+					<Editor 
+						id={[ 'value', item.row.id, item.id ].join('-')} 
+						value={cell.value} 
+					/>
+					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />
+				</td>
+			);
+		};
+
 		const Row = (row: any) => (
 			<tr>
 				<td 
 					className="dark first"
-					onClick={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
-					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
+					onClick={(e: any) => { this.onOptions(e, Key.Row, row.id, 0); }}
+					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.id, 0); }}
 				>
 					&nbsp;
 				</td>
+
 				{columns.map((column: any, i: number) => {
-					const cell = row.cells[i] || {};
-					const cn = [ 'column' + i, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
-					const css: any = {};
-
-					if (row.index == 0) {
-						cn.push('head');
+					if (row.id == 0) {
+						return <CellSortable key={i} row={row} id={i} index={i} />;
+					} else {
+						return <Cell key={i} row={row} id={i} index={i} />	;
 					};
-					if (cell.color) {
-						cn.push('textColor textColor-' + cell.color);
-					};
-					if (cell.background) {
-						cn.push('bgColor bgColor-' + cell.background);
-					};
-					if (cell.width) {
-						css.width = cell.width;
-					};
-
-					return (
-						<td 
-							key={i} 
-							className={cn.join(' ')}
-							style={css}
-							onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, row.index, i); }}
-						>
-							<Editor 
-								id={[ 'value', row.index, i ].join('-')} 
-								value={cell.value} 
-							/>
-							<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
-						</td>
-					);
 				})}
 			</tr>
 		);
+
+		const CellSortable = SortableElement((item: any) => {
+			return <Cell {...item} />;
+		});
+
+		const RowSortableContainer = SortableContainer((item: any) => {
+			return <Row {...item} />;
+		});
 
 		return (
 			<div 
@@ -139,17 +166,39 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 									<td 
 										key={i} 
 										className="dark"
-										onClick={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
 										onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
 									>
-										&nbsp;
+										<div className="click" onClick={(e: any) => { this.onOptions(e, Key.Column, 0, i); }} />
+										<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
 									</td>
 								);
 							})}
 						</tr>
-						{rows.map((item: any, i: number) => (
-							<Row key={i} index={i} {...item} />
-						))}
+
+						{rows.map((row: any, i: number) => {
+							if (i == 0) {
+								return (
+									<RowSortableContainer 
+										key={i}
+										axis="x" 
+										lockAxis="x"
+										lockToContainerEdges={true}
+										transitionDuration={150}
+										distance={10}
+										useDragHandle={true}
+										onSortStart={this.onSortStart}
+										onSortEnd={this.onSortEndColumn}
+										helperClass="isDragging"
+										helperContainer={() => { return $(`#block-${block.id} .wrap`).get(0); }}
+										index={i}
+										id={i}
+										{...row}
+									/>
+								);
+							} else {
+								return <Row key={i} id={i} index={i} {...row} />
+							};
+						})}
 					</tbody>
 				</table>
 			</div>
@@ -207,6 +256,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onFocus (e: any) {
+		e.stopPropagation();
 		keyboard.setFocus(true);
 	};
 
@@ -500,12 +550,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
-		const color = this.getProperty(key, row, column, 'color');
-		const background = this.getProperty(key, row, column, 'background');
-		const ah = this.getProperty(key, row, column, 'horizontal');
-		const av = this.getProperty(key, row, column, 'vertical');
+		const color = this.getProperty(row, column, 'color');
+		const background = this.getProperty(row, column, 'background');
+		const ah = this.getProperty(row, column, 'horizontal');
+		const av = this.getProperty(row, column, 'vertical');
 
 		const innerColor = <div className={[ 'inner', 'textColor textColor-' + (color || 'default') ].join(' ')} />;
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (background || 'default') ].join(' ')} />;
@@ -590,7 +639,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 						vertical: I.MenuDirection.Center,
 						isSub: true,
 						data: {
-							value: this.getProperty(key, row, column, item.id),
+							value: this.getProperty(row, column, item.id),
 						}
 					};
 
@@ -679,7 +728,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 	};
 
-	getProperty (key: Key, row: number, column: number, k: string): any {
+	getProperty (row: number, column: number, k: string): any {
 		const { block } = this.props;
 		const { rows } = block.content;
 		const rowObj = this.fillRow(rows[row]);
@@ -725,6 +774,33 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			case I.TableAlign.Bottom:	 icon = 'bottom'; break;
 		};
 		return icon;
+	};
+
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		if (selection) {
+			selection.preventSelect(true);
+		};
+	};
+
+	onSortEndColumn (result: any) {
+		const { oldIndex, newIndex } = result;
+		const { dataset, block } = this.props;
+		const { rows } = block.content;
+		const { selection } = dataset || {};
+
+		rows.forEach((row: I.TableRow) => {
+			row = this.fillRow(row);
+			row.cells = arrayMove(row.cells, oldIndex, newIndex);
+		});
+
+		if (selection) {
+			selection.preventSelect(false);
+		};
+
+		this.saveContent();
 	};
 
 });

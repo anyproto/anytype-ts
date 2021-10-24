@@ -6,27 +6,30 @@
 		table { height: 100%; border-collapse: collapse; font-family: 'Inter'; }
 		table, th, td { border: 1px solid $colorMediumGrey; }
 
-		tr { height: 100%; }
+		tr, td { height: 100%; }
 
 		td { @include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text; }
 		td {
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 1; }
+			.click { width: 100%; height: 100%; }
 		}
 		
-		td.align-h0 { text-align: left; }
-		td.align-h1 { text-align: right; }
-		td.align-h2 { text-align: center; }
+		td.align-h0 .value { text-align: left; }
+		td.align-h1 .value { text-align: right; }
+		td.align-h2 .value { text-align: center; }
 
 		td.align-v2 { vertical-align: middle; }
 		td.align-v3 { vertical-align: top; }
 		td.align-v4 { vertical-align: bottom; }
 
-		.value { padding: 6px 8px; }
+		.value { padding: 6px 20px; width: 100%; display: inline-block; vertical-align: inherit; }
 
-		td.head { font-weight: bold; white-space: nowrap; }
+		td.head { padding: 0px 20px; font-weight: bold; white-space: nowrap; height: 100%; vertical-align: inherit; }
 		td.head {
-			.value { 
-				display: inline-block; @include text-overflow-nw; vertical-align: top; width: 100%; margin-right: 6px; 
+			.value { @include text-overflow-nw; padding: 6px 0px; }
+			.icon.drag { 
+				width: 20px; height: 100%; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; 
+				background-size: 20px; position: absolute; left: 0px; top: 0px;
 			}
 		}
 		td.head.dark { cursor: default; }
