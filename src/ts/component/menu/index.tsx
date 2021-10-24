@@ -156,7 +156,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer } = param;
+		const { element, tabs, type, vertical, horizontal, passThrough, noDimmer, component } = param;
 		const { data } = param;
 		
 		let tab = '';
@@ -169,11 +169,16 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const cn = [ 
 			'menu', 
-			menuId,
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
 			'v' + vertical,
 			'h' + horizontal
 		];
+		if (component) {
+			cn.push(Util.toCamelCase('menu-' + component));
+		} else {
+			cn.push(menuId);
+		};
+
 		const cd = [];
 
 		if (tab) {
@@ -181,6 +186,9 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			if (item) {
 				Component = Components[item.component];
 			};
+		} else 
+		if (component) {
+			Component = Components[component];
 		} else {
 			Component = Components[id];
 		};

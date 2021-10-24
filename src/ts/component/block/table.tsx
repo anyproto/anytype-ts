@@ -5,6 +5,7 @@ import { I, C, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { Icon } from 'ts/component';
 import { getRange, setRange } from 'selection-ranges';
+import { menuStore } from '../../store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
@@ -20,6 +21,7 @@ enum Key {
 	None	 = '',
 	Column	 = 'columns',
 	Row		 = 'rows',
+	Cell	 = 'cell',
 };
 
 const BlockTable = observer(class BlockTable extends React.Component<Props, {}> {
@@ -78,29 +80,64 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const Head = () => (
 			<thead>
 				<tr>
-					{columns.map((item: any, i: number) => (
-						<th key={i} style={{ width: (1 / cl) * 100 + '%' }}>
-							<Editor 
-								id={[ 'value', 0, i ].join('-')} 
-								value={item.value} 
-							/>
-							<Icon className="plus" onClick={() => { this.columnAdd(i); }} />
-						</th>
-					))}
+					<th className="first">&nbsp;</th>
+					{columns.map((item: any, i: number) => {
+						const css: any = {};
+						const cn = [ 'align-v' + item.vertical, 'align-h' + item.horizontal ];
+
+						if (item.width) {
+							css.width = item.width;
+						};
+
+						console.log(item);
+
+						return (
+							<th 
+								id={'column-' + i} 
+								key={i} 
+								style={css} 
+								className={cn.join(' ')}
+								onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
+							>
+								<Editor 
+									id={[ 'value', 0, i ].join('-')} 
+									value={item.value} 
+								/>
+								<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
+							</th>
+						);
+					})}
 				</tr>
 			</thead>
 		);
 
-		const Row = (item: any) => (
+		const Row = (row: any) => (
 			<tr>
-				{columns.map((column: any, i: number) => (
-					<td key={i}>
-						<Editor 
-							id={[ 'value', item.index + 1, i ].join('-')} 
-							value={item.data[i]?.value} 
-						/>
-					</td>
-				))}
+				<td 
+					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.index, 0); }}
+				>
+					&nbsp;
+				</td>
+				{columns.map((column: any, i: number) => {
+					const cell = row.data[i] || {};
+					const ah = cell.horizontal || column.horizontal || row.horizontal;
+					const av = cell.vertical || column.vertical || row.vertical;
+					const cn = [ 'align-v' + av, 'align-h' + ah ];
+
+					return (
+						<td 
+							key={i} 
+							className={cn.join(' ')}
+							onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, row.index, i); }}
+						>
+							<Editor 
+								id={[ 'value', row.index + 1, i ].join('-')} 
+								value={cell.value} 
+							/>
+							<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
+						</td>
+					);
+				})}
 			</tr>
 		);
 
@@ -126,7 +163,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	componentDidUpdate () {
-		this.focusApply();
+		window.setTimeout(() => {
+			this.focusApply();
+		});
 	};
 	
 	componentWillUnmount () {
@@ -266,16 +305,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			this.focusSet(r, c, { from: 0, to: 0 });
 		});
 
-		keyboard.shortcut('arrowleft', e, (pressed: string) => {
-			if (range.to) {
-				return;
-			};
-
-			e.preventDefault();
-			left();
-		});
-
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('arrowleft, backspace', e, (pressed: string) => {
 			if (range.to) {
 				return;
 			};
@@ -311,13 +341,26 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	columnAdd (index: number) {
 		const { block } = this.props;
-		const { columns } = block.content;
+		const { columns, rows } = block.content;
 
-		columns.splice(index + 1, 0, { value: '' });
+		columns.splice(index + 1, 0, { value: '', width: 50 });
+		
+		for (let row of rows) {
+			row.data.splice(index + 1, 0, { value: '' });
+		};
+
 		this.saveContent();
 	};
 
 	columnRemove (index: number) {
+		const { block } = this.props;
+		const { columns, rows } = block.content;
+
+		columns.splice(index, 1);
+
+		for (let row of rows) {
+			row.data.splice(index, 1);
+		};
 
 		this.saveContent();
 	};
@@ -326,7 +369,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { block } = this.props;
 		const { rows } = block.content;
 		const { column } = this.focusObj;
-		const row: I.TableRow = this.fillRow({ data: [] });
+		const row: I.TableRow = this.fillRow({ 
+			data: [] as I.TableCell[],
+			horizontal: I.TableAlign.Left,
+			vertical: I.TableAlign.Top,
+		});
 
 		rows.splice(index + 1, 0, row);
 
@@ -336,14 +383,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	rowRemove (index: number) {
 		const { block } = this.props;
-		const { columns, rows } = block.content;
-		const pr = index;
-		const pc = columns.length - 1;
-		const l = this.getLength(pr, pc);
+		const { rows } = block.content;
+		const { column } = this.focusObj;
 
 		rows.splice(index, 1);
 
-		this.focusSet(pr, pc, { from: l, to: l });
+		const l = this.getLength(index, column);
+		this.focusSet(index, column, { from: l, to: l });
 		this.saveContent();
 	};
 
@@ -353,7 +399,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { columns } = content;
 
 		columns.forEach((col: any, i: number) => {
-			row.data[i] = row.data[i] || { value: '' };
+			row.data[i] = row.data[i] || { 
+				value: '',  
+				horizontal: I.TableAlign.Left,
+				vertical: I.TableAlign.Top,
+			};
 		});
 
 		return row;
@@ -381,7 +431,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	saveContent () {
 		const { rootId, block } = this.props;
 
-		C.BlockUpdateContent({ ...block }, rootId, block.id);
+		C.BlockUpdateContent({ ...block }, rootId, block.id, () => {
+			this.forceUpdate();
+		});
 	};
 
 	getValue (obj: any): string {
@@ -401,7 +453,198 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		if (!obj.length) {
 			return;
 		};
-		setRange(obj.get(0) as Element, { start: range.from, end: range.to });
+		const el = obj.get(0);
+
+		el.focus();
+		setRange(el, { start: range.from, end: range.to });
+	};
+
+	onResizeStart (e: any, index: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const win = $(window);
+
+		$('body').addClass('colResize');
+		win.unbind('mousemove.table mouseup.table');
+		win.on('mousemove.table', (e: any) => { this.onResizeMove(e, index); });
+		win.on('mouseup.table', (e: any) => { this.onResizeEnd(e, index); });
+
+		keyboard.setResize(true);
+	};
+
+	onResizeMove (e: any, index: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { block } = this.props;
+		const { columns } = block.content;
+		const node = $(ReactDOM.findDOMNode(this));
+		const w = node.width();
+		const el = node.find(`#column-${index}`);
+		const offset = el.offset();
+
+		let width = e.pageX - offset.left;
+		width = Math.max(20, Math.min(500, width)); 
+
+		columns[index].width = width;
+		el.css({ width: width });
+	};
+
+	onResizeEnd (e: any, index: number) {
+		$(window).unbind('mousemove.table mouseup.table');
+		$('body').removeClass('colResize');
+
+		keyboard.setResize(false);
+		this.saveContent();
+	};
+
+	onOptions (e: any, key: Key, row: number, column: number) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { block } = this.props;
+		const { columns, rows } = block.content;
+
+		let menuContext: any = null;
+		let options: any[] = [
+			{ id: 'horizontal', name: 'Horizontal align', arrow: true },
+			{ id: 'vertical', name: 'Vertical align', arrow: true },
+		];
+		let optionsColumn = [
+			{ id: 'columnBefore', name: 'Column before' },
+			{ id: 'columnAfter', name: 'Column after' },
+			{ id: 'columnRemove', name: 'Remove column' },
+		];
+		let optionsRow = [
+			{ id: 'rowBefore', name: 'Row before' },
+			{ id: 'rowAfter', name: 'Row after' },
+			{ id: 'rowRemove', name: 'Remove row' },
+		];
+		let optionsVertical = [
+			{ id: I.TableAlign.Left, name: 'Left' },
+			{ id: I.TableAlign.Center, name: 'Center' },
+			{ id: I.TableAlign.Right, name: 'Right' },
+		];
+		let optionsHorizontal = [
+			{ id: I.TableAlign.Top, name: 'Top' },
+			{ id: I.TableAlign.Center, name: 'Center' },
+			{ id: I.TableAlign.Bottom, name: 'Bottom' },
+		];
+
+		switch (key) {
+			case Key.Column:
+				options = optionsColumn.concat(options);
+				break;
+
+			case Key.Row:
+				options = optionsRow.concat(options);
+				break;
+
+			case Key.Cell:
+				options = optionsColumn.concat(options);
+				options = optionsRow.concat(options);
+				break;
+		};
+
+		const setAlign = (k: string, v: I.TableAlign) => {
+			switch (key) {
+				case Key.Column:
+					columns[column][k] = v;
+					break;
+
+				case Key.Row:
+					rows[row][k] = v;
+					break;
+
+				case Key.Cell:
+					rows[row].data[column][k] = v;
+					break;
+			};
+
+			console.log(columns);
+			console.log(rows);
+
+			this.saveContent();
+		};
+
+		menuStore.open('select1', {
+			component: 'select',
+			element: $(e.currentTarget),
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
+			data: {
+				options: options,
+				onOver: (e: any, item: any) => {
+					if (!item.arrow) {
+						menuStore.close('select2');
+						return;
+					};
+
+					let options: any[] = [];
+
+					switch (item.id) {
+						case 'horizontal':
+							options = options.concat(optionsVertical);
+							break;
+
+						case 'vertical':
+							options = options.concat(optionsHorizontal);
+							break;
+					};
+
+					menuStore.open('select2', {
+						component: 'select',
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						offsetX: menuContext.getSize().width,
+						vertical: I.MenuDirection.Center,
+						isSub: true,
+						data: {
+							options: options,
+							onSelect: (e: any, el: any) => {
+								setAlign(item.id, el.id);
+								menuContext.close();
+							}
+						},
+					});
+				},
+				onSelect: (e: any, item: any) => {
+					if (item.arrow) {
+						return;
+					};
+
+					switch (item.id) {
+						case 'columnBefore':
+							this.columnAdd(column - 1);
+							break;
+
+						case 'columnAfter':
+							this.columnAdd(column);
+							break;
+
+						case 'columnRemove':
+							this.columnRemove(column);
+							break;
+
+						case 'rowBefore':
+							this.rowAdd(row - 1);
+							break;
+
+						case 'rowAfter':
+							this.rowAdd(row);
+							break;
+
+						case 'rowRemove':
+							this.rowRemove(row);
+							break;
+					};
+				}
+			},
+		});
+
+		console.log('[onOptions]', key, row, column);
+
 	};
 
 });

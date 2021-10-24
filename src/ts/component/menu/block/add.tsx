@@ -567,7 +567,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				};
 
 				if (item.type == I.BlockType.Table) {
-					param.content.columns = [ { value: '' } ];
+					param.content.columns = [ {}, {}, {} ];
 					param.content.rows = [ 
 						{ data: [] },
 						{ data: [] },

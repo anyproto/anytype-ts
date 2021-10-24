@@ -184,18 +184,25 @@ const Mapper = {
 		TableColumn: (obj: any): any => {
 			return {
 				value: obj.getValue(),
+				width: obj.getWidth(),
+				horizontal: obj.getHorizontal(),
+				vertical: obj.getVertical(),
 			};
 		},
 
 		TableRow: (obj: any): any => {
 			return {
-				data: (obj.getDataList() || []).map(Mapper.From.TableRowData),
+				data: (obj.getDataList() || []).map(Mapper.From.TableCell),
+				horizontal: obj.getHorizontal(),
+				vertical: obj.getVertical(),
 			};
 		},
 
-		TableRowData: (obj: any): any => {
+		TableCell: (obj: any): any => {
 			return {
 				value: obj.getValue(),
+				horizontal: obj.getHorizontal(),
+				vertical: obj.getVertical(),
 			};
 		},
 
@@ -536,6 +543,9 @@ const Mapper = {
 			const item = new Model.Block.Content.Table.Column();
 
 			item.setValue(obj.value);
+			item.setWidth(obj.width);
+			item.setHorizontal(obj.horizontal);
+			item.setVertical(obj.vertical);
 
 			return item;
 		},
@@ -543,15 +553,19 @@ const Mapper = {
 		TableRow: (obj: any) => {
 			const item = new Model.Block.Content.Table.Row();
 
-			item.setDataList(obj.data.map(Mapper.To.TableRowData));
+			item.setDataList(obj.data.map(Mapper.To.TableCell));
+			item.setHorizontal(obj.horizontal);
+			item.setVertical(obj.vertical);
 
 			return item;
 		},
 
-		TableRowData: (obj: any) => {
-			const item = new Model.Block.Content.Table.RowData();
+		TableCell: (obj: any) => {
+			const item = new Model.Block.Content.Table.Cell();
 
 			item.setValue(obj.value);
+			item.setHorizontal(obj.horizontal);
+			item.setVertical(obj.vertical);
 
 			return item;
 		},

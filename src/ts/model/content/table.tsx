@@ -4,35 +4,49 @@ import { observable, intercept, makeObservable } from 'mobx';
 class TableColumn implements I.TableColumn {
 	
 	value: string = '';
+	width: number = 0;
+	horizontal: I.TableAlign = I.TableAlign.Left;
+	vertical: I.TableAlign = I.TableAlign.Top;
 	
 	constructor (props: I.TableColumn) {
 		let self = this;
 		
 		self.value = String(props.value || '');
+		self.width = Number(props.width) || 0;
+		self.horizontal = Number(props.horizontal) || 0;
+		self.vertical = Number(props.vertical) || 0;
 	};
 
 };
 
-class TableRowData implements I.TableRowData {
+class TableCell implements I.TableCell {
 	
 	value: string = '';
+	horizontal: I.TableAlign = I.TableAlign.Left;
+	vertical: I.TableAlign = I.TableAlign.Top;
 	
-	constructor (props: I.TableRowData) {
+	constructor (props: I.TableCell) {
 		let self = this;
 		
 		self.value = String(props.value || '');
+		self.horizontal = Number(props.horizontal) || 0;
+		self.vertical = Number(props.vertical) || 0;
 	};
 
 };
 
 class TableRow implements I.TableRow {
 	
-	data: TableRowData[] = [];
+	data: TableCell[] = [];
+	horizontal: I.TableAlign = I.TableAlign.Left;
+	vertical: I.TableAlign = I.TableAlign.Top;
 	
 	constructor (props: I.TableRow) {
 		let self = this;
 		
-		self.data = (props.data || []).map((it: I.TableRowData) => { return new TableRowData(it); });
+		self.data = (props.data || []).map((it: I.TableCell) => { return new TableCell(it); });
+		self.horizontal = Number(props.horizontal) || 0;
+		self.vertical = Number(props.vertical) || 0;
 	};
 
 };

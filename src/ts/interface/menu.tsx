@@ -8,6 +8,7 @@ export interface MenuTab {
 };
 
 export interface MenuParam {
+	component?: string;
 	menuKey?: string;
 	element?: any;
 	rect?: any;
