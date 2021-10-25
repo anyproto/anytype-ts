@@ -79,6 +79,9 @@
 		],
 		"viewEdit": [ 
 			"select" 
+		],
+		"featuredType": [
+			"searchObject"
 		]
 	},
 
