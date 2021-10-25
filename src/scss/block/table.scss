@@ -5,24 +5,32 @@
 	.block.blockTable { 
 		.table { display: inline-block; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
 		
-		.row { display: flex; position: relative; padding-left: 9px; }
+		.row { display: flex; position: relative; padding-left: 14px; }
 		.row.isDragging { 
 			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
 			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
 		}
 
-		.handleRow, .handleColumn { cursor: grab !important; background: $colorLightGrey; transition: $transitionFast; }
+		.handleRow, .handleColumn { 
+			cursor: grab !important; background: $colorLightGrey; transition: $transitionFast; @include text-very-small;
+			color: $colorBlack; text-align: center; display: flex; align-items: center; font-weight: 400;
+		}
 		.handleRow:hover, .handleColumn:hover { background: $colorMediumGrey; }
 
+		.handleRow, .handleColumn {
+			.txt { width: 100%; }
+		}
+
 		.handleColumn { 
-			height: 10px; width: 100%; border-bottom: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey;; 
+			height: 14px; width: 100%; border-bottom: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey;; 
 		}
 		.handleColumn.isFirst { border-left: 1px solid $colorMediumGrey; }
 
 		.cell.handleRow { 
-			width: 10px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
+			width: 14px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
+			@include text-very-small; color: $colorBlack;
 		}
-		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 10px); top: auto; bottom: 0px; }
+		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 14px); top: auto; bottom: 0px; }
 
 		.cell { 
 			border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 

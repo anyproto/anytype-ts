@@ -87,7 +87,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				className={[ 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
 				onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
 				onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
-			/>
+			>
+				<span className="txt">{item.id + 1}</span>
+			</div>
 		));
 
 		const HandleRow = SortableHandle((item: any) => (
@@ -95,7 +97,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				className={[ 'cell', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
 				onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
 				onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
-			/>
+			>
+				<span className="txt">{item.id + 1}</span>
+			</div>
 		));
 
 		const Cell = (item: any) => {
