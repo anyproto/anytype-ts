@@ -3,29 +3,33 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
-		.table { display: table; height: 100%; border-collapse: collapse; font-family: 'Inter'; border: 1px solid $colorMediumGrey; }
+		.table { display: block; height: 100%; border-collapse: collapse; font-family: 'Inter'; border: 1px solid $colorMediumGrey; }
 		
-		.row { display: table-row; height: 100%; }
+		.row { display: flex; position: relative; padding-left: 10px; }
 		.row.isDragging { 
-			display: table; border: 1px solid $colorMediumGrey; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; 
+			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
+			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
 		}
 
 		.handleColumn { 
 			cursor: grab; background: $colorLightGrey; font-size: 0px; line-height: 0px; height: 10px;
 			width: 100%; border-bottom: 1px solid $colorMediumGrey; 
 		}
-
-		.cell { 
-			display: table-cell; height: 100%; border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 
-			@include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text;
-		}
 		.cell.handleRow { 
 			cursor: grab; background: $colorLightGrey; font-size: 0px; line-height: 0px; width: 10px; height: 100%;
+			position: absolute; left: 0px; top: 0px;
 		}
 
+		.cell { 
+			border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 
+			@include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text; flex-shrink: 0;
+		}
 		.cell.head { font-weight: bold; white-space: nowrap; height: 100%; vertical-align: inherit; }
 		.cell.head {
 			.value { @include text-overflow-nw; }
+		}
+		.cell.isDragging { 
+			box-shadow: -1px -1px 0px 0px $colorMediumGrey inset, 1px 0px 0px 0px $colorMediumGrey inset; background: #fff;
 		}
 
 		.cell.align-h0 .value { text-align: left; }
@@ -35,8 +39,6 @@
 		.cell.align-v2 { vertical-align: middle; }
 		.cell.align-v3 { vertical-align: top; }
 		.cell.align-v4 { vertical-align: bottom; }
-
-		.cell.isDragging { box-shadow: -1px -1px 0px 0px $colorMediumGrey inset, 1px 0px 0px 0px $colorMediumGrey inset; }
 
 		.cell {
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 1; }
