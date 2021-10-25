@@ -3,12 +3,19 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
+		.scrollWrap { overflow-x: overlay; width: 100%; padding-bottom: 10px; }
+
 		.table { display: inline-block; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
 		
-		.row { display: flex; position: relative; padding-left: 14px; }
+		.row { display: flex; position: relative; padding-left: 13px; }
 		.row.isDragging { 
 			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
 			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
+		}
+
+		.fillRect { 
+			width: 14px; height: 14px; position: absolute; left: 0px; top: 0px; background: $colorLightGrey;
+			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
 		}
 
 		.handleRow, .handleColumn { 
@@ -30,7 +37,7 @@
 			width: 14px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
 			@include text-very-small; color: $colorBlack;
 		}
-		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 14px); top: auto; bottom: 0px; }
+		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 13px); top: 13px; }
 
 		.cell { 
 			border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 
@@ -56,7 +63,10 @@
 			.click { width: 100%; height: 100%; }
 
 			.value { padding: 6px 8px; min-height: 32px; width: 100%; display: inline-block; vertical-align: inherit; }
-			.value.isEditing { -webkit-user-modify: read-write-plaintext-only; }
+			.value.isEditing { 
+				-webkit-user-modify: read-write-plaintext-only; box-shadow: 0px 0px 0px 2px $colorBlack; z-index: 1; border-radius: 2px;
+			}
 		}
+		.cell.isEditing { border: 0px; z-index: 2; }
 	}
 }

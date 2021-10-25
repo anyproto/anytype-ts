@@ -109,6 +109,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const isHead = item.row.id == 0;
 			const isEditing = this.isEditing && (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
 
+			if (isEditing) {
+				cn.push('isEditing');
+			};
 			if (isHead) {
 				cn.push('isHead');
 			};
@@ -143,19 +146,24 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			);
 		};
 
-		const Row = (row: any) => (
-			<div className="row">
-				<HandleRow {...row} />
+		const Row = (row: any) => {
+			const isHead = row.id == 0;
+			return (
+				<div className="row">
+					{isHead ? <div className="fillRect"/ > : ''}
 
-				{columns.map((column: any, i: number) => {
-					if (row.id == 0) {
-						return <CellSortableElement key={i} row={row} id={i} index={i} />;
-					} else {
-						return <Cell key={i} row={row} id={i} index={i} />	;
-					};
-				})}
-			</div>
-		);
+					<HandleRow {...row} />
+
+					{columns.map((column: any, i: number) => {
+						if (isHead) {
+							return <CellSortableElement key={i} row={row} id={i} index={i} />;
+						} else {
+							return <Cell key={i} row={row} id={i} index={i} />	;
+						};
+					})}
+				</div>
+			);
+		};
 
 		const CellSortableElement = SortableElement((item: any) => {
 			return <Cell {...item} />;
@@ -204,18 +212,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<TableSortableContainer 
-					axis="y" 
-					lockAxis="y"
-					lockToContainerEdges={true}
-					transitionDuration={150}
-					distance={10}
-					useDragHandle={true}
-					onSortStart={this.onSortStart}
-					onSortEnd={this.onSortEndRow}
-					helperClass="isDragging"
-					helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
-				/>
+				<div className="scrollWrap">
+					<TableSortableContainer 
+						axis="y" 
+						lockAxis="y"
+						lockToContainerEdges={true}
+						transitionDuration={150}
+						distance={10}
+						useDragHandle={true}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEndRow}
+						helperClass="isDragging"
+						helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
+					/>
+				</div>
 			</div>
 		);
 	};
