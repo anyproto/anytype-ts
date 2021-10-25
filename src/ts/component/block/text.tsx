@@ -339,13 +339,29 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		items.unbind('click.object mouseenter.object');
+
+		items.each((i: number, item: any) => {
+			item = $(item);
+			
+			const data = item.data();
+			if (!data.param) {
+				return;
+			};
+
+			const object = detailStore.get(rootId, data.param, []);
+			const { _empty_, isArchived, isDeleted } = object;
+
+			if (_empty_ || isArchived || isDeleted) {
+				item.addClass('disabled');
+			};
+		});
 			
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
 			const data = el.data();
 			const range = data.range.split('-');
 
-			if (!data.param) {
+			if (!data.param || el.hasClass('disabled')) {
 				return;
 			};
 
@@ -403,14 +419,17 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 
 			const object = detailStore.get(rootId, data.param, []);
-			const { _empty_, layout, done } = object;
+			const { _empty_, layout, done, isArchived, isDeleted } = object;
 
 			let icon = null;
 			if (_empty_) {
-				item.addClass('disabled');
 				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = <IconObject size={size} object={object} />;
+			};
+
+			if (_empty_ || isArchived || isDeleted) {
+				item.addClass('disabled');
 			};
 
 			if ((layout == I.ObjectLayout.Task) && done) {
@@ -439,12 +458,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			const object = detailStore.get(rootId, data.param, []);
 
-			if (!el.hasClass('dis')) {
-				el.on('click.mention', function (e: any) {
-					e.preventDefault();
-					DataUtil.objectOpenEvent(e, object);
-				});
-			};
+			el.on('click.mention', function (e: any) {
+				e.preventDefault();
+				DataUtil.objectOpenEvent(e, object);
+			});
 
 			Util.previewShow($(this), {
 				param: object.id,
