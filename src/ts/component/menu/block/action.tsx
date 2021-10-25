@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
+import { I, C, M, keyboard, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
 import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -183,6 +183,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasAlign = true;
 			let hasColor = true;
 			let hasBg = true;
+			let hasTable = true;
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
@@ -195,6 +196,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isTable())			 hasTable = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
@@ -215,7 +217,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 			
 			if (hasAction) {
-				action.children = DataUtil.menuGetActions(hasFile, hasLink);
+				action.children = DataUtil.menuGetActions(hasFile, hasLink, hasTable);
 				sections.push(action);
 			};
 
@@ -241,6 +243,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasLink = true;
+			let hasTable = true;
 			let hasTitle = false;
 			let hasAlign = true;
 			let hasColor = true;
@@ -257,6 +260,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnPage())		 hasTurnObject = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isTable())			 hasTable = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -279,6 +283,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			if (hasLink) {
 				sections[0].children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
+			};
+
+			if (hasTable) {
+				sections[0].children.push({ id: 'csvImport', icon: '', name: 'CSV import' });
 			};
 
 			if (hasTitle) {
@@ -506,6 +514,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		const ids = DataUtil.selectionGet(blockId, false, data);
+
 		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
 
 		switch (item.itemId) {
@@ -523,6 +532,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				
 			case 'remove':
 				Action.remove(rootId, blockId, ids);
+				break;
+			
+			case 'csvImport':
 				break;
 				
 			default:

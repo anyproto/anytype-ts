@@ -50,7 +50,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	render () {
 		const { readonly, block } = this.props;
-		const { columnCount, rows } = block.content;
+		const { columnCount, sortIndex, sortType, rows } = block.content;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 		const columns = [];
 		const cr = rows.length;
@@ -108,6 +108,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const css: any = {};
 			const isHead = item.row.id == 0;
 			const isEditing = this.isEditing && (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
+			
+			let nextSort: I.SortType = I.SortType.Asc;
+			if (sortIndex == item.id) {
+				nextSort = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+			};
 
 			if (isEditing) {
 				cn.push('isEditing');
@@ -125,6 +130,13 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				css.width = cell.width;
 			};
 
+			const arrow = (
+				<Icon 
+					className={[ 'arrow', 'c' + nextSort ].join(' ')} 
+					onClick={(e: any) => { this.onSort(e, item.id, nextSort); }}
+				/>
+			);
+
 			return (
 				<div
 					className={cn.join(' ')}
@@ -141,6 +153,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 					) : (
 						<div className="value">{this.renderCell(cell.value)}</div>
 					)}
+
+					{isHead ? arrow : ''}
 					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />
 				</div>
 			);
@@ -450,6 +464,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		blockStore.update(rootId, { 
 			...block, 
 			content: { 
+				...block.content,
 				columnCount: columnCount + 1, 
 				rows: rows,
 			},
@@ -469,6 +484,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		blockStore.update(rootId, { 
 			...block, 
 			content: { 
+				...block.content,
 				columnCount: columnCount - 1, 
 				rows: rows,
 			},
@@ -878,6 +894,40 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		block.content.rows = arrayMove(block.content.rows, oldIndex, newIndex);
 
 		this.preventSelect(false);
+		this.saveContent();
+	};
+
+	onSort (e: any, column: number, sort: I.SortType) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		let { rootId, block } = this.props;
+		let { rows } = block.content;
+
+		if (rows.length) {
+			rows[0].isHead = true;
+			rows = block.content.rows.sort((c1: any, c2: any) => {
+				const v1 = c1.cells[column].value;
+				const v2 = c2.cells[column].value;
+	
+				if (c1.isHead && !c2.isHead) return -1;
+				if (!c1.isHead && c2.isHead) return 1;
+				if (v1 > v2) return sort == I.SortType.Asc ? 1 : -1;
+				if (v1 < v2) return sort == I.SortType.Asc ? -1 : 1;
+				return 0;
+			});
+		};
+
+		blockStore.update(rootId, { 
+			...block, 
+			content: { 
+				...block.content,
+				sortIndex: column, 
+				sortType: sort,
+				rows: rows,
+			},
+		});
+
 		this.saveContent();
 	};
 

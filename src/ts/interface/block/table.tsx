@@ -10,11 +10,11 @@ export enum TableAlign {
 
 export interface TableCell {
 	value: string;
-	horizontal: TableAlign;
-	vertical: TableAlign;
-	color: string;
-	background: string;
-	width: number;
+	horizontal?: TableAlign;
+	vertical?: TableAlign;
+	color?: string;
+	background?: string;
+	width?: number;
 };
 
 export interface TableRow {
@@ -23,6 +23,8 @@ export interface TableRow {
 
 export interface ContentTable {
 	columnCount: number;
+	sortIndex: number;
+	sortType: I.SortType;
 	rows: TableRow[];
 };
 

@@ -174,6 +174,8 @@ const Mapper = {
 			if (type == I.BlockType.Table) {
 				item.content = {
 					columnCount: content.getColumncount(),
+					sortIndex: content.getSortindex(),
+					sortType: content.getSorttype(),
 					rows: (content.getRowsList() || []).map(Mapper.From.TableRow),
 				};
 			};
@@ -523,6 +525,8 @@ const Mapper = {
 				content = new Model.Block.Content.Table();
 		
 				content.setColumncount(obj.content.columnCount);
+				content.setSortindex(obj.content.sortIndex);
+				content.setSorttype(obj.content.sortType);
 				content.setRowsList(obj.content.rows.map(Mapper.To.TableRow));
 
 				block.setTable(content);

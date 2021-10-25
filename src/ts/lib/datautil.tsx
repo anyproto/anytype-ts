@@ -690,7 +690,7 @@ class DataUtil {
 	};
 	
 	// Action menu
-	menuGetActions (hasFile: boolean, hasLink: boolean) {
+	menuGetActions (hasFile: boolean, hasLink: boolean, hasTable: boolean) {
 		let { config } = commonStore;
 		let cmd = keyboard.ctrlSymbol();
 		let items: any[] = [
@@ -709,6 +709,10 @@ class DataUtil {
 
 		if (hasLink) {
 			items.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
+		};
+
+		if (hasTable) {
+			items.push({ id: 'csvImport', icon: '', name: 'CSV import' });
 		};
 		
 		items = items.map((it: any) => {

@@ -38,12 +38,17 @@ class TableRow implements I.TableRow {
 class BlockContentTable implements I.ContentTable {
 	
 	columnCount: number = 0;
+	sortIndex: number = 0;
+	sortType: I.SortType = I.SortType.Asc;
 	rows: I.TableRow[] = [];
 	
 	constructor (props: I.ContentTable) {
 		let self = this;
 		
 		self.columnCount = Number(props.columnCount) || 0;
+		self.sortIndex = Number(props.sortIndex) || 0;
+		self.sortType = Number(props.sortType) || I.SortType.Asc;
+
 		self.rows = (props.rows || []).map((it: I.TableRow) => { return new TableRow(it); });
 
 		makeObservable(self, {

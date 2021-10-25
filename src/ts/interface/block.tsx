@@ -129,6 +129,8 @@ export interface Block {
 	isLayoutHeader?(): boolean;
 	isLayoutFooter?(): boolean;
 
+	isTable?(): boolean;
+
 	isLink?(): boolean;
 	isLinkPage?(): boolean;
 

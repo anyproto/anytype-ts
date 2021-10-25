@@ -7,14 +7,13 @@
 
 		.table { display: inline-block; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
 		
-		.row { display: flex; position: relative; padding-left: 13px; }
+		.row { display: flex; position: relative; padding-left: 19px; }
 		.row.isDragging { 
-			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
-			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
+			border-top: 1px solid $colorMediumGrey; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
 		}
 
 		.fillRect { 
-			width: 14px; height: 14px; position: absolute; left: 0px; top: 0px; background: $colorLightGrey;
+			width: 20px; height: 20px; position: absolute; left: 0px; top: 0px; background: $colorLightGrey;
 			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
 		}
 
@@ -29,15 +28,15 @@
 		}
 
 		.handleColumn { 
-			height: 14px; width: 100%; border-bottom: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey;; 
+			height: 20px; width: 100%; border-bottom: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey;; 
 		}
 		.handleColumn.isFirst { border-left: 1px solid $colorMediumGrey; }
 
 		.cell.handleRow { 
-			width: 14px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
+			width: 20px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
 			@include text-very-small; color: $colorBlack;
 		}
-		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 13px); top: 13px; }
+		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 19px); top: 19px; }
 
 		.cell { 
 			border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 
@@ -66,7 +65,13 @@
 			.value.isEditing { 
 				-webkit-user-modify: read-write-plaintext-only; box-shadow: 0px 0px 0px 2px $colorBlack; z-index: 1; border-radius: 2px;
 			}
+
+			.icon.arrow { 
+				width: 20px; height: 20px; position: absolute; right: 0px; top: 0px; background-image: url('~img/arrow/select/dark.svg');
+				cursor: pointer; z-index: 1;
+			}
+			.icon.arrow.c1 { transform: rotateZ(180deg); }
 		}
-		.cell.isEditing { border: 0px; z-index: 2; }
+		.cell.isEditing { z-index: 2; }
 	}
 }
