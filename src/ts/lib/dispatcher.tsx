@@ -91,6 +91,7 @@ class Dispatcher {
 
 		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
+		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 		if (v == V.BLOCKADD)					 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
@@ -188,6 +189,10 @@ class Dispatcher {
 					break;
 
 				case 'accountDetails':
+					break;
+
+				case 'accountConfigUpdate':
+					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), false);
 					break;
 
 				case 'threadStatus':
