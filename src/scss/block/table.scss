@@ -3,34 +3,37 @@
 .blocks {
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable { 
-		.table { display: block; height: 100%; border-collapse: collapse; font-family: 'Inter'; border: 1px solid $colorMediumGrey; }
+		.table { display: inline-block; height: 100%; border-collapse: collapse; font-family: 'Inter'; }
 		
-		.row { display: flex; position: relative; padding-left: 10px; }
+		.row { display: flex; position: relative; padding-left: 9px; }
 		.row.isDragging { 
 			border-top: 1px solid $colorMediumGrey; border-left: 1px solid $colorMediumGrey; 
 			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; width: auto;
 		}
 
+		.handleRow, .handleColumn { cursor: grab !important; background: $colorLightGrey; transition: $transitionFast; }
+		.handleRow:hover, .handleColumn:hover { background: $colorMediumGrey; }
+
 		.handleColumn { 
-			cursor: grab; background: $colorLightGrey; font-size: 0px; line-height: 0px; height: 10px;
-			width: 100%; border-bottom: 1px solid $colorMediumGrey; 
+			height: 10px; width: 100%; border-bottom: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey;; 
 		}
+		.handleColumn.isFirst { border-left: 1px solid $colorMediumGrey; }
+
 		.cell.handleRow { 
-			cursor: grab; background: $colorLightGrey; font-size: 0px; line-height: 0px; width: 10px; height: 100%;
-			position: absolute; left: 0px; top: 0px;
+			width: 10px; height: 100%; position: absolute; left: 0px; top: 0px; border-left: 1px solid $colorMediumGrey; z-index: 1;
 		}
+		.cell.handleRow.isFirst { border-top: 1px solid $colorMediumGrey; height: calc(100% - 10px); top: auto; bottom: 0px; }
 
 		.cell { 
 			border-right: 1px solid $colorMediumGrey; border-bottom: 1px solid $colorMediumGrey; 
 			@include text-common; line-height: 20px; vertical-align: top; position: relative; cursor: text; flex-shrink: 0;
 		}
-		.cell.head { font-weight: bold; white-space: nowrap; height: 100%; vertical-align: inherit; }
-		.cell.head {
+		.cell.isHead { font-weight: bold; white-space: nowrap; height: 100%; vertical-align: inherit; }
+		.cell.isHead {
 			.value { @include text-overflow-nw; }
 		}
-		.cell.isDragging { 
-			box-shadow: -1px -1px 0px 0px $colorMediumGrey inset, 1px 0px 0px 0px $colorMediumGrey inset; background: #fff;
-		}
+		.cell.isDragging { border-left: 1px solid $colorMediumGrey; border-top: 1px solid $colorMediumGrey; background: #fff; }
+		.cell.isDragging .handleColumn { background: $colorMediumGrey; }
 
 		.cell.align-h0 .value { text-align: left; }
 		.cell.align-h1 .value { text-align: right; }
@@ -44,7 +47,8 @@
 			.resize { width: 6px; height: 100%; position: absolute; right: -3px; top: 0px; cursor: col-resize; z-index: 1; }
 			.click { width: 100%; height: 100%; }
 
-			.value { padding: 6px 8px; width: 100%; display: inline-block; vertical-align: inherit; }
+			.value { padding: 6px 8px; min-height: 32px; width: 100%; display: inline-block; vertical-align: inherit; }
+			.value.isEditing { -webkit-user-modify: read-write-plaintext-only; }
 		}
 	}
 }

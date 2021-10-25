@@ -8,6 +8,7 @@ import { getRange, setRange } from 'selection-ranges';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import column from './dataview/view/board/column';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
@@ -17,6 +18,7 @@ interface Focus {
 	range: I.TextRange;
 };
 
+const formulajs = require('@formulajs/formulajs');
 const $ = require('jquery');
 
 enum Key {
@@ -56,39 +58,32 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			columns.push(i);
 		};
 
-		let Editor = null;
-		if (readonly) {
-			Editor = (item: any) => (
-				<div className="value">{item.value}</div>
-			);
-		} else {
-			Editor = (item: any) => (
-				<div
-					id={item.id}
-					className="value"
-					contentEditable={!readonly}
-					suppressContentEditableWarning={true}
-					onKeyDown={this.onKeyDown}
-					onKeyUp={this.onKeyUp}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onSelect={this.onSelect}
-					onPaste={() => {}}
-					onMouseDown={() => {}}
-					onMouseUp={() => {}}
-					onInput={() => {}}
-					onCompositionStart={() => {}}
-					onCompositionEnd={() => {}}
-					onDragStart={(e: any) => { e.preventDefault(); }}
-				>
-					{item.value}
-				</div>
-			);
-		};
+		const Editor = (item: any) => (
+			<div
+				id={item.id}
+				className="value isEditing"
+				contentEditable={!readonly}
+				suppressContentEditableWarning={true}
+				onKeyDown={this.onKeyDown}
+				onKeyUp={this.onKeyUp}
+				onFocus={this.onFocus}
+				onBlur={this.onBlur}
+				onSelect={this.onSelect}
+				onPaste={() => {}}
+				onMouseDown={() => {}}
+				onMouseUp={() => {}}
+				onInput={() => {}}
+				onCompositionStart={() => {}}
+				onCompositionEnd={() => {}}
+				onDragStart={(e: any) => { e.preventDefault(); }}
+			>
+				{item.value}
+			</div>
+		);
 
 		const HandleColumn = SortableHandle((item: any) => (
 			<div 
-				className="handleColumn"
+				className={[ 'handleColumn', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
 				onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
 				onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
 			/>
@@ -96,7 +91,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		const HandleRow = SortableHandle((item: any) => (
 			<div 
-				className="cell handleRow"
+				className={[ 'cell', 'handleRow', (item.id == 0 ? 'isFirst' : '') ].join(' ')}
 				onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
 				onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
 			/>
@@ -107,9 +102,10 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const cn = [ 'cell', 'column' + item.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
 			const isHead = item.row.id == 0;
+			const isEditing = (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
 
 			if (isHead) {
-				cn.push('head');
+				cn.push('isHead');
 			};
 			if (cell.color) {
 				cn.push('textColor textColor-' + cell.color);
@@ -125,13 +121,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				<div
 					className={cn.join(' ')}
 					style={css}
+					onClick={() => { this.setEditing(item.row.id, item.id); }}
 					onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
 				>
 					{isHead ? <HandleColumn {...item} /> : ''}
-					<Editor 
-						id={[ 'value', item.row.id, item.id ].join('-')} 
-						value={cell.value} 
-					/>
+					{isEditing && !readonly ? (
+						<Editor 
+							id={[ 'value', item.row.id, item.id ].join('-')} 
+							value={cell.value} 
+						/>
+					) : (
+						<div className="value">{this.renderCell(cell.value)}</div>
+					)}
 					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />
 				</div>
 			);
@@ -224,6 +225,50 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	setEditing (row: number, column: number) {
+		const { readonly } = this.props;
+		const isEditing = (row == this.focusObj.row) && (column == this.focusObj.column);
+		const l = this.getLength(row, column);
+
+		if (readonly && isEditing) {
+			return;
+		};
+
+		this.focusSet(row, column, { from: l, to: l });
+		this.forceUpdate();
+	};
+
+	renderCell (value: string) {
+		value = String(value || '');
+
+		const match = value.match(/^=([A-Z]+)\(([^\)]+)\)/i);
+		if (match) {
+			let f = match[1];
+			let a = match[2];
+
+			if (formulajs[f] && a) {
+				let arr = a.split(',').map((it: string) => { return it.trim(); });
+				let args = [];
+
+				arr.forEach((arg: string) => {
+					const m = arg.match(/^c([\d\.]+)/i);
+					if (m) {
+						const [ r, c] = m[1].split('.').map((it: string) => { return Number(it) || 0; });
+						const v = Number(this.getProperty(r, c, 'value')) || 0;
+
+						args.push(v);
+					} else {
+						args.push(arg);
+					};
+				});
+
+				value = formulajs[f].call(this, args);
+			};
+		};
+
+		return value;
 	};
 
 	getTarget (row: number, column: number) {
@@ -349,10 +394,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
-			
+		
 			this.saveValue(row, column, value);
-			this.rowAdd(row, 1);
-			this.focusSet(row + 1, column, { from: 0, to: 0 });
+			this.setEditing(0, 0);
 		});
 	};
 
@@ -447,6 +491,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	fillRow (row: I.TableRow) {
 		const { block } = this.props;
 		const { columnCount } = block.content;
+
+		row = row || new M.TableRow({ cells: [] });
 
 		for (let i = 0; i < columnCount; ++i) {
 			row.cells[i] = Object.assign({
