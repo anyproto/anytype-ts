@@ -168,7 +168,7 @@ class CommonStore {
 	};
 
 	configSet (config: any, force: boolean) {
-		console.log('[commonStore.configSet]', config);
+		console.log('[commonStore.configSet]', JSON.stringify(config, null, 3), force);
 
 		let newConfig: any = {};
 

@@ -63,7 +63,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
 		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
-		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0
+		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0;
+		const { allowSpaces } = config;
 
 		if (!element) {
 			return null;
