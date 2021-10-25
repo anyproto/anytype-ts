@@ -36,6 +36,7 @@ import Label from './util/label';
 import IconEmoji from './util/iconEmoji';
 import Tag from './util/tag';
 import Loader from './util/loader';
+import Deleted from './util/deleted';
 import Progress from './util/progress';
 import SelectionProvider from './util/selection';
 
@@ -106,6 +107,7 @@ export {
 	Marker,
 	Tag,
 	Loader,
+	Deleted,
 	Progress,
 	Menu,
 	MenuItemVertical,

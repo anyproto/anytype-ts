@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -14,18 +14,27 @@ interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
 };
 
+interface State {
+	isDeleted: boolean;
+};
+
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
 
-const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}> {
+const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
 	timeout: number = 0;
+
+	state = {
+		isDeleted: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -35,6 +44,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
@@ -169,7 +182,11 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 
