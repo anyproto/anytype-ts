@@ -316,8 +316,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				data: {
 					options: options,
 					noClose: true,
-					onOver: this.onTypeOver,
-					onSelect: this.onTypeSelect,
+					onSelect: (e: any, item: any) => {
+						item.arrow ? this.onTypeOver(e, item) : this.onTypeSelect(e, item);
+					},
 				},
 			});
 		};
