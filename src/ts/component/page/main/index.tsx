@@ -255,7 +255,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			{ id: I.TabIndex.Set, name: 'Sets', load: true },
 		];
 
-		if (config.experimental) {
+		if (config.allowSpaces) {
 			tabs.push({ id: I.TabIndex.Space, name: 'Spaces', load: true });
 			tabs.push({ id: I.TabIndex.Shared, name: 'Shared', load: true });
 		};
