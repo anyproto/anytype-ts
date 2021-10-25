@@ -33,6 +33,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	_isMounted: boolean = false;
 	timeout: number = 0;
 	focusObj: Focus = { row: 0, column: 0, range: { from: 0, to: 0 } };
+	isEditing: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -102,7 +103,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const cn = [ 'cell', 'column' + item.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
 			const isHead = item.row.id == 0;
-			const isEditing = (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
+			const isEditing = this.isEditing && (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
 
 			if (isHead) {
 				cn.push('isHead');
@@ -121,7 +122,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				<div
 					className={cn.join(' ')}
 					style={css}
-					onClick={() => { this.setEditing(item.row.id, item.id); }}
+					onClick={() => { this.setEditing(item.row.id, item.id, null); }}
 					onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
 				>
 					{isHead ? <HandleColumn {...item} /> : ''}
@@ -227,16 +228,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this._isMounted = false;
 	};
 
-	setEditing (row: number, column: number) {
+	setEditing (row: number, column: number, range: any) {
 		const { readonly } = this.props;
-		const isEditing = (row == this.focusObj.row) && (column == this.focusObj.column);
+		const isEditing = this.isEditing && (row == this.focusObj.row) && (column == this.focusObj.column);
 		const l = this.getLength(row, column);
 
-		if (readonly && isEditing) {
+		if (readonly || isEditing) {
 			return;
 		};
 
-		this.focusSet(row, column, { from: l, to: l });
+		this.preventSelect(true);
+		this.isEditing = true;
+		this.focusSet(row, column, range || { from: l, to: l });
 		this.forceUpdate();
 	};
 
@@ -255,8 +258,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				arr.forEach((arg: string) => {
 					const m = arg.match(/^c([\d\.]+)/i);
 					if (m) {
-						const [ r, c] = m[1].split('.').map((it: string) => { return Number(it) || 0; });
-						const v = Number(this.getProperty(r, c, 'value')) || 0;
+						const [ r, c ] = m[1].split('.').map((it: string) => { return Number(it) || 0; });
+						const v = Number(this.getProperty(r - 1, c - 1, 'value')) || 0;
 
 						args.push(v);
 					} else {
@@ -348,14 +351,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			e.preventDefault();
 
 			r--;
-			this.focusSet(r, c, range);
+			this.setEditing(r, c, range);
 		});
 
 		keyboard.shortcut('arrowdown', e, (pressed: string) => {
 			e.preventDefault();
 
 			r++;
-			this.focusSet(r, c, range);
+			this.setEditing(r, c, range);
 		});
 
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
@@ -372,7 +375,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			e.preventDefault();
-			this.focusSet(r, c, { from: 0, to: 0 });
+			this.setEditing(r, c, { from: 0, to: 0 });
 		});
 
 		keyboard.shortcut('arrowleft, backspace', e, (pressed: string) => {
@@ -389,14 +392,17 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			const l = this.getLength(r, c);
-			this.focusSet(r, c, { from: l, to: l });
+			this.setEditing(r, c, { from: l, to: l });
 		});
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 		
 			this.saveValue(row, column, value);
-			this.setEditing(0, 0);
+			
+			this.preventSelect(false);
+			this.isEditing = false;
+			this.forceUpdate();
 		});
 	};
 
@@ -479,12 +485,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	rowRemove (index: number) {
 		const { block } = this.props;
 		const { rows } = block.content;
-		const { column } = this.focusObj;
 
 		rows.splice(index, 1);
-
-		const l = this.getLength(index, column);
-		this.focusSet(index, column, { from: l, to: l });
 		this.saveContent();
 	};
 
@@ -838,44 +840,40 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
-		if (selection) {
-			selection.preventSelect(true);
-		};
+		this.preventSelect(true);
 	};
 
 	onSortEndColumn (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { dataset, block } = this.props;
+		const { block } = this.props;
 		const { rows } = block.content;
-		const { selection } = dataset || {};
 
 		rows.forEach((row: I.TableRow) => {
 			row = this.fillRow(row);
 			row.cells = arrayMove(row.cells, oldIndex, newIndex);
 		});
 
-		if (selection) {
-			selection.preventSelect(false);
-		};
-
+		this.preventSelect(false);
 		this.saveContent();
 	};
 
 	onSortEndRow (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { dataset, block } = this.props;
-		const { selection } = dataset || {};
+		const { block } = this.props;
 
 		block.content.rows = arrayMove(block.content.rows, oldIndex, newIndex);
 
-		if (selection) {
-			selection.preventSelect(false);
-		};
-
+		this.preventSelect(false);
 		this.saveContent();
+	};
+
+	preventSelect (v: boolean) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		if (selection) {
+			selection.preventSelect(v);
+		};
 	};
 
 });
