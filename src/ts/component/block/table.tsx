@@ -19,6 +19,7 @@ interface Focus {
 };
 
 const formulajs = require('@formulajs/formulajs');
+const Constant = require('json/constant.json');
 const $ = require('jquery');
 
 enum Key {
@@ -458,7 +459,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		for (let row of rows) {
 			const cell = Util.objectCopy(row.cells[index]);
-			row.cells.splice(idx, 0, { ...cell, value: '', width: 50 });
+			row.cells.splice(idx, 0, { ...cell, value: '', width: Constant.size.table.cell });
 		};
 
 		blockStore.update(rootId, { 
@@ -525,18 +526,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { columnCount } = block.content;
 
 		row = row || new M.TableRow({ cells: [] });
-
-		for (let i = 0; i < columnCount; ++i) {
-			row.cells[i] = Object.assign({
-				value: '', 
-				horizontal: I.TableAlign.Left,
-				vertical: I.TableAlign.Top,
-				color: '',
-				background: '',
-				width: 0,
-			}, row.cells[i] || {});
-		};
-
+		row = row.fill(columnCount);
 		return row;
 	};
 
@@ -616,7 +606,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const offset = el.first().offset();
 
 		let width = e.pageX - offset.left;
-		width = Math.max(20, Math.min(500, width)); 
+		width = Math.max(Constant.size.table.min, Math.min(500, width)); 
 
 		rows.forEach((row: I.TableRow) => {
 			row.cells[index].width = width;

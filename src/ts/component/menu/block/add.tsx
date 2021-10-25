@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Icon, Cell } from 'ts/component';
-import { I, keyboard, Key, C, focus, Action, Util, DataUtil, Storage, translate, analytics } from 'ts/lib';
+import { I, M, keyboard, C, focus, Action, Util, DataUtil, Storage, translate, analytics } from 'ts/lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -569,9 +569,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				if (item.type == I.BlockType.Table) {
 					param.content.columnCount = 3;
 					param.content.rows = [ 
-						{ cells: [] },
-						{ cells: [] },
-						{ cells: [] },
+						new M.TableRow({ cells: [] }).fill(3),
+						new M.TableRow({ cells: [] }).fill(3),
+						new M.TableRow({ cells: [] }).fill(3),
 					];
 				};
 

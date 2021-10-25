@@ -184,20 +184,20 @@ const Mapper = {
 		},
 
 		TableRow: (obj: any): any => {
-			return {
+			return new M.TableRow({
 				cells: (obj.getCellsList() || []).map(Mapper.From.TableCell),
-			};
+			});
 		},
 
 		TableCell: (obj: any): any => {
-			return {
+			return new M.TableCell({
 				value: obj.getValue(),
 				horizontal: obj.getHorizontal(),
 				vertical: obj.getVertical(),
 				color: obj.getColor(),
 				background: obj.getBackground(),
 				width: obj.getWidth(),
-			};
+			});
 		},
 
 		Restrictions: (obj: any): any => {

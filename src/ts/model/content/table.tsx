@@ -1,6 +1,8 @@
 import { I, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
+const Constant = require('json/constant.json');
+
 class TableCell implements I.TableCell {
 	
 	value: string = '';
@@ -31,6 +33,20 @@ class TableRow implements I.TableRow {
 		let self = this;
 		
 		self.cells = (props.cells || []).map((it: I.TableCell) => { return new TableCell(it); });
+	};
+
+	fill (columnCount: number) {
+		for (let i = 0; i < columnCount; ++i) {
+			this.cells[i] = Object.assign({
+				value: '', 
+				horizontal: I.TableAlign.Left,
+				vertical: I.TableAlign.Top,
+				color: '',
+				background: '',
+				width: Constant.size.table.cell,
+			}, this.cells[i] || {});
+		};
+		return this;
 	};
 
 };

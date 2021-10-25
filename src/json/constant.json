@@ -171,6 +171,11 @@
 		"lastBlock": 100,
 		"cover": 1920,
 
+		"table": {
+			"min": 50,
+			"cell": 150
+		},
+
 		"dataview": {
 			"gallery": {
 				"card": 224,

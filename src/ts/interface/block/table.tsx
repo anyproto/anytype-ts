@@ -19,6 +19,8 @@ export interface TableCell {
 
 export interface TableRow {
 	cells: TableCell[];
+
+	fill?: (columnCount: number) => TableRow;
 };
 
 export interface ContentTable {
