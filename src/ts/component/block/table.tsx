@@ -41,7 +41,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
-		this.onSortEndColumn = this.onSortEndColumn.bind(this)
+		this.onSortEndColumn = this.onSortEndColumn.bind(this);
+		this.onSortEndRow = this.onSortEndRow.bind(this);
 	};
 
 	render () {
@@ -85,13 +86,25 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			);
 		};
 
-		const Handle = SortableHandle(() => (
-			<Icon className="drag" />
+		const HandleColumn = SortableHandle((item: any) => (
+			<div 
+				className="handleColumn"
+				onClick={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
+				onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, item.id); }}
+			/>
+		));
+
+		const HandleRow = SortableHandle((item: any) => (
+			<div 
+				className="cell handleRow"
+				onClick={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
+				onContextMenu={(e: any) => { this.onOptions(e, Key.Row, item.id, 0); }}
+			/>
 		));
 
 		const Cell = (item: any) => {
 			const cell = (item.row.cells || [])[item.id] || {};
-			const cn = [ 'column' + item.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
+			const cn = [ 'cell', 'column' + item.id, 'align-v' + cell.vertical, 'align-h' + cell.horizontal ];
 			const css: any = {};
 			const isHead = item.row.id == 0;
 
@@ -109,47 +122,75 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			};
 
 			return (
-				<td 
+				<div
 					className={cn.join(' ')}
 					style={css}
 					onContextMenu={(e: any) => { this.onOptions(e, Key.Cell, item.row.id, item.id); }}
 				>
-					{isHead ? <Handle /> : ''}
+					{isHead ? <HandleColumn {...item} /> : ''}
 					<Editor 
 						id={[ 'value', item.row.id, item.id ].join('-')} 
 						value={cell.value} 
 					/>
 					<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, item.id); }} />
-				</td>
+				</div>
 			);
 		};
 
 		const Row = (row: any) => (
-			<tr>
-				<td 
-					className="dark first"
-					onClick={(e: any) => { this.onOptions(e, Key.Row, row.id, 0); }}
-					onContextMenu={(e: any) => { this.onOptions(e, Key.Row, row.id, 0); }}
-				>
-					&nbsp;
-				</td>
+			<div className="row">
+				<HandleRow {...row} />
 
 				{columns.map((column: any, i: number) => {
 					if (row.id == 0) {
-						return <CellSortable key={i} row={row} id={i} index={i} />;
+						return <CellSortableElement key={i} row={row} id={i} index={i} />;
 					} else {
 						return <Cell key={i} row={row} id={i} index={i} />	;
 					};
 				})}
-			</tr>
+			</div>
 		);
 
-		const CellSortable = SortableElement((item: any) => {
+		const CellSortableElement = SortableElement((item: any) => {
 			return <Cell {...item} />;
+		});
+
+		const RowSortableElement = SortableElement((item: any) => {
+			return <Row {...item} />;
 		});
 
 		const RowSortableContainer = SortableContainer((item: any) => {
 			return <Row {...item} />;
+		});
+
+		const TableSortableContainer = SortableContainer((item: any) => {
+			return (
+				<div className="table">
+					{rows.map((row: any, i: number) => {
+						if (i == 0) {
+							return (
+								<RowSortableContainer 
+									key={i}
+									axis="x" 
+									lockAxis="x"
+									lockToContainerEdges={true}
+									transitionDuration={150}
+									distance={10}
+									useDragHandle={true}
+									onSortStart={this.onSortStart}
+									onSortEnd={this.onSortEndColumn}
+									helperClass="isDragging"
+									helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
+									id={i}
+									{...row}
+								/>
+							);
+						} else {
+							return <RowSortableElement key={i} id={i} index={i} {...row} />
+						};
+					})}
+				</div>
+			);
 		});
 
 		return (
@@ -157,50 +198,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				tabIndex={0} 
 				className={cn.join(' ')}
 			>
-				<table>
-					<tbody>
-						<tr>
-							<td className="dark">&nbsp;</td>
-							{columns.map((column: any, i: number) => {
-								return (
-									<td 
-										key={i} 
-										className="dark"
-										onContextMenu={(e: any) => { this.onOptions(e, Key.Column, 0, i); }}
-									>
-										<div className="click" onClick={(e: any) => { this.onOptions(e, Key.Column, 0, i); }} />
-										<div className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, i); }} />
-									</td>
-								);
-							})}
-						</tr>
-
-						{rows.map((row: any, i: number) => {
-							if (i == 0) {
-								return (
-									<RowSortableContainer 
-										key={i}
-										axis="x" 
-										lockAxis="x"
-										lockToContainerEdges={true}
-										transitionDuration={150}
-										distance={10}
-										useDragHandle={true}
-										onSortStart={this.onSortStart}
-										onSortEnd={this.onSortEndColumn}
-										helperClass="isDragging"
-										helperContainer={() => { return $(`#block-${block.id} .wrap`).get(0); }}
-										index={i}
-										id={i}
-										{...row}
-									/>
-								);
-							} else {
-								return <Row key={i} id={i} index={i} {...row} />
-							};
-						})}
-					</tbody>
-				</table>
+				<TableSortableContainer 
+					axis="y" 
+					lockAxis="y"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					useDragHandle={true}
+					onSortStart={this.onSortStart}
+					onSortEnd={this.onSortEndRow}
+					helperClass="isDragging"
+					helperContainer={() => { return $(`#block-${block.id} .table`).get(0); }}
+				/>
 			</div>
 		);
 	};
@@ -562,6 +571,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (background || 'default') ].join(' ')} />;
 
 		let menuContext: any = null;
+		
 		let options: any[] = [
 			{ id: 'horizontal', icon: 'align ' + this.alignIcon(ah), name: 'Horizontal align', arrow: true },
 			{ id: 'vertical', icon: 'align ' + this.alignIcon(av), name: 'Vertical align', arrow: true },
@@ -569,14 +579,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let optionsColumn = [
 			{ id: 'columnBefore', name: 'Column before' },
 			{ id: 'columnAfter', name: 'Column after' },
+			columnCount > 1 ? { id: 'columnRemove', name: 'Remove column' } : null,
+			{ isDiv: true },
 		];
 		let optionsRow = [
 			{ id: 'rowBefore', name: 'Row before' },
 			{ id: 'rowAfter', name: 'Row after' },
+			rows.length > 1 ? { id: 'rowRemove', name: 'Remove row' } : null,
+			{ isDiv: true },
 		];
 		let optionsColor = [
 			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
 			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
+			{ isDiv: true },
 		];
 
 		let optionsHorizontal = [
@@ -596,13 +611,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			it.icon = 'align ' + this.alignIcon(it.id);
 			return it;
 		});
-
-		if (columnCount > 1) {
-			optionsColumn.push({ id: 'columnRemove', name: 'Remove column' });
-		};
-		if (rows.length > 1) {
-			optionsRow.push({ id: 'rowRemove', name: 'Remove row' });
-		};
 
 		switch (key) {
 			case Key.Column:
@@ -802,6 +810,20 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			row = this.fillRow(row);
 			row.cells = arrayMove(row.cells, oldIndex, newIndex);
 		});
+
+		if (selection) {
+			selection.preventSelect(false);
+		};
+
+		this.saveContent();
+	};
+
+	onSortEndRow (result: any) {
+		const { oldIndex, newIndex } = result;
+		const { dataset, block } = this.props;
+		const { selection } = dataset || {};
+
+		block.content.rows = arrayMove(block.content.rows, oldIndex, newIndex);
 
 		if (selection) {
 			selection.preventSelect(false);

@@ -10,7 +10,9 @@ interface Props extends I.Menu {}
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const HEIGHT = 28;
+const HEIGHT_ITEM = 28;
+const HEIGHT_SECTION = 28;
+const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
 const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> {
@@ -33,7 +35,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { data } = param;
 		const { filter, value, noFilter } = data;
 		const options = this.getItemsWithoutFilter();
-		const items = this.getItems();
+		const items = this.getItems(true);
 		const withFilter = !noFilter && (options.length > LIMIT);
 
 		const rowRenderer = (param: any) => {
@@ -45,15 +47,19 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 			if (item.isHidden) {
 				cn.push('isHidden');
 			};
-			return (
-				<CellMeasurer
-					key={param.key}
-					parent={param.parent}
-					cache={this.cache}
-					columnIndex={0}
-					rowIndex={param.index}
-					hasFixedWidth={() => {}}
-				>
+
+			let content = null;
+			if (item.isSection) {
+				content = <div className={[ 'sectionName', (param.index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
+			} else
+			if (item.isDiv) {
+				content = (
+					<div className="separator" style={param.style}>
+						<div className="inner" />
+					</div>
+				);
+			} else {
+				content = (
 					<MenuItemVertical 
 						{...item} 
 						icon={item.icon}
@@ -64,6 +70,19 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						style={param.style}
 					/>
+				);
+			};
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					{content}
 				</CellMeasurer>
 			);
 		};
@@ -97,7 +116,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={HEIGHT}
+										rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
@@ -115,7 +134,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		const { param, setActive } = this.props;
 		const { data } = param;
 		const { value, noKeys } = data;
-		const items = this.getItems();
+		const items = this.getItems(true);
 		
 		this._isMounted = true;
 		if (!noKeys) {
@@ -124,7 +143,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
 		
@@ -174,13 +193,33 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 
 		return (data.options || []).filter((it: any) => { return it; });
 	};
+
+	getSections () {
+		const { param } = this.props;
+		const { data } = param;
+
+		return (data.sections || []);
+	};
 	
-	getItems () {
+	getItems (withSections: boolean) {
 		const { param } = this.props;
 		const { data } = param;
 		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+		const sections = this.getSections();
 
-		let items = this.getItemsWithoutFilter();
+		let items: any[] = [];
+
+		if (sections && sections.length) {
+			for (let section of sections) {
+				if (withSections) {
+					items.push({ id: section.id, name: section.name, isSection: true });
+				};
+				items = items.concat(section.children);
+			};
+		} else {
+			items = this.getItemsWithoutFilter();
+		};
+
 		if (data.filter) {
 			items = items.filter((it: any) => { return it.name.match(filter); });
 		};
@@ -230,23 +269,36 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		this.props.param.data.filter = v;
 	};
 
+	getRowHeight (item: any) {
+		if (item.isDiv) return HEIGHT_DIV;
+		if (item.isSection) return HEIGHT_SECTION;
+		return HEIGHT_ITEM;
+	};
+
 	resize () {
 		const { position, getId, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
 		const options = this.getItemsWithoutFilter();
-		const items = this.getItems();
+		const items = this.getItems(true);
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
 		const withFilter = !noFilter && (options.length > LIMIT);
 
 		let offset = withFilter ? 44 : 0;
-
 		if (items.length <= LIMIT) {
 			offset += 16;
 		};
 
-		const height = Math.max(44, Math.min(HEIGHT * LIMIT + offset, Math.max(items.length, 1) * HEIGHT + offset));
+		let height = offset;
+		if (!items.length) {
+			height += HEIGHT_ITEM;
+		};
+		items.forEach((item: any) => {
+			height += this.getRowHeight(item);
+		});
+
+		height = Math.max(44, Math.min(HEIGHT_ITEM * LIMIT + offset, height));
 
 		content.css({ height: height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
