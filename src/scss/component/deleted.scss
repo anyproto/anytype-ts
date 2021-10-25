@@ -1,0 +1,14 @@
+@import "~scss/_vars";
+
+.deleteWrapper {
+	position: fixed; left: 0px; top: 0px; z-index: 10000; background: #fff; width: 100%; height: 100%;
+}
+.deleteWrapper {
+	.mid { 
+		position: absolute; width: 400px; height: 200px; margin: -100px 0px 0px -200px; left: 50%; top: 50%; 
+		text-align: center;
+	}
+
+	.icon.ghost { width: 64px; height: 64px; }
+	.label { @include text-header2; margin: 24px 0px; }
+}

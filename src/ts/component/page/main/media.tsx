@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Pager } from 'ts/component';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Pager, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 import { Document, Page } from 'react-pdf';
@@ -18,6 +18,7 @@ interface Props extends RouteComponentProps<any> {
 interface State {
 	pages: number;
 	page: number;
+	isDeleted: boolean;
 };
 
 const $ = require('jquery');
@@ -25,6 +26,7 @@ const { ipcRenderer } = window.require('electron');
 const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
+const Errors = require('json/error.json');
 
 const MAX_HEIGHT = 396;
 
@@ -38,6 +40,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	state = {
 		pages: 0,
 		page: 1,
+		isDeleted: false,
 	};
 
 	constructor (props: any) {
@@ -48,7 +51,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	render () {
-		const { page, pages } = this.state;
+		const { page, pages, isDeleted } = this.state;
+
+		if (isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
@@ -204,7 +212,11 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 

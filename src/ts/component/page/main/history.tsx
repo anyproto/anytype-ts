@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainHistory as Header, Block, Loader, Icon } from 'ts/component';
+import { HeaderMainHistory as Header, Block, Loader, Icon, Deleted } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, M, C, Util, DataUtil, dispatcher, Action } from 'ts/lib';
+import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -13,10 +13,12 @@ interface Props extends RouteComponentProps<any> {
 interface State {
 	versions: I.HistoryVersion[];
 	loading: boolean;
+	isDeleted: boolean;
 }
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
@@ -26,6 +28,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	state = {
 		versions: [] as I.HistoryVersion[],
 		loading: false,
+		isDeleted: false,
 	};
 	
 	version: I.HistoryVersion = null;
@@ -42,10 +45,14 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 	render () {
 		const { match } = this.props;
-		const { versions } = this.state;
+		const { versions, isDeleted } = this.state;
 		const rootId = match.params.id;
 		const groups = this.groupData(versions);
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (isDeleted) {
+			return <Deleted {...this.props} />;
+		};
 
 		if (!this.version || !root) {
 			return <Loader />;
@@ -296,11 +303,16 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
   	};
   
 	loadVersion (id: string) {
-		const { match } = this.props;
+		const { history, match } = this.props;
 		const rootId = match.params.id;
 
 		C.HistoryShow(rootId, id, (message: any) => {
 			if (message.error.code) {
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 

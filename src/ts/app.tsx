@@ -34,6 +34,7 @@ import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
 import 'scss/component/selection.scss';
 import 'scss/component/loader.scss';
+import 'scss/component/deleted.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';

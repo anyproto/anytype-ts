@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
 import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
 import { detailStore, dbStore } from 'ts/store';
 
@@ -10,13 +10,23 @@ interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
 };
 
+interface State {
+	isDeleted: boolean;
+};
+
+const Errors = require('json/error.json');
+
 const BLOCK_ID_OBJECT = 'dataview';
 
-const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, {}> {
+const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {
 
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
+
+	state = {
+		isDeleted: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -25,6 +35,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
@@ -99,7 +113,11 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 
