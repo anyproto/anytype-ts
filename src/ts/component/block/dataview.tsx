@@ -197,7 +197,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const ref = this.cellRefs.get(id);
 
 					if (ref && (view.type == I.ViewType.Grid)) {
-						window.setTimeout(() => { ref.onClick(e); });
+						window.setTimeout(() => { ref.onClick(e); }, 15);
 					};
 				};
 

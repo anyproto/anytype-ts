@@ -34,7 +34,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 			<div id={'row-' + index} className={cn.join(' ')} style={style}>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'grid-cell-' + relation.relationKey} 
+						key={'grid-cell-' + relation.relationKey + record.id} 
 						{...this.props} 
 						width={relation.width}
 						index={index} 

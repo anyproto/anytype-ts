@@ -310,7 +310,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			C.PageCreate({ name: filter }, (message: any) => {
+			C.PageCreate({ type: commonStore.type, name: filter }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

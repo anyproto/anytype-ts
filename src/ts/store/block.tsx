@@ -503,7 +503,7 @@ class BlockStore {
 			return;
 		};
 
-		const cnt = object.type == Constant.typeId.note ? 3 : 2;
+		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
 		const checkType = object.type == commonStore.type;
 		const checkBlocks = checkType && (root.childrenIds.length <= cnt);
 
