@@ -2,6 +2,7 @@ import { I, Util } from 'ts/lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 const Constant = require('json/constant.json');
+const formulajs = require('@formulajs/formulajs');
 
 class TableCell implements I.TableCell {
 	
@@ -89,12 +90,12 @@ class BlockContentTable implements I.ContentTable {
 
 		this.rows[0].isHead = true;
 		this.rows.sort((c1: any, c2: any) => {
-			const v1 = c1.cells[this.sortIndex].value;
-			const v2 = c2.cells[this.sortIndex].value;
-
 			if (c1.isHead && !c2.isHead) return -1;
 			if (!c1.isHead && c2.isHead) return 1;
-			
+
+			const v1 = this.calcCellValue(c1.cells[this.sortIndex].value);
+			const v2 = this.calcCellValue(c2.cells[this.sortIndex].value);
+
 			if (this.sortType == I.SortType.Asc) {
 				if (v1 < v2) return -1;
 				if (v1 > v2) return 1;
@@ -145,6 +146,44 @@ class BlockContentTable implements I.ContentTable {
 	rowRemove (index: number) {
 		this.rows.splice(index, 1);
 	};
+
+	getCellProperty (row: number, column: number, k: string): any {
+		return this.rows[row].cells[column][k];
+	};
+
+	calcCellValue (value: string) {
+		value = String(value || '');
+		const match = value.match(/^=([A-Z]+)\(([^\)]+)\)/i);
+
+		let ret = value;
+		if (match) {
+			let f = match[1];
+			let a = match[2];
+
+			if (formulajs[f] && a) {
+				let arr = a.split(',').map((it: string) => { return it.trim(); });
+				let args = [];
+
+				arr.forEach((arg: string) => {
+					const m = arg.match(/^c([\d\.]+)/i);
+					if (m) {
+						const [ r, c ] = m[1].split('.').map((it: string) => { return Number(it) || 0; });
+						const v = Number(this.getCellProperty(r - 1, c - 1, 'value')) || 0;
+
+						args.push(v);
+					} else {
+						args.push(arg);
+					};
+				});
+
+				ret = formulajs[f].call(this, args);
+			};
+		};
+
+		return ret;
+	};
+
+
 
 };
 

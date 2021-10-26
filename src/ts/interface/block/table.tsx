@@ -36,6 +36,9 @@ export interface ContentTable {
 	columnRemove?: (index: number) => void;
 	rowAdd?: (index: number, dir: number) => void;
 	rowRemove?: (index: number) => void;
+
+	getCellProperty?: (row: number, column: number, k: string) => string;
+	calcCellValue?: (value: string) => any;
 };
 
 export interface BlockTable extends I.Block {

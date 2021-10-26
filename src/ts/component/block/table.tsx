@@ -8,7 +8,6 @@ import { getRange, setRange } from 'selection-ranges';
 import { menuStore, blockStore } from 'ts/store';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
-import column from './dataview/view/board/column';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
@@ -158,7 +157,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 							value={cell.value} 
 						/>
 					) : (
-						<div className="value">{this.renderCell(cell.value)}</div>
+						<div className="value">{this.renderCell(item.row.id, item.id)}</div>
 					)}
 
 					{isHead ? arrow : ''}
@@ -278,35 +277,11 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		this.forceUpdate();
 	};
 
-	renderCell (value: string) {
-		value = String(value || '');
-
-		const match = value.match(/^=([A-Z]+)\(([^\)]+)\)/i);
-		if (match) {
-			let f = match[1];
-			let a = match[2];
-
-			if (formulajs[f] && a) {
-				let arr = a.split(',').map((it: string) => { return it.trim(); });
-				let args = [];
-
-				arr.forEach((arg: string) => {
-					const m = arg.match(/^c([\d\.]+)/i);
-					if (m) {
-						const [ r, c ] = m[1].split('.').map((it: string) => { return Number(it) || 0; });
-						const v = Number(this.getProperty(r - 1, c - 1, 'value')) || 0;
-
-						args.push(v);
-					} else {
-						args.push(arg);
-					};
-				});
-
-				value = formulajs[f].call(this, args);
-			};
-		};
-
-		return value;
+	renderCell (row: number, column: number) {
+		const { block } = this.props;
+		const value = block.content.getCellProperty(row, column, 'value');
+		
+		return block.content.calcCellValue(value);
 	};
 
 	getTarget (row: number, column: number) {
@@ -762,11 +737,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	getProperty (row: number, column: number, k: string): any {
-		const { block } = this.props;
-		const { rows } = block.content;
-		const rowObj = this.fillRow(rows[row]);
-
-		return rowObj.cells[column][k];
+		return this.props.block.content.getCellProperty(row, column, k);
 	};
 
 	setProperty (key: Key, row: number, column: number, k: string, v: any) {
