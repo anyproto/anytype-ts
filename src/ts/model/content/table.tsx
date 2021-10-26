@@ -38,14 +38,10 @@ class TableRow implements I.TableRow {
 
 	fill (columnCount: number) {
 		for (let i = 0; i < columnCount; ++i) {
-			this.cells[i] = Object.assign({
+			this.cells[i] = this.cells[i] || new TableCell({
 				value: '', 
-				horizontal: I.TableAlign.Left,
-				vertical: I.TableAlign.Top,
-				color: '',
-				background: '',
 				width: Constant.size.table.cell,
-			}, this.cells[i] || {});
+			});
 		};
 		return this;
 	};
@@ -68,7 +64,8 @@ class BlockContentTable implements I.ContentTable {
 
 		self.rows = (props.rows || []).map((it: I.TableRow) => { return new TableRow(it); });
 
-		this.sort();
+		self.fill();
+		self.sort(self.sortIndex, self.sortType);
 
 		makeObservable(self, {
 			columnCount: observable,
@@ -78,7 +75,14 @@ class BlockContentTable implements I.ContentTable {
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
 	};
 
-	sort () {
+	fill () {
+		this.rows.forEach((row: I.TableRow) => { row.fill(this.columnCount); });
+	};
+
+	sort (column: number, sort: I.SortType) {
+		this.sortIndex = column;
+		this.sortType = sort;
+
 		if (!this.rows.length) {
 			return;
 		};
@@ -101,6 +105,45 @@ class BlockContentTable implements I.ContentTable {
 			return 0;
 		});
 
+	};
+
+	columnAdd (index: number, dir: number) {
+		const idx = index + (dir > 0 ? 1 : 0);
+
+		for (let row of this.rows) {
+			const cell = new TableCell({ 
+				...row.cells[index],
+				value: '', 
+				width: Constant.size.table.cell,
+			});
+			row.cells.splice(idx, 0, cell);
+		};
+
+		this.columnCount++;
+	};
+
+	columnRemove (index: number) {
+		for (let row of this.rows) {
+			row.cells.splice(index, 1);
+		};
+		this.columnCount--;
+	};
+
+	rowAdd (index: number, dir: number) {
+		index = Math.max(0, index);
+
+		const idx = index + (dir > 0 ? 1 : 0);
+		const row: I.TableRow = new TableRow(this.rows[index] || { cells: [] }).fill(this.columnCount);
+		
+		row.cells.map((it: I.TableCell) => {
+			it.value = '';
+			return it;
+		});
+		this.rows.splice(idx, 0, row);
+	};
+
+	rowRemove (index: number) {
+		this.rows.splice(index, 1);
 	};
 
 };

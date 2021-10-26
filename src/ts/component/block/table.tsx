@@ -459,71 +459,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	columnAdd (index: number, dir: number) {
-		const { rootId, block } = this.props;
-		const { columnCount, rows } = block.content;
-		const idx = index + (dir > 0 ? 1 : 0);
-
-		for (let row of rows) {
-			const cell = Util.objectCopy(row.cells[index]);
-			row.cells.splice(idx, 0, { ...cell, value: '', width: Constant.size.table.cell });
-		};
-
-		blockStore.update(rootId, { 
-			...block, 
-			content: { 
-				...block.content,
-				columnCount: columnCount + 1, 
-				rows: rows,
-			},
-		});
-
+		this.props.block.content.columnAdd(index, dir);
 		this.saveContent();
 	};
 
 	columnRemove (index: number) {
-		const { rootId, block } = this.props;
-		const { columnCount, rows } = block.content;
-
-		for (let row of rows) {
-			row.cells.splice(index, 1);
-		};
-
-		blockStore.update(rootId, { 
-			...block, 
-			content: { 
-				...block.content,
-				columnCount: columnCount - 1, 
-				rows: rows,
-			},
-		});
-
+		this.props.block.content.columnRemove(index);
 		this.saveContent();
 	};
 
 	rowAdd (index: number, dir: number) {
-		index = Math.max(0, index);
-
-		const { block } = this.props;
-		const { rows } = block.content;
-		const idx = index + (dir > 0 ? 1 : 0);
-
-		let row: I.TableRow = new M.TableRow(rows[index] || {});
-		
-		row = this.fillRow(row);
-		row.cells.map((it: I.TableCell) => {
-			it.value = '';
-			return it;
-		});
-		rows.splice(idx, 0, row);
-
+		this.props.block.content.rowAdd(index, dir);
 		this.saveContent();
 	};
 
 	rowRemove (index: number) {
-		const { block } = this.props;
-		const { rows } = block.content;
-
-		rows.splice(index, 1);
+		this.props.block.content.rowRemove(index);
 		this.saveContent();
 	};
 
@@ -533,6 +484,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		row = row || new M.TableRow({ cells: [] });
 		row = row.fill(columnCount);
+
 		return row;
 	};
 
@@ -540,7 +492,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 		const { rows } = block.content;
 
-		rows[row] = this.fillRow(rows[row] || { data: [] });
+		rows[row] = this.fillRow(rows[row]);
 		rows[row].cells[column].value = value;
 
 		C.BlockUpdateContent({ ...block }, rootId, block.id);
@@ -549,9 +501,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	saveContent () {
 		const { rootId, block } = this.props;
 
-		C.BlockUpdateContent({ ...block }, rootId, block.id, () => {
-			this.forceUpdate();
-		});
+		blockStore.update(rootId, { ...block, content: { ...block.content } });
+		C.BlockUpdateContent({ ...block }, rootId, block.id, () => { this.forceUpdate(); });
 	};
 
 	getValue (obj: any): string {
@@ -584,12 +535,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { block } = this.props;
-		const { rows } = block.content;
-
-		rows.forEach((row: I.TableRow) => {
-			row = this.fillRow(row);
-		});
+		this.props.block.content.fill();
 
 		const win = $(window);
 
@@ -610,9 +556,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find(`.column${index}`);
 		const offset = el.first().offset();
-
-		let width = e.pageX - offset.left;
-		width = Math.max(Constant.size.table.min, Math.min(500, width)); 
+		const width = Math.max(Constant.size.table.min, Math.min(500, e.pageX - offset.left));
 
 		rows.forEach((row: I.TableRow) => {
 			row.cells[index].width = width;
@@ -831,9 +775,9 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 		switch (key) {
 			case Key.Column:
-				rows.forEach((row: I.TableRow) => {
-					row = this.fillRow(row);
-					row.cells[column][k] = v;
+				block.content.fill();
+				rows.forEach((row: I.TableRow) => { 
+					row.cells[column][k] = v; 
 				});
 				break;
 
@@ -874,8 +818,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		const { block } = this.props;
 		const { rows } = block.content;
 
+		block.content.fill();
 		rows.forEach((row: I.TableRow) => {
-			row = this.fillRow(row);
 			row.cells = arrayMove(row.cells, oldIndex, newIndex);
 		});
 
@@ -897,20 +841,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.preventDefault();
 		e.stopPropagation();
 
-		let { rootId, block } = this.props;
-		let { rows } = block.content;
-
-		block.content.sortIndex = column;
-		block.content.sortType = sort;
-		block.content.sort();
-
-		blockStore.update(rootId, { 
-			...block, 
-			content: { 
-				...block.content,
-			},
-		});
-
+		this.props.block.content.sort(column, sort);
 		this.saveContent();
 	};
 

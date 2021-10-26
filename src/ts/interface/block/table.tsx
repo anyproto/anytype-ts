@@ -30,7 +30,12 @@ export interface ContentTable {
 	sortType: I.SortType;
 	rows: TableRow[];
 
-	sort?: () => void;
+	fill?: () => void;
+	sort?: (column: number, sort: I.SortType) => void;
+	columnAdd?: (index: number, dir: number) => void;
+	columnRemove?: (index: number) => void;
+	rowAdd?: (index: number, dir: number) => void;
+	rowRemove?: (index: number) => void;
 };
 
 export interface BlockTable extends I.Block {
