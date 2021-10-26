@@ -56,8 +56,6 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			let cn = [ 'item' ];
 			let name = DataUtil.fileName(item);
 
-			console.log(item);
-
 			switch (item.layout) {
 				case I.ObjectLayout.File:
 					cn.push('isFile');
