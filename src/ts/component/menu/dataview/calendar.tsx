@@ -58,7 +58,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 								menuClassName="orange" 
 								menuClassNameWrap={classNameWrap}
 								menuWidth={192} 
-								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), true, false); }} 
+								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
 							/>
 						</div>
 						<div className="side right">
@@ -71,7 +71,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 								menuClassNameWrap={classNameWrap}
 								menuWidth={144} 
 								horizontal={I.MenuDirection.Right}
-								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), true, false); }} 
+								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
 							/>
 						</div>
 					</div>
