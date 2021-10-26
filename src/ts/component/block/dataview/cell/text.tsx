@@ -59,7 +59,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let EditorComponent = null;
 		let value = record[relation.relationKey];
 
-		if (relation.format == I.RelationType.Date) {
+		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
 			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 		} else {
 			value = String(value || '');
@@ -226,17 +226,19 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const cell = $(`#${id}`);
 
 		if (isEditing) {
-			let length = String(this.value || '').length;
-
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
 				this.value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
+			};
+			if (relation.format == I.RelationType.Number) {
+				this.value = DataUtil.formatRelationValue(relation, this.value, true);
 			};
 
 			if (this.ref) {
 				this.ref.setValue(this.value);
 
 				if (this.ref.setRange) {
+					let length = String(this.value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};
@@ -297,6 +299,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			if (onChange) {
 				onChange(value, () => {
 					menuStore.closeAll(Constant.menuIds.cell);
+
 					this.range = null;
 					this.setState({ isEditing: false });
 				});

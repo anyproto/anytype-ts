@@ -43,6 +43,11 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				cn.push('isHidden');
 			};
 
+			let name = item.name || DataUtil.defaultName('page');
+			if (item.layout == I.ObjectLayout.Note) {
+				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+			};
+
 			return (
 				<div 
 					id={'item-' + item.id} 
@@ -59,7 +64,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 							<Handle />
 							<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<div className="name">{name}</div>
 							</span>
 							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 						</React.Fragment>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { detailStore } from 'ts/store';
-import { Util } from 'ts/lib';
+import { I, DataUtil, Util } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { IconObject } from 'ts/component';
 
@@ -27,6 +27,11 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 			object = elementMapper(relation, object);
 		};
 
+		let name = object.name || DataUtil.defaultName('page');
+		if (object.layout == I.ObjectLayout.Note) {
+			name = object.snippet ? object.snippet : <span className="empty">Empty</span>;
+		};
+
 		return (
 			<div 
 				className={[ 'element', (object.isHidden ? 'isHidden' : '') ].join(' ')} 
@@ -34,7 +39,7 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 			>
 				<div className="flex">
 					<IconObject object={object} size={iconSize} />
-					<div className="name">{Util.shorten(object.name, 32)}</div>
+					<div className="name">{name}</div>
 				</div>
 			</div>
 		);
