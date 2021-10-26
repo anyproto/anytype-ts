@@ -1,6 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, Util, Storage, Mark } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
+import { DataUtil } from '../lib';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -469,10 +470,15 @@ class BlockStore {
 					continue;
 				};
 
-				if (old != object.name) {
-					const d = String(old || '').length - String(object.name || '').length;
+				let name = (object.name || DataUtil.defaultName('page'));
+				if (object.layout == I.ObjectLayout.Note) {
+					name = object.snippet || name;
+				};
 
-					text = Util.stringInsert(text, object.name, mark.range.from, mark.range.to);
+				if (old != name) {
+					const d = String(old || '').length - String(name || '').length;
+
+					text = Util.stringInsert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;
