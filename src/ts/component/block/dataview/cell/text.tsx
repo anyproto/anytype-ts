@@ -216,29 +216,27 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		this.value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 	};
 
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
-
 	componentDidUpdate () {
 		const { isEditing } = this.state;
 		const { id, relation, cellPosition } = this.props;
 		const cell = $(`#${id}`);
 
 		if (isEditing) {
+			let value = this.value;
+
 			if (relation.format == I.RelationType.Date) {
 				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
-				this.value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
+				value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
 			};
 			if (relation.format == I.RelationType.Number) {
-				this.value = DataUtil.formatRelationValue(relation, this.value, true);
+				value = DataUtil.formatRelationValue(relation, this.value, true);
 			};
 
 			if (this.ref) {
-				this.ref.setValue(this.value);
+				this.ref.setValue(value);
 
 				if (this.ref.setRange) {
-					let length = String(this.value || '').length;
+					let length = String(value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};
@@ -260,6 +258,10 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		};
 	};
 
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
 	onSelect (e: any) {
 		this.range = {
 			from: e.currentTarget.selectionStart,
@@ -278,6 +280,10 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		if (canEdit && (v != isEditing)) {
 			this.setState({ isEditing: v });
 		};
+	};
+
+	onChange (v: any) {
+		this.value = v;
 	};
 
 	onKeyUp (e: any, value: string) {
