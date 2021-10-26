@@ -78,7 +78,6 @@ class Storage {
 			'tabIndex', 
 			'tabStore', 
 			'linkSettings', 
-			'popupIntroBlock',
 			'graph',
 		];
 
