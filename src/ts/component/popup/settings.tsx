@@ -653,6 +653,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		popupStore.open('confirm',{
 			data: {
 				title: 'Are you sure?',
+				text: 'All encrypted files that have been successfully backed up to anytype cafe servers will be offloaded from your device. You will need an internet connection to download them again.',
 				textConfirm: 'Yes',
 				onConfirm: () => {
 					this.setState({ loading: true });
