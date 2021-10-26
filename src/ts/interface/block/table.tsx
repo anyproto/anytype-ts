@@ -37,7 +37,8 @@ export interface ContentTable {
 	rowAdd?: (index: number, dir: number) => void;
 	rowRemove?: (index: number) => void;
 
-	getCellProperty?: (row: number, column: number, k: string) => string;
+	setCellProperty?: (row: number, column: number, k: string, v: any) => void;
+	getCellProperty?: (row: number, column: number, k: string) => any;
 	calcCellValue?: (value: string) => any;
 };
 

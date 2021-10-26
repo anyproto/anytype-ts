@@ -147,15 +147,20 @@ class BlockContentTable implements I.ContentTable {
 		this.rows.splice(index, 1);
 	};
 
+	setCellProperty (row: number, column: number, k: string, v: any) {
+		return this.rows[row].cells[column][k] = v;
+	};
+
 	getCellProperty (row: number, column: number, k: string): any {
-		return this.rows[row].cells[column][k];
+		return this.rows[row]?.cells[column][k];
 	};
 
 	calcCellValue (value: string) {
 		value = String(value || '');
-		const match = value.match(/^=([A-Z]+)\(([^\)]+)\)/i);
 
 		let ret = value;
+		let match = value.match(/^=([A-Z]+)\(([^\)]+)\)/i);
+
 		if (match) {
 			let f = match[1];
 			let a = match[2];
@@ -182,8 +187,6 @@ class BlockContentTable implements I.ContentTable {
 
 		return ret;
 	};
-
-
 
 };
 

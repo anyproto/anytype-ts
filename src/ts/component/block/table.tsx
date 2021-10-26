@@ -297,10 +297,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	getLength (row: number, column: number) {
-		const { block } = this.props;
-		const { rows } = block.content;
-
-		return Number(rows[row]?.cells[column]?.value.length) || 0;
+		return String(this.getProperty(row, column, 'value') || '').length;
 	};
 
 	focusApply () {
@@ -356,16 +353,18 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let r = row;
 		let c = column;
 
+		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright, backspace', e, (pressed: string) => {
+			this.saveValue(row, column, value);
+		});
+
 		keyboard.shortcut('arrowup', e, (pressed: string) => {
 			e.preventDefault();
-
 			r--;
 			this.setEditing(r, c, range);
 		});
 
 		keyboard.shortcut('arrowdown', e, (pressed: string) => {
 			e.preventDefault();
-
 			r++;
 			this.setEditing(r, c, range);
 		});
@@ -375,7 +374,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			if (range.from != length) {
 				return;
 			};
-
 			if (!isLastCol) {
 				c++;
 			} else {
@@ -434,22 +432,22 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 	columnAdd (index: number, dir: number) {
 		this.props.block.content.columnAdd(index, dir);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	columnRemove (index: number) {
 		this.props.block.content.columnRemove(index);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	rowAdd (index: number, dir: number) {
 		this.props.block.content.rowAdd(index, dir);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	rowRemove (index: number) {
 		this.props.block.content.rowRemove(index);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	fillRow (row: I.TableRow) {
@@ -463,20 +461,19 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 	};
 
 	saveValue (row: number, column: number, value: string) {
-		const { rootId, block } = this.props;
-		const { rows } = block.content;
-
-		rows[row] = this.fillRow(rows[row]);
-		rows[row].cells[column].value = value;
-
-		C.BlockUpdateContent({ ...block }, rootId, block.id);
+		this.props.block.content.setCellProperty(row, column, 'value', value);
+		this.saveContent(false);
 	};
 
-	saveContent () {
+	saveContent (update: boolean) {
 		const { rootId, block } = this.props;
 
-		blockStore.update(rootId, { ...block, content: { ...block.content } });
-		C.BlockUpdateContent({ ...block }, rootId, block.id, () => { this.forceUpdate(); });
+		blockStore.update(rootId, { ...block });
+		C.BlockUpdateContent({ ...block }, rootId, block.id, () => { 
+			if (update) {
+				this.forceUpdate(); 
+			};
+		});
 	};
 
 	getValue (obj: any): string {
@@ -544,7 +541,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		$('body').removeClass('colResize');
 
 		keyboard.setResize(false);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	onOptions (e: any, key: Key, row: number, column: number) {
@@ -763,7 +760,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 				break;
 		};
 
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	alignIcon (v: I.TableAlign): string {
@@ -794,7 +791,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		});
 
 		this.preventSelect(false);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	onSortEndRow (result: any) {
@@ -804,7 +801,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		block.content.rows = arrayMove(block.content.rows, oldIndex, newIndex);
 
 		this.preventSelect(false);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	onSort (e: any, column: number, sort: I.SortType) {
@@ -812,7 +809,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		e.stopPropagation();
 
 		this.props.block.content.sort(column, sort);
-		this.saveContent();
+		this.saveContent(true);
 	};
 
 	preventSelect (v: boolean) {
