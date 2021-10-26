@@ -63,7 +63,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { filter, loading } = this.state;
 		const tabs = this.getTabs();
 		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
-		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0
+		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0;
+		const { allowSpaces } = config;
 
 		if (!element) {
 			return null;
@@ -255,7 +256,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			{ id: I.TabIndex.Set, name: 'Sets', load: true },
 		];
 
-		if (config.experimental) {
+		if (config.allowSpaces) {
 			tabs.push({ id: I.TabIndex.Space, name: 'Spaces', load: true });
 			tabs.push({ id: I.TabIndex.Shared, name: 'Shared', load: true });
 		};
@@ -747,12 +748,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived } = object;
+					const { name, isArchived, isDeleted } = object;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					return !isArchived;
+					return !isArchived && !isDeleted;
 				}).map((it: any) => {
 					if (tab == I.TabIndex.Recent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });

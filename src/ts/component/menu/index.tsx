@@ -598,7 +598,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			this.close();
 		});
 
-		if (!this.ref.getItems) {
+		if (!this.ref || !this.ref.getItems) {
 			return;
 		};
 

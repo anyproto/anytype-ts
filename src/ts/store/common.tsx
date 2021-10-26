@@ -33,7 +33,7 @@ class CommonStore {
     public filterObj: Filter = { from: 0, text: '' };
     public gatewayUrl: string = '';
     public previewObj: Preview = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
-    public configObj:any = {};
+    public configObj: any = {};
     public cellId: string = '';
 
     constructor() {
@@ -168,7 +168,7 @@ class CommonStore {
 	};
 
 	configSet (config: any, force: boolean) {
-		console.log('[commonStore.configSet]', config);
+		console.log('[commonStore.configSet]', JSON.stringify(config, null, 3), force);
 
 		let newConfig: any = {};
 

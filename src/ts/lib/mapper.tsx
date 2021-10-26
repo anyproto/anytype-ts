@@ -15,7 +15,9 @@ const Mapper = {
 		},
 
 		AccountConfig: (obj: any): I.AccountConfig => {
-			return {};
+			return {
+				allowSpaces: obj.getEnablespaces(),
+			};
 		},
 		
 		ObjectInfo: (obj: any): I.PageInfo => {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListObjectPreview, ListObject, Select } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListObjectPreview, ListObject, Select, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, analytics } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -13,11 +13,12 @@ interface Props extends RouteComponentProps<any> {
 }
 
 interface State {
-	templates: any[];
-}
+	isDeleted: boolean;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
@@ -42,7 +43,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	page: number = 0;
 
 	state = {
-		templates: [],
+		isDeleted: false,
 	};
 
 	constructor (props: any) {
@@ -58,6 +59,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
@@ -294,7 +299,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					history.push('/main/index');
+				};
 				return;
 			};
 

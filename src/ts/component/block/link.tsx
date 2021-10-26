@@ -12,7 +12,6 @@ import LinkCard from './link/card';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const $ = require('jquery');
-const raf = require('raf');
 
 const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 	
@@ -58,9 +57,9 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		} else 
 		if (isDeleted) {
 			element = (
-				<div className="deleted">
+				<div className="deleted" onClick={this.onClick}>
 					<Icon className="ghost" />
-					<div className="name">Deleted</div>
+					<div className="name">{translate('commonDeleted')}</div>
 				</div>
 			);
 		} else {

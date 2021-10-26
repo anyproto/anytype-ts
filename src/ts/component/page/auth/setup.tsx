@@ -155,6 +155,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	add () {
 		const { history, match } = this.props;
 		const { name, icon, code, phrase } = authStore;
+
+		Storage.delete('popupIntroBlock');
 		
 		C.AccountCreate(name, icon, code, (message: any) => {
 			if (message.error.code) {

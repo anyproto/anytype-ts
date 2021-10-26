@@ -15,6 +15,7 @@
 	"commonSubmit": { "en": "Submit" },
 	"commonValue": { "en": "Value" },
 	"commonProgress": { "en": "Processing..." },
+	"commonDeleted": { "en": "Non-existent object" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },

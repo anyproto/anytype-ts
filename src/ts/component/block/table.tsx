@@ -17,7 +17,6 @@ interface Focus {
 	range: I.TextRange;
 };
 
-const formulajs = require('@formulajs/formulajs');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
