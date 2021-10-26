@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, DataUtil } from 'ts/lib';
+import { I, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
@@ -134,6 +134,10 @@ class DetailStore {
 			object.iconImage = '';
 
 			name = object.snippet;
+		};
+
+		if (object.isDeleted) {
+			name = translate('commonDeleted');
 		};
 
 		return {

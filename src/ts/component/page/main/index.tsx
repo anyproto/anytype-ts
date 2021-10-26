@@ -748,12 +748,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived } = object;
+					const { name, isArchived, isDeleted } = object;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					return !isArchived;
+					return !isArchived && !isDeleted;
 				}).map((it: any) => {
 					if (tab == I.TabIndex.Recent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
