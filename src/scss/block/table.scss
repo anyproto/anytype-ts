@@ -21,7 +21,7 @@
 			cursor: grab !important; background: $colorLightGrey; transition: $transitionFast; @include text-very-small;
 			color: $colorBlack; text-align: center; display: flex; align-items: center; font-weight: 400;
 		}
-		.handleRow:hover, .handleColumn:hover { background: $colorMediumGrey; }
+		.handleRow:hover, .handleColumn:hover { background: #d9d8ce; }
 
 		.handleRow, .handleColumn {
 			.txt { width: 100%; }
