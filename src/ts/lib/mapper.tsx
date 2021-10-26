@@ -172,12 +172,12 @@ const Mapper = {
 			};
 
 			if (type == I.BlockType.Table) {
-				item.content = {
+				item.content = new M.BlockContentTable({
 					columnCount: content.getColumncount(),
 					sortIndex: content.getSortindex(),
 					sortType: content.getSorttype(),
 					rows: (content.getRowsList() || []).map(Mapper.From.TableRow),
-				};
+				});
 			};
 	
 			return item;

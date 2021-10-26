@@ -68,10 +68,14 @@
 
 			.icon.arrow { 
 				width: 20px; height: 20px; position: absolute; right: 0px; top: 0px; background-image: url('~img/arrow/select/dark.svg');
-				cursor: pointer; z-index: 1;
+				cursor: pointer; z-index: 1; opacity: 0; transform: rotateZ(180deg);
 			}
-			.icon.arrow.c1 { transform: rotateZ(180deg); }
+			.icon.arrow.c1 { transform: none; }
+			.icon.arrow.show { opacity: 1; }
 		}
 		.cell.isEditing { z-index: 2; }
+		.cell:hover {
+			.icon.arrow { opacity: 1; }
+		}
 	}
 }

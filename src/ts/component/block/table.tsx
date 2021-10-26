@@ -111,8 +111,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 			const isEditing = this.isEditing && (item.row.id == this.focusObj.row) && (item.id == this.focusObj.column);
 			
 			let nextSort: I.SortType = I.SortType.Asc;
+			let acn = [ 'arrow'];
+
 			if (sortIndex == item.id) {
+				acn.push('c' + sortType);
+				acn.push('show');
 				nextSort = sortType == I.SortType.Asc ? I.SortType.Desc : I.SortType.Asc;
+			} else {
+				acn.push('c' + I.SortType.Asc);
 			};
 
 			if (isEditing) {
@@ -133,7 +139,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 
 			const arrow = (
 				<Icon 
-					className={[ 'arrow', 'c' + nextSort ].join(' ')} 
+					className={acn.join(' ')} 
 					onClick={(e: any) => { this.onSort(e, item.id, nextSort); }}
 				/>
 			);
@@ -894,27 +900,14 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, {}> 
 		let { rootId, block } = this.props;
 		let { rows } = block.content;
 
-		if (rows.length) {
-			rows[0].isHead = true;
-			rows = block.content.rows.sort((c1: any, c2: any) => {
-				const v1 = c1.cells[column].value;
-				const v2 = c2.cells[column].value;
-	
-				if (c1.isHead && !c2.isHead) return -1;
-				if (!c1.isHead && c2.isHead) return 1;
-				if (v1 > v2) return sort == I.SortType.Asc ? 1 : -1;
-				if (v1 < v2) return sort == I.SortType.Asc ? -1 : 1;
-				return 0;
-			});
-		};
+		block.content.sortIndex = column;
+		block.content.sortType = sort;
+		block.content.sort();
 
 		blockStore.update(rootId, { 
 			...block, 
 			content: { 
 				...block.content,
-				sortIndex: column, 
-				sortType: sort,
-				rows: rows,
 			},
 		});
 

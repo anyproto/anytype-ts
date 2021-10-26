@@ -19,6 +19,7 @@ export interface TableCell {
 
 export interface TableRow {
 	cells: TableCell[];
+	isHead?: boolean;
 
 	fill?: (columnCount: number) => TableRow;
 };
@@ -28,6 +29,8 @@ export interface ContentTable {
 	sortIndex: number;
 	sortType: I.SortType;
 	rows: TableRow[];
+
+	sort?: () => void;
 };
 
 export interface BlockTable extends I.Block {

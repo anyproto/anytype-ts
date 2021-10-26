@@ -28,6 +28,7 @@ class TableCell implements I.TableCell {
 class TableRow implements I.TableRow {
 	
 	cells: TableCell[] = [];
+	isHeader: boolean = false;
 	
 	constructor (props: I.TableRow) {
 		let self = this;
@@ -67,12 +68,39 @@ class BlockContentTable implements I.ContentTable {
 
 		self.rows = (props.rows || []).map((it: I.TableRow) => { return new TableRow(it); });
 
+		this.sort();
+
 		makeObservable(self, {
 			columnCount: observable,
 			rows: observable,
 		});
 
 		intercept(self as any, (change: any) => { return Util.intercept(self, change); });
+	};
+
+	sort () {
+		if (!this.rows.length) {
+			return;
+		};
+
+		this.rows[0].isHead = true;
+		this.rows.sort((c1: any, c2: any) => {
+			const v1 = c1.cells[this.sortIndex].value;
+			const v2 = c2.cells[this.sortIndex].value;
+
+			if (c1.isHead && !c2.isHead) return -1;
+			if (!c1.isHead && c2.isHead) return 1;
+			
+			if (this.sortType == I.SortType.Asc) {
+				if (v1 < v2) return -1;
+				if (v1 > v2) return 1;
+			} else {
+				if (v1 < v2) return 1;
+				if (v1 > v2) return -1;
+			};
+			return 0;
+		});
+
 	};
 
 };
