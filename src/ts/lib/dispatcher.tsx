@@ -192,7 +192,7 @@ class Dispatcher {
 					break;
 
 				case 'accountConfigUpdate':
-					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), false);
+					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					break;
 
 				case 'threadStatus':
