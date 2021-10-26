@@ -36,7 +36,7 @@
 	.menu.menuBlockRelationView { width: auto; }
 	.menu.menuBlockRelationView {
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
-		.input { @include text-common; line-height: 22px; vertical-align: top; display: inline-block; height: 22px; padding: 0px; border: 0px; padding: 0px; }
+		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 20px; padding: 0px; border: 0px; padding: 0px; }
 
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
