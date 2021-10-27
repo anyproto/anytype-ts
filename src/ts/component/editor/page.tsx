@@ -1223,8 +1223,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			}
 		};
 
-		console.log(JSON.stringify(data, null, 3));
-		
 		const cb = (message: any) => {
 			const blocks = (message.anySlot || []).map(Mapper.From.Block);
 

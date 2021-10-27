@@ -338,7 +338,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('click.object mouseenter.object');
+		items.unbind('click.object mouseenter.object mouseleave.object');
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -355,6 +355,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				item.addClass('disabled');
 			};
 		});
+
+		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
 			
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
