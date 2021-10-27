@@ -36,6 +36,7 @@
 		.item.add {
 			.clickable { width: 100%; display: block; }
 		}
+		.item.add:hover::before { background: rgba(172, 169, 150, 0.1); }
 	}
 
 	.menu.menuDataviewObjectValues.fromFilter {

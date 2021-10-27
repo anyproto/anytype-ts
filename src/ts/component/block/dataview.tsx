@@ -10,6 +10,7 @@ import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
+import { commonStore } from '../../store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 

@@ -72,6 +72,15 @@ const ExportTemplates = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request('exportTemplates', request, callBack);
 };
 
+const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ExportLocalstore.Request();
+
+	request.setPath(path);
+	request.setDocidsList(ids);
+
+	dispatcher.request('exportLocalstore', request, callBack);
+};
+
 const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
@@ -1172,6 +1181,7 @@ export {
 	ProcessCancel,
 	Export,
 	ExportTemplates,
+	ExportLocalstore,
 	FileListOffload,
 
 	WalletCreate,

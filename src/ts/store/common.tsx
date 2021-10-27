@@ -93,7 +93,7 @@ class CommonStore {
 	};
 
 	get type(): string {
-		return String(Storage.get('defaultType') || Constant.typeId.note);
+		return String(Storage.get('defaultType') || Constant.typeId.page);
 	};
 
 	get pinTime(): number {

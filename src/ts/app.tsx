@@ -631,6 +631,27 @@ class App extends React.Component<Props, State> {
 					});
 				});
 				break;
+
+			case 'exportLocalstore':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.ExportLocalstore(files[0], [], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
+				break;
 		};
 	};
 

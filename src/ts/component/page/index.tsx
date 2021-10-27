@@ -275,17 +275,11 @@ class Page extends React.Component<Props, {}> {
 		const { isPopup } = this.props;
 		const { config } = commonStore;
 		const platform = Util.getPlatform();
-		const version = process.getSystemVersion();
 		const cn = [ 
 			this.getClass('body'), 
 			Util.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
-		const a = version.split('.');
-
-		if (a.length) {
-			cn.push('version' + a[0]);
-		};
 
 		if (config.debug.ui) {
 			cn.push('debug');

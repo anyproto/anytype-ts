@@ -39,8 +39,23 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 
 		const Row = (item: any) => {
 			const author = detailStore.get(rootId, item.creator, []);
+			const cn = [ 'row' ];
+
+			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
+				cn.push('isDone');
+			};
+			if (item.isArchived) {
+				cn.push('isArchived');
+			};
+			if (item.isDeleted) {
+				cn.push('isDeleted');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+
 			return (
-				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
+				<tr className={cn.join(' ')}>
 					<td className="cell">
 						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 							<div className="flex">

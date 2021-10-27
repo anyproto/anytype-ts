@@ -198,7 +198,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this._isMounted = true;
 
 		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
-			this.onSource();
+			window.setTimeout(() => { this.onSource(); }, Constant.delay.menu);
 		};
 	};
 
@@ -347,7 +347,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
+		const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => { return it.id; });
 
 		let menuId = '';
 		let menuParam = {
@@ -377,9 +377,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);
 						this.menuContext.close();
+					},
+					dataSort: (c1: any, c2: any) => {
+						let i1 = types.indexOf(c1.id);
+						let i2 = types.indexOf(c2.id);
+
+						if (i1 > i2) return 1;
+						if (i1 < i2) return -1;
+						return 0;
 					}
 				});
 				break;
+
 			case 'setOpenMenu':
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {

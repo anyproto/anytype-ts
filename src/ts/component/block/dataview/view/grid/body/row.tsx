@@ -29,6 +29,12 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		if ((record.layout == I.ObjectLayout.Task) && record.done) {
 			cn.push('isDone');
 		};
+		if (record.isArchived) {
+			cn.push('isArchived');
+		};
+		if (record.isDeleted) {
+			cn.push('isDeleted');
+		};
 		
 		return (
 			<div id={'row-' + index} className={cn.join(' ')} style={style}>

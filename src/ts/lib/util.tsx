@@ -948,17 +948,9 @@ class Util {
 
 	sizeHeader (): number {
 		const platform = this.getPlatform();
-		const version = process.getSystemVersion();
-		
-		let a = version.split('.');
-		let v = a.length ? a[0] : '';
-
-		let s = 38;
+		let s = 52;
 		if (platform == I.Platform.Windows) {
 			s = 68;
-		};
-		if ((platform == I.Platform.Mac) && (v == '11')) {
-			s = 52;
 		};
 		return s;
 	};

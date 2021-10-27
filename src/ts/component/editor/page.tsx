@@ -1222,7 +1222,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				blocks: blocks, 
 			}
 		};
-		
+
 		const cb = (message: any) => {
 			const blocks = (message.anySlot || []).map(Mapper.From.Block);
 

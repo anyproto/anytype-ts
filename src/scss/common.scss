@@ -33,7 +33,7 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0s; }
 input, textarea, select { font-family: 'Inter'; }
 
-#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 38px; z-index: -1; user-select: none; pointer-events: all; }
+#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
 #drag {
 	.sides { display: none; }
 }
@@ -43,10 +43,6 @@ input, textarea, select { font-family: 'Inter'; }
 		width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100% 100%; 
 		position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -60px; transition: opacity 0.5s ease-in-out;
 	}
-}
-
-html.platformMac.version11 {
-	#drag { height: 52px; }
 }
 
 html.platformWindows {

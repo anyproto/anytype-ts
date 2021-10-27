@@ -36,7 +36,7 @@
 	.menu.menuBlockRelationView { width: auto; }
 	.menu.menuBlockRelationView {
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
-		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 20px; padding: 0px; border: 0px; padding: 0px; }
+		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 21px; padding: 0px; border: 0px; padding: 0px; }
 
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
@@ -67,6 +67,9 @@
 			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
 
 			.cellContent { min-height: 22px; }
+			.cellContent {
+				.name { line-height: 22px; }
+			}
 
 			.cell { 
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 

@@ -84,7 +84,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		for (let mark of marks) {
-			if (mark.type == I.MarkType.Mention) {
+			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = detailStore.get(rootId, mark.param, []);
 			};
 		};
@@ -337,7 +337,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('click.object mouseenter.object');
+		items.unbind('click.object mouseenter.object mouseleave.object');
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -354,17 +354,31 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				item.addClass('disabled');
 			};
 		});
+
+		items.on('mouseleave.object', function (e: any) { Util.tooltipHide(false); });
 			
 		items.on('mouseenter.object', function (e: any) {
 			const el = $(this);
 			const data = el.data();
 			const range = data.range.split('-');
+			const object = detailStore.get(rootId, data.param, []);
+			
+			let tt = '';
+			if (object.isArchived) {
+				tt = translate('commonArchived');
+			};
+			if (object.isDeleted) {
+				tt = translate('commonDeleted');
+			};
+
+			if (tt) {
+				Util.tooltipShow(tt, el, I.MenuDirection.Center, I.MenuDirection.Top);
+				return;
+			};
 
 			if (!data.param || el.hasClass('disabled')) {
 				return;
 			};
-
-			const object = detailStore.get(rootId, data.param, []);
 
 			el.on('click.object', function (e: any) {
 				e.preventDefault();
@@ -599,12 +613,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
 			e.preventDefault();
 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
+
+			ret = true;
 		});
 
 		keyboard.shortcut('tab', e, (pressed: string) => {
