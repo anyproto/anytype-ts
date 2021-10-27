@@ -113,12 +113,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
     getTree () {
-        const edges = this.data.edges.map((edge: any) => {
+        let edges = this.data.edges.map((edge: any) => {
             edge.target = this.data.nodes.find((node: any) => { return node.id == edge.target; });
             return edge;
         });
+		edges = edges.filter((edge: any) => { return edge.type == I.EdgeType.Link; });
 
-        const nodes = this.data.nodes.map((node: any) => {
+        let nodes = this.data.nodes.map((node: any) => {
             node.children = edges.filter((edge: any) => {
                 return edge.source == node.id;
             }).map((edge: any) => { 
