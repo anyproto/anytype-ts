@@ -233,7 +233,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					{tabs}
 
 					{loading ? 
-						<Loader />
+						<Loader id="loader" />
 					: (
 						<div className="items">
 							<InfiniteLoader

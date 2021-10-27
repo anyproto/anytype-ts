@@ -43,7 +43,7 @@ class PopupTemplate extends React.Component<Props, State> {
 		const length = items.length;
 
 		if (loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		return (

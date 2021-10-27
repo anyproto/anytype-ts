@@ -140,7 +140,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		return (
 			<div className="wrap">
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 				
 				<form id="head" className="head" onSubmit={this.onSubmit}>
 					 <Icon key="icon-search" className="search" />

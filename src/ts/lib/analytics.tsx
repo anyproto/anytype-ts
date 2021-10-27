@@ -8,7 +8,11 @@ const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
-const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template', 'tab', 'document', 'page' ];
+const KEYS = [ 
+	'cmd', 'id', 'action', 'style', 'code', 
+	'type', 'objectType', 'layout', 'template', 
+	'tab', 'document', 'page', 'count'
+];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
 
 class Analytics {
@@ -138,6 +142,10 @@ class Analytics {
 			case 'PopupPage':
 				param.page = data.matchPopup.params.page;
 				param.action = data.matchPopup.params.action;
+				break;
+
+			case 'ObjectListDelete':
+				param.count = data.getObjectidsList().length;
 				break;
 		};
 

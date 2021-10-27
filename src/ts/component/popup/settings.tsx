@@ -439,7 +439,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		return (
 			<div className={'tab ' + Util.toCamelCase('tab-' + page)}>
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 				{content}
 			</div>
 		);
