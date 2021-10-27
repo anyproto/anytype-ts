@@ -2,7 +2,7 @@
 
 .pageMainMedia {
 
-	.blocks { margin: 0px auto; padding: 60px 0px; display: flex; }
+	.blocks { margin: 0px auto; padding: 74px 0px 60px 0px; display: flex; }
 	.blocks {
 		.side.right { padding-top: 25px; }
 	}
@@ -74,7 +74,3 @@
 }
 
 .pageMainMedia > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
-
-html.platformMac.headerBig {
-	.pageMainMedia .blocks { padding-top: 74px; }
-}

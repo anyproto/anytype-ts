@@ -6,11 +6,11 @@
 
 		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; }
-		.innerWrap { top: 38px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
+		.innerWrap { top: 52px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
 		.dimmer { transition: none; }
 
 		.head { 
-			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
+			height: 28px; position: fixed; top: -40px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
 			transform: translateX(-50%); padding: 4px 8px; -webkit-app-region: no-drag;
 		}
 		.head {
@@ -69,14 +69,5 @@
 html.platformWindows {
 	.popups {
 		.popup.popupSearch .innerWrap { top: 68px; }
-	}
-}
-
-html.platformMac.headerBig {
-	.popups {
-		.popup.popupSearch {
-			.innerWrap { top: 52px; }
-			.head { top: -40px; }
-		}
 	}
 }

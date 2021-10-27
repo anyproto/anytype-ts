@@ -154,15 +154,10 @@
 }
 
 html.platformMac {
-	.header {
-		.side.left { left: 88px; }
-	}
-}
-
-html.platformMac.headerBig {
 	.header { height: 52px !important; line-height: 28px; }
 	.header {
 		.side { top: 12px; }
+		.side.left { left: 88px; }
 		.side .item { vertical-align: middle; display: inline-block; }
 	}
 }
