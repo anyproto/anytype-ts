@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select } from 'ts/component';
-import { I, C, Storage, translate, Util, DataUtil } from 'ts/lib';
+import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -413,7 +412,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="Default Object type" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={types} value={commonStore.type} onChange={(id: string) => { commonStore.typeSet(id); }}/>
+								<Select id="defaultType" options={types} value={commonStore.type} onChange={(id: string) => { this.onTypeChange(id); }}/>
 							</div>
 						</div>
 
@@ -680,6 +679,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				}, 
 			}
 		});
+	};
+
+	onTypeChange (id: string) {
+		commonStore.typeSet(id);
+		analytics.event('DefaultTypeChanged', { objectType: id });
 	};
 
 	init () {
