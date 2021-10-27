@@ -85,7 +85,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		};
 
 		for (let mark of marks) {
-			if (mark.type == I.MarkType.Mention) {
+			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = detailStore.get(rootId, mark.param, []);
 			};
 		};

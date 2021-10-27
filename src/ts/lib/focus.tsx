@@ -34,6 +34,11 @@ class Focus {
 			},
 		};
 
+		console.log(range.from, range.to);
+		if (!range.from && !range.to) {
+			console.trace();
+		};
+
 		this.backup = Util.objectCopy(this.state);
 		return this;
 	};
