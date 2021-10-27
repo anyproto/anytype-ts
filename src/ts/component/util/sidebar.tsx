@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil } from 'ts/lib';
-import { IconObject } from 'ts/component';
+import { IconObject, Icon } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 
@@ -11,6 +12,8 @@ interface State {
 	loading: boolean;
 };
 
+const raf = require('raf');
+const $ = require('jquery');
 const Constant = require('json/constant.json');
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
@@ -30,12 +33,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         let depth = 0;
 
         const Item = (item: any) => {
+			let style: any = {};
             let name: any = item.name || DataUtil.defaultName('page');
+			let length = item.children.length;
+
 			if (!item.name && (item.layout == I.ObjectLayout.Note)) {
 				name = <div className="empty">Empty</div>;
 			};
-
-            let style: any = {};
+            
             if (item.depth == 0) {
                 style.paddingLeft = 14;
                 style.paddingRight = 14;
@@ -45,17 +50,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
             };
 
             return (
-                <div className={[ 'item', 'depth' + item.depth ].join(' ')}>
+                <div id={`item-${item.id}-${item.depth}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
                     <div className="flex" style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
                         <IconObject object={...item} />
                         <div className="name">{name}</div>
+						{length ? <Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} /> : ''}
                     </div>
 
-                    <div className="children">
-                        {item.children.map((child: any, i: number) => (
-                            <Item key={child.id + '-' + item.depth} {...child} depth={item.depth + 1} />
-                        ))}
-                    </div>
+					{length ? (
+						<div id={`children-${item.id}-${item.depth}`} className="children">
+							{item.children.map((child: any, i: number) => (
+								<Item key={child.id + '-' + item.depth} {...child} depth={item.depth + 1} />
+							))}
+						</div>
+					) : ''}
                 </div>
             );
         };
@@ -110,6 +118,43 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 			this.setState({ loading: false });
 		});
+	};
+
+	toggle (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const el = node.find(`#item-${item.id}-${item.depth}`);
+		const children = el.find(`#children-${item.id}-${item.depth}`);
+
+		console.log(children);
+
+		let height = 0;
+
+		if (el.hasClass('active')) {
+			el.removeClass('active');
+			height = children.height();
+			children.css({ overflow: 'hidden', height: height });
+
+			raf(() => {
+				children.css({ height: 0 });
+			});
+		} else {
+			el.addClass('active');
+
+			children.css({ overflow: 'visible', height: 'auto' });
+
+			height = children.height();
+			children.css({ overflow: 'hidden', height: 0 });
+			raf(() => {
+				children.css({ height: height });
+
+				window.setTimeout(() => {
+					children.css({ overflow: 'visible', height: 'auto' });
+				}, 200);
+			});
+		};
 	};
 
     getTree () {

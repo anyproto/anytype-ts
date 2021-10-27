@@ -17,6 +17,13 @@
         .flex:hover::before { background: rgba(172, 169, 150, 0.1); }
 
         .iconObject { flex-shrink: 0; margin-right: 6px; }
-        .name { @include text-overflow-nw; display: inline-block; }
+        .name { @include text-overflow-nw; display: inline-block; width: calc(100% - 24px); }
+        .icon.arrow { 
+            margin: -10px 0px 0px 0px; right: 10px; width: 20px; height: 20px; position: absolute; top: 50%;
+            background-image: url('~img/arrow/select/dark.svg'); 
+        }
+
+        .children { overflow: hidden; height: 0px; transition: height 0.2s ease-in-out; }
     }
+    .item.active > .flex > .icon.arrow { transform: rotate(180deg); }
 }
