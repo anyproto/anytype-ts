@@ -57,7 +57,7 @@ const BlockLink = observer(class BlockLink extends React.Component<Props, {}> {
 		} else 
 		if (isDeleted) {
 			element = (
-				<div className="deleted" onClick={this.onClick}>
+				<div className="deleted">
 					<Icon className="ghost" />
 					<div className="name">{translate('commonDeleted')}</div>
 				</div>
