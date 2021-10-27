@@ -17,11 +17,13 @@ interface State {
 	filter: string;
 	pages: any[];
 	n: number;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+
 const HEIGHT = 32;
+const LIMIT = 14;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
@@ -205,6 +207,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.setState({ pageId: rootId });
 		this.load();
 		this.rebind();
+		this.resize();
 
 		focus.clear(true);
 	};
@@ -235,6 +238,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		this.resize();
 	};
 	
 	componentWillUnmount () {
@@ -518,6 +523,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				C.BlockCreate(newBlock, item.id, '', position);
 				break;
 		};
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { getId } = this.props;
+		const items = this.getItems();
+		const obj = $(`#${getId()} .content`);
+		const height = Math.max(100, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+
+		obj.css({ height: height });
 	};
 
 });
