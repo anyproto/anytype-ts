@@ -96,28 +96,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 	getItems () {
 		const { filter } = this.state;
-		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
-
-		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			return [ Constant.typeId.note, Constant.typeId.page, Constant.typeId.set ].indexOf(it.id) < 0;
-		});
-		let page = dbStore.getObjectType(Constant.typeId.page);
-		let note = dbStore.getObjectType(Constant.typeId.note);
-		let set = dbStore.getObjectType(Constant.typeId.set);
-
-		items.sort(DataUtil.sortByName);
-
-		if (set) {
-			items.unshift(set);
-		};
-
-		if (object.type == Constant.typeId.note) {
-			items.unshift(page);
-		} else {
-			items.unshift(note);
-		};
-
+		
+		let items = DataUtil.getObjectTypesForNewObject();
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 

@@ -616,21 +616,42 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 
-	menuGetBlockObject () {
+	getObjectTypesForNewObject () {
 		const { config } = commonStore;
-		
+
+		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
+			return [ Constant.typeId.note, Constant.typeId.page, Constant.typeId.set ].indexOf(it.id) < 0;
+		});
+		if (!config.debug.ho) {
+			items = items.filter((it: I.ObjectType) => { return !it.isHidden; })
+		};
+		let page = dbStore.getObjectType(Constant.typeId.page);
+		let note = dbStore.getObjectType(Constant.typeId.note);
+		let set = dbStore.getObjectType(Constant.typeId.set);
+
+		items.sort(this.sortByName);
+
+		if (set) {
+			items.unshift(set);
+		};
+
+		if (commonStore.type == Constant.typeId.note) {
+			items.unshift(page);
+		} else {
+			items.unshift(note);
+		};
+
+		return items;
+	};
+
+	menuGetBlockObject () {
 		let ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
+		let items = this.getObjectTypesForNewObject();
 
-		let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
-		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
-		};
-		objectTypes.sort(this.sortByName);
-
-		for (let type of objectTypes) {
+		for (let type of items) {
 			ret.push({ 
 				type: I.BlockType.Page, 
 				id: 'object' + i++, 

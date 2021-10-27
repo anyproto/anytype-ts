@@ -198,7 +198,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this._isMounted = true;
 
 		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
-			this.onSource();
+			window.setTimeout(() => { this.onSource(); }, Constant.delay.menu);
 		};
 	};
 
