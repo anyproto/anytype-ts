@@ -210,7 +210,7 @@ function createWindow () {
 		param.icon = path.join(__dirname, '/electron/icon.icns');
 
 		const a = systemVersion.split('.');
-		if (a.length && (a[0] == 11)) {
+		if (a.length && (a[0] >= 11)) {
 			param.trafficLightPosition = { x: 20, y: 18 };
 		} else {
 			param.trafficLightPosition = { x: 20, y: 10 };

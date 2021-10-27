@@ -283,8 +283,8 @@ class Page extends React.Component<Props, {}> {
 		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
 		const a = version.split('.');
 
-		if (a.length) {
-			cn.push('version' + a[0]);
+		if (a.length && a[0] >= 11) {
+			cn.push('headerBig');
 		};
 
 		if (config.debug.ui) {

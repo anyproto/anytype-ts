@@ -957,7 +957,7 @@ class Util {
 		if (platform == I.Platform.Windows) {
 			s = 68;
 		};
-		if ((platform == I.Platform.Mac) && (v == '11')) {
+		if ((platform == I.Platform.Mac) && (v >= 11)) {
 			s = 52;
 		};
 		return s;
