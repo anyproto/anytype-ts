@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup } from 'ts/lib';
 import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -248,7 +248,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	onClick (e: any, item: any) {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
@@ -293,6 +293,9 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		if (item.id == Constant.typeId.set) {
 			C.ObjectToSet(rootId, [], (message: any) => {
+				if (isPopup) {
+					historyPopup.clear();
+				};
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 			});
 		} else {
