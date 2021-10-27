@@ -217,14 +217,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const selectWrap = node.find('#selectWrap');
 		const header = node.find('#header');
 		const hh = Util.sizeHeader();
+		const oy = list.offset().top;
+		const menu = $('#menuSelect.add');
+		const offsetTitle = 256;
 
 		if (!list.length) {
 			return;
 		};
-
-		const oy = list.offset().top;
-		const menu = $('#menuSelect.add');
-		const offsetTitle = 256;
 
 		let yt = 0;
 		if (oy - top <= offsetTitle) {
@@ -241,6 +240,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				list.removeClass('selectFixed');
 				selectWrap.css({ top: '' });
 			};
+		} else {
+			header.removeClass('selectFixed');
+			list.removeClass('selectFixed');
 		};
 
 		title.css({ transform: `translate3d(0px,${yt}px,0px)` });
@@ -416,7 +418,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
-		this.onScroll();
 	};
 
 	selectionRender () {
@@ -443,6 +444,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selected.forEach((id: string) => {
 			node.find(`#item-${id}`).addClass('isSelected');
 		});
+
+		this.onScroll();
 	};
 
 	onSelectionDelete (e: any) {
