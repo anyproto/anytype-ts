@@ -612,6 +612,10 @@ function menuInit () {
 					click: () => { send('command', 'exportTemplates'); }
 				},
 				{
+					label: 'Export localstore',
+					click: () => { send('command', 'exportLocalstore'); }
+				},
+				{
 					label: 'Create workspace',
 					click: () => { send('commandGlobal', 'workspace');	}
 				},
