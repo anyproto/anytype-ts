@@ -160,7 +160,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			highlight = { id: 'highlight', name: 'Highlight' };
 		};
 
-		if (!config.sudo) {
+		if (!config.allowSpaces) {
 			share = null;
 			highlight = null;
 		};
