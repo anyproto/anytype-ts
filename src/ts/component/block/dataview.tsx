@@ -10,6 +10,7 @@ import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
+import { commonStore } from '../../store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
@@ -197,7 +198,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					const ref = this.cellRefs.get(id);
 
 					if (ref && (view.type == I.ViewType.Grid)) {
-						window.setTimeout(() => { ref.onClick(e); });
+						window.setTimeout(() => { ref.onClick(e); }, 15);
 					};
 				};
 

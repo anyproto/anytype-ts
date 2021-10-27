@@ -43,23 +43,23 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{item.name}</div>
+				<div className="name">{DataUtil.fileName(item)}</div>
 			</React.Fragment>
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
+			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => { position(); }} />
 		);
 
         const Item = SortableElement((item: any) => {
 			let content = null;
 			let cn = [ 'item' ];
-			let name = DataUtil.fileName(item);
 
 			switch (item.layout) {
+				default:
 				case I.ObjectLayout.File:
 					cn.push('isFile');
-					content = <File {...item} name={name} />;
+					content = <File {...item} />;
 					break;
 
 				case I.ObjectLayout.Image:

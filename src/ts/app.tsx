@@ -34,6 +34,7 @@ import 'scss/component/tag.scss';
 import 'scss/component/dragLayer.scss';
 import 'scss/component/selection.scss';
 import 'scss/component/loader.scss';
+import 'scss/component/deleted.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/tooltip.scss';
@@ -622,6 +623,27 @@ class App extends React.Component<Props, State> {
 					};
 
 					C.ExportTemplates(files[0], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						ipcRenderer.send('pathOpen', files[0]);
+					});
+				});
+				break;
+
+			case 'exportLocalstore':
+				options = { 
+					properties: [ 'openDirectory' ],
+				};
+
+				dialog.showOpenDialog(options).then((result: any) => {
+					const files = result.filePaths;
+					if ((files == undefined) || !files.length) {
+						return;
+					};
+
+					C.ExportLocalstore(files[0], [], (message: any) => {
 						if (message.error.code) {
 							return;
 						};

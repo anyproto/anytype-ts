@@ -42,6 +42,7 @@
 				height: 48px;
 			}
 			.row.add { border: 0px; }
+			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
 
 			.row:hover {
 				.cellContent.isName.canEdit {

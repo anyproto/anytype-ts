@@ -52,7 +52,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			<div className="body">
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 
 				<div className="wrapper">
 					<div className="side left">
@@ -117,6 +117,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
 				value: [ 

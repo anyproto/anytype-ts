@@ -114,6 +114,7 @@ Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg'
 const Home = 'img/icon/home.svg';
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
+const Ghost = require('img/icon/ghost.svg');
 
 const Color = {
 	grey:	 '#dfddd0',
@@ -152,7 +153,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const { className, size, canEdit, forceLetter } = this.props;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
+		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
 		
 		if (className) {
@@ -253,6 +254,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={Home} className={icn.join(' ')} />;
 				break;
+		};
+
+		if (isDeleted) {
+			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icon = <img src={Ghost} className={icn.join(' ')} />;
 		};
 
 		if (!icon) {

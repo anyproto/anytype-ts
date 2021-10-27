@@ -7,9 +7,9 @@
 
 		.placeholder { display: none; overflow: hidden; }
 
-		lnk, obj { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
-		
 		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: rgba(172,169,150,0.1); }
+
+		.disabled { color: $colorMediumGrey; opacity: 1 !important; }
 
 		smile {
 			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: middle; }
@@ -24,6 +24,9 @@
 			name { display: none; }
 		}
 
+		lnk, obj { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
+		lnk.disabled, obj.disabled { border-width: 0px; }
+
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
 		mention {
@@ -31,6 +34,9 @@
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
 			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorMediumGrey; }
+		}
+		mention.disabled {
+			name { border-width: 0px; }
 		}
 
 		mention.withImage {

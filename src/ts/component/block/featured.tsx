@@ -19,6 +19,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	_isMounted: boolean = false;
 	cellRefs: Map<string, any> = new Map();
+	menuContext: any = null;
+	setId: string = '';
 
 	public static defaultProps = {
 		iconSize: 24,
@@ -30,6 +32,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onType = this.onType.bind(this);
+		this.onTypeOver = this.onTypeOver.bind(this);
+		this.onTypeSelect = this.onTypeSelect.bind(this);
 		this.onSource = this.onSource.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -194,7 +198,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this._isMounted = true;
 
 		if ((object.layout == I.ObjectLayout.Set) && !setOf.length) {
-			this.onSource();
+			window.setTimeout(() => { this.onSource(); }, Constant.delay.menu);
 		};
 	};
 
@@ -294,116 +298,26 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
 		const options: any[] = [
 			{ id: 'open', name: 'Open type' }
 		];
-		const subIds = [ 'searchObject' ];
-		const type: any = dbStore.getObjectType(object.type);
-		
 		if (!readonly && allowed) {
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
-
-		let setId = '';
-		let menuContext = null;
 
 		const showMenu = () => {
 			menuStore.open('select', { 
 				element: `#block-${block.id} #${DataUtil.cellId(PREFIX, Constant.relationKey.type, 0)}`,
 				offsetY: 8,
-				subIds: subIds,
+				subIds: Constant.menuIds.featuredType,
 				onOpen: (context: any) => {
-					menuContext = context;
+					this.menuContext = context;
 				},
 				data: {
 					options: options,
 					noClose: true,
-					onSelect: (e: any, el: any) => {
-						menuStore.closeAll(subIds);
-
-						let close = true;
-
-						switch (el.id) {
-							case 'open':
-								DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
-								break;
-
-							case 'change':
-								window.setTimeout(() => {
-									menuStore.open('searchObject', {
-										element: `#menuSelect #item-${el.id}`,
-										className: 'big single',
-										vertical: I.MenuDirection.Center,
-										offsetX: menuContext.getSize().width,
-										isSub: true,
-										data: {
-											rebind: menuContext.ref.rebind,
-											isBig: true,
-											rootId: rootId,
-											blockId: block.id,
-											blockIds: [ block.id ],
-											placeholder: 'Change object type',
-											placeholderFocus: 'Change object type',
-											filters: [
-												{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
-											],
-											onSelect: (item: any) => {
-												C.BlockObjectTypeSet(rootId, item.id);
-												menuContext.close();
-											}
-										}
-									});
-								}, Constant.delay.menu);
-
-								close = false;
-								break;
-
-							case 'setOpenMenu':
-								window.setTimeout(() => {
-									menuStore.open('searchObject', {
-										element: `#menuSelect #item-${el.id}`,
-										className: 'big single',
-										vertical: I.MenuDirection.Center,
-										offsetX: menuContext.getSize().width,
-										isSub: true,
-										data: {
-											rebind: menuContext.ref.rebind,
-											isBig: true,
-											rootId: rootId,
-											blockId: block.id,
-											blockIds: [ block.id ],
-											filters: [
-												{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.type, condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-												{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.setOf, condition: I.FilterCondition.In, value: [ object.type ] }
-											],
-											onSelect: (item: any) => {
-												DataUtil.objectOpenPopup({ id: item.id, layout: I.ObjectLayout.Set });
-												menuContext.close();
-											}
-										}
-									});
-								}, Constant.delay.menu);
-
-								close = false;
-								break;
-	
-							case 'setOpen':
-								DataUtil.objectOpenPopup({ id: setId, layout: I.ObjectLayout.Set });
-								break;
-	
-							case 'setCreate':
-								C.SetCreate([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
-									if (!message.error.code) {
-										DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
-									};
-								});
-								break;
-						};
-
-						if (close) {
-							menuContext.close();
-						};
+					onSelect: (e: any, item: any) => {
+						item.arrow ? this.onTypeOver(e, item) : this.onTypeSelect(e, item);
 					},
 				},
 			});
@@ -411,7 +325,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		DataUtil.checkSetCnt([ object.type ], (message: any) => {
 			if (message.records.length == 1) {
-				setId = message.records[0].id;
+				this.setId = message.records[0].id;
 				options.push({ id: 'setOpen', name: 'Open set' });
 			} else 
 			if (message.records.length == 2) {
@@ -422,6 +336,104 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 			showMenu();
 		});
+	};
+
+	onTypeOver (e: any, item: any) {
+		const { rootId, block } = this.props;
+
+		if (!item.arrow) {
+			menuStore.closeAll(Constant.menuIds.featuredType);
+			return;
+		};
+
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => { return it.id; });
+
+		let menuId = '';
+		let menuParam = {
+			element: `#${this.menuContext.getId()} #item-${item.id}`,
+			offsetX: this.menuContext.getSize().width,
+			className: 'big single',
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			data: {
+				isBig: true,
+				rootId: rootId,
+				blockId: block.id,
+				blockIds: [ block.id ],
+				rebind: this.menuContext.ref.rebind,
+			}
+		};
+
+		switch (item.id) {
+			case 'change':
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					placeholder: 'Change object type',
+					placeholderFocus: 'Change object type',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
+					],
+					onSelect: (item: any) => {
+						C.BlockObjectTypeSet(rootId, item.id);
+						this.menuContext.close();
+					},
+					dataSort: (c1: any, c2: any) => {
+						let i1 = types.indexOf(c1.id);
+						let i2 = types.indexOf(c2.id);
+
+						if (i1 > i2) return 1;
+						if (i1 < i2) return -1;
+						return 0;
+					}
+				});
+				break;
+
+			case 'setOpenMenu':
+				menuId = 'searchObject';
+				menuParam.data = Object.assign(menuParam.data, {
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.type, condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: Constant.relationKey.setOf, condition: I.FilterCondition.In, value: [ object.type ] }
+					],
+					onSelect: (item: any) => {
+						DataUtil.objectOpenPopup({ id: item.id, layout: I.ObjectLayout.Set });
+						this.menuContext.close();
+					}
+				});
+		};
+
+		if (menuId) {
+			menuStore.closeAll(Constant.menuIds.featuredType, () => {
+				menuStore.open(menuId, menuParam);
+			});
+		};
+	};
+
+	onTypeSelect (e: any, item: any) {
+		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const type: any = dbStore.getObjectType(object.type);
+
+		this.menuContext.close();
+
+		switch (item.id) {
+			case 'open':
+				DataUtil.objectOpenPopup({ id: object.type, layout: I.ObjectLayout.Type });
+				break;
+
+			case 'setOpen':
+				DataUtil.objectOpenPopup({ id: this.setId, layout: I.ObjectLayout.Set });
+				break;
+
+			case 'setCreate':
+				C.SetCreate([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
+					if (!message.error.code) {
+						DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
+					};
+				});
+				break;
+		};
 	};
 
 	onSource () {

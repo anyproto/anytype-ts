@@ -160,7 +160,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			highlight = { id: 'highlight', name: 'Highlight' };
 		};
 
-		if (!config.sudo) {
+		if (!config.allowSpaces) {
 			share = null;
 			highlight = null;
 		};
@@ -425,7 +425,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, getId, history } = this.props;
 		const { data } = param;
-		const { blockId, rootId, onSelect } = data;
+		const { blockId, rootId, onSelect, isPopup } = data;
 		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
@@ -493,11 +493,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
 					};
 					
-					if (prev) {
-						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
-						DataUtil.objectOpen(object);
+					if (!isPopup) {
+						if (prev) {
+							const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
+							DataUtil.objectOpen(object);
+						} else {
+							history.push('/main/index');
+						};
 					} else {
-						history.push('/main/index');
+						popupStore.close('page');
 					};
 				});
 				break;
@@ -524,8 +528,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			case 'remove':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
-					if (block.isPage()) {
-						history.push('/main/index');
+					if (!isPopup) {
+						if (block.isPage()) {
+							history.push('/main/index');
+						};
+					} else {
+						popupStore.close('page');
 					};
 				});
 				break;

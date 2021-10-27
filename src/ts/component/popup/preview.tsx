@@ -28,7 +28,7 @@ class PopupPreview extends React.Component<Props, {}> {
 		
 		return (
 			<div>
-				<Loader />
+				<Loader id="loader" />
 				<div id="wrap" className="wrap">
 					{content}
 				</div>

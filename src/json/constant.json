@@ -79,6 +79,9 @@
 		],
 		"viewEdit": [ 
 			"select" 
+		],
+		"featuredType": [
+			"searchObject"
 		]
 	},
 
@@ -95,6 +98,7 @@
 		"isHidden", 
 		"isArchived", 
 		"isReadonly", 
+		"isDeleted",
 		"done", 
 		"fileExt", 
 		"fileMimeType" 

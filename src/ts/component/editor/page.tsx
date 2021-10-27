@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Block, Icon, Loader } from 'ts/component';
+import { Block, Icon, Loader, Deleted } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, dispatcher } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
@@ -15,6 +15,10 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup: boolean;
 	onOpen?(): void;
+};
+
+interface State {
+	isDeleted: boolean;
 };
 
 const { ipcRenderer } = window.require('electron');
@@ -29,7 +33,7 @@ const userPath = app.getPath('userData');
 const THROTTLE = 20;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(class EditorPage extends React.Component<Props, {}> {
+const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	id: string = '';
@@ -43,6 +47,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	loading: boolean = false;
 	width: number = 0;
 	refHeader: any = null;
+
+	state = {
+		isDeleted: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -60,10 +68,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
-		
+
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -222,6 +234,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate(() => { history.push('/main/index'); });
+				} else 
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
 				} else {
 					history.push('/main/index');
 				};
@@ -1207,7 +1222,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 				blocks: blocks, 
 			}
 		};
-		
+
 		const cb = (message: any) => {
 			const blocks = (message.anySlot || []).map(Mapper.From.Block);
 
@@ -1306,7 +1321,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, {}> 
 		const match = data.text.match(reg);
 		const url = match && match[0];
 		
-		if (url && !force && !block.isTextTitle() && !block.isTextDescription()) {
+		if (block && url && !force && !block.isTextTitle() && !block.isTextDescription()) {
 			menuStore.open('select', { 
 				element: `#block-${focused}`,
 				offsetX: Constant.size.blockMenu,

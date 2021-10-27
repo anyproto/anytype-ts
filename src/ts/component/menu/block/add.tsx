@@ -577,15 +577,23 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
-						DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), (message: any) => {
-							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-
-							analytics.event('ObjectCreate', {
-								objectType: item.objectTypeId,
-								layout: template?.layout,
-								template: (template && template.templateIsBundled ? template.id : 'custom'),
+						if (type && (type.id == Constant.typeId.set)) {
+							C.SetCreate([], {}, '', (message: any) => {
+								if (!message.error.code) {
+									DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
+								};
 							});
-						});
+						} else {
+							DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), (message: any) => {
+								DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+	
+								analytics.event('ObjectCreate', {
+									objectType: item.objectTypeId,
+									layout: template?.layout,
+									template: (template && template.templateIsBundled ? template.id : 'custom'),
+								});
+							});
+						};
 					};
 
 					const showMenu = () => {

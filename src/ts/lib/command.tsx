@@ -72,6 +72,15 @@ const ExportTemplates = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request('exportTemplates', request, callBack);
 };
 
+const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ExportLocalstore.Request();
+
+	request.setPath(path);
+	request.setDocidsList(ids);
+
+	dispatcher.request('exportLocalstore', request, callBack);
+};
+
 const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
@@ -922,6 +931,10 @@ const SetCreate = (sources: string[], details: any, templateId: string, callBack
 
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
+
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
@@ -1168,6 +1181,7 @@ export {
 	ProcessCancel,
 	Export,
 	ExportTemplates,
+	ExportLocalstore,
 	FileListOffload,
 
 	WalletCreate,

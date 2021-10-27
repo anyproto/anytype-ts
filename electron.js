@@ -208,13 +208,7 @@ function createWindow () {
 	if (process.platform == 'darwin') {
 		app.dock.setIcon(image);
 		param.icon = path.join(__dirname, '/electron/icon.icns');
-
-		const a = systemVersion.split('.');
-		if (a.length && (a[0] == 11)) {
-			param.trafficLightPosition = { x: 20, y: 18 };
-		} else {
-			param.trafficLightPosition = { x: 20, y: 10 };
-		};
+		param.trafficLightPosition = { x: 20, y: 18 };
 	};
 
 	if (process.platform == 'win32') {
@@ -616,6 +610,10 @@ function menuInit () {
 				{
 					label: 'Export templates',
 					click: () => { send('command', 'exportTemplates'); }
+				},
+				{
+					label: 'Export localstore',
+					click: () => { send('command', 'exportLocalstore'); }
 				},
 				{
 					label: 'Create workspace',

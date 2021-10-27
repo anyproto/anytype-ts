@@ -112,9 +112,9 @@ class Cell extends React.Component<Props, {}> {
 			<div id={elementId} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
+					{...this.props} 
 					id={id} 
 					key={id}
-					{...this.props} 
 					canEdit={canEdit}
 					relation={relation}
 					onChange={this.onChange} 
@@ -187,8 +187,13 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.cellId = '';
 			cell.removeClass('isEditing');
 
-			if (this.ref && this.ref.setEditing) {
-				this.ref.setEditing(false);
+			if (this.ref) {
+				if (this.ref.onBlur) {
+					this.ref.onBlur();
+				};
+				if (this.ref.setEditing) {
+					this.ref.setEditing(false);
+				};
 			};
 			if (menuId) {
 				$(scrollContainer).removeClass('overMenu');

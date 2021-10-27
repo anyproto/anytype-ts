@@ -208,6 +208,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { onChange } = data;
 
 		const cb = (id: string, name: string) => {
+			name = String(name || DataUtil.defaultName('page'));
+
 			let from = filter.from;
 			let to = from + name.length + 1;
 			let marks = Util.objectCopy(data.marks || []);
@@ -223,12 +225,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			C.PageCreate({ name: filter.text }, (message: any) => {
+			C.PageCreate({ type: commonStore.type, name: filter.text }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				cb(message.pageId, (name || DataUtil.defaultName('page')));
+				cb(message.pageId, filter.text);
 			});
 		} else {
 			cb(item.id, item.name);

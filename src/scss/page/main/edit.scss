@@ -1,10 +1,6 @@
 @import "~scss/_vars";
 
 .pageMainEdit {
-	.wrapper { padding: 38px 0px 0px 0px; }
+	.wrapper { padding: 52px 0px 0px 0px; }
 	.wrapper > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
-}
-
-html.platformMac.version11 {
-	.pageMainEdit .wrapper { padding-top: 52px; }
 }

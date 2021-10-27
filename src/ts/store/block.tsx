@@ -1,6 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, Util, Storage, Mark } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
+import { DataUtil } from '../lib';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -462,17 +463,22 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ Constant.relationKey.name ], true);
+				const object = detailStore.get(rootId, mark.param, []);
 				const old = text.substr(from, to - from);
 
 				if (object._empty_) {
 					continue;
 				};
 
-				if (old != object.name) {
-					const d = String(old || '').length - String(object.name || '').length;
+				let name = (object.name || DataUtil.defaultName('page'));
+				if (object.layout == I.ObjectLayout.Note) {
+					name = object.snippet || name;
+				};
 
-					text = Util.stringInsert(text, object.name, mark.range.from, mark.range.to);
+				if (old != name) {
+					const d = String(old || '').length - String(name || '').length;
+
+					text = Util.stringInsert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;
@@ -503,7 +509,7 @@ class BlockStore {
 			return;
 		};
 
-		const cnt = object.type == Constant.typeId.note ? 3 : 2;
+		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
 		const checkType = object.type == commonStore.type;
 		const checkBlocks = checkType && (root.childrenIds.length <= cnt);
 
