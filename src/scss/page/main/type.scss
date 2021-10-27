@@ -87,6 +87,8 @@
 
 		table { width: 100%; border-collapse: collapse; border-bottom: 1px solid $colorLightGrey; table-layout: fixed; border-top: 1px solid $colorLightGrey; }
 		table {
+			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
+
 			.cellHead { 
 				text-align: left; color: $colorVeryDarkGrey; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
 				@include text-overflow-nw;
