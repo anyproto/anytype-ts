@@ -14,6 +14,7 @@ interface State {
 }
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
@@ -157,6 +158,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 		const { name, icon, code, phrase } = authStore;
 
 		Storage.delete('popupIntroBlock');
+		commonStore.typeSet(Constant.typeId.note);
 		
 		C.AccountCreate(name, icon, code, (message: any) => {
 			if (message.error.code) {
