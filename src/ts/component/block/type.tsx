@@ -97,7 +97,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	getItems () {
 		const { filter } = this.state;
 		
-		let items = DataUtil.getObjectTypesForNewObject();
+		let items = DataUtil.getObjectTypesForNewObject(true);
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 

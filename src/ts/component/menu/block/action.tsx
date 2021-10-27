@@ -344,7 +344,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; }); 
+		const types = DataUtil.getObjectTypesForNewObject(false).map((it: I.ObjectType) => { return it.id; }); 
 
 		setActive(item, false);
 
@@ -413,6 +413,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onSelect: (item: any) => {
 						this.moveToPage(item.id);
 						close();
+					},
+					dataSort: (c1: any, c2: any) => {
+						let i1 = types.indexOf(c1.id);
+						let i2 = types.indexOf(c2.id);
+
+						if (i1 > i2) return 1;
+						if (i1 < i2) return -1;
+						return 0;
 					}
 				});
 				break;

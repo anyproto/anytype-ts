@@ -616,7 +616,7 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 
-	getObjectTypesForNewObject () {
+	getObjectTypesForNewObject (withSet: boolean) {
 		const { config } = commonStore;
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
@@ -631,16 +631,17 @@ class DataUtil {
 
 		items.sort(this.sortByName);
 
-		if (set) {
+		if (withSet && set) {
 			items.unshift(set);
 		};
 
-		if (commonStore.type == Constant.typeId.note) {
-			items.unshift(page);
-		} else {
-			items.unshift(note);
+		if (page && note) {
+			if (commonStore.type == Constant.typeId.note) {
+				items = [ page, note ].concat(items);
+			} else {
+				items = [ note, page ].concat(items);
+			};
 		};
-
 		return items;
 	};
 
@@ -649,7 +650,7 @@ class DataUtil {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
-		let items = this.getObjectTypesForNewObject();
+		let items = this.getObjectTypesForNewObject(true);
 
 		for (let type of items) {
 			ret.push({ 

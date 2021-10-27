@@ -385,11 +385,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
-				const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => {
+				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
 					it.layout = I.ObjectLayout.Type;
 					return { ...it, object: it };
 				});
-				types.sort(DataUtil.sortByName);
 
 				const times: any[] = [
 					{ id: 60 },
