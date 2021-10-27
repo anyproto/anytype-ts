@@ -360,12 +360,24 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			const el = $(this);
 			const data = el.data();
 			const range = data.range.split('-');
+			const object = detailStore.get(rootId, data.param, []);
+			
+			let tt = '';
+			if (object.isArchived) {
+				tt = translate('commonArchived');
+			};
+			if (object.isDeleted) {
+				tt = translate('commonDeleted');
+			};
+
+			if (tt) {
+				Util.tooltipShow(tt, el, I.MenuDirection.Center, I.MenuDirection.Top);
+				return;
+			};
 
 			if (!data.param || el.hasClass('disabled')) {
 				return;
 			};
-
-			const object = detailStore.get(rootId, data.param, []);
 
 			el.on('click.object', function (e: any) {
 				e.preventDefault();
