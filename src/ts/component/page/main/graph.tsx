@@ -52,7 +52,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			<div className="body">
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 
 				<div className="wrapper">
 					<div className="side left">
