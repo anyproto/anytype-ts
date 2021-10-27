@@ -335,7 +335,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		keyboard.setFocus(true);
 	};
 
-	onBlur (e: any) {
+	onBlur () {
 		let { relation, onChange, index, getRecord } = this.props;
 		let value = this.ref.getValue();
 		let record = getRecord(index);

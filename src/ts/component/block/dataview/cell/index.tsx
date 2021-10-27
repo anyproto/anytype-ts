@@ -187,8 +187,13 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.cellId = '';
 			cell.removeClass('isEditing');
 
-			if (this.ref && this.ref.setEditing) {
-				this.ref.setEditing(false);
+			if (this.ref) {
+				if (this.ref.onBlur) {
+					this.ref.onBlur();
+				};
+				if (this.ref.setEditing) {
+					this.ref.setEditing(false);
+				};
 			};
 			if (menuId) {
 				$(scrollContainer).removeClass('overMenu');
