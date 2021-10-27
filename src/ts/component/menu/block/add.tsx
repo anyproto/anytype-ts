@@ -573,7 +573,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					const type = dbStore.getObjectType(item.objectTypeId);
 					if (type) {
 						details.type = type.id;
-						details.layout = type.layout;
+						details.layout = type.recommendedLayout;
 					};
 
 					const create = (template: any) => {
