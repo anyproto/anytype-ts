@@ -471,7 +471,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'history':
-				history.push('/main/history/' + blockId);
+				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'copy':

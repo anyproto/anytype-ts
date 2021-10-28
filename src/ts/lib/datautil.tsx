@@ -456,7 +456,7 @@ class DataUtil {
 				},
 			},
 		});
-		
+
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		popupStore.open('page', param);
@@ -475,6 +475,7 @@ class DataUtil {
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
+			case I.ObjectLayout.History:	 r = 'history'; break;
 		};
 		return r;
 	};

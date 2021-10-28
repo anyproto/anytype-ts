@@ -7,6 +7,7 @@ import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	isPopup: boolean;
 }
 
@@ -14,7 +15,7 @@ interface State {
 	versions: I.HistoryVersion[];
 	loading: boolean;
 	isDeleted: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -46,7 +47,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	render () {
 		const { match } = this.props;
 		const { versions, isDeleted } = this.state;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const groups = this.groupData(versions);
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -276,7 +277,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	loadList (lastId: string) { 
 		const { history, match } = this.props;
 		const { versions, loading } = this.state;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		
 		if (loading || (this.lastId && (lastId == this.lastId))) {
 			return;
@@ -304,7 +305,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
   
 	loadVersion (id: string) {
 		const { history, match } = this.props;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 
 		C.HistoryShow(rootId, id, (message: any) => {
 			if (message.error.code) {
@@ -408,6 +409,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 	getWrapperWidth (): number {
 		return Constant.size.editor;
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
 	};
 
 });
