@@ -577,22 +577,24 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					};
 
 					const create = (template: any) => {
+						const cb = (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
+
+							analytics.event('ObjectCreate', {
+								objectType: item.objectTypeId,
+								layout: template?.layout,
+								template: (template && template.templateIsBundled ? template.id : 'custom'),
+							});
+						};
+
 						if (type && (type.id == Constant.typeId.set)) {
-							C.SetCreate([], {}, '', (message: any) => {
-								if (!message.error.code) {
-									DataUtil.objectOpenPopup({ id: message.id, layout: I.ObjectLayout.Set });
-								};
-							});
+							C.BlockCreateSet(rootId, blockId, [], {}, position, cb);
 						} else {
-							DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), (message: any) => {
-								DataUtil.objectOpenPopup({ ...details, id: message.targetId });
-	
-								analytics.event('ObjectCreate', {
-									objectType: item.objectTypeId,
-									layout: template?.layout,
-									template: (template && template.templateIsBundled ? template.id : 'custom'),
-								});
-							});
+							DataUtil.pageCreate(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), cb);
 						};
 					};
 
