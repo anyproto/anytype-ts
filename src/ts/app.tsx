@@ -399,7 +399,6 @@ class App extends React.Component<Props, State> {
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
 
-			popupStore.closeAll();
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
