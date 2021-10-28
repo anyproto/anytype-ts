@@ -403,7 +403,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] }
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
