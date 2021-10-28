@@ -59,7 +59,12 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 						<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
 						<Select id={[ 'filter', 'type', item.id ].join('-')} className="grey" options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
 					</div>
-					{allowedView ? <Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} /> : ''}
+					{allowedView ? (
+						<div className="buttons">
+							<Icon className="more" onClick={(e: any) => { this.onClick(e, item); }} />
+							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
+						</div>
+					) : ''}
 				</div>
 			);
 		});
@@ -154,6 +159,27 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 
 		return DataUtil.getRelationOptions(rootId, blockId, getView());
+	};
+
+	onClick (e: any, item: any) {
+		const { param, getId } = this.props;
+		const { data } = param;
+
+		menuStore.open('select', {
+			element: `#${getId()} #item-${item.id}`,
+			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
+			data: {
+				...data,
+				options: this.getRelationOptions(),
+				value: item.relationKey,
+				save: this.save,
+				itemId: item.id,
+				onSelect: (e: any, el: any) => {
+					this.onChange(item.id, 'relationKey', el.id);
+				}
+			}
+		});
 	};
 
 	onAdd (e: any) {
