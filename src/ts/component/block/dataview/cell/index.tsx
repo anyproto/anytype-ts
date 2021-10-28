@@ -19,6 +19,7 @@ interface Props extends I.Cell {
 	showTooltip?: boolean;
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
+	maxWidth?: number;
 	optionCommand?: (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) => void;
 };
 
@@ -145,7 +146,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
@@ -157,9 +158,13 @@ class Cell extends React.Component<Props, {}> {
 
 		const win = $(window);
 		const cell = $(`#${cellId}`).addClass('isEditing');
-		const width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.edit);
 		const value = record[relation.relationKey] || '';
 		const height = cell.outerHeight();
+
+		let width = cell.outerWidth();
+		if (undefined !== maxWidth) {
+			width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.edit);
+		};
 
 		if (cellPosition) {
 			cellPosition(cellId);
