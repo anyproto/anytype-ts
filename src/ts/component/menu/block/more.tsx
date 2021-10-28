@@ -495,8 +495,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					
 					if (!isPopup) {
 						if (prev) {
-							const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
-							DataUtil.objectOpen(object);
+							history.entries = [];
+							history.index = -1;
+
+							DataUtil.objectOpen(detailStore.get(breadcrumbs, prev.content.targetBlockId, []));
 						} else {
 							history.push('/main/index');
 						};
