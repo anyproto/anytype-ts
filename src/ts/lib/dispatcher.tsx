@@ -548,6 +548,8 @@ class Dispatcher {
 						if ((undefined !== details.layout) && (block.layout != details.layout)) {
 							blockStore.update(rootId, { id: rootId, layout: details.layout });
 						};
+
+						blockStore.checkDraft(rootId);
 					};
 					break;
 
