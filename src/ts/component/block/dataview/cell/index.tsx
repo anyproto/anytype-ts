@@ -163,7 +163,7 @@ class Cell extends React.Component<Props, {}> {
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
-			width = Math.max(cell.outerWidth(), Constant.size.dataview.cell.edit);
+			width = Math.max(cell.outerWidth(), maxWidth);
 		};
 
 		if (cellPosition) {
