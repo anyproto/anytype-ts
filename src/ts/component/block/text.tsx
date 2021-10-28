@@ -614,7 +614,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
