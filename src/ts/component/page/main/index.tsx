@@ -366,6 +366,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	setFilter (v: string) {
+		if (this.state.filter == v) {
+			return;
+		};
+
 		if (this.refFilter) {
 			this.refFilter.setValue(v);
 		};
