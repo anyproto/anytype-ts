@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
 import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -234,10 +234,15 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			style: I.TextStyle.Paragraph,
 		};
 
+		this.getScrollContainer().scrollTop(0);
+		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
+
 		const create = (template: any) => {
 			const onBlock = (id: string) => {
 				focus.set(id, { from: 0, to: 0 });
 				focus.apply();
+
+				console.log('SCROLL');
 			};
 
 			const onTemplate = () => {
@@ -298,6 +303,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 	onFilterChange (e: any) {
 		this.setState({ filter: this.ref.getValue() });
+	};
+
+	getScrollContainer () {
+		const { isPopup } = this.props;
+		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 	
 });
