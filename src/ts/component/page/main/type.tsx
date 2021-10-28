@@ -354,7 +354,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 			DataUtil.objectOpenPopup(message.record, {
 				onClose: () => {
-					this.refListPreview.updateItem(message.record.id);
+					if (this.refListPreview) {
+						this.refListPreview.updateItem(message.record.id);
+					};
 				}
 			});
 		});
