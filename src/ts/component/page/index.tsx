@@ -233,8 +233,8 @@ class Page extends React.Component<Props, {}> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Anytype shared information with you',
-				text: 'New objects are syncing. You can find them in Shared tab in Home within a few minute',
+				title: 'You\'ve got shared objects!',
+				text: 'They will be accessible in the "Shared" tab in Home within a minute',
 				textConfirm: 'Ok',
 				canCancel: false,
 				onConfirm: () => {
