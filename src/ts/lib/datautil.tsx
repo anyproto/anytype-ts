@@ -484,11 +484,7 @@ class DataUtil {
 		details = details || {};
 		details.type = details.type || commonStore.type;
 		
-		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		
 		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
-			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			
 			if (message.error.code) {
 				return;
 			};
