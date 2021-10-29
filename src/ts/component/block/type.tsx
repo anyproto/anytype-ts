@@ -95,9 +95,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	getItems () {
+		const { rootId } = this.props;
 		const { filter } = this.state;
+		const object = detailStore.get(rootId, rootId, []);
 		
-		let items = DataUtil.getObjectTypesForNewObject(true);
+		let items = DataUtil.getObjectTypesForNewObject(true).filter((it: any) => { return it.id != object.type; });
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
