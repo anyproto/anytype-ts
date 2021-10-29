@@ -890,12 +890,38 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			e.preventDefault();
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(rootId, block.id, dir, (item: any) => {
-				return !item.isIcon() && !item.isTextTitle();
+			const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
+				return !it.isIcon() && !it.isTextTitle() && !it.isSystem();
 			});
-			if (next) {
-				C.BlockListMove(rootId, rootId, [ block.id ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
+
+			if (!next) {
+				return;
 			};
+
+			const element = blockStore.getMapElement(rootId, block.id);
+			const parentElement = blockStore.getMapElement(rootId, block.parentId);
+			const nextElement = blockStore.getMapElement(rootId, next.id)
+			const nextParent = blockStore.getLeaf(rootId, next.parentId);
+			const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+
+			if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
+				return;
+			};
+
+			let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
+			let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+			if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
+				position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+			};
+
+			if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
+				position = I.BlockPosition.Bottom;
+			};
+
+			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
+				focus.apply();
+			});
 		});
 
 		// Last/first block

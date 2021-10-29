@@ -241,8 +241,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			const onBlock = (id: string) => {
 				focus.set(id, { from: 0, to: 0 });
 				focus.apply();
-
-				console.log('SCROLL');
 			};
 
 			const onTemplate = () => {
