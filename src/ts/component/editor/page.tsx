@@ -1220,8 +1220,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
 
-		console.log('[onCopy] ids:', JSON.stringify(ids, null, 3));
-		
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
@@ -1231,9 +1229,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return ids.indexOf(it.id) >= 0;
 		});
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
-
-		console.log('[onCopy] tree:', tree);
-		console.log('[onCopy] blocks:', blocks);
 
 		blocks.map((it: I.Block) => {
 			if (it.type == I.BlockType.Text) {

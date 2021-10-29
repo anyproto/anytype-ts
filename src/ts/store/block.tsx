@@ -227,7 +227,7 @@ class BlockStore {
 		let blocks = this.getBlocks(rootId);
 		let childrenIds = this.getChildrenIds(rootId, id);
 		
-		let childBlocks = childrenIds.map((it: string) => {
+		return childrenIds.map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
 			if (!it) {
@@ -238,7 +238,6 @@ class BlockStore {
 			};
 			return true;
 		});
-		return childBlocks;
 	};
 
     // If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
@@ -355,21 +354,12 @@ class BlockStore {
 		return map;
 	};
 
-    getTree (rootId: string, list: I.Block[]): I.Block[] {
+    getTree (rootId: string, list: any[]): any[] {
 		list = Util.objectCopy(list || []);
-
-		let map: any = {};
-
 		for (let item of list) {
-			map[item.id] = item;
+			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
 		};
-
-		for (let item of list) {
-			map[item.id].childrenIds = this.getChildrenIds(rootId, item.id);
-			map[item.id].childBlocks = this.getChildren(rootId, item.id);
-		};
-
-		return (map[rootId] || {}).childBlocks || [];
+		return list;
 	};
 
     wrapTree (rootId: string) {
@@ -388,25 +378,19 @@ class BlockStore {
 	};
 
     unwrapTree (tree: any[]): any[] {
-		tree = tree || [];
+		tree = (tree || []).filter((it: any) => { return it; });
 
 		let ret = [] as I.Block[];
 		for (let item of tree) {
-			if (!item) {
-				continue;
-			};
-
 			let cb = item.childBlocks;
-
-			if (cb) {
-				try { delete(item.childBlocks); } catch (e) {};
-			};
 			
 			ret.push(item);
 			
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
+
+			delete(item.childBlocks);
 		};
 		return ret;
 	};
