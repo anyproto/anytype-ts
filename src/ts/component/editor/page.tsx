@@ -1430,6 +1430,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	onHistory (e: any) {
 		const { rootId } = this.props;
+
+		e.shiftKey = false;
+		e.ctrlKey = false;
+		e.metaKey = false;
+
 		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: rootId });
 	};
 

@@ -108,7 +108,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} version={this.version} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
@@ -321,6 +321,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 			dispatcher.onObjectShow(rootId, message.objectShow);
 			this.forceUpdate();
+
+			if (this.refHeader) {
+				this.refHeader.setVersion(this.version);
+			};
 		});
 	};
 	
