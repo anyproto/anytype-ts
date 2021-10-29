@@ -142,6 +142,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
 		};
 
+		if (object.type == Constant.typeId.template) {	
+			template = { id: 'createPage', icon: 'template', name: 'Create object' };
+		} else {
+			template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
+		};
+
+		if (object.id == profile) {
+			template = null;
+		};
+
 		if (object.isArchived) {
 			removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from bin' };
@@ -186,12 +196,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 		} else
 		if (block.isPage()) {
-			if (object.type == Constant.typeId.template) {	
-				template = { id: 'createPage', icon: 'template', name: 'Create object' };
-			} else {
-				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
-			};
-
 			// Restrictions
 
 			if (!block.canHaveHistory() || object.templateIsBundled) {
