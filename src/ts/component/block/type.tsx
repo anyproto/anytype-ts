@@ -239,18 +239,25 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		this.getScrollContainer().scrollTop(0);
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
 
+		let first = null;
+
 		const create = (template: any) => {
+
 			const onBlock = (id: string) => {
-				focus.set(id, { from: 0, to: 0 });
-				focus.apply();
+				if (first) {
+					const l = first.getLength();
+					
+					focus.set(first.id, { from: l, to: l });
+					focus.apply();
+				};
 			};
 
 			const onTemplate = () => {
-				const block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText() && !it.isTextTitle(); });
-				if (!block) {
+				first = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				if (!first) {
 					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
 				} else {
-					onBlock(block.id);
+					onBlock(first.id);
 				};
 			};
 
