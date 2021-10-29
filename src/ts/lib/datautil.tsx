@@ -979,6 +979,10 @@ class DataUtil {
 		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			if (!relation) {
+				return;
+			};
+
 			ret.push({ 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
