@@ -246,7 +246,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			};
 
 			const onTemplate = () => {
-				const block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				const block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText() && !it.isTextTitle(); });
 				if (!block) {
 					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
 				} else {
