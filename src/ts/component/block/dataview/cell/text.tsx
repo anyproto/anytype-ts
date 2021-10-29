@@ -324,9 +324,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 			if (onChange) {
-				onChange(this.value, () => {
-					menuStore.close(MENU_ID);
-				});
+				onChange(this.value, () => { menuStore.close(MENU_ID); });
 			};
 		});
 	};

@@ -313,6 +313,11 @@ class Cell extends React.Component<Props, {}> {
 					name = 'Call to';
 				};
 
+				if (e.shiftKey && value) {
+					const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
+					ipcRenderer.send('urlOpen', scheme + value);
+				};
+
 				param.data = Object.assign(param.data, {
 					disabled: !value, 
 					options: [
