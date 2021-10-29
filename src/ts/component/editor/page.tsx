@@ -908,6 +908,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
+			let isFirst = block.id == parentElement.childrenIds[0];
 			let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
 			let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -916,7 +917,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
-				position = I.BlockPosition.Bottom;
+				position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 			};
 
 			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
