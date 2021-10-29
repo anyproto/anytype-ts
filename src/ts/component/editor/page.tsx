@@ -504,7 +504,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
-			this.onHistory();
+			this.onHistory(e);
 		});
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
@@ -746,7 +746,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
-			this.onHistory();
+			this.onHistory(e);
 		});
 
 		// Duplicate
@@ -1428,9 +1428,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	onHistory () {
-		const { rootId, history } = this.props;
-		history.push('/main/history/' + rootId);
+	onHistory (e: any) {
+		const { rootId } = this.props;
+		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: rootId });
 	};
 
 	getLayoutIds (ids: string[]) {

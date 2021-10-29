@@ -419,7 +419,7 @@ class DataUtil {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
+		if (e.shiftKey || popupStore.isOpen('page')) {
 			this.objectOpenPopup(object);
 		} else {
 			this.objectOpen(object);
