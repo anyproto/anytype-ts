@@ -88,8 +88,9 @@
 		#selectWrap { display: none; }
 		#selectWrap {
 			.tabs { width: 100%; display: flex; padding: 0px 0px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
-			.side { width: 50%; white-space: nowrap; line-height: 44px; }
-			.side.right { text-align: right;}
+			.side { white-space: nowrap; line-height: 44px; }
+			.side.left { width: 20%; }
+			.side.right { width: 80%; text-align: right;}
 
 			.element { 
 				display: inline-block; height: 100%; line-height: 40px; vertical-align: top; padding: 0px 14px; 

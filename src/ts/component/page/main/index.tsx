@@ -78,7 +78,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			{ id: 'selectAll', icon: 'all', name: 'Select all' },
 			{ id: 'selectNone', icon: 'all', name: 'Deselect all' },
 		];
-		if (tab == I.TabIndex.Archive) {
+
+		if (tab.id == I.TabIndex.Favorite) {
+			selectionButtons = [
+				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'unfav', icon: 'unfav', name: 'Remove from favorites' },
+			].concat(selectionButtons);
+		};
+
+		if (tab.id == I.TabIndex.Archive) {
 			selectionButtons = [
 				{ id: 'delete', icon: 'delete', name: 'Delete' },
 				{ id: 'restore', icon: 'restore', name: 'Restore' },
@@ -160,7 +168,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								<div id="selectCnt" className="side left"></div>
 								<div className="side right">
 									{selectionButtons.map((item: any, i: number) => (
-										<div key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>
+										<div id={'button-' + item.id} key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>
 											<Icon className={item.icon} />
 											<div className="name">{item.name}</div>
 										</div>
@@ -429,8 +437,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#documents');
 		const cnt = node.find('#selectCnt');
-		const selectAll = node.find('#selectAll');
-		const selectNone = node.find('#selectNone');
+		const selectAll = node.find('#button-selectAll');
+		const selectNone = node.find('#button-selectNone');
 		const items = this.getList();
 		const l = this.selected.length;
 
@@ -462,6 +470,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				this.onSelectionDelete();
 				break;
 
+			case 'archive':
+				this.onSelectionArchive(true);
+				break;
+
 			case 'restore':
 				this.onSelectionArchive(false);
 				break;
@@ -478,6 +490,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 	onSelectionDelete () {
 		const l = this.selected.length;
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = items.map((it: any) => { return this.getObject(it).id; });
 
 		popupStore.open('confirm', {
 			data: {
@@ -485,7 +499,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => {
-					C.ObjectListDelete(this.selected, () => {
+					C.ObjectListDelete(ids, () => {
 						this.selected = [];
 						this.selectionRender();
 			
@@ -497,11 +511,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	onSelectionArchive (v: boolean) {
-		const items = this.getList().filter((it: any) => {
-			return this.selected.includes(it.id);
-		});
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = items.map((it: any) => { return this.getObject(it).id; });
 
-		C.ObjectListSetIsArchived(this.selected, v, () => {
+		C.ObjectListSetIsArchived(ids, v, () => {
 			items.forEach((it: any) => {
 				const object = this.getObject(it);
 				if (object.type == Constant.typeId.type) {
@@ -516,14 +529,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onSelectionAll () {
-		const items = this.getList();
-
-		this.selected = [];
-
-		items.forEach((it: any) => {
-			this.selected.push(it.id);
-		});
-
+		this.selected = this.getList().map((it: any) => { return it.id; });
 		this.selectionRender();
 	};
 
