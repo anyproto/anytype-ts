@@ -73,6 +73,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
+	
+		let selectionButtons = [
+			{ id: 'selectAll', icon: 'all', name: 'Select all' },
+			{ id: 'selectNone', icon: 'all', name: 'Deselect all' },
+		];
+		if (tab == I.TabIndex.Archive) {
+			selectionButtons = [
+				{ id: 'delete', icon: 'delete', name: 'Delete' },
+				{ id: 'restore', icon: 'restore', name: 'Restore' },
+			].concat(selectionButtons);
+		};
 
 		const TabItem = (item: any) => (
 			<div className={[ 'tab', (tab.id == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
@@ -148,25 +159,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 							<div className="tabs">
 								<div id="selectCnt" className="side left"></div>
 								<div className="side right">
-									<div className="element" onClick={this.onSelectionDelete}>
-										<Icon className="delete" />
-										<div className="name">Delete</div>
-									</div>
-									<div className="element" onClick={(e: any) => { this.onSelectionArchive(e, false); }}>
-										<Icon className="restore" />
-										<div className="name">Restore</div>
-									</div>
-									<div id="selectAll" className="element" onClick={this.onSelectionAll}>
-										<Icon className="all" />
-										<div className="name">Select all</div>
-									</div>
-									<div id="selectNone" className="element" onClick={this.onSelectionNone}>
-										<Icon className="all" />
-										<div className="name">Deselect all</div>
-									</div>
-									<div className="element" onClick={this.onSelectionClose}>
-										<Icon className="close" tooltip="Close" />
-									</div>
+									{selectionButtons.map((item: any, i: number) => (
+										<div key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>
+											<Icon className={item.icon} />
+											<div className="name">{item.name}</div>
+										</div>
+									))}
 								</div>
 							</div>
 						</div>
@@ -278,6 +276,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			id = tab.id;
 		};
 
+		this.selected = [];
 		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
@@ -415,12 +414,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 		e.persist();
 
-		let object = this.getObject(item);
-		let idx = this.selected.indexOf(object.id);
+		let idx = this.selected.indexOf(item.id);
 		if (idx >= 0) {
 			this.selected.splice(idx, 1);
 		} else {
-			this.selected.push(object.id);
+			this.selected.push(item.id);
 		};
 
 		this.selected = Util.arrayUnique(this.selected);
@@ -455,7 +453,30 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onScroll();
 	};
 
-	onSelectionDelete (e: any) {
+	onSelection (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		switch (item.id) {
+			case 'delete':
+				this.onSelectionDelete();
+				break;
+
+			case 'restore':
+				this.onSelectionArchive(false);
+				break;
+
+			case 'selectAll':
+				this.onSelectionAll();
+				break;
+
+			case 'selectNone':
+				this.onSelectionNone();
+				break;
+		};
+	};
+
+	onSelectionDelete () {
 		const l = this.selected.length;
 
 		popupStore.open('confirm', {
@@ -475,10 +496,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		});
 	};
 	
-	onSelectionArchive (e: any, v: boolean) {
+	onSelectionArchive (v: boolean) {
 		const items = this.getList().filter((it: any) => {
-			const object = this.getObject(it);
-			return this.selected.includes(object.id);
+			return this.selected.includes(it.id);
 		});
 
 		C.ObjectListSetIsArchived(this.selected, v, () => {
@@ -495,20 +515,19 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		});
 	};
 
-	onSelectionAll (e: any) {
+	onSelectionAll () {
 		const items = this.getList();
 
 		this.selected = [];
 
 		items.forEach((it: any) => {
-			let object = this.getObject(it);
-			this.selected.push(object.id);
+			this.selected.push(it.id);
 		});
 
 		this.selectionRender();
 	};
 
-	onSelectionNone (e: any) {
+	onSelectionNone () {
 		this.selected = [];
 		this.selectionRender();
 	};
@@ -629,12 +648,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					switch (el.id) {
 						case 'archive':
 							this.selected = [ object.id ];
-							this.onSelectionArchive(e, true);
+							this.onSelectionArchive(true);
 							break;
 
 						case 'unarchive':
 							this.selected = [ object.id ];
-							this.onSelectionArchive(e, false);
+							this.onSelectionArchive(false);
 							break;
 
 						case 'fav':
@@ -647,7 +666,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 						case 'remove':
 							this.selected = [ object.id ];
-							this.onSelectionDelete(e);
+							this.onSelectionDelete();
 							break;
 					};
 				},
