@@ -237,6 +237,7 @@ class Dispatcher {
 							dbStore.relationsClear(rootId, blockId);
 							dbStore.viewsClear(rootId, blockId);
 							dbStore.metaClear(rootId, blockId);
+							dbStore.recordsClear(rootId, blockId);
 						};
 
 						blockStore.delete(rootId, blockId);
