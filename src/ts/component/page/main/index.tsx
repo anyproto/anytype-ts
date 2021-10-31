@@ -84,12 +84,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
 				{ id: 'unfav', icon: 'unfav', name: 'Remove from favorites' },
 			].concat(selectionButtons);
-		};
-
+		} else
 		if (tab.id == I.TabIndex.Archive) {
 			selectionButtons = [
 				{ id: 'delete', icon: 'delete', name: 'Delete' },
 				{ id: 'restore', icon: 'restore', name: 'Restore' },
+			].concat(selectionButtons);
+		} else {
+			selectionButtons = [
+				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'fav', icon: 'fav', name: 'Add to favorites' },
 			].concat(selectionButtons);
 		};
 
