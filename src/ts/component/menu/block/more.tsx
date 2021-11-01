@@ -117,6 +117,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, blockId);
 		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDelete = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const cmd = keyboard.ctrlSymbol();
 
 		let template = null;
@@ -160,7 +161,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (!allowedDetails || object.isReadonly || (object.id == profile)) {
+		if (!allowedDetails || !allowedDelete || object.isReadonly) {
 			archive = null;
 		};
 
