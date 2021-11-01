@@ -161,8 +161,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (!allowedDetails || !allowedDelete || object.isReadonly) {
+		if (!allowedDelete || object.isReadonly) {
 			archive = null;
+			removePage = null;
 		};
 
 		if (object.isHightlighted) {
