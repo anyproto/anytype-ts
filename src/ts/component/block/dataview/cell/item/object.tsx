@@ -29,7 +29,7 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 
 		let name = object.name || DataUtil.defaultName('page');
 		if (object.layout == I.ObjectLayout.Note) {
-			name = object.snippet ? object.snippet : <span className="empty">Empty</span>;
+			name = object.snippet || <span className="empty">Empty</span>;
 		};
 
 		return (

@@ -120,7 +120,7 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; width: 100%; word-break: break-word; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; 
+				@include text-common; width: calc(100% - 20px); word-break: break-word; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; 
 				display: -webkit-box; line-height: 20px;
 			}
 			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 11px; left: 0px; padding: 0px 16px; }
@@ -133,15 +133,15 @@
 			.icon.more.hover { background-image: url('~img/icon/index/more1.svg'); opacity: 1; }
 
 			.icon.checkbox { 
-				width: 20px; height: 20px; position: absolute; right: 10px; top: 10px; z-index: 2; cursor: pointer;
-				background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none;
+				width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
+				background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
 			}
 		}
 		.item.isSelected {
 			.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); }
 		}
 		.item.withIcon {
-			.name { -webkit-line-clamp: 1; }
+			.name { width: 100%; -webkit-line-clamp: 1; }
 		}
 		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }
