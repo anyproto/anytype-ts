@@ -760,6 +760,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 		});
 
+		// Select all
+		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			focus.set(block.id, { from: 0, to: length });
+			focus.apply();
+		});
+
 		// Open action menu
 		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
 			menuStore.close('blockContext', () => {
