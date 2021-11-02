@@ -77,13 +77,6 @@
 				background-size: 24px 28px; background-position: 24px center;
 			}
 			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
-
-			.speed {
-				@include text-very-small; position: absolute; right: 2px; top: 2px; background-color: rgba(0,0,0,0.5); color: #fff;
-				border-radius: 2px; cursor: pointer; width: 20px; height: 20px; text-align: center; line-height: 20px; font-weight: 600;
-				opacity: 0; transition: $transitionFast; 
-			}
-			.speed:hover { background-color: rgba(0,0,0,0.9); }
 		}
 				
 		.icon.dots {
@@ -100,7 +93,6 @@
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }
 		.icon.dots { opacity: 1; }
-		.speed { opacity: 1; }
 	}
 	
 	.block.blockMedia > .wrapContent > .selectable.isSelected > .dropTarget > .focusable > .wrap {
