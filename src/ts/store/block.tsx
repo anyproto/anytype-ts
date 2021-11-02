@@ -456,9 +456,7 @@ class BlockStore {
 					continue;
 				};
 
-				if (layout == I.ObjectLayout.Note) {
-					name = Util.shorten(name, 30);
-				};
+				name = Util.shorten(name, 30);
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
