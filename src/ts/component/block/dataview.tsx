@@ -164,7 +164,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const item = data[index] || {};
 
 		if (item.layout == I.ObjectLayout.Note) {
-			item.name = item.snippet;
+			item.name = String(item.snippet || '').replace(/\n/g, ' ');
 		};
 		return item;
 	};

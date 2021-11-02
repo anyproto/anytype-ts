@@ -45,7 +45,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 			let name = item.name || DataUtil.defaultName('page');
 			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+				name = item.snippet || <span className="empty">Empty</span>;
 			};
 
 			return (

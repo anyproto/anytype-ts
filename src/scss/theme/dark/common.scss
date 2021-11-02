@@ -4,7 +4,7 @@ $colorDarker: #444;
 $colorMediumGrey: $colorWhite;
 
 /*@media (prefers-color-scheme: dark) {*/
-html.dark {
+html.themeDark {
 	body { background: $colorBlack; color: white; }
 
 	.frame { background: $colorBlack; }

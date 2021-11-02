@@ -66,7 +66,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 			let name = item.name || DataUtil.defaultName('page');
 			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+				name = item.snippet || <span className="empty">Empty</span>;
 			};
 
 			let content = null;
