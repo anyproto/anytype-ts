@@ -316,6 +316,9 @@ class Cell extends React.Component<Props, {}> {
 				if (e.shiftKey && value) {
 					const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
 					ipcRenderer.send('urlOpen', scheme + value);
+
+					setOff();
+					return;
 				};
 
 				param.data = Object.assign(param.data, {
