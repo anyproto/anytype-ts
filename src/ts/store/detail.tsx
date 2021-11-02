@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, DataUtil, translate } from 'ts/lib';
+import { I, Util, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
