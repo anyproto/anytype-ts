@@ -5,6 +5,7 @@ const EmojiData = require('json/emoji.json');
 const MAX_SIZE = 0x4000;
 const SKINS = [ '1F3FA', '1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF' ];
 const DIV = 65039;
+const CAP = 8419;
 const DIV_UNI = '-200d-';
 
 const Mapping = {
@@ -162,11 +163,24 @@ class SmileUtil {
 			return this.cache[icon];
 		};
 
+		let cp = [];
+		for (let i = 0; i < icon.length; ++i) {
+			cp.push(icon.charCodeAt(i));
+		};
+
+		if (!cp.includes(DIV) && (cp[cp.length - 1] == CAP)) {
+			cp.pop();
+			cp.push(DIV);
+			cp.push(CAP);
+
+			icon = cp.map((it: number) => { return String.fromCharCode(it); }).join('');
+		};
+
 		let data: any = null;
 
 		try {
 			data = getEmojiDataFromNative(icon, 'apple', EmojiData);
-
+			
 			// Try to get emoji with divider byte
 			if (!data) {
 				data = getEmojiDataFromNative(icon + String.fromCharCode(DIV), 'apple', EmojiData);
@@ -174,10 +188,7 @@ class SmileUtil {
 		} catch (e) {};
 
 		if (data) {
-			this.cache[icon] = { 
-				colons: data.colons, 
-				skin: data.skin 
-			};
+			this.cache[icon] = { colons: data.colons, skin: data.skin };
 			return this.cache[icon];
 		} else {
 			return {};
