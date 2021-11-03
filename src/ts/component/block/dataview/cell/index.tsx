@@ -351,11 +351,12 @@ class Cell extends React.Component<Props, {}> {
 				break;
 					
 			case I.RelationType.Checkbox:
-				cell.removeClass('isEditing');
+				ret = true;
 				break; 
 		};
 
 		if (ret) {
+			cell.removeClass('isEditing');
 			return;
 		};
 

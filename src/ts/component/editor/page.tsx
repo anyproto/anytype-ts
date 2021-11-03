@@ -65,6 +65,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -91,7 +92,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} />
+				<Controls key="editorControls" {...this.props} resize={this.resize} />
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
@@ -162,6 +163,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
+
+		console.log('resize.editor' + namespace);
 
 		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
@@ -764,6 +767,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 			focus.set(block.id, { from: 0, to: length });
 			focus.apply();
+
+			//$('.focusable.c' + block.id).trigger('select');
 		});
 
 		// Open action menu
@@ -1671,6 +1676,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	resize () {
+		console.log('RESIZE');
+
 		if (this.loading || !this._isMounted) {
 			return;
 		};
