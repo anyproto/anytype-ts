@@ -20,20 +20,21 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, index, getView, getRecord, onRef, style } = this.props;
 		const view = getView();
+		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(view.cardSize) ];
+		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
 		//const readonly = this.props.readonly || record.isReadonly;
 		const readonly = true;
 
-		if (view.coverFit) {
+		if (coverFit) {
 			cn.push('coverFit');
 		};
 
-		let BlankCover = (item: any) => (
+		const BlankCover = (item: any) => (
 			<div className={[ 'cover', 'type0', (!readonly ? 'canEdit' : '') ].join(' ')}>
 				<div className="inner">
 					{!readonly ? (
