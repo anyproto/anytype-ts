@@ -24,11 +24,17 @@
 
 			.block.blockCover { top: 38px; }
 
+			/* Set */
 			.editorWrapper.isSet { width: calc(100% - 96px); }
 			.editorWrapper.isSet {
 				.block.blockCover {
 					.elements { width: 100%; left: 0px; }
 				}
+			}
+
+			/* Note */ 
+			.editorWrapper.isNote {
+				.editorControls { height: 122px; }
 			}
 		}
 
