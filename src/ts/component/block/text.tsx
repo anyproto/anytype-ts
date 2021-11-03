@@ -1095,7 +1095,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks() || ids.length) {
+		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextDisabled) {
 				menuStore.close('blockContext');
 			};

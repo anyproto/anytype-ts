@@ -764,6 +764,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 			focus.set(block.id, { from: 0, to: length });
 			focus.apply();
+
+			console.log($('.focusable.c' + block.id));
+
+			$('.focusable.c' + block.id).trigger('select');
 		});
 
 		// Open action menu
