@@ -10,7 +10,8 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
 	dataset?: any;
-}
+	resize?: () => void;
+};
 
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
@@ -91,11 +92,15 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 	};
-	
+
+	componentDidUpdate () {
+		this.props.resize();
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
-	
+
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
