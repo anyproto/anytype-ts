@@ -359,12 +359,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				item.value = DataUtil.formatRelationValue(relation, null, false);
-
-				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-					return (i == v) || 
-					(it.relationKey != v) || 
-					((it.relationKey == v) && (it.condition != item.condition)); 
-				});
 			};
 
 			if (k == 'value') {
@@ -375,12 +369,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
 					item.value = DataUtil.formatRelationValue(relation, null, false);
 				};
-
-				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-					return (i == itemId) || 
-					(it.relationKey != item.relationKey) || 
-					((it.relationKey == item.relationKey) && (it.condition != v)); 
-				});
 			};
 
 			view.setFilter(itemId, item);
