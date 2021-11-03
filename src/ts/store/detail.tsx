@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, DataUtil, translate } from 'ts/lib';
+import { I, Util, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
@@ -125,7 +125,8 @@ class DetailStore {
 		};
 
 		let layout = Number(object.layout) || I.ObjectLayout.Page;
-		let name = String(object.name || DataUtil.defaultName('page'))
+		let name = String(object.name || DataUtil.defaultName('page'));
+		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
 
 		if (layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
@@ -133,7 +134,7 @@ class DetailStore {
 			object.iconEmoji = '';
 			object.iconImage = '';
 
-			name = object.snippet;
+			name = snippet;
 		};
 
 		if (object.isDeleted) {
@@ -142,11 +143,12 @@ class DetailStore {
 
 		return {
 			...object,
-			id: id,
-			name: name,
+			id,
+			name,
+			layout,
+			snippet,
 			type: DataUtil.convertRelationValueToString(object.type),
 			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
-			layout: layout,
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
 			coverX: Number(object.coverX) || 0,

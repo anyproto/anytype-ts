@@ -285,7 +285,7 @@ class Page extends React.Component<Props, {}> {
 			cn.push('debug');
 		};
 		if (config.debug.dm) {
-			cn.push('dark');
+			cn.push('themeDark');
 		};
 
 		obj.attr({ class: cn.join(' ') });

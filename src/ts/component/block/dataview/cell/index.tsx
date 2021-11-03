@@ -205,6 +205,7 @@ class Cell extends React.Component<Props, {}> {
 			};
 		};
 
+		let ret = false;
 		let param: I.MenuParam = { 
 			element: `#${cellId} .cellContent`,
 			horizontal: I.MenuDirection.Center,
@@ -316,6 +317,9 @@ class Cell extends React.Component<Props, {}> {
 				if (e.shiftKey && value) {
 					const scheme = DataUtil.getRelationUrlScheme(relation.format, value);
 					ipcRenderer.send('urlOpen', scheme + value);
+
+					ret = true;
+					break;
 				};
 
 				param.data = Object.assign(param.data, {
@@ -349,6 +353,10 @@ class Cell extends React.Component<Props, {}> {
 			case I.RelationType.Checkbox:
 				cell.removeClass('isEditing');
 				break; 
+		};
+
+		if (ret) {
+			return;
 		};
 
 		if (menuId) {

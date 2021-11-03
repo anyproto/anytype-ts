@@ -29,7 +29,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onResizeInit = this.onResizeInit.bind(this);
 		this.onPlay = this.onPlay.bind(this);
-		this.onSpeed = this.onSpeed.bind(this);
 	};
 
 	render () {
@@ -77,7 +76,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 					<div className="wrap resizable" style={css}>
 						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
 						<div className="videoControls">
-							<div id="speed" className="speed" onClick={this.onSpeed}>x{this.speed}</div>
 							<Icon className="play" onClick={this.onPlay} />
 							<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 						</div>
@@ -202,21 +200,6 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 		});
 	};
 
-	onSpeed () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const video = node.find('video');
-		const speed = node.find('#speed');
-		const el = video.get(0);
-
-		this.speed += 1;
-		if (this.speed > 4) {
-			this.speed = 1;
-		};
-		speed.text('x' + this.speed);
-
-		el.playbackRate = this.speed;
-	};
-	
 	onResizeInit () {
 		if (!this._isMounted) {
 			return;
