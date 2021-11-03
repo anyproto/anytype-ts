@@ -235,6 +235,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
+		const namespace = isPopup ? '.popup' : '';
 
 		this.getScrollContainer().scrollTop(0);
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
@@ -249,6 +250,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 					
 					focus.set(first.id, { from: l, to: l });
 					focus.apply();
+
+					$(window).trigger('resize.editor' + namespace);
 				};
 			};
 

@@ -148,6 +148,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					{icon}
 					<div className="name">{name}</div>
 					<div className="descr">{item.snippet}</div>
+					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
 				
 					{withButtons ? (
@@ -514,11 +515,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	getPage (page: any): I.PageInfo {
 		page.details.name = String(page.details.name || DataUtil.defaultName('page'));
-
-		return {
-			...page,
-			text: [ page.details.name, page.snippet ].join(' '),
-		};
+		return page;
 	};
 
 	getRootId () {

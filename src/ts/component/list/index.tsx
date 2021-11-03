@@ -50,15 +50,10 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				targetId = item.id;
 			};
 
-			const { _empty_, layout, iconEmoji, iconImage, snippet } = object;
-			const type = dbStore.getObjectType(object.type);
-			const cn = [ 'item' ];
+			let { _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
+			let type = dbStore.getObjectType(object.type);
+			let cn = [ 'item' ];
 			
-			let name: any = object.name || DataUtil.defaultName('page');
-			if (!object.name && (layout == I.ObjectLayout.Note)) {
-				name = <div className="empty">Empty</div>;
-			};
-
 			if (_empty_) {
 				return (
 					<div className="item isLoading" data-target-id={targetId}>
@@ -67,6 +62,10 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 						<div className="line lineType animatedBackground" />
 					</div>
 				);
+			};
+
+			if (layout == I.ObjectLayout.Note) {
+				name = object.snippet || <span className="empty">Empty</span>;
 			};
 
 			if (layout == I.ObjectLayout.Task) {
