@@ -4,6 +4,7 @@ import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error,
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { config } from 'process';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}
 
@@ -55,7 +56,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	render () {
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme } = commonStore;
+		const { cover, coverImage, theme, config } = commonStore;
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -424,21 +425,23 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row">
-							<div className="side left">
-								<Label text="Dark mode" />
+						{config.experimental ? (
+							<div className="row">
+								<div className="side left">
+									<Label text="Dark mode" />
+								</div>
+								<div className="side right">
+									<Switch 
+										value={theme == 'dark'} 
+										className="big"
+										onChange={(e: any, v: boolean) => { 
+											commonStore.themeSet(v ? 'dark' : ''); 
+											location.reload();
+										}}
+									/>
+								</div>
 							</div>
-							<div className="side right">
-								<Switch 
-									value={theme == 'dark'} 
-									className="big"
-									onChange={(e: any, v: boolean) => { 
-										commonStore.themeSet(v ? 'dark' : ''); 
-										location.reload();
-									}}
-								/>
-							</div>
-						</div>
+						) : ''}
 
 						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
 							<div className="side left">
