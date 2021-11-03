@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -55,7 +55,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	render () {
 		const { account, phrase } = authStore;
-		const { cover, coverImage } = commonStore;
+		const { cover, coverImage, theme } = commonStore;
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -420,7 +420,23 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="PIN code check time-out" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+								<Select id="pinTime" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+							</div>
+						</div>
+
+						<div className="row">
+							<div className="side left">
+								<Label text="Dark mode" />
+							</div>
+							<div className="side right">
+								<Switch 
+									value={theme == 'dark'} 
+									className="big"
+									onChange={(e: any, v: boolean) => { 
+										commonStore.themeSet(v ? 'dark' : ''); 
+										location.reload();
+									}}
+								/>
 							</div>
 						</div>
 
@@ -428,8 +444,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							<div className="side left">
 								<Label text="Clear file cache" />
 							</div>
-							<div className="side right">
-							</div>
+							<div className="side right" />
 						</div>
 					</div>
 				);

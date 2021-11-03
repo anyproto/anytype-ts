@@ -35,6 +35,7 @@ class CommonStore {
     public previewObj: Preview = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
     public configObj: any = {};
     public cellId: string = '';
+	public themeId: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -45,6 +46,7 @@ class CommonStore {
             gatewayUrl: observable,
             previewObj: observable,
             configObj: observable,
+			themeId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -52,6 +54,7 @@ class CommonStore {
             cover: computed,
             coverImage: computed,
             gateway: computed,
+			theme: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -60,7 +63,8 @@ class CommonStore {
             filterSetFrom: action,
             filterSetText: action,
             filterSet: action,
-            previewSet: action
+            previewSet: action,
+			themeSet: action,
         });
     };
 
@@ -98,6 +102,10 @@ class CommonStore {
 
 	get pinTime(): number {
 		return (Number(Storage.get('pinTime')) || Constant.default.pinTime) * 1000;
+	};
+
+	get theme(): string {
+		return String(this.themeId || Storage.get('theme') || '');
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -165,6 +173,11 @@ class CommonStore {
 
 	pinTimeSet (v: string) {
 		Storage.set('pinTime', v);
+	};
+
+	themeSet (v: string) {
+		this.themeId = v;
+		Storage.set('theme', v);
 	};
 
 	configSet (config: any, force: boolean) {
