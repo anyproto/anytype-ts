@@ -6,6 +6,9 @@ $colorMediumGrey: $colorWhite;
 /*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
 	body { background: $colorBlack; color: white; }
+	#root > .loaderWrapper {
+		.logo { background-image: url('~img/logo/white.svg'); }
+	}
 
 	.frame { background: $colorBlack; }
 
