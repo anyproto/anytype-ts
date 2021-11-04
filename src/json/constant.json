@@ -151,7 +151,8 @@
 		"video": "_otvideo",
 		"audio": "_otaudio",
 		"relation": "_otrelation",
-		"note": "_otnote"
+		"note": "_otnote",
+		"task": "_ottask"
 	},
 
 	"blockId": {
