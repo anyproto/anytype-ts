@@ -141,14 +141,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
+				<div className="coverOver" />
+
 				{isImage ? (
-					<React.Fragment>
-						<div className="coverOver" />
-						<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
-					</React.Fragment>
+					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				) : (
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
+
 				{!readonly ? (
 					<div id="elements" className="elements">
 						{elements}
