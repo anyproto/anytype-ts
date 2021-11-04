@@ -142,7 +142,10 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			>
 				{loading ? <Loader /> : ''}
 				{isImage ? (
-					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
+					<React.Fragment>
+						<div className="coverOver" />
+						<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
+					</React.Fragment>
 				) : (
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
@@ -488,7 +491,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		selection.preventSelect(true);
+		if (selection) {
+			selection.preventSelect(true);
+		};
 	};
 	
 	onScaleMove (e: any, v: number) {
