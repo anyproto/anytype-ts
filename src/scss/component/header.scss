@@ -115,14 +115,6 @@
 .popup {
 	.header.headerMainEdit {
 		.side.left { opacity: 1; left: 14px; }
-		.side.left {
-			.btn { cursor: pointer; color: $colorVeryDarkGrey; display: inline-block; vertical-align: top; border-radius: 6px; padding: 0px 10px; height: 28px; line-height: 26px; }
-			.btn:hover { background-color: $colorVeryLightGrey; }
-			.btn {
-				.icon { width: 20px; height: 20px; margin-right: 4px; border-radius: 0px; vertical-align: middle; }
-				.txt { line-height: 20px; }
-			}
-		}
 		.side.center { opacity: 1; }
 		.path { border: 0px; cursor: default !important; }
 		.path {

@@ -118,6 +118,8 @@ html.themeDark {
         .path {
             .item:hover { color: $colorPrimary; }
         }
+
+        .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
     }
 
     .header.headerMainIndex {
