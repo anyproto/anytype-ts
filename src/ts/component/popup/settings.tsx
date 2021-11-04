@@ -430,10 +430,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<Switch 
 										value={theme == 'dark'} 
 										className="big"
-										onChange={(e: any, v: boolean) => { 
-											commonStore.themeSet(v ? 'dark' : ''); 
-											location.reload();
-										}}
+										onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
 									/>
 								</div>
 							</div>

@@ -178,6 +178,7 @@ class CommonStore {
 	themeSet (v: string) {
 		this.themeId = v;
 		Storage.set('theme', v);
+		Util.addBodyClass('theme', v);
 	};
 
 	configSet (config: any, force: boolean) {

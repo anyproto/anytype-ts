@@ -325,12 +325,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	initTheme() {
-		const { theme } = commonStore;
-		const obj = $('html');
-
-		if (theme) {
-			obj.addClass(Util.toCamelCase(`theme-${theme}`));
-		};
+		Util.addBodyClass('theme', commonStore.theme);
 	};
 
 	preload () {

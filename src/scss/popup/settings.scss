@@ -185,6 +185,8 @@
 				@include text-paragraph; line-height: 28px;
 			}
 
+			.select { transition: none; }
+
 			.side { width: 50%; line-height: 28px; }
 			.side.right { text-align: right; }
 		}
