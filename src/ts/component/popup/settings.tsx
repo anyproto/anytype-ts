@@ -134,8 +134,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			case 'wallpaper':
 				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
-				let covers1 = [  ];
+				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pink' ];
+				let covers1 = [];
 				let covers2 = [];
+				let covers3 = [];
 
 				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
@@ -145,9 +147,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 					covers2.push({ id: c, image: '', type: I.CoverType.Color });
 				};
 
+				for (let c of gradients) {
+					covers3.push({ id: c, image: '', type: I.CoverType.Gradient });
+				};
+
 				if (coverImage) {
 					covers1.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
 				};
+
+				let sections = [
+					{ name: translate('popupSettingsPicture'), children: covers1 },
+					{ name: translate('popupSettingsColor'), children: covers2 },
+					{ name: translate('popupSettingsGradient'), children: covers3 },
+				];
 
 				Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
@@ -167,23 +179,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row">
-							<Label className="name" text={translate('popupSettingsPicture')} />
-							<div className="covers">
-								{covers1.map((item: any, i: number) => (
-									<Item key={i} {...item} active={item.id == cover.id} />
-								))}
+						{sections.map((section: any, i: number) => (
+							<div key={i} className="row">
+								<Label className="name" text={section.name} />
+								<div className="covers">
+									{section.children.map((item: any, i: number) => (
+										<Item key={i} {...item} active={(item.id == cover.id) && (cover.type == item.type)} />
+									))}
+								</div>
 							</div>
-						</div>
-
-						<div className="row last">
-							<Label className="name" text={translate('popupSettingsColor')} />
-							<div className="covers">
-								{covers2.map((item: any, i: number) => (
-									<Item key={i} {...item} preview={true} active={item.id == cover.id} />
-								))}
-							</div>
-						</div>
+						))}
 					</div>
 				);
 				break;

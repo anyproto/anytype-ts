@@ -147,15 +147,11 @@ html.themeDark {
             .loaderWrapper { background: $colorBgLight; }
         }
 
-        /* MenuBlockAdd */
-
         .menu.menuBlockAdd {
             .item.isBig {
                 .iconObject { background: $colorBgIcon; }
             }
         }
-
-        /* MenuSmile */
 
         .menu.menuSmile {
             .head { border-color: $colorLineSecondary; color: $colorSecondary; }
@@ -164,16 +160,12 @@ html.themeDark {
             }
         }
 
-        /* MenuBlockCover */
-
         .menu.menuBlockCover {
             .head { border-color: $colorLineSecondary; color: $colorSecondary; }
             .head {
                 .btn:hover, .btn.active { color: $colorPrimary; }
             }
         }
-
-        /* MenuBlockRelationView */
 
         .menu.menuBlockRelationView {
             .section > .name { color: $colorPrimary; }
@@ -185,17 +177,13 @@ html.themeDark {
             }
         }
 
-        /* MenuDataviewText */
-
-        .menu.menuDataviewText {
-            #input { background: $colorBgIcon; }
-        }
-
         .menu.menuBlockRelationEdit {
             .input { border-color: $colorLinePrimary; }
         }
 
-        /* MenuSearchObject */
+        .menu.menuDataviewText {
+            #input { background: $colorBgIcon; }
+        }
 
         .menu.menuSearchObject.big {
             .item {
@@ -203,13 +191,9 @@ html.themeDark {
             }
         }
 
-        /* MenuThreadList */
-
         .menu.menuThreadList {
             .item:hover::before { background: $colorHover; }
         }
-
-        /* MenuBlockMore */
 
         .menu.menuBlockMore {
             .item:hover::before { background: $colorHover; }
