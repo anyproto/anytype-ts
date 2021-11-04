@@ -1,10 +1,29 @@
 @import "~scss/_vars";
 
+$colorPrimary: #cbc9bd;
+$colorSecondary: #929082;
+
 /*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
+    body { color: $colorPrimary; }
+
     #root > .loaderWrapper { background: $colorBlack; }
 	
     .cover.main::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
+    }
+
+
+    /* PageMainIndex */
+
+    .pageMainIndex {
+        #documents {
+            .emptySearch { background: $colorBlack; }
+
+            .item { background: $colorBlack; }
+            .item {
+                .type { color: $colorSecondary; }
+            }
+        }
     }
 }
