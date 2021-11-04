@@ -3,9 +3,9 @@
 .input-drag { height: 100%; position: relative; }
 .input-drag {
 	.back { width: 100%; height: 2px; background: rgba(255,255,255,0.5); position: absolute; top: 50%; left: 0px; margin-top: -1px; }
-	.fill { height: 2px; background: #fff; width: 0px; position: absolute; left: 0px; top: 50%; margin-top: -1px; }
+	.fill { height: 2px; background: $colorWhite; width: 0px; position: absolute; left: 0px; top: 50%; margin-top: -1px; }
 	.icon { 
-		width: 12px; height: 12px; border: 2px solid #fff; border-radius: 12px; position: absolute; left: 0px; top: 50%; 
+		width: 12px; height: 12px; border: 2px solid $colorWhite; border-radius: 12px; position: absolute; left: 0px; top: 50%; 
 		transform: translateY(-50%); transition: none; cursor: grab;
 	}
 	.bullet { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px); }
@@ -15,5 +15,5 @@
 .dragWrap { height: 24px; background: rgba(0,0,0,0.5); border-radius: 4px; padding: 0px 8px; display: flex; }
 .dragWrap {
 	.input-drag { width: calc(100% - 38px); margin-right: 8px; }
-	.number { width: 38px; @include text-common; flex-shrink: 0; line-height: 24px; color: #fff; font-weight: 500; text-align: right; }
+	.number { width: 38px; @include text-common; flex-shrink: 0; line-height: 24px; color: $colorWhite; font-weight: 500; text-align: right; }
 }

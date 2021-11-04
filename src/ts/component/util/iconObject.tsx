@@ -257,7 +257,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		};
 
 		if (isDeleted) {
-			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icn = [ 'iconCommon', 'c' + iconSize ];
 			icon = <img src={Ghost} className={icn.join(' ')} />;
 		};
 
@@ -340,9 +340,13 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	iconSize () {
 		const { size, iconSize, forceLetter } = this.props;
 		const object = this.getObject();
-		const { layout, iconImage, iconEmoji } = object;
+		const { layout, iconImage, iconEmoji, isDeleted } = object;
 
 		let s = IconSize[size];
+
+		if (isDeleted) {
+			return s;
+		};
 
 		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
 			s = 16;

@@ -4,6 +4,7 @@ import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error,
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
 import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { config } from 'process';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}
 
@@ -55,7 +56,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	render () {
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme } = commonStore;
+		const { cover, coverImage, theme, config } = commonStore;
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -133,20 +134,23 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			case 'wallpaper':
 				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
-				let covers1 = [  ];
-				let covers2 = [];
+				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pinkOrange', 'bluePink', 'greenOrange', 'sky' ];
+				let covers1 = [];
+				let covers2 = colors.map((it: string) => { return { id: it, image: '', type: I.CoverType.Color }; });
+				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
 
+				if (coverImage) {
+					covers1.push({ id: 0, image: coverImage, type: I.CoverType.Upload });
+				};
 				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
-				for (let c of colors) {
-					covers2.push({ id: c, image: '', type: I.CoverType.Color });
-				};
-
-				if (coverImage) {
-					covers1.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
-				};
+				let sections = [
+					{ name: translate('popupSettingsPicture'), children: covers1 },
+					{ name: translate('popupSettingsColor'), children: covers2 },
+					{ name: translate('popupSettingsGradient'), children: covers3 },
+				];
 
 				Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
@@ -166,23 +170,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row">
-							<Label className="name" text={translate('popupSettingsPicture')} />
-							<div className="covers">
-								{covers1.map((item: any, i: number) => (
-									<Item key={i} {...item} active={item.id == cover.id} />
-								))}
+						{sections.map((section: any, i: number) => (
+							<div key={i} className="row">
+								<Label className="name" text={section.name} />
+								<div className="covers">
+									{section.children.map((item: any, i: number) => (
+										<Item key={i} {...item} active={(item.id == cover.id) && (cover.type == item.type)} />
+									))}
+								</div>
 							</div>
-						</div>
-
-						<div className="row last">
-							<Label className="name" text={translate('popupSettingsColor')} />
-							<div className="covers">
-								{covers2.map((item: any, i: number) => (
-									<Item key={i} {...item} preview={true} active={item.id == cover.id} />
-								))}
-							</div>
-						</div>
+						))}
 					</div>
 				);
 				break;
@@ -424,21 +421,20 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row">
-							<div className="side left">
-								<Label text="Dark mode" />
+						{config.experimental ? (
+							<div className="row">
+								<div className="side left">
+									<Label text="Dark mode" />
+								</div>
+								<div className="side right">
+									<Switch 
+										value={theme == 'dark'} 
+										className="big"
+										onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
+									/>
+								</div>
 							</div>
-							<div className="side right">
-								<Switch 
-									value={theme == 'dark'} 
-									className="big"
-									onChange={(e: any, v: boolean) => { 
-										commonStore.themeSet(v ? 'dark' : ''); 
-										location.reload();
-									}}
-								/>
-							</div>
-						</div>
+						) : ''}
 
 						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
 							<div className="side left">

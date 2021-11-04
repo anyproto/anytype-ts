@@ -164,8 +164,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
-		console.log('resize.editor' + namespace);
-
 		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Storage.set('askSurvey', 1);
@@ -1676,8 +1674,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	resize () {
-		console.log('RESIZE');
-
 		if (this.loading || !this._isMounted) {
 			return;
 		};

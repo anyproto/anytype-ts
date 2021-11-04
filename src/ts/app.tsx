@@ -289,6 +289,11 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
+		this.initTheme();
+	};
+
+	componentDidUpdate () {
+		this.initTheme();
 	};
 	
 	init () {
@@ -317,6 +322,10 @@ class App extends React.Component<Props, State> {
 		
 		this.setIpcEvents();
 		this.setWindowEvents();
+	};
+
+	initTheme() {
+		Util.addBodyClass('theme', commonStore.theme);
 	};
 
 	preload () {

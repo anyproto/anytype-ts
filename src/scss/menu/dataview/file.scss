@@ -21,17 +21,17 @@
 			img { display: block; max-width: 100%; max-height: 208px; object-fit: contain; }
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
 			.clickable { width: calc(100% - 20px); display: inline-block; vertical-align: top; }
-			.icon.more { background-color: #fff; }
+			.icon.more { background-color: $colorWhite; }
 		}
 		.item.isImage {
 			.icon.more { top: 12px; right: 12px; margin: 0px; }
-			.icon.more:hover { background-color: #fff; }
+			.icon.more:hover { background-color: $colorWhite; }
 		}
 
 		.item.isFile:hover, .item.isFile.active {
 			.clickable { width: calc(100% - 46px); }
 		}
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item:hover, .item.active {
 			.icon.more { opacity: 1; }
 		}

@@ -36,12 +36,12 @@
 			.item { display: flex; }
 			.item {
 				.clickable { width: 228px; padding: 4px; display: flex; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
-				.clickable:hover { background: rgba(172,169,150,0.1); }
+				.clickable:hover { background: $colorHover; }
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorVeryDarkGrey; }
 				.value { color: $colorMediumGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
-				.value:hover { background: rgba(172,169,150,0.1); }
+				.value:hover { background: $colorHover; }
 			}
 		}
 

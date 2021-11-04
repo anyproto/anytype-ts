@@ -4,11 +4,11 @@
 	.frame { width: 672px; padding: 36px 48px 32px 48px; }
 	.title { margin-bottom: 15px; }
 	.label { margin-bottom: 25px; }
-	.input { height: 40px; border: solid 1px #d2d0c2; }
+	.input { height: 40px; border: solid 1px $colorBorderDark; }
 	
 	.textarea { 
-		font-family: 'Plex'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px #d2d0c2; 
-		background-color: #fff; 
+		font-family: 'Plex'; padding: 7px 16px; height: auto; margin: 0px 0px 32px 0px; border: solid 1px $colorBorderDark; 
+		background-color: $colorWhite; 
 	}
 	
 	.iconObject { margin-bottom: 12px; }
