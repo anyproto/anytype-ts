@@ -81,9 +81,15 @@ html.themeDark {
 
         .popup.popupSettings {
             .head { background: $colorBlack; }
+            .head {
+                .element:hover { color: $colorPrimary; }
+            }
+
             .tabIndex .row, .tabOther .row { border-color: $colorLineLight; }
             .tabWallpaper .item.active { border-color: $colorLineDark; }
             .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineLight; }
+
+            .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLineDark; }
         }
     }
 
