@@ -21,7 +21,15 @@
     .popup.popupSettings {
         .head { background: $colorBlack; }
         .head {
+            .element { color: $colorSecondary; }
+            .element {
+                .icon.back { background-image: url('~img/theme/dark/icon/popup/settings/back0.svg'); } 
+            }
+
             .element:hover { color: $colorPrimary; }
+            .element:hover {
+				.icon.back { background-image: url('~img/theme/dark/icon/popup/settings/back1.svg'); } 
+			}
         }
 
         .tabIndex .row, .tabOther .row { border-color: $colorLineSecondary; }
