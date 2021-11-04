@@ -230,7 +230,20 @@ html.themeDark {
                 .row { box-shadow: 0px 1px $colorLineLight inset; }
             }
 
+            .viewItem.viewBoard {
+                .cellContent.isName { color: $colorPrimary; }
+            }
+
             .viewItem.viewList {
+                .cellContent.isName { color: $colorPrimary; }
+            }
+
+            .viewItem.viewGallery {
+                .card { background: $colorBlack; border-color: $colorLineDark; }
+                .card {
+                    .cover { box-shadow: 0px 0px 0px 1px $colorLineDark inset; }
+                }
+
                 .cellContent.isName { color: $colorPrimary; }
             }
         }
