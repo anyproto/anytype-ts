@@ -87,7 +87,9 @@
 				}
 			}
 			
-			.cover { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
+			.cover { 
+				position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); border-radius: 1px;
+			}
 		}
 		
 		.tabPhrase {

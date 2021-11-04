@@ -86,7 +86,10 @@ html.themeDark {
             }
 
             .tabIndex .row, .tabOther .row { border-color: $colorLineLight; }
+            
             .tabWallpaper .item.active { border-color: $colorLineDark; }
+            .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLineDark; }
+
             .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineLight; }
 
             .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLineDark; }
