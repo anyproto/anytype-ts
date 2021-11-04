@@ -7,7 +7,7 @@
         .side { height: 100%; }
         .side.left { width: 100%; }
         .side.right { 
-            width: 268px; overflow: auto; border-left: 1px solid $colorLightGrey; position: relative; 
+            width: 268px; overflow: overlay; border-left: 1px solid $colorLightGrey; position: relative; 
             z-index: 21; position: absolute; right: 0px; top: 0px; display: none; background: $colorWhite;
         }
         .side.right {
@@ -63,7 +63,7 @@
         .icon.close:hover { background-color: $colorVeryLightGrey; }
     }
 
-    .sections { overflow: auto; padding: 14px 0px; }
+    .sections { overflow: overlay; padding: 14px 0px; }
     .section { padding: 11px 0px 0px 0px; }
     .section::after { content: ""; height: 1px; margin: 8px 16px 0px 16px; background: $colorLightGrey; display: block; }
     .section:first-child { padding: 0px; }

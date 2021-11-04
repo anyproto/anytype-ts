@@ -18,7 +18,7 @@
 			.inner { height: 35px; }
 		}
 	
-		.items { overflow: auto; height: 288px; }
+		.items { overflow: overlay; height: 288px; }
 		.empty { height: 100%; line-height: 256px; padding: 16px; text-align: center; }
 		.empty {
 			b { display: block; font-weight: 400; color: $colorBlack; }
