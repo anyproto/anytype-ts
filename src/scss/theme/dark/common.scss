@@ -15,6 +15,10 @@ $colorBgInactive: rgba(172, 169, 150, 0.3);
 
 /*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
+
+    /* Common */
+    /* ---------------------------------------------------------------- */
+
     body { background: $colorBlack; color: $colorPrimary; }
 
     #root > .loaderWrapper { background: $colorBlack; }
@@ -24,6 +28,7 @@ html.themeDark {
     }
 
     /* Components */
+    /* ---------------------------------------------------------------- */
 
     .loaderWrapper {
         .loader { border-color: $colorLineDark; border-left-color: $colorOrange; }
@@ -56,6 +61,7 @@ html.themeDark {
     .iconObject.withLetter { background-color: $colorHover; }
 
     /* Popups */
+    /* ---------------------------------------------------------------- */
 
     .popups {
         .popup {
@@ -81,6 +87,7 @@ html.themeDark {
     }
 
     /* Menu */
+    /* ---------------------------------------------------------------- */
 
     .menus {
         .menu { background: $colorBgLight; }
@@ -103,6 +110,7 @@ html.themeDark {
     }
 
     /* Header */
+    /* ---------------------------------------------------------------- */
 
     .header.headerMainEdit { background: $colorBlack; }
     .header.headerMainEdit {
@@ -115,6 +123,9 @@ html.themeDark {
     .header.headerMainIndex {
         .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
     }
+
+    /* Pages */
+    /* ---------------------------------------------------------------- */
 
     /* PageAuth */
 
@@ -189,6 +200,7 @@ html.themeDark {
     }
 
     /* Blocks */
+    /* ---------------------------------------------------------------- */
 
     .blocks {
         .block.blockIconPage {
