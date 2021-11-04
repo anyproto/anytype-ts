@@ -65,6 +65,8 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .popups {
+        /* Common */
+
         .popup {
             .innerWrap { background: $colorBlack; }
 
@@ -107,6 +109,9 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .menus {
+
+        /* Common */
+
         .menu { background: $colorBgLight; }
         .menu.vertical {
             .tabs { border-color: $colorLineLight; }
@@ -121,10 +126,18 @@ html.themeDark {
             .loaderWrapper { background: $colorBgLight; }
         }
 
+        /* MenuBlockAdd */
+
         .menu.menuBlockAdd {
             .item.isBig {
                 .iconObject { background: $colorHover; }
             }
+        }
+
+        /* MenuSmile */
+
+        .menu.menuSmile {
+            .head { border-color: $colorLineLight; }
         }
     }
 
