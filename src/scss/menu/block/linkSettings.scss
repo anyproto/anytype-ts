@@ -41,7 +41,7 @@
 		.buttons { padding: 0px 14px; margin: 12px 0px; display: flex; justify-content: flex-start; flex-basis: auto; }
 		.buttons {
 			.button { flex-grow: 1; margin-right: 4px; height: 28px; line-height: 26px; border-radius: 4px; }
-			.button.grey { box-shadow: 0px 0px 0px 1px $colorBorderDark inset; color: #cbc9bd; }
+			.button.grey { box-shadow: 0px 0px 0px 1px $colorBorderDark inset; color: $colorSecondary; }
 			.button.grey:hover { box-shadow: 0px 0px 0px 1px $colorMediumGrey inset; color: $colorDarkGrey; }
 			.button:last-child { margin: 0px; }
 		}

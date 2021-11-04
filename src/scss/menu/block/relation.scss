@@ -2,19 +2,6 @@
 
 .menus {
 
-	.menu.menuBlockRelationView {
-		.icon.edit { display: none; }
-		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-
-		.sides { display: flex; }
-
-		.info { 
-			width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-			flex-shrink: 0; margin-right: 6px;
-		}
-	}
-
 	.menu.menuBlockRelationEdit {
 		.wrap { padding: 0px 16px 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
@@ -35,6 +22,12 @@
 
 	.menu.menuBlockRelationView { width: auto; }
 	.menu.menuBlockRelationView {
+		.icon.edit { display: none; }
+		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+
+		.sides { display: flex; }
+
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 21px; padding: 0px; border: 0px; padding: 0px; }
 
@@ -62,7 +55,10 @@
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 			.icon.fav:hover { background-color: $colorHover; }
 
-			.info { padding: 5px 0px; color: $colorDarkGrey; }
+			.info { 
+				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
+				flex-shrink: 0; margin-right: 6px; padding: 5px 0px; color: $colorDarkGrey;
+			}
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: $colorHover; }
 

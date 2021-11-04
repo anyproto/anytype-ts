@@ -108,13 +108,13 @@ html.platformWindows {
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over, .overMenu, .overPopup { overflow: hidden !important; }
-.empty { color: #cbc9bd; }
+.empty { color: $colorSecondary; }
 .isDone { color: $colorMediumGrey; }
 .placeholder { 
-	pointer-events: none; color: #cbc9bd; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
+	pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
 	overflow: hidden; white-space: nowrap;
 }
-::-webkit-input-placeholder { color: #cbc9bd !important; }
+::-webkit-input-placeholder { color: $colorSecondary !important; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

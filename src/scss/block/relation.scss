@@ -14,7 +14,7 @@
 		.sides { display: flex; }
 
 		.info { padding: 6px 2px 6px 0px; line-height: 20px; width: 30%; min-width: 40px; flex-shrink: 0; @include text-overflow-nw; }
-		.info.noValue { width: 100%; color: #cbc9bd; }
+		.info.noValue { width: 100%; color: $colorSecondary; }
 		.info.noValue.canEdit { cursor: pointer; }
 
 		.info {

@@ -166,7 +166,7 @@
 
 		.emptySearch { 
 			width: 100%; height: 90px; line-height: 90px; background: $colorWhite; border-radius: 12px; padding: 32px 36px;
-			@include text-header3; color: #cbc9bd;
+			@include text-header3; color: $colorSecondary;
 		}
 	}
 
