@@ -25,6 +25,10 @@ html.themeDark {
 
     /* Components */
 
+    .loaderWrapper {
+        .loader { border-color: $colorLineDark; border-left-color: $colorOrange; }
+    }
+
     /* Button */
 
     .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineLight inset; }
@@ -56,6 +60,8 @@ html.themeDark {
     .popups {
         .popup {
             .innerWrap { background: $colorBlack; }
+
+            #loader { background: $colorBlack; }
         }
 
         /* PopupSearch */
@@ -165,6 +171,19 @@ html.themeDark {
                         .line { background: $colorLineLight; }
                     }
                 }
+            }
+        }
+    }
+
+    /* PageMainType */
+
+    .pageMainType {
+        .wrapper {
+            table { border-color: $colorLineLight; }
+            table {
+                .cellHead .name { border-color: $colorLineLight; }
+                .cell { border-color: $colorLineLight; }
+                tbody { border-color: $colorLineLight; }
             }
         }
     }
