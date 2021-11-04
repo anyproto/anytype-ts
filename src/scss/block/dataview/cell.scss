@@ -107,6 +107,6 @@
 .cellContent.canEdit.c-checkbox { cursor: pointer; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
-	a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
+	a { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; }
 	a:hover { border-color: $colorBlack; }
 }
