@@ -10,7 +10,7 @@ $colorSecondary: #929082;
 
 /*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
-    body { color: $colorPrimary; }
+    body { background: $colorBlack; color: $colorPrimary; }
 
     #root > .loaderWrapper { background: $colorBlack; }
 	
@@ -25,6 +25,12 @@ html.themeDark {
             .innerWrap { background: $colorBlack; }
         }
 
+        /* PopupSearch */
+
+        .popup.popupSearch {
+            .head { background: $colorBlack; }
+        }
+
         /* PopupSettings */
 
         .popup.popupSettings {
@@ -34,6 +40,14 @@ html.themeDark {
     }
 
     /* Header */
+
+    .header.headerMainEdit { background: $colorBlack; }
+    .header.headerMainEdit {
+        .path { border: 0px; line-height: 28px; }
+        .path {
+            .item:hover { color: $colorPrimary; }
+        }
+    }
 
     .header.headerMainIndex {
         .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
@@ -48,6 +62,21 @@ html.themeDark {
             .item { background: $colorBlack; }
             .item {
                 .type { color: $colorSecondary; }
+            }
+        }
+    }
+
+    /* Blocks */
+
+    .blocks {
+        .block.blockDataview {
+            .dataviewControls {
+                .line { background: $colorBorderDark; }
+            }
+
+            .viewItem.viewGrid { box-shadow: 0px -1px $colorBorderDark inset; }
+            .viewItem.viewGrid {
+                .row { box-shadow: 0px 1px $colorBorderDark inset; }
             }
         }
     }
