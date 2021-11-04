@@ -136,7 +136,7 @@ import 'scss/menu/dataview/source.scss';
 
 import 'scss/media/print.scss';
 
-import 'scss/theme/dark/common.scss';
+import 'scss/theme/dark.scss';
 
 interface RouteElement { path: string; };
 interface Props {};
