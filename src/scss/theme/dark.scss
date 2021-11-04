@@ -152,6 +152,9 @@ html.themeDark {
 
             .item { background: $colorBgLight; }
             .item.hover::before { background: $colorHover; }
+            .item {
+                .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
+            }
 
             .loaderWrapper { background: $colorBgLight; }
         }
@@ -192,6 +195,18 @@ html.themeDark {
 
         .menu.menuDataviewText {
             #input { background: $colorBgIcon; }
+        }
+
+        .menu.menuDataviewRelationList {
+            .item:hover::before { background: $colorHover; }
+        }
+
+        .menu.menuDataviewFilterList {
+            .item.add:hover::before { background: $colorHover; }
+        }
+
+        .menu.menuDataviewSort {
+            .item.add:hover::before { background: $colorHover; }
         }
 
         .menu.menuSearchObject.big {
