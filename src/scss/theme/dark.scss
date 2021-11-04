@@ -164,6 +164,14 @@ html.themeDark {
         .menu.menuBlockRelationView {
             .section > .name { color: $colorPrimary; }
         }
+
+        /* MenuSearchObject */
+
+        .menu.menuSearchObject.big {
+            .item {
+                .iconObject { background: $colorHover; }
+            }
+        }
     }
 
     /* Header */
