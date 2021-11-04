@@ -8,7 +8,7 @@
 
 			.card { 
 				width: 260px; border: 1px solid $colorBorderDark; border-radius: 12px; display: inline-block; cursor: pointer; 
-				background: #fff;
+				background: $colorWhite;
 			}
 			.card {
 				.cover { 

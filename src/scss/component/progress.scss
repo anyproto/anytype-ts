@@ -13,7 +13,7 @@
 .progress {
 	.inner { 
 		position: absolute; left: 50%; top: 50%; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); height: 72px; width: 384px;
-		border-radius: 12px; text-align: center; background: #fff; overflow: hidden; margin: -36px 0px 0px -192px; padding: 12px 16px;
+		border-radius: 12px; text-align: center; background: $colorWhite; overflow: hidden; margin: -36px 0px 0px -192px; padding: 12px 16px;
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out; pointer-events: all;
 	}
 	.inner {

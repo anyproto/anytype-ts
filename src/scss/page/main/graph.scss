@@ -8,7 +8,7 @@
         .side.left { width: 100%; }
         .side.right { 
             width: 268px; overflow: auto; border-left: 1px solid $colorLightGrey; position: relative; 
-            z-index: 21; position: absolute; right: 0px; top: 0px; display: none; background: #fff;
+            z-index: 21; position: absolute; right: 0px; top: 0px; display: none; background: $colorWhite;
         }
         .side.right {
             .bottom { 
@@ -19,7 +19,7 @@
                     width: 20px; height: 20px; margin-right: 8px; vertical-align: top; background-image: url('~img/icon/graph/search.svg');
                 }
 
-                .filter { padding: 0px; background: #fff; width: calc(100% - 28px); display: inline-block; vertical-align: top; }
+                .filter { padding: 0px; background: $colorWhite; width: calc(100% - 28px); display: inline-block; vertical-align: top; }
                 .filter {
                     .inner { height: auto; }
                     .input { height: 20px; line-height: 20px; }
@@ -37,7 +37,7 @@
     .footer { display: block !important; }
     .footer {
         .icon { 
-            width: 44px; height: 44px; background-color: #fff; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 12px; 
+            width: 44px; height: 44px; background-color: $colorWhite; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 12px; 
 		    background-size: 20px 20px; position: absolute; right: 20px; bottom: 20px; 
         }
         .icon.manager { background-image: url('~img/icon/dataview/button/manager0.svg'); }
@@ -45,7 +45,7 @@
 
     #graphWrapper { height: 100%; }
     #graph { width: 100%; height: 100%; }
-    canvas { width: 100%; height: 100%; background: #fff; }
+    canvas { width: 100%; height: 100%; background: $colorWhite; }
 
     .tabs { 
         padding: 0px 16px; border-bottom: 1px solid $colorLightGrey; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; 
@@ -71,7 +71,7 @@
     .section:last-child::after { display: none; }
     .section > .name { padding: 3px 16px; margin-bottom: 2px; @include text-small; color: $colorDarkGrey; display: block; font-weight: 500; }
     .section {
-        .item { padding: 4px 16px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: #fff; }
+        .item { padding: 4px 16px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: $colorWhite; }
         .item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(172, 169, 150, 0); z-index: 1;
 			transition: background 0.2s ease-in-out; pointer-events: none;
@@ -113,7 +113,7 @@
 
         .heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; word-wrap: break-word; }
         .heading {
-            .iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px #fff inset; }
+            .iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
             .title { display: block; @include text-header3; font-weight: bold; position: relative; }
             .icon.checkbox { 
                 position: static; width: 20px; height: 20px; background-image: url('~img/icon/object/checkbox0.svg') !important; 
@@ -147,5 +147,5 @@
 }
 
 .pageMainGraph > .body > #loader { 
-    position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: #fff; z-index: 11; 
+    position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorWhite; z-index: 11; 
 }

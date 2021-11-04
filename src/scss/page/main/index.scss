@@ -4,7 +4,7 @@
 	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
 	
 	.title { 
-		color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; 
+		color: $colorWhite; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; 
 		white-space: nowrap; user-select: none;
 	}
 	.title {
@@ -52,13 +52,13 @@
 					cursor: pointer; 
 				}
 				.tab:hover { background: rgba(0,0,0,0.15); }
-				.tab.active { background: rgba(0,0,0,0.3); color: #fff; }
+				.tab.active { background: rgba(0,0,0,0.3); color: $colorWhite; }
 			}
 
 			.btns { position: absolute; right: 0px; top: 0px; z-index: 1; }
 			.btns {
 				.btn {
-					height: 44px; line-height: 44px; color: #fff; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
+					height: 44px; line-height: 44px; color: $colorWhite; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
 					display: inline-block; vertical-align: top; transition: width 0.2s ease-in-out, background 0.2s ease-in-out; padding: 0px 20px;
 					margin-right: 16px; font-weight: 500;
 				}
@@ -71,7 +71,7 @@
 					.filter { height: 20px; padding: 0px; display: none; vertical-align: top; width: 100%; }
 					.filter {
 						.inner { height: 20px; }
-						.input { height: 20px; color: #fff; }
+						.input { height: 20px; color: $colorWhite; }
 						.line { display: none; }
 						.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); }
 						.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); }
@@ -87,7 +87,7 @@
 
 		#selectWrap { display: none; }
 		#selectWrap {
-			.tabs { width: 100%; display: flex; padding: 0px 0px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
+			.tabs { width: 100%; display: flex; padding: 0px 0px 0px 16px; @include text-common; font-weight: normal; color: $colorWhite; }
 			.side { width: 50%; white-space: nowrap; line-height: 44px; }
 			.side.right { text-align: right;}
 
@@ -108,7 +108,7 @@
 		}
 
 		.item { 
-			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
+			width: 208px; height: 124px; background: $colorWhite; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 14px 16px; position: relative; cursor: pointer; user-select: none;
 		}
 		
@@ -165,7 +165,7 @@
 		}
 
 		.emptySearch { 
-			width: 100%; height: 90px; line-height: 90px; background: #fff; border-radius: 12px; padding: 32px 36px;
+			width: 100%; height: 90px; line-height: 90px; background: $colorWhite; border-radius: 12px; padding: 32px 36px;
 			@include text-header3; color: #cbc9bd;
 		}
 	}

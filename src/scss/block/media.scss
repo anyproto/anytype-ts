@@ -29,7 +29,7 @@
 		.wrap.broken {
 			img:before { 
 				content: " "; display: block; position: absolute; left: 13px; top: 11px; height: calc(100% - 22px); width: calc(100% - 26px);
-				background: #fff;
+				background: $colorWhite;
 			}
 
 			img:after { content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 13px; top: 11px; }

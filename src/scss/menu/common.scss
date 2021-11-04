@@ -12,7 +12,7 @@
 	
 	.menu { 
 		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: #fff; opacity: 0; transform: scale3d(0.8,0.8,1);
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: $colorWhite; opacity: 0; transform: scale3d(0.8,0.8,1);
 		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
 	}
 	.menu.fixed { position: fixed; }
@@ -58,7 +58,7 @@
 	
 		.title { @include text-small;  margin: 0px; padding: 7px 14px; font-weight: 400; color: $colorMediumGrey; }
 	
-		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: #fff; }
+		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: $colorWhite; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadonly { cursor: default; }
 		

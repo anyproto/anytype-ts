@@ -6,7 +6,7 @@
 }
 .switch {
 	.inner { 
-		width: 12px; height: 12px; border-radius: 100%; background: #fff; position: absolute; left: 2px; top: 2px;
+		width: 12px; height: 12px; border-radius: 100%; background: $colorWhite; position: absolute; left: 2px; top: 2px;
 		transition: $transitionFast; box-shadow: 0px 0px 0px 0.5px rgba(0, 0, 0, 0.1);
 	}	
 }

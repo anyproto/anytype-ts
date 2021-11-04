@@ -5,7 +5,7 @@
 	.menu.menuDataviewText {
 		.content { overflow: visible; max-height: none; transition: $transitionFast; padding: 0px; }
 		#input { 
-			@include text-common; border-radius: 4px; padding: 13px 14px; overflow: auto; height: auto; width: 100%; background: #fff; z-index: 1; white-space: normal; 
+			@include text-common; border-radius: 4px; padding: 13px 14px; overflow: auto; height: auto; width: 100%; background: $colorWhite; z-index: 1; white-space: normal; 
 			-webkit-user-modify: read-write-plaintext-only;
 		}
 		#placeholder { padding: 13px 14px; }

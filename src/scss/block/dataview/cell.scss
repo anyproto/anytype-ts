@@ -10,7 +10,7 @@
 	.icon.edit { display: none !important; }
 	.cellContent { 
 		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
-		background: #fff; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
+		background: $colorWhite; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
 	}
 	.cellContent {
 		.name { display: inline-block; }

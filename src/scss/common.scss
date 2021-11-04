@@ -57,7 +57,7 @@ html.platformWindows {
 			.icon:last-child { margin-right: 16px; }
 		}
 
-		.name { color: #fff; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
+		.name { color: $colorWhite; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
 
 		.icon { cursor: pointer; -webkit-app-region: none; }
 		.icon.menu { width: 20px; height: 20px; margin: -2px 16px 0px 0px; background-image: url('~img/icon/header/windows/menu0.svg'); }
