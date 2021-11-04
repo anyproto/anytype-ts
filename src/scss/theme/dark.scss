@@ -314,6 +314,10 @@ html.themeDark {
         .coverOver {
            position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1;
         }
+        .elements {
+            .btn.white { background: $colorBgIcon; color: $colorSecondary; }
+            .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
+        }
     }
 
     .blocks {
