@@ -13,6 +13,11 @@ html.themeDark {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
     }
 
+    /* Header */
+
+    .header.headerMainIndex {
+        .side.center { border: 0px; color: $colorSecondary; background: rgb(44, 43, 39, 0.3); }
+    }
 
     /* PageMainIndex */
 
