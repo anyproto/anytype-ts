@@ -101,6 +101,8 @@ html.themeDark {
             .line { background: $colorLineLight; }
             .section::after { background: $colorLineLight; }
             .item { background: $colorBgLight; }
+
+            .loaderWrapper { background: $colorBgLight; }
         }
 
         .menu.menuBlockAdd {
