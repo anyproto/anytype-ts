@@ -63,6 +63,15 @@ html.themeDark {
     .select { border-color: $colorLinePrimary; }
     .select:hover, .select.active { background: $colorHover; }
 
+    .listTemplate {
+        .item.add { border-color: $colorLinePrimary; }
+        .item:before { background: $colorHover; }
+    }
+
+    .previewObject {
+        .border { border-color: $colorLinePrimary; }
+    }
+
     /* IconObject */
 
     .iconObject.c56 { background-color: $colorBgIcon; }
