@@ -222,6 +222,10 @@ html.themeDark {
         .menu.menuBlockMore {
             .item:hover::before { background: $colorHover; }
         }
+
+        .menu.menuHelp {
+            .item:hover::before { background: $colorHover; }
+        }
     }
 
     /* Header */
@@ -238,6 +242,13 @@ html.themeDark {
 
     .header.headerMainIndex {
         .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    }
+
+    /* Footer */
+    /* ---------------------------------------------------------------- */
+
+    .footer {
+        .icon.big { background-color: $colorBgIcon; }
     }
 
     /* Pages */
