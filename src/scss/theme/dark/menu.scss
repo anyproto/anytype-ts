@@ -1,0 +1,94 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+.menus {
+
+    /* Common */
+
+    .menu { background: $colorBgLight; }
+    .menu.vertical {
+        .tabs { border-color: $colorLineSecondary; }
+        .tabs {
+            .tab:hover, .tab.active { color: $colorPrimary; }
+        }
+
+        .line { background: $colorLineSecondary; }
+        .section::after { background: $colorLineSecondary; }
+
+        .item { background: $colorBgLight; }
+        .item.hover::before { background: $colorHover; }
+        .item {
+            .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
+        }
+
+        .loaderWrapper { background: $colorBgLight; }
+    }
+
+    .menu.menuBlockAdd {
+        .item.isBig {
+            .iconObject { background: $colorBgIcon; }
+        }
+    }
+
+    .menu.menuSmile {
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .btn:hover, .btn.active { color: $colorPrimary; }
+        }
+    }
+
+    .menu.menuBlockCover {
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .btn:hover, .btn.active { color: $colorPrimary; }
+        }
+    }
+
+    .menu.menuBlockRelationView {
+        .section > .name { color: $colorPrimary; }
+
+        .info.canEdit:hover { background: $colorHover; }
+        .cell.canEdit:hover { background: $colorHover; }
+        .item.add:hover { 
+            .info { background: $colorHover; } 
+        }
+    }
+
+    .menu.menuBlockRelationEdit {
+        .input { border-color: $colorLinePrimary; }
+    }
+
+    .menu.menuDataviewText {
+        #input { background: $colorBgIcon; }
+    }
+
+    .menu.menuDataviewRelationList {
+        .item:hover::before { background: $colorHover; }
+    }
+
+    .menu.menuDataviewFilterList {
+        .item.add:hover::before { background: $colorHover; }
+    }
+
+    .menu.menuDataviewSort {
+        .item.add:hover::before { background: $colorHover; }
+    }
+
+    .menu.menuSearchObject.big {
+        .item {
+            .iconObject { background: $colorBgIcon; }
+        }
+    }
+
+    .menu.menuThreadList {
+        .item:hover::before { background: $colorHover; }
+    }
+
+    .menu.menuBlockMore {
+        .item:hover::before { background: $colorHover; }
+    }
+
+    .menu.menuHelp {
+        .item:hover::before { background: $colorHover; }
+    }
+}

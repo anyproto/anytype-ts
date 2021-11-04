@@ -1,0 +1,112 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+/*@media (prefers-color-scheme: dark) {*/
+html.themeDark {
+
+    /* Common */
+    /* ---------------------------------------------------------------- */
+
+    body { background: $colorBlack; color: $colorPrimary; }
+
+    #root > .loaderWrapper { background: $colorBlack; }
+	
+    .cover.main::after {
+        content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
+    }
+
+    .empty { color: $colorTertiary; }
+    .placeholder { color: $colorTertiary; }
+    ::-webkit-input-placeholder { color: $colorTertiary !important; }
+
+    /* Components */
+    /* ---------------------------------------------------------------- */
+
+    .loaderWrapper {
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+    }
+
+    /* Button */
+
+    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; }
+    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+
+    .button.blank { border-color: $colorLineSecondary; }
+    .button.blank:hover { border-color: $colorLinePrimary; }
+
+    .filter {
+        .line { background: $colorLineSecondary; }
+    }
+
+    .frame { background: $colorBlack; }
+
+    .textarea { background: $colorBgIcon; }
+
+    .switch { background: $colorBgInactive; }
+
+    .sync { background: $colorBgIcon; }
+
+    .select { border-color: $colorLinePrimary; }
+    .select:hover, .select.active { background: $colorHover; }
+
+    .listTemplate {
+        .item.add { border-color: $colorLinePrimary; }
+        .item:before { background: $colorHover; }
+    }
+
+    .previewObject {
+        .border { border-color: $colorLinePrimary; }
+    }
+
+    /* IconObject */
+
+    .iconObject.c56 { background-color: $colorBgIcon; }
+    .iconObject.c64 { background-color: $colorBgIcon; }
+    .iconObject.c96 { background-color: $colorBgIcon; }
+    .iconObject.c112 { background-color: $colorBgIcon; }
+    .iconObject.c128 { background-color: $colorBgIcon; }
+    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorBgIcon; }
+    .iconObject.withLetter { background-color: $colorBgIcon; }
+
+    /* EditorControls */
+
+    .editorControls {
+        .btn { background: $colorBgIcon; color: $colorSecondary; }
+        .btn:hover { color: $colorPrimary; }
+    }
+
+    /* Header */
+    /* ---------------------------------------------------------------- */
+
+    .header.headerMainEdit { background: $colorBlack; }
+    .header.headerMainEdit {
+        .path { border: 0px; line-height: 28px; }
+        .path {
+            .item:hover { color: $colorPrimary; }
+        }
+        .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
+    }
+
+    .header.headerMainIndex {
+        .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    }
+
+    /* Footer */
+    /* ---------------------------------------------------------------- */
+
+    .footer {
+        .icon.big { background-color: $colorBgIcon; }
+    }
+
+    @import "./menu.scss";
+    @import "./popup.scss";
+    @import "./page.scss";
+    @import "./block.scss";
+
+    /* Cells */
+    /* ---------------------------------------------------------------- */
+
+    .cell.isEditing {
+        .cellContent { background: $colorBgIcon; }
+    }
+}

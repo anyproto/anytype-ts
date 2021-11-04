@@ -31,8 +31,6 @@ const Sync = observer(class Sync extends React.Component<Props, {}> {
 		const thread = authStore.threadGet(rootId);
 		const { summary } = thread;
 
-		console.log(summary);
-
 		return (
 			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
 				<div className={[ 'bullet', DataUtil.threadColor(summary.status) ].join(' ')} />

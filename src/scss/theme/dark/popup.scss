@@ -1,0 +1,43 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+.popups {
+    /* Common */
+
+    .popup {
+        .innerWrap { background: $colorBlack; }
+
+        #loader { background: $colorBlack; }
+    }
+
+    /* PopupSearch */
+
+    .popup.popupSearch {
+        .head { background: $colorBlack; }
+    }
+
+    /* PopupSettings */
+
+    .popup.popupSettings {
+        .head { background: $colorBlack; }
+        .head {
+            .element:hover { color: $colorPrimary; }
+        }
+
+        .tabIndex .row, .tabOther .row { border-color: $colorLineSecondary; }
+        
+        .tabWallpaper .item.active { border-color: $colorLinePrimary; }
+        .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }
+
+        .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineSecondary; }
+
+        .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLinePrimary; }
+
+        .tabImportIndex {
+            .item { border-color: $colorLineSecondary; }
+            .item:hover, .item.active { border-color: $colorLinePrimary; }
+            .item.notion .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/notion.svg'); }
+            .item.roam .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/roam.svg'); }
+        }
+    }
+}
