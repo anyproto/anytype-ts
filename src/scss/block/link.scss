@@ -107,7 +107,7 @@
 
         .linkCard.card { margin: 3px 0px; }
         .linkCard.card {
-            .sides { border: 1px solid #dfddd0; }
+            .sides { border: 1px solid $colorBorderDark; }
         }
         .linkCard.withCover {
             .sides { border: 0px; }

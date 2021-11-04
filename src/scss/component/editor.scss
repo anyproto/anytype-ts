@@ -41,7 +41,7 @@
 		height: 28px; margin-right: 8px; line-height: 26px; padding: 0px 8px 0px 6px; border-radius: 6px;
 	}
 	.btn:last-child { margin: 0px; }
-	.btn:hover, .btn.hover { background: rgba(134, 125, 66, 0.08); color: $colorBlack; }
+	.btn:hover, .btn.hover { background: $colorHover; color: $colorBlack; }
 
 	.btn {
 		.icon { width: 20px; height: 20px; margin-right: 4px; }

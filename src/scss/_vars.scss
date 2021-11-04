@@ -14,6 +14,11 @@ $colorTeal: #0fc8ba;
 $colorLime: #5dd400;
 $colorGreen: #57c600;
 
+$colorBorderLight: #eae9e0;
+$colorBorderDark: #dfddd0;
+
+$colorHover: rgba(134, 125, 66, 0.08);
+
 $transitionFast: all 0.2s ease-in-out;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
