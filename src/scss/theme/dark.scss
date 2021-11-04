@@ -61,6 +61,8 @@ html.themeDark {
     .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorHover; }
     .iconObject.withLetter { background-color: $colorHover; }
 
+    /* EditorControls */
+
     .editorControls {
         .btn { background: $colorHover; color: $colorSecondary; }
         .btn:hover { color: $colorPrimary; }
@@ -143,6 +145,12 @@ html.themeDark {
 
         .menu.menuSmile {
             .head { border-color: $colorLineLight; }
+        }
+
+        /* MenuBlockRelationView */
+
+        .menu.menuBlockRelationView {
+            .section > .name { color: $colorPrimary; }
         }
     }
 
@@ -296,5 +304,12 @@ html.themeDark {
         }
 
         .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+    }
+
+    /* Cells */
+    /* ---------------------------------------------------------------- */
+
+    .cell.isEditing {
+        .cellContent { background: $colorHover; }
     }
 }
