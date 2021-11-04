@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-$colorBorderDark: rgba(172, 169, 150, 0.3);
-$colorBorderLight: rgba(223, 221, 208, 0.08);
+$colorLineDark: rgba(172, 169, 150, 0.3);
+$colorLineLight: rgba(223, 221, 208, 0.08);
 
 $colorBlack30: rgb(44, 43, 39, 0.3);
 
@@ -25,14 +25,16 @@ html.themeDark {
 
     /* Components */
 
-    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorBorderLight inset; }
-    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorBorderDark inset; }
+    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineLight inset; }
+    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLineDark inset; }
 
     .frame { background: $colorBlack; }
 
     .textarea { background: $colorHover; }
 
     .switch { background: $colorBgInactive; }
+
+    .sync { background: $colorHover; }
 
     /* IconObject */
 
@@ -61,9 +63,9 @@ html.themeDark {
 
         .popup.popupSettings {
             .head { background: $colorBlack; }
-            .tabIndex .row, .tabOther .row { border-color: $colorBorderLight; }
-            .tabWallpaper .item.active { border-color: $colorBorderDark; }
-            .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorBorderLight; }
+            .tabIndex .row, .tabOther .row { border-color: $colorLineLight; }
+            .tabWallpaper .item.active { border-color: $colorLineDark; }
+            .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineLight; }
         }
     }
 
@@ -72,9 +74,9 @@ html.themeDark {
     .menus {
         .menu { background: $colorBgLight; }
         .menu.vertical {
-            .tabs { border-color: $colorBorderLight; }
-            .line { background: $colorBorderLight; }
-            .section::after { background: $colorBorderLight; }
+            .tabs { border-color: $colorLineLight; }
+            .line { background: $colorLineLight; }
+            .section::after { background: $colorLineLight; }
             .item { background: $colorBgLight; }
         }
 
@@ -121,7 +123,7 @@ html.themeDark {
     .pageMainGraph {
         canvas { background: $colorBlack; }
         .wrapper {
-            .side.right { background: $colorBlack; border-color: $colorBorderLight; }
+            .side.right { background: $colorBlack; border-color: $colorLineLight; }
             .section {
                 .item { background: $colorBlack; }
             }
@@ -136,7 +138,7 @@ html.themeDark {
             .items {
                 .item {
                     .info {
-                        .line { background: $colorBorderLight; }
+                        .line { background: $colorLineLight; }
                     }
                 }
             }
@@ -146,16 +148,24 @@ html.themeDark {
     /* Blocks */
 
     .blocks {
+        .block.blockIconPage {
+            .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
+        }
+
+        .block.blockIconUser {
+            .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
+        }
+
         .block.blockDataview {
             .dataviewControls {
-                .line { background: $colorBorderLight; }
+                .line { background: $colorLineLight; }
             }
 
-            .cellHead .resize .line { background: $colorBorderLight; }
+            .cellHead .resize .line { background: $colorLineLight; }
 
-            .viewItem.viewGrid { box-shadow: 0px -1px $colorBorderLight inset; }
+            .viewItem.viewGrid { box-shadow: 0px -1px $colorLineLight inset; }
             .viewItem.viewGrid {
-                .row { box-shadow: 0px 1px $colorBorderLight inset; }
+                .row { box-shadow: 0px 1px $colorLineLight inset; }
             }
         }
 

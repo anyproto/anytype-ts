@@ -31,9 +31,7 @@ const Sync = observer(class Sync extends React.Component<Props, {}> {
 		const thread = authStore.threadGet(rootId);
 		const { summary } = thread;
 
-		if (!summary) {
-			return null;
-		};
+		console.log(summary);
 
 		return (
 			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
