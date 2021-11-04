@@ -25,8 +25,13 @@ html.themeDark {
 
     /* Components */
 
+    /* Button */
+
     .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineLight inset; }
     .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLineDark inset; }
+
+    .button.blank { border-color: $colorLineLight; }
+    .button.blank:hover { border-color: $colorLineDark; }
 
     .frame { background: $colorBlack; }
 
@@ -75,6 +80,10 @@ html.themeDark {
         .menu { background: $colorBgLight; }
         .menu.vertical {
             .tabs { border-color: $colorLineLight; }
+            .tabs {
+                .tab:hover, .tab.active { color: $colorPrimary; }
+            }
+
             .line { background: $colorLineLight; }
             .section::after { background: $colorLineLight; }
             .item { background: $colorBgLight; }
@@ -122,11 +131,26 @@ html.themeDark {
 
     .pageMainGraph {
         canvas { background: $colorBlack; }
+
+        .tabs { border-color: $colorLineLight; }
+        .tabs {
+            .tab:hover, .tab.active { color: $colorPrimary; }
+        }
+
         .wrapper {
             .side.right { background: $colorBlack; border-color: $colorLineLight; }
+            .side.right {
+                .bottom { border-color: $colorLineLight; }
+                .filter { background: none; }
+            }
+
             .section {
                 .item { background: $colorBlack; }
             }
+        }
+
+        .footer {
+            .icon { background-color: $colorHover; }
         }
     }
 
