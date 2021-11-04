@@ -144,7 +144,19 @@ html.themeDark {
         /* MenuSmile */
 
         .menu.menuSmile {
-            .head { border-color: $colorLineLight; }
+            .head { border-color: $colorLineLight; color: $colorSecondary; }
+            .head {
+                .btn:hover, .btn.active { color: $colorPrimary; }
+            }
+        }
+
+        /* MenuBlockCover */
+
+        .menu.menuBlockCover {
+            .head { border-color: $colorLineLight; color: $colorSecondary; }
+            .head {
+                .btn:hover, .btn.active { color: $colorPrimary; }
+            }
         }
 
         /* MenuBlockRelationView */
