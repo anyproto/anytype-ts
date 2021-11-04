@@ -8,6 +8,8 @@ $colorBlack30: rgb(44, 43, 39, 0.3);
 $colorPrimary: #cbc9bd;
 $colorSecondary: #929082;
 
+$colorHover: rgba(223, 221, 208, 0.08);
+
 /*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
     body { background: $colorBlack; color: $colorPrimary; }
@@ -24,6 +26,8 @@ html.themeDark {
     .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorBorderDark inset; }
 
     .frame { background: $colorBlack; }
+
+    .textarea { background: $colorHover; }
 
     /* Popups */
 
@@ -59,6 +63,10 @@ html.themeDark {
     .header.headerMainIndex {
         .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
     }
+
+    /* PageAuth */
+
+    .pageAuth .textarea, .pageIndex .textarea, .pageObject .textarea { border: 0px; }
 
     /* PageMainIndex */
 
