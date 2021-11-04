@@ -61,6 +61,11 @@ html.themeDark {
     .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorHover; }
     .iconObject.withLetter { background-color: $colorHover; }
 
+    .editorControls {
+        .btn { background: $colorHover; color: $colorSecondary; }
+        .btn:hover { color: $colorPrimary; }
+    }
+
     /* Popups */
     /* ---------------------------------------------------------------- */
 
