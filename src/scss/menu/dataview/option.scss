@@ -50,7 +50,7 @@
 	
 	.menu.menuDataviewOptionEdit {
 		.filter { margin-bottom: 8px; }
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item.active::before { z-index: 1; }
 	}
 

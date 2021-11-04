@@ -983,6 +983,17 @@ class Util {
 		return param;
 	};
 
+	addBodyClass (prefix: string, v: string) {
+		const obj = $('html');
+		const reg = new RegExp(`^${prefix}`);
+		const c = String(obj.attr('class') || '').split(' ').filter((it: string) => { return !it.match(reg); });
+
+		if (v) {
+			c.push(this.toCamelCase(`${prefix}-${v}`));
+		};
+		obj.attr({ class: c.join(' ') });
+	};
+
 };
 
 export default new Util();

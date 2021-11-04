@@ -7,7 +7,7 @@
 
 		.placeholder { display: none; overflow: hidden; }
 
-		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: rgba(172,169,150,0.1); }
+		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: $colorHover; }
 
 		.disabled { color: $colorMediumGrey; opacity: 1 !important; }
 

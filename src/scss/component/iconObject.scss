@@ -35,11 +35,11 @@
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c40 { width: 40px; height: 40px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 0px; overflow: hidden; }
-.iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: #f3f2ec; }
-.iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: #f3f2ec; }
-.iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
-.iconObject.c112 { display: block; width: 112px; height: 112px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
-.iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: #f3f2ec; }
+.iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c112 { display: block; width: 112px; height: 112px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 
 .iconObject.c56, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
@@ -49,10 +49,10 @@
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
 
-.iconObject.c40.isRelation, .iconObject.c48.isRelation { border-radius: 8px; background-color: #f3f2ec; }
+.iconObject.c40.isRelation, .iconObject.c48.isRelation { border-radius: 8px; background-color: $colorVeryLightGrey; }
 .iconObject.c40.withLetter, .iconObject.c48.withLetter { border-radius: 8px; }
 
-.iconObject.withLetter { background-color: #f3f2ec; }
+.iconObject.withLetter { background-color: $colorVeryLightGrey; }
 
 .iconObject.withImage { border-radius: 2px !important; }
 .iconObject.isHuman { border-radius: 100% !important; }

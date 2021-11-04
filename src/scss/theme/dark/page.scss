@@ -1,0 +1,90 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+/* PageAuth */
+
+.pageAuth .textarea, .pageIndex .textarea, .pageObject .textarea { border: 0px; }
+
+/* PageMainIndex */
+
+.pageMainIndex {
+    #documents {
+        .emptySearch { background: $colorBlack; }
+
+        .item { background: $colorBlack; }
+        .item {
+            .type { color: $colorSecondary; }
+        }
+    }
+}
+
+/* PageMainGraph */
+
+.pageMainGraph {
+    canvas { background: $colorBlack; }
+
+    .tabs { border-color: $colorLineSecondary; }
+    .tabs {
+        .tab:hover, .tab.active { color: $colorPrimary; }
+    }
+
+    .wrapper {
+        .side.right { background: $colorBlack; border-color: $colorLineSecondary; }
+        .side.right {
+            .bottom { border-color: $colorLineSecondary; }
+            .filter { background: none; }
+        }
+
+        .section {
+            .item { background: $colorBlack; }
+        }
+    }
+
+    .footer {
+        .icon { background-color: $colorBgIcon; }
+    }
+}
+
+/* PageMainStore */
+
+.pageMainStore {
+    .head { background: $colorBlack; }
+    .head {
+        .tabs { background: $colorBgIcon; color: $colorSecondary; }
+        .tabs {
+            .item.active { background: $colorHover; color: $colorPrimary; }
+        }
+    }
+
+    .body {
+        .items {
+            .item {
+                .info {
+                    .line { background: $colorLineSecondary; }
+                }
+            }
+        }
+    }
+}
+
+/* PageMainType */
+
+.pageMainType {
+    .wrapper {
+        table { border-color: $colorLineSecondary; }
+        table {
+            .cellHead .name { border-color: $colorLineSecondary; }
+            .cell { border-color: $colorLineSecondary; }
+            tbody { border-color: $colorLineSecondary; }
+        }
+    }
+}
+
+/* PageMainNavigation */
+
+.pageMainNavigation {
+    .selected { border-color: $colorLinePrimary; }
+    .items {
+        .item { border-color: $colorLinePrimary; }
+    }
+}

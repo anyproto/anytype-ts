@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .sync {
-	background: #f3f2ec; border-radius: 4px; @include text-small; padding: 0px 6px; display: inline-block; vertical-align: middle;
+	background: $colorVeryLightGrey; border-radius: 4px; @include text-small; padding: 0px 6px; display: inline-block; vertical-align: middle;
 	color: $colorMediumGrey; white-space: nowrap;
 }
 .sync {

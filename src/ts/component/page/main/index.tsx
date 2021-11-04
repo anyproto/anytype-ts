@@ -107,7 +107,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header {...this.props} />
 				<Footer {...this.props} />
 				

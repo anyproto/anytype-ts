@@ -40,7 +40,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		
 		return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

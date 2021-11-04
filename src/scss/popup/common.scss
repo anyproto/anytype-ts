@@ -11,7 +11,7 @@
 	
 	.popup {
 		.innerWrap { 
-			position: absolute; left: 50%; top: 50%; z-index: 1; background: #fff; border-radius: 12px; box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.35);
+			position: absolute; left: 50%; top: 50%; z-index: 1; background: $colorWhite; border-radius: 12px; box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.35);
 			opacity: 0; transform: scale3d(0.95,0.95,1); transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out; overflow-x: hidden; overflow-y: overlay;
 		}
 

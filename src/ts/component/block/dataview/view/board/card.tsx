@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent {
 
 const getItemStyle = (snapshot: any, style: any) => {
 	if (snapshot.isDragging) {
-		style.background = '#f3f2ef';
+		style.background = '$colorVeryLightGrey';
 	};
 	return style;
 };

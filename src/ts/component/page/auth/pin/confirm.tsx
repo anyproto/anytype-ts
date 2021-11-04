@@ -38,7 +38,7 @@ const PageAuthPinConfirm = observer(class PageAuthPinConfirm extends React.Compo
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

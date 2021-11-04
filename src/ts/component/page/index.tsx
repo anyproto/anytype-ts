@@ -30,7 +30,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
