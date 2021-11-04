@@ -37,9 +37,12 @@
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }
         .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }
 
-        .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineSecondary; }
+        .tabPinIndex, .tabPinSelect, .tabPinConfirm {
+            .button.blank { border-color: $colorLineSecondary; }
+            .button.blank:hover { color: $colorPrimary; }
 
-        .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLinePrimary; }
+            .input { border-color: $colorLinePrimary; }
+        }
 
         .tabImportIndex {
             .item { border-color: $colorLineSecondary; }
