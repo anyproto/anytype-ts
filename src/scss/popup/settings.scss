@@ -148,7 +148,10 @@
 			.item.disabled:hover { border-color: $colorLightGrey;  }
 
 			.item {
-				.icon { margin-bottom: 6px; height: 32px; }
+				.icon { 
+					width: 28px; margin-bottom: 6px; height: 32px; background-size: contain; 
+					background-position: top center;
+				}
 				.name { @include text-small; }
 				.soon { 
 					font-weight: 500; font-size: 9px; line-height: 18px; letter-spacing: 0.4px; text-transform: uppercase; color: $colorMediumGrey; 
@@ -156,13 +159,13 @@
 				}
 			}
 
-			.item.notion .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); }
-			.item.evernote .icon { width: 27px; background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
-			.item.roam .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/roam.svg'); }
-			.item.word .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/word.svg'); }
-			.item.text .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/text.svg'); }
-			.item.html .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/html.svg'); }
-			.item.csv .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/csv.svg'); }
+			.item.notion .icon {  background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+			.item.evernote .icon { background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
+			.item.roam .icon { background-image: url('~img/icon/popup/settings/import/roam.svg'); }
+			.item.word .icon { background-image: url('~img/icon/popup/settings/import/word.svg'); }
+			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
+			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
+			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
 		}
 
 		.tabImportNotion {

@@ -93,6 +93,13 @@ html.themeDark {
             .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineLight; }
 
             .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLineDark; }
+
+            .tabImportIndex {
+                .item { border-color: $colorLineLight; }
+                .item:hover, .item.active { border-color: $colorLineDark; }
+                .item.notion .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/notion.svg'); }
+                .item.roam .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/roam.svg'); }
+            }
         }
     }
 
