@@ -209,6 +209,13 @@ html.themeDark {
 
     .pageMainStore {
         .head { background: $colorBlack; }
+        .head {
+            .tabs { background: $colorHover; color: $colorSecondary; }
+            .tabs {
+                .item.active { background: $colorHover; color: $colorPrimary; }
+            }
+        }
+
         .body {
             .items {
                 .item {
@@ -282,5 +289,7 @@ html.themeDark {
                 .iconObject { background: $colorHover; }
             }
         }
+
+        .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
     }
 }
