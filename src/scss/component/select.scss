@@ -5,7 +5,7 @@
 	letter-spacing: 0.08px; transition: $transitionFast; position: relative; cursor: pointer; font-family: 'Inter';
 	white-space: nowrap; padding: 3px 26px 3px 6px; line-height: 20px !important;
 }
-.select:hover, .select.active { background: #f3f2ef; }
+.select:hover, .select.active { background: $colorVeryLightGrey; }
 
 .select {
 	.icon { transition: none; }

@@ -57,6 +57,7 @@ html.themeDark {
     .sync { background: $colorBgIcon; }
 
     .select { border-color: $colorLinePrimary; }
+    .select:hover, .select.active { background: $colorHover; }
 
     /* IconObject */
 
