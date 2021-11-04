@@ -42,7 +42,7 @@
         .viewItem.viewGallery {
             .card { background: $colorBlack; border-color: $colorLinePrimary; }
             .card {
-                .cover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+                .cover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; background-color: $colorBgIcon; }
             }
 
             .cellContent.isName { color: $colorPrimary; }
