@@ -64,6 +64,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
+			name = name || DataUtil.defaultName('page');
 			if (layout == I.ObjectLayout.Note) {
 				name = object.snippet || <span className="empty">Empty</span>;
 			};
