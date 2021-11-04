@@ -31,7 +31,7 @@
 		.item.isFile:hover, .item.isFile.active {
 			.clickable { width: calc(100% - 46px); }
 		}
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item:hover, .item.active {
 			.icon.more { opacity: 1; }
 		}

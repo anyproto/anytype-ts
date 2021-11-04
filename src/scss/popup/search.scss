@@ -61,7 +61,7 @@
 				}
 			}
 
-			.item.active { background-color: rgba(172, 169, 150, 0.1); }
+			.item.active { background-color: $colorHover; }
 		}
 	}
 }

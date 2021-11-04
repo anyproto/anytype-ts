@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-$colorLineDark: rgba(172, 169, 150, 0.3);
-$colorLineLight: rgba(223, 221, 208, 0.08);
+$colorLinePrimary: #525148;
+$colorLineSecondary: #373632;
 
 $colorBlack30: rgb(44, 43, 39, 0.3);
 
@@ -12,6 +12,7 @@ $colorTertiary: rgba(203, 201, 189, 0.3);
 $colorHover: rgba(223, 221, 208, 0.08);
 
 $colorBgLight: #373632;
+$colorBgIcon: #484843;
 $colorBgInactive: rgba(172, 169, 150, 0.3);
 
 /*@media (prefers-color-scheme: dark) {*/
@@ -32,39 +33,43 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .loaderWrapper {
-        .loader { border-color: $colorLineDark; border-left-color: $colorOrange; }
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
     }
 
     /* Button */
 
-    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineLight inset; }
-    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLineDark inset; }
+    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; }
+    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
 
-    .button.blank { border-color: $colorLineLight; }
-    .button.blank:hover { border-color: $colorLineDark; }
+    .button.blank { border-color: $colorLineSecondary; }
+    .button.blank:hover { border-color: $colorLinePrimary; }
+
+    .filter {
+        .line { background: $colorLineSecondary; }
+    }
 
     .frame { background: $colorBlack; }
 
-    .textarea { background: $colorHover; }
+    .textarea { background: $colorBgIcon; }
 
     .switch { background: $colorBgInactive; }
 
-    .sync { background: $colorHover; }
+    .sync { background: $colorBgIcon; }
 
     /* IconObject */
 
-    .iconObject.c56 { background-color: $colorHover; }
-    .iconObject.c64 { background-color: $colorHover; }
-    .iconObject.c96 { background-color: $colorHover; }
-    .iconObject.c112 { background-color: $colorHover; }
-    .iconObject.c128 { background-color: $colorHover; }
-    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorHover; }
-    .iconObject.withLetter { background-color: $colorHover; }
+    .iconObject.c56 { background-color: $colorBgIcon; }
+    .iconObject.c64 { background-color: $colorBgIcon; }
+    .iconObject.c96 { background-color: $colorBgIcon; }
+    .iconObject.c112 { background-color: $colorBgIcon; }
+    .iconObject.c128 { background-color: $colorBgIcon; }
+    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorBgIcon; }
+    .iconObject.withLetter { background-color: $colorBgIcon; }
 
     /* EditorControls */
 
     .editorControls {
-        .btn { background: $colorHover; color: $colorSecondary; }
+        .btn { background: $colorBgIcon; color: $colorSecondary; }
         .btn:hover { color: $colorPrimary; }
     }
 
@@ -94,18 +99,18 @@ html.themeDark {
                 .element:hover { color: $colorPrimary; }
             }
 
-            .tabIndex .row, .tabOther .row { border-color: $colorLineLight; }
+            .tabIndex .row, .tabOther .row { border-color: $colorLineSecondary; }
             
-            .tabWallpaper .item.active { border-color: $colorLineDark; }
-            .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLineDark; }
+            .tabWallpaper .item.active { border-color: $colorLinePrimary; }
+            .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }
 
-            .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineLight; }
+            .tabPinIndex .button.blank, .tabPinSelect .button.blank, .tabPinConfirm .button.blank { border-color: $colorLineSecondary; }
 
-            .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLineDark; }
+            .tabPinIndex .input, .tabPinSelect .input, .tabPinConfirm .input { border-color: $colorLinePrimary; }
 
             .tabImportIndex {
-                .item { border-color: $colorLineLight; }
-                .item:hover, .item.active { border-color: $colorLineDark; }
+                .item { border-color: $colorLineSecondary; }
+                .item:hover, .item.active { border-color: $colorLinePrimary; }
                 .item.notion .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/notion.svg'); }
                 .item.roam .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/roam.svg'); }
             }
@@ -121,14 +126,16 @@ html.themeDark {
 
         .menu { background: $colorBgLight; }
         .menu.vertical {
-            .tabs { border-color: $colorLineLight; }
+            .tabs { border-color: $colorLineSecondary; }
             .tabs {
                 .tab:hover, .tab.active { color: $colorPrimary; }
             }
 
-            .line { background: $colorLineLight; }
-            .section::after { background: $colorLineLight; }
+            .line { background: $colorLineSecondary; }
+            .section::after { background: $colorLineSecondary; }
+
             .item { background: $colorBgLight; }
+            .item.hover::before { background: $colorHover; }
 
             .loaderWrapper { background: $colorBgLight; }
         }
@@ -137,14 +144,14 @@ html.themeDark {
 
         .menu.menuBlockAdd {
             .item.isBig {
-                .iconObject { background: $colorHover; }
+                .iconObject { background: $colorBgIcon; }
             }
         }
 
         /* MenuSmile */
 
         .menu.menuSmile {
-            .head { border-color: $colorLineLight; color: $colorSecondary; }
+            .head { border-color: $colorLineSecondary; color: $colorSecondary; }
             .head {
                 .btn:hover, .btn.active { color: $colorPrimary; }
             }
@@ -153,7 +160,7 @@ html.themeDark {
         /* MenuBlockCover */
 
         .menu.menuBlockCover {
-            .head { border-color: $colorLineLight; color: $colorSecondary; }
+            .head { border-color: $colorLineSecondary; color: $colorSecondary; }
             .head {
                 .btn:hover, .btn.active { color: $colorPrimary; }
             }
@@ -169,8 +176,20 @@ html.themeDark {
 
         .menu.menuSearchObject.big {
             .item {
-                .iconObject { background: $colorHover; }
+                .iconObject { background: $colorBgIcon; }
             }
+        }
+
+        /* MenuThreadList */
+
+        .menu.menuThreadList {
+            .item:hover::before { background: $colorHover; }
+        }
+
+        /* MenuBlockMore */
+
+        .menu.menuBlockMore {
+            .item:hover::before { background: $colorHover; }
         }
     }
 
@@ -183,7 +202,6 @@ html.themeDark {
         .path {
             .item:hover { color: $colorPrimary; }
         }
-
         .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
     }
 
@@ -216,15 +234,15 @@ html.themeDark {
     .pageMainGraph {
         canvas { background: $colorBlack; }
 
-        .tabs { border-color: $colorLineLight; }
+        .tabs { border-color: $colorLineSecondary; }
         .tabs {
             .tab:hover, .tab.active { color: $colorPrimary; }
         }
 
         .wrapper {
-            .side.right { background: $colorBlack; border-color: $colorLineLight; }
+            .side.right { background: $colorBlack; border-color: $colorLineSecondary; }
             .side.right {
-                .bottom { border-color: $colorLineLight; }
+                .bottom { border-color: $colorLineSecondary; }
                 .filter { background: none; }
             }
 
@@ -234,7 +252,7 @@ html.themeDark {
         }
 
         .footer {
-            .icon { background-color: $colorHover; }
+            .icon { background-color: $colorBgIcon; }
         }
     }
 
@@ -243,7 +261,7 @@ html.themeDark {
     .pageMainStore {
         .head { background: $colorBlack; }
         .head {
-            .tabs { background: $colorHover; color: $colorSecondary; }
+            .tabs { background: $colorBgIcon; color: $colorSecondary; }
             .tabs {
                 .item.active { background: $colorHover; color: $colorPrimary; }
             }
@@ -253,7 +271,7 @@ html.themeDark {
             .items {
                 .item {
                     .info {
-                        .line { background: $colorLineLight; }
+                        .line { background: $colorLineSecondary; }
                     }
                 }
             }
@@ -264,11 +282,11 @@ html.themeDark {
 
     .pageMainType {
         .wrapper {
-            table { border-color: $colorLineLight; }
+            table { border-color: $colorLineSecondary; }
             table {
-                .cellHead .name { border-color: $colorLineLight; }
-                .cell { border-color: $colorLineLight; }
-                tbody { border-color: $colorLineLight; }
+                .cellHead .name { border-color: $colorLineSecondary; }
+                .cell { border-color: $colorLineSecondary; }
+                tbody { border-color: $colorLineSecondary; }
             }
         }
     }
@@ -287,16 +305,16 @@ html.themeDark {
 
         .block.blockDataview {
             .dataviewControls {
-                .line { background: $colorLineLight; }
+                .line { background: $colorLineSecondary; }
                 .viewItem { color: $colorSecondary; }
                 .viewItem:hover, .viewItem.active { color: $colorPrimary; }
             }
 
-            .cellHead .resize .line { background: $colorLineLight; }
+            .cellHead .resize .line { background: $colorLineSecondary; }
 
-            .viewItem.viewGrid { box-shadow: 0px -1px $colorLineLight inset; }
+            .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
             .viewItem.viewGrid {
-                .row { box-shadow: 0px 1px $colorLineLight inset; }
+                .row { box-shadow: 0px 1px $colorLineSecondary inset; }
             }
 
             .viewItem.viewBoard {
@@ -308,9 +326,9 @@ html.themeDark {
             }
 
             .viewItem.viewGallery {
-                .card { background: $colorBlack; border-color: $colorLineDark; }
+                .card { background: $colorBlack; border-color: $colorLinePrimary; }
                 .card {
-                    .cover { box-shadow: 0px 0px 0px 1px $colorLineDark inset; }
+                    .cover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
                 }
 
                 .cellContent.isName { color: $colorPrimary; }
@@ -319,8 +337,9 @@ html.themeDark {
 
         .block.blockType {
             .item {
-                .iconObject { background: $colorHover; }
+                .iconObject { background: $colorBgIcon; }
             }
+            .item.hover { background: $colorHover; }
         }
 
         .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
@@ -330,6 +349,6 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .cell.isEditing {
-        .cellContent { background: $colorHover; }
+        .cellContent { background: $colorBgIcon; }
     }
 }

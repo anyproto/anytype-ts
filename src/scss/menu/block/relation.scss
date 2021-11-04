@@ -24,7 +24,7 @@
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item.disabled:hover::before { opacity: 0; }
 
 		.icon.arrow { 
