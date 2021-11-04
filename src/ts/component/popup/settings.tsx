@@ -136,23 +136,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
 				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pink' ];
 				let covers1 = [];
-				let covers2 = [];
-				let covers3 = [];
-
-				for (let i = 1; i <= 13; ++i) {
-					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
-				};
-
-				for (let c of colors) {
-					covers2.push({ id: c, image: '', type: I.CoverType.Color });
-				};
-
-				for (let c of gradients) {
-					covers3.push({ id: c, image: '', type: I.CoverType.Gradient });
-				};
+				let covers2 = colors.map((it: string) => { return { id: it, image: '', type: I.CoverType.Color }; });
+				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
 
 				if (coverImage) {
-					covers1.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
+					covers1.push({ id: 0, image: coverImage, type: I.CoverType.Upload });
+				};
+				for (let i = 1; i <= 13; ++i) {
+					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
 				let sections = [
