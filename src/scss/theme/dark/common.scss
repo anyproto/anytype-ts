@@ -34,6 +34,16 @@ html.themeDark {
 
     .switch { background: $colorBgInactive; }
 
+    /* IconObject */
+
+    .iconObject.c56 { background-color: $colorHover; }
+    .iconObject.c64 { background-color: $colorHover; }
+    .iconObject.c96 { background-color: $colorHover; }
+    .iconObject.c112 { background-color: $colorHover; }
+    .iconObject.c128 { background-color: $colorHover; }
+    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorHover; }
+    .iconObject.withLetter { background-color: $colorHover; }
+
     /* Popups */
 
     .popups {
@@ -66,6 +76,12 @@ html.themeDark {
             .line { background: $colorBorderLight; }
             .section::after { background: $colorBorderLight; }
             .item { background: $colorBgLight; }
+        }
+
+        .menu.menuBlockAdd {
+            .item.isBig {
+                .iconObject { background: $colorHover; }
+            }
         }
     }
 
@@ -112,6 +128,21 @@ html.themeDark {
         }
     }
 
+    /* PageMainStore */
+
+    .pageMainStore {
+        .head { background: $colorBlack; }
+        .body {
+            .items {
+                .item {
+                    .info {
+                        .line { background: $colorBorderLight; }
+                    }
+                }
+            }
+        }
+    }
+
     /* Blocks */
 
     .blocks {
@@ -125,6 +156,12 @@ html.themeDark {
             .viewItem.viewGrid { box-shadow: 0px -1px $colorBorderLight inset; }
             .viewItem.viewGrid {
                 .row { box-shadow: 0px 1px $colorBorderLight inset; }
+            }
+        }
+
+        .block.blockType {
+            .item {
+                .iconObject { background: $colorHover; }
             }
         }
     }

@@ -34,7 +34,7 @@
 			.item { padding-left: 48px; }
 		}
 
-		.item:hover, .item.active { background: #f3f2ec; }
+		.item:hover, .item.active { background: $colorVeryLightGrey; }
 	}
 
 	.blockLast { height: 100px; }

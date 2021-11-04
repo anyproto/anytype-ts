@@ -77,7 +77,7 @@
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
-	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
+	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
 	.icon.nm { margin: 0px !important; }
 
@@ -117,7 +117,7 @@
 		.side.left { opacity: 1; left: 14px; }
 		.side.left {
 			.btn { cursor: pointer; color: $colorVeryDarkGrey; display: inline-block; vertical-align: top; border-radius: 6px; padding: 0px 10px; height: 28px; line-height: 26px; }
-			.btn:hover { background-color: #f3f2ec; }
+			.btn:hover { background-color: $colorVeryLightGrey; }
 			.btn {
 				.icon { width: 20px; height: 20px; margin-right: 4px; border-radius: 0px; vertical-align: middle; }
 				.txt { line-height: 20px; }

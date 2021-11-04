@@ -50,7 +50,7 @@
                 .cardDescription:empty { display: none; }
 
                 .archive {
-                    border-radius: 3px; background-color: #f3f2ec; @include text-small; color: $colorMediumGrey; 
+                    border-radius: 3px; background-color: $colorVeryLightGrey; @include text-small; color: $colorMediumGrey; 
                     padding: 0px 6px; display: none; position: absolute; right: 0px; top: 0px; vertical-align: middle;
                 }
             }

@@ -18,7 +18,7 @@
 	}
 	.inner {
 		.label { position: absolute; left: 16px; top: 12px; z-index: 1; color: $colorBlack; white-space: nowrap; @include text-paragraph; }
-		.bar { width: calc(100% - 32px); height: 8px; background: #f3f2ec; overflow: hidden; border-radius: 8px; position: absolute; bottom: 16px; left: 16px; }
+		.bar { width: calc(100% - 32px); height: 8px; background: $colorVeryLightGrey; overflow: hidden; border-radius: 8px; position: absolute; bottom: 16px; left: 16px; }
 		.fill { position: absolute; left: 0px; top: 0px; height: 100%; background: $colorOrange; }
 	}
 	

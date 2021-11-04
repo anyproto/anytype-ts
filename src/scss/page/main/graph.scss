@@ -60,7 +60,7 @@
             width: 28px; height: 28px; position: absolute; right: 10px; top: 50%; margin-top: -14px; 
             background-image: url('~img/icon/graph/close.svg'); background-size: 20px 20px; border-radius: 6px;
         }
-        .icon.close:hover { background-color: #f3f2ec; }
+        .icon.close:hover { background-color: $colorVeryLightGrey; }
     }
 
     .sections { overflow: auto; padding: 14px 0px; }
@@ -113,7 +113,7 @@
 
         .heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; word-wrap: break-word; }
         .heading {
-            .iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
+            .iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
             .title { display: block; @include text-header3; font-weight: bold; position: relative; }
             .icon.checkbox { 
                 position: static; width: 20px; height: 20px; background-image: url('~img/icon/object/checkbox0.svg') !important; 

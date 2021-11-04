@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuHelp { position: fixed; }
 	.menu.menuHelp {
-		.item:hover { background: #f3f2ec; }
+		.item:hover { background: $colorVeryLightGrey; }
 	
 		.icon { width: 24px; height: 24px; }
 		.icon.help { background-size: 20px 20px; background-image: url('~img/icon/menu/help/help0.svg'); }

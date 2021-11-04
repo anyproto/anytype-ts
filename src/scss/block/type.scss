@@ -16,7 +16,7 @@
 		.item.hover { background: rgba(134,125,66, 0.08); }
 
 		.item {
-			.iconObject { position: absolute; left: 8px; top: 8px; background: #f3f2ec; border-radius: 10px; }
+			.iconObject { position: absolute; left: 8px; top: 8px; background: $colorVeryLightGrey; border-radius: 10px; }
 
 			.info { height: 100%; position: relative; line-height: 48px; }
 			.info {

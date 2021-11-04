@@ -106,6 +106,6 @@
 		.icon.play { display: none; }
 	}
 
-	.block.blockMedia.isAudio > .wrapContent { background-color: #f3f2ec; }
+	.block.blockMedia.isAudio > .wrapContent { background-color: $colorVeryLightGrey; }
 	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
 }

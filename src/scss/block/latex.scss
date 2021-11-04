@@ -23,7 +23,7 @@
 		#value { font-size: 20px; line-height: 20px; width: 100%; overflow-x: auto; overflow-y: visible; padding-bottom: 10px; }
 		#value:empty { display: none; }
 		#input { 
-			background: #f3f2ec; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
+			background: $colorVeryLightGrey; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
 			-webkit-user-modify: read-write-plaintext-only; display: none; border-radius: 4px; margin-top: 8px;
 		}
 
