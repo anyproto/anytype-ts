@@ -134,7 +134,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			case 'wallpaper':
 				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
-				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pink' ];
+				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pinkOrange', 'bluePink', 'greenOrange', 'sky' ];
 				let covers1 = [];
 				let covers2 = colors.map((it: string) => { return { id: it, image: '', type: I.CoverType.Color }; });
 				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
