@@ -46,7 +46,7 @@
 	.empty { vertical-align: top; display: none; }
 
 	.more { 
-		background: #f5f5f0; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
+		background: $colorVeryLightGrey; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
 		@include text-small; color: $colorDarkGrey; margin-left: 6px;
 	}
 }

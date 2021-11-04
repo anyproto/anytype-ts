@@ -106,6 +106,10 @@ html.themeDark {
     /* Cells */
     /* ---------------------------------------------------------------- */
 
+    .cellContent {
+        .more { background-color: $colorBgIcon; color: $colorSecondary; }
+    }
+
     .cell.isEditing {
         .cellContent { background: $colorBgIcon; }
     }
