@@ -10,6 +10,9 @@ $colorSecondary: #929082;
 
 $colorHover: rgba(223, 221, 208, 0.08);
 
+$colorBgLight: #373632;
+$colorBgInactive: rgba(172, 169, 150, 0.3);
+
 /*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
     body { background: $colorBlack; color: $colorPrimary; }
@@ -29,6 +32,8 @@ html.themeDark {
 
     .textarea { background: $colorHover; }
 
+    .switch { background: $colorBgInactive; }
+
     /* Popups */
 
     .popups {
@@ -47,6 +52,19 @@ html.themeDark {
         .popup.popupSettings {
             .head { background: $colorBlack; }
             .tabIndex .row, .tabOther .row { border-color: $colorBorderLight; }
+            .tabWallpaper .item.active { border-color: $colorBorderDark; }
+        }
+    }
+
+    /* Menu */
+
+    .menus {
+        .menu { background: $colorBgLight; }
+        .menu.vertical {
+            .tabs { border-color: $colorBorderLight; }
+            .line { background: $colorBorderLight; }
+            .section::after { background: $colorBorderLight; }
+            .item { background: $colorBgLight; }
         }
     }
 
@@ -86,12 +104,14 @@ html.themeDark {
     .blocks {
         .block.blockDataview {
             .dataviewControls {
-                .line { background: $colorBorderDark; }
+                .line { background: $colorBorderLight; }
             }
 
-            .viewItem.viewGrid { box-shadow: 0px -1px $colorBorderDark inset; }
+            .cellHead .resize .line { background: $colorBorderLight; }
+
+            .viewItem.viewGrid { box-shadow: 0px -1px $colorBorderLight inset; }
             .viewItem.viewGrid {
-                .row { box-shadow: 0px 1px $colorBorderDark inset; }
+                .row { box-shadow: 0px 1px $colorBorderLight inset; }
             }
         }
     }
