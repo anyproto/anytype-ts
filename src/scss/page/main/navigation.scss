@@ -55,12 +55,13 @@
 
 	.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; padding: 0px 16px; }
 	
-	.selected { padding: 16px 16px 12px 16px; border-radius: 8px; border: 1px solid $colorLightGrey; transition: $transitionFast; }
+	.selected { padding: 16px; border-radius: 8px; border: 1px solid $colorLightGrey; transition: $transitionFast; }
 	.selected {
 		.iconObject { margin-bottom: 8px; }
 		.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
 		.descr { @include text-small; color: $colorVeryDarkGrey; @include text-overflow; max-height: 54px; }
-		.cover { position: static; height: 156px; margin-top: 11px; }
+		.cover { position: static; height: 156px; margin-top: 11px; border-radius: 2px; }
+
 		.buttons { margin-top: 16px; display: flex; }
 		.buttons {
 			.button { width: 100%; height: 32px; line-height: 28px; }

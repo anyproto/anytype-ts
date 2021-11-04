@@ -79,3 +79,12 @@
         }
     }
 }
+
+/* PageMainNavigation */
+
+.pageMainNavigation {
+    .selected { border-color: $colorLinePrimary; }
+    .items {
+        .item { border-color: $colorLinePrimary; }
+    }
+}
