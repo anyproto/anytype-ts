@@ -159,6 +159,7 @@ html.themeDark {
         .block.blockDataview {
             .dataviewControls {
                 .line { background: $colorLineLight; }
+                .viewItem:hover, .viewItem.active { color: $colorPrimary; }
             }
 
             .cellHead .resize .line { background: $colorLineLight; }
@@ -166,6 +167,10 @@ html.themeDark {
             .viewItem.viewGrid { box-shadow: 0px -1px $colorLineLight inset; }
             .viewItem.viewGrid {
                 .row { box-shadow: 0px 1px $colorLineLight inset; }
+            }
+
+            .viewItem.viewList {
+                .cellContent.isName { color: $colorPrimary; }
             }
         }
 
