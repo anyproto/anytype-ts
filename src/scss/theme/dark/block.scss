@@ -116,8 +116,16 @@
         .cardName span::before { background: $colorPrimary !important; }
     }
 
+    /* BlockDiv */
+
     .block.blockDiv {
         .line { border-color: $colorLinePrimary; }
         .dot { border-color: $colorLinePrimary !important; }
+    }
+
+    /* BlockLatex */
+
+    .block.blockLatex {
+        #input { background: $colorBgIcon; }
     }
 }
