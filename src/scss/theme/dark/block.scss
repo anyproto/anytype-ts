@@ -18,6 +18,9 @@
     }
 
     .block.blockDataview {
+        .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
+        .icon.plus:hover { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
+
         .dataviewControls {
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
@@ -33,6 +36,17 @@
         }
 
         .cellHead .resize .line { background: $colorLineSecondary; }
+
+        .viewItem.viewGrid,
+		.viewItem.viewList {
+			.cell.add { color: $colorSecondary; }
+			.cell.add {
+				.btn:hover { color: $colorPrimary; }
+				.btn:hover {
+					.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
+				}
+			}
+		}
 
         .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
         .viewItem.viewGrid {
