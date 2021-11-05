@@ -32,6 +32,10 @@
 			}
         }
 
+        .tabIndex {
+            .logout:hover { color: $colorOrange; }
+        }
+
         .tabIndex .row, .tabOther .row { border-color: $colorLineSecondary; }
         
         .tabWallpaper .item.active { border-color: $colorLinePrimary; }

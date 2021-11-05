@@ -18,13 +18,35 @@
     }
 
     .block.blockDataview {
+        .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
+        .icon.plus:hover { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
+
         .dataviewControls {
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
+
+            .icon.search { background-image: url('~img/theme/dark/icon/dataview/button/search0.svg'); }
+			.icon.manager { background-image: url('~img/theme/dark/icon/dataview/button/manager0.svg'); }
+			.icon.plus { background-image: url('~img/theme/dark/icon/dataview/button/plus0.svg'); }
+
+			.icon.search:hover, .icon.search.active { background-image: url('~img/theme/dark/icon/dataview/button/search1.svg'); }
+			.icon.manager:hover, .icon.manager.active { background-image: url('~img/theme/dark/icon/dataview/button/manager1.svg'); }
+			.icon.plus:hover, .icon.plus.active { background-image: url('~img/theme/dark/icon/dataview/button/plus1.svg'); }
         }
 
         .cellHead .resize .line { background: $colorLineSecondary; }
+
+        .viewItem.viewGrid,
+		.viewItem.viewList {
+			.cell.add { color: $colorSecondary; }
+			.cell.add {
+				.btn:hover { color: $colorPrimary; }
+				.btn:hover {
+					.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
+				}
+			}
+		}
 
         .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
         .viewItem.viewGrid {

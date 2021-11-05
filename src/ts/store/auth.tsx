@@ -118,12 +118,7 @@ class AuthStore {
     };
 
 	threadGet (rootId: string) {
-		const thread = this.threadMap.get(rootId) || {};
-
-		thread.summary = thread.summary || {};
-		thread.summary.status = thread.summary.status || I.ThreadStatus.Unknown;
-
-		return thread;
+		return this.threadMap.get(rootId) || {};
     };
 
 	logout () {

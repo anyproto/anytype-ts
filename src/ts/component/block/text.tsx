@@ -558,10 +558,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
+		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
+		const restricted: I.MarkType[] = [];
+
+		if (block.isTextHeader()) {
+			restricted.push(I.MarkType.Bold);
+		};
 		
-		return Mark.fromHtml(value.html());
+		return Mark.fromHtml(value.html(), restricted);
 	};
 
 	onInput (e: any) {
