@@ -109,6 +109,8 @@
     .block.blockLink {
         .sides { border-color: $colorLinePrimary !important; }
         .cardName span::before { background: $colorLinePrimary !important; }
+
+        .loading, .deleted { color: $colorSecondary; }
     }
 
     .block.blockLink:hover {
