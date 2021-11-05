@@ -76,6 +76,8 @@ html.themeDark {
         .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
     }
 
+    .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+
     /* Icon */
 
     .icon.ghost { background-image: url('~img/theme/dark/icon/ghost.svg'); }
