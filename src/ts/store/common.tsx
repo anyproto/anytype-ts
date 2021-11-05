@@ -1,5 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
+import { analytics } from '../lib';
 
 const Constant = require('json/constant.json');
 
@@ -179,6 +180,8 @@ class CommonStore {
 		this.themeId = v;
 		Storage.set('theme', v);
 		Util.addBodyClass('theme', v);
+
+		analytics.event('Theme', { id: v });
 	};
 
 	configSet (config: any, force: boolean) {
