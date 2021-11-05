@@ -35,6 +35,13 @@
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
     }
 
+    /* BlockMedia */
+
+    .block.blockMedia {
+        .focusable.isFocused::before { background: $colorHover; }
+    }
+    .block.blockMedia.isAudio > .wrapContent { background: none; }
+
     /* BlockDataview */
 
     .block.blockDataview {
