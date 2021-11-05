@@ -167,13 +167,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const item = data[index] || {};
+		
+		let name = item.name;
 		if (item.layout == I.ObjectLayout.Note) {
-			item.name = String(item.snippet || '').replace(/\n/g, ' ');
+			name = String(item.snippet || '').replace(/\n/g, ' ');
 		};
 		if (item.isDeleted) {
-			item.name = translate('commonDeleted');
+			name = translate('commonDeleted');
 		};
-		return item;
+
+		return {
+			...item,
+			name,
+		};
 	};
 
 	getView (viewId?: string) {

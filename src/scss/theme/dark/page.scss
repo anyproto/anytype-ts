@@ -73,6 +73,32 @@
 
 .pageMainType {
     .wrapper {
+        .section.template {
+			.btn { color: $colorSecondary; }
+			.btn {
+				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template0.svg'); }
+			}
+
+			.btn:hover { color: $colorPrimary; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template1.svg'); }
+			}
+
+			.listTemplate {
+				.icon.arrow.left { left: -32px; }
+				.icon.arrow.right { right: -32px; }
+			}
+		}
+
+        .section.relation {
+            .item {
+                .name { color: $colorSecondary; }
+            }
+            .item.canEdit, .item.add {
+				.clickable:hover { background: $colorHover; }
+			}
+        }
+
         table { border-color: $colorLineSecondary; }
         table {
             .cellHead .name { border-color: $colorLineSecondary; }
