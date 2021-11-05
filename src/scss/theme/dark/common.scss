@@ -9,6 +9,8 @@ html.themeDark {
 
     body { background: $colorBlack; color: $colorPrimary; }
 
+    a { color: $colorPrimary; }
+
     #root > .loaderWrapper { background: $colorBlack; }
     #root {
         .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
