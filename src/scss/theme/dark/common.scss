@@ -58,7 +58,10 @@ html.themeDark {
 
     .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
     .inputWithFile {
+        .input::placeholder { color: $colorSecondary; }
         .fileWrap:hover .border { color: $colorPrimary; }
+
+        #url { color: $colorPrimary; }
     }
 
     .listTemplate {

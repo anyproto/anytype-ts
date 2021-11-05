@@ -137,4 +137,13 @@
     .block.blockLatex {
         #input { background: $colorBgIcon; }
     }
+
+    /* BlockBookmark */
+
+    .block.blockBookmark {
+        .inner { border-color: transparent; background-color: $colorHover; }
+        .name { color: $colorPrimary; }
+        .descr { color: $colorSecondary; }
+        .link { color: $colorSecondary; }
+    }
 }
