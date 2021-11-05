@@ -19,21 +19,8 @@ let edges = [];
 let forceProps = {};
 let images = {};
 let simulation = null;
-let Color = {
-	bg: '#fff',
-	text: '#2c2b27',
-	link: {
-		0: '#dfddd0',
-		1: '#8c9ea5',
-		over: '#ffd15b',
-	},
-	node: {
-		common: '#f3f2ec',
-		filter: '#e3f7d0',
-		focused: '#fef3c5',
-		over: '#d6f5f3',
-	},
-};
+let theme = '';
+let Color = {};
 let LineWidth = 0.25;
 
 addEventListener('message', ({ data }) => { 
@@ -48,10 +35,12 @@ init = (data) => {
 	forceProps = data.forceProps;
 	nodes = data.nodes;
 	edges = data.edges;
+	theme = data.theme;
 
 	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
+	initColor();
 	resize(data);
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(3);
@@ -80,6 +69,46 @@ init = (data) => {
 	simulation.on('tick', () => { redraw(); });
 	simulation.on('end', () => { simulation.alphaTarget(1); });
 	simulation.tick(200);
+};
+
+initColor = () => {
+	switch (theme) {
+		default:
+			Color = {
+				bg: '#fff',
+				text: '#2c2b27',
+				link: {
+					0: '#dfddd0',
+					1: '#8c9ea5',
+					over: '#ffd15b',
+				},
+				node: {
+					common: '#f3f2ec',
+					filter: '#e3f7d0',
+					focused: '#fef3c5',
+					over: '#d6f5f3',
+				},
+			}; 
+			break;
+
+		case 'dark':
+			Color = {
+				bg: '#2c2b27',
+				text: '#cbc9bd',
+				link: {
+					0: '#525148',
+					1: '#8c9ea5',
+					over: '#ffd15b',
+				},
+				node: {
+					common: '#484843',
+					filter: '#e3f7d0',
+					focused: '#fef3c5',
+					over: '#d6f5f3',
+				},
+			};
+			break;
+	};
 };
 
 image = ({ src, bitmap }) => {
