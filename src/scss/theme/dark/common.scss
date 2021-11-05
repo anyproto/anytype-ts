@@ -75,6 +75,21 @@ html.themeDark {
         .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
     }
 
+    .preview {
+        .content { background: $colorBgLight; }
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .item:hover { color: $colorPrimary; }
+        }
+
+        .previewLink {
+            .name { color: $colorPrimary; }
+            .descr { color: $colorSecondary; }
+            .link { color: $colorSecondary; }
+            .img { border-color: $colorLineSecondary; }
+        }
+    }
+
     .pager {
         .pageItem:hover { color: $colorPrimary; }
         .pageItem.active { color: $colorOrange; }

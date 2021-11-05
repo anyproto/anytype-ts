@@ -852,6 +852,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							horizontal: I.MenuDirection.Center,
 							data: {
 								filter: mark ? mark.param : '',
+								type: mark ? mark.type : null,
 								onChange: (newType: I.MarkType, param: string) => {
 									marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
 									DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
