@@ -22,6 +22,14 @@
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
+
+            .icon.search { background-image: url('~img/theme/dark/icon/dataview/button/search0.svg'); }
+			.icon.manager { background-image: url('~img/theme/dark/icon/dataview/button/manager0.svg'); }
+			.icon.plus { background-image: url('~img/theme/dark/icon/dataview/button/plus0.svg'); }
+
+			.icon.search:hover, .icon.search.active { background-image: url('~img/theme/dark/icon/dataview/button/search1.svg'); }
+			.icon.manager:hover, .icon.manager.active { background-image: url('~img/theme/dark/icon/dataview/button/manager1.svg'); }
+			.icon.plus:hover, .icon.plus.active { background-image: url('~img/theme/dark/icon/dataview/button/plus1.svg'); }
         }
 
         .cellHead .resize .line { background: $colorLineSecondary; }

@@ -14,6 +14,8 @@
         .item { background: $colorBlack; }
         .item {
             .type { color: $colorSecondary; }
+            .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
         }
     }
 }
