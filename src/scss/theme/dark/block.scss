@@ -39,8 +39,20 @@
 
     .block.blockMedia {
         .focusable.isFocused::before { background: $colorHover; }
+
+        .audioControls {
+			.icon.play { background-image: url('~img/theme/dark/icon/audio/play.svg'); }
+			.icon.play.active { background-image: url('~img/theme/dark/icon/audio/pause.svg'); }
+
+			.icon.volume { background-image: url('~img/theme/dark/icon/audio/volume.svg'); }
+			.icon.volume.active { background-image: url('~img/theme/dark/icon/audio/mute.svg'); }
+
+			.input-drag {
+				.back { background: $colorHover; }
+			}
+        }
     }
-    .block.blockMedia.isAudio > .wrapContent { background: none; }
+    .block.blockMedia.isAudio > .wrapContent { background: $colorHover; }
 
     /* BlockDataview */
 
