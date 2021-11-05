@@ -169,16 +169,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const item = data[index] || {};
 		
 		let name = item.name;
+		let isReadonly = item.isReadonly;
+
 		if (item.layout == I.ObjectLayout.Note) {
 			name = String(item.snippet || '').replace(/\n/g, ' ');
 		};
 		if (item.isDeleted) {
 			name = translate('commonDeleted');
+			isReadonly = true;
 		};
 
 		return {
 			...item,
 			name,
+			isReadonly,
 		};
 	};
 

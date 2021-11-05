@@ -55,4 +55,28 @@
             .item.roam .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/roam.svg'); }
         }
     }
+    
+    /* PopupShortcuts */
+
+    .popup.popupShortcut {
+        .head {
+            .tabs { color: $colorSecondary; }
+            .tabs {
+                .item:hover, .item.active { color: $colorPrimary; }
+            }
+        }
+
+        .body {
+            .section {
+                .name { border-color: $colorLineSecondary; }
+                .items {
+                    .item { border-color: $colorLineSecondary; }
+                    .item {
+                        .key { color: $colorSecondary; }
+                    }
+                }
+            }
+            .section > .descr { border-color: $colorLineSecondary; }
+        }
+    }
 }

@@ -103,6 +103,10 @@
         .item.add:hover::before { background: $colorHover; }
     }
 
+    .menu.menuDataviewSource {
+        .item.add:hover::before { background: $colorHover; }
+    }
+
     .menu.menuSearchObject.big {
         .item {
             .iconObject { background: $colorBgIcon; }
