@@ -6,6 +6,20 @@
     /* Common */
 
     .menu { background: $colorBgLight; }
+
+    .menu {
+        .icon.text { background-image: url('~img/theme/dark/icon/menu/action/block/text0.svg'); }
+		.icon.list { background-image: url('~img/theme/dark/icon/menu/action/block/list0.svg'); }
+		
+		.icon.header1 { background-image: url('~img/theme/dark/icon/menu/action/block/header10.svg'); }
+		.icon.header2 { background-image: url('~img/theme/dark/icon/menu/action/block/header20.svg'); }
+		.icon.header3 { background-image: url('~img/theme/dark/icon/menu/action/block/header30.svg'); }
+		.icon.quote { background-image: url('~img/theme/dark/icon/menu/action/block/quote0.svg'); }
+		
+		.icon.numbered { background-image: url('~img/theme/dark/icon/menu/action/block/numbered0.svg'); }
+		.icon.toggle { background-image: url('~img/theme/dark/icon/menu/action/block/toggle0.svg'); }
+    }
+
     .menu.vertical {
         .tabs { border-color: $colorLineSecondary; }
         .tabs {
@@ -19,6 +33,8 @@
         .item.hover::before { background: $colorHover; }
         .item {
             .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/menu.svg'); }
+			.icon.chk { background-image: url('~img/theme/dark/icon/menu/checkbox.svg'); }
         }
 
         .loaderWrapper { background: $colorBgLight; }
@@ -27,7 +43,20 @@
     .menu.menuBlockAdd {
         .item.isBig {
             .iconObject { background: $colorBgIcon; }
+
+            .icon.text { background-image: url('~img/theme/dark/icon/menu/action/block/text1.svg'); }
+            .icon.list { background-image: url('~img/theme/dark/icon/menu/action/block/list1.svg'); }
+            
+            .icon.header1 { background-image: url('~img/theme/dark/icon/menu/action/block/header11.svg'); }
+            .icon.header2 { background-image: url('~img/theme/dark/icon/menu/action/block/header21.svg'); }
+            .icon.header3 { background-image: url('~img/theme/dark/icon/menu/action/block/header31.svg'); }
+            .icon.quote { background-image: url('~img/theme/dark/icon/menu/action/block/quote1.svg'); }
+            
+            .icon.numbered { background-image: url('~img/theme/dark/icon/menu/action/block/numbered1.svg'); }
+            .icon.toggle { background-image: url('~img/theme/dark/icon/menu/action/block/toggle1.svg'); }
         }
+
+        .sectionName::before { background-color: $colorLineSecondary; }
     }
 
     .menu.menuSmile {
@@ -96,4 +125,10 @@
 		.item { color: $colorSecondary; }
 		.item:hover { color: $colorPrimary; }
 	}
+
+    .menu.menuDataviewCalendar {
+        .select {
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/big.svg'); }
+		}
+    }
 }

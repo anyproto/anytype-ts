@@ -48,6 +48,9 @@ html.themeDark {
 
     .select { border-color: $colorLinePrimary; }
     .select:hover, .select.active { background: $colorHover; }
+    .select {
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
+    }
 
     .listTemplate {
         .item.add { border-color: $colorLinePrimary; }
@@ -58,6 +61,15 @@ html.themeDark {
         .border { border-color: $colorLinePrimary; }
         .loaderWrapper { border-color: $colorLinePrimary; }
         .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
+    }
+
+    .pager {
+        .pageItem:hover { color: $colorPrimary; }
+        .pageItem.active { color: $colorOrange; }
+
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
     }
 
     /* IconObject */
