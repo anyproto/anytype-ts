@@ -16,6 +16,11 @@
 }
 
 .blocks {
+    .block {
+        .icon.dnd { border-color: $colorLinePrimary; }
+    }
+    .block:hover > .wrapMenu > .icon.dnd { background-image: url('~img/theme/dark/icon/block/menu1.svg'); }
+
     .block.blockIconPage {
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
     }
