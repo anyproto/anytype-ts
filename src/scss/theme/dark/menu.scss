@@ -20,6 +20,8 @@
 		.icon.toggle { background-image: url('~img/theme/dark/icon/menu/action/block/toggle0.svg'); }
     }
 
+    /* Vertical */
+
     .menu.vertical {
         .tabs { border-color: $colorLineSecondary; }
         .tabs {
@@ -40,6 +42,8 @@
         .loaderWrapper { background: $colorBgLight; }
     }
 
+    /* MenuBlockAdd */
+
     .menu.menuBlockAdd {
         .item.isBig {
             .iconObject { background: $colorBgIcon; }
@@ -59,6 +63,8 @@
         .sectionName::before { background-color: $colorLineSecondary; }
     }
 
+    /* MenuSmile */
+
     .menu.menuSmile {
         .head { border-color: $colorLineSecondary; color: $colorSecondary; }
         .head {
@@ -66,12 +72,16 @@
         }
     }
 
+    /* MenuBlockCover */
+
     .menu.menuBlockCover {
         .head { border-color: $colorLineSecondary; color: $colorSecondary; }
         .head {
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
     }
+
+    /* MenuBlockRelationView */
 
     .menu.menuBlockRelationView {
         .section > .name { color: $colorPrimary; }
@@ -83,25 +93,43 @@
         }
     }
 
+    /* MenuBlockRelationEdit */
+
     .menu.menuBlockRelationEdit {
         .input { border-color: $colorLinePrimary; }
     }
 
+    /* MenuDataviewText */
+
     .menu.menuDataviewText {
-        #input { background: $colorBgIcon; }
+        #input { background: $colorBlack; }
     }
+
+    /* MenuDataviewRelationList */
 
     .menu.menuDataviewRelationList {
         .item:hover::before { background: $colorHover; }
     }
 
+    /* MenuDataviewFilterList */
+
     .menu.menuDataviewFilterList {
         .item.add:hover::before { background: $colorHover; }
     }
 
+    /* MenuDataviewSort */
+
     .menu.menuDataviewSort {
         .item.add:hover::before { background: $colorHover; }
     }
+
+    /* MenuDataviewSource */
+
+    .menu.menuDataviewSource {
+        .item.add:hover::before { background: $colorHover; }
+    }
+
+    /* MenuSearchObject */
 
     .menu.menuSearchObject.big {
         .item {
@@ -109,26 +137,42 @@
         }
     }
 
+    /* MenuThreadList */
+
     .menu.menuThreadList {
         .item:hover::before { background: $colorHover; }
     }
+
+    /* MenuBlockMore */
 
     .menu.menuBlockMore {
         .item:hover::before { background: $colorHover; }
     }
 
+    /* MenuHelp */
+
     .menu.menuHelp {
         .item:hover::before { background: $colorHover; }
     }
+
+    /* MenuButton */
 
 	.menu.menuButton {
 		.item { color: $colorSecondary; }
 		.item:hover { color: $colorPrimary; }
 	}
 
+    /* MenuDataviewCalendar */
+
     .menu.menuDataviewCalendar {
         .select {
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/big.svg'); }
 		}
+    }
+
+    /* MenuBlockLatex */
+
+    .menu.menuBlockLatex.isTemplate {
+        .item > .inner { border-color: $colorLinePrimary; }
     }
 }

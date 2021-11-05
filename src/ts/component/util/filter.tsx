@@ -14,6 +14,7 @@ interface Props {
 	onKeyDown?(e: any, v: string): void;
 	onKeyUp?(e: any, v: string): void;
 	onChange?(value: string): void;
+	onClear?(): void;
 };
 
 const $ = require('jquery');
@@ -119,9 +120,15 @@ class Filter extends React.Component<Props, {}> {
 	};
 
 	onClear (e: any) {
+		const { onClear } = this.props;
+
 		this.ref.setValue('');
 		this.ref.focus();
 		this.onChange(e, '');
+
+		if (onClear) {
+			onClear();
+		};
 	};
 
 	onChange (e: any, v: string) {	

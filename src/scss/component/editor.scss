@@ -4,7 +4,7 @@
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
-	.focusable.isFocused { background: rgba(134, 125, 66, 0.05); }
+	.focusable.isFocused { background: $colorHover; }
 
 	.note { 
 		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: $colorWhite; position: absolute; 

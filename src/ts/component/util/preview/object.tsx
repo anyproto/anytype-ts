@@ -8,6 +8,7 @@ interface Props {
 	rootId: string;
 	className?: string;
 	onClick? (e: any): void;
+	position?: () => void;
 }
 interface State {
 	loading: boolean;
@@ -338,6 +339,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			};
 
 			this.setState({ loading: false });
+
+			if (this.props.position) {
+				this.props.position();
+			};
 		});
 	};
 
