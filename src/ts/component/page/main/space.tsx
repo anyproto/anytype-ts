@@ -200,9 +200,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -212,6 +209,9 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();
