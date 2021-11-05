@@ -79,4 +79,17 @@
             .section > .descr { border-color: $colorLineSecondary; }
         }
     }
+
+    /* PopupHelp */
+
+    .popup.popupHelp {
+		.head { color: $colorSecondary; }
+		.head {
+			.icon.telegram { background-image: url('~img/theme/dark/icon/telegram0.svg'); }
+			.icon.telegram:hover { background-image: url('~img/theme/dark/icon/telegram1.svg'); }
+
+			.icon.twitter { background-image: url('~img/theme/dark/icon/twitter0.svg'); }
+			.icon.twitter:hover { background-image: url('~img/theme/dark/icon/twitter1.svg'); }
+		}
+	}
 }
