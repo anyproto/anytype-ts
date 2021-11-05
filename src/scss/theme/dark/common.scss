@@ -10,10 +10,14 @@ html.themeDark {
     body { background: $colorBlack; color: $colorPrimary; }
 
     #root > .loaderWrapper { background: $colorBlack; }
+    #root {
+        .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
+    }
 	
     .cover.main::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
     }
+    .cover.type2.black { background-color: #000; }
 
     .empty { color: $colorTertiary; }
     .placeholder { color: $colorTertiary; }
@@ -48,6 +52,9 @@ html.themeDark {
 
     .select { border-color: $colorLinePrimary; }
     .select:hover, .select.active { background: $colorHover; }
+    .select {
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
+    }
 
     .listTemplate {
         .item.add { border-color: $colorLinePrimary; }
@@ -59,6 +66,21 @@ html.themeDark {
         .loaderWrapper { border-color: $colorLinePrimary; }
         .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
     }
+
+    .pager {
+        .pageItem:hover { color: $colorPrimary; }
+        .pageItem.active { color: $colorOrange; }
+
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+    }
+
+    .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+
+    /* Icon */
+
+    .icon.ghost { background-image: url('~img/theme/dark/icon/ghost.svg'); }
 
     /* IconObject */
 
@@ -75,6 +97,19 @@ html.themeDark {
     .editorControls {
         .btn { background: $colorBgIcon; color: $colorSecondary; }
         .btn:hover { color: $colorPrimary; }
+
+        .btn {
+            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon0.svg'); }
+            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover0.svg'); }
+            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout0.svg'); }
+            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation0.svg');  }
+        }
+        .btn:hover, .btn.hover {
+            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
+            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
+            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
+            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg');  }
+        }
     }
 
     /* Header */
@@ -113,6 +148,6 @@ html.themeDark {
     }
 
     .cell.isEditing {
-        .cellContent { background: $colorBgIcon; }
+        .cellContent { background: $colorBlack; }
     }
 }

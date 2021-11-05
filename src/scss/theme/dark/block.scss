@@ -3,19 +3,39 @@
        position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 1;
     }
     .elements {
-        .btn.white { background: $colorBgIcon; color: $colorSecondary; }
+        .btn.white { background: $colorBgIcon; color: $colorPrimary; }
         .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
+
+        .btn {
+			.icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
+			.icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
+			.icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
+			.icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg'); }
+		}
     }
 }
 
 .blocks {
+    /* Common */
+
+    .block {
+        .icon.dnd { border-color: $colorLinePrimary; }
+    }
+    .block:hover > .wrapMenu > .icon.dnd { background-image: url('~img/theme/dark/icon/block/menu1.svg'); }
+
+    /* BlockIconPage */
+
     .block.blockIconPage {
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
     }
 
+    /* BlockIconUser */
+
     .block.blockIconUser {
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
     }
+
+    /* BlockDataview */
 
     .block.blockDataview {
         .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
@@ -71,6 +91,8 @@
         }
     }
 
+    /* BlockType */
+
     .block.blockType {
         .item {
             .iconObject { background: $colorBgIcon; }
@@ -78,5 +100,32 @@
         .item.hover { background: $colorHover; }
     }
 
+    /* BlockText */
+
     .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+
+    /* BlockLink */
+
+    .block.blockLink {
+        .sides { border-color: $colorLinePrimary !important; }
+        .cardName span::before { background: $colorLinePrimary !important; }
+    }
+
+    .block.blockLink:hover {
+        .sides { border-color: $colorPrimary !important; }
+        .cardName span::before { background: $colorPrimary !important; }
+    }
+
+    /* BlockDiv */
+
+    .block.blockDiv {
+        .line { border-color: $colorLinePrimary; }
+        .dot { border-color: $colorLinePrimary !important; }
+    }
+
+    /* BlockLatex */
+
+    .block.blockLatex {
+        #input { background: $colorBgIcon; }
+    }
 }

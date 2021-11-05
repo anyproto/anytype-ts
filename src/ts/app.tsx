@@ -394,9 +394,7 @@ class App extends React.Component<Props, State> {
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
-				window.setTimeout(() => {
-					this.setState({ loading: false });
-				}, 600);
+				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
 			}, 2000);
 		});
 		

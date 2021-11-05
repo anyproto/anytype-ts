@@ -178,9 +178,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -190,6 +187,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

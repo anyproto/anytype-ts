@@ -226,9 +226,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		this.id = rootId;
 
 		C.BlockOpen(this.id, '', (message: any) => {
@@ -243,6 +240,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 			
 			this.loading = false;
 			this.focusTitle();

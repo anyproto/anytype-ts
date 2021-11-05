@@ -129,6 +129,12 @@ const Color = {
 	green:	 '#57c600',
 };
 
+const Theme = {
+	dark: {
+		grey: '#484843',
+	}
+};
+
 const $ = require('jquery');
 
 const IconObject = observer(class IconObject extends React.Component<Props, {}> {
@@ -390,14 +396,23 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		return s;
 	};
 
-	userSvg (): string {
+	svgColor () {
 		const { color } = this.props;
+		const { theme } = commonStore;
+
+		if (Theme[theme] && Theme[theme][color]) {
+			return Theme[theme][color];
+		};
+		return Color[color];
+	};
+
+	userSvg (): string {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
-
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
+		
+		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgColor()}" />`;
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${circle}${text}</svg>`;
 

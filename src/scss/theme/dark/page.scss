@@ -108,6 +108,19 @@
     }
 }
 
+/* PageMainRelation */
+
+.pageMainRelation {
+    .wrapper {
+        table { border-color: $colorLineSecondary; }
+        table {
+            .cellHead .name { border-color: $colorLineSecondary; }
+            .cell { border-color: $colorLineSecondary; }
+            tbody { border-color: $colorLineSecondary; }
+        }
+    }
+}
+
 /* PageMainNavigation */
 
 .pageMainNavigation {
