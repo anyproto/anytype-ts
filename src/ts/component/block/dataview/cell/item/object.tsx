@@ -17,9 +17,10 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 
 	render () {
 		const { rootId, id, iconSize, relation, elementMapper, onClick } = this.props;
+		
 		let object = detailStore.get(rootId, id, []);
-
-		if (object._empty_) {
+		let { _empty_, name } = object;
+		if (_empty_) {
 			return null;
 		};
 
@@ -27,7 +28,6 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 			object = elementMapper(relation, object);
 		};
 
-		let name = object.name || DataUtil.defaultName('page');
 		if (object.layout == I.ObjectLayout.Note) {
 			name = object.snippet || <span className="empty">Empty</span>;
 		};

@@ -135,7 +135,8 @@ import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/source.scss';
 
 import 'scss/media/print.scss';
-import 'scss/media/dark.scss';
+
+import 'scss/theme/dark/common.scss';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -288,6 +289,11 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
+		this.initTheme();
+	};
+
+	componentDidUpdate () {
+		this.initTheme();
 	};
 	
 	init () {
@@ -316,6 +322,10 @@ class App extends React.Component<Props, State> {
 		
 		this.setIpcEvents();
 		this.setWindowEvents();
+	};
+
+	initTheme() {
+		Util.addBodyClass('theme', commonStore.theme);
 	};
 
 	preload () {
@@ -384,9 +394,7 @@ class App extends React.Component<Props, State> {
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
-				window.setTimeout(() => {
-					this.setState({ loading: false });
-				}, 600);
+				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
 			}, 2000);
 		});
 		

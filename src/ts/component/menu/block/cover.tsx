@@ -191,6 +191,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				{ type: I.CoverType.Gradient, id: 'red' },
 				{ type: I.CoverType.Gradient, id: 'blue' },
 				{ type: I.CoverType.Gradient, id: 'teal' },
+				{ type: I.CoverType.Gradient, id: 'pinkOrange' },
+				{ type: I.CoverType.Gradient, id: 'bluePink' },
+				{ type: I.CoverType.Gradient, id: 'greenOrange' },
+				{ type: I.CoverType.Gradient, id: 'sky' },
 			] as any[] },
 		];
 

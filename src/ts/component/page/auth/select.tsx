@@ -29,7 +29,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<Pro
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

@@ -2,19 +2,6 @@
 
 .menus {
 
-	.menu.menuBlockRelationView {
-		.icon.edit { display: none; }
-		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-
-		.sides { display: flex; }
-
-		.info { 
-			width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-			flex-shrink: 0; margin-right: 6px;
-		}
-	}
-
 	.menu.menuBlockRelationEdit {
 		.wrap { padding: 0px 16px 8px 16px; }
 		.line { height: 1px; margin: 8px 0px; background: $colorLightGrey; }
@@ -24,7 +11,7 @@
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item.disabled:hover::before { opacity: 0; }
 
 		.icon.arrow { 
@@ -35,6 +22,12 @@
 
 	.menu.menuBlockRelationView { width: auto; }
 	.menu.menuBlockRelationView {
+		.icon.edit { display: none; }
+		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+
+		.sides { display: flex; }
+
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 21px; padding: 0px; border: 0px; padding: 0px; }
 
@@ -60,11 +53,14 @@
 				margin: 0px; opacity: 0; position: absolute; right: -38px; top: 0px;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
-			.icon.fav:hover { background-color: rgba(172,169,150,0.1); }
+			.icon.fav:hover { background-color: $colorHover; }
 
-			.info { padding: 5px 0px; color: $colorDarkGrey; }
+			.info { 
+				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
+				flex-shrink: 0; margin-right: 6px; padding: 5px 0px; color: $colorDarkGrey;
+			}
 			.info.canEdit { cursor: pointer; }
-			.info.canEdit:hover { background: rgba(172,169,150,0.1); }
+			.info.canEdit:hover { background: $colorHover; }
 
 			.cellContent { min-height: 22px; }
 			.cellContent {
@@ -75,7 +71,7 @@
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 
 				position: relative; margin-right: 6px;
 			}
-			.cell.canEdit:hover { background: rgba(172,169,150,0.1); }
+			.cell.canEdit:hover { background: $colorHover; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }
@@ -153,7 +149,7 @@
 			.info { width: 100%; }
 		}
 		.item.add:hover { 
-			.info { background: rgba(172,169,150,0.1); } 
+			.info { background: $colorHover; } 
 		}
 	}
 

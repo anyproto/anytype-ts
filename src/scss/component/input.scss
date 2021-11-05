@@ -5,6 +5,6 @@
 	@include text-common;
 }
 .input.isReadonly { background: #f7f5f0; cursor: default; }
-.input::placeholder { color: #d2d0c2; }
+.input::placeholder { color: $colorBorderDark; }
 
 .input.withError { border-color: $colorRed !important; }

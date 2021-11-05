@@ -41,6 +41,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -107,7 +108,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 				<div className="blocks wrapper">
-					<Controls key="editorControls" {...this.props} rootId={rootId} />
+					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 
 					<div className="head">
 						{check.withIcon ? (
@@ -177,9 +178,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -189,6 +187,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

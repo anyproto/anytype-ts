@@ -558,10 +558,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
+		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
+		const restricted: I.MarkType[] = [];
+
+		if (block.isTextHeader()) {
+			restricted.push(I.MarkType.Bold);
+		};
 		
-		return Mark.fromHtml(value.html());
+		return Mark.fromHtml(value.html(), restricted);
 	};
 
 	onInput (e: any) {
@@ -614,7 +620,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d, ${cmd}+a`, e, (pressed: string) => {
 			e.preventDefault();
 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
@@ -1095,7 +1101,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks() || ids.length) {
+		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextDisabled) {
 				menuStore.close('blockContext');
 			};

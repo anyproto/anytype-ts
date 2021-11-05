@@ -1,0 +1,195 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+/*@media (prefers-color-scheme: dark) {*/
+html.themeDark {
+
+    /* Common */
+    /* ---------------------------------------------------------------- */
+
+    body { background: $colorBlack; color: $colorPrimary; }
+
+    #root > .loaderWrapper { background: $colorBlack; }
+    #root {
+        .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
+    }
+	
+    .cover.main::after {
+        content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
+    }
+    .cover.type2.black { background-color: #000 !important; }
+
+    .empty { color: $colorTertiary; }
+    .placeholder { color: $colorTertiary; }
+    ::-webkit-input-placeholder { color: $colorTertiary !important; }
+
+    /* Components */
+    /* ---------------------------------------------------------------- */
+
+    .loaderWrapper {
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+    }
+
+    /* Button */
+
+    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; }
+    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+
+    .button.blank { border-color: $colorLineSecondary; }
+    .button.blank:hover { border-color: $colorLinePrimary; }
+
+    .filter {
+        .line { background: $colorLineSecondary; }
+    }
+
+    .frame { background: $colorBlack; }
+
+    .textarea { background: $colorBgIcon; }
+
+    .switch { background: $colorBgInactive; }
+
+    .sync { background: $colorBgIcon; }
+
+    .select { border-color: $colorLinePrimary; }
+    .select:hover, .select.active { background: $colorHover; }
+    .select {
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/select/dark.svg') !important; }
+    }
+
+    .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
+    .inputWithFile {
+        .input::placeholder { color: $colorSecondary; }
+        .fileWrap:hover .border { color: $colorPrimary; }
+
+        #url { color: $colorPrimary; }
+    }
+
+    .listTemplate {
+        .item.add { border-color: $colorLinePrimary; }
+        .item:before { background: $colorHover; }
+    }
+
+    /* PreviewObject */
+
+    .previewObject {
+        .border { border-color: $colorLinePrimary; }
+        .loaderWrapper { border-color: $colorLinePrimary; }
+        .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
+        .heading {
+            .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+            .featured { color: $colorSecondary; }
+            .bullet { background: $colorSecondary; }
+        }
+
+        .blocks {
+            .element {
+                .line { background: $colorHover; }
+            }
+        }
+    }
+
+    .preview {
+        .content { background: $colorBgLight; }
+        .head { border-color: $colorLineSecondary; color: $colorSecondary; }
+        .head {
+            .item:hover { color: $colorPrimary; }
+        }
+
+        .previewLink {
+            .name { color: $colorPrimary; }
+            .descr { color: $colorSecondary; }
+            .link { color: $colorSecondary; }
+            .img { border-color: $colorLineSecondary; }
+        }
+    }
+
+    .pager {
+        .pageItem:hover { color: $colorPrimary; }
+        .pageItem.active { color: $colorOrange; }
+
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+    }
+
+    .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+
+    /* Icon */
+
+    .icon.ghost { background-image: url('~img/theme/dark/icon/ghost.svg'); }
+
+    /* IconObject */
+
+    .iconObject.c56 { background-color: $colorBgIcon; }
+    .iconObject.c64 { background-color: $colorBgIcon; }
+    .iconObject.c96 { background-color: $colorBgIcon; }
+    .iconObject.c112 { background-color: $colorBgIcon; }
+    .iconObject.c128 { background-color: $colorBgIcon; }
+    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorBgIcon; }
+    .iconObject.withLetter { background-color: $colorBgIcon; }
+
+    /* EditorControls */
+
+    .editorControls {
+        .btn { background: $colorBgIcon; color: $colorSecondary; }
+        .btn:hover { color: $colorPrimary; }
+
+        .btn {
+            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon0.svg'); }
+            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover0.svg'); }
+            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout0.svg'); }
+            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation0.svg');  }
+        }
+        .btn:hover, .btn.hover {
+            .icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
+            .icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
+            .icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
+            .icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg');  }
+        }
+    }
+
+    /* Editor */
+
+    .editorWrapper {
+        .focusable.isFocused { background: $colorHover; }
+    }
+
+    /* Header */
+    /* ---------------------------------------------------------------- */
+
+    .header.headerMainEdit { background: $colorBlack; }
+    .header.headerMainEdit {
+        .path { border: 0px; line-height: 28px; }
+        .path {
+            .item:hover { color: $colorPrimary; }
+        }
+        .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
+    }
+
+    .header.headerMainIndex {
+        .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    }
+
+    /* Footer */
+    /* ---------------------------------------------------------------- */
+
+    .footer {
+        .icon.big { background-color: $colorBgIcon; }
+    }
+
+    @import "./menu.scss";
+    @import "./popup.scss";
+    @import "./page.scss";
+    @import "./block.scss";
+
+    /* Cells */
+    /* ---------------------------------------------------------------- */
+
+    .cellContent {
+        .more { background-color: $colorBgIcon; color: $colorSecondary; }
+    }
+
+    .cell.isEditing {
+        .cellContent { background: $colorBlack; }
+    }
+}

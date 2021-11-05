@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 
@@ -161,12 +161,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
 		const data = dbStore.getData(rootId, block.id);
+
+		if (index > data.length - 1) {
+			return {};
+		};
+
 		const item = data[index] || {};
+		
+		let name = item.name;
+		let isReadonly = item.isReadonly;
 
 		if (item.layout == I.ObjectLayout.Note) {
-			item.name = item.snippet;
+			name = String(item.snippet || '').replace(/\n/g, ' ');
 		};
-		return item;
+		if (item.isDeleted) {
+			name = translate('commonDeleted');
+			isReadonly = true;
+		};
+
+		return {
+			...item,
+			name,
+			isReadonly,
+		};
 	};
 
 	getView (viewId?: string) {

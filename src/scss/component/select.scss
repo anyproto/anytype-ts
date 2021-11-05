@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
 .select { 
-	border-radius: 4px; border: solid 1px #d2d0c2; display: inline-block; vertical-align: middle;
+	border-radius: 4px; border: solid 1px $colorBorderDark; display: inline-block; vertical-align: middle;
 	letter-spacing: 0.08px; transition: $transitionFast; position: relative; cursor: pointer; font-family: 'Inter';
 	white-space: nowrap; padding: 3px 26px 3px 6px; line-height: 20px !important;
 }
-.select:hover, .select.active { background: #f3f2ef; }
+.select:hover, .select.active { background: $colorVeryLightGrey; }
 
 .select {
 	.icon { transition: none; }

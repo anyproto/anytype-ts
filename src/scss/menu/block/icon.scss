@@ -76,7 +76,7 @@
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
 				background: $colorBlack; 
 			}
-			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorLightGrey inset; background: #fff; }
+			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorLightGrey inset; background: $colorWhite; }
 			
 			.inner.textColor-black { background: $colorBlack; }
 			.inner.textColor-grey { background: $colorMediumGrey; }

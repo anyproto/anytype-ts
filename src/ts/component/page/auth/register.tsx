@@ -36,7 +36,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 
 		return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

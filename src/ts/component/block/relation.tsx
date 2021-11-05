@@ -49,7 +49,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 						</div>
 						<div 
 							id={id} 
-							className={[ 'cell', DataUtil.relationClass(relation.format), (allowedValue ? 'canEdit' : '') ].join(' ')} 
+							className={[ 'cell', DataUtil.relationClass(relation.format), (!readonly && allowedValue ? 'canEdit' : '') ].join(' ')} 
 							onClick={this.onCellClick}
 						>
 							<Cell 
@@ -60,7 +60,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 								relationKey={relation.relationKey}
 								getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
 								viewType={I.ViewType.Grid}
-								readonly={!allowedValue}
+								readonly={readonly || !allowedValue}
 								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
@@ -141,7 +141,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 	};
 
 	onCellClick (e: any) {
-		const { block } = this.props;
+		const { block, readonly } = this.props;
+
+		if (readonly) {
+			return;
+		};
 
 		if (this.refCell) {
 			this.refCell.onClick(e);

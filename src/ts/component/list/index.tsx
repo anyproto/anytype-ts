@@ -50,9 +50,9 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				targetId = item.id;
 			};
 
-			const { _empty_, layout, iconEmoji, iconImage, snippet } = object;
-			const type = dbStore.getObjectType(object.type);
-			const cn = [ 'item' ];
+			let { _empty_, layout, name, iconEmoji, iconImage, snippet } = object;
+			let type = dbStore.getObjectType(object.type);
+			let cn = [ 'item' ];
 			
 			if (_empty_) {
 				return (
@@ -64,9 +64,9 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			let name: any = object.name || DataUtil.defaultName('page');
+			name = name || DataUtil.defaultName('page');
 			if (layout == I.ObjectLayout.Note) {
-				name = object.snippet || <div className="empty">Empty</div>;
+				name = object.snippet || <span className="empty">Empty</span>;
 			};
 
 			if (layout == I.ObjectLayout.Task) {

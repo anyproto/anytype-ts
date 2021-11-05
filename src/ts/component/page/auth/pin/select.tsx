@@ -37,7 +37,7 @@ const PageAuthPinSelect = observer(class PageAuthPinSelect extends React.Compone
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

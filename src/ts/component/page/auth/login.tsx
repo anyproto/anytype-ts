@@ -32,7 +32,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

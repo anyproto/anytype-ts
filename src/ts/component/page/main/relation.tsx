@@ -108,9 +108,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -120,6 +117,9 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

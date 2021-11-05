@@ -449,14 +449,10 @@ class BlockStore {
 				const { from, to } = mark.range;
 				const object = detailStore.get(rootId, mark.param, []);
 				const old = text.substr(from, to - from);
+				const name = Util.shorten(object.name, 30);
 
 				if (object._empty_) {
 					continue;
-				};
-
-				let name = (object.name || DataUtil.defaultName('page'));
-				if (object.layout == I.ObjectLayout.Note) {
-					name = object.snippet || name;
 				};
 
 				if (old != name) {

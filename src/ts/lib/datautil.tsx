@@ -615,9 +615,15 @@ class DataUtil {
 
 	getObjectTypesForNewObject (withSet: boolean) {
 		const { config } = commonStore;
+		const skip = [ 
+			Constant.typeId.note, 
+			Constant.typeId.page, 
+			Constant.typeId.set, 
+			Constant.typeId.task,
+		];
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			return [ Constant.typeId.note, Constant.typeId.page, Constant.typeId.set ].indexOf(it.id) < 0;
+			return skip.indexOf(it.id) < 0;
 		});
 		if (!config.debug.ho) {
 			items = items.filter((it: I.ObjectType) => { return !it.isHidden; })
@@ -625,8 +631,13 @@ class DataUtil {
 		let page = dbStore.getObjectType(Constant.typeId.page);
 		let note = dbStore.getObjectType(Constant.typeId.note);
 		let set = dbStore.getObjectType(Constant.typeId.set);
+		let task = dbStore.getObjectType(Constant.typeId.task);
 
 		items.sort(this.sortByName);
+
+		if (task) {
+			items.unshift(task);
+		};
 
 		if (withSet && set) {
 			items.unshift(set);

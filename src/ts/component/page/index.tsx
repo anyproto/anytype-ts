@@ -30,7 +30,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -273,7 +272,7 @@ class Page extends React.Component<Props, {}> {
 	
 	setBodyClass () {
 		const { isPopup } = this.props;
-		const { config } = commonStore;
+		const { config, theme } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
@@ -284,8 +283,9 @@ class Page extends React.Component<Props, {}> {
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (config.debug.dm) {
-			cn.push('dark');
+
+		if (theme) {
+			cn.push(Util.toCamelCase(`theme-${theme}`));
 		};
 
 		obj.attr({ class: cn.join(' ') });

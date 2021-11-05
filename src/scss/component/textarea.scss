@@ -4,6 +4,6 @@
 	width: 100%; resize: none; font-size: 14px; border: 0px; background: #f7f5f0; padding: 20px;
 	line-height: 22px; letter-spacing: -0.12px; color: inherit; display: block; font-family: 'Plex'; 
 }
-.textarea::placeholder { color: #d2d0c2; }
+.textarea::placeholder { color: $colorBorderDark; }
 
 .textarea.withError { border-color: #f6a085 !important; border-width: 2px !important; border-radius: 1px; }

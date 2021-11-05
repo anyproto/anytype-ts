@@ -211,7 +211,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '`',		 name: 'Inline code' },
 						{ com: '** or __',		 name: 'Inline bold' },
 						{ com: '* or _',		 name: 'Inline italic' },
-						{ com: '~~',		 name: 'Inline strike' },
+						{ com: '~~',		 name: 'Inline strikethrough' },
 					]
 				},
 			],

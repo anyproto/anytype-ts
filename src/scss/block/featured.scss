@@ -11,7 +11,7 @@
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
 		.cellContent { display: inline; vertical-align: middle; padding: 5.5px 6px; transition: background 0.2s ease-in-out; cursor: pointer; }
-		.cellContent:hover, .cellContent.hover { background: rgba(172,169,150,0.1); }
+		.cellContent:hover, .cellContent.hover { background: $colorHover; }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {

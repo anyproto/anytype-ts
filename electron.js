@@ -539,7 +539,6 @@ function menuInit () {
 			mw: 'Middleware', 
 			th: 'Threads', 
 			an: 'Analytics', 
-			dm: 'Dark Mode',
 			js: 'JSON',
 		};
 		const flagMenu = [];
@@ -557,15 +556,6 @@ function menuInit () {
 				}
 			});
 		};
-
-		/*
-		flagMenu.push({
-			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
-			click: () => {
-				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-			}
-		});
-		*/
 
 		menuParam.push({
 			label: 'Debug',

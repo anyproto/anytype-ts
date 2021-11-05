@@ -65,6 +65,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -91,7 +92,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} />
+				<Controls key="editorControls" {...this.props} resize={this.resize} />
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
@@ -225,9 +226,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		this.id = rootId;
 
 		C.BlockOpen(this.id, '', (message: any) => {
@@ -242,6 +240,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 			
 			this.loading = false;
 			this.focusTitle();
@@ -760,6 +761,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 		});
 
+		// Select all
+		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			focus.set(block.id, { from: 0, to: length });
+			focus.apply();
+
+			//$('.focusable.c' + block.id).trigger('select');
+		});
+
 		// Open action menu
 		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
 			menuStore.close('blockContext', () => {
@@ -843,6 +852,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							horizontal: I.MenuDirection.Center,
 							data: {
 								filter: mark ? mark.param : '',
+								type: mark ? mark.type : null,
 								onChange: (newType: I.MarkType, param: string) => {
 									marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
 									DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
