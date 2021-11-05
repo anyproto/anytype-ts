@@ -103,4 +103,16 @@
     /* BlockText */
 
     .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+
+    /* BlockLink */
+
+    .block.blockLink {
+        .sides { border-color: $colorLineSecondary !important; }
+        .cardName span::before { background: $colorLineSecondary !important; }
+    }
+
+    .block.blockLink:hover {
+        .sides { border-color: $colorLinePrimary !important; }
+        .cardName span::before { background: $colorLinePrimary !important; }
+    }
 }
