@@ -91,4 +91,9 @@
     .menu.menuHelp {
         .item:hover::before { background: $colorHover; }
     }
+
+	.menu.menuButton {
+		.item { color: $colorSecondary; }
+		.item:hover { color: $colorPrimary; }
+	}
 }

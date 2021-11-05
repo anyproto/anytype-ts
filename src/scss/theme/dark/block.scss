@@ -3,8 +3,15 @@
        position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 1;
     }
     .elements {
-        .btn.white { background: $colorBgIcon; color: $colorSecondary; }
+        .btn.white { background: $colorBgIcon; color: $colorPrimary; }
         .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
+
+        .btn {
+			.icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
+			.icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
+			.icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
+			.icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg'); }
+		}
     }
 }
 
