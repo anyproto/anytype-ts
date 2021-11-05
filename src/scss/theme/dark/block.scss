@@ -16,18 +16,26 @@
 }
 
 .blocks {
+    /* Common */
+
     .block {
         .icon.dnd { border-color: $colorLinePrimary; }
     }
     .block:hover > .wrapMenu > .icon.dnd { background-image: url('~img/theme/dark/icon/block/menu1.svg'); }
 
+    /* BlockIconPage */
+
     .block.blockIconPage {
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
     }
 
+    /* BlockIconUser */
+
     .block.blockIconUser {
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBorderDark; }
     }
+
+    /* BlockDataview */
 
     .block.blockDataview {
         .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
@@ -83,12 +91,16 @@
         }
     }
 
+    /* BlockType */
+
     .block.blockType {
         .item {
             .iconObject { background: $colorBgIcon; }
         }
         .item.hover { background: $colorHover; }
     }
+
+    /* BlockText */
 
     .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
 }

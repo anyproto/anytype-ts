@@ -10,6 +10,9 @@ html.themeDark {
     body { background: $colorBlack; color: $colorPrimary; }
 
     #root > .loaderWrapper { background: $colorBlack; }
+    #root {
+        .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
+    }
 	
     .cover.main::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
@@ -72,6 +75,10 @@ html.themeDark {
         .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
     }
+
+    /* Icon */
+
+    .icon.ghost { background-image: url('~img/theme/dark/icon/ghost.svg'); }
 
     /* IconObject */
 
