@@ -56,6 +56,8 @@ html.themeDark {
 
     .previewObject {
         .border { border-color: $colorLinePrimary; }
+        .loaderWrapper { border-color: $colorLinePrimary; }
+        .icon.logo { background-image: url('~img/theme/dark/icon/type/logo.svg'); }
     }
 
     /* IconObject */
