@@ -107,12 +107,17 @@
     /* BlockLink */
 
     .block.blockLink {
-        .sides { border-color: $colorLineSecondary !important; }
-        .cardName span::before { background: $colorLineSecondary !important; }
+        .sides { border-color: $colorLinePrimary !important; }
+        .cardName span::before { background: $colorLinePrimary !important; }
     }
 
     .block.blockLink:hover {
-        .sides { border-color: $colorLinePrimary !important; }
-        .cardName span::before { background: $colorLinePrimary !important; }
+        .sides { border-color: $colorPrimary !important; }
+        .cardName span::before { background: $colorPrimary !important; }
+    }
+
+    .block.blockDiv {
+        .line { border-color: $colorLinePrimary; }
+        .dot { border-color: $colorLinePrimary !important; }
     }
 }
