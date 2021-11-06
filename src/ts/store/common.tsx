@@ -26,6 +26,8 @@ interface Cover {
 	type: I.CoverType;
 };
 
+const $ = require('jquery');
+
 class CommonStore {
 
     public coverObj: Cover = { id: '', type: 0, image: '' };
@@ -181,12 +183,13 @@ class CommonStore {
 		Storage.set('theme', v);
 		Util.addBodyClass('theme', v);
 
-		analytics.event('Theme', { id: v });
+		analytics.event('ThemeSet', { id: v });
 	};
 
 	configSet (config: any, force: boolean) {
 		console.log('[commonStore.configSet]', JSON.stringify(config, null, 3), force);
 
+		let obj = $('html');
 		let newConfig: any = {};
 
 		if (force) {
@@ -200,6 +203,8 @@ class CommonStore {
 		};
 
 		set(this.configObj, newConfig);
+
+		this.configObj.debug.ui ? obj.addClass('debug') : obj.removeClass('debug');
 	};
 
 };

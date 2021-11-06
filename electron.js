@@ -550,7 +550,7 @@ function menuInit () {
 					config.debug[i] = !config.debug[i];
 					setConfig({ debug: config.debug });
 					
-					if ([ 'ui', 'ho', 'dm' ].includes(i)) {
+					if ([ 'ho' ].includes(i)) {
 						win.reload();
 					};
 				}
