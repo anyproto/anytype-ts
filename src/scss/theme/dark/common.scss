@@ -94,6 +94,8 @@ html.themeDark {
         }
     }
 
+    /* Preview */
+
     .preview {
         .content { background: $colorBgLight; }
         .head { border-color: $colorLineSecondary; color: $colorSecondary; }
@@ -109,6 +111,8 @@ html.themeDark {
         }
     }
 
+    /* Pager */
+
     .pager {
         .pageItem:hover { color: $colorPrimary; }
         .pageItem.active { color: $colorOrange; }
@@ -116,6 +120,16 @@ html.themeDark {
         .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
         .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+    }
+
+    /* Progress */
+
+    .progress {
+        .inner { background: $colorBgLight; }
+        .inner {
+            .label { color: $colorPrimary; }
+            .bar { background: $colorHover; }
+        }
     }
 
     .tooltip { background: $colorBgIcon; color: $colorPrimary; }
