@@ -1211,8 +1211,13 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
-				value = Number(value);
+				if ((value === '') || (value === undefined)) {
+					value = null;
+				};
+				if (value !== null) {
+					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
+					value = Number(value);
+				};
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {
