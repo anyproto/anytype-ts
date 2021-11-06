@@ -121,6 +121,10 @@
 
     /* BlockText */
 
+    .block.blockText {
+        kbd { background: $colorHover; color: $colorOrange; }
+    }
+
     .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
 
     /* BlockLink */

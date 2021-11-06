@@ -18,6 +18,11 @@
 		
 		.icon.numbered { background-image: url('~img/theme/dark/icon/menu/action/block/numbered0.svg'); }
 		.icon.toggle { background-image: url('~img/theme/dark/icon/menu/action/block/toggle0.svg'); }
+
+        .icon.color {
+            .inner.textColor-default { background-color: $colorPrimary; }
+            .inner.bgColor-default { background: transparent; }
+        }
     }
 
     /* Vertical */
@@ -174,5 +179,11 @@
 
     .menu.menuBlockLatex.isTemplate {
         .item > .inner { border-color: $colorLinePrimary; }
+    }
+
+    /* MenuBlockContext */
+
+    .menu.menuBlockContext {
+		.icon:hover { background-color: $colorHover; }
     }
 }

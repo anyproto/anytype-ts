@@ -351,6 +351,9 @@ class Cell extends React.Component<Props, {}> {
 				break;
 					
 			case I.RelationType.Checkbox:
+				if (this.ref.onClick) {
+					this.ref.onClick();
+				};
 				ret = true;
 				break; 
 		};

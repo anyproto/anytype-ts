@@ -3,7 +3,15 @@
 
 /* PageAuth */
 
-.pageAuth .textarea, .pageIndex .textarea, .pageObject .textarea { border: 0px; }
+.pageAuth, .pageIndex, .pageObject {
+    .textarea { border: 0px; }
+    .input { border-color: $colorLinePrimary; }
+}
+.textarea, .pageIndex .textarea, .pageObject 
+
+.pageAuthRegister {
+    .iconObject { background-image: url('~img/theme/dark/icon/picture.svg'); }
+}
 
 /* PageMainIndex */
 

@@ -504,11 +504,10 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('import', this.onImport);
 		ipcRenderer.on('export', this.onExport);
-
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
-			commonStore.configSet(config, true); 
+			commonStore.configSet(config, true);
 			analytics.init();
 		});
 
