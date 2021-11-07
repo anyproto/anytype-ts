@@ -133,7 +133,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
-		let share = { id: 'sharePage', name: 'Share' };
+		let share = { id: 'sharePage', icon: 'link', name: 'Share' };
 		let highlight = null;
 
 		if (object.isFavorite) {
@@ -165,9 +165,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (object.isHightlighted) {
-			highlight = { id: 'unhighlight', name: 'Unhighlight' };
+			highlight = { id: 'unhighlight', icon: 'unfav', name: 'Unhighlight' };
 		} else {
-			highlight = { id: 'highlight', name: 'Highlight' };
+			highlight = { id: 'highlight', icon: 'fav', name: 'Highlight' };
 		};
 
 		if (!config.allowSpaces) {
