@@ -112,7 +112,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
-							<div className="editor">
+							<div id={'editor-' + rootId} className="editor">
 								<div className="blocks">
 									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
 									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
@@ -155,6 +155,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 
 	componentDidUpdate () {
+		const rootId = this.getRootId();
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
@@ -170,6 +171,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 		sideLeft.unbind('scroll').scroll(() => { this.onScrollLeft(); });
 		sideRight.unbind('scroll').scroll(() => { this.onScrollRight(); });
+
+		blockStore.setNumbers(rootId);
 	};
 
 	onScrollLeft () {
@@ -275,7 +278,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 	
 	loadList (lastId: string) { 
-		const { history, match } = this.props;
+		const { history } = this.props;
 		const { versions, loading } = this.state;
 		const rootId = this.getRootId();
 		
@@ -304,7 +307,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
   	};
   
 	loadVersion (id: string) {
-		const { history, match } = this.props;
+		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		C.HistoryShow(rootId, id, (message: any) => {

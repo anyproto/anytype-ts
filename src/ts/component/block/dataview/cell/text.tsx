@@ -61,6 +61,9 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
 			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+			if (relation.format == I.RelationType.Number) {
+				value = value === null ? null : String(value);
+			};
 		} else {
 			value = String(value || '');
 		};
@@ -230,6 +233,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 			if (relation.format == I.RelationType.Number) {
 				value = DataUtil.formatRelationValue(relation, this.value, true);
+				value = value === null ? null : String(value);
 			};
 
 			if (this.ref) {

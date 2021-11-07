@@ -190,6 +190,22 @@ html.themeDark {
         .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
     }
 
+    .header.headerMainHistory { background: $colorBlack; }
+    .header.headerMainHistory {
+        .side {
+            .item { color: $colorSecondary; }
+            .item {
+                .icon.arrow { background-image: url('~img/theme/dark/arrow/history0.svg'); margin: 0px; }
+            }
+        }
+        
+		.item.grey:hover { color: $colorPrimary; }
+
+		.item:hover {
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/history1.svg'); }
+		}
+    }
+
     /* Footer */
     /* ---------------------------------------------------------------- */
 

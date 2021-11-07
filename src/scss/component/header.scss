@@ -134,10 +134,10 @@
 		.item {
 			.icon.arrow { background-image: url('~img/arrow/history0.svg'); margin: 0px; }
 		}
-		.item.orange { color: #e89d00; font-weight: 500; }
+		.item.orange { color: $colorOrange !important; font-weight: 500; }
 		
 		.item.grey:hover { color: $colorBlack; }
-		.item.orange:hover { color: $colorBlack; }
+		.item.orange:hover { color: #f09c0e !important; }
 
 		.item:hover {
 			.icon.arrow { background-image: url('~img/arrow/history1.svg'); }
