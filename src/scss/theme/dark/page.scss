@@ -137,3 +137,15 @@
         .item { border-color: $colorLinePrimary; }
     }
 }
+
+/* PageMainHistory */
+
+.pageMainHistory {
+    .list { background: $colorBlack; border-color: $colorLineSecondary; }
+    .list {
+        .item:hover, .item.active { background: $colorHover; }
+        .item {
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
+        }
+    }
+}
