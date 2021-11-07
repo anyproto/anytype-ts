@@ -132,6 +132,14 @@ class BlockStore {
 	};
 
     clearAll () {
+		this.profileSet('');
+		this.storeSetType('');
+		this.storeSetTemplate('');
+		this.storeSetRelation('');
+		this.breadcrumbsSet('');
+		this.recentSet('');
+		this.rootSet('');
+
 		this.blockMap = new Map();
 		this.treeMap = new Map();
 		this.restrictionMap = new Map();
