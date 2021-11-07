@@ -125,17 +125,13 @@ class AuthStore {
 		Storage.logout();
 
 		keyboard.setPinChecked(false);
-		crumbs.delete(I.CrumbsType.Page);
-		crumbs.delete(I.CrumbsType.Recent);
-
 		commonStore.coverSetDefault();
 
 		blockStore.breadcrumbsSet('');
 		blockStore.recentSet('');
 		blockStore.clearAll();
 		detailStore.clearAll();
-
-		dbStore.objectTypesClear();
+		dbStore.clearAll();
 
 		this.accountItem = null;
 		this.nameSet('');
