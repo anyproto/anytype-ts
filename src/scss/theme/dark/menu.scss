@@ -47,6 +47,12 @@
         .loaderWrapper { background: $colorBgLight; }
     }
 
+    /* Horizontal */
+
+    .menu.horizontal {
+        .section { border-color: $colorLineSecondary; }
+    }
+
     /* MenuBlockAdd */
 
     .menu.menuBlockAdd {
