@@ -13,6 +13,7 @@ class DbStore {
     constructor() {
         makeObservable(this, {
             objectTypes: computed,
+			clearAll: action,
             objectTypesSet: action,
             objectTypeAdd: action,
             objectTypeUpdate: action,
