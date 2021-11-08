@@ -64,6 +64,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 			description: 'Add a description',
 		};
 
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
@@ -126,7 +127,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 						</div>
 					</div>
 					
-					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					{children.map((block: I.Block, i: number) => (
+						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					))}
 				</div>
 
 				<Footer {...this.props} rootId={rootId} />

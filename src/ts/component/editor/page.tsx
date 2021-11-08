@@ -85,7 +85,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const length = childrenIds.length;
 		const width = root?.fields?.width;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
@@ -111,26 +111,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							getWrapperWidth={this.getWrapperWidth}
 						/>
 					
-						{children.map((block: I.Block, i: number) => {
-							if (block.isLayoutHeader()) {
-								return null;
-							};
-							return (
-								<Block 
-									key={'block-' + block.id} 
-									{...this.props}
-									index={i}
-									block={block}
-									onKeyDown={this.onKeyDownBlock}
-									onKeyUp={this.onKeyUpBlock}  
-									onMenuAdd={this.onMenuAdd}
-									onPaste={this.onPaste}
-									readonly={!allowed}
-									getWrapper={this.getWrapper}
-									getWrapperWidth={this.getWrapperWidth}
-								/>
-							)
-						})}
+						{children.map((block: I.Block, i: number) => (
+							<Block 
+								key={'block-' + block.id} 
+								{...this.props}
+								index={i}
+								block={block}
+								onKeyDown={this.onKeyDownBlock}
+								onKeyUp={this.onKeyUpBlock}  
+								onMenuAdd={this.onMenuAdd}
+								onPaste={this.onPaste}
+								readonly={!allowed}
+								getWrapper={this.getWrapper}
+								getWrapperWidth={this.getWrapperWidth}
+							/>
+						))}
 					</div>
 					
 					<div className="blockLast" onClick={this.onLastClick} />
