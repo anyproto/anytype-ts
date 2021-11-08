@@ -132,8 +132,15 @@
 
 .pageMainNavigation {
     .selected { border-color: $colorLinePrimary; }
+    .selected {
+        .descr { color: $colorSecondary; }
+    }
+
     .items {
         .item { border-color: $colorLinePrimary; }
+        .item {
+            .descr { color: $colorSecondary; }
+        }
     }
 }
 

@@ -26,7 +26,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		let prefix = '';
 		switch (relation.format) {
 			default:
-				prefix = 'bgColor';
+				prefix = 'tagColor';
 				break;
 
 			case I.RelationType.Status:

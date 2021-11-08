@@ -81,6 +81,11 @@
         .head {
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
+
+        .emptySearch {
+			b { color: $colorPrimary; }
+			.label { color: $colorSecondary; }
+		}
     }
 
     /* MenuBlockCover */
@@ -140,7 +145,20 @@
         .item.add:hover::before { background: $colorHover; }
     }
 
+    /* MenuDataviewOptionEdit */
+
+    .menu.menuDataviewOptionEdit {
+		.item:hover::before { background: $colorHover; }
+	}
+
     /* MenuSearchObject */
+
+    .menu.menuSearchObject {
+		.emptySearch {
+			b { color: $colorPrimary; }
+			.label { color: $colorSecondary; }
+		}
+    }
 
     .menu.menuSearchObject.big {
         .item {
