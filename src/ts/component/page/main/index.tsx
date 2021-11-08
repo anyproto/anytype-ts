@@ -51,6 +51,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
 		this.onSelectionArchive = this.onSelectionArchive.bind(this);
+		this.onSelectionFavorite = this.onSelectionFavorite.bind(this);
 		this.onSelectionAll = this.onSelectionAll.bind(this);
 		this.onSelectionNone = this.onSelectionNone.bind(this);
 		this.onSelectionClose = this.onSelectionClose.bind(this);
@@ -73,6 +74,29 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
+	
+		let selectionButtons = [
+			{ id: 'selectAll', icon: 'all', name: 'Select all' },
+			{ id: 'selectNone', icon: 'all', name: 'Deselect all' },
+		];
+
+		if (tab.id == I.TabIndex.Favorite) {
+			selectionButtons = [
+				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'unfav', icon: 'unfav', name: 'Remove from favorites' },
+			].concat(selectionButtons);
+		} else
+		if (tab.id == I.TabIndex.Archive) {
+			selectionButtons = [
+				{ id: 'delete', icon: 'delete', name: 'Delete' },
+				{ id: 'restore', icon: 'restore', name: 'Restore' },
+			].concat(selectionButtons);
+		} else {
+			selectionButtons = [
+				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'fav', icon: 'fav', name: 'Add to favorites' },
+			].concat(selectionButtons);
+		};
 
 		const TabItem = (item: any) => (
 			<div className={[ 'tab', (tab.id == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
@@ -148,25 +172,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 							<div className="tabs">
 								<div id="selectCnt" className="side left"></div>
 								<div className="side right">
-									<div className="element" onClick={this.onSelectionDelete}>
-										<Icon className="delete" />
-										<div className="name">Delete</div>
-									</div>
-									<div className="element" onClick={(e: any) => { this.onSelectionArchive(e, false); }}>
-										<Icon className="restore" />
-										<div className="name">Restore</div>
-									</div>
-									<div id="selectAll" className="element" onClick={this.onSelectionAll}>
-										<Icon className="all" />
-										<div className="name">Select all</div>
-									</div>
-									<div id="selectNone" className="element" onClick={this.onSelectionNone}>
-										<Icon className="all" />
-										<div className="name">Deselect all</div>
-									</div>
-									<div className="element" onClick={this.onSelectionClose}>
-										<Icon className="close" tooltip="Close" />
-									</div>
+									{selectionButtons.map((item: any, i: number) => (
+										<div id={'button-' + item.id} key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>
+											<Icon className={item.icon} />
+											<div className="name">{item.name}</div>
+										</div>
+									))}
 								</div>
 							</div>
 						</div>
@@ -279,6 +290,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			id = tab.id;
 		};
 
+		this.selected = [];
 		this.state.tab = id;	
 		this.setState({ tab: id, pages: [] });
 
@@ -417,12 +429,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.stopPropagation();
 		e.persist();
 
-		let object = this.getObject(item);
-		let idx = this.selected.indexOf(object.id);
+		let idx = this.selected.indexOf(item.id);
 		if (idx >= 0) {
 			this.selected.splice(idx, 1);
 		} else {
-			this.selected.push(object.id);
+			this.selected.push(item.id);
 		};
 
 		this.selected = Util.arrayUnique(this.selected);
@@ -433,8 +444,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const node = $(ReactDOM.findDOMNode(this));
 		const wrapper = node.find('#documents');
 		const cnt = node.find('#selectCnt');
-		const selectAll = node.find('#selectAll');
-		const selectNone = node.find('#selectNone');
+		const selectAll = node.find('#button-selectAll');
+		const selectNone = node.find('#button-selectNone');
 		const items = this.getList();
 		const l = this.selected.length;
 
@@ -457,8 +468,45 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onScroll();
 	};
 
-	onSelectionDelete (e: any) {
+	onSelection (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		switch (item.id) {
+			case 'delete':
+				this.onSelectionDelete();
+				break;
+
+			case 'archive':
+				this.onSelectionArchive(true);
+				break;
+
+			case 'restore':
+				this.onSelectionArchive(false);
+				break;
+
+			case 'fav':
+				this.onSelectionFavorite(true);
+				break;
+
+			case 'unfav':
+				this.onSelectionFavorite(false);
+				break;
+
+			case 'selectAll':
+				this.onSelectionAll();
+				break;
+
+			case 'selectNone':
+				this.onSelectionNone();
+				break;
+		};
+	};
+
+	onSelectionDelete () {
 		const l = this.selected.length;
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = items.map((it: any) => { return this.getObject(it).id; });
 
 		popupStore.open('confirm', {
 			data: {
@@ -466,7 +514,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => {
-					C.ObjectListDelete(this.selected, () => {
+					C.ObjectListDelete(ids, () => {
 						this.selected = [];
 						this.selectionRender();
 			
@@ -477,13 +525,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		});
 	};
 	
-	onSelectionArchive (e: any, v: boolean) {
-		const items = this.getList().filter((it: any) => {
-			const object = this.getObject(it);
-			return this.selected.includes(object.id);
-		});
+	onSelectionArchive (v: boolean) {
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = items.map((it: any) => { return this.getObject(it).id; });
 
-		C.ObjectListSetIsArchived(this.selected, v, () => {
+		C.ObjectListSetIsArchived(ids, v, () => {
 			items.forEach((it: any) => {
 				const object = this.getObject(it);
 				if (object.type == Constant.typeId.type) {
@@ -497,20 +543,23 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		});
 	};
 
-	onSelectionAll (e: any) {
-		const items = this.getList();
+	onSelectionFavorite (v: boolean) {
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = items.map((it: any) => { return this.getObject(it).id; });
 
-		this.selected = [];
-
-		items.forEach((it: any) => {
-			let object = this.getObject(it);
-			this.selected.push(object.id);
+		C.ObjectListSetIsFavorite(ids, v, () => {
+			this.selected = [];
+			this.selectionRender();
+			this.load();
 		});
+	};
 
+	onSelectionAll () {
+		this.selected = this.getList().map((it: any) => { return it.id; });
 		this.selectionRender();
 	};
 
-	onSelectionNone (e: any) {
+	onSelectionNone () {
 		this.selected = [];
 		this.selectionRender();
 	};
@@ -628,28 +677,27 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						return;
 					};
 
+					this.selected = [ object.id ];
+
 					switch (el.id) {
 						case 'archive':
-							this.selected = [ object.id ];
-							this.onSelectionArchive(e, true);
+							this.onSelectionArchive(true);
 							break;
 
 						case 'unarchive':
-							this.selected = [ object.id ];
-							this.onSelectionArchive(e, false);
+							this.onSelectionArchive(false);
 							break;
 
 						case 'fav':
-							C.ObjectSetIsFavorite(object.id, true);
+							this.onSelectionFavorite(true);
 							break;
 
 						case 'unfav':
-							C.ObjectSetIsFavorite(object.id, false);
+							this.onSelectionFavorite(false);
 							break;
 
 						case 'remove':
-							this.selected = [ object.id ];
-							this.onSelectionDelete(e);
+							this.onSelectionDelete();
 							break;
 					};
 				},
