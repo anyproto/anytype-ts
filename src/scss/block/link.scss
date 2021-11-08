@@ -24,7 +24,6 @@
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
             .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; }
-            .sides.hidden { visibility: hidden; }
 
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.left:empty { display: none; }
@@ -110,6 +109,7 @@
         .linkCard.card { margin: 3px 0px; }
         .linkCard.card {
             .sides { border: 1px solid $colorBorderDark; }
+            .sides.hidden { visibility: hidden; }
         }
         .linkCard.withCover {
             .sides { border: 0px; }
