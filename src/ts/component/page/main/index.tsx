@@ -51,6 +51,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
 		this.onSelectionArchive = this.onSelectionArchive.bind(this);
+		this.onSelectionFavorite = this.onSelectionFavorite.bind(this);
 		this.onSelectionAll = this.onSelectionAll.bind(this);
 		this.onSelectionNone = this.onSelectionNone.bind(this);
 		this.onSelectionClose = this.onSelectionClose.bind(this);
@@ -484,6 +485,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				this.onSelectionArchive(false);
 				break;
 
+			case 'fav':
+				this.onSelectionFavorite(true);
+				break;
+
+			case 'unfav':
+				this.onSelectionFavorite(false);
+				break;
+
 			case 'selectAll':
 				this.onSelectionAll();
 				break;
@@ -528,6 +537,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				};
 			});
 
+			this.selected = [];
+			this.selectionRender();
+			this.load();
+		});
+	};
+
+	onSelectionFavorite (v: boolean) {
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = items.map((it: any) => { return this.getObject(it).id; });
+
+		C.ObjectListSetIsFavorite(ids, v, () => {
 			this.selected = [];
 			this.selectionRender();
 			this.load();
@@ -657,27 +677,26 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						return;
 					};
 
+					this.selected = [ object.id ];
+
 					switch (el.id) {
 						case 'archive':
-							this.selected = [ object.id ];
 							this.onSelectionArchive(true);
 							break;
 
 						case 'unarchive':
-							this.selected = [ object.id ];
 							this.onSelectionArchive(false);
 							break;
 
 						case 'fav':
-							C.ObjectSetIsFavorite(object.id, true);
+							this.onSelectionFavorite(true);
 							break;
 
 						case 'unfav':
-							C.ObjectSetIsFavorite(object.id, false);
+							this.onSelectionFavorite(false);
 							break;
 
 						case 'remove':
-							this.selected = [ object.id ];
 							this.onSelectionDelete();
 							break;
 					};

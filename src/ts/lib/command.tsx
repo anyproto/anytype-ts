@@ -1093,6 +1093,15 @@ const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: 
 	dispatcher.request('objectListSetIsArchived', request, callBack);
 };
 
+const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Set.IsFavorite.Request();
+	
+	request.setObjectidsList(ids);
+	request.setIsfavorite(isFavorite);
+
+	dispatcher.request('objectListSetIsFavorite', request, callBack);
+};
+
 const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.AddWithObjectId.Request();
 
@@ -1303,6 +1312,7 @@ export {
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,
+	ObjectListSetIsFavorite,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
