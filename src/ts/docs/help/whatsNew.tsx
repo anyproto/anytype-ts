@@ -554,7 +554,7 @@ export default [
   { style: I.TextStyle.Header1, text: `Updates for 03 March, 2020` },
 	{ style: I.TextStyle.Header3, text: `Introducing Anytype` },
 	{ text: `We upgraded the design and backed it up with cutting edge technologies to make your experience safe, secure, and convenient.` },
-	{ text: `<span class="bgColor bgColor-yellow">This version of Anytype is suitable for personal usage only</span>. In the next versions we’ll add collaborative functionality.` },
+	{ text: `<span class="highlight">This version of Anytype is suitable for personal usage only</span>. In the next versions we’ll add collaborative functionality.` },
 
 	{ style: I.TextStyle.Header3, text: `Available features` },
 	{ style: I.TextStyle.Bulleted, text: `Editor with different kinds of blocks you need to work with notes, ideas, collections, knowledge bases, receipts, diaries, to-do lists, travel plans;` },
