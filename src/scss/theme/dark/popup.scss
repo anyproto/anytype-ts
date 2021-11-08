@@ -105,6 +105,8 @@
 			.icon.twitter { background-image: url('~img/theme/dark/icon/twitter0.svg'); }
 			.icon.twitter:hover { background-image: url('~img/theme/dark/icon/twitter1.svg'); }
 		}
+
+        .highlight { color: $colorOrange; background: $colorHover; }
 	}
 
     /* PopupPrompt */
