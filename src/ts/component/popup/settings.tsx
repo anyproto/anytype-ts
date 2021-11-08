@@ -421,20 +421,18 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						{config.experimental ? (
-							<div className="row">
-								<div className="side left">
-									<Label text="Dark mode" />
-								</div>
-								<div className="side right">
-									<Switch 
-										value={theme == 'dark'} 
-										className="big"
-										onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
-									/>
-								</div>
+						<div className="row">
+							<div className="side left">
+								<Label text="Dark mode" />
 							</div>
-						) : ''}
+							<div className="side right">
+								<Switch 
+									value={theme == 'dark'} 
+									className="big"
+									onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
+								/>
+							</div>
+						</div>
 
 						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
 							<div className="side left">
