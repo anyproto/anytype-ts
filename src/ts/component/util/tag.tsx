@@ -15,7 +15,7 @@ class Tag extends React.Component<Props, {}> {
 
 	render () {
 		let { text, color, className, canEdit, onRemove } = this.props;
-		let cn = [ 'tagItem', (color || 'default') ];
+		let cn = [ 'tagItem', 'tagColor-' + (color || 'default') ];
 		
 		if (className) {
 			cn.push(className);

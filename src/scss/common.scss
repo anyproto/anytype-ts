@@ -158,3 +158,15 @@ search.active { background: orange !important; }
 .bgColor-ice { background: #d6effd !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
+
+.tagColor-default { color: $colorBlack !important; background: $colorWhite !important; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
+.tagColor-grey { color: #4b4b4b !important; background: #b0b0b0 !important; }
+.tagColor-yellow { color: #ad8620 !important; background: #f9d77e !important; }
+.tagColor-orange { color: #a85c34 !important; background: #f4ad88 !important; }
+.tagColor-red { color: #a64949 !important; background: #f5a6a6 !important; }
+.tagColor-pink { color: #965088 !important; background: #eda2de !important; }
+.tagColor-purple { color: #6948b4 !important; background: #c8b2fa !important; }
+.tagColor-blue { color: #274ccd !important; background: #99afff !important; }
+.tagColor-ice { color: #3d69aa !important; background: #a4c7fa !important; }
+.tagColor-teal { color: #2f876f !important; background: #8bdac4 !important; }
+.tagColor-lime { color: #388a2b !important; background: #b1f5a6 !important; }

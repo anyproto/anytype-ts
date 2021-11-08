@@ -145,6 +145,12 @@
         .item.add:hover::before { background: $colorHover; }
     }
 
+    /* MenuDataviewOptionEdit */
+
+    .menu.menuDataviewOptionEdit {
+		.item:hover::before { background: $colorHover; }
+	}
+
     /* MenuSearchObject */
 
     .menu.menuSearchObject {
