@@ -13,7 +13,7 @@ class ContentText extends React.Component<Props, {}> {
 
 	public static defaultProps = {
 		text: '&nbsp;',
-		color: 'black',
+		color: 'default',
 	};
 
 	render () {
