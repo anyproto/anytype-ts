@@ -133,6 +133,11 @@
         .sides { border-color: $colorLinePrimary !important; }
         .cardName span::before { background: $colorLinePrimary !important; }
 
+        .linkCard.card {
+            .sides { background: $colorBgLight; }
+            .cover { color: $colorPrimary; }
+        }
+
         .loading, .deleted { color: $colorSecondary; }
     }
 

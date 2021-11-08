@@ -2,9 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
-import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
+import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { config } from 'process';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}
 
@@ -21,6 +20,11 @@ const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 const QRCode = require('qrcode.react');
+
+const QRColor = {
+	'': '#fff',
+	dark: '#aca996'
+};
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
 
@@ -56,7 +60,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	render () {
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme, config } = commonStore;
+		const { cover, coverImage, theme } = commonStore;
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -212,7 +216,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<Label text={translate('popupSettingsMobileQRText')} />
 								</div>
 								<div className="side right isBlurred" onClick={this.elementUnblur}>
-									<QRCode value={entropy} />
+									<div className="qrWrap">
+										<QRCode value={entropy} bgColor={QRColor[theme]} size="100" />
+									</div>
 								</div>
 							</div>
 						) : (
@@ -421,20 +427,18 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						{config.experimental ? (
-							<div className="row">
-								<div className="side left">
-									<Label text="Dark mode" />
-								</div>
-								<div className="side right">
-									<Switch 
-										value={theme == 'dark'} 
-										className="big"
-										onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
-									/>
-								</div>
+						<div className="row">
+							<div className="side left">
+								<Label text="Dark mode" />
 							</div>
-						) : ''}
+							<div className="side right">
+								<Switch 
+									value={theme == 'dark'} 
+									className="big"
+									onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
+								/>
+							</div>
+						</div>
 
 						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
 							<div className="side left">

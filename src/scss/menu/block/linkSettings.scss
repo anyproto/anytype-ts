@@ -6,12 +6,12 @@
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 58px); }
 			.switch { position: absolute; right: 14px; top: 50%; margin-top: -8px; }
-		}
 
-		.icon.style-text { width: 32px; height: 32px; background-image: url('~img/icon/menu/linkSettings/text0.svg'); }
-		.icon.style-card { width: 44px; height: 32px; background-image: url('~img/icon/menu/linkSettings/card0.svg'); }
-		.icon.item-icon { background-image: url('~img/icon/menu/linkSettings/icon.svg'); }
-		.icon.item-cover { background-image: url('~img/icon/menu/linkSettings/cover.svg'); }
+			.icon.style-text { width: 32px; height: 32px; background-image: url('~img/icon/menu/linkSettings/text0.svg'); }
+			.icon.style-card { width: 44px; height: 32px; background-image: url('~img/icon/menu/linkSettings/card0.svg'); }
+			.icon.item-icon { background-image: url('~img/icon/menu/linkSettings/icon.svg'); }
+			.icon.item-cover { background-image: url('~img/icon/menu/linkSettings/cover.svg'); }
+		}
 
 		.section.card {
 			.items { display: flex; padding: 10px 16px 7px 16px; }

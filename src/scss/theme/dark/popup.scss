@@ -48,6 +48,10 @@
             .input { border-color: $colorLinePrimary; }
         }
 
+        .tabPhrase {
+            .qrWrap { background: $colorMediumGrey; }
+        }
+
         .tabImportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }
@@ -92,4 +96,10 @@
 			.icon.twitter:hover { background-image: url('~img/theme/dark/icon/twitter1.svg'); }
 		}
 	}
+
+    /* PopupPrompt */
+
+    .popup.popupPrompt {
+        .input { background: $colorBlack; border-color: $colorLinePrimary; }
+    }
 }

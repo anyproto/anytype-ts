@@ -299,7 +299,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasColor) {
-				sections[1].children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') });
+				sections[1].children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
 			};
 
 			if (hasBg) {

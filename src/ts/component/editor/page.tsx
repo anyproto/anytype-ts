@@ -85,7 +85,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const length = childrenIds.length;
 		const width = root?.fields?.width;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
@@ -111,26 +111,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							getWrapperWidth={this.getWrapperWidth}
 						/>
 					
-						{children.map((block: I.Block, i: number) => {
-							if (block.isLayoutHeader()) {
-								return null;
-							};
-							return (
-								<Block 
-									key={'block-' + block.id} 
-									{...this.props}
-									index={i}
-									block={block}
-									onKeyDown={this.onKeyDownBlock}
-									onKeyUp={this.onKeyUpBlock}  
-									onMenuAdd={this.onMenuAdd}
-									onPaste={this.onPaste}
-									readonly={!allowed}
-									getWrapper={this.getWrapper}
-									getWrapperWidth={this.getWrapperWidth}
-								/>
-							)
-						})}
+						{children.map((block: I.Block, i: number) => (
+							<Block 
+								key={'block-' + block.id} 
+								{...this.props}
+								index={i}
+								block={block}
+								onKeyDown={this.onKeyDownBlock}
+								onKeyUp={this.onKeyUpBlock}  
+								onMenuAdd={this.onMenuAdd}
+								onPaste={this.onPaste}
+								readonly={!allowed}
+								getWrapper={this.getWrapper}
+								getWrapperWidth={this.getWrapperWidth}
+							/>
+						))}
 					</div>
 					
 					<div className="blockLast" onClick={this.onLastClick} />
@@ -178,10 +173,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		this.open();
 		
-		if (this.uiHidden) {
-			this.uiHide();
-		};
-
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
 
@@ -253,6 +244,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onOpen();
 			};
 
+			window.clearTimeout(this.timeoutMove);
+			window.setTimeout(() => { this.uiShow(); }, 10);
 			this.resize();
 		});
 	};
@@ -338,7 +331,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		$('.footer').css({ opacity: 0 });
-		$('#button-add').css({ opacity: 0 });
 		
 		this.uiHidden = true;
 		
@@ -353,13 +345,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const win = $(window);
-		
 		$('.footer').css({ opacity: 1 });
-		$('#button-add').css({ opacity: '' });
 		
 		this.uiHidden = false;
-		win.unbind('mousemove.ui');
+		$(window).unbind('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {

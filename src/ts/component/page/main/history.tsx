@@ -62,10 +62,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+		const object = check.object;
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper', check.className ];
-		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
+		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
 		if (root && root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;

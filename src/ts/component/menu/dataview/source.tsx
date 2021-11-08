@@ -146,7 +146,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 				return;
 			};
 
-			const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: any) => { return it.id; });
+			const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => { return it.id; });
 			const filters = [
 				{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types }
 			];
@@ -165,6 +165,14 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 					placeholder: 'Change object type',
 					placeholderFocus: 'Change object type',
 					filters: filters,
+					dataSort: (c1: any, c2: any) => {
+						let i1 = types.indexOf(c1.id);
+						let i2 = types.indexOf(c2.id);
+
+						if (i1 > i2) return 1;
+						if (i1 < i2) return -1;
+						return 0;
+					},
 					onSelect: (item: any) => {
 						this.save([ item.id ]);
 					}

@@ -116,7 +116,7 @@ const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 const Ghost = require('img/icon/ghost.svg');
 
-const Color = {
+const BgColor = {
 	grey:	 '#dfddd0',
 	black:	 '#2c2b27',
 	brown:	 '#aca996',
@@ -127,6 +127,11 @@ const Color = {
 	teal:	 '#0fc8ba',
 	lime:	 '#5dd400',
 	green:	 '#57c600',
+};
+
+const Color = {
+	'':		 '#aca996',
+	dark:	 '#cbc9bd'
 };
 
 const Theme = {
@@ -396,14 +401,19 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		return s;
 	};
 
-	svgColor () {
+	svgBgColor () {
 		const { color } = this.props;
 		const { theme } = commonStore;
 
 		if (Theme[theme] && Theme[theme][color]) {
 			return Theme[theme][color];
 		};
-		return Color[color];
+		return BgColor[color];
+	};
+
+	svgColor () {
+		const { theme } = commonStore;
+		return Color[theme];
 	};
 
 	userSvg (): string {
@@ -412,8 +422,8 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const iconSize = this.iconSize();
 		const name = this.iconName();
 		
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgColor()}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#CBC9BD" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgBgColor()}" />`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${circle}${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
@@ -425,7 +435,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		const iconSize = this.iconSize();
 		const name = this.iconName();
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#CBC9BD" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));

@@ -10,7 +10,6 @@ import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
-import { commonStore } from '../../store';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {}
 
@@ -22,6 +21,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
+	viewId: string = '';
 
 	constructor (props: any) {
 		super(props);
@@ -107,21 +107,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block } = this.props;
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const views = dbStore.getViews(rootId, block.id);
+		const view = this.getView();
 
-		if (views.length) {
-			this.getData(viewId || views[0].id, 0);
+		if (view) {
+			this.viewId = view.id;
+			this.getData(view.id, 0);
 		};
-		this.resize();
 
+		this.resize();
 		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
 	};
 
 	componentDidUpdate () {
-		this.resize();
+		const view = this.getView();
 
+		if (view && (view.id != this.viewId)) {
+			this.viewId = view.id;
+			this.getData(view.id, 0);
+		};
+
+		this.resize();
 		$(window).trigger('resize.editor');
 	};
 
@@ -130,6 +135,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
+		if (!newViewId) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(rootId, block.id);
 		const viewChange = newViewId != viewId;

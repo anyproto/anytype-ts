@@ -1,6 +1,5 @@
 @import "~scss/_vars";
 
-.footer { transition: $transitionFast; }
 .footer {
 	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; }
 

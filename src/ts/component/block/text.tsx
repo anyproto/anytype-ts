@@ -790,12 +790,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		// Open add menu
 		if (canOpenMenuAdd) {
-			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
+			});
 		};
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			this.onMention();
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				this.onMention();
+			});
 		};
 
 		// Make div

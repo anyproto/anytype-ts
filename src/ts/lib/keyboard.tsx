@@ -416,7 +416,10 @@ class Keyboard {
 			const pin = Storage.get('pin');
 			if (pin) {
 				this.setPinChecked(false);
-				this.history.push('/auth/pin-check');
+				
+				popupStore.closeAll(null, () => {
+					this.history.push('/auth/pin-check');
+				});
 			};
 		}, pinTime);
 	};
