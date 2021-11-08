@@ -173,10 +173,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		this.open();
 		
-		if (this.uiHidden) {
-			this.uiHide();
-		};
-
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
 
@@ -248,6 +244,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onOpen();
 			};
 
+			window.clearTimeout(this.timeoutMove);
+			window.setTimeout(() => { this.uiShow(); }, 10);
 			this.resize();
 		});
 	};
@@ -328,12 +326,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	uiHide () {
+		console.log('uiHide', this.uiHidden);
+		console.trace();
+
 		if (this.uiHidden) {
 			return;
 		};
 
 		$('.footer').css({ opacity: 0 });
-		$('#button-add').css({ opacity: 0 });
 		
 		this.uiHidden = true;
 		
@@ -344,17 +344,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	uiShow () {
+		console.log('uiShow', this.uiHidden);
+
 		if (!this.uiHidden) {
 			return;
 		};
 
-		const win = $(window);
-		
 		$('.footer').css({ opacity: 1 });
-		$('#button-add').css({ opacity: '' });
 		
 		this.uiHidden = false;
-		win.unbind('mousemove.ui');
+		$(window).unbind('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {
