@@ -13,7 +13,14 @@
     /* PopupSearch */
 
     .popup.popupSearch {
+        .emptySearch {
+            .label { color: $colorSecondary; }
+            b { color: $colorPrimary; }
+        }
+
         .head { background: $colorBlack; }
+
+        .item.active { background-color: $colorHover; }
     }
 
     /* PopupSettings */
