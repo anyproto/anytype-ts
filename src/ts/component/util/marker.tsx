@@ -36,6 +36,7 @@ const Theme = {
 		bullets: {
 			default: require('img/theme/dark/icon/bullet/default.svg'),
 		},
+		toggle:		 require('img/theme/dark/icon/marker/toggle.svg'),
 	},
 };
 
@@ -81,7 +82,7 @@ class Marker extends React.Component<Props, {}> {
 				break;
 			
 			case I.TextStyle.Toggle:
-				inner = <img src={Icons.toggle} />;
+				inner = <img src={this.getToggle()} />;
 				break;
 		};
 		
@@ -98,6 +99,13 @@ class Marker extends React.Component<Props, {}> {
 		const color = this.props.color || 'default';
 
 		return (t && t.bullets[color]) ? t.bullets[color] : Icons.bullets[color];
+	};
+
+	getToggle () {
+		const { theme } = commonStore;
+		const t = Theme[theme];
+
+		return (t && t.toggle) ? t.toggle : Icons.toggle;
 	};
 	
 };
