@@ -9,10 +9,14 @@ html.themeDark {
 
     body { background: $colorBlack; color: $colorPrimary; }
 
+    a { color: $colorPrimary; }
+
     #root > .loaderWrapper { background: $colorBlack; }
     #root {
         .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
     }
+
+    ::selection { color: $colorBlack; }
 	
     .cover.main::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3);
@@ -22,6 +26,8 @@ html.themeDark {
     .empty { color: $colorTertiary; }
     .placeholder { color: $colorTertiary; }
     ::-webkit-input-placeholder { color: $colorTertiary !important; }
+
+    .textColor-default { color: $colorPrimary; }
 
     /* Components */
     /* ---------------------------------------------------------------- */
@@ -88,6 +94,8 @@ html.themeDark {
         }
     }
 
+    /* Preview */
+
     .preview {
         .content { background: $colorBgLight; }
         .head { border-color: $colorLineSecondary; color: $colorSecondary; }
@@ -103,6 +111,8 @@ html.themeDark {
         }
     }
 
+    /* Pager */
+
     .pager {
         .pageItem:hover { color: $colorPrimary; }
         .pageItem.active { color: $colorOrange; }
@@ -110,6 +120,16 @@ html.themeDark {
         .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
         .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+    }
+
+    /* Progress */
+
+    .progress {
+        .inner { background: $colorBgLight; }
+        .inner {
+            .label { color: $colorPrimary; }
+            .bar { background: $colorHover; }
+        }
     }
 
     .tooltip { background: $colorBgIcon; color: $colorPrimary; }
@@ -168,6 +188,22 @@ html.themeDark {
 
     .header.headerMainIndex {
         .side.center { border: 0px; color: $colorSecondary; background: $colorBlack30; }
+    }
+
+    .header.headerMainHistory { background: $colorBlack; }
+    .header.headerMainHistory {
+        .side {
+            .item { color: $colorSecondary; }
+            .item {
+                .icon.arrow { background-image: url('~img/theme/dark/arrow/history0.svg'); margin: 0px; }
+            }
+        }
+        
+		.item.grey:hover { color: $colorPrimary; }
+
+		.item:hover {
+			.icon.arrow { background-image: url('~img/theme/dark/arrow/history1.svg'); }
+		}
     }
 
     /* Footer */

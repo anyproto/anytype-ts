@@ -1,5 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
+import { analytics } from '../lib';
 
 const Constant = require('json/constant.json');
 
@@ -24,6 +25,8 @@ interface Cover {
 	image: string;
 	type: I.CoverType;
 };
+
+const $ = require('jquery');
 
 class CommonStore {
 
@@ -179,11 +182,14 @@ class CommonStore {
 		this.themeId = v;
 		Storage.set('theme', v);
 		Util.addBodyClass('theme', v);
+
+		analytics.event('ThemeSet', { id: v });
 	};
 
 	configSet (config: any, force: boolean) {
 		console.log('[commonStore.configSet]', JSON.stringify(config, null, 3), force);
 
+		let obj = $('html');
 		let newConfig: any = {};
 
 		if (force) {
@@ -197,6 +203,8 @@ class CommonStore {
 		};
 
 		set(this.configObj, newConfig);
+
+		this.configObj.debug.ui ? obj.addClass('debug') : obj.removeClass('debug');
 	};
 
 };

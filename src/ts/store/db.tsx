@@ -13,10 +13,10 @@ class DbStore {
     constructor() {
         makeObservable(this, {
             objectTypes: computed,
+			clearAll: action,
             objectTypesSet: action,
             objectTypeAdd: action,
             objectTypeUpdate: action,
-            objectTypesClear: action,
             relationsSet: action,
             relationsClear: action,
             relationAdd: action,
@@ -40,6 +40,14 @@ class DbStore {
 
     get objectTypes(): I.ObjectType[] {
 		return this.objectTypeList;
+	};
+
+	clearAll () {
+		this.objectTypeList = observable.array([]);
+    	this.relationMap = observable.map(new Map());
+    	this.viewMap = observable.map(new Map());
+    	this.dataMap = observable.map(new Map());
+    	this.metaMap = observable.map(new Map());
 	};
 
     objectTypesSet (types: I.ObjectType[]) {
@@ -66,10 +74,6 @@ class DbStore {
 		if (item) {
 			set(item, type);
 		};
-	};
-
-    objectTypesClear () {
-		this.objectTypeList = [];
 	};
 
     relationsSet (rootId: string, blockId: string, list: I.Relation[]) {

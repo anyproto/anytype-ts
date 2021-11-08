@@ -50,7 +50,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
 		let color = (
-			<div className={[ 'inner', 'textColor textColor-' + (colorMark.param || 'black') ].join(' ')} />
+			<div className={[ 'inner', 'textColor textColor-' + (colorMark.param || 'default') ].join(' ')} />
 		);
 		
 		let background = (

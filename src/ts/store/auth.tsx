@@ -43,6 +43,7 @@ class AuthStore {
 			accountSet: action,
 			threadSet: action,
 			threadRemove: action,
+			clearAll: action,
 			logout: action,
 		});
 	};
@@ -121,21 +122,27 @@ class AuthStore {
 		return this.threadMap.get(rootId) || {};
     };
 
+	clearAll () {
+		this.accountItem = null;
+		this.accountList = [];
+		this.icon = '';
+		this.preview = '';
+		this.name = '';
+		this.phrase = '';
+		this.code = '';
+		this.threadMap = new Map();
+	};
+
 	logout () {
 		Storage.logout();
 
 		keyboard.setPinChecked(false);
-		crumbs.delete(I.CrumbsType.Page);
-		crumbs.delete(I.CrumbsType.Recent);
-
 		commonStore.coverSetDefault();
 
-		blockStore.breadcrumbsSet('');
-		blockStore.recentSet('');
 		blockStore.clearAll();
 		detailStore.clearAll();
-
-		dbStore.objectTypesClear();
+		dbStore.clearAll();
+		this.clearAll();
 
 		this.accountItem = null;
 		this.nameSet('');

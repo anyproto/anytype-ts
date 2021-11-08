@@ -222,19 +222,20 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const win = $(window);
 		const top = win.scrollTop();
 		const node = $(ReactDOM.findDOMNode(this));
-		const title = node.find('#title');
 		const list = node.find('#documents');
-		const selectWrap = node.find('#selectWrap');
-		const header = node.find('#header');
-		const hh = Util.sizeHeader();
-		const oy = list.offset().top;
-		const menu = $('#menuSelect.add');
-		const offsetTitle = 256;
 
 		if (!list.length) {
 			return;
 		};
 
+		const title = node.find('#title');
+		const selectWrap = node.find('#selectWrap');
+		const header = node.find('#header');
+		const hh = Util.sizeHeader();
+		const menu = $('#menuSelect.add');
+		const offsetTitle = 256;
+
+		let oy = list.offset().top;
 		let yt = 0;
 		if (oy - top <= offsetTitle) {
 			yt = oy - top - offsetTitle;

@@ -271,23 +271,21 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		const { isPopup } = this.props;
 		const { config, theme } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
 			Util.toCamelCase([ 'platform', platform ].join('-')),
 		];
-		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
-
-		if (config.debug.ui) {
-			cn.push('debug');
-		};
+		const obj = $('html');
 
 		if (theme) {
 			cn.push(Util.toCamelCase(`theme-${theme}`));
 		};
 
+		if (config.debug.ui) {
+			cn.push('debug');
+		};
 		obj.attr({ class: cn.join(' ') });
 	};
 	

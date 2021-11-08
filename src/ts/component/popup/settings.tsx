@@ -578,15 +578,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onLogout (e: any) {
-		const { history } = this.props;
+		const { history, close } = this.props;
 
 		this.onConfirmPhrase = () => {
-			C.AccountStop(false);
-			authStore.logout();
-			history.push('/');
+			close();
 
-			this.pinConfirmed = false;
-			this.onConfirmPhrase = null;
+			window.setTimeout(() => {
+				C.AccountStop(false);
+				authStore.logout();
+				history.push('/');
+	
+				this.pinConfirmed = false;
+				this.onConfirmPhrase = null;
+			}, Constant.delay.popup);
 		};
 
 		this.onPage('phrase');

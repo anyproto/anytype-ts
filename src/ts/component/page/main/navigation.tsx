@@ -258,6 +258,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		this.rebind();
 
 		focus.clear(true);
+		keyboard.setFocus(true);
 	};
 	
 	componentDidUpdate () {
@@ -288,8 +289,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
+		keyboard.setFocus(false);
 	};
 
 	rebind () {

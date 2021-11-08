@@ -297,10 +297,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
+		const type = detailStore.get(rootId, object.type, []);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const options: any[] = [
-			{ id: 'open', name: 'Open type' }
-		];
+		const options: any[] = [];
+		
+		if (!type.isArchived && !type.isDeleted) {
+			options.push({ id: 'open', name: 'Open type' });
+		};
+
 		if (!readonly && allowed) {
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};

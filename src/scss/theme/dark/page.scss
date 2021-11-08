@@ -3,7 +3,14 @@
 
 /* PageAuth */
 
-.pageAuth .textarea, .pageIndex .textarea, .pageObject .textarea { border: 0px; }
+.pageAuth, .pageIndex, .pageObject {
+    .textarea { border: 0px; }
+    .input { border-color: $colorLinePrimary; }
+}
+
+.pageAuthRegister {
+    .iconObject { background-image: url('~img/theme/dark/icon/picture.svg'); }
+}
 
 /* PageMainIndex */
 
@@ -127,5 +134,17 @@
     .selected { border-color: $colorLinePrimary; }
     .items {
         .item { border-color: $colorLinePrimary; }
+    }
+}
+
+/* PageMainHistory */
+
+.pageMainHistory {
+    .list { background: $colorBlack; border-color: $colorLineSecondary; }
+    .list {
+        .item:hover, .item.active { background: $colorHover; }
+        .item {
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
+        }
     }
 }
