@@ -72,6 +72,11 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
+
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
