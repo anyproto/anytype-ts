@@ -403,6 +403,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 					return it;
 				});
 
+				const themes: any[] = [
+					{ id: '', name: 'Default' },
+					{ id: 'dark', name: 'Dark' },
+				];
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
@@ -429,14 +434,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 						<div className="row">
 							<div className="side left">
-								<Label text="Dark mode" />
+								<Label text="Theme" />
 							</div>
 							<div className="side right">
-								<Switch 
-									value={theme == 'dark'} 
-									className="big"
-									onChange={(e: any, v: boolean) => { commonStore.themeSet(v ? 'dark' : ''); }}
-								/>
+								<Select id="theme" options={themes} value={theme} onChange={(id: string) => { commonStore.themeSet(id); }}/>
 							</div>
 						</div>
 
