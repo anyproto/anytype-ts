@@ -209,6 +209,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const cb = (id: string, name: string) => {
 			name = String(name || DataUtil.defaultName('page'));
+			name = Util.shorten(name, 30);
 
 			let from = filter.from;
 			let to = from + name.length + 1;
