@@ -96,4 +96,10 @@
 			.icon.twitter:hover { background-image: url('~img/theme/dark/icon/twitter1.svg'); }
 		}
 	}
+
+    /* PopupPrompt */
+
+    .popup.popupPrompt {
+        .input { background: $colorBlack; border-color: $colorLinePrimary; }
+    }
 }

@@ -133,7 +133,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
-		let share = { id: 'sharePage', icon: 'link', name: 'Share' };
+		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
 		let highlight = null;
 
 		if (object.isFavorite) {
@@ -165,9 +165,9 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		if (object.isHightlighted) {
-			highlight = { id: 'unhighlight', icon: 'unfav', name: 'Unhighlight' };
+			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
-			highlight = { id: 'highlight', icon: 'fav', name: 'Highlight' };
+			highlight = { id: 'highlight', icon: 'highlight', name: 'Highlight' };
 		};
 
 		if (!config.allowSpaces) {
@@ -175,7 +175,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			highlight = null;
 		};
 
-		if (!object.workspaceId || block.isObjectSpace()) {
+		if (!object.workspaceId || block.isObjectSpace() || !config.allowSpaces) {
 			highlight = null;
 		};
 
@@ -185,6 +185,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ archive, removePage ] },
 				{ children: [ fav, link, highlight ] },
 				{ children: [ print ] },
+				{ children: [ highlight ] },
 			];
 
 			if (!block.isObjectSet() && !block.isObjectSpace()) {
@@ -192,7 +193,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			if (block.isObjectSpace()) {
-				sections.push({ children: [ share ] });
+				sections[3].children.push(share);
 			};
 		} else
 		if (block.isPage()) {
@@ -213,9 +214,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			sections = [
 				{ children: [ undo, redo, history, archive, removePage ] },
-				{ children: [ fav, link, template, highlight ] },
+				{ children: [ fav, link, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
+				{ children: [ highlight ] },
 			];
 
 			sections = sections.map((it: any, i: number) => {
