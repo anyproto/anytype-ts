@@ -126,7 +126,7 @@ export default [
 	{ text: `This is the very first version of Anytype. An encrypted, offline-first tool for thought with robust sync on mobile and desktop. In the coming months we will release full support on iOS, Graph view, dark mode, and local APIs.` },
 	{ style: I.TextStyle.Header1, text: `Problems and feature requests` },
 	{ text: `If you experience any problems, please, get in touch with us in the forum. You can make a bug report, feature request, or ask questions there. You can also join our telegram and discord groups for chatting with other Anytypers.` },
-	{ text: `If you see any problems with synchronisation, not responding app, high resource consumption, please open <a href="https://community.anytype.io/d/675-sync-problems-white-screen-or-not-responding-high-resource-consumption/5">this thread for solutions first</a>. Your Anytype's data folder is here: <a href="${path}" class="path cp bgColor bgColor-grey textColor textColor-red">${path}</a>.` },
+	{ text: `If you see any problems with synchronisation, not responding app, high resource consumption, please open <a href="https://community.anytype.io/d/675-sync-problems-white-screen-or-not-responding-high-resource-consumption/5">this thread for solutions first</a>. Your Anytype's data folder is here: <a href="${path}" class="path cp highlight">${path}</a>.` },
 	{ style: I.TextStyle.Header1, text: `Thank you` },
 	{ text: `We still have a long way to go, but your feedback gets us there faster. Thank you for being a part of the alpha program, and thank you for being part of this journey.` },
 	{ text: `— Anton, Roman, Zhanna & the entire Anyteam.` },
