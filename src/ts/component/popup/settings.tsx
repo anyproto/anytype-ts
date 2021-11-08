@@ -64,8 +64,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
-		console.log('THEME', theme);
-
 		let content = null;
 		let Item = null;
 

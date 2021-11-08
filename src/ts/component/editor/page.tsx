@@ -326,9 +326,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	uiHide () {
-		console.log('uiHide', this.uiHidden);
-		console.trace();
-
 		if (this.uiHidden) {
 			return;
 		};
@@ -344,8 +341,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	uiShow () {
-		console.log('uiShow', this.uiHidden);
-
 		if (!this.uiHidden) {
 			return;
 		};
