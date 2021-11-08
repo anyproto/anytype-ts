@@ -20,6 +20,9 @@
 
         .head { background: $colorBlack; }
 
+        .item {
+            .descr { color: $colorSecondary; }
+        }
         .item.active { background-color: $colorHover; }
     }
 

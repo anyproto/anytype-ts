@@ -28,41 +28,47 @@ Size[I.LinkIconSize.Large] = 96;
 const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
-        const { rootId, block, withName, withIcon, withCover, withDescription, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
+        const { rootId, block, withName, withIcon, withDescription, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
         const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
         const { align, bgColor } = block;
-        const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout) ];
+        const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
         const cns = [ 'sides' ];
         const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
+        const withCover = this.props.withCover && coverId && coverType;
 
         if (className) {
             cn.push(className);
         };
-        if (withCover && coverId && coverType) {
+        if (withCover) {
             cn.push('withCover');
         };
 
         if (bgColor) {
 			cns.push('bgColor bgColor-' + bgColor);
 		};
+        if (!withIcon && !withName && !withDescription) {
+            cns.push('hidden');
+        };
 
-        cn.push('c' + Size[iconSize]);
+        let sideLeft = null;
 
-        const sideLeft = withIcon ? (
-            <div key="sideLeft" id="sideLeft" className="side left">
-                <IconObject 
-                    id={`block-${block.id}-icon`}
-                    size={Size[iconSize]} 
-                    object={object} 
-                    canEdit={canEdit} 
-                    onSelect={onSelect} 
-                    onUpload={onUpload} 
-                    onCheckbox={onCheckbox} 
-                />
-            </div>
-        ) : null;
+        if (withIcon) {
+            sideLeft = (
+                <div key="sideLeft" id="sideLeft" className="side left">
+                    <IconObject 
+                        id={`block-${block.id}-icon`}
+                        size={Size[iconSize]} 
+                        object={object} 
+                        canEdit={canEdit} 
+                        onSelect={onSelect} 
+                        onUpload={onUpload} 
+                        onCheckbox={onCheckbox} 
+                    />
+                </div>
+            );
+        };
 
-        const sideRight = (
+        let sideRight = (
             <div key="sideRight" id="sideRight" className="side right">
                 <div className="txt">
                     {withName ? <div className="cardName"><span>{name}</span></div> : ''}
@@ -92,7 +98,7 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 		return (
 			<div className={cn.join(' ')} onMouseDown={onClick}>
-                {withCover && coverId && coverType ? (
+                {withCover ? (
                     <Cover 
                         type={coverType} 
                         id={coverId} 
