@@ -105,6 +105,14 @@
 				canvas { display: inline-block; }
 			}
 
+			.qrWrap { 
+				padding: 16px; border-radius: 12px; display: inline-block; width: 132px; height: 132px; 
+				background: $colorVeryLightGrey;
+			}
+			.qrWrap {
+				canvas { width: 100%; height: 100%; }
+			}
+
 			.inputs { margin-bottom: 20px; }
 			.buttons { margin-top: 32px; }
 		}

@@ -48,6 +48,10 @@
             .input { border-color: $colorLinePrimary; }
         }
 
+        .tabPhrase {
+            .qrWrap { background: $colorMediumGrey; }
+        }
+
         .tabImportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }

@@ -151,6 +151,7 @@
     /* MenuThreadList */
 
     .menu.menuThreadList {
+        .item { border-color: $colorLineSecondary; }
         .item:hover::before { background: $colorHover; }
     }
 
@@ -191,5 +192,34 @@
 
     .menu.menuBlockContext {
 		.icon:hover { background-color: $colorHover; }
+    }
+
+    /* MenuBlockLinkSettings */
+
+    .menu.menuBlockLinkSettings {
+        .section.card {
+            .item { color: $colorSecondary; }
+            .item {
+                .icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text0.svg'); }
+			    .icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card0.svg'); }
+            }
+
+            .item:hover { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+            .item:hover {
+				.icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text1.svg'); }		
+				.icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card1.svg'); }
+			}
+
+            .item.active { color: $colorPrimary; background: $colorHover; }
+			.item.active {
+				.icon.style-text { background-image: url('~img/theme/dark/icon/menu/linkSettings/text2.svg'); }		
+				.icon.style-card { background-image: url('~img/theme/dark/icon/menu/linkSettings/card2.svg'); }
+			}
+        }
+
+        .buttons {
+            .button.grey { box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; color: $colorSecondary; }
+            .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; color: $colorPrimary; }
+        }
     }
 }
