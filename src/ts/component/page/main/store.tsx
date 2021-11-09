@@ -376,25 +376,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		const rootId = this.getRootId();
-		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
-		const viewChange = id != viewId;
-		const meta: any = { offset: this.offset };
-		const cb = (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		};
-
-		if (viewChange) {
-			meta.viewId = id;
-		};
-		if (viewChange || clear) {
-			dbStore.recordsSet(rootId, BLOCK_ID, []);
-		};
-
-		dbStore.metaSet(rootId, BLOCK_ID, meta);
-		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, this.offset, 0, cb);
+		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, this.offset, 0, clear, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

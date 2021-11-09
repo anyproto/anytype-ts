@@ -251,7 +251,7 @@ class BlockStore {
     // If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
     getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			list = this.unwrapTree([ this.wrapTree(rootId) ]);
+			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
 		};
 
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -268,7 +268,7 @@ class BlockStore {
 	};
 
     getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
-		const list = this.unwrapTree([ this.wrapTree(rootId) ]).filter(check);
+		const list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(check);
 		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 
@@ -283,16 +283,17 @@ class BlockStore {
 		};
 	};
 
-    setNumbers (rootId: string) {
-		const container = $('#editor-' + rootId);
-		if (!container.length) {
-			return;
-		};
-
-		const root = this.wrapTree(rootId);
+    updateNumbers (rootId: string) {
+		const root = this.wrapTree(rootId, rootId);
 		if (!root) {
 			return;
 		};
+
+		this.updateNumbersTree([ root ]);
+	};
+
+	updateNumbersTree (tree: any[]) {
+		tree = (tree || []).filter((it: any) => { return it; });
 
 		const unwrap = (list: any) => {
 			list = list || [];
@@ -331,7 +332,7 @@ class BlockStore {
 			};
 		};
 
-		cb(unwrap([ root ]));
+		cb(unwrap(tree));
 	};
 
     getStructure (list: I.Block[]) {
@@ -370,7 +371,7 @@ class BlockStore {
 		return list;
 	};
 
-    wrapTree (rootId: string) {
+    wrapTree (rootId: string, blockId: string) {
 		let map = this.getMap(rootId);
 		let ret: any = {};
 
@@ -382,7 +383,7 @@ class BlockStore {
 			};
 		};
 
-		return ret[rootId];
+		return ret[blockId];
 	};
 
     unwrapTree (tree: any[]): any[] {

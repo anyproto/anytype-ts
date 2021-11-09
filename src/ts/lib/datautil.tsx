@@ -1323,6 +1323,22 @@ class DataUtil {
 		return fields;
 	};
 
+	getDataviewData (rootId: string, blockId: string, id: string, offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+		const { viewId } = dbStore.getMeta(rootId, blockId);
+		const viewChange = id != viewId;
+		const meta: any = { offset: offset };
+
+		if (viewChange) {
+			meta.viewId = id;
+		};
+		if (viewChange || clear) {
+			dbStore.recordsSet(rootId, blockId, []);
+		};
+
+		dbStore.metaSet(rootId, blockId, meta);
+		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
+	};
+
 };
 
 export default new DataUtil();
