@@ -26,7 +26,7 @@
 		.block.blockMedia { max-height: 100%; }
 		.block.blockMedia * { width: 100%; height: 100%; }
 		.block.blockMedia {
-			img.media { width: auto; height: auto; max-width: 100%; }
+			img.media { width: auto; height: auto; max-width: 100%; display: inline-block; }
 		}
 		.iconObject { width: 100%; height: 100%; border-radius: 6px; background: $colorHover; }
 
