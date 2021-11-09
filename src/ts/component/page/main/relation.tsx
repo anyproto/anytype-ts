@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
 import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
-import { detailStore, dbStore } from 'ts/store';
+import { detailStore, dbStore, commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
@@ -43,6 +43,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			return <Loader id="loader" />;
 		};
 
+		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
@@ -66,9 +67,11 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 							</div>
 						</div>
-						<div className="side right">
-							<Button id="button-create" text="Create set" onClick={this.onCreate} />
-						</div>
+						{config.experimental ? (
+							<div className="side right">
+								<Button id="button-create" text="Create set" onClick={this.onCreate} />
+							</div>
+						) : ''}
 					</div>
 
 					<div className="section set">

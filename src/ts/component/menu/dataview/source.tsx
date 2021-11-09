@@ -1,10 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, IconObject, Tag } from 'ts/component';
-import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
+import { Icon, IconObject } from 'ts/component';
+import { detailStore, menuStore, commonStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
-import arrayMove from 'array-move';
-import { translate, Util, keyboard } from 'ts/lib';
+import { Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {}
@@ -25,6 +23,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 	};
 	
 	render () {
+		const { config } = commonStore;
 		const items = this.getItems();
 		const types = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.type; })
 		
@@ -63,7 +62,7 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 						</div>
 					) : ''}
 				</div>
-				{!types.length ? (
+				{!types.length && config.experimental ? (
 					<div className="bottom">
 						<div className="line" />
 						<ItemAdd disabled={true} /> 
