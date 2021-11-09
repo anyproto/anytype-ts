@@ -159,14 +159,27 @@ search.active { background: orange !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
-.tagColor-default { color: $colorBlack !important; background: $colorWhite !important; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
-.tagColor-grey { color: #4b4b4b !important; background: #b0b0b0 !important; }
-.tagColor-yellow { color: #ad8620 !important; background: #f9d77e !important; }
-.tagColor-orange { color: #a85c34 !important; background: #f4ad88 !important; }
-.tagColor-red { color: #a64949 !important; background: #f5a6a6 !important; }
-.tagColor-pink { color: #965088 !important; background: #eda2de !important; }
-.tagColor-purple { color: #6948b4 !important; background: #c8b2fa !important; }
-.tagColor-blue { color: #274ccd !important; background: #99afff !important; }
-.tagColor-ice { color: #3d69aa !important; background: #a4c7fa !important; }
-.tagColor-teal { color: #2f876f !important; background: #8bdac4 !important; }
-.tagColor-lime { color: #388a2b !important; background: #b1f5a6 !important; }
+.isTag.tagColor-default { color: $colorBlack; background: #fff; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
+.isTag.tagColor-grey { color: #8c9ea5; background: #ebeff1; }
+.isTag.tagColor-yellow { color: #b2a616; background: #fbf5b8; }
+.isTag.tagColor-orange { color: #d3720d; background: #ffEcc8; }
+.isTag.tagColor-red { color: #e2400c; background: #ffe5de; }
+.isTag.tagColor-pink { color: #ca1b8e; background: #fddcf2; }
+.isTag.tagColor-purple { color: #9e30c4; background: #f1dbf8; }
+.isTag.tagColor-blue { color: $colorBlue; background: #dce1fb; }
+.isTag.tagColor-ice { color: #1c8bca; background: #cfedfe; }
+.isTag.tagColor-teal { color: #0caaa3; background: #d4f5f3; }
+.isTag.tagColor-lime { color: #64b90f; background: #e3f7d0; }
+
+.isStatus.tagColor-default { color: $colorBlack !important; }
+.isStatus.tagColor-black { color: $colorBlack !important; }
+.isStatus.tagColor-grey { color: $colorMediumGrey !important; }
+.isStatus.tagColor-yellow { color: $colorYellow !important; }
+.isStatus.tagColor-orange { color: $colorOrange !important; }
+.isStatus.tagColor-red { color: $colorRed !important; }
+.isStatus.tagColor-pink { color: $colorPink !important; }
+.isStatus.tagColor-purple { color: $colorPurple !important; }
+.isStatus.tagColor-blue { color: $colorBlue !important; }
+.isStatus.tagColor-ice { color: $colorIce !important; }
+.isStatus.tagColor-teal { color: $colorTeal !important; }
+.isStatus.tagColor-lime { color: $colorLime !important; }

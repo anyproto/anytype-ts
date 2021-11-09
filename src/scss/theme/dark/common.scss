@@ -30,6 +30,19 @@ html.themeDark {
     .bgColor { color: $colorTertiary; }
     .textColor-default { color: $colorPrimary; }
 
+    .isTag.tagColor-default { color: $colorPrimary !important; background: $colorBlack !important; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+
+    .isTag.tagColor-grey { color: #4b4b4b !important; background: #b0b0b0 !important; }
+    .isTag.tagColor-yellow { color: #ad8620 !important; background: #f9d77e !important; }
+    .isTag.tagColor-orange { color: #a85c34 !important; background: #f4ad88 !important; }
+    .isTag.tagColor-red { color: #a64949 !important; background: #f5a6a6 !important; }
+    .isTag.tagColor-pink { color: #965088 !important; background: #eda2de !important; }
+    .isTag.tagColor-purple { color: #6948b4 !important; background: #c8b2fa !important; }
+    .isTag.tagColor-blue { color: #274ccd !important; background: #99afff !important; }
+    .isTag.tagColor-ice { color: #3d69aa !important; background: #a4c7fa !important; }
+    .isTag.tagColor-teal { color: #2f876f !important; background: #8bdac4 !important; }
+    .isTag.tagColor-lime { color: #388a2b !important; background: #b1f5a6 !important; }
+
     /* Components */
     /* ---------------------------------------------------------------- */
 
