@@ -113,7 +113,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
-							<div id={'editor-' + rootId} className="editor">
+							<div className="editor">
 								<div className="blocks">
 									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
 									{check.withIcon ? <Block {...this.props} rootId={rootId} key={icon.id} block={icon} readonly={true} /> : ''}
@@ -173,7 +173,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		sideLeft.unbind('scroll').scroll(() => { this.onScrollLeft(); });
 		sideRight.unbind('scroll').scroll(() => { this.onScrollRight(); });
 
-		blockStore.setNumbers(rootId);
+		blockStore.updateNumbers(rootId);
 	};
 
 	onScrollLeft () {

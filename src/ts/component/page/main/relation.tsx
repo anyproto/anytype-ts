@@ -121,6 +121,8 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
+			this.getDataviewData(BLOCK_ID_OBJECT, 50);
+
 			this.loading = false;
 			this.forceUpdate();
 
@@ -128,6 +130,15 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	getDataviewData (blockId: string, limit: number) {
+		const rootId = this.getRootId();
+		const views = dbStore.getViews(rootId, blockId);
+
+		if (views.length) {
+			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
+		};
 	};
 
 	close () {
