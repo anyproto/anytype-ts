@@ -328,34 +328,6 @@ class App extends React.Component<Props, State> {
 		Util.addBodyClass('theme', commonStore.theme);
 	};
 
-	preload () {
-		const prefix = './dist/';
-		const fr = new RegExp(/\.png|gif|jpg|svg/);
-		
-		const readDir = (prefix: string, folder: string) => {
-			const fp = path.join(prefix, folder);
-			fs.readdir(fp, (err: any, files: string[]) => {
-				if (err) {
-					return;
-				};
-
-				let images: string[] = [];
-				for (let file of files) {
-					const fn = path.join(fp, file);
-					const isDir = fs.lstatSync(fn).isDirectory();
-					if (isDir) {
-						readDir(fp, file);
-					} else 
-					if (file.match(fr)) {
-						images.push(fn.replace(/^dist\//, ''));
-					};
-				};
-				Util.cacheImages(images);
-			});
-		};
-		readDir(prefix, 'img');
-	};
-
 	setIpcEvents () {
 		const accountId = Storage.get('accountId');
 		const body = $('body');
@@ -390,7 +362,6 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
-			this.preload();
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
