@@ -314,7 +314,15 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	};
 
 	componentDidUpdate () {
+		const { rootId } = this.props;
+		const contextId = this.getRootId();
+		const root = blockStore.wrapTree(contextId, rootId);
+
 		this.open();
+
+		if (root) {
+			blockStore.updateNumbersTree([ root ]);
+		};
 	};
 
 	componentWillUnmount () {
