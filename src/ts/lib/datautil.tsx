@@ -1,6 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
-import children from '../component/list/children';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -1317,6 +1316,13 @@ class DataUtil {
 
 		if (layout == I.ObjectLayout.Task) {
 			fields.withIcon = true;
+			fields.iconSize = I.LinkIconSize.Small;
+		};
+
+		if (layout == I.ObjectLayout.Note) {
+			fields.withIcon = false;
+			fields.withCover = false;
+			fields.withDescription = false;
 			fields.iconSize = I.LinkIconSize.Small;
 		};
 

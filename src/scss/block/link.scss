@@ -122,7 +122,7 @@
         .linkCard.align1 {
             .sides { display: block; }
             .side.left { margin: 0px 0px 8px 0px; }
-            .side.right { width: 100% !important; }
+            .side.right { width: 100% !important; line-height: unset !important; }
             .iconObject { display: inline-block; }
         }
 

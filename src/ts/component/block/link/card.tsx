@@ -29,12 +29,20 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
 
 	render () {
         const { rootId, block, withName, withIcon, withDescription, iconSize, object, className, canEdit, onClick, onSelect, onUpload, onCheckbox } = this.props;
-        const { id, layout, coverType, coverId, coverX, coverY, coverScale, name, description } = object;
+        const { id, layout, coverType, coverId, coverX, coverY, coverScale, snippet } = object;
         const { align, bgColor } = block;
         const cn = [ 'linkCard', 'align' + align, DataUtil.layoutClass(id, layout), 'c' + Size[iconSize] ];
         const cns = [ 'sides' ];
         const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
         const withCover = this.props.withCover && coverId && coverType;
+
+        let name = object.name || DataUtil.defaultName('page');
+        let description = '';
+		if (layout == I.ObjectLayout.Note) {
+			name = snippet || <span className="empty">Empty</span>;
+		} else {
+			description = object.description || object.snippet;
+		};
 
         if (className) {
             cn.push(className);
@@ -72,13 +80,13 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
             <div key="sideRight" className="side right">
                 <div className="txt">
                     {withName ? <div className="cardName"><span>{name}</span></div> : ''}
-                    {withDescription ? <div className="cardDescription">{description}</div> : ''}
+                    {withDescription ? <div className="cardDescription">{description || snippet}</div> : ''}
                     <div className="archive">{translate('blockLinkArchived')}</div>
 
                     {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}
                 </div>
             </div>
-        ); 
+        );
 
         let content = (
             <div id="sides" className={cns.join(' ')}>
