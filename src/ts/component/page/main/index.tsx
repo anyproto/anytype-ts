@@ -503,10 +503,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 	};
 
+	getSelectedObjectIds () {
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		return items.map((it: any) => { return this.getObject(it).id; });
+	};
+
 	onSelectionDelete () {
 		const l = this.selected.length;
-		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
-		const ids = items.map((it: any) => { return this.getObject(it).id; });
+		const ids = this.getSelectedObjectIds();
 
 		popupStore.open('confirm', {
 			data: {
@@ -527,7 +531,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onSelectionArchive (v: boolean) {
 		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
-		const ids = items.map((it: any) => { return this.getObject(it).id; });
+		const ids = this.getSelectedObjectIds();
 
 		C.ObjectListSetIsArchived(ids, v, () => {
 			items.forEach((it: any) => {
@@ -544,9 +548,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onSelectionFavorite (v: boolean) {
-		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
-		const ids = items.map((it: any) => { return this.getObject(it).id; });
-
+		const ids = this.getSelectedObjectIds();
 		C.ObjectListSetIsFavorite(ids, v, () => {
 			this.selected = [];
 			this.selectionRender();
@@ -677,7 +679,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						return;
 					};
 
-					this.selected = [ object.id ];
+					this.selected = [ item.id ];
 
 					switch (el.id) {
 						case 'archive':
