@@ -12,7 +12,7 @@ html.themeDark {
     a { color: $colorPrimary; }
 
     #root > .loaderWrapper { background: $colorBlack; }
-    #root {
+    #root > .loaderWrapper {
         .logo { background-image: url('~img/theme/dark/logo/color.svg'); }
     }
 
