@@ -213,6 +213,8 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
+			this.getDataviewData(BLOCK_ID_HIGHLIGHTED, 0);
+
 			this.loading = false;
 			this.forceUpdate();
 
@@ -222,6 +224,15 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 			this.resize();
 		});
+	};
+
+	getDataviewData (blockId: string, limit: number) {
+		const rootId = this.getRootId();
+		const views = dbStore.getViews(rootId, blockId);
+
+		if (views.length) {
+			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
+		};
 	};
 
 	close () {
