@@ -117,7 +117,7 @@ const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
 const Ghost = require('img/icon/ghost.svg');
 
 const BgColor = {
-	grey:	 '#dfddd0',
+	grey:	 '#f3f2ec',
 	black:	 '#2c2b27',
 	brown:	 '#aca996',
 	orange:	 '#ffb522',
@@ -162,6 +162,7 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 	render () {
 		const { className, size, canEdit, forceLetter } = this.props;
+		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat, isDeleted } = object || {};
