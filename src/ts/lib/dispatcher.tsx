@@ -11,6 +11,7 @@ const Constant = require('json/constant.json');
 const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
+const SKIP_IDS = [ 'blockSetBreadcrumbs' ];
 
 /// #if USE_ADDON
 const bindings = window.require('bindings')({
@@ -714,7 +715,7 @@ class Dispatcher {
 		let t2 = 0;
 		let d = null;
 
-		if (debug) {
+		if (debug && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
 			d = Util.objectClear(data.toObject());
 			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
@@ -751,7 +752,7 @@ class Dispatcher {
 					analytics.event('Error', { cmd: type, code: message.error.code });
 				};
 
-				if (debug) {
+				if (debug && !SKIP_IDS.includes(type)) {
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
 					d = Util.objectClear(response.toObject());
 					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
@@ -774,12 +775,12 @@ class Dispatcher {
 				data.renderTime = renderTime;
 				analytics.event(upper, data);
 
-				if (debug) {
+				if (debug && !SKIP_IDS.includes(type)) {
 					const times = [
 						'Middle time:', middleTime + 'ms',
 						'Render time:', renderTime + 'ms',
 						'Total time:', totalTime + 'ms',
-					]
+					];
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;', times.join('\t'));
 				};
 			});
