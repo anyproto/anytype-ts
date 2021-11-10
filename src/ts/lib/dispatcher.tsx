@@ -11,7 +11,7 @@ const Constant = require('json/constant.json');
 const { app, getGlobal } = window.require('@electron/remote');
 
 const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
-const SKIP_IDS = [ 'blockSetBreadcrumbs' ];
+const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
 /// #if USE_ADDON
 const bindings = window.require('bindings')({
