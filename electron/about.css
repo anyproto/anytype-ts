@@ -1,7 +1,7 @@
 body, html { width: 100%; height: 100%; -webkit-user-select: none; user-select: none; -webkit-app-region: drag; }
 
 body { 
-    margin: 0; color: #2c2b27; background: #fff; font-family: Helvetica, Arial, sans-serif; display: flex;
+    margin: 0; color: #2c2b27; font-family: Helvetica, Arial, sans-serif; display: flex;
     flex-direction: column; justify-content: center; align-items: center; font-size: 12px;
 }
 
@@ -39,6 +39,6 @@ body {
 }
 .buttons button:hover { background: #f1981a; }
 
-html.dark body { background: #2c2b27; color: #929082; }
+html.dark body { color: #929082; }
 html.dark .title { color: #cbc9bd; }
 html.dark .copyright { color: #5c5a54; }

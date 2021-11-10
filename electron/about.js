@@ -1,10 +1,4 @@
-var a = location.search.replace(/^\?/, '').split('&');
-var param = {};
-
-a.forEach((s) => {
-    var kv = s.split('=');
-    param[kv[0]] = kv[1];
-});
+var param = getParam();
 
 document.title = 'Anytype';
 document.getElementById('year').innerText = new Date().getFullYear();
@@ -13,4 +7,3 @@ document.getElementById('close').addEventListener('click', e => {
     e.preventDefault();
     window.close();
 });
-document.getElementById('html').className = param.theme;

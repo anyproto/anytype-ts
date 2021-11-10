@@ -206,6 +206,7 @@ class CommonStore {
 
 		set(this.configObj, newConfig);
 
+		this.configObj.debug = this.configObj.debug || {};
 		this.configObj.debug.ui ? obj.addClass('debug') : obj.removeClass('debug');
 	};
 
