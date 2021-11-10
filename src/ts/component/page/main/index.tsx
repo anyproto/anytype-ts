@@ -22,6 +22,7 @@ const Constant: any = require('json/constant.json');
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
+	_isMounted: boolean = false;
 	refFilter: any = null;
 	id: string = '';
 	timeoutFilter: number = 0;
@@ -189,6 +190,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	componentDidMount () {
+		this._isMounted = true;
+
 		const win = $(window);
 		const tabs = this.getTabs();
 
@@ -215,6 +218,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		this._isMounted = false;
+
 		$(window).unbind('scroll.page');
 		menuStore.closeAll(Constant.menuIds.index);
 	};
@@ -301,6 +306,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	load () {
+		if (!this._isMounted) {
+			return;
+		};
+
 		const { filter } = this.state;
 		const { config } = commonStore;
 		const tabs = this.getTabs();
@@ -338,7 +347,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.setState({ loading: true });
 
 		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
-			if (message.error.code) {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
