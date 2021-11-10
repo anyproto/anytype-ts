@@ -13,3 +13,4 @@ document.getElementById('close').addEventListener('click', e => {
     e.preventDefault();
     window.close();
 });
+document.getElementById('html').className = param.theme;

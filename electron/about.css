@@ -38,3 +38,7 @@ body {
     background: #ffb522; color: #fff;
 }
 .buttons button:hover { background: #f1981a; }
+
+html.dark body { background: #2c2b27; color: #929082; }
+html.dark .title { color: #cbc9bd; }
+html.dark .copyright { color: #5c5a54; }
