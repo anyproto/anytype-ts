@@ -6,18 +6,32 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `0.21.0 Desktop` }
-	,
+	{ style: I.TextStyle.Title, text: `0.21.0 Desktop` },
+
 	{ style: I.TextStyle.Header2, text: `Deletion` },
+	{ text: `Say hello to our most incredible innovation since object creation: object deletion. Anytype now supports the permanent deleting of objects! 🥳 🗑♻️. Moving objects to the bin will remove them from navigation. From the bin, you can choose to select, delete, and restore your objects. <b>This action is irrevocable, so please be careful.</b> ` },
+	{ text: `<img src="./img/help/delete.png" class="full">` },
+	{ text: `At present, only objects created inside Anytype can be deleted. Other files like media, and those that come with Anytype (types, relations) will be supported in future releases.` },
 
 	{ style: I.TextStyle.Header2, text: `New defaults` },
+	{ text: `Speed and convenience are central to this update. Drafts have been replaced with a new default type, <span class="highlight">the Note</span>. Designed to capture thoughts quickly. You can now choose any type of object as your default type in Settings. An update we hope will provide you with even more customization and workflow options.` },
+	{ text: `<img src="./img/help/note.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `Sets creation` },
+	{ text: `You can now create a Set from the dashboard, using the bottom-left + button, or even in-line using the <span class="highlight">/</span> menu. From there, you can choose which type of object your new Set is for. For example, viewing your current projects, or building a reading list of books.` },
+	{ text: `<video src="./img/help/set-creation.mp4" controls autoplay loop class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `Darkmode!` },
+	{ text: `Just in-time for winter, our long-awaited dark mode is here. Night owls rejoice! To enable dark mode, simply open the Settings pane, navigate to other settings → theme → and choose Dark.` },
+	{ text: `<img src="./img/help/dark-mode.png" class="full">` },
+
+	{ style: I.TextStyle.Header2, text: `Fresh docs` },
+	{ text: `We’ve launched a brand new hub for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
+
+	{ style: I.TextStyle.Header2, text: `Text with link to an object` },
+	{ text: `There was a way to add an arbitrary URL link to a text selection. But now you can make a link to any Anytype object this way. Just select the part of the text, click link icon and choose!` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
-
 	{ style: I.TextStyle.Bulleted, text: `PDF now renders in Anytype. if you open this file type as an object. Use block’s menu in the editor and just click on a file in sets. Thanks, Gabi and Florencia for your feedback!` },
 	{ style: I.TextStyle.Bulleted, text: `You can now also open and create a set through the type in featured relations` },
 	{ style: I.TextStyle.Bulleted, text: `You will have Page, Note, Set, and Task at the top of the type selection. They are the most used types, so they will become more accessible.` },
@@ -32,7 +46,6 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Better graph search highlight. Thanks, <a href="https://community.anytype.io/d/1087-better-graph-search-highlight/1">lynxlove</a>` },
 
 	{ style: I.TextStyle.Header2, text: `Bugs` },
-
 	{ style: I.TextStyle.Bulleted, text: `Anytype rarely failed to create set. Thanks, <a href="https://community.anytype.io/t/fails-to-create-a-project-sets/2199">Srinath, turquiseblue, vanntile, Eban</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `Changing the set filter from "is done" to something else resulted in a crash. Thanks, <a href="https://community.anytype.io/d/991-changing-set-filter-from-is-done-to-something-else-results-in-crash/1">sahilstudio</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Clipboard stops working while working with blocks.` },
@@ -81,7 +94,7 @@ export default [
 	{ text: `To pan around the canvas, drag the background.` },
 	{ text: `You can zoom in and out using a touchpad zoom function or by scrolling with a mouse wheel.` },
 	{ text: `Use the search function at the bottom of the panel to the right if you want to find a particular object. Matching objects will be highlighted in the network view.` },
-	{ text: `To access the Graph Mode, look for the <img src="./img/icon/graph.svg" class="icon" /> icon in the top-left corner from any opened object or just press ⌘ + Option + O / Ctrl + Alt + O.` },
+	{ text: `To access the Graph Mode, look for the <img src="./img/icon/graph.svg" class="icon" /> icon in the top-left corner from any opened object or just press <span class="highlight">⌘ + Option + O / Ctrl + Alt + O</span>.` },
 	{ text: `What does your graph look like? Share it in the community!` },
 	{ text: `<img src="./img/help/graph.png" class="full">` },
 
