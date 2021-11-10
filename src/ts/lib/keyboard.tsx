@@ -313,6 +313,7 @@ class Keyboard {
 	};
 
 	onPrint () {
+		const { theme } = commonStore;
 		const isPopup = popupStore.isOpen('page');
 		const html = $('html');
 
@@ -320,10 +321,13 @@ class Keyboard {
 			html.addClass('withPopup');
 		};
 
+		Util.addBodyClass('theme', '');
+
 		focus.clearRange(true);
 		window.print();
 
 		html.removeClass('withPopup');
+		Util.addBodyClass('theme', theme);
 	};
 
 	onSearch () {
