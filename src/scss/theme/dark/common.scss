@@ -10,6 +10,7 @@ html.themeDark {
     body { background: $colorBlack; color: $colorPrimary; }
 
     a { color: $colorPrimary; }
+    a:hover { color: $colorOrange; }
 
     #root > .loaderWrapper { background: $colorBlack; }
     #root > .loaderWrapper {

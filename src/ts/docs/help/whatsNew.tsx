@@ -1,11 +1,81 @@
-import { I } from 'ts/lib';
+import { I, keyboard } from 'ts/lib';
+
+const cmd = keyboard.ctrlKey();
 
 export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
+	{ style: I.TextStyle.Title, text: `0.21.0 Desktop` }
+	,
+	{ style: I.TextStyle.Header2, text: `Deletion` },
+
+	{ style: I.TextStyle.Header2, text: `New defaults` },
+
+	{ style: I.TextStyle.Header2, text: `Sets creation` },
+
+	{ style: I.TextStyle.Header2, text: `Darkmode!` },
+
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+
+	{ style: I.TextStyle.Bulleted, text: `PDF now renders in Anytype. if you open this file type as an object. Use block’s menu in the editor and just click on a file in sets. Thanks, Gabi and Florencia for your feedback!` },
+	{ style: I.TextStyle.Bulleted, text: `You can now also open and create a set through the type in featured relations` },
+	{ style: I.TextStyle.Bulleted, text: `You will have Page, Note, Set, and Task at the top of the type selection. They are the most used types, so they will become more accessible.` },
+	{ style: I.TextStyle.Bulleted, text: `You can change views position in sets (finally!)` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype now shows object’s preview when hovering the link and mention` },
+	{ style: I.TextStyle.Bulleted, text: `We’ve added brand new gradient wallpapers, that look very solid! ` },
+	{ style: I.TextStyle.Bulleted, text: `Full-text search now works for pre-build objects` },
+	{ style: I.TextStyle.Bulleted, text: `You can now open URL by clicking with Shift being held. Thanks, <a href="https://community.anytype.io/d/1059-option-to-make-url-relations-easier-to-click-through-to/1">qualquertipo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Search box height is now adaptive fitting results with no extra space below` },
+	{ style: I.TextStyle.Bulleted, text: `Relation's name in Graph mode is now always readable in the normal direction. Thanks, <a href="https://community.anytype.io/d/1085-relations-name-in-graph-mode-should-always-be-readable-in-the-normal-direction/1">michaellw</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Make sidebar less wide in Graph View. Thanks, <a href="https://community.anytype.io/d/1102-sidebar-less-fullscreen-in-graph-view/1">lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Better graph search highlight. Thanks, <a href="https://community.anytype.io/d/1087-better-graph-search-highlight/1">lynxlove</a>` },
+
+	{ style: I.TextStyle.Header2, text: `Bugs` },
+
+	{ style: I.TextStyle.Bulleted, text: `Anytype rarely failed to create set. Thanks, <a href="https://community.anytype.io/t/fails-to-create-a-project-sets/2199">Srinath, turquiseblue, vanntile, Eban</a>.` },
+	{ style: I.TextStyle.Bulleted, text: `Changing the set filter from "is done" to something else resulted in a crash. Thanks, <a href="https://community.anytype.io/d/991-changing-set-filter-from-is-done-to-something-else-results-in-crash/1">sahilstudio</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Clipboard stops working while working with blocks.` },
+	{ style: I.TextStyle.Bulleted, text: `Copy and cut from the title was not getting the right content.  ` },
+	{ style: I.TextStyle.Bulleted, text: `Pasting a link to create a bookmark crashes Anytype. Thanks, <a href="https://community.anytype.io/d/1129-pasting-a-link-to-create-bookmark-crashes-anytype/1">Tanzeel098</a>` },
+	{ style: I.TextStyle.Bulleted, text: `The date relation filter wasn't working with time. The last added object may be ordered not as predicted.` },
+	{ style: I.TextStyle.Bulleted, text: `Some of the emojis with numbers weren't displaying cross-device. Thanks, <a href="https://community.anytype.io/d/323-0-9-number-emojis-as-page-icons-do-not-sync-properly/1">faraaz</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Words/Sentences were getting duplicated or missing when selecting it with <span class="highlight">Ctrl + A</span> and pressing <span class="highlight">Enter</span> on created objects. Thanks, <a href="https://community.anytype.io/d/957-weird-behaviour-when-selecting-a-text-and-pressing-enter/1">Sedulous</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Having two filters with the same relation changes the first condition to "All". Thanks, <a href="https://community.anytype.io/d/621-filters-reset-when-multiple-filtering-rules-are-added/1">quietwalker</a>` },
+	{ style: I.TextStyle.Bulleted, text: `LaTeX: When the carriage moved from the end of the list to the beginning or from the beginning to the end of the list, the focus on the element disappeared` },
+	{ style: I.TextStyle.Bulleted, text: `In history mode, there was a possibility to change featured relations.` },
+	{ style: I.TextStyle.Bulleted, text: `Cards linked objects had a residual overlay when empty. Thanks, <a href="https://community.anytype.io/d/967-cards-linked-objects-have-a-residual-overlay-when-empty/1">AyneHancer</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Enabling Show Icon in Grid View cropped the Page Name. Thanks, <a href="https://community.anytype.io/d/1137-enabling-show-icon-in-grid-view-crops-the-page-name/1">lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `The gallery view sometimes cut the last relation value.` },
+	{ style: I.TextStyle.Bulleted, text: `Image viewer showed scrollbar. Thanks, <a href="https://community.anytype.io/d/1072-image-viewer-showing-scrollbar/1">kEbZeCK</a>` },
+	{ style: I.TextStyle.Bulleted, text: `When you pressed Enter to open a page using the navigation pane Anytype was inserting line breaks. Thanks, <a href="https://community.anytype.io/t/using-the-navigation-pane-inserts-unwanted-line-breaks">Tim-Luca</a>` },
+	{ style: I.TextStyle.Bulleted, text: `An image added to the file relation could break the work of the file list in the relay.` },
+	{ style: I.TextStyle.Bulleted, text: `There was an inconsistent movement for nested blocks using <span class="highlight">${cmd}+Shift Up/Down</span>. Thanks, <a href="https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1">qualquertipo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `When creating a new object from a Set, edit its name. If the cursor was moved, the revised text was also moved in the direction of the cursor. Thanks, <a href="https://community.anytype.io/d/1136-ui-glitch-when-adding-a-new-object-from-a-set/1">lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Relation Numbers could store non-numerical symbols.` },
+	{ style: I.TextStyle.Bulleted, text: `When switched the month in the calendar in the Date relation, the date could be reset to 1970-01-01` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes relation focus could stay on a previously selected cell in Set.` },
+	{ style: I.TextStyle.Bulleted, text: `Selection could freeze when was working with nested blocks. Thanks, <a href="https://community.anytype.io/d/894-selection-bugs-inaround-nested-blocks/1">qualquertipo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Welcome to Anytype showed after login and not only after registration.` },
+	{ style: I.TextStyle.Bulleted, text: `Shortcuts view opened while working with an object in a modal window closed the object.` },
+	{ style: I.TextStyle.Bulleted, text: `Hints weren't centred relative to the object to which they were displayed.` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes when the custom type was opened, the templates weren't showing.` },
+	{ style: I.TextStyle.Bulleted, text: `App crashed after clicking <span class="highlight">Cancel</span> in the Navigation pane. Thanks, <a href="https://community.anytype.io/d/1186-crash-after-clicking-cancel-in-navigation-pane/1">HaosGames</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Changes have been made to relation name could not update everywhere it was used.` },
+	{ style: I.TextStyle.Bulleted, text: `When pressed ctrl / it with now carriage inside block app selected all the content text, but weren't working for further actions. Thanks, <a href="https://community.anytype.io/d/944-ctrl-selects-every-text-visually/1">Srinath</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Link preview could be stuck on the screen. Thanks, <a href="https://community.anytype.io/d/852-link-preview-stuck-on-screen/1">jimkleiber</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Template preview could also be stuck.` },
+	{ style: I.TextStyle.Bulleted, text: `The search wasn't working in the graph. Thanks, <a href="https://community.anytype.io/d/1091-search-function-in-graph-view-is-not-working/1">Tanzeel098</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Background default colour swatch showed as black (should be white). Thanks, <a href="https://community.anytype.io/d/871-background-default-color-swatch-shows-as-black-should-be-white/1">qualquertipo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `A lot of minor UI fixes while working with relation value in Set` },
+	{ style: I.TextStyle.Bulleted, text: `Bookmark Preview got cropped on Higher Layout Widths. Thanks, <a href="https://community.anytype.io/d/1118-bookmark-preview-gets-cropped-on-higher-layout-widths/1">lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `No extra space was added to the template formula. So switching the LaTeX Template formula multiple times resulted in a syntax error. Thanks, <a href="https://community.anytype.io/d/1101-switching-the-latex-template-formula-multiple-times-results-in-syntax-error/1">lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Objects created from Set weren't focusing the text cursor on their name. Thanks, <a href="https://community.anytype.io/d/955-objects-created-form-set-should-focus-the-text-cursor-on-their-name/1">Kite</a>` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
 	{ style: I.TextStyle.Title, text: `0.20.0 Desktop` },
-	{ style: I.TextStyle.Header2, text: `Graph Mode` },
+	{ style: I.TextStyle.Header1, text: `Graph Mode` },
 	{ text: `Displays a graph representation of the Links and Relations between your objects. Now you can see the power of Anytype relations, with connections showing how each object relates to another! The more links and relations an object has, the more extensive its "network".  Especially useful both for the most referenced objects, and for hubs or content maps with many links to other objects.` },
 	{ text: `You can hover over each object to highlight its connections. Clicking on it will show additional information and options in a side panel.` },
 	{ text: `To pan around the canvas, drag the background.` },

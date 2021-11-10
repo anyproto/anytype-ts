@@ -3,9 +3,7 @@ import { commonStore, popupStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
 
-const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
