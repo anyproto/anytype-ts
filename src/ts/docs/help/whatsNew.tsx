@@ -63,7 +63,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Image viewer showed scrollbar. Thanks, <a href="https://community.anytype.io/d/1072-image-viewer-showing-scrollbar/1">kEbZeCK</a>` },
 	{ style: I.TextStyle.Bulleted, text: `When you pressed Enter to open a page using the navigation pane Anytype was inserting line breaks. Thanks, <a href="https://community.anytype.io/t/using-the-navigation-pane-inserts-unwanted-line-breaks">Tim-Luca</a>` },
 	{ style: I.TextStyle.Bulleted, text: `An image added to the file relation could break the work of the file list in the relay.` },
-	{ style: I.TextStyle.Bulleted, text: `There was an inconsistent movement for nested blocks using <span class="highlight">${cmd}+Shift Up/Down</span>. Thanks, <a href="https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1">qualquertipo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `There was an inconsistent movement for nested blocks using <span class="highlight">Ctrl + Shift Up/Down</span>. Thanks, <a href="https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1">qualquertipo</a>` },
 	{ style: I.TextStyle.Bulleted, text: `When creating a new object from a Set, edit its name. If the cursor was moved, the revised text was also moved in the direction of the cursor. Thanks, <a href="https://community.anytype.io/d/1136-ui-glitch-when-adding-a-new-object-from-a-set/1">lynxlove</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Relation Numbers could store non-numerical symbols.` },
 	{ style: I.TextStyle.Bulleted, text: `When switched the month in the calendar in the Date relation, the date could be reset to 1970-01-01` },
