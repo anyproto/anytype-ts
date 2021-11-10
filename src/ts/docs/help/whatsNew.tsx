@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `0.21.0 Desktop` },
+	{ style: I.TextStyle.Title, text: `0.21.0 Deletion, Note type and Darkmode` },
 
 	{ style: I.TextStyle.Header2, text: `Deletion` },
 	{ text: `Say hello to our most incredible innovation since object creation: object deletion. Anytype now supports the permanent deleting of objects! 🥳 🗑♻️. Moving objects to the bin will remove them from navigation. From the bin, you can choose to select, delete, and restore your objects. <b>This action is irrevocable, so please be careful.</b> ` },
@@ -21,12 +21,12 @@ export default [
 	{ text: `You can now create a Set from the dashboard, using the bottom-left + button, or even in-line using the <span class="highlight">/</span> menu. From there, you can choose which type of object your new Set is for. For example, viewing your current projects, or building a reading list of books.` },
 	{ text: `<video src="./img/help/set-creation.mp4" controls autoplay loop class="full">` },
 
-	{ style: I.TextStyle.Header2, text: `Darkmode!` },
-	{ text: `Just in-time for winter, our long-awaited dark mode is here. Night owls rejoice! To enable dark mode, simply open the Settings pane, navigate to other settings → theme → and choose Dark.` },
+	{ style: I.TextStyle.Header2, text: `Darkmode` },
+	{ text: `Just in-time for winter, our long-awaited dark mode is here. This feature has graced our devices (and eyes) in recent years, and has really become a way of life for some. Night owls rejoice! To enable dark mode, simply open the Settings pane, navigate to other settings → theme → and choose Dark.` },
 	{ text: `<img src="./img/help/dark-mode.png" class="full">` },
 
 	{ style: I.TextStyle.Header2, text: `Fresh docs` },
-	{ text: `We’ve launched a brand new hub for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
+	{ text: `We’ve launched a brand <a href="https://doc.anytype.io/d/">new hub</a> for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
 
 	{ style: I.TextStyle.Header2, text: `Text with link to an object` },
 	{ text: `There was a way to add an arbitrary URL link to a text selection. But now you can make a link to any Anytype object this way. Just select the part of the text, click link icon and choose!` },
