@@ -200,6 +200,7 @@
 			"electron/icon*",
 			"electron/about.css",
 			"electron/about.html",
+			"electron/common.js",
 			"electron/about.js",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
