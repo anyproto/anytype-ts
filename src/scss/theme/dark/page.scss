@@ -15,6 +15,11 @@
 /* PageMainIndex */
 
 .pageMainIndex {
+
+    .animatedBackground {
+        background-image: linear-gradient(to right, rgba(0,0,0,0) 8%, $colorTertiary 18%, rgba(0,0,0,0) 33%);
+    }
+
     #documents {
         .emptySearch { background: $colorBlack; }
 
