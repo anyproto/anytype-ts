@@ -159,17 +159,17 @@ search.active { background: orange !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
 
-.isTag.tagColor-default { color: $colorBlack; background: #fff; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
-.isTag.tagColor-grey { color: #8c9ea5; background: #ebeff1; }
-.isTag.tagColor-yellow { color: #b2a616; background: #fbf5b8; }
-.isTag.tagColor-orange { color: #d3720d; background: #ffEcc8; }
-.isTag.tagColor-red { color: #e2400c; background: #ffe5de; }
-.isTag.tagColor-pink { color: #ca1b8e; background: #fddcf2; }
-.isTag.tagColor-purple { color: #9e30c4; background: #f1dbf8; }
-.isTag.tagColor-blue { color: $colorBlue; background: #dce1fb; }
-.isTag.tagColor-ice { color: #1c8bca; background: #cfedfe; }
-.isTag.tagColor-teal { color: #0caaa3; background: #d4f5f3; }
-.isTag.tagColor-lime { color: #64b90f; background: #e3f7d0; }
+.isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
+.isTag.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
+.isTag.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
+.isTag.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
+.isTag.tagColor-red { color: #e2400c !important; background: #ffe5de !important; }
+.isTag.tagColor-pink { color: #ca1b8e !important; background: #fddcf2 !important; }
+.isTag.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
+.isTag.tagColor-blue { color: $colorBlue !important; background: #dce1fb !important; }
+.isTag.tagColor-ice { color: #1c8bca !important; background: #cfedfe !important; }
+.isTag.tagColor-teal { color: #0caaa3 !important; background: #d4f5f3 !important; }
+.isTag.tagColor-lime { color: #64b90f !important; background: #e3f7d0 !important; }
 
 .isStatus.tagColor-default { color: $colorBlack !important; }
 .isStatus.tagColor-black { color: $colorBlack !important; }

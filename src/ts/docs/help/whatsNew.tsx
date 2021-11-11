@@ -1,6 +1,6 @@
 import { I, keyboard } from 'ts/lib';
 
-const cmd = keyboard.ctrlKey();
+const cmd = keyboard.ctrlSymbol();
 
 export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
@@ -53,7 +53,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Pasting a link to create a bookmark crashes Anytype. Thanks, <a href="https://community.anytype.io/d/1129-pasting-a-link-to-create-bookmark-crashes-anytype/1">Tanzeel098</a>` },
 	{ style: I.TextStyle.Bulleted, text: `The date relation filter wasn't working with time. The last added object may be ordered not as predicted.` },
 	{ style: I.TextStyle.Bulleted, text: `Some of the emojis with numbers weren't displaying cross-device. Thanks, <a href="https://community.anytype.io/d/323-0-9-number-emojis-as-page-icons-do-not-sync-properly/1">faraaz</a>` },
-	{ style: I.TextStyle.Bulleted, text: `Words/Sentences were getting duplicated or missing when selecting it with <span class="highlight">Ctrl + A</span> and pressing <span class="highlight">Enter</span> on created objects. Thanks, <a href="https://community.anytype.io/d/957-weird-behaviour-when-selecting-a-text-and-pressing-enter/1">Sedulous</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Words/Sentences were getting duplicated or missing when selecting it with <span class="highlight">${cmd} + A</span> and pressing <span class="highlight">Enter</span> on created objects. Thanks, <a href="https://community.anytype.io/d/957-weird-behaviour-when-selecting-a-text-and-pressing-enter/1">Sedulous</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Having two filters with the same relation changes the first condition to "All". Thanks, <a href="https://community.anytype.io/d/621-filters-reset-when-multiple-filtering-rules-are-added/1">quietwalker</a>` },
 	{ style: I.TextStyle.Bulleted, text: `LaTeX: When the carriage moved from the end of the list to the beginning or from the beginning to the end of the list, the focus on the element disappeared` },
 	{ style: I.TextStyle.Bulleted, text: `In history mode, there was a possibility to change featured relations.` },
@@ -63,7 +63,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Image viewer showed scrollbar. Thanks, <a href="https://community.anytype.io/d/1072-image-viewer-showing-scrollbar/1">kEbZeCK</a>` },
 	{ style: I.TextStyle.Bulleted, text: `When you pressed Enter to open a page using the navigation pane Anytype was inserting line breaks. Thanks, <a href="https://community.anytype.io/t/using-the-navigation-pane-inserts-unwanted-line-breaks">Tim-Luca</a>` },
 	{ style: I.TextStyle.Bulleted, text: `An image added to the file relation could break the work of the file list in the relay.` },
-	{ style: I.TextStyle.Bulleted, text: `There was an inconsistent movement for nested blocks using <span class="highlight">Ctrl + Shift Up/Down</span>. Thanks, <a href="https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1">qualquertipo</a>` },
+	{ style: I.TextStyle.Bulleted, text: `There was an inconsistent movement for nested blocks using <span class="highlight">${cmd} + Shift Up/Down</span>. Thanks, <a href="https://community.anytype.io/d/889-inconsistent-movement-for-nested-blocks-using-ctrlshift-updown/1">qualquertipo</a>` },
 	{ style: I.TextStyle.Bulleted, text: `When creating a new object from a Set, edit its name. If the cursor was moved, the revised text was also moved in the direction of the cursor. Thanks, <a href="https://community.anytype.io/d/1136-ui-glitch-when-adding-a-new-object-from-a-set/1">lynxlove</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Relation Numbers could store non-numerical symbols.` },
 	{ style: I.TextStyle.Bulleted, text: `When switched the month in the calendar in the Date relation, the date could be reset to 1970-01-01` },
@@ -166,7 +166,7 @@ export default [
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `New shortcut for Shortcuts - <span class="highlight">Ctrl + Space</span>. Thanks, <a href="https://community.anytype.io/d/602-shortcut-for-shortcuts/1">lynxlove</a>` },
-	{ style: I.TextStyle.Bulleted, text: `Changing text color: remember last used color or background and add shortcut - <span class="highlight">Cmd/Ctrl + Shift + C</span> or <span class="highlight">Cmd/Ctrl + Shift + H</span>. Thanks, <a href="https://community.anytype.io/d/546-changing-text-color-remember-last-used-color-and-adding-shortcut/1">abstractgeek</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Changing text color: remember last used color or background and add shortcut - <span class="highlight">${cmd} + Shift + C</span> or <span class="highlight">${cmd} + Shift + H</span>. Thanks, <a href="https://community.anytype.io/d/546-changing-text-color-remember-last-used-color-and-adding-shortcut/1">abstractgeek</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Favorite & unfavorite. You can’t add an object to favorites multiple times anymore. Thanks, <a href="https://community.anytype.io/d/568-possible-to-mark-an-object-as-favorite-multiple-times/1">Isak</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Ability to clear the "Recent" list on the dashboard. Thanks, <a href="https://community.anytype.io/d/646-ability-to-clear-the-recent-list/1">ste</a>` },
 	{ style: I.TextStyle.Bulleted, text: `Link to object — first result not highlighted visually. Thanks, <a href="https://community.anytype.io/d/696-link-to-object-first-result-not-visually-chosen/1">kEbZeCK</a>` },
@@ -225,7 +225,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `You can now restore from Archive tab via three dots menu` },
 	{ style: I.TextStyle.Bulleted, text: `2 new abstract covers related to the upcoming major relase` },
 	{ style: I.TextStyle.Header2, text: `Fixes & tech` },
-	{ style: I.TextStyle.Bulleted, text: `Item movement by <span class="highlight">Ctrl + Shift + Up/Down</span> would delete its content when not "saved". Thanks, Sven` },
+	{ style: I.TextStyle.Bulleted, text: `Item movement by <span class="highlight">${cmd} + Shift + Up/Down</span> would delete its content when not "saved". Thanks, Sven` },
 	{ style: I.TextStyle.Bulleted, text: `Hyperlink pop up window persisted across pages. Thanks, <a href="https://community.anytype.io/d/341-hyperlink-pop-up-window-persists-across-pages/1">jmsinnz</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `New Checkbox was created pre-checked if the one above was checked. Thanks, <a href="https://community.anytype.io/d/311-new-checkbox-pre-checked/1">bskinner</a>.` },
 	{ style: I.TextStyle.Bulleted, text: `When you dragged pictures into a toggle, it resized to the width of the toggle. Thanks, <a href="https://community.anytype.io/d/461-when-you-drag-pictures-into-a-toggle-it-resizes-to-the-width-of-the-toggle/1">Inkqb</a>.` },
