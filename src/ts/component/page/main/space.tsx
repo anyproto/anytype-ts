@@ -19,7 +19,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
@@ -58,7 +57,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.id == 'dataview'; });
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('set'),
@@ -148,7 +147,9 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 						)}
 					</div>
 					
-					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					{children.map((block: I.Block, i: number) => (
+						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					))}
 				</div>
 
 				<Footer {...this.props} rootId={rootId} />

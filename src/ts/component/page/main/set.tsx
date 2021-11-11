@@ -19,7 +19,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
@@ -63,7 +62,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 			description: 'Add a description',
 		};
 
-		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
