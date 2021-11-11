@@ -106,6 +106,8 @@ export default [
 	{ text: `<img src="./img/help/intro/0c62976fba4a5a656c763bc8f4827ffe.png" class="full" />` },
 	{ text: `Sets don't <b>store</b> objects. They are a way to see a portion of your knowledge graph, like objects tagged <kbd>Work</kbd>. Sets help you sort through, and create specific views to work with many objects at once.` },
 	{ style: I.TextStyle.Header3, text: `<b>Creating Sets</b>` },
+	{ text: `You can create a Set with a + menu in the Home or bottom-left corner or in / menu in editor. After that you need to decide on what you want to see there. For example project management may require Project type, for reading list — Book.` },
+	{ text: `<video src="./img/help/set-creation.mp4" preload controls class="full" />` },
 	{ text: `From the Library, choose an object type, click "Create", and choose "Create a set".` },
 	{ text: `<video src="./img/help/intro/store-create-new-set.mp4" preload controls class="full" />` },
 	{ text: `<i>Read about <a href="https://doc.anytype.io/d/use-cases-and-tutorials/creating-a-task-tracker">how can you create a task tracker</a>.</i> ` },
