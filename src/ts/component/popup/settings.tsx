@@ -60,7 +60,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	render () {
 		const { account, phrase } = authStore;
-		const { cover, coverImage, theme } = commonStore;
+		const { cover, coverImage, theme, config } = commonStore;
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -441,12 +441,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
-							<div className="side left">
-								<Label text="Clear file cache" />
+						{config.experimental ? (
+							<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
+								<div className="side left">
+									<Label text="Clear file cache" />
+								</div>
+								<div className="side right" />
 							</div>
-							<div className="side right" />
-						</div>
+						) : ''}
 					</div>
 				);
 				break;

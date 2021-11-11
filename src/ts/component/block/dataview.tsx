@@ -107,10 +107,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
+		const { rootId, block } = this.props;
 		const view = this.getView();
 
 		if (view) {
-			this.viewId = view.id;
+			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
 			this.getData(view.id, 0);
 		};
 
@@ -119,11 +120,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidUpdate () {
-		const view = this.getView();
+		const { rootId, block } = this.props;
+		const { viewId } = dbStore.getMeta(rootId, block.id);
 
-		if (view && (view.id != this.viewId)) {
-			this.viewId = view.id;
-			this.getData(view.id, 0);
+		if (viewId != this.viewId) {
+			this.getData(viewId, 0);
 		};
 
 		this.resize();
@@ -138,6 +139,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!newViewId) {
 			return;
 		};
+
+		this.viewId = newViewId;
 
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(rootId, block.id);

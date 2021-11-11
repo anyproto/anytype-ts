@@ -4,6 +4,7 @@ import { detailStore, menuStore, commonStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import { Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { dbStore } from '../../../store';
 
 interface Props extends I.Menu {}
 
