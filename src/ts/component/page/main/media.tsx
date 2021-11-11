@@ -8,7 +8,7 @@ import { commonStore, blockStore, detailStore } from 'ts/store';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.js';
+pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
