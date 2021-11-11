@@ -122,7 +122,9 @@ function trayIcon () {
 };
 
 nativeTheme.on('updated', () => {
-	tray.setImage(trayIcon());
+	if (tray) {
+		tray.setImage(trayIcon());
+	};
 });
 
 function initTray () {
