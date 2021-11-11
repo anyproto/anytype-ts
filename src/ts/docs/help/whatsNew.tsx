@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `0.21.0 Deletion, Note type and Darkmode` },
+	{ style: I.TextStyle.Title, text: `Deletion. Note type. Darkmode` },
 
 	{ style: I.TextStyle.Header2, text: `Deletion` },
 	{ text: `Say hello to our most incredible innovation since object creation: object deletion. Anytype now supports the permanent deleting of objects! 🥳 🗑♻️. Moving objects to the bin will remove them from navigation. From the bin, you can choose to select, delete, and restore your objects. <b>This action is irrevocable, so please be careful.</b> ` },
@@ -69,7 +69,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When switched the month in the calendar in the Date relation, the date could be reset to 1970-01-01` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes relation focus could stay on a previously selected cell in Set.` },
 	{ style: I.TextStyle.Bulleted, text: `Selection could freeze when was working with nested blocks. Thanks, <a href="https://community.anytype.io/d/894-selection-bugs-inaround-nested-blocks/1">qualquertipo</a>` },
-	{ style: I.TextStyle.Bulleted, text: `Welcome to Anytype showed after login and not only after registration.` },
+	{ style: I.TextStyle.Bulleted, text: `Fundamentals showed after login and not only after registration.` },
 	{ style: I.TextStyle.Bulleted, text: `Shortcuts view opened while working with an object in a modal window closed the object.` },
 	{ style: I.TextStyle.Bulleted, text: `Hints weren't centred relative to the object to which they were displayed.` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes when the custom type was opened, the templates weren't showing.` },
@@ -87,7 +87,7 @@ export default [
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
-	{ style: I.TextStyle.Title, text: `0.20.0 Desktop` },
+	{ style: I.TextStyle.Header1, text: `Updates for 09 October, 2021` },
 	{ style: I.TextStyle.Header1, text: `Graph Mode` },
 	{ text: `Displays a graph representation of the Links and Relations between your objects. Now you can see the power of Anytype relations, with connections showing how each object relates to another! The more links and relations an object has, the more extensive its "network".  Especially useful both for the most referenced objects, and for hubs or content maps with many links to other objects.` },
 	{ text: `You can hover over each object to highlight its connections. Clicking on it will show additional information and options in a side panel.` },
@@ -135,7 +135,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `New types of objects and the power to connect them with relations.` },
 	{ style: I.TextStyle.Bulleted, text: `Layouts help you save time on repetitive tasks, customize your objects with featured relations and reusable templates.` },
 	{ style: I.TextStyle.Bulleted, text: `Finally, you can now work with multiple objects using Sets.` },
-	{ text: `Take a look at the <span class="highlight">“Welcome to Anytype”</span> page to help you get started. There are also helpful tips and tricks to get the most out of this substantial new update.` },
+	{ text: `Take a look at the <span class="highlight">“Fundamentals”</span> page to help you get started. There are also helpful tips and tricks to get the most out of this substantial new update.` },
 
 	{ style: I.TextStyle.Header2, text: `New features:` },
 	{ style: I.TextStyle.Header3, text: `Play that funky music, Anytype` },
