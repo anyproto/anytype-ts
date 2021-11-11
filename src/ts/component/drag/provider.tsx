@@ -124,7 +124,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 
 		let data: any = {};
-		if (this.hoverData) {
+		if (this.hoverData && (this.position != I.BlockPosition.None)) {
 			data = this.hoverData;
 		};
 		let targetId = String(data.id || '');
@@ -323,6 +323,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			const col2 = x + width;
 			const isText = type == I.BlockType.Text;
 			const isFeatured = type == I.BlockType.Featured;
+			const isType = type == I.BlockType.Type;
 
 			if (ex <= col1) {
 				this.position = I.BlockPosition.Left;
@@ -377,8 +378,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				recalcPosition();
 			};
 
-			// You can't drop on Featured
-			if (isFeatured) {
+			// You can't drop on Featured or Type
+			if (isFeatured || isType) {
 				this.position = I.BlockPosition.None;
 			};
 
