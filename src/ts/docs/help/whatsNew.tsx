@@ -29,7 +29,7 @@ export default [
 	{ text: `We’ve launched a brand <a href="https://doc.anytype.io/d/">new hub</a> for Anytype docs. You can find it in the <span class="highlight">+</span> menu and in the <span class="highlight">?</span> icon at the bottom-right of your screen. This is our first draft, and we look forward to your feedback!` },
 
 	{ style: I.TextStyle.Header2, text: `Text with link to an object` },
-	{ text: `There was a way to add an arbitrary URL link to a text selection. But now you can make a link to any Anytype object this way. Just select the part of the text, click link icon and choose!` },
+	{ text: `There was a way to add an arbitrary URL link to a text selection. But now you can make a link to any Anytype object this way. Just select the part of the text, click link icon and choose! Thank you, Oshyan, <a href:"https://community.anytype.io/t/link-to-object-from-text-selection/1051">for your proposal</a>!` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
 	{ style: I.TextStyle.Bulleted, text: `PDF now renders in Anytype. if you open this file type as an object. Use block’s menu in the editor and just click on a file in sets. Thanks, Gabi and Florencia for your feedback!` },
