@@ -131,11 +131,15 @@
 
     .block.blockLink {
         .sides { border-color: $colorLinePrimary !important; }
-        .cardName span::before { background: $colorLinePrimary !important; }
+        .cardName span::before { background: $colorSecondary !important; }
 
         .linkCard.card {
             .sides { background: $colorBgLight; }
             .cover { color: $colorPrimary; }
+
+            .side.right {
+                .cardDescription { color: $colorSecondary; }
+            }
         }
 
         .loading, .deleted { color: $colorSecondary; }
