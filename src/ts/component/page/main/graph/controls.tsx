@@ -50,6 +50,10 @@ const GraphControls = observer(class GraphControls extends React.Component<Props
        this.focus();
     };
 
+    onClose () {
+        this.refFilter.setValue('');
+    };
+
     focus () {
 		window.setTimeout(() => { 
 			if (this.refFilter) {
