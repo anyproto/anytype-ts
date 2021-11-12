@@ -3,9 +3,7 @@ import { commonStore, popupStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
 
-const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
@@ -16,6 +14,7 @@ const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const os = window.require('os');
 const path = window.require('path');
+const Cover = require('json/cover.json');
 
 class Util {
 	
@@ -828,8 +827,12 @@ class Util {
 		return String((Number(s) || 0) || '') === String(s || '');
 	};
 
-	coverSrc (cover: string, preview?: boolean) {
-		return `./img/cover/${preview ? 'preview/' : ''}${cover}.jpg`;
+	coverSrc (id: string, preview?: boolean): string {
+		const item = Cover.find((it: any) => { return it.id == id; });
+		if (item) {
+			return commonStore.imageUrl(item.hash, preview ? 200 : Constant.size.image);
+		};
+		return `./img/cover/${preview ? 'preview/' : ''}${id}.jpg`;
 	};
 
 	selectionRect () {
@@ -981,6 +984,17 @@ class Util {
 		});
 
 		return param;
+	};
+
+	addBodyClass (prefix: string, v: string) {
+		const obj = $('html');
+		const reg = new RegExp(`^${prefix}`);
+		const c = String(obj.attr('class') || '').split(' ').filter((it: string) => { return !it.match(reg); });
+
+		if (v) {
+			c.push(this.toCamelCase(`${prefix}-${v}`));
+		};
+		obj.attr({ class: c.join(' ') });
 	};
 
 };

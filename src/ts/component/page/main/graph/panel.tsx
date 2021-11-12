@@ -33,12 +33,13 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
         view: I.GraphView.Controls,
         rootId: '',
     };
+    ref: any = null;
 
 	constructor (props: any) {
 		super(props);
 
         this.setState = this.setState.bind(this);
-        this.onCancel = this.onCancel.bind(this);
+        this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
@@ -57,19 +58,19 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
                     </div>
                 ))}
 
-                <Icon className="close" onClick={this.onCancel} />
+                <Icon className="close" onClick={this.onClose} />
             </div>
         );
 
         switch (view) {
             default:
             case I.GraphView.Controls:
-                content = <Controls {...this.props} />;
+                content = <Controls ref={(ref: any) => { this.ref = ref; }} {...this.props} />;
                 break;
 
             case I.GraphView.Preview:
                 tabs = null;
-                content = <Preview {...this.props} rootId={rootId} onCancel={this.onCancel} />;
+                content = <Preview ref={(ref: any) => { this.ref = ref; }} {...this.props} rootId={rootId} onClose={this.onClose} />;
                 break;
             
             case I.GraphView.Filter:
@@ -96,9 +97,13 @@ const GraphPanel = observer(class Graph extends React.Component<Props, State> {
         this.setState({ view });
     };
 
-    onCancel () {
+    onClose () {
         this.props.togglePanel(false);
         this.onTab(I.GraphView.Controls);
+
+        if (this.ref && this.ref.onClose) {
+            this.ref.onClose();
+        };
     };
 
     resize () {

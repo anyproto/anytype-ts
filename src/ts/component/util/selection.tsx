@@ -85,56 +85,58 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		const { rootId } = this.props;
 		const k = e.key.toLowerCase();
+		const cmd = keyboard.ctrlKey();
 
-		let ids: any = this.get();
-		let idsWithChildren: any = this.get(true);
-		
-		if ((k == Key.up || k == Key.down) && ids.length) {
-			let dir = (k == Key.up) ? -1 : 1;
-			
-			// Move selection with arrows
-			if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
-				focus.clear(true);
-				
-				let next;
-				if (dir < 0) {
-					next = blockStore.getNextBlock(rootId, idsWithChildren[0], dir);
-				} else {
-					next = blockStore.getNextBlock(rootId, idsWithChildren[idsWithChildren.length - 1], dir);
-				};
+		const ids = this.get();
+		const idsWithChildren = this.get(true);
 
-				if (next && ids.indexOf(next.id) < 0) {
-					C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
-				};
-			} else 
-			// Expand selection by arrows
-			if (e.shiftKey) {
-				focus.clear(true);
-				
-				let idx = (dir < 0) ? 0 : ids.length - 1;
-				let method = '';
-				
-				if (ids.length == 1) {
-					this.dir = dir;
-				};
-
-				if (this.dir && (dir != this.dir)) {
-					method = dir < 0 ? 'pop' : 'shift';
-					ids[method]();
-				} else {
-					const next = blockStore.getNextBlock(rootId, ids[idx], dir, (item: any) => {
-						return item.type != I.BlockType.Layout;
-					});
-
-					method = dir < 0 ? 'unshift' : 'push';
-					if (next) {
-						ids[method](next.id);
-					};
-				};
-				
-				this.set(ids);
-			};
+		if (!ids.length) {
+			return;
 		};
+
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+			focus.clear(true);
+
+			let dir = pressed.match(Key.up) ? -1 : 1;
+			let next;
+			
+			if (dir < 0) {
+				next = blockStore.getNextBlock(rootId, idsWithChildren[0], dir);
+			} else {
+				next = blockStore.getNextBlock(rootId, idsWithChildren[idsWithChildren.length - 1], dir);
+			};
+
+			if (next && ids.indexOf(next.id) < 0) {
+				C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+			};
+		});
+
+		keyboard.shortcut(`shift+arrowup, shift+arrowdown`, e, (pressed: string) => {
+			focus.clear(true);
+				
+			let dir = pressed.match(Key.up) ? -1 : 1;
+			let method = '';
+			
+			if (ids.length == 1) {
+				this.dir = dir;
+			};
+
+			if (this.dir && (dir != this.dir)) {
+				method = dir < 0 ? 'pop' : 'shift';
+				ids[method]();
+			} else {
+				const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
+				const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, (it: any) => { return !it.isSystem(); });
+
+				method = dir < 0 ? 'unshift' : 'push';
+				if (next) {
+					ids[method](next.id);
+				};
+			};
+			
+			this.set(ids);
+		});
+
 	};
 	
 	getScrollContainer () {

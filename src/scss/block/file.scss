@@ -4,7 +4,7 @@
 	.block.blockFile { padding: 6px 0px; }
 	.block.blockFile.withFile { padding: 0px; }
 	.block.blockFile {
-		.loaderWrapper { border-radius: 4px; border: solid 1px #d2d0c2; height: 48px; width: 100%; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
 		
 		.name {

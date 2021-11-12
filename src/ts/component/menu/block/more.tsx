@@ -117,6 +117,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const object = detailStore.get(rootId, blockId);
 		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedDelete = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const cmd = keyboard.ctrlSymbol();
 
 		let template = null;
@@ -133,13 +134,23 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
-		let share = { id: 'sharePage', name: 'Share' };
+		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
 		let highlight = null;
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
 			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
+		};
+
+		if (object.type == Constant.typeId.template) {	
+			template = { id: 'createPage', icon: 'template', name: 'Create object' };
+		} else {
+			template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
+		};
+
+		if (object.id == profile) {
+			template = null;
 		};
 
 		if (object.isArchived) {
@@ -150,14 +161,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (!allowedDetails || object.isReadonly || (object.id == profile)) {
+		if (!allowedDelete || object.isReadonly) {
 			archive = null;
+			removePage = null;
 		};
 
 		if (object.isHightlighted) {
-			highlight = { id: 'unhighlight', name: 'Unhighlight' };
+			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
-			highlight = { id: 'highlight', name: 'Highlight' };
+			highlight = { id: 'highlight', icon: 'highlight', name: 'Highlight' };
 		};
 
 		if (!config.allowSpaces) {
@@ -165,7 +177,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			highlight = null;
 		};
 
-		if (!object.workspaceId || block.isObjectSpace()) {
+		if (!object.workspaceId || block.isObjectSpace() || !config.allowSpaces) {
 			highlight = null;
 		};
 
@@ -175,6 +187,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ archive, removePage ] },
 				{ children: [ fav, link, highlight ] },
 				{ children: [ print ] },
+				{ children: [ highlight ] },
 			];
 
 			if (!block.isObjectSet() && !block.isObjectSpace()) {
@@ -182,16 +195,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			};
 
 			if (block.isObjectSpace()) {
-				sections.push({ children: [ share ] });
+				sections[3].children.push(share);
 			};
 		} else
 		if (block.isPage()) {
-			if (object.type == Constant.typeId.template) {	
-				template = { id: 'createPage', icon: 'template', name: 'Create object' };
-			} else {
-				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
-			};
-
 			// Restrictions
 
 			if (!block.canHaveHistory() || object.templateIsBundled) {
@@ -209,9 +216,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 			sections = [
 				{ children: [ undo, redo, history, archive, removePage ] },
-				{ children: [ fav, link, template, highlight ] },
+				{ children: [ fav, link, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
+				{ children: [ highlight ] },
 			];
 
 			sections = sections.map((it: any, i: number) => {
@@ -471,7 +479,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'history':
-				history.push('/main/history/' + blockId);
+				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'copy':
@@ -495,8 +503,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					
 					if (!isPopup) {
 						if (prev) {
-							const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
-							DataUtil.objectOpen(object);
+							history.entries = [];
+							history.index = -1;
+
+							DataUtil.objectOpen(detailStore.get(breadcrumbs, prev.content.targetBlockId, []));
 						} else {
 							history.push('/main/index');
 						};

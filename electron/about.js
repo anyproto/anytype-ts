@@ -1,10 +1,4 @@
-var a = location.search.replace(/^\?/, '').split('&');
-var param = {};
-
-a.forEach((s) => {
-    var kv = s.split('=');
-    param[kv[0]] = kv[1];
-});
+var param = getParam();
 
 document.title = 'Anytype';
 document.getElementById('year').innerText = new Date().getFullYear();

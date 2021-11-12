@@ -3,6 +3,8 @@
 .blocks {
 	.block.blockBookmark { padding: 6px 0px; }
 	.block.blockBookmark {
+		.focusable { border-radius: 6px; }
+
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
 			cursor: pointer; position: relative; border-radius: 6px;

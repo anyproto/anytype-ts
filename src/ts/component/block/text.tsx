@@ -1,15 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon, Button } from 'ts/component';
+import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
-import { InlineMath, BlockMath } from 'react-katex';
 import 'prismjs/themes/prism.css';
-import 'katex/dist/katex.min.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -45,6 +43,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
 	preventMenu: boolean = false;
+
+	public static defaultProps = {
+		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -558,10 +560,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
+		const { block } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const value = node.find('#value');
+		const restricted: I.MarkType[] = [];
+
+		if (block.isTextHeader()) {
+			restricted.push(I.MarkType.Bold);
+		};
 		
-		return Mark.fromHtml(value.html());
+		return Mark.fromHtml(value.html(), restricted);
 	};
 
 	onInput (e: any) {
@@ -614,7 +622,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d, ${cmd}+a`, e, (pressed: string) => {
 			e.preventDefault();
 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
@@ -784,12 +792,16 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		// Open add menu
 		if (canOpenMenuAdd) {
-			onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range);
+			});
 		};
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			this.onMention();
+			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
+				this.onMention();
+			});
 		};
 
 		// Make div
@@ -1095,7 +1107,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
-		if (!currentTo || (currentFrom == currentTo) || (from == currentFrom && to == currentTo) || !block.canHaveMarks() || ids.length) {
+		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextDisabled) {
 				menuStore.close('blockContext');
 			};

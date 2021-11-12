@@ -1,0 +1,169 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+/* PageAuth */
+
+.pageAuth, .pageIndex, .pageObject {
+    .textarea { border: 0px; }
+    .input { border-color: $colorLinePrimary; }
+}
+
+.pageAuthRegister {
+    .iconObject { background-image: url('~img/theme/dark/icon/picture.svg'); }
+}
+
+/* PageMainIndex */
+
+.pageMainIndex {
+
+    .animatedBackground {
+        background-image: linear-gradient(to right, rgba(0,0,0,0) 8%, $colorTertiary 18%, rgba(0,0,0,0) 33%);
+    }
+
+    #documents {
+        .emptySearch { background: $colorBlack; }
+
+        .item { background: $colorBlack; }
+        .item {
+            .type { color: $colorSecondary; }
+            .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
+        }
+
+        .item.isLoading {
+			.iconObject { background: $colorBgIcon; }
+			.line.lineName { background-color: $colorBgIcon; }
+			.line.lineType { background-color: $colorBgIcon; }
+		}
+    }
+}
+
+/* PageMainGraph */
+
+.pageMainGraph {
+    canvas { background: $colorBlack; }
+
+    .tabs { border-color: $colorLineSecondary; }
+    .tabs {
+        .tab:hover, .tab.active { color: $colorPrimary; }
+    }
+
+    .wrapper {
+        .side.right { background: $colorBlack; border-color: $colorLineSecondary; }
+        .side.right {
+            .bottom { border-color: $colorLineSecondary; }
+            .filter { background: none; }
+        }
+
+        .section {
+            .item { background: $colorBlack; }
+        }
+    }
+
+    .footer {
+        .icon { background-color: $colorBgIcon; }
+    }
+}
+.pageMainGraph > .body > #loader { background: $colorBlack; }
+
+/* PageMainStore */
+
+.pageMainStore {
+    .head { background: $colorBlack; }
+    .head {
+        .tabs { background: $colorBgIcon; color: $colorSecondary; }
+        .tabs {
+            .item.active { background: $colorHover; color: $colorPrimary; }
+        }
+    }
+
+    .body {
+        .items {
+            .item {
+                .info {
+                    .line { background: $colorLineSecondary; }
+                }
+            }
+        }
+    }
+}
+
+/* PageMainType */
+
+.pageMainType {
+    .wrapper {
+        .section.template {
+			.btn { color: $colorSecondary; }
+			.btn {
+				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template0.svg'); }
+			}
+
+			.btn:hover { color: $colorPrimary; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template1.svg'); }
+			}
+
+			.listTemplate {
+				.icon.arrow.left { left: -32px; }
+				.icon.arrow.right { right: -32px; }
+			}
+		}
+
+        .section.relation {
+            .item {
+                .name { color: $colorSecondary; }
+            }
+            .item.canEdit, .item.add {
+				.clickable:hover { background: $colorHover; }
+			}
+        }
+
+        table { border-color: $colorLineSecondary; }
+        table {
+            .cellHead .name { border-color: $colorLineSecondary; }
+            .cell { border-color: $colorLineSecondary; }
+            tbody { border-color: $colorLineSecondary; }
+        }
+    }
+}
+
+/* PageMainRelation */
+
+.pageMainRelation {
+    .wrapper {
+        table { border-color: $colorLineSecondary; }
+        table {
+            .cellHead .name { border-color: $colorLineSecondary; }
+            .cell { border-color: $colorLineSecondary; }
+            tbody { border-color: $colorLineSecondary; }
+        }
+    }
+}
+
+/* PageMainNavigation */
+
+.pageMainNavigation {
+    .selected { border-color: $colorLinePrimary; }
+    .selected {
+        .descr { color: $colorSecondary; }
+    }
+
+    .items {
+        .item { border-color: $colorLinePrimary; }
+        .item {
+            .descr { color: $colorSecondary; }
+        }
+    }
+}
+
+/* PageMainHistory */
+
+.pageMainHistory {
+    .list { background: $colorBlack; border-color: $colorLineSecondary; }
+    .list {
+        .item:hover, .item.active { background: $colorHover; }
+        .item {
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
+        }
+    }
+}

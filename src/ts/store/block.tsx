@@ -132,6 +132,14 @@ class BlockStore {
 	};
 
     clearAll () {
+		this.profileSet('');
+		this.storeSetType('');
+		this.storeSetTemplate('');
+		this.storeSetRelation('');
+		this.breadcrumbsSet('');
+		this.recentSet('');
+		this.rootSet('');
+
 		this.blockMap = new Map();
 		this.treeMap = new Map();
 		this.restrictionMap = new Map();
@@ -227,7 +235,7 @@ class BlockStore {
 		let blocks = this.getBlocks(rootId);
 		let childrenIds = this.getChildrenIds(rootId, id);
 		
-		let childBlocks = childrenIds.map((it: string) => {
+		return childrenIds.map((it: string) => {
 			return blocks.find((item: any) => { return item.id == it; });
 		}).filter((it: any) => {
 			if (!it) {
@@ -238,13 +246,12 @@ class BlockStore {
 			};
 			return true;
 		});
-		return childBlocks;
 	};
 
     // If check is present - find next block if check passes or continue to next block in "dir" direction, else just return next block;
     getNextBlock (rootId: string, id: string, dir: number, check?: (item: I.Block) => any, list?: any): any {
 		if (!list) {
-			list = this.unwrapTree([ this.wrapTree(rootId) ]);
+			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
 		};
 
 		let idx = list.findIndex((item: I.Block) => { return item.id == id; });
@@ -261,7 +268,7 @@ class BlockStore {
 	};
 
     getFirstBlock (rootId: string, dir: number, check: (item: I.Block) => any): I.Block {
-		const list = this.unwrapTree([ this.wrapTree(rootId) ]).filter(check);
+		const list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]).filter(check);
 		return dir > 0 ? list[0] : list[list.length - 1];
 	};
 
@@ -276,16 +283,17 @@ class BlockStore {
 		};
 	};
 
-    setNumbers (rootId: string) {
-		const container = $('#editor-' + rootId);
-		if (!container.length) {
-			return;
-		};
-
-		const root = this.wrapTree(rootId);
+    updateNumbers (rootId: string) {
+		const root = this.wrapTree(rootId, rootId);
 		if (!root) {
 			return;
 		};
+
+		this.updateNumbersTree([ root ]);
+	};
+
+	updateNumbersTree (tree: any[]) {
+		tree = (tree || []).filter((it: any) => { return it; });
 
 		const unwrap = (list: any) => {
 			list = list || [];
@@ -324,7 +332,7 @@ class BlockStore {
 			};
 		};
 
-		cb(unwrap([ root ]));
+		cb(unwrap(tree));
 	};
 
     getStructure (list: I.Block[]) {
@@ -355,24 +363,15 @@ class BlockStore {
 		return map;
 	};
 
-    getTree (rootId: string, list: I.Block[]): I.Block[] {
+    getTree (rootId: string, list: any[]): any[] {
 		list = Util.objectCopy(list || []);
-
-		let map: any = {};
-
 		for (let item of list) {
-			map[item.id] = item;
+			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
 		};
-
-		for (let item of list) {
-			map[item.id].childrenIds = this.getChildrenIds(rootId, item.id);
-			map[item.id].childBlocks = this.getChildren(rootId, item.id);
-		};
-
-		return (map[rootId] || {}).childBlocks || [];
+		return list;
 	};
 
-    wrapTree (rootId: string) {
+    wrapTree (rootId: string, blockId: string) {
 		let map = this.getMap(rootId);
 		let ret: any = {};
 
@@ -384,29 +383,23 @@ class BlockStore {
 			};
 		};
 
-		return ret[rootId];
+		return ret[blockId];
 	};
 
     unwrapTree (tree: any[]): any[] {
-		tree = tree || [];
+		tree = (tree || []).filter((it: any) => { return it; });
 
 		let ret = [] as I.Block[];
 		for (let item of tree) {
-			if (!item) {
-				continue;
-			};
-
 			let cb = item.childBlocks;
-
-			if (cb) {
-				try { delete(item.childBlocks); } catch (e) {};
-			};
 			
 			ret.push(item);
 			
 			if (cb && cb.length) {
 				ret = ret.concat(this.unwrapTree(cb));
 			};
+
+			delete(item.childBlocks);
 		};
 		return ret;
 	};
@@ -465,14 +458,10 @@ class BlockStore {
 				const { from, to } = mark.range;
 				const object = detailStore.get(rootId, mark.param, []);
 				const old = text.substr(from, to - from);
+				const name = Util.shorten(object.name, 30);
 
 				if (object._empty_) {
 					continue;
-				};
-
-				let name = (object.name || DataUtil.defaultName('page'));
-				if (object.layout == I.ObjectLayout.Note) {
-					name = object.snippet || name;
 				};
 
 				if (old != name) {

@@ -19,7 +19,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
@@ -42,6 +41,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -57,7 +57,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.id == 'dataview'; });
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('set'),
@@ -109,7 +109,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 				<div className="blocks wrapper">
-					<Controls key="editorControls" {...this.props} rootId={rootId} />
+					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 
 					<div className="head">
 						{check.withIcon ? (
@@ -147,7 +147,9 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 						)}
 					</div>
 					
-					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					{children.map((block: I.Block, i: number) => (
+						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					))}
 				</div>
 
 				<Footer {...this.props} rootId={rootId} />
@@ -199,9 +201,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -212,6 +211,11 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				return;
 			};
 
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
+
+			this.getDataviewData(BLOCK_ID_HIGHLIGHTED, 0);
+
 			this.loading = false;
 			this.forceUpdate();
 
@@ -221,6 +225,15 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 			this.resize();
 		});
+	};
+
+	getDataviewData (blockId: string, limit: number) {
+		const rootId = this.getRootId();
+		const views = dbStore.getViews(rootId, blockId);
+
+		if (views.length) {
+			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
+		};
 	};
 
 	close () {

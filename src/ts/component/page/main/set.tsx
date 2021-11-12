@@ -19,7 +19,6 @@ interface State {
 };
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
@@ -41,6 +40,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -56,13 +56,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('set'),
 			description: 'Add a description',
 		};
 
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
@@ -107,7 +107,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 				<div className="blocks wrapper">
-					<Controls key="editorControls" {...this.props} rootId={rootId} />
+					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 
 					<div className="head">
 						{check.withIcon ? (
@@ -125,7 +125,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 						</div>
 					</div>
 					
-					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					{children.map((block: I.Block, i: number) => (
+						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					))}
 				</div>
 
 				<Footer {...this.props} rootId={rootId} />
@@ -177,9 +179,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -189,6 +188,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

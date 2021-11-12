@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
 import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -95,9 +95,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	getItems () {
+		const { rootId } = this.props;
 		const { filter } = this.state;
+		const object = detailStore.get(rootId, rootId, []);
 		
-		let items = DataUtil.getObjectTypesForNewObject(true);
+		let items = DataUtil.getObjectTypesForNewObject(true).filter((it: any) => { return it.id != object.type; });
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
@@ -228,24 +230,39 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	onClick (e: any, item: any) {
+		e.persist();
+
 		const { rootId, isPopup } = this.props;
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
+		const namespace = isPopup ? '.popup' : '';
+
+		this.getScrollContainer().scrollTop(0);
+		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
+
+		let first = null;
 
 		const create = (template: any) => {
+
 			const onBlock = (id: string) => {
-				focus.set(id, { from: 0, to: 0 });
-				focus.apply();
+				if (first) {
+					const l = first.getLength();
+					
+					focus.set(first.id, { from: l, to: l });
+					focus.apply();
+
+					$(window).trigger('resize.editor' + namespace);
+				};
 			};
 
 			const onTemplate = () => {
-				const block = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
-				if (!block) {
+				first = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				if (!first) {
 					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
 				} else {
-					onBlock(block.id);
+					onBlock(first.id);
 				};
 			};
 
@@ -298,6 +315,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 	onFilterChange (e: any) {
 		this.setState({ filter: this.ref.getValue() });
+	};
+
+	getScrollContainer () {
+		const { isPopup } = this.props;
+		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 	
 });

@@ -1,5 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
+import { analytics } from '../lib';
 
 const Constant = require('json/constant.json');
 
@@ -25,6 +26,9 @@ interface Cover {
 	type: I.CoverType;
 };
 
+const $ = require('jquery');
+const { ipcRenderer } = window.require('electron');
+
 class CommonStore {
 
     public coverObj: Cover = { id: '', type: 0, image: '' };
@@ -35,6 +39,7 @@ class CommonStore {
     public previewObj: Preview = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
     public configObj: any = {};
     public cellId: string = '';
+	public themeId: string = '';
 
     constructor() {
         makeObservable(this, {
@@ -45,6 +50,7 @@ class CommonStore {
             gatewayUrl: observable,
             previewObj: observable,
             configObj: observable,
+			themeId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -52,6 +58,7 @@ class CommonStore {
             cover: computed,
             coverImage: computed,
             gateway: computed,
+			theme: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -60,7 +67,8 @@ class CommonStore {
             filterSetFrom: action,
             filterSetText: action,
             filterSet: action,
-            previewSet: action
+            previewSet: action,
+			themeSet: action,
         });
     };
 
@@ -98,6 +106,10 @@ class CommonStore {
 
 	get pinTime(): number {
 		return (Number(Storage.get('pinTime')) || Constant.default.pinTime) * 1000;
+	};
+
+	get theme(): string {
+		return String(this.themeId || Storage.get('theme') || '');
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -167,9 +179,19 @@ class CommonStore {
 		Storage.set('pinTime', v);
 	};
 
+	themeSet (v: string) {
+		this.themeId = v;
+		Storage.set('theme', v);
+		Util.addBodyClass('theme', v);
+
+		ipcRenderer.send('configSet', { theme: v });
+		analytics.event('ThemeSet', { id: v });
+	};
+
 	configSet (config: any, force: boolean) {
 		console.log('[commonStore.configSet]', JSON.stringify(config, null, 3), force);
 
+		let obj = $('html');
 		let newConfig: any = {};
 
 		if (force) {
@@ -183,6 +205,9 @@ class CommonStore {
 		};
 
 		set(this.configObj, newConfig);
+
+		this.configObj.debug = this.configObj.debug || {};
+		this.configObj.debug.ui ? obj.addClass('debug') : obj.removeClass('debug');
 	};
 
 };

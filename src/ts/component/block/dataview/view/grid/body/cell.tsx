@@ -47,6 +47,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 					viewType={I.ViewType.Grid}
 					idPrefix={idPrefix}
 					onCellChange={onCellChange}
+					maxWidth={Constant.size.dataview.cell.edit}
 				/>
 			</div>
 		);

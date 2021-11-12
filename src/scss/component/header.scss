@@ -65,24 +65,24 @@
 	.icon:hover, .icon.active { background-color: rgba(0,0,0,0.15); }
 
 	.side.center { 
-		border: 1px solid rgba(255,255,255,0.5); border-radius: 6px;height: 28px; line-height: 26px; color: #fff; text-align: center;
+		border: 1px solid rgba(255,255,255,0.5); border-radius: 6px;height: 28px; line-height: 26px; color: $colorWhite; text-align: center;
 		cursor: pointer;
 	}
 }
 .header.headerMainIndex.selectFixed { background: rgba(0,0,0,0.7); }
 
-.header.headerMainEdit { background: #fff; height: 38px; line-height: 20px; }
+.header.headerMainEdit { background: $colorWhite; height: 38px; line-height: 20px; }
 .header.headerMainEdit {
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px 20px; border-radius: 6px; }
 	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
-	.icon.big:hover, .icon.big.hover { background-color: #f3f2ec; }
+	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
 	.icon.nm { margin: 0px !important; }
 
 	.path { 
-		border: 1px solid #fff; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 
+		border: 1px solid $colorWhite; border-radius: 6px; display: inline-block; vertical-align: top; height: 28px; 
 		line-height: 24px; width: 100%; text-align: center; transition: $transitionFast; -webkit-app-region: no-drag;
 	}
 	.path {
@@ -115,14 +115,6 @@
 .popup {
 	.header.headerMainEdit {
 		.side.left { opacity: 1; left: 14px; }
-		.side.left {
-			.btn { cursor: pointer; color: $colorVeryDarkGrey; display: inline-block; vertical-align: top; border-radius: 6px; padding: 0px 10px; height: 28px; line-height: 26px; }
-			.btn:hover { background-color: #f3f2ec; }
-			.btn {
-				.icon { width: 20px; height: 20px; margin-right: 4px; border-radius: 0px; vertical-align: middle; }
-				.txt { line-height: 20px; }
-			}
-		}
 		.side.center { opacity: 1; }
 		.path { border: 0px; cursor: default !important; }
 		.path {
@@ -131,7 +123,7 @@
 	}
 }
 
-.header.headerMainHistory { height: 38px; line-height: 22px; padding: 8px 16px; width: calc(100% - 254px); background: #fff; }
+.header.headerMainHistory { height: 38px; line-height: 22px; padding: 8px 16px; width: calc(100% - 254px); background: $colorWhite; }
 .header.headerMainHistory {
 	.side { height: 20px; top: 8px; }
 	.side.center { text-align: center; }
@@ -142,10 +134,10 @@
 		.item {
 			.icon.arrow { background-image: url('~img/arrow/history0.svg'); margin: 0px; }
 		}
-		.item.orange { color: #e89d00; font-weight: 500; }
+		.item.orange { color: $colorOrange !important; font-weight: 500; }
 		
 		.item.grey:hover { color: $colorBlack; }
-		.item.orange:hover { color: $colorBlack; }
+		.item.orange:hover { color: #f09c0e !important; }
 
 		.item:hover {
 			.icon.arrow { background-image: url('~img/arrow/history1.svg'); }

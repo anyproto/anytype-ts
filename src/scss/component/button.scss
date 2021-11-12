@@ -5,16 +5,16 @@
 	height: 40px; line-height: 38px; padding: 0px 16px; border-radius: 8px; transition: $transitionFast;
 	font-size: 14px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: 0.2px;
 }
-.button.orange { background: $colorOrange; color: #fff; }
-.button.orange:hover { background: #f1981a; }
+.button.orange { background: $colorOrange; color: $colorWhite; }
+.button.orange:hover { background: #f09c0e; }
 
-.button.grey { background: none; color: $colorBlack; box-shadow: 0px 0px 0px 1px #d2d0c2 inset; }
+.button.grey { background: none; color: $colorBlack; box-shadow: 0px 0px 0px 1px $colorBorderDark inset; }
 .button.grey:hover { background: none; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
 
-.button.grey.filled { background: $colorLightGrey; color: #fff; box-shadow: 0px 0px; }
+.button.grey.filled { background: $colorLightGrey; color: $colorWhite; box-shadow: 0px 0px; }
 .button.grey.filled:hover { box-shadow: 0px 0px; }
 
-.button.dark { background: rgba(0,0,0,0.3); color: #fff; }
+.button.dark { background: rgba(0,0,0,0.3); color: $colorWhite; }
 .button.dark:hover { background: rgba(0,0,0,0.4); }
 
 .button.blank { line-height: 36px; background: none; border: solid 1px $colorLightGrey; }

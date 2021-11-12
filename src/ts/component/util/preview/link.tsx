@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { commonStore, menuStore } from 'ts/store';
 import { Icon, Loader } from 'ts/component';
 import { observer } from 'mobx-react';
-import { I, C, Mark, Util } from 'ts/lib';
+import { C } from 'ts/lib';
 
 interface Props {
 	url: string;
+	position?: () => void;
 };
 
 interface State {
@@ -33,6 +33,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	url: string;
 	
 	render () {
+		const { url } = this.props;
 		const { loading, title, description, param, faviconUrl, imageUrl } = this.state;
 		
 		if (loading) {
@@ -47,7 +48,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 					{description ? <div className="descr">{description}</div> : ''}
 					<div className="link">
 						{faviconUrl ? <Icon icon={faviconUrl} className="fav" /> : ''}
-						{param}
+						{url}
 					</div> 
 				</div>
 			</div>
@@ -86,6 +87,10 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 				...message.previewLink,
 				loading: false,
 			});
+
+			if (this.props.position) {
+				this.props.position();
+			};
 		});
 	};
 	

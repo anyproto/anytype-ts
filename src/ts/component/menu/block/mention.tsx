@@ -49,7 +49,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 			let name = item.name || DataUtil.defaultName('page');
 			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+				name = item.snippet || <span className="empty">Empty</span>;
 			};
 
 			return (
@@ -209,6 +209,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const cb = (id: string, name: string) => {
 			name = String(name || DataUtil.defaultName('page'));
+			name = Util.shorten(name, 30);
 
 			let from = filter.from;
 			let to = from + name.length + 1;

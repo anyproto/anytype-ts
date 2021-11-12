@@ -50,7 +50,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		let bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 
 		let color = (
-			<div className={[ 'inner', 'textColor textColor-' + (colorMark.param || 'black') ].join(' ')} />
+			<div className={[ 'inner', 'textColor textColor-' + (colorMark.param || 'default') ].join(' ')} />
 		);
 		
 		let background = (
@@ -196,6 +196,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				mark = Mark.getInRange(marks, type, { from: from, to: to });
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: mark ? mark.param : '',
+					type: mark ? mark.type : null,
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
 						marks = Mark.toggleLink({ type: newType, param: param, range: { from: from, to: to } }, marks);

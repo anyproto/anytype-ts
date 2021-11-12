@@ -11,7 +11,7 @@
 
 	.heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; }
 	.heading {
-		.iconObject { display: inline-block; background-color: #f3f2ec; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px #fff inset; }
+		.iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
 		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: bold; position: relative; }
 		.icon.checkbox { 
 			position: absolute; top: 5px; left: -20px; width: 14px; height: 14px; background-image: url('~img/icon/object/checkbox0.svg') !important; 

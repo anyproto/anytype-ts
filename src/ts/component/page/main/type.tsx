@@ -294,9 +294,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -307,6 +304,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				return;
 			};
 
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
+
+			this.getDataviewData(BLOCK_ID_OBJECT, 50);
+			this.getDataviewData(BLOCK_ID_TEMPLATE, 0);
+
 			this.loading = false;
 			this.forceUpdate();
 
@@ -314,6 +317,15 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	getDataviewData (blockId: string, limit: number) {
+		const rootId = this.getRootId();
+		const views = dbStore.getViews(rootId, blockId);
+
+		if (views.length) {
+			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
+		};
 	};
 
 	close () {
@@ -354,7 +366,9 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 			DataUtil.objectOpenPopup(message.record, {
 				onClose: () => {
-					this.refListPreview.updateItem(message.record.id);
+					if (this.refListPreview) {
+						this.refListPreview.updateItem(message.record.id);
+					};
 				}
 			});
 		});

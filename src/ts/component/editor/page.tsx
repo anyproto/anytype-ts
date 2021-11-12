@@ -65,6 +65,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.blockCreate = this.blockCreate.bind(this);
 		this.getWrapper = this.getWrapper.bind(this);
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
@@ -84,14 +85,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId);
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
 		const length = childrenIds.length;
 		const width = root?.fields?.width;
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block, I.RestrictionObject.Details ]); 
 
 		return (
 			<div id="editorWrapper">
-				<Controls key="editorControls" {...this.props} />
+				<Controls key="editorControls" {...this.props} resize={this.resize} />
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
@@ -110,26 +111,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							getWrapperWidth={this.getWrapperWidth}
 						/>
 					
-						{children.map((block: I.Block, i: number) => {
-							if (block.isLayoutHeader()) {
-								return null;
-							};
-							return (
-								<Block 
-									key={'block-' + block.id} 
-									{...this.props}
-									index={i}
-									block={block}
-									onKeyDown={this.onKeyDownBlock}
-									onKeyUp={this.onKeyUpBlock}  
-									onMenuAdd={this.onMenuAdd}
-									onPaste={this.onPaste}
-									readonly={!allowed}
-									getWrapper={this.getWrapper}
-									getWrapperWidth={this.getWrapperWidth}
-								/>
-							)
-						})}
+						{children.map((block: I.Block, i: number) => (
+							<Block 
+								key={'block-' + block.id} 
+								{...this.props}
+								index={i}
+								block={block}
+								onKeyDown={this.onKeyDownBlock}
+								onKeyUp={this.onKeyUpBlock}  
+								onMenuAdd={this.onMenuAdd}
+								onPaste={this.onPaste}
+								readonly={!allowed}
+								getWrapper={this.getWrapper}
+								getWrapperWidth={this.getWrapperWidth}
+							/>
+						))}
 					</div>
 					
 					<div className="blockLast" onClick={this.onLastClick} />
@@ -177,10 +173,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		this.open();
 		
-		if (this.uiHidden) {
-			this.uiHide();
-		};
-
 		focus.apply();
 		this.getScrollContainer().scrollTop(this.scrollTop);
 
@@ -225,9 +217,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		this.id = rootId;
 
 		C.BlockOpen(this.id, '', (message: any) => {
@@ -242,6 +231,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 			
 			this.loading = false;
 			this.focusTitle();
@@ -252,6 +244,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onOpen();
 			};
 
+			window.clearTimeout(this.timeoutMove);
+			window.setTimeout(() => { this.uiShow(); }, 10);
 			this.resize();
 		});
 	};
@@ -337,7 +331,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		$('.footer').css({ opacity: 0 });
-		$('#button-add').css({ opacity: 0 });
 		
 		this.uiHidden = true;
 		
@@ -352,13 +345,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		const win = $(window);
-		
 		$('.footer').css({ opacity: 1 });
-		$('#button-add').css({ opacity: '' });
 		
 		this.uiHidden = false;
-		win.unbind('mousemove.ui');
+		$(window).unbind('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {
@@ -504,7 +494,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
-			this.onHistory();
+			this.onHistory(e);
 		});
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
@@ -746,7 +736,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// History
 		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
 			e.preventDefault();
-			this.onHistory();
+			this.onHistory(e);
 		});
 
 		// Duplicate
@@ -758,6 +748,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					focus.apply();
 				};
 			});
+		});
+
+		// Select all
+		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+			focus.set(block.id, { from: 0, to: length });
+			focus.apply();
+
+			//$('.focusable.c' + block.id).trigger('select');
 		});
 
 		// Open action menu
@@ -843,6 +841,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							horizontal: I.MenuDirection.Center,
 							data: {
 								filter: mark ? mark.param : '',
+								type: mark ? mark.type : null,
 								onChange: (newType: I.MarkType, param: string) => {
 									marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
 									DataUtil.blockSetText(rootId, block, text, marks, true, () => { focus.apply(); });
@@ -890,12 +889,39 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			e.preventDefault();
 
 			const dir = pressed.match(Key.up) ? -1 : 1;
-			const next = blockStore.getNextBlock(rootId, block.id, dir, (item: any) => {
-				return !item.isIcon() && !item.isTextTitle();
+			const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
+				return !it.isIcon() && !it.isTextTitle() && !it.isSystem();
 			});
-			if (next) {
-				C.BlockListMove(rootId, rootId, [ block.id ], next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));	
+
+			if (!next) {
+				return;
 			};
+
+			const element = blockStore.getMapElement(rootId, block.id);
+			const parentElement = blockStore.getMapElement(rootId, block.parentId);
+			const nextElement = blockStore.getMapElement(rootId, next.id)
+			const nextParent = blockStore.getLeaf(rootId, next.parentId);
+			const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+
+			if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
+				return;
+			};
+
+			let isFirst = block.id == parentElement.childrenIds[0];
+			let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
+			let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+			if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
+				position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+			};
+
+			if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
+				position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+			};
+
+			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
+				focus.apply();
+			});
 		});
 
 		// Last/first block
@@ -1192,7 +1218,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			ids = [ focused ];
 		};
 		ids = ids.concat(this.getLayoutIds(ids));
-		
+
 		const cmd = cut ? 'BlockCut' : 'BlockCopy';
 		const focusBlock = blockStore.getLeaf(rootId, focused);
 		const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
@@ -1220,7 +1246,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			anytype: { 
 				range: range,
 				blocks: blocks, 
-			}
+			},
 		};
 
 		const cb = (message: any) => {
@@ -1402,9 +1428,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	onHistory () {
-		const { rootId, history } = this.props;
-		history.push('/main/history/' + rootId);
+	onHistory (e: any) {
+		const { rootId } = this.props;
+
+		e.shiftKey = false;
+		e.ctrlKey = false;
+		e.metaKey = false;
+
+		DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: rootId });
 	};
 
 	getLayoutIds (ids: string[]) {

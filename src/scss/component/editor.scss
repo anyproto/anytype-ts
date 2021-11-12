@@ -4,10 +4,10 @@
 .editorWrapper {
 	.blocks { margin-left: -48px; }
 
-	.focusable.isFocused { background: rgba(134, 125, 66, 0.05); }
+	.focusable.isFocused { background: $colorHover; }
 
 	.note { 
-		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: #fff; position: absolute; 
+		background: linear-gradient(270deg, #262cd2 0%, #0c82ef 100%); border-radius: 4px; height: 80px; color: $colorWhite; position: absolute; 
 		left: 16px; top: 38px; width: calc(100% - 32px); line-height: 80px; text-align: center; z-index: 2;
 	}
 	.note {
@@ -37,11 +37,11 @@
 	.controlButtons { position: absolute; bottom: 0px; width: 100%; }
 	
 	.btn { 
-		background: #fff; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+		background: $colorWhite; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 		height: 28px; margin-right: 8px; line-height: 26px; padding: 0px 8px 0px 6px; border-radius: 6px;
 	}
 	.btn:last-child { margin: 0px; }
-	.btn:hover, .btn.hover { background: rgba(134, 125, 66, 0.08); color: $colorBlack; }
+	.btn:hover, .btn.hover { background: $colorHover; color: $colorBlack; }
 
 	.btn {
 		.icon { width: 20px; height: 20px; margin-right: 4px; }

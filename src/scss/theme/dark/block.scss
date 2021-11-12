@@ -1,0 +1,174 @@
+.block.blockCover {
+    .coverOver {
+       position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 1;
+    }
+    .elements {
+        .btn.white { background: $colorBgIcon; color: $colorPrimary; }
+        .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
+
+        .btn {
+			.icon.icon { background-image: url('~img/theme/dark/icon/add/icon1.svg'); }
+			.icon.addCover { background-image: url('~img/theme/dark/icon/add/cover1.svg'); }
+			.icon.layout { background-image: url('~img/theme/dark/icon/add/layout1.svg'); }
+			.icon.relation { background-image: url('~img/theme/dark/icon/add/relation1.svg'); }
+		}
+    }
+}
+
+.blocks {
+    /* Common */
+
+    .block {
+        .icon.dnd { border-color: $colorLinePrimary; }
+    }
+    .block:hover > .wrapMenu > .icon.dnd { background-image: url('~img/theme/dark/icon/block/menu1.svg'); }
+
+    /* BlockIconPage */
+
+    .block.blockIconPage {
+        .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
+    }
+
+    /* BlockIconUser */
+
+    .block.blockIconUser {
+        .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
+    }
+
+    /* BlockMedia */
+
+    .block.blockMedia {
+        .focusable.isFocused::before { background: $colorHover; }
+
+        .audioControls {
+			.icon.play { background-image: url('~img/theme/dark/icon/audio/play.svg'); }
+			.icon.play.active { background-image: url('~img/theme/dark/icon/audio/pause.svg'); }
+
+			.icon.volume { background-image: url('~img/theme/dark/icon/audio/volume.svg'); }
+			.icon.volume.active { background-image: url('~img/theme/dark/icon/audio/mute.svg'); }
+
+			.input-drag {
+				.back { background: $colorHover; }
+			}
+        }
+    }
+    .block.blockMedia.isAudio > .wrapContent { background: $colorHover; }
+
+    /* BlockDataview */
+
+    .block.blockDataview {
+        .icon.plus { background-image: url('~img/theme/dark/icon/plus/menu0.svg'); }
+        .icon.plus:hover { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
+
+        .dataviewControls {
+            .line { background: $colorLineSecondary; }
+            .viewItem { color: $colorSecondary; }
+            .viewItem:hover, .viewItem.active { color: $colorPrimary; }
+
+            .icon.search { background-image: url('~img/theme/dark/icon/dataview/button/search0.svg'); }
+			.icon.manager { background-image: url('~img/theme/dark/icon/dataview/button/manager0.svg'); }
+			.icon.plus { background-image: url('~img/theme/dark/icon/dataview/button/plus0.svg'); }
+
+			.icon.search:hover, .icon.search.active { background-image: url('~img/theme/dark/icon/dataview/button/search1.svg'); }
+			.icon.manager:hover, .icon.manager.active { background-image: url('~img/theme/dark/icon/dataview/button/manager1.svg'); }
+			.icon.plus:hover, .icon.plus.active { background-image: url('~img/theme/dark/icon/dataview/button/plus1.svg'); }
+        }
+
+        .cellHead .resize .line { background: $colorLineSecondary; }
+
+        .viewItem.viewGrid,
+		.viewItem.viewList {
+			.cell.add { color: $colorSecondary; }
+			.cell.add {
+				.btn:hover { color: $colorPrimary; }
+				.btn:hover {
+					.icon.plus { background-image: url('~img/theme/dark/icon/plus/menu1.svg'); }
+				}
+			}
+		}
+
+        .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
+        .viewItem.viewGrid {
+            .row { box-shadow: 0px 1px $colorLineSecondary inset; }
+        }
+
+        .viewItem.viewBoard {
+            .cellContent.isName { color: $colorPrimary; }
+        }
+
+        .viewItem.viewList {
+            .cellContent.isName { color: $colorPrimary; }
+        }
+
+        .viewItem.viewGallery {
+            .card { background: $colorBlack; border-color: $colorLinePrimary; }
+            .card {
+                .cover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; background-color: $colorBgIcon; }
+            }
+
+            .cellContent.isName { color: $colorPrimary; }
+        }
+    }
+
+    /* BlockType */
+
+    .block.blockType {
+        .item {
+            .iconObject { background: $colorBgIcon; }
+        }
+        .item.hover { background: $colorHover; }
+    }
+
+    /* BlockText */
+
+    .block.blockText {
+        kbd { background: $colorHover; color: $colorOrange; }
+    }
+
+    .block.blockText.code > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+
+    /* BlockLink */
+
+    .block.blockLink {
+        .sides { border-color: $colorLinePrimary !important; }
+        .cardName span::before { background: $colorSecondary !important; }
+
+        .linkCard.card {
+            .sides { background: $colorBgLight; }
+            .cover { color: $colorPrimary; }
+
+            .side.right {
+                .cardDescription { color: $colorSecondary; }
+            }
+        }
+
+        .loading, .deleted { color: $colorSecondary; }
+    }
+
+    .block.blockLink:hover {
+        .sides { border-color: $colorPrimary !important; }
+        .cardName span::before { background: $colorPrimary !important; }
+    }
+
+    /* BlockDiv */
+
+    .block.blockDiv {
+        .line { border-color: $colorSecondary; }
+        .dot { background: $colorSecondary !important; }
+    }
+
+    /* BlockLatex */
+
+    .block.blockLatex {
+        #input { background: $colorBgIcon; }
+    }
+
+    /* BlockBookmark */
+
+    .block.blockBookmark {
+        .inner { border-color: transparent; background-color: $colorHover; }
+        .name { color: $colorPrimary; }
+        .descr { color: $colorSecondary; }
+        .link { color: $colorSecondary; }
+    }
+}

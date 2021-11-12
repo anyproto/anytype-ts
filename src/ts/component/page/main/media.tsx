@@ -8,7 +8,7 @@ import { commonStore, blockStore, detailStore } from 'ts/store';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.js';
+pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -207,9 +207,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
 		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
@@ -219,6 +216,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

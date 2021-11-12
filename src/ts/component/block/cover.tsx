@@ -72,6 +72,11 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return;
+		};
+
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
@@ -141,11 +146,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
+				<div className="coverOver" />
+
 				{isImage ? (
 					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				) : (
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
+
 				{!readonly ? (
 					<div id="elements" className="elements">
 						{elements}
@@ -488,7 +496,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		selection.preventSelect(true);
+		if (selection) {
+			selection.preventSelect(true);
+		};
 	};
 	
 	onScaleMove (e: any, v: number) {

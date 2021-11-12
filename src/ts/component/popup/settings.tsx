@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select } from 'ts/component';
+import { Icon, Button, Title, Label, Cover, Textarea, Loader, IconObject, Error, Pin, Select, Switch } from 'ts/component';
 import { I, C, Storage, translate, Util, DataUtil, analytics } from 'ts/lib';
-import { authStore, blockStore, commonStore, popupStore, dbStore } from 'ts/store';
+import { authStore, blockStore, commonStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Popup, RouteComponentProps<any> {}
@@ -20,6 +20,11 @@ const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 const sha1 = require('sha1');
 const QRCode = require('qrcode.react');
+
+const QRColor = {
+	'': '#fff',
+	dark: '#aca996'
+};
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
 
@@ -55,7 +60,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	render () {
 		const { account, phrase } = authStore;
-		const { cover, coverImage } = commonStore;
+		const { cover, coverImage, theme, config } = commonStore;
 		const { page, loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
@@ -133,20 +138,23 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			case 'wallpaper':
 				let colors = [ 'yellow', 'orange', 'pink', 'red', 'purple', 'navy', 'blue', 'ice', 'teal', 'green' ];
-				let covers1 = [  ];
-				let covers2 = [];
+				let gradients = [ 'yellow', 'red', 'blue', 'teal', 'pinkOrange', 'bluePink', 'greenOrange', 'sky' ];
+				let covers1 = [];
+				let covers2 = colors.map((it: string) => { return { id: it, image: '', type: I.CoverType.Color }; });
+				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
 
+				if (coverImage) {
+					covers1.push({ id: 0, image: coverImage, type: I.CoverType.Upload });
+				};
 				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 				};
 
-				for (let c of colors) {
-					covers2.push({ id: c, image: '', type: I.CoverType.Color });
-				};
-
-				if (coverImage) {
-					covers1.unshift({ id: 0, image: coverImage, type: I.CoverType.Upload });
-				};
+				let sections = [
+					{ name: translate('popupSettingsPicture'), children: covers1 },
+					{ name: translate('popupSettingsColor'), children: covers2 },
+					{ name: translate('popupSettingsGradient'), children: covers3 },
+				];
 
 				Item = (item: any) => (
 					<div className={'item ' + (item.active ? 'active': '')} onClick={() => { this.onCover(item); }}>
@@ -166,23 +174,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							</div>
 						</div>
 
-						<div className="row">
-							<Label className="name" text={translate('popupSettingsPicture')} />
-							<div className="covers">
-								{covers1.map((item: any, i: number) => (
-									<Item key={i} {...item} active={item.id == cover.id} />
-								))}
+						{sections.map((section: any, i: number) => (
+							<div key={i} className="row">
+								<Label className="name" text={section.name} />
+								<div className="covers">
+									{section.children.map((item: any, i: number) => (
+										<Item key={i} {...item} active={(item.id == cover.id) && (cover.type == item.type)} />
+									))}
+								</div>
 							</div>
-						</div>
-
-						<div className="row last">
-							<Label className="name" text={translate('popupSettingsColor')} />
-							<div className="covers">
-								{covers2.map((item: any, i: number) => (
-									<Item key={i} {...item} preview={true} active={item.id == cover.id} />
-								))}
-							</div>
-						</div>
+						))}
 					</div>
 				);
 				break;
@@ -215,7 +216,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									<Label text={translate('popupSettingsMobileQRText')} />
 								</div>
 								<div className="side right isBlurred" onClick={this.elementUnblur}>
-									<QRCode value={entropy} />
+									<div className="qrWrap">
+										<QRCode value={entropy} bgColor={QRColor[theme]} size="100" />
+									</div>
 								</div>
 							</div>
 						) : (
@@ -400,6 +403,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 					return it;
 				});
 
+				const themes: any[] = [
+					{ id: '', name: 'Default' },
+					{ id: 'dark', name: 'Dark' },
+				];
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
@@ -420,17 +428,27 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="PIN code check time-out" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+								<Select id="pinTime" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 							</div>
 						</div>
 
-						<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
+						<div className="row">
 							<div className="side left">
-								<Label text="Clear file cache" />
+								<Label text="Theme" />
 							</div>
 							<div className="side right">
+								<Select id="theme" options={themes} value={theme} onChange={(id: string) => { commonStore.themeSet(id); }}/>
 							</div>
 						</div>
+
+						{config.experimental ? (
+							<div className="row cp textColor textColor-red" onClick={this.onFileOffload}>
+								<div className="side left">
+									<Label text="Clear file cache" />
+								</div>
+								<div className="side right" />
+							</div>
+						) : ''}
 					</div>
 				);
 				break;
@@ -567,15 +585,19 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onLogout (e: any) {
-		const { history } = this.props;
+		const { history, close } = this.props;
 
 		this.onConfirmPhrase = () => {
-			C.AccountStop(false);
-			authStore.logout();
-			history.push('/');
+			close();
 
-			this.pinConfirmed = false;
-			this.onConfirmPhrase = null;
+			window.setTimeout(() => {
+				C.AccountStop(false);
+				authStore.logout();
+				history.push('/');
+	
+				this.pinConfirmed = false;
+				this.onConfirmPhrase = null;
+			}, Constant.delay.popup);
 		};
 
 		this.onPage('phrase');

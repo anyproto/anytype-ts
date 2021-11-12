@@ -12,7 +12,7 @@
 		.inputs { margin-bottom: 32px; }
 		
 		.head { 
-			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 10px 12px; background: #fff; z-index: 1;
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 10px 12px; background: $colorWhite; z-index: 1;
 			border-radius: 12px 12px 0px 0px; 
 		}
 		.head {
@@ -87,7 +87,9 @@
 				}
 			}
 			
-			.cover { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
+			.cover { 
+				position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); border-radius: 1px;
+			}
 		}
 		
 		.tabPhrase {
@@ -101,6 +103,14 @@
 				.side { width: 100%; }
 				.side.right { text-align: right; font-size: 0px; width: 50%; padding: 6px;}
 				canvas { display: inline-block; }
+			}
+
+			.qrWrap { 
+				padding: 16px; border-radius: 12px; display: inline-block; width: 132px; height: 132px; 
+				background: $colorVeryLightGrey;
+			}
+			.qrWrap {
+				canvas { width: 100%; height: 100%; }
 			}
 
 			.inputs { margin-bottom: 20px; }
@@ -146,7 +156,10 @@
 			.item.disabled:hover { border-color: $colorLightGrey;  }
 
 			.item {
-				.icon { margin-bottom: 6px; height: 32px; }
+				.icon { 
+					width: 28px; margin-bottom: 6px; height: 32px; background-size: contain; 
+					background-position: top center;
+				}
 				.name { @include text-small; }
 				.soon { 
 					font-weight: 500; font-size: 9px; line-height: 18px; letter-spacing: 0.4px; text-transform: uppercase; color: $colorMediumGrey; 
@@ -154,13 +167,13 @@
 				}
 			}
 
-			.item.notion .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); }
-			.item.evernote .icon { width: 27px; background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
-			.item.roam .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/roam.svg'); }
-			.item.word .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/word.svg'); }
-			.item.text .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/text.svg'); }
-			.item.html .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/html.svg'); }
-			.item.csv .icon { width: 28px; background-image: url('~img/icon/popup/settings/import/csv.svg'); }
+			.item.notion .icon {  background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+			.item.evernote .icon { background-image: url('~img/icon/popup/settings/import/evernote.svg'); }
+			.item.roam .icon { background-image: url('~img/icon/popup/settings/import/roam.svg'); }
+			.item.word .icon { background-image: url('~img/icon/popup/settings/import/word.svg'); }
+			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
+			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
+			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
 		}
 
 		.tabImportNotion {
@@ -179,6 +192,8 @@
 				width: 100%; display: flex; padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorLightGrey; 
 				@include text-paragraph; line-height: 28px;
 			}
+
+			.select { transition: none; }
 
 			.side { width: 50%; line-height: 28px; }
 			.side.right { text-align: right; }

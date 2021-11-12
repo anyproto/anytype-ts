@@ -39,6 +39,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 		
 		this.onClick = this.onClick.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
 	
@@ -66,7 +67,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 			let name = item.name || DataUtil.defaultName('page');
 			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet ? item.snippet : <span className="empty">Empty</span>;
+				name = item.snippet || <span className="empty">Empty</span>;
 			};
 
 			let content = null;
@@ -113,6 +114,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 					placeholder="Paste link or search objects" 
 					value={filter}
 					onChange={this.onFilterChange}
+					onClear={this.onFilterClear}
 				/>
 
 				<div className="items">
@@ -202,6 +204,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<Props
 
 	onFilterChange (e: any) {
 		menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+	};
+
+	onFilterClear () {
+		const { param } = this.props;
+		const { data } = param;
+		const { type, onChange } = data;
+
+		onChange(type, '');
 	};
 
 	getSections () {

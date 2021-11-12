@@ -8,15 +8,15 @@ class DbStore {
     public relationMap: Map<string, I.Relation[]> = observable.map(new Map());
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public dataMap: Map<string, any[]> = observable.map(new Map());
-    public metaMap: Map<string, any> = new Map();
+    public metaMap: Map<string, any> = observable.map(new Map());
 
     constructor() {
         makeObservable(this, {
             objectTypes: computed,
+			clearAll: action,
             objectTypesSet: action,
             objectTypeAdd: action,
             objectTypeUpdate: action,
-            objectTypesClear: action,
             relationsSet: action,
             relationsClear: action,
             relationAdd: action,
@@ -42,10 +42,18 @@ class DbStore {
 		return this.objectTypeList;
 	};
 
+	clearAll () {
+		this.objectTypeList = observable.array([]);
+    	this.relationMap = observable.map(new Map());
+    	this.viewMap = observable.map(new Map());
+    	this.dataMap = observable.map(new Map());
+    	this.metaMap = observable.map(new Map());
+	};
+
     objectTypesSet (types: I.ObjectType[]) {
 		let list = this.objectTypeList;
 
-		types = types.map((it: any) => { return new M.ObjectType(it); });
+		types = (types || []).map((it: any) => { return new M.ObjectType(it); });
 
 		for (let type of types) {
 			const check = this.getObjectType(type.id);
@@ -66,10 +74,6 @@ class DbStore {
 		if (item) {
 			set(item, type);
 		};
-	};
-
-    objectTypesClear () {
-		this.objectTypeList = [];
 	};
 
     relationsSet (rootId: string, blockId: string, list: I.Relation[]) {

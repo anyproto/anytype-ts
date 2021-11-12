@@ -122,7 +122,9 @@ function trayIcon () {
 };
 
 nativeTheme.on('updated', () => {
-	tray.setImage(trayIcon());
+	if (tray) {
+		tray.setImage(trayIcon());
+	};
 });
 
 function initTray () {
@@ -185,7 +187,7 @@ function createWindow () {
 	});
 
 	let param = {
-		backgroundColor: '#fff',
+		backgroundColor: getBgColor(),
 		show: false,
 		x: state.x,
 		y: state.y,
@@ -306,6 +308,10 @@ function createWindow () {
 		exit(true);
 	});
 
+	ipcMain.on('configSet', (e, config) => {
+		setConfig(config);
+	});
+
 	ipcMain.on('updateCancel', (e) => {
 		isUpdating = false;
 		clearTimeout(timeoutUpdate);
@@ -355,23 +361,27 @@ function createWindow () {
 		};
 	});
 
-	storage.get(CONFIG_NAME, (error, data) => {
-		config = data || {};
-		config.channel = String(config.channel || defaultChannel);
+	autoUpdaterInit();
+	menuInit();
+};
 
-		if (error) {
-			console.error(error);
-		};
+function getBgColor () {
+	let { theme } = config;
+	let bg = '#fff';
 
-		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
+	switch (theme) {
+		case 'dark':
+			bg = '#2c2b27';
+			break;
+	};
 
-		autoUpdaterInit();
-		menuInit();
-	});
+	return bg;
 };
 
 function openAboutWindow () {
+	let { theme } = config;
     let window = new BrowserWindow({
+		backgroundColor: getBgColor(),
         width: 400,
         height: 400,
         useContentSize: true,
@@ -383,7 +393,7 @@ function openAboutWindow () {
 		},
     });
 
-    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html?version=' + version));
+    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${theme}`));
 
 	window.once('closed', () => {
         window = null;
@@ -423,6 +433,10 @@ function menuInit () {
 				{
 					label: 'Check for updates',
 					click: () => { checkUpdate(false); }
+				},
+				{
+					label: 'Settings',
+					click: () => { send('popup', 'settings', {}); }
 				},
 				{ type: 'separator' },
 				{
@@ -539,7 +553,6 @@ function menuInit () {
 			mw: 'Middleware', 
 			th: 'Threads', 
 			an: 'Analytics', 
-			dm: 'Dark Mode',
 			js: 'JSON',
 		};
 		const flagMenu = [];
@@ -551,21 +564,12 @@ function menuInit () {
 					config.debug[i] = !config.debug[i];
 					setConfig({ debug: config.debug });
 					
-					if ([ 'ui', 'ho', 'dm' ].includes(i)) {
+					if ([ 'ho' ].includes(i)) {
 						win.reload();
 					};
 				}
 			});
 		};
-
-		/*
-		flagMenu.push({
-			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
-			click: () => {
-				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-			}
-		});
-		*/
 
 		menuParam.push({
 			label: 'Debug',
@@ -729,7 +733,20 @@ function autoUpdaterInit () {
 	});
 };
 
-app.on('ready', waitForLibraryAndCreateWindows);
+app.on('ready', () => {
+	storage.get(CONFIG_NAME, (error, data) => {
+		config = data || {};
+		config.channel = String(config.channel || defaultChannel);
+
+		if (error) {
+			console.error(error);
+		};
+
+		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
+
+		waitForLibraryAndCreateWindows();
+	});
+});
 
 app.on('second-instance', (event, argv, cwd) => {
 	Util.log('info', 'second-instance');

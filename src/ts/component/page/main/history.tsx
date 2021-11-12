@@ -7,6 +7,7 @@ import { I, M, C, Util, DataUtil, dispatcher } from 'ts/lib';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
+	rootId: string;
 	isPopup: boolean;
 }
 
@@ -14,7 +15,7 @@ interface State {
 	versions: I.HistoryVersion[];
 	loading: boolean;
 	isDeleted: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -46,7 +47,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	render () {
 		const { match } = this.props;
 		const { versions, isDeleted } = this.state;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		const groups = this.groupData(versions);
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -61,10 +62,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+		const object = check.object;
+		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper', check.className ];
-		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, childrenIds: [], fields: {}, content: {} });
+		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
 		if (root && root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
@@ -107,7 +109,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		
 		return (
 			<div>
-				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} version={this.version} />
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
 						<div className={cn.join(' ')}>
@@ -154,6 +156,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 
 	componentDidUpdate () {
+		const rootId = this.getRootId();
 		const node = $(ReactDOM.findDOMNode(this));
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
@@ -169,6 +172,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 		sideLeft.unbind('scroll').scroll(() => { this.onScrollLeft(); });
 		sideRight.unbind('scroll').scroll(() => { this.onScrollRight(); });
+
+		blockStore.updateNumbers(rootId);
 	};
 
 	onScrollLeft () {
@@ -274,9 +279,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 	
 	loadList (lastId: string) { 
-		const { history, match } = this.props;
+		const { history } = this.props;
 		const { versions, loading } = this.state;
-		const rootId = match.params.id;
+		const rootId = this.getRootId();
 		
 		if (loading || (this.lastId && (lastId == this.lastId))) {
 			return;
@@ -303,8 +308,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
   	};
   
 	loadVersion (id: string) {
-		const { history, match } = this.props;
-		const rootId = match.params.id;
+		const { history } = this.props;
+		const rootId = this.getRootId();
 
 		C.HistoryShow(rootId, id, (message: any) => {
 			if (message.error.code) {
@@ -320,6 +325,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 			dispatcher.onObjectShow(rootId, message.objectShow);
 			this.forceUpdate();
+
+			if (this.refHeader) {
+				this.refHeader.setVersion(this.version);
+			};
 		});
 	};
 	
@@ -408,6 +417,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 	getWrapperWidth (): number {
 		return Constant.size.editor;
+	};
+
+	getRootId () {
+		const { rootId, match } = this.props;
+		return rootId ? rootId : match.params.id;
 	};
 
 });

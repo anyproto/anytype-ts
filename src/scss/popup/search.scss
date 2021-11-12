@@ -10,7 +10,7 @@
 		.dimmer { transition: none; }
 
 		.head { 
-			height: 28px; position: fixed; top: -40px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
+			height: 28px; position: fixed; top: -40px; left: 50%; background: $colorWhite; width: 100%; border-radius: 6px;
 			transform: translateX(-50%); padding: 4px 8px; -webkit-app-region: no-drag;
 		}
 		.head {
@@ -61,13 +61,13 @@
 				}
 			}
 
-			.item.active { background-color: rgba(172, 169, 150, 0.1); }
+			.item.active { background-color: $colorHover; }
 		}
 	}
 }
 
 html.platformWindows {
 	.popups {
-		.popup.popupSearch .innerWrap { top: 68px; }
+		.popup.popupSearch .innerWrap { top: 74px; }
 	}
 }

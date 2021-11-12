@@ -29,7 +29,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		
 		return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

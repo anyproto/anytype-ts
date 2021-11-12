@@ -23,8 +23,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const object = detailStore.get(rootId, content.targetBlockId);
         const { layout } = object;
         const fields = DataUtil.checkLinkSettings(block.fields, layout);
-        const canIcon = object.layout != I.ObjectLayout.Task;
-        const canCover = fields.style == I.LinkCardStyle.Card;
+        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(layout);
+        const canCover = ![ I.ObjectLayout.Note ].includes(layout) && (fields.style == I.LinkCardStyle.Card);
+        const canDescription = ![ I.ObjectLayout.Note ].includes(layout);
 
         const styles: any[] = [
             { id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
@@ -36,14 +37,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
             { id: I.LinkIconSize.Medium, name: 'M' },
             { id: I.LinkIconSize.Large, name: 'L' },
         ];
-        if (object.layout == I.ObjectLayout.Task) {
+        if (!canIcon) {
             buttons = [];
         };
 
         let items1: any[] = [];
         let items2: any[] = [
             { id: 'withName', icon: 'relation ' + DataUtil.relationClass(I.RelationType.ShortText), name: 'Name' },
-            { id: 'withDescription', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), name: 'Description' }
         ];
 
         if (canIcon) {
@@ -52,6 +52,10 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
         if (canCover) {
             items1.push({ id: 'withCover', icon: 'item-cover', name: 'Cover' });
+        };
+
+        if (canDescription) {
+            items2.push({ id: 'withDescription', icon: 'relation ' + DataUtil.relationClass(I.RelationType.LongText), name: 'Description' });
         };
 
         return (

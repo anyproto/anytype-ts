@@ -1,6 +1,5 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
-import children from '../component/list/children';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -456,7 +455,7 @@ class DataUtil {
 				},
 			},
 		});
-		
+
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
 		popupStore.open('page', param);
@@ -475,6 +474,7 @@ class DataUtil {
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
+			case I.ObjectLayout.History:	 r = 'history'; break;
 		};
 		return r;
 	};
@@ -483,11 +483,7 @@ class DataUtil {
 		details = details || {};
 		details.type = details.type || commonStore.type;
 		
-		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
-		
 		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
-			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			
 			if (message.error.code) {
 				return;
 			};
@@ -618,9 +614,15 @@ class DataUtil {
 
 	getObjectTypesForNewObject (withSet: boolean) {
 		const { config } = commonStore;
+		const skip = [ 
+			Constant.typeId.note, 
+			Constant.typeId.page, 
+			Constant.typeId.set, 
+			Constant.typeId.task,
+		];
 
 		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-			return [ Constant.typeId.note, Constant.typeId.page, Constant.typeId.set ].indexOf(it.id) < 0;
+			return skip.indexOf(it.id) < 0;
 		});
 		if (!config.debug.ho) {
 			items = items.filter((it: I.ObjectType) => { return !it.isHidden; })
@@ -628,8 +630,13 @@ class DataUtil {
 		let page = dbStore.getObjectType(Constant.typeId.page);
 		let note = dbStore.getObjectType(Constant.typeId.note);
 		let set = dbStore.getObjectType(Constant.typeId.set);
+		let task = dbStore.getObjectType(Constant.typeId.task);
 
 		items.sort(this.sortByName);
+
+		if (task) {
+			items.unshift(task);
+		};
 
 		if (withSet && set) {
 			items.unshift(set);
@@ -982,6 +989,10 @@ class DataUtil {
 		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			if (!relation) {
+				return;
+			};
+
 			ret.push({ 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
@@ -1199,8 +1210,13 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
-				value = Number(value);
+				if ((value === '') || (value === undefined)) {
+					value = null;
+				};
+				if (value !== null) {
+					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
+					value = Number(value);
+				};
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {
@@ -1303,7 +1319,30 @@ class DataUtil {
 			fields.iconSize = I.LinkIconSize.Small;
 		};
 
+		if (layout == I.ObjectLayout.Note) {
+			fields.withIcon = false;
+			fields.withCover = false;
+			fields.withDescription = false;
+			fields.iconSize = I.LinkIconSize.Small;
+		};
+
 		return fields;
+	};
+
+	getDataviewData (rootId: string, blockId: string, id: string, offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+		const { viewId } = dbStore.getMeta(rootId, blockId);
+		const viewChange = id != viewId;
+		const meta: any = { offset: offset };
+
+		if (viewChange) {
+			meta.viewId = id;
+		};
+		if (viewChange || clear) {
+			dbStore.recordsSet(rootId, blockId, []);
+		};
+
+		dbStore.metaSet(rootId, blockId, meta);
+		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
 	};
 
 };

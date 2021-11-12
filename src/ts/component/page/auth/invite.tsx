@@ -30,7 +30,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				

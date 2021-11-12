@@ -4,7 +4,7 @@
 	.wrapper { position: relative; z-index: 1; padding: 90px 0px 0px 0px; margin: 0px auto; }
 	
 	.title { 
-		color: #fff; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; 
+		color: $colorWhite; position: relative; height: 64px; line-height: 64px; margin: 0px auto; position: fixed; top: 142px; 
 		white-space: nowrap; user-select: none;
 	}
 	.title {
@@ -38,7 +38,7 @@
 		background-size: 800px 100%;
 	}
 
-	#documents { display: flex; flex-wrap: wrap; overflow: auto; }
+	#documents { display: flex; flex-wrap: wrap; overflow: overlay; }
 	#documents {
 		.tabWrap { width: 100%; height: 44px; margin-bottom: 24px; position: relative; }
 		.tabWrap {
@@ -52,13 +52,13 @@
 					cursor: pointer; 
 				}
 				.tab:hover { background: rgba(0,0,0,0.15); }
-				.tab.active { background: rgba(0,0,0,0.3); color: #fff; }
+				.tab.active { background: rgba(0,0,0,0.3); color: $colorWhite; }
 			}
 
 			.btns { position: absolute; right: 0px; top: 0px; z-index: 1; }
 			.btns {
 				.btn {
-					height: 44px; line-height: 44px; color: #fff; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
+					height: 44px; line-height: 44px; color: $colorWhite; background: rgba(0,0,0,0.3); border-radius: 12px; cursor: pointer; 
 					display: inline-block; vertical-align: top; transition: width 0.2s ease-in-out, background 0.2s ease-in-out; padding: 0px 20px;
 					margin-right: 16px; font-weight: 500;
 				}
@@ -71,7 +71,7 @@
 					.filter { height: 20px; padding: 0px; display: none; vertical-align: top; width: 100%; }
 					.filter {
 						.inner { height: 20px; }
-						.input { height: 20px; color: #fff; }
+						.input { height: 20px; color: $colorWhite; }
 						.line { display: none; }
 						.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); }
 						.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); }
@@ -87,9 +87,10 @@
 
 		#selectWrap { display: none; }
 		#selectWrap {
-			.tabs { width: 100%; display: flex; padding: 0px 0px 0px 16px; @include text-common; font-weight: normal; color: #fff; }
-			.side { width: 50%; white-space: nowrap; line-height: 44px; }
-			.side.right { text-align: right;}
+			.tabs { width: 100%; display: flex; padding: 0px 0px 0px 16px; @include text-common; font-weight: normal; color: $colorWhite; }
+			.side { white-space: nowrap; line-height: 44px; }
+			.side.left { width: 20%; }
+			.side.right { width: 80%; text-align: right;}
 
 			.element { 
 				display: inline-block; height: 100%; line-height: 40px; vertical-align: top; padding: 0px 14px; 
@@ -102,13 +103,15 @@
 				.icon.restore { background-image: url('~img/icon/index/restore.svg'); }
 				.icon.all { background-image: url('~img/icon/index/all.svg'); }
 				.icon.close { margin: 0px; background-image: url('~img/icon/index/close.svg'); }
+				.icon.fav { background-image: url('~img/icon/index/fav.svg'); }
+				.icon.unfav { background-image: url('~img/icon/index/unfav.svg'); }
 				.name { display: inline-block; vertical-align: middle; }
 			}
 			.element:hover { background: rgba(0,0,0,0.15); }
 		}
 
 		.item { 
-			width: 208px; height: 124px; background: #fff; border-radius: 12px; display: inline-block; vertical-align: top;
+			width: 208px; height: 124px; background: $colorWhite; border-radius: 12px; display: inline-block; vertical-align: top;
 			margin: 0px 16px 16px 0px; padding: 14px 16px; position: relative; cursor: pointer; user-select: none;
 		}
 		
@@ -117,7 +120,7 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; width: 100%; word-break: break-word; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; 
+				@include text-common; width: calc(100% - 20px); word-break: break-word; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; 
 				display: -webkit-box; line-height: 20px;
 			}
 			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 11px; left: 0px; padding: 0px 16px; }
@@ -130,21 +133,21 @@
 			.icon.more.hover { background-image: url('~img/icon/index/more1.svg'); opacity: 1; }
 
 			.icon.checkbox { 
-				width: 20px; height: 20px; position: absolute; right: 10px; top: 10px; z-index: 2; cursor: pointer;
-				background-image: url('~img/icon/index/checkbox0.svg'); display: none; opacity: 0; transition: none;
+				width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
+				background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
 			}
 		}
 		.item.isSelected {
 			.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); }
 		}
 		.item.withIcon {
-			.name { -webkit-line-clamp: 1; }
+			.name { width: 100%; -webkit-line-clamp: 1; }
 		}
 		.item.isDragging { transition: none; box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.last { margin-right: 0px; }
 
 		.item.isLoading {
-			.iconObject { background: #f3f2ec; border-radius: 10px; margin-bottom: 15px; }
+			.iconObject { background: $colorVeryLightGrey; border-radius: 10px; margin-bottom: 15px; }
 			.line { border-radius: 2px; }
 			.line.lineName { width: 88px; height: 10px; background-color: $colorLightGrey; margin-bottom: 10px; }
 			.line.lineType { width: 56px; height: 8px; background-color: $colorLightGrey; }
@@ -153,7 +156,7 @@
 		.item.isTask { padding-left: 40px; }
 		.item.isTask {
 			.iconObject { position: absolute; left: 16px; top: 15px; z-index: 1; margin: 0px; }
-			.name { -webkit-line-clamp: 3; }
+			.name { -webkit-line-clamp: 4; }
 		}
 		
 		.item.active, .item.hover {
@@ -165,14 +168,8 @@
 		}
 
 		.emptySearch { 
-			width: 100%; height: 90px; line-height: 90px; background: #fff; border-radius: 12px; padding: 32px 36px;
-			@include text-header3; color: #cbc9bd;
-		}
-	}
-
-	#documents.tabArchive {
-		.item {
-			.icon.checkbox { display: block; }
+			width: 100%; height: 90px; line-height: 90px; background: $colorWhite; border-radius: 12px; padding: 32px 36px;
+			@include text-header3; color: $colorSecondary;
 		}
 	}
 

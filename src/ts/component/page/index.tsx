@@ -30,7 +30,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -233,8 +232,8 @@ class Page extends React.Component<Props, {}> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Anytype shared information with you',
-				text: 'New objects are syncing. You can find them in Shared tab in Home within a few minute',
+				title: 'You\'ve got shared objects!',
+				text: 'They will be accessible in the "Shared" tab in Home within a minute',
 				textConfirm: 'Ok',
 				canCancel: false,
 				onConfirm: () => {
@@ -272,22 +271,21 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		const { isPopup } = this.props;
-		const { config } = commonStore;
+		const { config, theme } = commonStore;
 		const platform = Util.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
 			Util.toCamelCase([ 'platform', platform ].join('-')),
 		];
-		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
+		const obj = $('html');
+
+		if (theme) {
+			cn.push(Util.toCamelCase(`theme-${theme}`));
+		};
 
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (config.debug.dm) {
-			cn.push('dark');
-		};
-
 		obj.attr({ class: cn.join(' ') });
 	};
 	

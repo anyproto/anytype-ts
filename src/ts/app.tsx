@@ -136,7 +136,8 @@ import 'scss/menu/dataview/view.scss';
 import 'scss/menu/dataview/source.scss';
 
 import 'scss/media/print.scss';
-import 'scss/media/dark.scss';
+
+import 'scss/theme/dark/common.scss';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -289,6 +290,11 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
+		this.initTheme(commonStore.theme);
+	};
+
+	componentDidUpdate () {
+		this.initTheme(commonStore.theme);
 	};
 	
 	init () {
@@ -319,32 +325,16 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 	};
 
-	preload () {
-		const prefix = './dist/';
-		const fr = new RegExp(/\.png|gif|jpg|svg/);
-		
-		const readDir = (prefix: string, folder: string) => {
-			const fp = path.join(prefix, folder);
-			fs.readdir(fp, (err: any, files: string[]) => {
-				if (err) {
-					return;
-				};
+	initTheme (theme: string) {
+		const head = $('head');
 
-				let images: string[] = [];
-				for (let file of files) {
-					const fn = path.join(fp, file);
-					const isDir = fs.lstatSync(fn).isDirectory();
-					if (isDir) {
-						readDir(fp, file);
-					} else 
-					if (file.match(fr)) {
-						images.push(fn.replace(/^dist\//, ''));
-					};
-				};
-				Util.cacheImages(images);
-			});
+		head.find('#link-prism').remove();
+
+		if (theme) {
+			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
 		};
-		readDir(prefix, 'img');
+
+		Util.addBodyClass('theme', theme);
 	};
 
 	setIpcEvents () {
@@ -381,13 +371,10 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('dataPath', (e: any, dataPath: string) => {
 			authStore.pathSet(dataPath);
-			this.preload();
 
 			window.setTimeout(() => {
 				logo.css({ opacity: 0 });
-				window.setTimeout(() => {
-					this.setState({ loading: false });
-				}, 600);
+				window.setTimeout(() => { this.setState({ loading: false }); }, 600);
 			}, 2000);
 		});
 		
@@ -400,7 +387,6 @@ class App extends React.Component<Props, State> {
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
 
-			popupStore.closeAll();
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 
@@ -498,12 +484,13 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('import', this.onImport);
 		ipcRenderer.on('export', this.onExport);
-
 		ipcRenderer.on('command', this.onCommand);
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
-			commonStore.configSet(config, true); 
+			commonStore.configSet(config, true);
 			analytics.init();
+
+			this.initTheme(config.theme);
 		});
 
 		ipcRenderer.on('enter-full-screen', () => {

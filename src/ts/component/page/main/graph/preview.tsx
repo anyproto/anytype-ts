@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	onClick?: (e: any) => void;
-	onCancel?: (e: any) => void;
+	onClose?: (e: any) => void;
 	setState?: (state: any) => void;
 };
 
@@ -31,7 +31,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 	
 	render () {
 		const { loading } = this.state;
-		const { rootId, onCancel } = this.props;
+		const { rootId, onClose } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const { layout, fileExt, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
@@ -69,7 +69,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 						</div>
 						<div className="buttons">
 							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />
-							<Button text="Cancel" color="blank" onClick={onCancel} />
+							<Button text="Cancel" color="blank" onClick={onClose} />
 						</div>
 					</React.Fragment>
 				)}
