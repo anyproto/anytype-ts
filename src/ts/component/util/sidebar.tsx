@@ -128,8 +128,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const el = node.find(`#item-${item.id}-${item.depth}`);
 		const children = el.find(`#children-${item.id}-${item.depth}`);
 
-		console.log(children);
-
 		let height = 0;
 
 		if (el.hasClass('active')) {
