@@ -434,6 +434,10 @@ function menuInit () {
 					label: 'Check for updates',
 					click: () => { checkUpdate(false); }
 				},
+				{
+					label: 'Settings',
+					click: () => { send('popup', 'settings', {}); }
+				},
 				{ type: 'separator' },
 				{
 					label: 'Quit', accelerator: 'CmdOrCtrl+Q',
