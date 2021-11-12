@@ -27,6 +27,7 @@ html.themeDark {
     .empty { color: $colorTertiary; }
     .placeholder { color: $colorTertiary; }
     ::-webkit-input-placeholder { color: $colorTertiary !important; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 
     .bgColor { color: $colorTertiary; }
     .textColor-default { color: $colorPrimary; }

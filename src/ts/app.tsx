@@ -289,11 +289,11 @@ class App extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this.init();
-		this.initTheme();
+		this.initTheme(commonStore.theme);
 	};
 
 	componentDidUpdate () {
-		Util.addBodyClass('theme', commonStore.theme);
+		this.initTheme(commonStore.theme);
 	};
 	
 	init () {
@@ -324,12 +324,13 @@ class App extends React.Component<Props, State> {
 		this.setWindowEvents();
 	};
 
-	initTheme() {
-		const { theme } = commonStore;
+	initTheme (theme: string) {
 		const head = $('head');
 
+		head.find('#link-prism').remove();
+
 		if (theme) {
-			head.append(`<link rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
+			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
 		};
 
 		Util.addBodyClass('theme', theme);
@@ -487,6 +488,8 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
 			analytics.init();
+
+			this.initTheme(config.theme);
 		});
 
 		ipcRenderer.on('enter-full-screen', () => {
