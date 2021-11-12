@@ -1,15 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
-import { Select, Marker, Loader, IconObject, Icon, Button } from 'ts/component';
+import { Select, Marker, Loader, IconObject, Icon } from 'ts/component';
 import { I, C, keyboard, Key, Util, DataUtil, Mark, focus, Storage, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { commonStore, blockStore, detailStore, menuStore } from 'ts/store';
 import * as Prism from 'prismjs';
-import { InlineMath, BlockMath } from 'react-katex';
 import 'prismjs/themes/prism.css';
-import 'katex/dist/katex.min.css';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;
@@ -45,6 +43,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	composition: boolean = false;
 	preventSaveOnBlur: boolean = false;
 	preventMenu: boolean = false;
+
+	public static defaultProps = {
+		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
+	};
 
 	constructor (props: any) {
 		super(props);
