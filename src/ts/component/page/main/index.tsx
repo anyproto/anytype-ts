@@ -521,6 +521,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const l = this.selected.length;
 		const ids = this.getSelectedObjectIds();
 
+		this.selected = [];
+		this.selectionRender();
+
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
@@ -528,9 +531,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				textConfirm: 'Delete',
 				onConfirm: () => {
 					C.ObjectListDelete(ids, () => {
-						this.selected = [];
-						this.selectionRender();
-			
 						this.load();
 					});
 				}
@@ -542,6 +542,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
 		const ids = this.getSelectedObjectIds();
 
+		this.selected = [];
+		this.selectionRender();
+
 		C.ObjectListSetIsArchived(ids, v, () => {
 			items.forEach((it: any) => {
 				const object = this.getObject(it);
@@ -549,20 +552,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
 				};
 			});
-
-			this.selected = [];
-			this.selectionRender();
 			this.load();
 		});
 	};
 
 	onSelectionFavorite (v: boolean) {
 		const ids = this.getSelectedObjectIds();
-		C.ObjectListSetIsFavorite(ids, v, () => {
-			this.selected = [];
-			this.selectionRender();
-			this.load();
-		});
+
+		this.selected = [];
+		this.selectionRender();
+
+		C.ObjectListSetIsFavorite(ids, v, this.load);
 	};
 
 	onSelectionAll () {
