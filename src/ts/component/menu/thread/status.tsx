@@ -12,10 +12,9 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		const { rootId, isCafe, accountId } = data;
 		const thread = authStore.threadGet(rootId);
 		const cafe = thread.cafe || {};
-
-		const { accounts } = thread;
-		const { status, files } = cafe;
-		const account = (accounts || []).find((it: I.ThreadAccount) => { return it.id == accountId; });
+		const status = cafe.status || {};
+		const files = cafe.files || {};
+		const account = (thread.accounts || []).find((it: I.ThreadAccount) => { return it.id == accountId; });
 
 		const Item = (item: any) => (
 			<div className="item">
