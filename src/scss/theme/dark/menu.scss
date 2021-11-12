@@ -136,6 +136,9 @@
     /* MenuDataviewSort */
 
     .menu.menuDataviewSort {
+        .item {
+            .select.grey { color: $colorSecondary; }
+        }
         .item.add:hover::before { background: $colorHover; }
     }
 

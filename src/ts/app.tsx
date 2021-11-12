@@ -293,7 +293,7 @@ class App extends React.Component<Props, State> {
 	};
 
 	componentDidUpdate () {
-		this.initTheme();
+		Util.addBodyClass('theme', commonStore.theme);
 	};
 	
 	init () {
@@ -325,7 +325,14 @@ class App extends React.Component<Props, State> {
 	};
 
 	initTheme() {
-		Util.addBodyClass('theme', commonStore.theme);
+		const { theme } = commonStore;
+		const head = $('head');
+
+		if (theme) {
+			head.append(`<link rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
+		};
+
+		Util.addBodyClass('theme', theme);
 	};
 
 	setIpcEvents () {
