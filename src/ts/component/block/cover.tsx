@@ -535,7 +535,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
-		selection.preventSelect(false);
+		if (selection) {
+			selection.preventSelect(false);
+		};
 		this.scale = v;
 	};
 	
