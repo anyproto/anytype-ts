@@ -133,6 +133,15 @@
         .item.add:hover::before { background: $colorHover; }
     }
 
+    /* MenuDataviewFileValues */
+
+    .menu.menuDataviewFileValues {
+		.item { color: $colorPrimary; }
+		.item {
+            .icon.more { background-color: $colorHover; }
+        }
+    }
+
     /* MenuDataviewSort */
 
     .menu.menuDataviewSort {
