@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.listTemplate { white-space: nowrap; position: relative; }
-.listTemplate {
+.listPreviewObject { white-space: nowrap; position: relative; }
+.listPreviewObject {
 	.wrap { overflow: hidden; border-radius: 8px; }
 	.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
 

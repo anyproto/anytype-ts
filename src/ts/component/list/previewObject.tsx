@@ -56,7 +56,7 @@ class ListObjectPreview extends React.Component<Props, {}> {
 		);
 
 		return (
-			<div className="listTemplate">
+			<div className="listPreviewObject">
 				<div className="wrap">
 					<div id="scroll" className="scroll">
 						{items.map((item: any, i: number) => (

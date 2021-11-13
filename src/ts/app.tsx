@@ -43,7 +43,7 @@ import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
-import 'scss/component/list/template.scss';
+import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';

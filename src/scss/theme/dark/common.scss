@@ -85,9 +85,13 @@ html.themeDark {
         #url { color: $colorPrimary; }
     }
 
-    .listTemplate {
+    .listPreviewObject {
         .item.add { border-color: $colorLinePrimary; }
         .item:before { background: $colorHover; }
+
+        .icon.arrow { background-image: url('~img/theme/dark/arrow/template0.svg'); }
+        .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/template1.svg'); }
+        .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/template0.svg'); }
     }
 
     /* PreviewObject */
