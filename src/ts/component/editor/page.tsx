@@ -704,10 +704,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		// Select all
-		if (block.isText() && (range.from == 0) && (range.to == length)) {
+		if (block.isText()) {
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-				e.preventDefault();
-				this.onSelectAll();
+				if ((range.from == 0) && (range.to == length)) {
+					e.preventDefault();
+					this.onSelectAll();
+				} else {
+					focus.set(block.id, { from: 0, to: length });
+					focus.apply();
+				};
 			});
 		};
 
@@ -748,14 +753,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					focus.apply();
 				};
 			});
-		});
-
-		// Select all
-		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-			focus.set(block.id, { from: 0, to: length });
-			focus.apply();
-
-			//$('.focusable.c' + block.id).trigger('select');
 		});
 
 		// Open action menu
