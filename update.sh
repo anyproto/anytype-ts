@@ -33,7 +33,7 @@ if [ "$arch" = "" ]; then
 fi;
 
 mwv=`cat middleware.version`
-  
+
 version=`curl -u "$user:$token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
 
 tag=`echo $version | jq ".tag_name"`
