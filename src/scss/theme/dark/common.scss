@@ -24,7 +24,7 @@ html.themeDark {
     }
     .cover.type2.black { background-color: #000 !important; }
 
-    .empty { color: $colorTertiary; }
+    .empty, .emptyText { color: $colorTertiary; }
     .placeholder { color: $colorTertiary; }
     ::-webkit-input-placeholder { color: $colorTertiary !important; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }

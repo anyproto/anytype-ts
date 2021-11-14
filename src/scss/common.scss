@@ -108,7 +108,7 @@ html.platformWindows {
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over, .overMenu, .overPopup { overflow: hidden !important; }
-.empty { color: $colorSecondary; }
+.empty, .emptyText { color: $colorSecondary; }
 .isDone { color: $colorMediumGrey; }
 .placeholder { 
 	pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
