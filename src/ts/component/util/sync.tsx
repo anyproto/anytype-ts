@@ -29,6 +29,11 @@ const Sync = observer(class Sync extends React.Component<Props, {}> {
 	render () {
 		const { id, className, rootId, onClick } = this.props;
 		const thread = authStore.threadGet(rootId);
+		
+		if (!thread.summary) {
+			return null;
+		};
+
 		const summary = thread.summary || {};
 		const status = summary.status || I.ThreadStatus.Unknown;
 
