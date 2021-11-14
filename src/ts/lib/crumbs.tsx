@@ -12,13 +12,15 @@ const ID = 'crumbs';
 class Crumbs {
 	
 	init (): void {
-		if (!blockStore.breadcrumbs) {
+		const { breadcrumbs, recent } = blockStore;
+
+		if (!breadcrumbs) {
 			C.BlockOpenBreadcrumbs((message: any) => {
 				blockStore.breadcrumbsSet(message.blockId);
 			});
 		};
 
-		if (!blockStore.recent) {
+		if (!recent) {
 			C.BlockOpenBreadcrumbs((message: any) => {
 				blockStore.recentSet(message.blockId);
 				this.save(I.CrumbsType.Recent, this.get(I.CrumbsType.Recent));
