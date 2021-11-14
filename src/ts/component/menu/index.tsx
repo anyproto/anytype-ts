@@ -473,19 +473,13 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
 
-				if (isFixed) {
-					coords.y -= scrollTop;
-				};
-				
-				let px = Math.abs(x - coords.x);
-				let py = Math.abs(y - coords.y) + 4;
-				let w = px - 4;
+				let w = Math.abs(x - coords.x);
 				let t = '';
-				let l = coords.x + 4;
+				let l = coords.x;
 
 				if (flipX) {
 					w -= width;
-					l -= w + 8;
+					l -= w;
 					t = 'scaleX(-1)';
 				};
 
@@ -494,7 +488,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 					height: height,
 					left: l,
 					top: y,
-					clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
+					clipPath: `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`,
 					transform: t,
 					position: (isFixed ? 'fixed' : 'absolute'),
 				});
