@@ -609,7 +609,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (block.isTextCode() && (pressed == 'enter')) {
 				return;
 			};
-
+			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+				return;
+			};
 			if (menuOpen) {
 				return;
 			};
