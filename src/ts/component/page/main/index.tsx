@@ -437,6 +437,29 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	onSelect (e: any, item: any) {
 		e.stopPropagation();
 		e.persist();
+		if (e.shiftKey) {
+			const list = this.getList();
+			const idxInList = list.findIndex(block => block.id === item.id);
+			
+			if (idxInList > -1 && this.selected.length > 0) {
+				const closestSelectedIndex = this.selected
+					.map(selectedItemId => list.findIndex(block => block.id === selectedItemId))
+					.filter(idx => idx > -1)
+					.reduce(function(prev, curr) {
+						return (Math.abs(curr - idxInList) < Math.abs(prev - idxInList) ? curr : prev);
+					});
+				
+				if (isFinite(closestSelectedIndex)) {
+					// we don't add current selected element here
+					// it will be processed below
+					const itemsToSelect = (closestSelectedIndex >= idxInList) ? 
+						list.slice(idxInList + 1, closestSelectedIndex) : 
+						list.slice(closestSelectedIndex, idxInList);
+						this.selected = [...this.selected, ...itemsToSelect.map(item => item.id)]; 
+				}
+			}
+		}
+
 
 		let idx = this.selected.indexOf(item.id);
 		if (idx >= 0) {
@@ -445,6 +468,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			this.selected.push(item.id);
 		};
 
+		
+		
+		console.log(e);
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
 	};

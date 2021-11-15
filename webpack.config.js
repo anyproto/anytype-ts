@@ -11,7 +11,7 @@ module.exports = (env) => {
 	return {
 		mode: env.NODE_ENV,
 	
-		//devtool: 'source-map',
+		devtool: 'source-map',
 
 		optimization: {
 			minimize: false,
