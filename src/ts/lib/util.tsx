@@ -997,6 +997,16 @@ class Util {
 		obj.attr({ class: c.join(' ') });
 	};
 
+	findClosestElement (array: number[], goal: number) {
+		return array.reduce(
+			(prev: number, curr: number) => 
+				(Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev));
+	};
+
+	getPositiveRangeBetweenTwoValues (value1: number, value2: number) {
+		const [start, end] = (value1 >= value2) ? [value2, value1] : [value1 + 1, value2 + 1];
+		return [start, end];
+	};
 };
 
 export default new Util();
