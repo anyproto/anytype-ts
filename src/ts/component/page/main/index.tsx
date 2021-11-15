@@ -468,9 +468,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			this.selected.push(item.id);
 		};
 
-		
-		
-		console.log(e);
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
 	};
