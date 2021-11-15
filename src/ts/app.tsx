@@ -8,7 +8,7 @@ import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, po
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
-import { configure } from "mobx"
+import { configure } from "mobx";
 
 configure({ enforceActions: 'never' });
 

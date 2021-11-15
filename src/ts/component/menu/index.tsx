@@ -473,13 +473,13 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
 
-				let w = Math.abs(x - coords.x);
+				let w = Math.abs(x - coords.x) - 4;
 				let t = '';
-				let l = coords.x;
+				let l = coords.x + 4;
 
 				if (flipX) {
 					w -= width;
-					l -= w;
+					l -= w + 8;
 					t = 'scaleX(-1)';
 				};
 
