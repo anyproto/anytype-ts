@@ -997,6 +997,11 @@ class Util {
 		obj.attr({ class: c.join(' ') });
 	};
 
+	findClosestElement (array: number[], goal: number) {
+		return array.reduce((prev: number, curr: number) => {
+			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
+		});
+	};
 };
 
 export default new Util();

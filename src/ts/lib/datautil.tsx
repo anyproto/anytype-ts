@@ -1214,7 +1214,7 @@ class DataUtil {
 					value = null;
 				};
 				if (value !== null) {
-					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
+					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.eE+]*/g, '');
 					value = Number(value);
 				};
 				break;
@@ -1344,7 +1344,6 @@ class DataUtil {
 		dbStore.metaSet(rootId, blockId, meta);
 		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
 	};
-
 };
 
 export default new DataUtil();
