@@ -224,16 +224,25 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, cellPosition } = this.props;
+		const { id, relation, cellPosition, getView } = this.props;
 		const cell = $(`#${id}`);
+
+		let view = null;
+		let viewRelation: any = {};
+		
+		if (getView) {
+			view = getView();
+			viewRelation = view.getRelation(relation.relationKey);
+		};
 
 		if (isEditing) {
 			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
+				let format = [ 'd.m.Y', (viewRelation.includeTime ? 'H:i' : '') ];
 				value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
 			};
+
 			if (relation.format == I.RelationType.Number) {
 				value = DataUtil.formatRelationValue(relation, this.value, true);
 				value = value === null ? null : String(value);
@@ -330,6 +339,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
+
 			if (onChange) {
 				onChange(this.value, () => { menuStore.close(MENU_ID); });
 			};
