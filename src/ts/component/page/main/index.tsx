@@ -437,35 +437,32 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	onSelect (e: any, item: any) {
 		e.stopPropagation();
 		e.persist();
+
 		if (e.shiftKey) {
 			const list = this.getList();
-			const idxInList = list.findIndex(block => block.id === item.id);
+			const idxInList = list.findIndex(it => it.id === item.id);
 			
-			if (idxInList > -1 && this.selected.length > 0) {
-				const closestSelectedIndex = this.selected
-					.map(selectedItemId => list.findIndex(block => block.id === selectedItemId))
-					.filter(idx => idx > -1)
-					.reduce(function(prev, curr) {
-						return (Math.abs(curr - idxInList) < Math.abs(prev - idxInList) ? curr : prev);
-					});
+			if ((idxInList >= 0) && (this.selected.length > 0)) {
+				const selectedItemsIndexes = this.getSelectedListItemsIndexes();
+				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i !== idxInList)
+				const closestSelectedIdx = DataUtil.findClosestElement(selectedItemsIndexesWithoutCurrent, idxInList);
 				
-				if (isFinite(closestSelectedIndex)) {
-					// we don't add current selected element here
-					// it will be processed below
-					const itemsToSelect = (closestSelectedIndex >= idxInList) ? 
-						list.slice(idxInList + 1, closestSelectedIndex) : 
-						list.slice(closestSelectedIndex, idxInList);
-						this.selected = [...this.selected, ...itemsToSelect.map(item => item.id)]; 
-				}
-			}
-		}
+				if (isFinite(closestSelectedIdx)) {
+					const [start, end] = DataUtil.getPositiveRangeBetweenTwoValues(closestSelectedIdx, idxInList);
+					const itemIdsToSelect = list.slice(start, end)
+											  .map(item => item.id);
 
+					this.selected = [...this.selected, ...itemIdsToSelect];
+				};
+			};
 
-		let idx = this.selected.indexOf(item.id);
-		if (idx >= 0) {
-			this.selected.splice(idx, 1);
 		} else {
-			this.selected.push(item.id);
+			let idx = this.selected.indexOf(item.id);
+			if (idx >= 0) {
+				this.selected.splice(idx, 1);
+			} else {
+				this.selected.push(item.id);
+			};	
 		};
 
 		this.selected = Util.arrayUnique(this.selected);
@@ -878,8 +875,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		return list;
 	};
-
-	onClear () {
+	getSelectedListItemsIndexes() {
+		const list = this.getList();
+		const selectedItemsIndexes = this.selected.map(
+			selectedItemId => list.findIndex(it => it.id === selectedItemId)
+		);
+		const selectedItemsIndexesFound = selectedItemsIndexes.filter(idx => idx >= 0);
+		
+		return selectedItemsIndexesFound;
+	};
+	onClear () { 
 		const recent = crumbs.get(I.CrumbsType.Recent);
 		recent.ids = [];
 		crumbs.save(I.CrumbsType.Recent, recent);
