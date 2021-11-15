@@ -21,9 +21,9 @@
     }
 
     #documents {
-        .emptySearch { background: $colorBlack; }
+        .emptySearch { background: rgba(0,0,0,0.5); }
 
-        .item { background: $colorBlack; }
+        .item { background: rgba(0,0,0,0.5); }
         .item {
             .type { color: $colorSecondary; }
             .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }

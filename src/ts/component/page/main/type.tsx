@@ -547,18 +547,24 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	save () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details = [];
-		const object: any = { id: rootId };
+		const type: any = { id: rootId };
 
 		for (let id of EDITOR_IDS) {
 			const value = this.getValue(id);
+			if (value == object[id]) {
+				continue;
+			};
 
 			details.push({ key: id, value: value });
-			object[id] = value;
+			type[id] = value;
 		};
-		dbStore.objectTypeUpdate(object);
 
-		C.BlockSetDetails(rootId, details);
+		if (details.length) {
+			dbStore.objectTypeUpdate(type);
+			C.BlockSetDetails(rootId, details);
+		};
 	};
 
 	getRange (id: string) {

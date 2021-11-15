@@ -1,6 +1,5 @@
 import { observable, action, computed, set, intercept, makeObservable } from 'mobx';
 import { I, M, DataUtil, Util } from 'ts/lib';
-import children from '../component/list/children';
 
 class DbStore {
 

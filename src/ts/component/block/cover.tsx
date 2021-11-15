@@ -74,7 +74,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
-			return;
+			return null;
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
