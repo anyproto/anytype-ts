@@ -444,17 +444,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			
 			if ((idxInList >= 0) && (this.selected.length > 0)) {
 				const selectedItemsIndexes = this.getSelectedListItemsIndexes();
-				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i !== idxInList)
+				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i !== idxInList);
 				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexesWithoutCurrent, idxInList);
 				
 				if (isFinite(closestSelectedIdx)) {
-					const [start, end] = Util.getPositiveRangeBetweenTwoValues(closestSelectedIdx, idxInList);
+					const [ start, end ] = this.getSelectionRangeFromTwoIndexes(closestSelectedIdx, idxInList);
 					const itemIdsToSelect = list.slice(start, end).map(item => item.id);
 
 					this.selected = this.selected.concat(itemIdsToSelect);
 				};
 			};
-
 		} else {
 			let idx = this.selected.indexOf(item.id);
 			if (idx >= 0) {
@@ -874,17 +873,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		return list;
 	};
-	getSelectedListItemsIndexes() {
+
+	getSelectedListItemsIndexes () {
 		const list = this.getList();
-		const selectedItemsIndexes = this.selected.map(
-			selectedItemId => list.findIndex(it => it.id === selectedItemId)
-		);
-		
+		const selectedItemsIndexes = this.selected.map(selectedItemId => {
+			return list.findIndex(it => it.id === selectedItemId);
+		});
 		return selectedItemsIndexes.filter(idx => idx >= 0);
 	};
 	getSelectionRangeFromTwoIndexes(index1: number, index2: number) {
-		const [start, end] = (index1 >= index2) ? [index2, index1] : [index1 + 1, index2 + 1];
-		return [start, end];
+		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
+		return [ start, end ];
 	};
 	onClear () { 
 		const recent = crumbs.get(I.CrumbsType.Recent);

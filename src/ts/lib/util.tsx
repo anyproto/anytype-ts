@@ -998,9 +998,9 @@ class Util {
 	};
 
 	findClosestElement (array: number[], goal: number) {
-		return array.reduce(
-			(prev: number, curr: number) => 
-				(Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev));
+		return array.reduce((prev: number, curr: number) => {
+			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
+		});
 	};
 };
 
