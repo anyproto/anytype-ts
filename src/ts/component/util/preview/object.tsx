@@ -9,10 +9,11 @@ interface Props {
 	className?: string;
 	onClick? (e: any): void;
 	position?: () => void;
-}
+};
+
 interface State {
 	loading: boolean;
-}
+};
 
 const Constant = require('json/constant.json');
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
