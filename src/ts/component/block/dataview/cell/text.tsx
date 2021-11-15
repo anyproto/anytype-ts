@@ -350,10 +350,10 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		keyboard.setFocus(true);
 	};
 
-	onBlur () {
+	onBlur (e: any) {
 		let { relation, onChange, index, getRecord } = this.props;
 
-		if (!this.ref) {
+		if (!this.ref || keyboard.isBlurDisabled) {
 			return;
 		};
 
@@ -362,10 +362,6 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 		keyboard.setFocus(false);
 		this.range = null;
-
-		if (keyboard.isBlurDisabled) {
-			return;
-		};
 
 		if (relation.format == I.RelationType.Date) {
 			value = this.fixDateValue(value);

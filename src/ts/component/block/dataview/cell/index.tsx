@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, DataUtil, Util, keyboard } from 'ts/lib';
 import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
@@ -182,6 +182,7 @@ class Cell extends React.Component<Props, {}> {
 				this.ref.onClick();
 			};
 			if (menuId) {
+				keyboard.disableBlur(true);
 				$(scrollContainer).addClass('overMenu');
 			};
 
@@ -200,7 +201,9 @@ class Cell extends React.Component<Props, {}> {
 					this.ref.setEditing(false);
 				};
 			};
+
 			if (menuId) {
+				keyboard.disableBlur(false);
 				$(scrollContainer).removeClass('overMenu');
 			};
 		};
