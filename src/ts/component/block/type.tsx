@@ -222,10 +222,8 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			} else {
 				y = el.offset().top;
 			};
-
-			if (y >= h - o) {
-				container.scrollTop(y - h + o);
-			};
+			
+			container.scrollTop(Math.max(0, y - h + o));
 		};
 	};
 
