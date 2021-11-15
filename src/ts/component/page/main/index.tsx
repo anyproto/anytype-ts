@@ -881,10 +881,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		});
 		return selectedItemsIndexes.filter(idx => idx >= 0);
 	};
-	getSelectionRangeFromTwoIndexes(index1: number, index2: number) {
+
+	getSelectionRangeFromTwoIndexes (index1: number, index2: number) {
 		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
 		return [ start, end ];
 	};
+
 	onClear () { 
 		const recent = crumbs.get(I.CrumbsType.Recent);
 		recent.ids = [];
