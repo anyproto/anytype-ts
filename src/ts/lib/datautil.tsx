@@ -1344,7 +1344,6 @@ class DataUtil {
 		dbStore.metaSet(rootId, blockId, meta);
 		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
 	};
-
 };
 
 export default new DataUtil();
