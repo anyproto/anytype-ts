@@ -1214,7 +1214,7 @@ class DataUtil {
 					value = null;
 				};
 				if (value !== null) {
-					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
+					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
 					value = Number(value);
 				};
 				break;
