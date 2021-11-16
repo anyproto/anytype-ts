@@ -46,6 +46,8 @@
     .tabs { border-color: $colorLineSecondary; }
     .tabs {
         .tab:hover, .tab.active { color: $colorPrimary; }
+
+        .icon.close:hover { background-color: $colorHover; }
     }
 
     .wrapper {

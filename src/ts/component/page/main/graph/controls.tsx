@@ -52,6 +52,7 @@ const GraphControls = observer(class GraphControls extends React.Component<Props
 
     onClose () {
         this.refFilter.setValue('');
+        this.props.onFilterChange('');
     };
 
     focus () {
