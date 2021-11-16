@@ -193,6 +193,11 @@ class Cell extends React.Component<Props, {}> {
 			commonStore.cellId = '';
 			cell.removeClass('isEditing');
 
+			if (menuId) {
+				keyboard.disableBlur(false);
+				$(scrollContainer).removeClass('overMenu');
+			};
+
 			if (this.ref) {
 				if (this.ref.onBlur) {
 					this.ref.onBlur();
@@ -200,11 +205,6 @@ class Cell extends React.Component<Props, {}> {
 				if (this.ref.setEditing) {
 					this.ref.setEditing(false);
 				};
-			};
-
-			if (menuId) {
-				keyboard.disableBlur(false);
-				$(scrollContainer).removeClass('overMenu');
 			};
 		};
 
