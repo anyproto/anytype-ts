@@ -308,6 +308,11 @@ class DbStore {
     getData (rootId: string, blockId: string) {
 		return this.dataMap.get(this.getId(rootId, blockId)) || [];
 	};
+
+	getRecord (rootId: string, blockId: string, id: string) {
+		const data = this.getData(rootId, blockId);
+		return data.find((it: any) => { return it.id == id; });
+	};
 };
 
 export let dbStore: DbStore = new DbStore();

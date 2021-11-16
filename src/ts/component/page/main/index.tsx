@@ -2,12 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard } from 'ts/lib';
 import arrayMove from 'array-move';
-import { popupStore } from '../../../store';
-import { keyboard } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -20,6 +18,8 @@ interface State {
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
+
+const SUB_ID = 'index';
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
@@ -76,6 +76,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const object = detailStore.get(profile, profile, []);
 		const { name } = object;
 		const list = this.getList();
+		const length = list.length;
+
+		// Subscriptions
+		list.forEach((it: any) => {
+			const { name, iconEmoji, iconImage, type, layout, relationFormat } = it;
+		});
 	
 		let selectionButtons = [
 			{ id: 'selectAll', icon: 'all', name: 'Select all' },
@@ -364,12 +370,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe('index', filters, sorts, Constant.defaultRelationKeys, filter, 100, true, '', '', (message: any) => {
+		C.ObjectSearchSubscribe(SUB_ID, filters, sorts, Constant.defaultRelationKeys, filter, 100, true, '', '', (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			this.setState({ loading: false, pages: message.records });
+			dbStore.recordsSet(SUB_ID, '', message.records);
+			this.setState({ loading: false });
 		});
 	};
 
@@ -829,8 +836,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	getList () {
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
-		const { tab, filter, pages } = this.state;
-		
+		const { tab, filter } = this.state;
+		const records = dbStore.getData(SUB_ID, '');
+
 		let reg = null;
 		let list: any[] = [];
 		let rootId = root;
@@ -841,7 +849,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		switch (tab) {
-			default:
 			case I.TabIndex.Favorite:
 			case I.TabIndex.Recent:
 				if (tab == I.TabIndex.Recent) {
@@ -881,11 +888,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 				break;
 
-			case I.TabIndex.Archive:
-			case I.TabIndex.Set:
-			case I.TabIndex.Space:
-			case I.TabIndex.Shared:
-				list = pages;
+			default:
+				list = records;
 				break;
 		};
 

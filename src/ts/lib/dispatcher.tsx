@@ -120,6 +120,11 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWRECORDSUPDATE)	 t = 'blockDataviewRecordsUpdate';
 		if (v == V.BLOCKDATAVIEWRECORDSDELETE)	 t = 'blockDataviewRecordsDelete';
 
+		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
+		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
+		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
+		if (v == V.SUBSCRIPTIONCOUNTERS)		 t = 'subscriptionCounters';
+
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
 		if (v == V.PROCESSDONE)					 t = 'processDone';
@@ -165,15 +170,17 @@ class Dispatcher {
 		let blocks: any[] = [];
 		let id: string = '';
 		let self = this;
+		let block: any = null;
+		let details: any = null;
+		let viewId: string = '';
+		let keys: string[] = [];
+		let ids: string[] = [];
+		let subIds: string[] = [];
+		let afterId: string = '';
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
 		for (let message of messages) {
-			let block: any = null;
-			let details: any = null;
-			let viewId: string = '';
-			let keys: string[] = [];
-			let ids: string[] = [];
 			let type = this.eventType(message.getValueCase());
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
@@ -526,10 +533,16 @@ class Dispatcher {
 
 				case 'objectDetailsSet':
 					id = data.getId();
+					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
 
 					details = Decode.decodeStruct(data.getDetails());
 					detailStore.update(rootId, { id: id, details: details }, true);
+
+					// Subscriptions
+					subIds.forEach((it: string) => {
+						dbStore.recordUpdate(it, '', { ...details, id: id });
+					});
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 						blockStore.update(rootId, { id: rootId, layout: details.layout });
@@ -538,6 +551,7 @@ class Dispatcher {
 
 				case 'objectDetailsAmend':
 					id = data.getId();
+					subIds = data.getSubidsList() || [];
 					block = blockStore.getLeaf(rootId, id);
 
 					details = {};
@@ -545,6 +559,11 @@ class Dispatcher {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
 					detailStore.update(rootId, { id: id, details: details }, false);
+
+					// Subscriptions
+					subIds.forEach((it: string) => {
+						dbStore.recordUpdate(it, '', { ...details, id: id });
+					});
 
 					if ((id == rootId) && block) {
 						if ((undefined !== details.layout) && (block.layout != details.layout)) {
@@ -557,7 +576,19 @@ class Dispatcher {
 
 				case 'objectDetailsUnset':
 					id = data.getId();
+					subIds = data.getSubidsList() || [];
 					keys = data.getKeysList() || [];
+
+					// Subscriptions
+					subIds.forEach((it: string) => {
+						const record = dbStore.getRecord(it, '', id);
+						if (!record) {
+							return;
+						};
+
+						keys.forEach((key: string) => { delete(record[key]); });
+						dbStore.recordUpdate(it, '', record);
+					});
 					
 					detailStore.delete(rootId, id, keys);
 					blockStore.checkDraft(rootId);
@@ -585,6 +616,34 @@ class Dispatcher {
 					for (let key of keys) {
 						dbStore.relationDelete(rootId, id, key);
 					};
+					break;
+
+				case 'subscriptionAdd':
+					id = data.getId();
+					afterId = data.getAfterid();
+
+					console.log('subscriptionAdd', id, afterId);
+					break;
+
+				case 'subscriptionRemove':
+					id = data.getId();
+
+					console.log('subscriptionRemove', id);
+					break;
+
+				case 'subscriptionPosition':
+					id = data.getId();
+					afterId = data.getAfterid();
+
+					console.log('subscriptionPosition', id, afterId);
+					break;
+
+				case 'subscriptionCounters':
+					const total = data.getTotal();
+					const nextCount = data.getNextcount();
+					const prevCount = data.getPrevcount();
+
+					console.log('subscriptionCounters', total, nextCount, prevCount);
 					break;
 
 				case 'processNew':
