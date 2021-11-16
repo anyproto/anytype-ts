@@ -217,7 +217,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								</div>
 								<div className="side right isBlurred" onClick={this.elementUnblur}>
 									<div className="qrWrap">
-										<QRCode value={entropy} bgColor={QRColor[theme]} size="100" />
+										<QRCode value={entropy} bgColor={QRColor[theme]} size={100} />
 									</div>
 								</div>
 							</div>

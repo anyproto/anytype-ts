@@ -1042,8 +1042,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (block.isTextCode() && (pressed == 'enter')) {
 				return;
 			};
-
 			if (!block.isText() && keyboard.isFocused) {
+				return;
+			};
+			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
 				return;
 			};
 
