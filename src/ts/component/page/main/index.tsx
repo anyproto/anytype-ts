@@ -346,7 +346,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
+		C.ObjectSearchSubscribe('index', filters, sorts, Constant.defaultRelationKeys, filter, 100, true, '', '', (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};

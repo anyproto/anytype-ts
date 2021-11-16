@@ -425,6 +425,12 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
+const ObjectSearchSubscribe = (response: any) => {
+	return {
+		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+	};
+};
+
 const ObjectGraph = (response: any) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
@@ -593,6 +599,7 @@ export {
 	ObjectTypeRelationAdd,
 
 	ObjectSearch,
+	ObjectSearchSubscribe,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,

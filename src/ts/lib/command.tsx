@@ -946,6 +946,22 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request('objectSearch', request, callBack);
 };
 
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+	request.setIgnoreworkspace(ignoreWorkspace);
+	request.setAfterid(afterId);
+	request.setBeforeid(beforeId);
+
+	dispatcher.request('objectSearchSubscribe', request, callBack);
+};
+
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.RelationOptionAdd.Request();
 	
@@ -1293,6 +1309,7 @@ export {
 
 	SetCreate,
 	ObjectSearch,
+	ObjectSearchSubscribe,
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
