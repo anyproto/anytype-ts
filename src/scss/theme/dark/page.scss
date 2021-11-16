@@ -46,6 +46,8 @@
     .tabs { border-color: $colorLineSecondary; }
     .tabs {
         .tab:hover, .tab.active { color: $colorPrimary; }
+
+        .icon.close:hover { background-color: $colorHover; }
     }
 
     .wrapper {
@@ -57,6 +59,12 @@
 
         .section {
             .item { background: $colorBlack; }
+        }
+    }
+
+    .panelPreview {
+        .heading {
+            .iconObject { background: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
         }
     }
 
