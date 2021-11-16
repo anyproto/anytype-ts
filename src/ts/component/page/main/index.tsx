@@ -12,7 +12,6 @@ interface Props extends RouteComponentProps<any> {}
 interface State {
 	tab: I.TabIndex;
 	filter: string;
-	pages: any[];
 	loading: boolean;
 };
 
@@ -32,7 +31,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	state = {
 		tab: I.TabIndex.Favorite,
 		filter: '',
-		pages: [],
 		loading: false,
 	};
 
@@ -322,7 +320,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = [];
 		this.state.tab = id;	
-		this.setState({ tab: id, pages: [] });
+		this.setState({ tab: id });
 
 		Storage.set('tabIndex', id);
 		analytics.event('TabHome', { tab: tab.name });

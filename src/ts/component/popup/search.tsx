@@ -15,7 +15,6 @@ interface State {
 	pageId: string;
 	loading: boolean;
 	filter: string;
-	pages: any[];
 	n: number;
 };
 
@@ -24,6 +23,7 @@ const Constant = require('json/constant.json');
 
 const HEIGHT = 32;
 const LIMIT = 14;
+const SUB_ID = 'search';
 
 const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
@@ -32,7 +32,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		pageId: '',
 		loading: false,
 		filter: '',
-		pages: [] as any[],
 		n: 0,
 	};
 	ref: any = null;
@@ -412,7 +411,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		this.setState({ loading: true, n: -1 });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
+		C.ObjectSearchSubscribe(SUB_ID, filters, sorts, Constant.defaultRelationKeys, filter, 0, true, '', '', (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
@@ -422,27 +421,28 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.ref.focus();
 			};
 			
-			const pages = message.records;
-			this.setState({ pages: pages, loading: false });
+			dbStore.recordsSet(SUB_ID, '', message.records);
+
+			this.setState({ loading: false });
 		});
 	};
 
 	getItems () {
 		const { root } = blockStore;
-		const pages = Util.objectCopy(this.state.pages);
+		const records = Util.objectCopy(dbStore.getRecords(SUB_ID, ''));
 		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 
-		for (let page of pages) {
-			page.order = recent.findIndex((id: string) => { return id == page.id; });
+		for (let item of records) {
+			item.order = recent.findIndex((id: string) => { return id == item.id; });
 		};
 
-		pages.sort((c1: any, c2: any) => {
+		records.sort((c1: any, c2: any) => {
 			if (c1.order > c2.order) return -1;
 			if (c2.order < c1.order) return 1;
 			return 0;
 		});
 
-		return pages.map((it: any) => {
+		return records.map((it: any) => {
 			return { 
 				...it, 
 				isRoot: it.id == root, 
