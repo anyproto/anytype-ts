@@ -77,7 +77,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			return (
 				<div className="items">
 					{items.map((item: any, i: number) => (
-						<Item key={i + 1} {...item} index={i + 1} />
+						<Item key={i} {...item} index={i} />
 					))}
 				</div>
 			);
@@ -178,10 +178,11 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
+		const relation = data.relation.get();
 		
 		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.filter((it: any) => { return it != item.id; });
-		value = Util.arrayUnique(value);
+		value = DataUtil.formatRelationValue(relation, value, true);
 
 		this.n = -1;
 
@@ -195,10 +196,11 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
+		const relation = data.relation.get();
 
 		let value = DataUtil.getRelationArrayValue(data.value);
 		value = arrayMove(value, oldIndex - 1, newIndex - 1);
-		value = Util.arrayUnique(value);
+		value = DataUtil.formatRelationValue(relation, value, true);
 
 		this.props.param.data.value = value;
 		onChange(value);
