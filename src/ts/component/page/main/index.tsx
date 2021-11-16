@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
 import { popupStore } from '../../../store';
+import { keyboard } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -192,7 +193,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	componentDidMount () {
 		this._isMounted = true;
 
-		const win = $(window);
 		const tabs = this.getTabs();
 
 		crumbs.delete(I.CrumbsType.Page);
@@ -200,8 +200,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onTab(Storage.get('tabIndex') || tabs[0].id);
 		this.onScroll();
 		this.selectionRender();
-
-		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
@@ -219,9 +218,28 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 
-		$(window).unbind('scroll.page');
 		menuStore.closeAll(Constant.menuIds.index);
+	};
+
+	rebind () {
+		const win = $(window);
+
+		this.unbind();
+		win.on('keyup.page', (e: any) => { this.onKeyUp(e); });
+		win.on('scroll.page', (e: any) => { this.onScroll(); });
+	};
+
+	unbind () {
+		$(window).unbind('scroll.page keyup.page');
+	};
+
+	onKeyUp (e: any) {
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			this.selected = [];
+			this.selectionRender();
+		});
 	};
 
 	onScroll () {
