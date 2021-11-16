@@ -1210,11 +1210,11 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
+				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
 				if (value !== null) {
-					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
 					value = Number(value);
 				};
 				break;
