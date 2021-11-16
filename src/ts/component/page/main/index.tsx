@@ -227,6 +227,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
+		C.ObjectSearchUnsubscribe([ SUB_ID ]);
 	};
 
 	rebind () {
@@ -572,11 +573,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
-				onConfirm: () => {
-					C.ObjectListDelete(ids, () => {
-						this.load();
-					});
-				}
+				onConfirm: () => { C.ObjectListDelete(ids); }
 			},
 		});
 	};

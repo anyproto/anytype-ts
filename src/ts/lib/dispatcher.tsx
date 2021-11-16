@@ -642,6 +642,8 @@ class Dispatcher {
 				case 'subscriptionRemove':
 					id = data.getId();
 					dbStore.recordDelete(rootId, '', id);
+
+					console.log('subscriptionRemove', rootId, id);
 					break;
 
 				case 'subscriptionPosition':

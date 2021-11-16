@@ -949,6 +949,10 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
+
 	request.setSubid(subId);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
@@ -960,6 +964,14 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setBeforeid(beforeId);
 
 	dispatcher.request('objectSearchSubscribe', request, callBack);
+};
+
+const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchUnsubscribe.Request();
+
+	request.setSubidsList(subIds);
+
+	dispatcher.request('objectSearchUnsubscribe', request, callBack);
 };
 
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
@@ -1308,8 +1320,6 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
-	ObjectSearch,
-	ObjectSearchSubscribe,
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
@@ -1326,6 +1336,10 @@ export {
 	ObjectToSet,
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
+
+	ObjectSearch,
+	ObjectSearchSubscribe,
+	ObjectSearchUnsubscribe,
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,
