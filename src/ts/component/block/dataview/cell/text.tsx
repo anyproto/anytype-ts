@@ -80,7 +80,13 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			} else 
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
-				let ph = [ 'dd.mm.yyyy' ];
+				let ph = [];
+
+				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
+					ph.push('mm.dd.yyyy');
+				} else {
+					ph.push('dd.mm.yyyy');
+				};
 				
 				if (viewRelation.includeTime) {
 					mask.push('99:99');
@@ -239,7 +245,17 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [ 'd.m.Y', (viewRelation.includeTime ? 'H:i' : '') ];
+				let format = [];
+				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
+					format.push('m.d.Y');
+				} else {
+					format.push('d.m.Y');
+				};
+
+				if (viewRelation.includeTime) {
+					format.push('H:i');
+				};
+
 				value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
 			};
 
@@ -381,8 +397,18 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	fixDateValue (v: any) {
+		const { relation, getView } = this.props;
+
+		let view = null;
+		let viewRelation: any = {};
+
+		if (getView) {
+			view = getView();
+			viewRelation = view.getRelation(relation.relationKey);
+		};
+
 		v = String(v || '').replace(/_/g, '');
-		return v ? Util.parseDate(v) : null;
+		return v ? Util.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
 	onIconSelect (icon: string) {
