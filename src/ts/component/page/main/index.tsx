@@ -458,11 +458,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (e.shiftKey) {
 			const list = this.getList();
-			const idxInList = list.findIndex(it => it.id === item.id);
+			const idxInList = list.findIndex(it => it.id == item.id);
 			
 			if ((idxInList >= 0) && (this.selected.length > 0)) {
 				const selectedItemsIndexes = this.getSelectedListItemsIndexes();
-				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i !== idxInList);
+				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i != idxInList);
 				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexesWithoutCurrent, idxInList);
 				
 				if (isFinite(closestSelectedIdx)) {

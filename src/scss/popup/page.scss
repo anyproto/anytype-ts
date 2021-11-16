@@ -35,3 +35,14 @@
 
 	}	
 }
+
+html.platformMac {
+	.popups {
+		.popup.popupPage {
+			.pageMainEdit {
+				.content { padding-top: 52px; }
+				.block.blockCover { top: 52px; }
+			}	
+		}
+	}
+}

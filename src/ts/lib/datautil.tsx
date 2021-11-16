@@ -1217,6 +1217,9 @@ class DataUtil {
 				if (value !== null) {
 					value = Number(value);
 				};
+				if (isNaN(value)) {
+					value = null;
+				};
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {
