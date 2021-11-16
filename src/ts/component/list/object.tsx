@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
 import { IconObject, Pager } from 'ts/component';
-import { detailStore, dbStore } from 'ts/store';
+import { detailStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
 	blockId: string;
-}
+};
 
 const Constant = require('json/constant.json');
 
@@ -127,12 +127,22 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		);
 	};
 
+	componentDidMount () {
+		const { rootId, blockId } = this.props;
+		const views = dbStore.getViews(rootId, blockId);
+
+		if (views.length) {
+			this.getData(views[0].id, 0);
+		};
+	};
+
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, blockId } = this.props;
 		const meta: any = { offset: offset };
 
 		dbStore.metaSet(rootId, blockId, meta);
 		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, Constant.limit.dataview.records, callBack);
+		//C.ObjectSearchSubscribe([ 'listObject', rootId, blockId ].join('-'), view.filters, view.sorts, Constant.defaultRelationKeys, '', Constant.limit.dataview.records, true, '', '', callBack);
 	};
 
 });

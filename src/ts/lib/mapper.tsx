@@ -154,7 +154,7 @@ const Mapper = {
 	
 			if (type == I.BlockType.Dataview) {
 				item.content = {
-					//sources: content.getSourceList(),
+					sources: content.getSourceList(),
 					views: (content.getViewsList() || []).map(Mapper.From.View),
 					relations: (content.getRelationsList() || []).map(Mapper.From.Relation),
 				};

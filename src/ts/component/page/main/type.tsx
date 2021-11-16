@@ -304,7 +304,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
-			this.getDataviewData(BLOCK_ID_OBJECT, 50);
 			this.getDataviewData(BLOCK_ID_TEMPLATE, 0);
 
 			this.loading = false;
