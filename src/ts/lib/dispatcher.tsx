@@ -11,7 +11,19 @@ const path = require('path');
 const Constant = require('json/constant.json');
 const { app, getGlobal } = window.require('@electron/remote');
 
-const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds', 'objectDetailsSet', 'objectDetailsAmend', 'objectDetailsUnset', 'subscriptionAdd', 'subscriptionRemove', 'subscriptionPosition', 'subscriptionCounters' ];
+const SORT_IDS = [ 
+	'objectShow', 
+	'blockAdd', 
+	'blockDelete', 
+	'blockSetChildrenIds', 
+	'objectDetailsSet', 
+	'objectDetailsAmend', 
+	'objectDetailsUnset', 
+	'subscriptionAdd', 
+	'subscriptionRemove', 
+	'subscriptionPosition', 
+	'subscriptionCounters',
+];
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
 /// #if USE_ADDON
@@ -545,7 +557,7 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
-						dbStore.recordUpdate(it, '', { ...details, id: id });
+						dbStore.recordAdd(it, '', { ...details, id: id }, -1);
 					});
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
@@ -566,7 +578,12 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
-						dbStore.recordUpdate(it, '', { ...details, id: id });
+						const record = dbStore.getRecord(it, '', id);
+						if (record) {
+							dbStore.recordUpdate(it, '', { ...details, id: id });
+						} else {
+							dbStore.recordAdd(it, '', { ...details, id: id }, -1);
+						};
 					});
 
 					if ((id == rootId) && block) {
@@ -634,16 +651,12 @@ class Dispatcher {
 						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
 					};
 
-					if (oldIndex != newIndex) {
-						dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
-					};
+					dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
 					break;
 
 				case 'subscriptionRemove':
 					id = data.getId();
 					dbStore.recordDelete(rootId, '', id);
-
-					console.log('subscriptionRemove', rootId, id);
 					break;
 
 				case 'subscriptionPosition':
@@ -668,9 +681,7 @@ class Dispatcher {
 					const nextCount = data.getNextcount();
 					const prevCount = data.getPrevcount();
 
-					dbStore.metaSet(rootId, '', { total: total });
-
-					console.log('subscriptionCounters', total, nextCount, prevCount);
+					dbStore.metaSet(rootId, '', { total: total, offset: prevCount });
 					break;
 
 				case 'processNew':
@@ -710,17 +721,11 @@ class Dispatcher {
 	};
 
 	sort (c1: any, c2: any) {
-		let type1 = this.eventType(c1.getValueCase());
-		let type2 = this.eventType(c2.getValueCase());
+		let idx1 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c1.getValueCase()); });
+		let idx2 = SORT_IDS.findIndex((it: string) => { return it == this.eventType(c2.getValueCase()); });
 
-		for (let id of SORT_IDS) {
-			if ((type1 == id) && (type2 != id)) {
-				return -1;
-			};
-			if ((type2 == id) && (type1 != id)) {
-				return 1;
-			};
-		};
+		if (idx1 > idx2) return 1;
+		if (idx1 < idx2) return -1;
 		return 0;
 	};
 

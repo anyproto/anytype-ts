@@ -592,7 +592,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
 				};
 			});
-			this.load();
 		});
 	};
 
@@ -602,7 +601,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selected = [];
 		this.selectionRender();
 
-		C.ObjectListSetIsFavorite(ids, v, this.load);
+		C.ObjectListSetIsFavorite(ids, v);
 	};
 
 	onSelectionAll () {
@@ -621,18 +620,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store }, {
-			onClose: () => { this.load(); }
-		});
+		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
 	};
 	
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
-			this.load();
-
-			DataUtil.objectOpenPopup({ id: message.targetId }, {
-				onClose: () => { this.load(); }
-			});
+			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 
