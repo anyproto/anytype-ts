@@ -20,10 +20,10 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, getData, getView, isPopup, readonly, onRowAdd } = this.props;
 		const view = getView();
-		const data = dbStore.getData(rootId, block.id);
+		const records = dbStore.getRecords(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const length = data.length;
+		const length = records.length;
 
 		return (
 			<div className="wrap">
@@ -39,7 +39,7 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 											height={Number(height) || 0}
 											width={Number(width) || 0}
 											isScrolling={isScrolling}
-											rowCount={data.length}
+											rowCount={records.length}
 											rowHeight={HEIGHT}
 											rowRenderer={({ key, index, style }) => (
 												<div className="listItem" key={key} style={style}>

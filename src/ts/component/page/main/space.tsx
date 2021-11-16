@@ -66,7 +66,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const highlighted = dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED);
+		const highlighted = dbStore.getRecords(rootId, BLOCK_ID_HIGHLIGHTED);
 
 		if (object.name == DataUtil.defaultName('page')) {
 			object.name = '';
@@ -135,7 +135,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 							<div className="content">
 								<ListObjectPreview 
 									key="listTemplate"
-									getItems={() => { return dbStore.getData(rootId, BLOCK_ID_HIGHLIGHTED); }}
+									getItems={() => { return dbStore.getRecords(rootId, BLOCK_ID_HIGHLIGHTED); }}
 									canAdd={false}
 									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
 								/>

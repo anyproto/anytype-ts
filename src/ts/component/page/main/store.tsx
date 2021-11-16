@@ -392,7 +392,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	getItems () {
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
-		const data = Util.objectCopy(dbStore.getData(rootId, BLOCK_ID)).map((it: any) => {
+		const records = Util.objectCopy(dbStore.getRecords(rootId, BLOCK_ID)).map((it: any) => {
 			it.name = String(it.name || DataUtil.defaultName('page'));
 			return it;
 		});
@@ -402,9 +402,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		];
 		let n = 0;
 		let row = { children: [] };
-		for (let i = 0; i < data.length; ++i) {
-			const item = data[i];
 
+		for (let item of records) {
 			row.children.push(item);
 
 			n++;

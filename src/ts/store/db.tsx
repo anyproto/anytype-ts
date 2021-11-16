@@ -243,18 +243,18 @@ class DbStore {
 	};
 
     recordAdd (rootId: string, blockId: string, obj: any, dir: number): number {
-		const data = this.getData(rootId, blockId);
+		const records = this.getRecords(rootId, blockId);
 		
 		obj = observable(obj);
 		intercept(obj as any, (change: any) => { return Util.intercept(obj, change); });
 
-		dir > 0 ? data.push(obj) : data.unshift(obj);
-		return dir > 0 ? data.length - 1 : 0;
+		dir > 0 ? records.push(obj) : records.unshift(obj);
+		return dir > 0 ? records.length - 1 : 0;
 	};
 
     recordUpdate (rootId: string, blockId: string, obj: any) {
-		const data = this.getData(rootId, blockId);
-		const record = data.find((it: any) => { return it.id == obj.id; });
+		const records = this.getRecords(rootId, blockId);
+		const record = records.find((it: any) => { return it.id == obj.id; });
 		if (!record) {
 			return;
 		};
@@ -263,10 +263,10 @@ class DbStore {
 	};
 
     recordDelete (rootId: string, blockId: string, id: string) {
-		let data = this.getData(rootId, blockId);
-		data = data.filter((it: any) => { return it.id != id; });
+		let records = this.getRecords(rootId, blockId);
+		records = records.filter((it: any) => { return it.id != id; });
 
-		this.dataMap.set(this.getId(rootId, blockId), data);
+		this.dataMap.set(this.getId(rootId, blockId), records);
 	};
 
     getId (rootId: string, blockId: string) {
@@ -305,13 +305,13 @@ class DbStore {
 		return this.metaMap.get(this.getId(rootId, blockId)) || {};
 	};
 
-    getData (rootId: string, blockId: string) {
+    getRecords (rootId: string, blockId: string) {
 		return this.dataMap.get(this.getId(rootId, blockId)) || [];
 	};
 
 	getRecord (rootId: string, blockId: string, id: string) {
-		const data = this.getData(rootId, blockId);
-		return data.find((it: any) => { return it.id == id; });
+		const records = this.getRecords(rootId, blockId);
+		return records.find((it: any) => { return it.id == id; });
 	};
 };
 

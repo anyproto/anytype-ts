@@ -77,7 +77,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			description: 'Add a description',
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
-		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
+		const templates = dbStore.getRecords(rootId, BLOCK_ID_TEMPLATE);
 		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
@@ -186,7 +186,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={(ref: any) => { this.refListPreview = ref; }}
-										getItems={() => { return dbStore.getData(rootId, BLOCK_ID_TEMPLATE); }}
+										getItems={() => { return dbStore.getRecords(rootId, BLOCK_ID_TEMPLATE); }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
@@ -272,9 +272,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	componentWillUnmount () {
-		const rootId = this.getRootId();
-		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
-
 		this._isMounted = false;
 		this.close();
 

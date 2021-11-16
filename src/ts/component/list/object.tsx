@@ -18,7 +18,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	
 	render () {
 		const { rootId, blockId } = this.props;
-		const items = Util.objectCopy(dbStore.getData(rootId, blockId)).map((it: any) => {
+		const records = Util.objectCopy(dbStore.getRecords(rootId, blockId)).map((it: any) => {
 			it.name = String(it.name || DataUtil.defaultName('page'));
 			return it;
 		});
@@ -26,7 +26,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		const isFileType = [ Constant.typeId.file, Constant.typeId.image ].indexOf(rootId) >= 0;
 
 		let pager = null;
-		if (total && items.length) {
+		if (total && records.length) {
 			pager = (
 				<Pager 
 					offset={offset} 
@@ -108,13 +108,13 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 						</tr>
 					</thead>
 					<tbody>
-						{!items.length ? (
+						{!records.length ? (
 							<tr>
 								<td className="cell empty" colSpan={3}>No objects yet</td>
 							</tr>
 						) : (
 							<React.Fragment>
-								{items.map((item: any, i: number) => (
+								{records.map((item: any, i: number) => (
 									<Row key={i} {...item} />
 								))}
 							</React.Fragment>

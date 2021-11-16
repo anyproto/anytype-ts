@@ -26,7 +26,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const { rootId, block, groupId, getView, onAdd, list, columnId, value } = this.props;
 		const view = getView();
 		const group = view.getRelation(groupId);
-		const data = dbStore.getData(rootId, block.id);
+		const records = dbStore.getRecords(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
 
 		const Add = (item: any) => (

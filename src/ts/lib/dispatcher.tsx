@@ -2,6 +2,7 @@ import { authStore, commonStore, blockStore, detailStore, dbStore } from 'ts/sto
 import { Util, I, M, Decode, translate, analytics, Response, Mapper } from 'ts/lib';
 import * as Sentry from '@sentry/browser';
 import { crumbs } from '.';
+import arrayMove from 'array-move';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
 const Commands = require('lib/pb/protos/commands_pb');
@@ -10,7 +11,7 @@ const path = require('path');
 const Constant = require('json/constant.json');
 const { app, getGlobal } = window.require('@electron/remote');
 
-const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds' ];
+const SORT_IDS = [ 'objectShow', 'blockAdd', 'blockDelete', 'blockSetChildrenIds', 'objectDetailsSet', 'objectDetailsAmend', 'objectDetailsUnset', 'subscriptionAdd', 'subscriptionRemove', 'subscriptionPosition', 'subscriptionCounters' ];
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
 /// #if USE_ADDON
@@ -177,6 +178,9 @@ class Dispatcher {
 		let ids: string[] = [];
 		let subIds: string[] = [];
 		let afterId: string = '';
+		let records: any[] = [];
+		let oldIndex: number = 0;
+		let newIndex: number = 0;
 
 		messages.sort((c1: any, c2: any) => { return self.sort(c1, c2); });
 
@@ -622,26 +626,47 @@ class Dispatcher {
 					id = data.getId();
 					afterId = data.getAfterid();
 
-					console.log('subscriptionAdd', id, afterId);
+					records = dbStore.getRecords(rootId, '');
+					oldIndex = records.findIndex((it: any) => { return it.id == id; });
+					newIndex = 0;
+
+					if (afterId) {
+						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+					};
+
+					if (oldIndex != newIndex) {
+						dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
+					};
 					break;
 
 				case 'subscriptionRemove':
 					id = data.getId();
-
-					console.log('subscriptionRemove', id);
+					dbStore.recordDelete(rootId, '', id);
 					break;
 
 				case 'subscriptionPosition':
 					id = data.getId();
 					afterId = data.getAfterid();
 
-					console.log('subscriptionPosition', id, afterId);
+					records = dbStore.getRecords(rootId, '');
+					oldIndex = records.findIndex((it: any) => { return it.id == id; });
+					newIndex = 0;
+
+					if (afterId) {
+						newIndex = records.findIndex((it: any) => { return it.id == afterId; });
+					};
+
+					if (oldIndex != newIndex) {
+						dbStore.recordsSet(rootId, '', arrayMove(records, oldIndex, newIndex));
+					};
 					break;
 
 				case 'subscriptionCounters':
 					const total = data.getTotal();
 					const nextCount = data.getNextcount();
 					const prevCount = data.getPrevcount();
+
+					dbStore.metaSet(rootId, '', { total: total });
 
 					console.log('subscriptionCounters', total, nextCount, prevCount);
 					break;

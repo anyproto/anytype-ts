@@ -172,13 +172,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
-		const data = dbStore.getData(rootId, block.id);
+		const records = dbStore.getRecords(rootId, block.id);
 
-		if (index > data.length - 1) {
+		if (index > records.length - 1) {
 			return {};
 		};
 
-		const item = data[index] || {};
+		const item = records[index] || {};
 		
 		let name = item.name;
 		let isReadonly = item.isReadonly;
@@ -318,8 +318,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const data = dbStore.getData(rootId, block.id);
-		const record = data.find((it: any) => { return it.id == id; });
+		const record = dbStore.getRecord(rootId, block.id, id);
 
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;

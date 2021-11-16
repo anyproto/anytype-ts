@@ -837,7 +837,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter } = this.state;
-		const records = dbStore.getData(SUB_ID, '');
+		const records = dbStore.getRecords(SUB_ID, '');
 
 		let reg = null;
 		let list: any[] = [];
