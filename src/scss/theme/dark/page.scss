@@ -62,6 +62,12 @@
         }
     }
 
+    .panelPreview {
+        .heading {
+            .iconObject { background: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+        }
+    }
+
     .footer {
         .icon { background-color: $colorBgIcon; }
     }
