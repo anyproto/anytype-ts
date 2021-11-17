@@ -150,8 +150,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 					ipcRenderer.send('pathOpen', message.path);
 				};
 			});
-
-			//ipcRenderer.send('urlOpen', commonStore.fileUrl(hash));
 		};
 	};
 	
