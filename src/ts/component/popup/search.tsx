@@ -428,20 +428,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	getItems () {
 		const { root } = blockStore;
-		const records = Util.objectCopy(dbStore.getRecords(Constant.subIds.search, ''));
-		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 
-		for (let item of records) {
-			item.order = recent.findIndex((id: string) => { return id == item.id; });
-		};
-
-		records.sort((c1: any, c2: any) => {
-			if (c1.order > c2.order) return -1;
-			if (c2.order < c1.order) return 1;
-			return 0;
-		});
-
-		return records.map((it: any) => {
+		return dbStore.getRecords(Constant.subIds.search, '').map((it: any) => {
 			const object = detailStore.get(Constant.subIds.search, it.id);
 			return { 
 				...object, 
