@@ -65,14 +65,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			</div>
 		);
 
-		let iconHome = (
-			<div className="iconObject c20">
-				<div className="iconEmoji c18">
-					<Icon className="home" />
-				</div>
-			</div>
-		);
-
 		const Item = (item: any) => {
 			let type = dbStore.getObjectType(item.type);
 			let description = item.description;
@@ -91,7 +83,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					onMouseOver={(e: any) => { this.onOver(e, item); }} 
 					onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
+					<IconObject object={item} size={18} />
 					
 					<div className="name">{name}</div>
 
