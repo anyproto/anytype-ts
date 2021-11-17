@@ -377,7 +377,8 @@ drawNode = (d) => {
 		};
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
-	} else if (isHumanLayoutType(d)) {
+	} else 
+	if (isHumanLayoutType(d)) {
 		nameCircleIcon(d);
 	};
 
