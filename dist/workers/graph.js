@@ -27,34 +27,6 @@ let theme = '';
 let Color = {};
 let LineWidth = 0.25;
 
-// Graph utils
-const isHumanLayoutType = (d) => {
-	// 1 -- Human layout type
-	return d.layout === 1;
-};
-
-const isTaskLayoutType = (d) => {
-	// 2 -- Task layout type
-	return d.layout === 2;
-};
-
-const isCustomIconLayoutType = (d) => {
-	return isHumanLayoutType(d) || isTaskLayoutType(d);
-};
-
-const nameCircleIcon = (d, ctx) => {
-	// Get First upper char
-	const name = d.name.trim().substr(0, 1).toUpperCase();
-	
-	ctx.save();
-	ctx.font = baseFontStyle;  
-	ctx.fillStyle = Color.iconText;
-	ctx.textAlign = 'center';
-	ctx.textBaseline =  "middle";
-	ctx.fillText(name, d.x, d.y);
-	ctx.restore();
-};
-
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
 		this[data.id](data); 
@@ -381,7 +353,7 @@ drawNode = (d) => {
 			x = d.x - d.radius;
 			y = d.y - d.radius;
 	
-			if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+			if (isCustomIconLayoutType(d)) {
 				ctx.beginPath();
 				ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 				ctx.closePath();
@@ -406,7 +378,7 @@ drawNode = (d) => {
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	} else if (isHumanLayoutType(d)) {
-		nameCircleIcon(d, ctx);
+		nameCircleIcon(d);
 	};
 
 	ctx.restore();
@@ -501,4 +473,33 @@ resize = (data) => {
 onResize = (data) => {
 	resize(data);
 	redraw();
+};
+
+
+// Graph utils
+const isHumanLayoutType = (d) => {
+	// 1 -- Human layout type
+	return d.layout == 1;
+};
+
+const isTaskLayoutType = (d) => {
+	// 2 -- Task layout type
+	return d.layout == 2;
+};
+
+const isCustomIconLayoutType = (d) => {
+	return isHumanLayoutType(d) || isTaskLayoutType(d);
+};
+
+const nameCircleIcon = (d) => {
+	// Get First upper char
+	const name = d.name.trim().substr(0, 1).toUpperCase();
+	
+	ctx.save();
+	ctx.font = baseFontStyle;  
+	ctx.fillStyle = Color.iconText;
+	ctx.textAlign = 'center';
+	ctx.textBaseline =  "middle";
+	ctx.fillText(name, d.x, d.y);
+	ctx.restore();
 };
