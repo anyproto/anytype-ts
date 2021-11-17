@@ -18,8 +18,6 @@ interface State {
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
-const SUB_ID = 'index';
-
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
@@ -71,7 +69,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const object = detailStore.get(profile, profile, []);
+		const object = dbStore.getRecord(Constant.subIds.profile, '', profile);
 		const { name } = object;
 		const list = this.getList();
 		const length = list.length;
@@ -225,7 +223,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
-		C.ObjectSearchUnsubscribe([ SUB_ID ]);
+		C.ObjectSearchUnsubscribe([ Constant.subIds.index ]);
 	};
 
 	rebind () {
@@ -369,12 +367,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(SUB_ID, filters, sorts, Constant.defaultRelationKeys, filter, 100, true, '', '', (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, filter, 100, true, '', '', (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			dbStore.recordsSet(SUB_ID, '', message.records);
+			dbStore.recordsSet(Constant.subIds.index, '', message.records);
 			this.setState({ loading: false });
 		});
 	};
@@ -433,8 +431,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = detailStore.get(profile, profile, []);
+		const object = dbStore.getRecord(Constant.subIds.profile, '', profile);
 
+		console.log(object);
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
@@ -825,7 +824,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
 		const { tab, filter } = this.state;
-		const records = dbStore.getRecords(SUB_ID, '');
+		const records = dbStore.getRecords(Constant.subIds.index, '');
 
 		let reg = null;
 		let list: any[] = [];

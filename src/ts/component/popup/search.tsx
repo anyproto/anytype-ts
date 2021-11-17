@@ -23,7 +23,6 @@ const Constant = require('json/constant.json');
 
 const HEIGHT = 32;
 const LIMIT = 14;
-const SUB_ID = 'search';
 
 const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
@@ -411,7 +410,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		this.setState({ loading: true, n: -1 });
 
-		C.ObjectSearchSubscribe(SUB_ID, filters, sorts, Constant.defaultRelationKeys, filter, 0, true, '', '', (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.search, filters, sorts, Constant.defaultRelationKeys, filter, 0, true, '', '', (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
@@ -421,7 +420,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.ref.focus();
 			};
 			
-			dbStore.recordsSet(SUB_ID, '', message.records);
+			dbStore.recordsSet(Constant.subIds.search, '', message.records);
 
 			this.setState({ loading: false });
 		});
@@ -429,7 +428,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 	getItems () {
 		const { root } = blockStore;
-		const records = Util.objectCopy(dbStore.getRecords(SUB_ID, ''));
+		const records = Util.objectCopy(dbStore.getRecords(Constant.subIds.search, ''));
 		const recent = crumbs.get(I.CrumbsType.Recent).ids;
 
 		for (let item of records) {

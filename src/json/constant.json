@@ -47,6 +47,12 @@
 		}
 	},
 
+	"subIds": {
+		"index": "index",
+		"search": "search",
+		"profile": "profile"
+	},
+
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
