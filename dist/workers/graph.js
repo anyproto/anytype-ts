@@ -365,7 +365,7 @@ drawNode = (d) => {
 	ctx.fillStyle = bg;
 	ctx.fill();
 
-	if (forceProps.labels && d.textBitmap && (transform.k > 1.5) ) {
+	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
 		const h = 5;
 		const div = 6.25;
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
@@ -405,8 +405,7 @@ drawNode = (d) => {
 		};
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
-	} 
-	else if (isHumanLayoutType(d)) {
+	} else if (isHumanLayoutType(d)) {
 		nameCircleIcon(d, ctx);
 	};
 
