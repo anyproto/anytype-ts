@@ -475,23 +475,23 @@ onResize = (data) => {
 	redraw();
 };
 
-
 // Graph utils
+
+// 1 - Human layout type
 const isHumanLayoutType = (d) => {
-	// 1 -- Human layout type
-	return d.layout == 1;
+	return d.layout === 1;
 };
 
+// 2 - Task layout type
 const isTaskLayoutType = (d) => {
-	// 2 -- Task layout type
-	return d.layout == 2;
+	return d.layout === 2;
 };
 
 const isCustomIconLayoutType = (d) => {
 	return isHumanLayoutType(d) || isTaskLayoutType(d);
 };
 
-const nameCircleIcon = (d) => {
+const nameCircleIcon = (d, ctx) => {
 	// Get First upper char
 	const name = d.name.trim().substr(0, 1).toUpperCase();
 	
@@ -499,7 +499,7 @@ const nameCircleIcon = (d) => {
 	ctx.font = baseFontStyle;  
 	ctx.fillStyle = Color.iconText;
 	ctx.textAlign = 'center';
-	ctx.textBaseline =  "middle";
+	ctx.textBaseline = 'middle';
 	ctx.fillText(name, d.x, d.y);
 	ctx.restore();
 };

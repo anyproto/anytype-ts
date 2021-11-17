@@ -329,7 +329,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
 				};
 				break;
-
+				
+			case I.ObjectLayout.Human:
+				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
+				break;
+				
 			default:
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 160);
@@ -344,7 +348,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 		};
 
-		if (!src) {
+		if (!src && d.layout !== I.ObjectLayout.Human) {
 			src = 'img/icon/page.svg';
 		};
 		return src;
