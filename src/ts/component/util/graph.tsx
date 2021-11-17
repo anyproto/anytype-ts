@@ -345,12 +345,13 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					};
 					src = src.replace(/^.\//, '');
 				};
+		
+				if (!src) {
+					src = 'img/icon/page.svg';
+				};		
 				break;
 		};
 
-		if (!src && d.layout !== I.ObjectLayout.Human) {
-			src = 'img/icon/page.svg';
-		};
 		return src;
 	};
 
