@@ -242,8 +242,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
+		C.ObjectSearchUnsubscribe(Constant.subIds.search);
 	};
 
 	rebind () {
@@ -420,8 +422,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.ref.focus();
 			};
 			
-			dbStore.recordsSet(Constant.subIds.search, '', message.records);
-
 			this.setState({ loading: false });
 		});
 	};
@@ -442,10 +442,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		});
 
 		return records.map((it: any) => {
+			const object = detailStore.get(Constant.subIds.search, it.id);
 			return { 
-				...it, 
+				...object, 
 				isRoot: it.id == root, 
-				name: String(it.name || '') 
 			};
 		});
 	};

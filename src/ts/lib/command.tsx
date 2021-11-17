@@ -1,4 +1,5 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
+import { dbStore, detailStore } from 'ts/store';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -963,7 +964,22 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
 
-	dispatcher.request('objectSearchSubscribe', request, callBack);
+	const cb = (message: any) => {
+		if (message.records.length) {
+			dbStore.recordsSet(subId, '', message.records.map((it: any) => { 
+				return { id: it.id }; 
+			}));
+			detailStore.set(subId, message.records.map((it: any) => { 
+				return { id: it.id, details: it }; 
+			}));
+		};
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectSearchSubscribe', request, cb);
 };
 
 const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {

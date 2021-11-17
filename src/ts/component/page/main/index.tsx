@@ -69,7 +69,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const object = dbStore.getRecord(Constant.subIds.profile, '', profile);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 		const { name } = object;
 		const list = this.getList();
 		const length = list.length;
@@ -372,7 +372,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				return;
 			};
 
-			dbStore.recordsSet(Constant.subIds.index, '', message.records);
 			this.setState({ loading: false });
 		});
 	};
@@ -431,9 +430,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = dbStore.getRecord(Constant.subIds.profile, '', profile);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 
-		console.log(object);
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
@@ -876,7 +874,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				break;
 
 			default:
-				list = records;
+				list = records.map((it: any) => {
+					return detailStore.get(Constant.subIds.index, it.id);
+				});
 				break;
 		};
 

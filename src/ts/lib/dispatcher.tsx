@@ -557,7 +557,8 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
-						dbStore.recordAdd(it, '', { ...details, id: id }, -1);
+						dbStore.recordAdd(it, '', { id: id }, -1);
+						detailStore.update(it, { id: id, details: details }, true);
 					});
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
@@ -579,11 +580,10 @@ class Dispatcher {
 					// Subscriptions
 					subIds.forEach((it: string) => {
 						const record = dbStore.getRecord(it, '', id);
-						if (record) {
-							dbStore.recordUpdate(it, '', { ...details, id: id });
-						} else {
-							dbStore.recordAdd(it, '', { ...details, id: id }, -1);
+						if (!record) {
+							dbStore.recordAdd(it, '', { id: id }, -1);
 						};
+						detailStore.update(it, { id: id, details: details }, false);
 					});
 
 					if ((id == rootId) && block) {
