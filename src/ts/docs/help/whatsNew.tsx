@@ -30,6 +30,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `The carriage shows at the beginning of a line in a Date relation with a non-empty value` },
 	{ style: I.TextStyle.Bulleted, text: `Text set into relation with format Number gets set as zero` },
 	{ style: I.TextStyle.Bulleted, text: `Deleted objects are no longer shown in navigation. Thanks, michaellw` },
+	{ style: I.TextStyle.Bulleted, text: `Sorting of Object relation prevented relation from further editing` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
