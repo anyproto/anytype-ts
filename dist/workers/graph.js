@@ -343,7 +343,7 @@ drawNode = (d) => {
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
 	};
 
-	if (img && !isCustomIconLayoutType(d)) {
+	if (img) {
 		let x = d.x - d.radius / 2;
 		let y = d.y - d.radius / 2;
 		let w = d.radius;
@@ -491,7 +491,7 @@ const isCustomIconLayoutType = (d) => {
 	return isHumanLayoutType(d) || isTaskLayoutType(d);
 };
 
-const nameCircleIcon = (d, ctx) => {
+const nameCircleIcon = (d) => {
 	// Get First upper char
 	const name = d.name.trim().substr(0, 1).toUpperCase();
 	
