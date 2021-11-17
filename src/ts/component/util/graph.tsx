@@ -127,6 +127,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
+			d.name = SmileUtil.strip(d.name);
 			d.shortName = Util.shorten(d.name, 16);
 			d.radius = Math.max(3, Math.min(10, sourceCnt + targetCnt));
 			d.isRoot = d.id == rootId;
@@ -270,7 +271,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	};
 
 	onZoom ({ transform }) {
-		Storage.set('graph', { transform });
+		// Temporary disable saving, as for opening small graphs
+		// after big one we don't center it well
+		// and keep negative coordinates. 
+		// Storage.set('graph', { transform });
 		this.send('onZoom', { transform: transform });
   	};
 
@@ -325,7 +329,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
 				};
 				break;
-
+				
+			case I.ObjectLayout.Human:
+				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
+				break;
+				
 			default:
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 160);
@@ -337,12 +345,13 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					};
 					src = src.replace(/^.\//, '');
 				};
+		
+				if (!src) {
+					src = 'img/icon/page.svg';
+				};		
 				break;
 		};
 
-		if (!src) {
-			src = 'img/icon/page.svg';
-		};
 		return src;
 	};
 
