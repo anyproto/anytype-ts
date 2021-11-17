@@ -6,7 +6,34 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Deletion. Note type. Darkmode` },
+	{ style: I.TextStyle.Title, text: `Updates for 17 November, 2021` },
+
+	{ style: I.TextStyle.Header2, text: `Enhancements` },
+	{ style: I.TextStyle.Bulleted, text: `You can use <span class="highlight">Shift</span> to select a range of items on Dashboard tabs. Thanks, sahilstudio` },
+	{ style: I.TextStyle.Bulleted, text: `Refactoring of the transition area in submenus. Menus with submenus should become more responsive.` },
+
+	{ style: I.TextStyle.Header2, text: `Bugs` },
+	{ style: I.TextStyle.Bulleted, text: `A newly created template and relations belonging to a type could no longer be opened and edited. Thanks, Sharky` },
+	{ style: I.TextStyle.Bulleted, text: `Object’s page updates in real-time could break after using the graph view. Thanks, WhereisJ9` },
+	{ style: I.TextStyle.Bulleted, text: `Dark mode — Discoloured three dots menu background for file relation values. Thanks, sahilstudio` },
+	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">Shift + Enter</span> to create a line break doesn’t work. Thanks, Tim-Luca` },
+	{ style: I.TextStyle.Bulleted, text: `Clear Search in Graph View on sidepanel close. Thanks, lynxlove` },
+	{ style: I.TextStyle.Bulleted, text: `Sometimes PDF may not be rendered in the preview` },
+	{ style: I.TextStyle.Bulleted, text: `App crashes when sync status is clicked in pages showing the status as Preparing. Thanks, lynxlove` },
+	{ style: I.TextStyle.Bulleted, text: `Writing an exponential number to a number cell does not work` },
+	{ style: I.TextStyle.Bulleted, text: `The time in Date relation is always transformed to 12.00` },
+	{ style: I.TextStyle.Bulleted, text: `When you click on a cell with a date and the selected date format is mm.dd.yyyy, it switches to dd.mm.yyyy in edit mode` },
+	{ style: I.TextStyle.Bulleted, text: `In the position close to the bottom of the screen, the preview links may not be shown` },
+	{ style: I.TextStyle.Bulleted, text: `When you close a cell of the URL type by clicking under the cell in Set, the drop-down menu does not close` },
+	{ style: I.TextStyle.Bulleted, text: `The relation list in the Set jumps up when clicking on the switcher.` },
+	{ style: I.TextStyle.Bulleted, text: `In the types menu for the empty object, there was no returning to the top of the list after pressing down on the last element` },
+	{ style: I.TextStyle.Bulleted, text: `The carriage shows at the beginning of a line in a Date relation with a non-empty value` },
+	{ style: I.TextStyle.Bulleted, text: `Text set into relation with format Number gets set as zero` },
+	{ style: I.TextStyle.Bulleted, text: `Deleted objects are no longer shown in navigation. Thanks, michaellw` },
+
+	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
+
+	{ style: I.TextStyle.Header1, text: `Deletion. Note type. Darkmode` },
 
 	{ style: I.TextStyle.Header2, text: `Deletion` },
 	{ text: `Say hello to our most incredible innovation since object creation: object deletion. Anytype now supports the permanent deleting of objects! 🥳 🗑♻️. Moving objects to the bin will remove them from navigation. From the bin, you can choose to select, delete, and restore your objects. <b>This action is irrevocable, so please be careful.</b> ` },
