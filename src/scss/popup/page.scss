@@ -4,6 +4,14 @@
 	.popup.popupPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
 		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px; top: 0px; }
+		.innerWrap.full {
+			.header {
+				.side.left {
+					.icon.expand { display: none; }
+					.icon.home { display: inline-block; }
+				}
+			}
+		}
 
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
@@ -15,6 +23,10 @@
 		.header {
 			.menu { right: 0px; top: 0px; }
 			.side.left { left: 16px !important; }
+			.side.left {
+				.icon.home { display: none; }
+				.icon.expand { display: inline-block; }
+			}
 		}
 		.footer { display: none; }
 

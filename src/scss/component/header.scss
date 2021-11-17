@@ -78,6 +78,7 @@
 	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
+	.icon.expand { display: none; }
 
 	.icon.nm { margin: 0px !important; }
 
