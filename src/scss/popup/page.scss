@@ -3,6 +3,8 @@
 .popups {
 	.popup.popupPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
+		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px; top: 0px; }
+
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
@@ -39,6 +41,11 @@
 html.platformMac {
 	.popups {
 		.popup.popupPage {
+			.innerWrap.full {
+				.header {
+					.side.left { left: 88px !important; }
+				}
+			}
 			.pageMainEdit {
 				.content { padding-top: 52px; }
 				.block.blockCover { top: 52px; }
