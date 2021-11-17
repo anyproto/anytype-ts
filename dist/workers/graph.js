@@ -28,13 +28,14 @@ let Color = {};
 let LineWidth = 0.25;
 
 // Graph utils
+
+// 1 - Human layout type
 const isHumanLayoutType = (d) => {
-	// 1 -- Human layout type
 	return d.layout === 1;
 };
 
+// 2 - Task layout type
 const isTaskLayoutType = (d) => {
-	// 2 -- Task layout type
 	return d.layout === 2;
 };
 
@@ -365,7 +366,7 @@ drawNode = (d) => {
 	ctx.fillStyle = bg;
 	ctx.fill();
 
-	if (forceProps.labels && d.textBitmap && (transform.k > 1.5) ) {
+	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
 		const h = 5;
 		const div = 6.25;
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
