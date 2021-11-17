@@ -245,7 +245,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.unbind();
 
 		window.clearTimeout(this.timeout);
-		C.ObjectSearchUnsubscribe(Constant.subIds.search);
+		C.ObjectSearchUnsubscribe([ Constant.subIds.search ]);
 	};
 
 	rebind () {

@@ -987,7 +987,18 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 
 	request.setSubidsList(subIds);
 
-	dispatcher.request('objectSearchUnsubscribe', request, callBack);
+	const cb = (message: any) => {
+		subIds.forEach((id: string) => {
+			dbStore.recordsClear(id, '');
+			detailStore.clear(id);
+		});
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectSearchUnsubscribe', request, cb);
 };
 
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
