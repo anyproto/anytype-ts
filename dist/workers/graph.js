@@ -6,6 +6,10 @@ importScripts('d3/d3-timer.min.js');
 importScripts('d3/d3-selection.min.js');
 importScripts('d3/d3-force.min.js');
 
+// CONSTANTS
+const baseFontFamily = 'Helvetica';
+const baseFontStyle = `3px ${baseFontFamily}`;
+
 let offscreen = null;
 let canvas = null;
 let ctx = null;
@@ -22,6 +26,34 @@ let simulation = null;
 let theme = '';
 let Color = {};
 let LineWidth = 0.25;
+
+// Graph utils
+const isHumanLayoutType = (d) => {
+	// 1 -- Human layout type
+	return d.layout === 1;
+};
+
+const isTaskLayoutType = (d) => {
+	// 2 -- Task layout type
+	return d.layout === 2;
+};
+
+const isCustomIconLayoutType = (d) => {
+	return isHumanLayoutType(d) || isTaskLayoutType(d);
+};
+
+const nameCircleIcon = (d, ctx) => {
+	// Get First upper char
+	const name = d.name.trim().substr(0, 1).toUpperCase();
+	
+	ctx.save();
+	ctx.font = baseFontStyle;  
+	ctx.fillStyle = Color.iconText;
+	ctx.textAlign = 'center';
+	ctx.textBaseline =  "middle";
+	ctx.fillText(name, d.x, d.y);
+	ctx.restore();
+};
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -55,7 +87,7 @@ init = (data) => {
 
 		octx.save();
 		octx.clearRect(0, 0, 250, 40);
-		octx.font = '20px Helvetica';
+		octx.font = `20px ${baseFontFamily}`;
 		octx.fillStyle = Color.text;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 125, 20);
@@ -77,6 +109,7 @@ initColor = () => {
 			Color = {
 				bg: '#fff',
 				text: '#2c2b27',
+				iconText: '#aca996',
 				link: {
 					0: '#dfddd0',
 					1: '#8c9ea5',
@@ -95,6 +128,7 @@ initColor = () => {
 			Color = {
 				bg: '#2c2b27',
 				text: '#cbc9bd',
+				iconText: '#cbc9bd',
 				link: {
 					0: '#525148',
 					1: '#8c9ea5',
@@ -265,7 +299,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	if (d.name && forceProps.labels && (transform.k > 1.5)) {
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.font = 'italic 3px Helvetica';
+		ctx.font = `italic ${baseFontStyle}`;
 
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
@@ -314,7 +348,7 @@ drawNode = (d) => {
 		ctx.globalAlpha = 0.4;
 	};
 
-	if ([ 1, 2 ].indexOf(d.layout) >= 0) {
+	if (isCustomIconLayoutType(d)) {
 		ctx.beginPath();
 		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 		ctx.closePath();
@@ -331,13 +365,13 @@ drawNode = (d) => {
 	ctx.fillStyle = bg;
 	ctx.fill();
 
-	if (forceProps.labels && d.textBitmap && (transform.k > 1.5)) {
+	if (forceProps.labels && d.textBitmap && (transform.k > 1.5) ) {
 		const h = 5;
 		const div = 6.25;
 		ctx.drawImage(d.textBitmap, 0, 0, 250, 40, d.x - h * div / 2, d.y + d.radius + 1, h * div, h);
 	};
 
-	if (img) {
+	if (img && !isCustomIconLayoutType(d)) {
 		let x = d.x - d.radius / 2;
 		let y = d.y - d.radius / 2;
 		let w = d.radius;
@@ -371,6 +405,9 @@ drawNode = (d) => {
 		};
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
+	} 
+	else if (isHumanLayoutType(d)) {
+		nameCircleIcon(d, ctx);
 	};
 
 	ctx.restore();
@@ -459,7 +496,7 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
-	ctx.font = '3px Helvetica';
+	ctx.font = baseFontStyle;
 };
 
 onResize = (data) => {
