@@ -1242,6 +1242,7 @@ class DataUtil {
 				value = Util.objectCopy(value || []);
 				value = Util.arrayUnique(value);
 				value = value.map((it: any) => { return String(it || ''); });
+				value = value.filter((it: any) => { return it; });
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);

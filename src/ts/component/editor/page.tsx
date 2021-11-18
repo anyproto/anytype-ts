@@ -1466,23 +1466,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		return ret;
 	};
 
-	phraseCheck () {
-		let blockCnt = Number(Storage.get('blockCnt')) || 0;
-		blockCnt++;
-		if (blockCnt == 10) {
-			popupStore.open('settings', { data: { page: 'phrase' } });
-		};
-		if (blockCnt <= 11) {
-			Storage.set('blockCnt', blockCnt);
-		};
-	};
-	
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
 		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
-			this.phraseCheck();
 
 			if (callBack) {
 				callBack(message.blockId);
@@ -1582,7 +1570,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focus(message.blockId, 0, 0, true);
-			this.phraseCheck();
 
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);
