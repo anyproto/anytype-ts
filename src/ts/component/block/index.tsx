@@ -14,6 +14,7 @@ import BlockFile from './file';
 import BlockImage from './image';
 import BlockVideo from './video';
 import BlockAudio from './audio';
+import BlockPDF from './pdf'; 
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
@@ -134,7 +135,15 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					case I.FileType.Audio: 
 						blockComponent = <BlockAudio ref={setRef} {...this.props} />;
 						break;
+					// FIXME (@timopheym): Change when backend will send PDF type 
+					// case I.FileType.PDF: 
+					// 	blockComponent = <BlockPDF ref={setRef} {...this.props} />;
+					// 	break;
 				};
+				
+				if (content.mime == 'application/pdf') {
+					blockComponent = <BlockPDF ref={setRef} {...this.props} />;
+				}
 				break;
 				
 			case I.BlockType.Bookmark:

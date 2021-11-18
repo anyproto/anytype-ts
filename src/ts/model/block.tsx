@@ -267,6 +267,11 @@ class Block implements I.Block {
 	isFileAudio (): boolean {
 		return this.isFile() && (this.content.type == I.FileType.Audio);
 	};
+	
+	isFilePDF (): boolean {
+		// FIXME(@timopheym): When we would get PDF type from backend change it to ENUM
+		return this.isFile() && (this.content.mime == 'application/pdf');
+	};
 
 	isBookmark (): boolean {
 		return this.type == I.BlockType.Bookmark;
