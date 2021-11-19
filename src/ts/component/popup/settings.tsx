@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Popup, RouteComponentProps<any> {}
 
 interface State {
-	page: string;
 	loading: boolean;
 	error: string;
 	entropy: string;
@@ -30,7 +29,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	refPhrase: any = null;
 	state = {
-		page: 'index',
 		loading: false,
 		error: '',
 		entropy: '',
@@ -59,9 +57,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { page } = data;
 		const { account, phrase } = authStore;
 		const { cover, coverImage, theme, config } = commonStore;
-		const { page, loading, error, entropy } = this.state;
+		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
 		let content = null;
@@ -465,12 +466,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { page } = data || {};
+		const { page } = data;
 		const { phrase } = authStore;
 
-		if (page) {
-			this.onPage(page);
-		};
+		this.onPage(page || 'index');
 
 		if (phrase) {
 			C.WalletConvert(phrase, '', (message: any) => {
@@ -561,6 +560,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onPage (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { page } = data || {};
 		const pin = Storage.get('pin');
 
 		if (pin && (id == 'phrase') && !this.pinConfirmed) {
@@ -573,8 +575,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			return;
 		};
 
-		this.prevPage = this.state.page;
-		this.setState({ page: id });
+		this.prevPage = page;
+		popupStore.updateData(this.props.id, { page: id });
 	};
 
 	onCover (item: any) {
