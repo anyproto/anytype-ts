@@ -71,7 +71,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		let canSelect = true;
 		let canDrop = !readonly;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block) ];
+		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block), 'index-' + Number(index) ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -79,9 +79,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		
 		if (className) {
 			cn.push(className);
-		};
-		if (index) {
-			cn.push('index-' + index);
 		};
 		if (fields.isUnwrapped) {
 			cn.push('isUnwrapped');
