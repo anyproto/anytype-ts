@@ -115,6 +115,7 @@ html.platformWindows {
 	overflow: hidden; white-space: nowrap;
 }
 ::-webkit-input-placeholder { color: $colorSecondary !important; }
+.isBlurred { filter: blur(3px); }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

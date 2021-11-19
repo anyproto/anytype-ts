@@ -75,6 +75,7 @@
         }
 
         .cellHead .resize .line { background: $colorLineSecondary; }
+        .cellHead.isDragging { background: $colorHover; }
 
         .viewItem.viewGrid,
 		.viewItem.viewList {

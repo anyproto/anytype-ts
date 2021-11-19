@@ -62,6 +62,10 @@
 	}
 }
 
+.pageAuthSuccess {
+	.textarea { border-radius: 4px; padding: 20px 24px; color: $colorIce; }
+}
+
 .pageAuthRegister {
 	.frame { white-space: nowrap; padding-bottom: 36px; }
 	.fileWrap { margin-right: 16px; width: 64px; height: 64px; display: inline-block; vertical-align: middle; }
