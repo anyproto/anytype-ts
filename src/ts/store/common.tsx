@@ -1,6 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, Storage, Util } from 'ts/lib';
-import { analytics } from '../lib';
+import { analytics } from 'ts/lib';
+import { blockStore, detailStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 
