@@ -291,7 +291,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnDiv) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true });
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
@@ -377,6 +377,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		switch (item.itemId) {
 			case 'turnStyle':
 				menuId = 'blockStyle';
+
+				if (item.isDiv) {
+					menuParam.offsetY = 0;
+					menuParam.vertical = I.MenuDirection.Center;
+				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {

@@ -79,18 +79,6 @@ class DbStore {
 		const key = this.getId(rootId, blockId);
 		const relations = this.getRelations(rootId, blockId);
 
-		// hack for done relation to exist in state
-		if (!list.find((it: any) => { return it.relationKey == 'done'; })) {
-			list.push({
-				relationKey: 'done',
-				name: 'Done',
-				format: I.RelationType.Checkbox,
-				isHidden: true,
-				isReadonlyRelation: true,
-				isReadonlyValue: false,
-			});
-		};
-
 		list = list.map((it: I.Relation) => { return new M.Relation(it); });
 		for (let item of list) {
 			const check = this.getRelation(rootId, blockId, item.relationKey);
