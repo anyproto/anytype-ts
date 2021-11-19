@@ -136,18 +136,18 @@ function initTray () {
 
 		{ type: 'separator' },
 
-		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings'); } },
+		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings', {}, true); } },
 		{ label: 'Check for updates', click: () => { win.show(); checkUpdate(false); } },
 
 		{ type: 'separator' },
 
-		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }); } },
-		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }); } },
+		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }, true); } },
+		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }, true); } },
 		
 		{ type: 'separator' },
 
 		{ label: 'New object', click: () => { win.show(); send('command', 'create'); } },
-		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }); } },
+		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }, true); } },
 		
 		{ type: 'separator' },
 
