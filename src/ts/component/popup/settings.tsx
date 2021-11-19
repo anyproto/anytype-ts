@@ -28,7 +28,7 @@ const QRColor = {
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
 
-	phraseRef: any = null;
+	refPhrase: any = null;
 	state = {
 		page: 'index',
 		loading: false,
@@ -198,7 +198,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						
 						<div className="inputs">
 							<Textarea 
-								ref={(ref: any) => this.phraseRef = ref} 
+								ref={(ref: any) => this.refPhrase = ref} 
 								id="phrase" 
 								value={phrase} 
 								className="isBlurred"
@@ -520,7 +520,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onFocusPhrase (e: any) {
-		this.phraseRef.select();
+		this.refPhrase.select();
 		this.elementUnblur(e);
 	};
 

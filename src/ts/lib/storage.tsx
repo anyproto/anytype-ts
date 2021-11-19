@@ -79,6 +79,7 @@ class Storage {
 			'tabStore', 
 			'linkSettings', 
 			'graph',
+			'blockCnt',
 		];
 
 		for (let key of keys) {
