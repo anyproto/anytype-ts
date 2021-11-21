@@ -180,10 +180,10 @@
 		"productName": "Anytype",
 		"protocols": [
 			{
-				"name": "Anytype2",
+				"name": "Anytype",
 				"role": "Editor",
 				"schemes": [
-					"anytype2"
+					"anytype"
 				]
 			}
 		],
