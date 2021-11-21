@@ -316,9 +316,6 @@ class App extends React.Component<Props, State> {
 		};
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
-		if (coverImg) {
-			commonStore.coverSetUploadedImage(coverImg);
-		};
 		
 		this.setIpcEvents();
 		this.setWindowEvents();

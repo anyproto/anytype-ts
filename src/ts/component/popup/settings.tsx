@@ -510,9 +510,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				this.setState({ loading: false });
 
-				commonStore.coverSetUploadedImage(message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
-
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
 			});
 		});

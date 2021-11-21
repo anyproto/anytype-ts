@@ -116,6 +116,10 @@ class CommonStore {
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id: id, image: image, type: type };
 		Storage.set('cover', this.coverObj);
+
+		if (type == I.CoverType.Upload) {
+			this.coverSetUploadedImage(image);
+		};
 	};
 
     coverSetUploadedImage (image: string) {
