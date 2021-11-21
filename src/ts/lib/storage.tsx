@@ -81,6 +81,7 @@ class Storage {
 			'graph',
 			'blockCnt',
 			'gateway',
+			'dataPath',
 		];
 
 		for (let key of keys) {
