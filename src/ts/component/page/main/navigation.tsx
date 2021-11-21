@@ -77,8 +77,16 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		);
 
 		const Item = (item: any) => {
-			let { name } = item.details || {};
+			let { layout, name, description, snippet } = item.details || {};
 			let isRoot = item.id == root;
+
+			if (layout == I.ObjectLayout.Note) {
+				name = snippet || <span className="empty">Empty</span>;
+				description = '';
+			} else {
+				name = name || DataUtil.defaultName('page');
+				description = description || snippet;
+			};
 
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
@@ -86,7 +94,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						{isRoot ? iconHome : <IconObject object={item.details} forceLetter={true} size={48} />}
 						<div className="info">
 							<div className="name">{name}</div>
-							<div className="descr">{item.snippet}</div>
+							<div className="descr">{description}</div>
 						</div>
 					</div>
 					<Icon className="arrow" />
@@ -123,7 +131,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const Selected = (item: any) => {
-			let { name, coverType, coverId, coverX, coverY, coverScale } = item.details;
+			let { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item.details;
 			let isRoot = item.id == root;
 			let icon = null;
 			let withScale = true;
@@ -132,6 +140,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			if (isRoot) {
 				icon = iconHome;
 				name = 'Home';
+				description = '';
 				withScale = false;
 				withButtons = false;
 				
@@ -140,14 +149,22 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					coverType = I.CoverType.Image;
 				};
 			} else {
-				icon = <IconObject object={item.details} forceLetter={true} size={48} />
+				icon = <IconObject object={item.details} forceLetter={true} size={48} />;
+
+				if (layout == I.ObjectLayout.Note) {
+					name = snippet || <span className="empty">Empty</span>;
+					description = '';
+				} else {
+					name = name || DataUtil.defaultName('page');
+					description = description || snippet;
+				};
 			};
 
 			return (
 				<div id={'item-' + item.id} className="selected">
 					{icon}
 					<div className="name">{name}</div>
-					<div className="descr">{item.snippet}</div>
+					<div className="descr">{description}</div>
 					
 					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
 				

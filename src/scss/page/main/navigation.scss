@@ -3,12 +3,6 @@
 .pageMainNavigation {
 	.wrapper > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.5); }
 
-	.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
-	.empty {
-		b { display: block; font-weight: 400; color: $colorBlack; }
-		.txt { line-height: 24px; color: $colorMediumGrey; }
-	}
-	
 	.items {
 		.item { 
 			cursor: pointer; transition: $transitionFast; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
