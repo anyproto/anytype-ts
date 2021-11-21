@@ -389,6 +389,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
+				const { type } = commonStore;
+				const pinTime = commonStore.pinTime / 1000;
+
 				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
 					it.layout = I.ObjectLayout.Type;
 					return { ...it, object: it };
@@ -420,7 +423,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="Default Object type" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={types} value={commonStore.type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+								<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
 							</div>
 						</div>
 
@@ -429,7 +432,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="PIN code check time-out" />
 							</div>
 							<div className="side right">
-								<Select id="pinTime" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+								<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 							</div>
 						</div>
 
@@ -703,7 +706,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onTypeChange (id: string) {
-		commonStore.typeSet(id);
+		commonStore.defaultTypeSet(id);
 		analytics.event('DefaultTypeChanged', { objectType: id });
 	};
 

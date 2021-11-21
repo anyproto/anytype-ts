@@ -301,6 +301,10 @@ class App extends React.Component<Props, State> {
 		DataUtil.init(history);
 		Storage.delete('lastSurveyCanceled');
 
+		const storageKeys = [
+			'theme', 'pinTime', 'defaultType',
+		];
+
 		const cover = Storage.get('cover');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
@@ -315,6 +319,11 @@ class App extends React.Component<Props, State> {
 		};
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
+
+		storageKeys.forEach((it: string) => {
+			console.log(it, Util.toCamelCase(it + '-Set'), Storage.get(it));
+			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
+		});
 		
 		this.setIpcEvents();
 		this.setWindowEvents();

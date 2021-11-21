@@ -41,6 +41,8 @@ class CommonStore {
     public configObj: any = {};
     public cellId: string = '';
 	public themeId: string = '';
+	public typeId: string = '';
+	public pinTimeId: number = 0;
 
     constructor() {
         makeObservable(this, {
@@ -52,6 +54,7 @@ class CommonStore {
             previewObj: observable,
             configObj: observable,
 			themeId: observable,
+			typeId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -102,15 +105,15 @@ class CommonStore {
 	};
 
 	get type(): string {
-		return String(Storage.get('defaultType') || Constant.typeId.page);
+		return String(this.typeId || Constant.typeId.page);
 	};
 
 	get pinTime(): number {
-		return (Number(Storage.get('pinTime')) || Constant.default.pinTime) * 1000;
+		return (Number(this.pinTimeId) || Constant.default.pinTime) * 1000;
 	};
 
 	get theme(): string {
-		return String(this.themeId || Storage.get('theme') || '');
+		return String(this.themeId || '');
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -175,11 +178,15 @@ class CommonStore {
 		this.previewObj = { type: 0, param: '', object: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
-	typeSet (v: string) {
+	defaultTypeSet (v: string) {
+		this.typeId = v;
 		Storage.set('defaultType', v);
 	};
 
 	pinTimeSet (v: string) {
+		console.log(v);
+
+		this.pinTimeId = Number(v) || Constant.default.pinTime;
 		Storage.set('pinTime', v);
 	};
 
