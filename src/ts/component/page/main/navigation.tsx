@@ -495,8 +495,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				return;
 			};
 
-			let pagesIn = message.object.links.inbound.map((it: any) => { return this.getPage(it); });
-			let pagesOut = message.object.links.outbound.map((it: any) => { return this.getPage(it); });
+			let pagesIn = message.object.links.inbound;
+			let pagesOut = message.object.links.outbound;
 
 			pagesIn = pagesIn.filter(filter);
 			pagesOut = pagesOut.filter(filter);
@@ -505,7 +505,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			this.setState({ 
 				n: 0,
 				loading: false,
-				info: this.getPage(message.object.info),
+				info: message.object.info,
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
 			});
@@ -515,7 +515,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	filterMapper (it: I.PageInfo) {
-		return !it.details.isArchived;
+		return !it.details.isArchived && !it.details.isDeleted;
 	};
 
 	onClick (e: any, item: I.PageInfo) {
@@ -531,11 +531,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, item.details);
 		});
-	};
-
-	getPage (page: any): I.PageInfo {
-		page.details.name = String(page.details.name || DataUtil.defaultName('page'));
-		return page;
 	};
 
 	getRootId () {
