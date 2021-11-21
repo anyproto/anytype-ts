@@ -41,7 +41,7 @@
 			.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 		}
 
-		.item.empty { line-height: 78px; cursor: default; }
+		.item.empty { line-height: 78px; cursor: default; padding: 0px 16px; }
 		.item.empty {
 			.name { display: inline-block; vertical-align: middle; }
 		}
