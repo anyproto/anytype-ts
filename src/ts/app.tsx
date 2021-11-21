@@ -302,7 +302,6 @@ class App extends React.Component<Props, State> {
 		Storage.delete('lastSurveyCanceled');
 
 		const cover = Storage.get('cover');
-		const coverImg = Storage.get('coverImg');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
 

@@ -98,7 +98,7 @@ class CommonStore {
 	};
 
     get gateway(): string {
-		return String(this.gatewayUrl || Storage.get('gateway') || '');
+		return String(this.gatewayUrl || '');
 	};
 
 	get type(): string {
@@ -114,7 +114,7 @@ class CommonStore {
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
-		this.coverObj = { id: id, image: image, type: type };
+		this.coverObj = { id, image, type };
 		Storage.set('cover', this.coverObj);
 
 		if (type == I.CoverType.Upload) {
@@ -133,7 +133,6 @@ class CommonStore {
 
     gatewaySet (v: string) {
 		this.gatewayUrl = v;
-		Storage.set('gateway', v);
 	};
 
     fileUrl (hash: string) {
