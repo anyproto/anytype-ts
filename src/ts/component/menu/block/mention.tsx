@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Loader } from 'ts/component';
+import { MenuItemVertical, Loader, ObjectName } from 'ts/component';
 import { I, C, keyboard, Util, DataUtil, Mark } from 'ts/lib';
-import { commonStore, dbStore, blockStore } from 'ts/store';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -47,11 +47,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type);
 
-			let name = item.name || DataUtil.defaultName('page');
-			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet || <span className="empty">Empty</span>;
-			};
-
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -65,7 +60,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						id={item.id}
 						object={item.id == 'add' ? undefined : item}
 						icon={item.icon}
-						name={name}
+						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}

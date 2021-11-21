@@ -64,6 +64,7 @@
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
+            .viewItem.isDragging { background: $colorHover; }
 
             .icon.search { background-image: url('~img/theme/dark/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('~img/theme/dark/icon/dataview/button/manager0.svg'); }

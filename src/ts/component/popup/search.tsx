@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, Label } from 'ts/component';
+import { Icon, Input, Loader, IconObject, Label, ObjectName, ObjectDescription } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -77,14 +77,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		const Item = (item: any) => {
 			let type = dbStore.getObjectType(item.type);
-			let description = item.description;
-			let name = item.name || DataUtil.defaultName('page');
-
-			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet || <span className="empty">Empty</span>;
-			} else {
-				description = item.description || item.snippet;
-			};
+			let description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
 				<div 
@@ -95,7 +88,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				>
 					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
 					
-					<div className="name">{name}</div>
+					<ObjectName object={item} />
 
 					{type ? (
 						<React.Fragment>
@@ -107,7 +100,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					{description ? (
 						<React.Fragment>
 							{div}
-							<div className="descr">{description}</div>
+							<ObjectDescription object={item} />
 						</React.Fragment>
 					) : ''}
 				</div>

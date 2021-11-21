@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import { Icon, IconObject } from 'ts/component';
-import { blockStore, detailStore, dbStore } from 'ts/store';
+import { Icon, IconObject, ObjectName } from 'ts/component';
+import { blockStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, DataUtil } from 'ts/lib';
 
@@ -64,11 +64,6 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				);
 			};
 
-			name = name || DataUtil.defaultName('page');
-			if (layout == I.ObjectLayout.Note) {
-				name = object.snippet || <span className="empty">Empty</span>;
-			};
-
 			if (layout == I.ObjectLayout.Task) {
 				cn.push('isTask');
 				icon = <IconObject size={18} object={object} canEdit={true} onCheckbox={(e: any) => { this.onCheckbox(e, object); }} />;
@@ -87,7 +82,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 				>
 					{icon}
 
-					<div className="name">{name}</div>
+					<ObjectName object={object} />
 					<div className="type">{type ? type.name : ''}</div>
 
 					<Icon id={'button-' + item.id + '-more'} tooltip="Actions" className="more" onClick={(e: any) => { onMore(e, item); }} />

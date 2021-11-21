@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, Label } from 'ts/component';
-import { I, C, keyboard, Util, crumbs, DataUtil, translate, Storage } from 'ts/lib';
-import { commonStore, dbStore, blockStore } from 'ts/store';
+import { MenuItemVertical, Filter, Loader, Label, ObjectName } from 'ts/component';
+import { I, C, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -72,11 +72,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				cn.push('active');
 			};
 
-			let name = item.name || DataUtil.defaultName('page');
-			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet || <span className="empty">Empty</span>;
-			};
-
 			const props = {
 				...item,
 				object: (item.id == 'add' ? undefined : item),
@@ -106,7 +101,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				>
 					<MenuItemVertical 
 						{...props}
-						name={name}
+						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}

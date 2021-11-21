@@ -52,7 +52,7 @@ export interface MenuItem {
 	id?: string;
 	icon?: string;
 	object?: any;
-	name?: string;
+	name?: any;
 	description?: string;
 	caption?: string;
 	inner?: any;
