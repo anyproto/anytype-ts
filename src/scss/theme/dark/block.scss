@@ -1,4 +1,9 @@
 .block.blockCover {
+    .loaderWrapper { background: rgba(0,0,0,0.3); }
+    .loaderWrapper {
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+    }
+
     .elements {
         .btn.white { background: $colorBgIcon; color: $colorPrimary; }
         .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
