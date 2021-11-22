@@ -321,7 +321,6 @@ class App extends React.Component<Props, State> {
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
 
 		storageKeys.forEach((it: string) => {
-			console.log(it, Util.toCamelCase(it + '-Set'), Storage.get(it));
 			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
 		});
 		
