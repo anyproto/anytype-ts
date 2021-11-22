@@ -23,12 +23,13 @@
     #documents {
         .emptySearch { background: rgba(0,0,0,0.5); }
 
-        .item { background: rgba(0,0,0,0.5); }
+        .item { background: rgba(0,0,0,0.5); transition: background 0.2s ease-in-out; }
         .item {
             .type { color: $colorSecondary; }
             .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
         }
+        .item:hover { background: rgba(0,0,0,0.7); }
 
         .item.isLoading {
 			.iconObject { background: $colorBgIcon; }
