@@ -1,7 +1,4 @@
 .block.blockCover {
-    .coverOver {
-       position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 1;
-    }
     .elements {
         .btn.white { background: $colorBgIcon; color: $colorPrimary; }
         .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
@@ -136,7 +133,7 @@
         .cardName span::before { background: $colorSecondary !important; }
 
         .linkCard.card {
-            .sides { background: rgba(0,0,0,0.6); }
+            .sides { background: rgba(0,0,0,0.5); }
             .cover { color: $colorPrimary; }
 
             .side.right {
