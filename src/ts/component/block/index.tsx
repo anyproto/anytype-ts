@@ -60,7 +60,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, index, className, block, readonly } = this.props;
+		const { rootId, css, className, block, readonly } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 
 		if (!id) {
@@ -68,10 +68,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		};
 
 		const { style, checked } = content;
+		const index = Number(this.props.index) || 0;
 
 		let canSelect = true;
 		let canDrop = !readonly;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block), 'index-' + Number(index) ];
+		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
