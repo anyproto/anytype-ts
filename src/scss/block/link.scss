@@ -23,7 +23,7 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; }
+            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; z-index: 1; position: relative; }
 
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.left:empty { display: none; }
