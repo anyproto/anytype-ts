@@ -154,7 +154,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (object.isHightlighted) {
+		if (object.isHighlighted) {
 			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
 			highlight = { id: 'highlight', name: 'Highlight' };
