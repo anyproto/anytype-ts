@@ -172,6 +172,8 @@
 .pageMainHistory {
     .list { background: $colorBlack; border-color: $colorLineSecondary; }
     .list {
+        .section.fix { background: $colorBlack; }
+
         .item:hover, .item.active { background: $colorHover; }
         .item {
             .name { color: $colorSecondary; }

@@ -25,7 +25,7 @@ class Name extends React.Component<Props, {}> {
 		
 		return (
 			<div className={className}>
-				{name}
+				<span>{name}</span>
 			</div>
 		);
 	};

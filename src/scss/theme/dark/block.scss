@@ -136,11 +136,11 @@
         .cardName span::before { background: $colorSecondary !important; }
 
         .linkCard.card {
-            .sides { background: $colorBgLight; }
+            .sides { background: rgba(0,0,0,0.6); }
             .cover { color: $colorPrimary; }
 
             .side.right {
-                .cardDescription { color: $colorSecondary; }
+                .cardDescription { color: $colorPrimary; }
             }
         }
 
