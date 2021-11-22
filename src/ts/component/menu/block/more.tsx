@@ -134,11 +134,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
 		let removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
+		let removeBlock = { id: 'removeBlock', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
+			fav = { id: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (isTemplate) {	
@@ -156,7 +157,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (object.isHightlighted) {
 			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
-			highlight = { id: 'highlight', icon: 'highlight', name: 'Highlight' };
+			highlight = { id: 'highlight', name: 'Highlight' };
 		};
 
 		// Restrictions
@@ -199,7 +200,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ print ] },
 				{ children: [ highlight ] },
 			];
-
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
 		} else {
 			sections.push({ children: [
@@ -207,7 +207,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
-				{ id: 'remove', name: 'Delete' },
+				removeBlock,
 			]});
 		};
 
@@ -511,7 +511,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.ObjectSetIsFavorite(rootId, false);
 				break;
 
-			case 'remove':
+			case 'removeBlock':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {
