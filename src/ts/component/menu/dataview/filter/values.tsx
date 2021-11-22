@@ -277,9 +277,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
-		const item = getView().getFilter(itemId);
+		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		this.checkClear(item.value);
+		const item = view.getFilter(itemId);
+		if (item) {
+			this.checkClear(item.value);
+		};
 	};
 
 	getItems () {
