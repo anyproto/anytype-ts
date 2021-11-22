@@ -231,13 +231,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 
-		this.init();
-		this.props.setActive();
-
 		const view = getView();
 		if (!view) {
 			return;
 		};
+
+		this.init();
+		this.props.setActive();
 
 		const item = view.getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
