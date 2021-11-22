@@ -166,7 +166,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			removePage = null;
 		};
 
-		if (object.isHightlighted) {
+		if (object.isHighlighted) {
 			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
 			highlight = { id: 'highlight', icon: 'highlight', name: 'Highlight' };
