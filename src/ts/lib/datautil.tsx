@@ -397,7 +397,8 @@ class DataUtil {
 				};
 
 				const object = detailStore.get(root, root, [ 'coverId', 'coverType' ]);
-				if (!object._empty_) {
+
+				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
 					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 				};
 

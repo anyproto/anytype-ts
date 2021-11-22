@@ -44,7 +44,7 @@
 	
 		.btn { 
 			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; cursor: pointer; display: inline-block;
-			padding: 0px 8px 0px 6px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
+			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
 		}
 		.btn:last-child { margin: 0px; }
 
@@ -54,7 +54,7 @@
 		.btn.black { color: $colorWhite; background: rgba(0,0,0,0.5); line-height: 22px; }
 		.btn.black:hover, .btn.black.active { background: rgba(0,0,0,0.7); }
 
-		.btn.withIcon { line-height: 26px; }
+		.btn.withIcon { padding: 0px 8px 0px 6px; line-height: 26px; }
 
 		.btn {
 			.icon { width: 20px; height: 20px; margin: 0px 4px 0px 0px; vertical-align: middle; }

@@ -23,14 +23,14 @@
 
 		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; }
+            .sides { display: flex; overflow: hidden; transition: border-color 0.2s ease-in-out; z-index: 1; position: relative; }
 
             .side.left { flex-shrink: 0; margin: 0px 16px 0px 0px; }
             .side.left:empty { display: none; }
             .side.right { width: 100%; position: relative; }
 
             .iconObject { margin: 0px; }
-            .cover { position: static; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
+            .cover { position: relative; padding: 68px 12px 12px 12px; border-radius: 6px; color: $colorBlack; }
 
             .side.right {
                 .txt { width: 100%; }

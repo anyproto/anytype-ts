@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { detailStore } from 'ts/store';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { IconObject } from 'ts/component';
+import { IconObject, ObjectName } from 'ts/component';
 
 interface Props {
 	rootId: string;
@@ -19,17 +19,12 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 		const { rootId, id, iconSize, relation, elementMapper, onClick } = this.props;
 		
 		let object = detailStore.get(rootId, id, []);
-		let { _empty_, name } = object;
-		if (_empty_) {
+		if (object._empty_) {
 			return null;
 		};
 
 		if (elementMapper) {
 			object = elementMapper(relation, object);
-		};
-
-		if (object.layout == I.ObjectLayout.Note) {
-			name = object.snippet || <span className="empty">Empty</span>;
 		};
 
 		return (
@@ -39,7 +34,7 @@ const ItemObject = observer(class ItemObject extends React.Component<Props, {}> 
 			>
 				<div className="flex">
 					<IconObject object={object} size={iconSize} />
-					<div className="name">{name}</div>
+					<ObjectName object={object} />
 				</div>
 			</div>
 		);

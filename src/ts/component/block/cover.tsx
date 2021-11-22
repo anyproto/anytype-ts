@@ -146,7 +146,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
-				<div className="coverOver" />
 
 				{isImage ? (
 					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />

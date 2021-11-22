@@ -80,6 +80,8 @@ class Storage {
 			'linkSettings', 
 			'graph',
 			'blockCnt',
+			'gateway',
+			'dataPath',
 		];
 
 		for (let key of keys) {

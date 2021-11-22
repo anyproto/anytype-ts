@@ -161,14 +161,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const win = $(window);
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const wrapper = obj.find('.wrapper');
-
-		let height = 0;
-		if (isPopup) {
-			height = obj.height();
-		} else {
-			height = win.height();
-		};
-
+		const header = obj.find('#header');
+		const hh = header.height();
+		const height = isPopup ? (obj.height() - hh) : win.height();
+		
+		wrapper.css({ height: height })
 		wrapper.find('.side').css({ height: height });
 		
 		if (isPopup) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Cover } from 'ts/component';
+import { IconObject, Cover, ObjectName, ObjectDescription } from 'ts/component';
 import { I, M, DataUtil, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
@@ -35,14 +35,6 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         const cns = [ 'sides' ];
         const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, align: align, childrenIds: [], fields: {}, content: {} });
         const withCover = this.props.withCover && coverId && coverType;
-
-        let name = object.name || DataUtil.defaultName('page');
-        let description = '';
-		if (layout == I.ObjectLayout.Note) {
-			name = snippet || <span className="empty">Empty</span>;
-		} else {
-			description = object.description || object.snippet;
-		};
 
         if (className) {
             cn.push(className);
@@ -79,8 +71,8 @@ const LinkCard = observer(class LinkCard extends React.Component<Props, {}> {
         let sideRight = (
             <div key="sideRight" className="side right">
                 <div className="txt">
-                    {withName ? <div className="cardName"><span>{name}</span></div> : ''}
-                    {withDescription ? <div className="cardDescription">{description || snippet}</div> : ''}
+                    {withName ? <ObjectName className="cardName" object={object} /> : ''}
+                    {withDescription ? <ObjectDescription className="cardDescription" object={object} /> : ''}
                     <div className="archive">{translate('blockLinkArchived')}</div>
 
                     {/*<Block {...this.props} rootId={block.content.targetBlockId} iconSize={18} block={featured} readonly={true} className="noPlus" />*/}

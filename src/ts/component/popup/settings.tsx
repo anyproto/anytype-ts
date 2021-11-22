@@ -145,7 +145,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
 
 				if (coverImage) {
-					covers1.push({ id: 0, image: coverImage, type: I.CoverType.Upload });
+					covers1.push({ id: coverImage, image: coverImage, type: I.CoverType.Upload });
 				};
 				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
@@ -389,6 +389,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
+				const { type } = commonStore;
+				const pinTime = commonStore.pinTime / 1000;
+
 				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
 					it.layout = I.ObjectLayout.Type;
 					return { ...it, object: it };
@@ -420,7 +423,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="Default Object type" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={types} value={commonStore.type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+								<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
 							</div>
 						</div>
 
@@ -429,7 +432,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="PIN code check time-out" />
 							</div>
 							<div className="side right">
-								<Select id="pinTime" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+								<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 							</div>
 						</div>
 
@@ -510,9 +513,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				this.setState({ loading: false });
 
-				commonStore.coverSetUploadedImage(message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
-
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
 			});
 		});
@@ -705,7 +706,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onTypeChange (id: string) {
-		commonStore.typeSet(id);
+		commonStore.defaultTypeSet(id);
 		analytics.event('DefaultTypeChanged', { objectType: id });
 	};
 
