@@ -171,6 +171,7 @@
     .list {
         .item:hover, .item.active { background: $colorHover; }
         .item {
+            .name { color: $colorSecondary; }
             .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
         }
     }
