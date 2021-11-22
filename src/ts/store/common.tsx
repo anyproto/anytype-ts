@@ -96,8 +96,8 @@ class CommonStore {
 		return this.coverObj;
 	};
 
-    get coverImage(): Cover {
-		return this.coverImg || Storage.get('coverImg');
+    get coverImage(): string {
+		return this.coverImg;
 	};
 
     get gateway(): string {
@@ -184,8 +184,6 @@ class CommonStore {
 	};
 
 	pinTimeSet (v: string) {
-		console.log(v);
-
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
 		Storage.set('pinTime', v);
 	};

@@ -145,7 +145,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
 
 				if (coverImage) {
-					covers1.push({ id: 0, image: coverImage, type: I.CoverType.Upload });
+					covers1.push({ id: coverImage, image: coverImage, type: I.CoverType.Upload });
 				};
 				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
