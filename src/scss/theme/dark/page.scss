@@ -28,6 +28,8 @@
             .type { color: $colorSecondary; }
             .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
+
+            .empty { color: $colorSecondary; }
         }
         .item:hover { background: rgba(0,0,0,0.7); }
 
