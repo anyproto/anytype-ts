@@ -586,12 +586,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	setTransform (x: number, y: number) {
-		let mx = this.rect.cw - this.rect.width;
-		let my = this.rect.ch - this.rect.height;
+		let mx = (this.rect.cw - this.rect.width) / 2;
+		let my = (this.rect.ch - this.rect.height) / 2;
 
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
-		
+
 		let css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
 		
 		if (this.rect.ch < this.rect.height) {
