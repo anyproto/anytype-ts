@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, C, DataUtil } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard } from 'ts/lib';
 import { IconObject, Icon, ObjectName } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore } from 'ts/store';
+import { blockStore, commonStore } from 'ts/store';
 
 interface Props {
 };
@@ -18,6 +18,7 @@ const Constant = require('json/constant.json');
 
 const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
+	_isMounted: boolean = false;
 	state = {
 		loading: false,
 	};
@@ -25,10 +26,27 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		nodes: [],
 		edges: [],
 	};
+	ox: number = 0;
+
+	constructor (props: any) {
+		super(props);
+
+		this.onExpand = this.onExpand.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
+	};
 
 	render () {
+		const { sidebar } = commonStore;
+		const { width, height, x, y, fixed } = sidebar;
 		const { loading } = this.state;
         const tree = this.getTree();
+		const css: any = { width: sidebar.width };
+		const cn = [ 'sidebar' ];
+
+		if (fixed) {
+			cn.push('fixed');
+		};
 
         let depth = 0;
 
@@ -55,23 +73,39 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         };
 
 		return (
-            <div id="sidebar" className="sidebar">
+            <div id="sidebar" className={cn.join(' ')} style={css} onMouseLeave={this.onMouseLeave}>
 				<div className="head">
-
+					{fixed ? (
+						<Icon className="close" onClick={this.onExpand} />
+					) : (
+						<Icon className="expand" onClick={this.onExpand} />
+					)}
 				</div>
+				
 				<div className="body">
 					{tree.map((item: any, i: number) => (
 						<Item key={item.id + '-' + depth} {...item} depth={depth} />
 					))}
 				</div>
 
-				<div className="resize" />
+				<div className="resize" onMouseDown={this.onResizeStart} />
             </div>
 		);
 	};
 
 	componentDidMount () {
+		this._isMounted = true;
+
 		this.load();
+		this.resize();
+	};
+
+	componentDidUpdate () {
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	load () {
@@ -114,6 +148,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	toggle (e: any, item: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -149,13 +187,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
     getTree () {
-        let edges = this.data.edges.map((edge: any) => {
-            edge.target = this.data.nodes.find((node: any) => { return node.id == edge.target; });
+		const data = Util.objectCopy(this.data);
+
+        let edges = data.edges.map((edge: any) => {
+            edge.target = data.nodes.find((node: any) => { return node.id == edge.target; });
             return edge;
         });
 		edges = edges.filter((edge: any) => { return edge.type == I.EdgeType.Link; });
 
-        let nodes = this.data.nodes.map((node: any) => {
+        let nodes = data.nodes.map((node: any) => {
             node.children = edges.filter((edge: any) => {
                 return edge.source == node.id;
             }).map((edge: any) => { 
@@ -165,6 +205,67 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         });
         return nodes;
     };
+
+	onExpand (e: any) {
+		const { sidebar } = commonStore;
+		commonStore.sidebarSet({ fixed: !sidebar.fixed });
+	};
+
+	onMouseLeave (e: any) {
+		if (!this._isMounted || keyboard.isResizing) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+
+		node.removeClass('active');
+	};
+
+	onResizeStart (e: any) {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		const win = $(window);
+		const body = $('body');
+		
+		this.ox = node.offset().left;
+
+		keyboard.setResize(true);
+		body.addClass('colResize');
+		win.unbind('mousemove.sidebar mouseup.sidebar');
+		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e); });
+		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e); });
+	};
+
+	onResizeMove (e: any) {
+		const node = $(ReactDOM.findDOMNode(this));
+		const w = this.getWidth(e.pageX - this.ox);
+
+		node.css({ width: w });
+		$('#sidebarDummy').css({ width: w });
+	};
+
+	onResizeEnd (e: any) {
+		commonStore.sidebarSet({ width: this.getWidth(e.pageX - this.ox) });
+
+		keyboard.setResize(false);
+		$('body').removeClass('colResize');
+		$(window).unbind('mousemove.sidebar mouseup.sidebar');
+	};
+
+	getWidth (w: number) {
+		const size = Constant.size.sidebar;
+		return Math.max(size.min, Math.min(size.max, w));
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+	};
 
 });
 

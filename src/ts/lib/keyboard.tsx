@@ -477,6 +477,10 @@ class Keyboard {
 			page: { x: e.pageX, y: e.pageY },
 			client: { x: e.clientX, y: e.clientY },
 		};
+
+		if (this.mouse.page.x <= 20) {
+			$('#sidebar').addClass('active');
+		};
 	};
 	
 	isArrow (k: string): boolean {

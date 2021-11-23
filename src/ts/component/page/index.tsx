@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { ListPopup, Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -67,17 +68,19 @@ interface Props extends RouteComponentProps<any> {
 	rootId?: string;
 };
 
-class Page extends React.Component<Props, {}> {
+const Page = observer(class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 	refChild: any;
 
 	render () {
 		const { isPopup } = this.props;
+		const { sidebar } = commonStore;
+		const { fixed, width } = sidebar;
+
 		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const fixed = false;
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -90,7 +93,7 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		const wrap = (
-			<div className={'page ' + this.getClass('page')}>
+			<div id="page" className={'page ' + this.getClass('page')}>
 				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
 			</div>
 		);
@@ -101,8 +104,10 @@ class Page extends React.Component<Props, {}> {
 		} else {
 			if (fixed) {
 				content = (
-					<div className="flex">
+					<div className="pageFlex">
 						<Sidebar />
+						<div id="sidebarDummy" style={{ width: width }} />
+						
 						{wrap}
 					</div>
 				);
@@ -327,6 +332,6 @@ class Page extends React.Component<Props, {}> {
 		});
 	};
 	
-};
+});
 
 export default Page;

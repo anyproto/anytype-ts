@@ -27,6 +27,14 @@ interface Cover {
 	type: I.CoverType;
 };
 
+interface Sidebar {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	fixed: boolean;
+};
+
 const $ = require('jquery');
 const { ipcRenderer } = window.require('electron');
 
@@ -43,10 +51,12 @@ class CommonStore {
 	public themeId: string = '';
 	public typeId: string = '';
 	public pinTimeId: number = 0;
+	public sidebarObj: Sidebar = { width: 0, height: 0, x: 0, y: 0, fixed: false };
 
     constructor() {
         makeObservable(this, {
             coverObj: observable,
+			sidebarObj: observable,
             coverImg: observable,
             progressObj: observable,
             filterObj: observable,
@@ -63,6 +73,7 @@ class CommonStore {
             coverImage: computed,
             gateway: computed,
 			theme: computed,
+			sidebar: computed,
             coverSet: action,
             coverSetUploadedImage: action,
             gatewaySet: action,
@@ -73,6 +84,7 @@ class CommonStore {
             filterSet: action,
             previewSet: action,
 			themeSet: action,
+			sidebarSet: action,
         });
     };
 
@@ -114,6 +126,10 @@ class CommonStore {
 
 	get theme(): string {
 		return String(this.themeId || '');
+	};
+
+	get sidebar(): Sidebar {
+		return this.sidebarObj;
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -195,6 +211,18 @@ class CommonStore {
 
 		ipcRenderer.send('configSet', { theme: v });
 		analytics.event('ThemeSet', { id: v });
+	};
+
+	sidebarSet (v: any) {
+		const size = Constant.size.sidebar;
+
+		v = Object.assign(this.sidebarObj, v);
+		v.width = Number(v.width) || 0;
+		v.width = Math.max(size.min, Math.min(size.max, v.width));
+		v.fixed = Boolean(v.fixed);
+
+		set(this.sidebarObj, v);
+		Storage.set('sidebar', v);
 	};
 
 	configSet (config: any, force: boolean) {
