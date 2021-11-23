@@ -348,6 +348,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId, save } = data;
 		const view = getView();
+
+		if (!view) {
+			return;
+		};
 		
 		let item = view.getFilter(itemId);
 		if (!item) {
@@ -355,6 +359,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		if (!relation) {
+			return;
+		};
 
 		this.checkClear(v);
 
