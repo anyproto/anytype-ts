@@ -30,15 +30,5 @@ html.debug {
 
 	.blockLast { background: rgba(0,0,255,0.1); }
 
-	.sidebar {
-		.body {
-			.item {
-				.iconObject { background-color: rgba(0,0,255,0.1); }
-				.icon { background-color: rgba(0,0,255,0.1); }
-				.name { background-color: rgba(0,0,255,0.1); }
-			}
-		}
-	}
-	
 	.isHidden { background-color: rgba(255,192,203,0.3) !important; }
 } 
