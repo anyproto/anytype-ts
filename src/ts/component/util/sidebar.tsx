@@ -33,7 +33,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         let depth = 0;
 
         const Item = (item: any) => {
-			let css: any = { paddingLeft: item.depth * 6 };
+			let css: any = { 
+				paddingLeft: item.depth * 6,
+				paddingRight: (item.depth == 0 ? 6 : 0),
+			};
 
             return (
                 <div id={`item-${item.id}-${item.depth}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
