@@ -79,8 +79,10 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 		const { fixed, width } = sidebar;
 
 		const match = this.getMatch();
-		const path = [ match.params.page, match.params.action ].join('/');
+		const { page, action } = match.params || {};
+		const path = [ page, action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const showSidebar = (page == 'main') && (action != 'index');
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -98,14 +100,16 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			</div>
 		);
 
+		let sb = <Sidebar isPopup={isPopup} />;
 		let content = null;
-		if (isPopup) {
+
+		if (isPopup || !showSidebar) {
 			content = wrap;
 		} else {
 			if (fixed) {
 				content = (
 					<div className="pageFlex">
-						<Sidebar />
+						{sb}
 						<div id="sidebarDummy" style={{ width: width }} />
 						
 						{wrap}
@@ -114,7 +118,7 @@ const Page = observer(class Page extends React.Component<Props, {}> {
 			} else {
 				content = (
 					<React.Fragment>
-						<Sidebar />
+						{sb}
 						{wrap}
 					</React.Fragment>
 				);

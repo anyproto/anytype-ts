@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 import { authStore, blockStore, commonStore } from 'ts/store';
 
 interface Props {
+	isPopup: boolean;
 };
 
 interface State {
@@ -82,11 +83,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		return (
             <div id="sidebar" className={cn.join(' ')} style={css} onMouseLeave={this.onMouseLeave}>
 				<div className="head">
-					{fixed ? (
-						<Icon className="close" onClick={this.onExpand} />
-					) : (
-						<Icon className="expand" onClick={this.onExpand} />
-					)}
+					<Icon className={fixed ? 'close' : 'expand'} onClick={this.onExpand} />
 				</div>
 				
 				<div className="body">
@@ -102,19 +99,27 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.init();
 		this.resize();
+
+		$(window).unbind('resize.sidebar').on('resize.sidebar', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
+		this.init();
 		this.resize();
-
-		if (!this.loaded && !this.state.loading) {
-			this.load();
-		};
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		
+		$(window).unbind('resize.sidebar');
+	};
+
+	init () {
+		if (!this.loaded && !this.state.loading) {
+			this.load();
+		};
 	};
 
 	load () {
@@ -259,6 +264,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const w = this.getWidth(e.pageX - this.ox);
 
+		this.resizeHeader(w);
+
 		node.css({ width: w });
 		$('#sidebarDummy').css({ width: w });
 	};
@@ -281,6 +288,30 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 			return;
 		};
 
+		const { sidebar } = commonStore;
+		const { width } = sidebar;
+
+		this.resizeHeader(width);
+	};
+
+	resizeHeader (width: number) {
+		const { isPopup } = this.props;
+		if (isPopup) {
+			return;
+		};
+
+		const { sidebar } = commonStore;
+		const { fixed } = sidebar;
+		const win = $(window);
+		const header = $('#page #header');
+		
+		let w = win.width();
+		if (fixed) {
+			w -= width;
+		};
+
+		header.css({ width: w });
+		fixed ? header.addClass('withSidebar') : header.removeClass('withSidebar');
 	};
 
 });

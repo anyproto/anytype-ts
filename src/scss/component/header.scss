@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.header { position: fixed; top: 0px; left: 0px; width: 100%; z-index: 20; user-select: none; }
+.header { position: fixed; top: 0px; right: 0px; width: 100%; z-index: 20; user-select: none; }
 .header {
 	.icon { width: 20px; height: 20px; cursor: pointer; vertical-align: top; -webkit-app-region: no-drag; }
 	.icon.back { margin-right: 8px; }
@@ -152,6 +152,9 @@ html.platformMac {
 		.side { top: 12px; }
 		.side.left { left: 88px; }
 		.side .item { vertical-align: middle; display: inline-block; }
+	}
+	.header.withSidebar {
+		.side.left { left: 6px; }
 	}
 }
 

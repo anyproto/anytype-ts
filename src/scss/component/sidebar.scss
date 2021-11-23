@@ -1,8 +1,9 @@
 @import "~scss/_vars";
 
-.pageFlex { display: flex; flex-direction: row; justify-content: flex-start; }
+.pageFlex { display: flex; flex-direction: row; justify-content: space-between; }
 .pageFlex {
 	#sidebarDummy { flex-shrink: 0; }
+    #page { width: 100%; }
 }
 
 .sidebar { 
