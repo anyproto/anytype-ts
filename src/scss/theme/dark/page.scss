@@ -21,14 +21,17 @@
     }
 
     #documents {
-        .emptySearch { background: $colorBlack; }
+        .emptySearch { background: rgba(0,0,0,0.5); }
 
-        .item { background: $colorBlack; }
+        .item { background: rgba(0,0,0,0.5); transition: background 0.2s ease-in-out; }
         .item {
             .type { color: $colorSecondary; }
             .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
 			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
+
+            .empty { color: $colorSecondary; }
         }
+        .item:hover { background: rgba(0,0,0,0.7); }
 
         .item.isLoading {
 			.iconObject { background: $colorBgIcon; }
@@ -46,6 +49,8 @@
     .tabs { border-color: $colorLineSecondary; }
     .tabs {
         .tab:hover, .tab.active { color: $colorPrimary; }
+
+        .icon.close:hover { background-color: $colorHover; }
     }
 
     .wrapper {
@@ -57,6 +62,12 @@
 
         .section {
             .item { background: $colorBlack; }
+        }
+    }
+
+    .panelPreview {
+        .heading {
+            .iconObject { background: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
         }
     }
 
@@ -103,7 +114,7 @@
 				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template1.svg'); }
 			}
 
-			.listTemplate {
+			.listPreviewObject {
 				.icon.arrow.left { left: -32px; }
 				.icon.arrow.right { right: -32px; }
 			}
@@ -120,7 +131,7 @@
 
         table { border-color: $colorLineSecondary; }
         table {
-            .cellHead .name { border-color: $colorLineSecondary; }
+            .cellHead .name { border-color: $colorLineSecondary; color: $colorSecondary; }
             .cell { border-color: $colorLineSecondary; }
             tbody { border-color: $colorLineSecondary; }
         }
@@ -133,7 +144,7 @@
     .wrapper {
         table { border-color: $colorLineSecondary; }
         table {
-            .cellHead .name { border-color: $colorLineSecondary; }
+            .cellHead .name { border-color: $colorLineSecondary; color: $colorSecondary; }
             .cell { border-color: $colorLineSecondary; }
             tbody { border-color: $colorLineSecondary; }
         }
@@ -161,8 +172,11 @@
 .pageMainHistory {
     .list { background: $colorBlack; border-color: $colorLineSecondary; }
     .list {
+        .section.fix { background: $colorBlack; }
+
         .item:hover, .item.active { background: $colorHover; }
         .item {
+            .name { color: $colorSecondary; }
             .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
         }
     }

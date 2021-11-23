@@ -395,6 +395,13 @@ class DataUtil {
 					Util.onErrorUpdate();
 					return;
 				};
+
+				const object = detailStore.get(root, root, [ 'coverId', 'coverType' ]);
+
+				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+				};
+
 				if (callBack) {
 					callBack();
 				};
@@ -1210,12 +1217,15 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
+				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
 				if ((value === '') || (value === undefined)) {
 					value = null;
 				};
 				if (value !== null) {
-					value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
 					value = Number(value);
+				};
+				if (isNaN(value)) {
+					value = null;
 				};
 				break;
 			case I.RelationType.Date:
@@ -1239,6 +1249,7 @@ class DataUtil {
 				value = Util.objectCopy(value || []);
 				value = Util.arrayUnique(value);
 				value = value.map((it: any) => { return String(it || ''); });
+				value = value.filter((it: any) => { return it; });
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -1344,7 +1355,6 @@ class DataUtil {
 		dbStore.metaSet(rootId, blockId, meta);
 		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
 	};
-
 };
 
 export default new DataUtil();

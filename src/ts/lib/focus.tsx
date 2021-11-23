@@ -57,7 +57,7 @@ class Focus {
 
 		if (withRange) {
 			$(document.activeElement).blur();
-			window.getSelection().empty();
+			window.getSelection().removeAllRanges();
 			keyboard.setFocus(false);
 		};
 	};

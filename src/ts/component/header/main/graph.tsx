@@ -44,21 +44,22 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 		return (
 			<div id="header" className={cn.join(' ')}>
-				{isPopup ? (
-					<div className="side left">
-						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-					</div>
-				) : (
-					<div className="side left">
-						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-					</div>
-				)}
+				<div className="side left">
+					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+					{isPopup ? (
+						<React.Fragment>
+							<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+							<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+						</React.Fragment>
+					) : (
+						<React.Fragment>
+							<Icon className="back big" tooltip="Back" onClick={this.onBack} />
+							<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
+						</React.Fragment>
+					)}
+					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
+				</div>
 
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>

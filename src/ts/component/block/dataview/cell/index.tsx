@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, DataUtil, Util } from 'ts/lib';
+import { I, DataUtil, Util, keyboard } from 'ts/lib';
 import { commonStore, menuStore, dbStore } from 'ts/store';
 import { observable } from 'mobx';
 
@@ -157,7 +157,7 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		const win = $(window);
-		const cell = $(`#${cellId}`).addClass('isEditing');
+		const cell = $(`#${cellId}`);
 		const value = record[relation.relationKey] || '';
 		const height = cell.outerHeight();
 
@@ -170,27 +170,36 @@ class Cell extends React.Component<Props, {}> {
 			cellPosition(cellId);
 		};
 
+		let closeIfOpen = true;
 		let menuId = '';
 		let setOn = () => {
-			if (!this.ref) {
-				return;
-			};
-			if (this.ref.setEditing) {
-				this.ref.setEditing(true);
-			};
-			if (this.ref.onClick) {
-				this.ref.onClick();
-			};
+			cell.addClass('isEditing');
+
 			if (menuId) {
+				keyboard.disableBlur(true);
 				$(scrollContainer).addClass('overMenu');
+			};
+
+			if (this.ref) {
+				if (this.ref.setEditing) {
+					this.ref.setEditing(true);
+				};
+
+				if (this.ref.onClick) {
+					this.ref.onClick();
+				};
 			};
 
 			win.trigger('resize');
 		};
 
 		let setOff = () => {
-			commonStore.cellId = '';
 			cell.removeClass('isEditing');
+
+			if (menuId) {
+				keyboard.disableBlur(false);
+				$(scrollContainer).removeClass('overMenu');
+			};
 
 			if (this.ref) {
 				if (this.ref.onBlur) {
@@ -200,9 +209,8 @@ class Cell extends React.Component<Props, {}> {
 					this.ref.setEditing(false);
 				};
 			};
-			if (menuId) {
-				$(scrollContainer).removeClass('overMenu');
-			};
+
+			window.setTimeout(() => { commonStore.cellId = ''; }, Constant.delay.menu);
 		};
 
 		let ret = false;
@@ -241,6 +249,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 					
 				menuId = 'dataviewCalendar';
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.File:
@@ -296,6 +305,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = 'dataviewText';
+				closeIfOpen = false;
 				break;
 
 			case I.RelationType.Url:
@@ -348,6 +358,7 @@ class Cell extends React.Component<Props, {}> {
 				});
 
 				menuId = 'button';
+				closeIfOpen = false;
 				break;
 					
 			case I.RelationType.Checkbox:
@@ -364,20 +375,27 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		if (menuId) {
-			menuStore.closeAll(Constant.menuIds.cell);
-			window.clearTimeout(this.timeout);
-
 			if (commonStore.cellId != cellId) {
 				commonStore.cellId = cellId;
 
 				this.timeout = window.setTimeout(() => {
 					menuStore.open(menuId, param);
 
-					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
+					$(pageContainer).unbind('mousedown.cell').on('mousedown.cell', (e: any) => { 
+						if (!$(e.target).parents(`#${cellId}`).length) {
+							menuStore.closeAll(Constant.menuIds.cell); 
+						};
+					});
+
 					if (!config.debug.ui) {
 						win.unbind('blur.cell').on('blur.cell', () => { menuStore.closeAll(Constant.menuIds.cell); });
 					};
 				}, Constant.delay.menu);
+			} else 
+			if (closeIfOpen) {
+				setOff();
+				menuStore.closeAll(Constant.menuIds.cell);
+				window.clearTimeout(this.timeout);
 			};
 		} else {
 			setOn();

@@ -4,6 +4,9 @@
     width: 300px; height: calc(100% - 52px); position: fixed; left: 0px; top: 52px; background-color: #f3f2ec; overflow-x: hidden; 
     overflow-y: overlay; z-index: 5; padding: 14px 0px;
 }
+.sidebar.fixed {
+
+}
 
 .sidebar {
     .item { cursor: pointer; }

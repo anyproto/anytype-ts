@@ -32,10 +32,11 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 	render () {
 		const { loading } = this.state;
 		const { rootId, onClose } = this.props;
-		const check = DataUtil.checkDetails(rootId);
+		const contextId = this.getRootId();
+		const check = DataUtil.checkDetails(contextId, rootId);
 		const object = check.object;
 		const { layout, fileExt, description, snippet, coverType, coverId, coverX, coverY, coverScale } = object;
-		const author = detailStore.get(rootId, object.creator, []);
+		const author = detailStore.get(contextId, object.creator, []);
 		const isTask = object.layout == I.ObjectLayout.Task;
 		const cn = [ 'panelPreview', 'blocks', check.className, ];
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
@@ -101,7 +102,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, '', (message: any) => {
+		C.BlockShow(rootId, 'preview', (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -109,6 +110,11 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 			this.setState({ loading: false });
 			this.forceUpdate();
 		});
+	};
+
+	getRootId () {
+		const { rootId } = this.props;
+		return [ rootId, 'preview' ].join('-');
 	};
 
 });

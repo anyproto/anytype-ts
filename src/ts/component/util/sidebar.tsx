@@ -69,7 +69,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         };
 
 		return (
-            <div className="sidebar">
+            <div id="sidebar" className="sidebar">
                 {tree.map((item: any, i: number) => (
                     <Item key={item.id + '-' + depth} {...item} depth={depth} />
                 ))}

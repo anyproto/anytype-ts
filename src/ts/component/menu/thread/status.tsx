@@ -25,11 +25,13 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					};
 
 					let content = null;
-					if (field.value.toString()) {
+					let value = String(field.value || '');
+
+					if (value) {
 						content = (
 							<React.Fragment>
 								<div className="side left">{field.key}</div>
-								<div className="side right">{field.value}</div>
+								<div className="side right">{value}</div>
 							</React.Fragment>
 						);
 					} else {

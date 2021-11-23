@@ -3,12 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListMenu, Progress, Tooltip, Preview, Icon } from './component';
+import { Page, ListMenu, Progress, Tooltip, Preview, Icon, Sidebar } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
-import { configure } from "mobx"
+import { configure } from "mobx";
 
 configure({ enforceActions: 'never' });
 
@@ -44,7 +44,7 @@ import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
 import 'scss/component/sidebar.scss';
-import 'scss/component/list/template.scss';
+import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
@@ -259,6 +259,7 @@ class App extends React.Component<Props, State> {
 						<Preview />
 						<Progress />
 						<Tooltip />
+						<Sidebar />
 						
 						<div id="drag">
 							<div className="sides">
@@ -302,8 +303,11 @@ class App extends React.Component<Props, State> {
 		DataUtil.init(history);
 		Storage.delete('lastSurveyCanceled');
 
+		const storageKeys = [
+			'theme', 'pinTime', 'defaultType',
+		];
+
 		const cover = Storage.get('cover');
-		const coverImg = Storage.get('coverImg');
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 		const redirect = Storage.get('redirect');
 
@@ -317,9 +321,10 @@ class App extends React.Component<Props, State> {
 		};
 
 		cover ? commonStore.coverSet(cover.id, cover.image, cover.type) : commonStore.coverSetDefault();
-		if (coverImg) {
-			commonStore.coverSetUploadedImage(coverImg);
-		};
+
+		storageKeys.forEach((it: string) => {
+			commonStore[Util.toCamelCase(it + '-Set')](Storage.get(it));
+		});
 		
 		this.setIpcEvents();
 		this.setWindowEvents();
@@ -382,11 +387,15 @@ class App extends React.Component<Props, State> {
 			history.push(route);
 		});
 
-		ipcRenderer.on('popup', (e: any, id: string, param: any) => {
+		ipcRenderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {
 			param = param || {};
 			param.data = param.data || {};
 			param.data.rootId = keyboard.getRootId();
 
+			if (close) {
+				popupStore.closeAll();
+			};
+			
 			window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 		});
 

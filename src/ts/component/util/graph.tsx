@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, Util, DataUtil, SmileUtil, translate, Storage } from 'ts/lib';
+import { I, Util, DataUtil, SmileUtil, translate } from 'ts/lib';
 import { commonStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import * as d3 from 'd3';
@@ -101,9 +101,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
-		const stored = Storage.get('graph') || {} as any;
-		const transform = stored.transform || {};
-		const nodes = stored.nodes || {};
+		const transform: any = {};
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -127,16 +125,12 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 
 			d.layout = Number(d.layout) || 0;
 			d.name = d.name || translate('defaultNamePage');
+			d.name = SmileUtil.strip(d.name);
 			d.shortName = Util.shorten(d.name, 16);
 			d.radius = Math.max(3, Math.min(10, sourceCnt + targetCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
-
-			if (nodes[d.id]) {
-				d.fx = nodes[d.id].x;
-				d.fy = nodes[d.id].y;
-			};
 
 			// Clear icon props to fix image size
 			if (d.layout == I.ObjectLayout.Task) {
@@ -241,17 +235,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const offset = node.offset();
 		const id = this.subject.id;
-		const nodes = Storage.get('graph').nodes || {};
 		const x = p[0] - offset.left;
 		const y = p[1] - offset.top;
-
-		if (id) {
-			nodes[id] = nodes[id] || {};
-			nodes[id].x = x;
-			nodes[id].y = y;
-
-			//Storage.set('graph', { nodes });
-		};
 
 		this.send('onDragMove', { 
 			subjectId: id, 
@@ -270,7 +255,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 	};
 
 	onZoom ({ transform }) {
-		Storage.set('graph', { transform });
 		this.send('onZoom', { transform: transform });
   	};
 
@@ -325,7 +309,11 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					src = `img/icon/file/${Util.fileIcon(d)}.svg`;
 				};
 				break;
-
+				
+			case I.ObjectLayout.Human:
+				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
+				break;
+				
 			default:
 				if (d.iconImage) {
 					src = commonStore.imageUrl(d.iconImage, 160);
@@ -337,12 +325,13 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 					};
 					src = src.replace(/^.\//, '');
 				};
+		
+				if (!src) {
+					src = 'img/icon/page.svg';
+				};		
 				break;
 		};
 
-		if (!src) {
-			src = 'img/icon/page.svg';
-		};
 		return src;
 	};
 

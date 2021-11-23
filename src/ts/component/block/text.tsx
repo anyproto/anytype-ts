@@ -609,7 +609,9 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			if (block.isTextCode() && (pressed == 'enter')) {
 				return;
 			};
-
+			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+				return;
+			};
 			if (menuOpen) {
 				return;
 			};
@@ -1107,6 +1109,8 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const currentFrom = range.from;
 		const currentTo = range.to;
 
+		window.clearTimeout(this.timeoutContext);
+
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (!keyboard.isContextDisabled) {
 				menuStore.close('blockContext');
@@ -1124,7 +1128,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
-		window.clearTimeout(this.timeoutContext);
 		this.timeoutContext = window.setTimeout(() => {
 			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 			pageContainer.unbind('click.context').on('click.context', () => { 

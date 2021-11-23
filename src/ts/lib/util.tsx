@@ -395,9 +395,17 @@ class Util {
 		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
 	};
 
-	parseDate (value: string): number {
+	parseDate (value: string, format?: I.DateFormat): number {
 		let [ date, time ] = String(value || '').split(' ');
-		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		let d = 0;
+		let m = 0;
+		let y = 0;
+
+		if (format == I.DateFormat.ShortUS) {
+			[ m, d, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		} else {
+			[ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		};
 		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
 
 		m = Math.min(12, Math.max(1, m));
@@ -997,6 +1005,11 @@ class Util {
 		obj.attr({ class: c.join(' ') });
 	};
 
+	findClosestElement (array: number[], goal: number) {
+		return array.reduce((prev: number, curr: number) => {
+			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
+		});
+	};
 };
 
 export default new Util();

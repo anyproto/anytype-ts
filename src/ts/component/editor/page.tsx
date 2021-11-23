@@ -704,10 +704,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		// Select all
-		if (block.isText() && (range.from == 0) && (range.to == length)) {
+		if (block.isText()) {
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-				e.preventDefault();
-				this.onSelectAll();
+				if ((range.from == 0) && (range.to == length)) {
+					e.preventDefault();
+					this.onSelectAll();
+				} else {
+					focus.set(block.id, { from: 0, to: length });
+					focus.apply();
+				};
 			});
 		};
 
@@ -748,14 +753,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					focus.apply();
 				};
 			});
-		});
-
-		// Select all
-		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-			focus.set(block.id, { from: 0, to: length });
-			focus.apply();
-
-			//$('.focusable.c' + block.id).trigger('select');
 		});
 
 		// Open action menu
@@ -1045,8 +1042,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (block.isTextCode() && (pressed == 'enter')) {
 				return;
 			};
-
 			if (!block.isText() && keyboard.isFocused) {
+				return;
+			};
+			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
 				return;
 			};
 
@@ -1467,23 +1466,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		return ret;
 	};
 
-	phraseCheck () {
-		let blockCnt = Number(Storage.get('blockCnt')) || 0;
-		blockCnt++;
-		if (blockCnt == 10) {
-			popupStore.open('settings', { data: { page: 'phrase' } });
-		};
-		if (blockCnt <= 11) {
-			Storage.set('blockCnt', blockCnt);
-		};
-	};
-	
 	blockCreate (blockId: string, position: I.BlockPosition, param: any, callBack?: (blockId: string) => void) {
 		const { rootId } = this.props;
 
 		C.BlockCreate(param, rootId, blockId, position, (message: any) => {
 			this.focus(message.blockId, 0, 0, false);
-			this.phraseCheck();
 
 			if (callBack) {
 				callBack(message.blockId);
@@ -1583,7 +1570,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			this.focus(message.blockId, 0, 0, true);
-			this.phraseCheck();
 
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);

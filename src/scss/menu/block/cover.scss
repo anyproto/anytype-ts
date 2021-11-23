@@ -21,7 +21,7 @@
 	
 		.cover { 
 			width: 88px; height: 48px; border-radius: 2px; margin: 0px 8px 8px 0px; display: inline-block; 
-			vertical-align: top; position: static; cursor: pointer;
+			vertical-align: top; position: relative; cursor: pointer;
 		}
 		.cover:nth-child(4n+4) { margin-right: 0px; }
 	}

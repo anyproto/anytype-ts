@@ -8,7 +8,6 @@ import { observer } from 'mobx-react';
 interface Props extends I.Popup, RouteComponentProps<any> {}
 
 interface State {
-	page: string;
 	loading: boolean;
 	error: string;
 	entropy: string;
@@ -28,9 +27,8 @@ const QRColor = {
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
 
-	phraseRef: any = null;
+	refPhrase: any = null;
 	state = {
-		page: 'index',
 		loading: false,
 		error: '',
 		entropy: '',
@@ -59,9 +57,12 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { page } = data;
 		const { account, phrase } = authStore;
 		const { cover, coverImage, theme, config } = commonStore;
-		const { page, loading, error, entropy } = this.state;
+		const { loading, error, entropy } = this.state;
 		const pin = Storage.get('pin');
 
 		let content = null;
@@ -144,7 +145,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				let covers3 = gradients.map((it: string) => { return { id: it, image: '', type: I.CoverType.Gradient }; });
 
 				if (coverImage) {
-					covers1.push({ id: 0, image: coverImage, type: I.CoverType.Upload });
+					covers1.push({ id: coverImage, image: coverImage, type: I.CoverType.Upload });
 				};
 				for (let i = 1; i <= 13; ++i) {
 					covers1.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
@@ -198,7 +199,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						
 						<div className="inputs">
 							<Textarea 
-								ref={(ref: any) => this.phraseRef = ref} 
+								ref={(ref: any) => this.refPhrase = ref} 
 								id="phrase" 
 								value={phrase} 
 								className="isBlurred"
@@ -217,7 +218,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								</div>
 								<div className="side right isBlurred" onClick={this.elementUnblur}>
 									<div className="qrWrap">
-										<QRCode value={entropy} bgColor={QRColor[theme]} size="100" />
+										<QRCode value={entropy} bgColor={QRColor[theme]} size={100} />
 									</div>
 								</div>
 							</div>
@@ -388,6 +389,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'other':
+				const { type } = commonStore;
+				const pinTime = commonStore.pinTime / 1000;
+
 				const types = DataUtil.getObjectTypesForNewObject(false).map((it: any) => {
 					it.layout = I.ObjectLayout.Type;
 					return { ...it, object: it };
@@ -419,7 +423,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="Default Object type" />
 							</div>
 							<div className="side right">
-								<Select id="defaultType" options={types} value={commonStore.type} onChange={(id: string) => { this.onTypeChange(id); }}/>
+								<Select id="defaultType" options={types} value={type} onChange={(id: string) => { this.onTypeChange(id); }}/>
 							</div>
 						</div>
 
@@ -428,7 +432,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								<Label text="PIN code check time-out" />
 							</div>
 							<div className="side right">
-								<Select id="pinTime" options={times} value={String(commonStore.pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+								<Select id="pinTime" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 							</div>
 						</div>
 
@@ -465,12 +469,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { page } = data || {};
+		const { page } = data;
 		const { phrase } = authStore;
 
-		if (page) {
-			this.onPage(page);
-		};
+		this.onPage(page || 'index');
 
 		if (phrase) {
 			C.WalletConvert(phrase, '', (message: any) => {
@@ -511,16 +513,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				this.setState({ loading: false });
 
-				commonStore.coverSetUploadedImage(message.hash);
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
-
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
 			});
 		});
 	};
 
 	onFocusPhrase (e: any) {
-		this.phraseRef.select();
+		this.refPhrase.select();
 		this.elementUnblur(e);
 	};
 
@@ -561,6 +561,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onPage (id: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { page } = data || {};
 		const pin = Storage.get('pin');
 
 		if (pin && (id == 'phrase') && !this.pinConfirmed) {
@@ -573,8 +576,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			return;
 		};
 
-		this.prevPage = this.state.page;
-		this.setState({ page: id });
+		this.prevPage = page;
+		popupStore.updateData(this.props.id, { page: id });
 	};
 
 	onCover (item: any) {
@@ -703,7 +706,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onTypeChange (id: string) {
-		commonStore.typeSet(id);
+		commonStore.defaultTypeSet(id);
 		analytics.event('DefaultTypeChanged', { objectType: id });
 	};
 

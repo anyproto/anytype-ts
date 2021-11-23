@@ -26,8 +26,9 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 		const { data } = param;
 		const { rootId } = data;
 		const thread = authStore.threadGet(rootId);
-		const { accounts, cafe } = thread;
-		const { status } = cafe || {};
+		const accounts = thread.accounts || [];
+		const cafe = thread.cafe || {};
+		const status = cafe.status || I.ThreadStatus.Unknown;
 
 		const Item = (item: any) => (
 			<div 

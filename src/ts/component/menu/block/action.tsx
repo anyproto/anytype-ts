@@ -175,7 +175,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnText = true;
 			let hasTurnPage = true;
 			let hasTurnList = true;
-			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasLink = true;
@@ -187,6 +186,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
+				if (!block) {
+					continue;
+				};
+
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
@@ -249,6 +252,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
+				if (!block) {
+					continue;
+				};
+
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
 				};
@@ -291,7 +298,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnDiv) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true });
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
@@ -377,6 +384,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		switch (item.itemId) {
 			case 'turnStyle':
 				menuId = 'blockStyle';
+
+				if (item.isDiv) {
+					menuParam.offsetY = 0;
+					menuParam.vertical = I.MenuDirection.Center;
+				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {

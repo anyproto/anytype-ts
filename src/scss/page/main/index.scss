@@ -156,7 +156,7 @@
 		.item.isTask { padding-left: 40px; }
 		.item.isTask {
 			.iconObject { position: absolute; left: 16px; top: 15px; z-index: 1; margin: 0px; }
-			.name { -webkit-line-clamp: 4; }
+			.name { -webkit-line-clamp: 4; width: calc(100% - 20px); }
 		}
 		
 		.item.active, .item.hover {

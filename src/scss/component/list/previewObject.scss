@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.listTemplate { white-space: nowrap; position: relative; }
-.listTemplate {
+.listPreviewObject { white-space: nowrap; position: relative; }
+.listPreviewObject {
 	.wrap { overflow: hidden; border-radius: 8px; }
 	.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
 
@@ -22,7 +22,7 @@
 	.item:last-child { margin-right: 0px; }
 	.item.hover:before, .item:hover:before { display: block; }
 
-	.item.add { border: 1px solid $colorLightGrey; border-radius: 8px; width: 344px; height: 216px; }
+	.item.add { border: 1px solid $colorLightGrey; border-radius: 8px; width: 344px; height: 216px; cursor: pointer; }
 
 	.icon.arrow { 
 		position: absolute; top: 0px; width: 32px; height: 216px; background-image: url('~img/arrow/template0.svg'); 

@@ -3,12 +3,6 @@
 .pageMainNavigation {
 	.wrapper > .loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.5); }
 
-	.empty { height: 100%; line-height: 360px; padding: 16px; text-align: center; }
-	.empty {
-		b { display: block; font-weight: 400; color: $colorBlack; }
-		.txt { line-height: 24px; color: $colorMediumGrey; }
-	}
-	
 	.items {
 		.item { 
 			cursor: pointer; transition: $transitionFast; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
@@ -47,7 +41,7 @@
 			.icon.arrow { background-image: url('~img/arrow/nav1.svg'); }
 		}
 
-		.item.empty { line-height: 78px; cursor: default; }
+		.item.empty { line-height: 78px; cursor: default; padding: 0px 16px; }
 		.item.empty {
 			.name { display: inline-block; vertical-align: middle; }
 		}
@@ -60,7 +54,7 @@
 		.iconObject { margin-bottom: 8px; }
 		.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
 		.descr { @include text-small; color: $colorVeryDarkGrey; @include text-overflow; max-height: 54px; }
-		.cover { position: static; height: 156px; margin-top: 11px; border-radius: 2px; }
+		.cover { position: relative; height: 156px; margin-top: 11px; border-radius: 2px; }
 
 		.buttons { margin-top: 16px; display: flex; }
 		.buttons {

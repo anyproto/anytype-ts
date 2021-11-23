@@ -3,16 +3,30 @@
 .popups {
 	.popup.popupPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
+		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px; top: 0px; }
+		.innerWrap.full {
+			.header {
+				.side.left {
+					.icon.expand { display: none; }
+					.icon.home { display: inline-block; }
+				}
+			}
+		}
+
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
 		.page { padding: 0px; height: 100%; }
 		.page > div { height: 100%; }
 
-		.header { position: absolute; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
+		.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
 		.header {
 			.menu { right: 0px; top: 0px; }
 			.side.left { left: 16px !important; }
+			.side.left {
+				.icon.home { display: none; }
+				.icon.expand { display: inline-block; }
+			}
 		}
 		.footer { display: none; }
 
@@ -34,4 +48,20 @@
 		}
 
 	}	
+}
+
+html.platformMac {
+	.popups {
+		.popup.popupPage {
+			.innerWrap.full {
+				.header {
+					.side.left { left: 88px !important; }
+				}
+			}
+			.pageMainEdit {
+				.content { padding-top: 52px; }
+				.block.blockCover { top: 52px; }
+			}	
+		}
+	}
 }

@@ -401,7 +401,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		};
 
 		obj.css({ minHeight: isPopup ? '' : win.height() });
-		node.css({ paddingTop: hh });
+		node.css({ paddingTop: isPopup ? 0 : hh });
 	};
 
 });

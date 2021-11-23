@@ -178,11 +178,12 @@ class Dispatcher {
 			let fn = 'get' + Util.ucFirst(type);
 			let data = message[fn] ? message[fn]() : {};
 			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
-			
-			if (needLog) {
-				log(rootId, type, data, message.getValueCase());
-			};
 
+			// Do not log breadcrumbs details to clean up logs
+			if (rootId.match('virtualBreadcrumbs')) {
+				needLog = false;
+			};
+			
 			switch (type) {
 
 				case 'accountShow':
@@ -613,6 +614,10 @@ class Dispatcher {
 							break;
 					};
 					break;
+			};
+
+			if (needLog) {
+				log(rootId, type, data, message.getValueCase());
 			};
 		};
 		

@@ -15,6 +15,7 @@ const Constant = require('json/constant.json');
 const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, {}> {
 	
 	n: number = 0;
+	top: number = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -114,8 +115,14 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	componentDidUpdate () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
 		this.props.setActive(null, true);
 		this.props.position();
+		this.rebind();
+
+		scroll.scrollTop(this.top);
 	};
 
 	componentWillUnmount () {
@@ -123,12 +130,21 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	rebind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
+
+		scroll.on('scroll', (e: any) => { this.top = scroll.scrollTop(); });
 	};
 	
 	unbind () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const scroll = node.find('#scrollWrap');
+
+		scroll.unbind('scroll');
 		$(window).unbind('keydown.menu');
 	};
 
@@ -138,6 +154,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		let item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
+			e.preventDefault();
+
 			this.onSwitch(e, item, !item.isVisible);
 			ret = true;
 		});

@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.21.1",
+	"version": "0.21.5",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -180,10 +180,10 @@
 		"productName": "Anytype",
 		"protocols": [
 			{
-				"name": "Anytype2",
+				"name": "Anytype",
 				"role": "Editor",
 				"schemes": [
-					"anytype2"
+					"anytype"
 				]
 			}
 		],

@@ -115,6 +115,12 @@
         .input { border-color: $colorLinePrimary; }
     }
 
+     /* MenuDataviewRelationEdit */
+
+     .menu.menuDataviewRelationEdit {
+        .input { border-color: $colorLinePrimary; }
+    }
+
     /* MenuDataviewText */
 
     .menu.menuDataviewText {
@@ -131,6 +137,15 @@
 
     .menu.menuDataviewFilterList {
         .item.add:hover::before { background: $colorHover; }
+    }
+
+    /* MenuDataviewFileValues */
+
+    .menu.menuDataviewFileValues {
+		.item { color: $colorPrimary; }
+		.item {
+            .icon.more { background-color: $colorHover; }
+        }
     }
 
     /* MenuDataviewSort */
@@ -201,6 +216,8 @@
         .select {
 			.icon.arrow { background-image: url('~img/theme/dark/arrow/select/big.svg'); }
 		}
+        .day:hover { background: #f9d77e; color: #ad8620 !important; }
+        .day.active { color: $colorOrange; }
     }
 
     /* MenuBlockLatex */

@@ -115,15 +115,13 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 		
 		const object = detailStore.get(rootId, blockId);
-		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedDelete = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const cmd = keyboard.ctrlSymbol();
-
+		const isTemplate = object.type == Constant.typeId.template;
+		
 		let template = null;
 		let archive = null;
 		let fav = null;
-		let removePage = null;
+		let highlight = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
@@ -135,85 +133,66 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
-		let highlight = null;
+		let removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
+		let removeBlock = { id: 'removeBlock', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
+			fav = { id: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', name: 'Add to Favorites' };
 		};
 
-		if (object.type == Constant.typeId.template) {	
+		if (isTemplate) {	
 			template = { id: 'createPage', icon: 'template', name: 'Create object' };
 		} else {
 			template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
 		};
 
-		if (object.id == profile) {
-			template = null;
-		};
-
 		if (object.isArchived) {
-			removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
 			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from bin' };
-			fav = null;
 		} else {
 			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (!allowedDelete || object.isReadonly) {
-			archive = null;
-			removePage = null;
-		};
-
-		if (object.isHightlighted) {
+		if (object.isHighlighted) {
 			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
-			highlight = { id: 'highlight', icon: 'highlight', name: 'Highlight' };
+			highlight = { id: 'highlight', name: 'Highlight' };
 		};
 
-		if (!config.allowSpaces) {
-			share = null;
-			highlight = null;
-		};
+		// Restrictions
 
-		if (!object.workspaceId || block.isObjectSpace() || !config.allowSpaces) {
-			highlight = null;
-		};
+		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowedArchive = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]) && !object.isReadonly;
+		const allowedDelete = allowedArchive && !object.isArchived;
+		const allowedShare = block.isObjectSpace() && config.allowSpaces;
+		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
+		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
+		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
+		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
+		const allowedFav = !object.isArchived;
+
+		if (!allowedArchive)	 archive = null;
+		if (!allowedDelete)		 removePage = null;
+		if (!allowedShare)		 share = null;
+		if (!allowedHighlight)	 highlight = null;
+		if (!allowedSearch)		 search = null;
+		if (!allowedHistory)	 history = null;
+		if (!allowedBlock)		 undo = redo = null;
+		if (!allowedTemplate)	 template = null;
+		if (!allowedFav)		 fav = null;
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive, removePage ] },
 				{ children: [ fav, link, highlight ] },
+				{ children: [ search ] },
 				{ children: [ print ] },
-				{ children: [ highlight ] },
+				{ children: [ share, highlight ] },
 			];
-
-			if (!block.isObjectSet() && !block.isObjectSpace()) {
-				sections.splice(1, 0, { children: [ search ] });
-			};
-
-			if (block.isObjectSpace()) {
-				sections[3].children.push(share);
-			};
 		} else
 		if (block.isPage()) {
-			// Restrictions
-
-			if (!block.canHaveHistory() || object.templateIsBundled) {
-				history = null;
-			};
-
-			if (!allowedBlock) {
-				undo = null;
-				redo = null;
-			};
-
-			if (object.type == Constant.typeId.note) {
-				template = null;
-			};
-
 			sections = [
 				{ children: [ undo, redo, history, archive, removePage ] },
 				{ children: [ fav, link, template ] },
@@ -221,18 +200,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ print ] },
 				{ children: [ highlight ] },
 			];
-
-			sections = sections.map((it: any, i: number) => {
-				it.id = 'page' + i;
-				return it;
-			});
+			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
 		} else {
 			sections.push({ children: [
 				turn,
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
-				{ id: 'remove', name: 'Delete' },
+				removeBlock,
 			]});
 		};
 
@@ -536,7 +511,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.ObjectSetIsFavorite(rootId, false);
 				break;
 
-			case 'remove':
+			case 'removeBlock':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {

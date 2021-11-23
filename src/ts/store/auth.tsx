@@ -57,12 +57,11 @@ class AuthStore {
     };
 
 	get path (): string {
-		return this.dataPath || Storage.get('dataPath') || '';
+		return this.dataPath || '';
     };
 
 	pathSet (v: string) {
 		this.dataPath = v;
-		Storage.set('dataPath', v);
     };
 
 	pinSet (v: string) {

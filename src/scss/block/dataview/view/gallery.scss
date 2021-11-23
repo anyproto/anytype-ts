@@ -12,7 +12,7 @@
 			}
 			.card {
 				.cover { 
-					position: static; height: 144px; background-position: top center; border-radius: 12px 12px 0px 0px;
+					position: relative; height: 144px; background-position: top center; border-radius: 12px 12px 0px 0px;
 					background-color: $colorHover; width: calc(100% + 2px); 
 					margin: -1px -1px 0px -1px; box-shadow: 0px 0px 0px 1px $colorBorderDark inset;
 				}

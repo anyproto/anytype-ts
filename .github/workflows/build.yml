@@ -33,7 +33,7 @@ jobs:
 
       - name: Update Addon
         shell: bash  
-        run: ./update.sh ${{secrets.TOKEN}} ${{matrix.os}}
+        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
 
       - name: Update Deps
         run: npm run build:deps
