@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil, Util, keyboard } from 'ts/lib';
 import { IconObject, Icon, ObjectName } from 'ts/component';
 import { observer } from 'mobx-react';
-import { blockStore, commonStore } from 'ts/store';
+import { authStore, blockStore, commonStore } from 'ts/store';
 
 interface Props {
 };
@@ -27,6 +27,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 		edges: [],
 	};
 	ox: number = 0;
+	loaded: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -37,12 +38,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	render () {
+		const { account } = authStore;
 		const { sidebar } = commonStore;
+		const { root, profile } = blockStore;
 		const { width, height, x, y, fixed } = sidebar;
 		const { loading } = this.state;
         const tree = this.getTree();
 		const css: any = { width: sidebar.width };
 		const cn = [ 'sidebar' ];
+
+		if (!account) {
+			return null;
+		};
 
 		if (fixed) {
 			cn.push('fixed');
@@ -95,13 +102,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
-
-		this.load();
 		this.resize();
 	};
 
 	componentDidUpdate () {
 		this.resize();
+
+		if (!this.loaded && !this.state.loading) {
+			this.load();
+		};
 	};
 
 	componentWillUnmount () {
@@ -109,6 +118,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 	};
 
 	load () {
+		const { root, profile } = blockStore;
+		if (!root || !profile) {
+			return;
+		};
+
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -128,7 +142,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, 
 				value: [
 					'_anytype_profile',
-					blockStore.profile,
+					profile,
+					root,
 				] 
 			},
 		];
@@ -140,6 +155,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 				return;
 			};
 
+			this.loaded = true;
 			this.data.edges = message.edges.filter(d => { return d.source !== d.target; });
 			this.data.nodes = message.nodes;
 
