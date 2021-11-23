@@ -175,7 +175,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnText = true;
 			let hasTurnPage = true;
 			let hasTurnList = true;
-			let hasTurnObject = true;
 			let hasTurnDiv = true;
 			let hasFile = true;
 			let hasLink = true;
@@ -187,6 +186,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
+				if (!block) {
+					continue;
+				};
+
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
@@ -249,6 +252,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
+				if (!block) {
+					continue;
+				};
+
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
 				};
