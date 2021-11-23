@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { I, C, DataUtil } from 'ts/lib';
-import { IconObject, Icon } from 'ts/component';
+import { IconObject, Icon, ObjectName } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore } from 'ts/store';
 
@@ -33,46 +33,33 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         let depth = 0;
 
         const Item = (item: any) => {
-			let style: any = {};
-            let name: any = item.name || DataUtil.defaultName('page');
-			let length = item.children.length;
-
-			if (!item.name && (item.layout == I.ObjectLayout.Note)) {
-				name = <div className="empty">Empty</div>;
-			};
-            
-            if (item.depth == 0) {
-                style.paddingLeft = 14;
-                style.paddingRight = 14;
-            } else {
-                style.paddingLeft = item.depth * 26;
-                style.paddingRight = 14;
-            };
+			let css: any = { paddingLeft: item.depth * 6 };
 
             return (
                 <div id={`item-${item.id}-${item.depth}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
-                    <div className="flex" style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
-                        <IconObject object={...item} />
-                        <div className="name">{name}</div>
-						{length ? <Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} /> : ''}
+                    <div className="flex" style={css} onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
+						<Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} />
+                        <IconObject object={...item} size={20} />
+						<ObjectName object={item} />
                     </div>
 
-					{length ? (
-						<div id={`children-${item.id}-${item.depth}`} className="children">
-							{item.children.map((child: any, i: number) => (
-								<Item key={child.id + '-' + item.depth} {...child} depth={item.depth + 1} />
-							))}
-						</div>
-					) : ''}
+					<div id={`children-${item.id}-${item.depth}`} className="children">
+						{item.children.map((child: any, i: number) => (
+							<Item key={child.id + '-' + item.depth} {...child} depth={item.depth + 1} />
+						))}
+					</div>
                 </div>
             );
         };
 
 		return (
             <div id="sidebar" className="sidebar">
-                {tree.map((item: any, i: number) => (
-                    <Item key={item.id + '-' + depth} {...item} depth={depth} />
-                ))}
+				<div className="head"></div>
+				<div className="body">
+					{tree.map((item: any, i: number) => (
+						<Item key={item.id + '-' + depth} {...item} depth={depth} />
+					))}
+				</div>
             </div>
 		);
 	};

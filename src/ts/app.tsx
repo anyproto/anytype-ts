@@ -259,7 +259,6 @@ class App extends React.Component<Props, State> {
 						<Preview />
 						<Progress />
 						<Tooltip />
-						<Sidebar />
 						
 						<div id="drag">
 							<div className="sides">

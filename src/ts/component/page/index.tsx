@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup } from 'ts/component';
+import { ListPopup, Sidebar } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -77,6 +77,7 @@ class Page extends React.Component<Props, {}> {
 		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const fixed = false;
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -87,13 +88,38 @@ class Page extends React.Component<Props, {}> {
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
+
+		const wrap = (
+			<div className={'page ' + this.getClass('page')}>
+				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+			</div>
+		);
+
+		let content = null;
+		if (isPopup) {
+			content = wrap;
+		} else {
+			if (fixed) {
+				content = (
+					<div className="flex">
+						<Sidebar />
+						{wrap}
+					</div>
+				);
+			} else {
+				content = (
+					<React.Fragment>
+						<Sidebar />
+						{wrap}
+					</React.Fragment>
+				);
+			};
+		};
 		
 		return (
 			<React.Fragment>
 				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-				<div className={'page ' + this.getClass('page')}>
-					<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
-				</div>
+				{content}
 			</React.Fragment>
 		);
 	};
