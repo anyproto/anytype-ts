@@ -33,20 +33,19 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
         let depth = 0;
 
         const Item = (item: any) => {
-			let css: any = { 
-				paddingLeft: item.depth * 6,
-				paddingRight: (item.depth == 0 ? 6 : 0),
-			};
+			let css: any = { paddingLeft: item.depth * 6 };
+			let length = item.children.length;
+			let id = [ item.id, item.depth ].join('-');
 
             return (
-                <div id={`item-${item.id}-${item.depth}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
+                <div id={`item-${id}`} className={[ 'item', 'depth' + item.depth ].join(' ')}>
                     <div className="flex" style={css} onClick={(e: any) => { DataUtil.objectOpenPopup(item); }}>
-						<Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} />
+						{length ? <Icon className="arrow" onClick={(e: any) => { this.toggle(e, item); }} /> : ''}
                         <IconObject object={...item} size={20} />
 						<ObjectName object={item} />
                     </div>
 
-					<div id={`children-${item.id}-${item.depth}`} className="children">
+					<div id={`children-${id}`} className="children">
 						{item.children.map((child: any, i: number) => (
 							<Item key={child.id + '-' + item.depth} {...child} depth={item.depth + 1} />
 						))}
@@ -57,12 +56,16 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, State> {
 
 		return (
             <div id="sidebar" className="sidebar">
-				<div className="head"></div>
+				<div className="head">
+
+				</div>
 				<div className="body">
 					{tree.map((item: any, i: number) => (
 						<Item key={item.id + '-' + depth} {...item} depth={depth} />
 					))}
 				</div>
+
+				<div className="resize" />
             </div>
 		);
 	};
