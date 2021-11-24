@@ -147,7 +147,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 
 	getSubId () {
 		const { rootId, blockId } = this.props;
-		return [ 'listObject', rootId, blockId ].join('-');
+		return dbStore.getSubId(rootId, blockId);
 	};
 
 	getKeys () {

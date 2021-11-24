@@ -303,6 +303,10 @@ class DbStore {
 		const records = this.getRecords(rootId, blockId);
 		return records.find((it: any) => { return it.id == id; });
 	};
+
+	getSubId (rootId: string, blockId: string) {
+		return [ rootId, blockId ].join('-');
+	};
 };
 
 export let dbStore: DbStore = new DbStore();

@@ -76,9 +76,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			name: DataUtil.defaultName('type'),
 			description: 'Add a description',
 		};
+
 		const type: any = dbStore.getObjectType(rootId) || {};
-		const templates = dbStore.getRecords(rootId, BLOCK_ID_TEMPLATE);
-		const { total } = dbStore.getMeta([ 'listObject', rootId, BLOCK_ID_OBJECT ].join('-'), '');
+		const templates = dbStore.getRecords(this.getSubIdTemplate(), '');
+		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
+		const objects = dbStore.getRecords(this.getSubIdObject(), '');
+		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
@@ -173,7 +176,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{templates.length} {Util.cntWord(templates.length, 'template', 'templates')}
+								{totalTemplate} {Util.cntWord(totalTemplate, 'template', 'templates')}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -181,12 +184,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 									</div>
 								) : ''}
 							</div>
-							{templates.length ? (
+							{totalTemplate ? (
 								<div className="content">
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={(ref: any) => { this.refListPreview = ref; }}
-										getItems={() => { return dbStore.getRecords(rootId, BLOCK_ID_TEMPLATE); }}
+										getItems={() => { return templates; }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
@@ -236,7 +239,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					</div>
 
 					<div className="section set">
-						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
+						<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
 						<div className="content">
 							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
@@ -318,9 +321,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	getDataviewData (blockId: string, limit: number) {
 		const rootId = this.getRootId();
 		const views = dbStore.getViews(rootId, blockId);
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (views.length) {
-			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
+			const view = views[0];
+			C.ObjectSearchSubscribe(this.getSubIdTemplate(), view.filters, view.sorts, [ 'id' ], block.content.sources, '', 0, 0, true, '', '');
 		};
 	};
 
@@ -610,6 +615,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getSubIdTemplate () {
+		return dbStore.getSubId(this.getRootId(), BLOCK_ID_TEMPLATE);
+	};
+
+	getSubIdObject () {
+		return dbStore.getSubId(this.getRootId(), BLOCK_ID_OBJECT);
 	};
 
 });
