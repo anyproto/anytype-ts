@@ -411,7 +411,7 @@ class Cell extends React.Component<Props, {}> {
 
 		const record = getRecord(index);
 		if (record && onCellChange) {
-			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
+			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
 

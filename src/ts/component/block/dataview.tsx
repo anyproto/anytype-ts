@@ -138,6 +138,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		C.ObjectSearchUnsubscribe([ dbStore.getSubId(rootId, block.id) ]);
 	};
 
+	getKeys (id: string) {
+		const view = this.getView(id);
+		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
+
+		return Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys);
+	};
+
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
 		if (!newViewId) {
 			return;
@@ -156,8 +163,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
-		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
-		const keys = Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys);
+		const keys = this.getKeys(view.id);
 		
 		let limit = Constant.limit.dataview.records;
 		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
@@ -188,8 +194,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const record = records[index] || {};
 		const item = detailStore.get(subId, record.id);
 
-		let name = item.name;
-		let isReadonly = item.isReadonly;
+		let name = String(item.name || '');
+		let isReadonly = Boolean(item.isReadonly);
 
 		if (item.layout == I.ObjectLayout.Note) {
 			name = String(item.snippet || '').replace(/\n/g, ' ');
@@ -226,17 +232,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 		const view = this.getView();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const keys = this.getKeys(view.id);
 
 		const create = (template: any) => {
-			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
-				if (!message.error.code) {
-					const index = dbStore.recordAdd(rootId, block.id, message.record, dir);
-					const id = DataUtil.cellId('dataviewCell', 'name', index);
-					const ref = this.cellRefs.get(id);
+			DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, template?.id, {}, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
 
-					if (ref && (view.type == I.ViewType.Grid)) {
-						window.setTimeout(() => { ref.onClick(e); }, 15);
-					};
+				const details = { id: message.targetId };
+				keys.forEach((k: string) => { details[k] = ''; });
+				detailStore.update(subId, { id: message.targetId, details: details }, true);
+
+				const index = dbStore.recordAdd(subId, '', { id: message.targetId }, dir);
+				const id = DataUtil.cellId('dataviewCell', 'name', index);
+				const ref = this.cellRefs.get(id);
+
+				if (ref && (view.type == I.ViewType.Grid)) {
+					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
 				if (template) {
@@ -330,14 +344,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const record = dbStore.getRecord(subId, '', id);
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
+		value = DataUtil.formatRelationValue(relation, value, true);
+
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
-		dbStore.recordUpdate(subId, '', obj);
-
-		C.BlockSetDetails(record.id, [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
-		]);
+		detailStore.update(subId, record.id, obj);
+		C.BlockSetDetails(record.id, [ { key: relationKey, value: value } ]);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

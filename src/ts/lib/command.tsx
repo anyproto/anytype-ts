@@ -971,7 +971,12 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 
 		let details = [];
 		details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
-		details = details.concat(message.records.map((it: any) => { return { id: it.id, details: it }; }));
+		details = details.concat(message.records.map((it: any) => { 
+			keys.forEach((k: string) => {
+				it[k] = it[k] || '';
+			});
+			return { id: it.id, details: it }; 
+		}));
 		detailStore.set(subId, details);
 		dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
 
