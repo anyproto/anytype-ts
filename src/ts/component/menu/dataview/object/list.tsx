@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Filter, MenuItemVertical, Icon, Loader } from 'ts/component';
-import { I, C, Util, Key, keyboard, DataUtil } from 'ts/lib';
+import { Filter, MenuItemVertical, Icon, Loader, ObjectName } from 'ts/component';
+import { I, C, Util, keyboard, DataUtil } from 'ts/lib';
 import { commonStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -53,6 +53,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type: any = dbStore.getObjectType(item.type) || {};
+			const name = <ObjectName object={item} />;
 
 			let content = null;
 			if (item.id == 'add') {
@@ -67,7 +68,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
-						name={item.name}
+						name={name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						withCaption={true}

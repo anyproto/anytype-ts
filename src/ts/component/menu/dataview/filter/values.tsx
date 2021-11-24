@@ -231,13 +231,13 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
 
-		this.init();
-		this.props.setActive();
-
 		const view = getView();
 		if (!view) {
 			return;
 		};
+
+		this.init();
+		this.props.setActive();
 
 		const item = view.getFilter(itemId);
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
@@ -277,9 +277,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
-		const item = getView().getFilter(itemId);
+		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		this.checkClear(item.value);
+		const item = view.getFilter(itemId);
+		if (item) {
+			this.checkClear(item.value);
+		};
 	};
 
 	getItems () {
@@ -342,6 +348,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId, save } = data;
 		const view = getView();
+
+		if (!view) {
+			return;
+		};
 		
 		let item = view.getFilter(itemId);
 		if (!item) {
@@ -349,6 +359,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		if (!relation) {
+			return;
+		};
 
 		this.checkClear(v);
 

@@ -1,7 +1,9 @@
 .block.blockCover {
-    .coverOver {
-       position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 1;
+    .loaderWrapper { background: rgba(0,0,0,0.3); }
+    .loaderWrapper {
+        .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
     }
+
     .elements {
         .btn.white { background: $colorBgIcon; color: $colorPrimary; }
         .btn.white:hover { background: $colorBlack; color: $colorPrimary; }
@@ -64,6 +66,7 @@
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
+            .viewItem.isDragging { background: $colorHover; }
 
             .icon.search { background-image: url('~img/theme/dark/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('~img/theme/dark/icon/dataview/button/manager0.svg'); }
@@ -135,11 +138,11 @@
         .cardName span::before { background: $colorSecondary !important; }
 
         .linkCard.card {
-            .sides { background: $colorBgLight; }
+            .sides { background: rgba(0,0,0,0.5); }
             .cover { color: $colorPrimary; }
 
             .side.right {
-                .cardDescription { color: $colorSecondary; }
+                .cardDescription { color: $colorPrimary; }
             }
         }
 

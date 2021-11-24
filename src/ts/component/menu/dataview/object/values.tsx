@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { Icon, IconObject } from 'ts/component';
-import { I, Util, DataUtil, keyboard, Key, translate } from 'ts/lib';
+import { Icon, IconObject, ObjectName } from 'ts/component';
+import { I, DataUtil, keyboard } from 'ts/lib';
 import arrayMove from 'array-move';
-import { commonStore, detailStore, dbStore, menuStore } from 'ts/store';
+import { commonStore, detailStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {}
@@ -43,11 +43,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				cn.push('isHidden');
 			};
 
-			let name = item.name || DataUtil.defaultName('page');
-			if (item.layout == I.ObjectLayout.Note) {
-				name = item.snippet || <span className="empty">Empty</span>;
-			};
-
 			return (
 				<div 
 					id={'item-' + item.id} 
@@ -64,7 +59,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 							<Handle />
 							<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 								<IconObject object={item} />
-								<div className="name">{name}</div>
+								<ObjectName object={item} />
 							</span>
 							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 						</React.Fragment>

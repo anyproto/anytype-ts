@@ -19,7 +19,7 @@
 		.page { padding: 0px; height: 100%; }
 		.page > div { height: 100%; }
 
-		.header { position: absolute; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
+		.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
 		.header {
 			.menu { right: 0px; top: 0px; }
 			.side.left { left: 16px !important; }

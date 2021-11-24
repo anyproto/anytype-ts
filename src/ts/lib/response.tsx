@@ -428,6 +428,7 @@ const ObjectSearch = (response: any) => {
 const ObjectSearchSubscribe = (response: any) => {
 	return {
 		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
 	};
 };
 

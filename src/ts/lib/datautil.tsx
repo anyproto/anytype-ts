@@ -399,6 +399,13 @@ class DataUtil {
 					Util.onErrorUpdate();
 					return;
 				};
+
+				const object = detailStore.get(root, root, [ 'coverId', 'coverType' ]);
+
+				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+				};
+
 				if (callBack) {
 					callBack();
 				};

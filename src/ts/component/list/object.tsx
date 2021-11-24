@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { IconObject, Pager } from 'ts/component';
+import { IconObject, Pager, ObjectName } from 'ts/component';
 import { detailStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -18,15 +18,13 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	
 	render () {
 		const { rootId, blockId } = this.props;
-		const records = Util.objectCopy(dbStore.getRecords(rootId, blockId)).map((it: any) => {
-			it.name = String(it.name || DataUtil.defaultName('page'));
-			return it;
-		});
+		const subId = this.getSubId();
+		const items = this.getItems();
 		const { offset, total, viewId } = dbStore.getMeta(rootId, blockId);
 		const isFileType = [ Constant.typeId.file, Constant.typeId.image ].indexOf(rootId) >= 0;
 
 		let pager = null;
-		if (total && records.length) {
+		if (total && items.length) {
 			pager = (
 				<Pager 
 					offset={offset} 
@@ -38,7 +36,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		};
 
 		const Row = (item: any) => {
-			const author = detailStore.get(rootId, item.creator, []);
+			const author = detailStore.get(subId, item.creator, []);
 			const cn = [ 'row' ];
 
 			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
@@ -60,7 +58,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<ObjectName object={item} />
 							</div>
 						</div>
 					</td>
@@ -108,13 +106,13 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 						</tr>
 					</thead>
 					<tbody>
-						{!records.length ? (
+						{!items.length ? (
 							<tr>
 								<td className="cell empty" colSpan={3}>No objects yet</td>
 							</tr>
 						) : (
 							<React.Fragment>
-								{records.map((item: any, i: number) => (
+								{items.map((item: any, i: number) => (
 									<Row key={i} {...item} />
 								))}
 							</React.Fragment>
@@ -136,13 +134,32 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		};
 	};
 
+	getItems () {
+		const subId = this.getSubId();
+		const records = dbStore.getRecords(subId, '');
+
+		return records.map((it: any) => {
+			return detailStore.get(subId, it.id, this.getKeys());
+		});
+	};
+
+	getSubId () {
+		const { rootId, blockId } = this.props;
+		return [ 'listObject', rootId, blockId ].join('-');
+	};
+
+	getKeys () {
+		return Constant.defaultRelationKeys.concat([ 'creator', 'lastModifiedDate' ]);
+	};
+
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, blockId } = this.props;
 		const meta: any = { offset: offset };
 		const view = dbStore.getView(rootId, blockId, id);
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		dbStore.metaSet(rootId, blockId, meta);
-		C.ObjectSearchSubscribe([ 'listObject', rootId, blockId ].join('-'), view.filters, view.sorts, Constant.defaultRelationKeys, [], '', Constant.limit.dataview.records, true, '', '', callBack);
+		C.ObjectSearchSubscribe(this.getSubId(), view.filters, view.sorts, this.getKeys(), block.content.sources, '', Constant.limit.dataview.records, true, '', '', callBack);
 	};
 
 });

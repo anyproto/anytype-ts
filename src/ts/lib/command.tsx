@@ -967,11 +967,11 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 
 	const cb = (message: any) => {
 		if (message.records.length) {
-			dbStore.recordsSet(subId, '', message.records.map((it: any) => { 
-				return { id: it.id }; 
-			}));
 			detailStore.set(subId, message.records.map((it: any) => { 
 				return { id: it.id, details: it }; 
+			}));
+			dbStore.recordsSet(subId, '', message.records.map((it: any) => { 
+				return { id: it.id }; 
 			}));
 		};
 
