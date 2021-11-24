@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { IconObject, Pager } from 'ts/component';
+import { IconObject, Pager, ObjectName } from 'ts/component';
 import { detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -60,7 +60,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<ObjectName object={item} />
 							</div>
 						</div>
 					</td>
