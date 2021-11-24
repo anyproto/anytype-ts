@@ -558,6 +558,8 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
+						it = it.split('/')[0];
+
 						dbStore.recordAdd(it, '', { id: id }, -1);
 						detailStore.update(it, { id: id, details: details }, true);
 					});
@@ -580,6 +582,8 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
+						it = it.split('/')[0];
+
 						const record = dbStore.getRecord(it, '', id);
 						if (!record) {
 							dbStore.recordAdd(it, '', { id: id }, -1);
@@ -603,6 +607,8 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
+						it = it.split('/')[0];
+
 						const record = dbStore.getRecord(it, '', id);
 						if (!record) {
 							return;

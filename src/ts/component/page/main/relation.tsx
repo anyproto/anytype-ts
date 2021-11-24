@@ -48,7 +48,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const { total } = dbStore.getMeta([ 'listObject', rootId, BLOCK_ID_OBJECT ].join('-'), '');
+		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, BLOCK_ID_OBJECT), '');
 
 		return (
 			<div>

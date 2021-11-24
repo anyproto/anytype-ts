@@ -129,6 +129,10 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		this.getData(0);
 	};
 
+	componentWillUnmount () {
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
+	};
+
 	getView () {
 		const { rootId, blockId } = this.props;
 		const views = dbStore.getViews(rootId, blockId);

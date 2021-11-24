@@ -132,7 +132,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		const { rootId, block } = this.props;
+
 		$(window).unbind('resize.dataview');
+		C.ObjectSearchUnsubscribe([ dbStore.getSubId(rootId, block.id) ]);
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
@@ -153,7 +156,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
-		const relationKeys = view.relations.filter((it: any) => { return it.isVisible; }).map((it: any) => { return it.relationKey; });
+		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
 		const keys = Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys);
 		
 		let limit = Constant.limit.dataview.records;
