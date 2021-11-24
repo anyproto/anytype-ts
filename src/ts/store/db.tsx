@@ -195,6 +195,8 @@ class DbStore {
     metaSet (rootId: string, blockId: string, meta: any) {
 		const data = this.metaMap.get(this.getId(rootId, blockId));
 
+		console.log('SET META', rootId, blockId, meta);
+
 		if (data) {
 			set(data, meta);
 		} else {

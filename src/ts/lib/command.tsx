@@ -966,6 +966,11 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setBeforeid(beforeId);
 
 	const cb = (message: any) => {
+		dbStore.metaSet(subId, '', { 
+			total: message.counters.total,
+			offset: message.counters.prevCount,
+		});
+
 		if (message.records.length) {
 			detailStore.set(subId, message.records.map((it: any) => { 
 				return { id: it.id, details: it }; 

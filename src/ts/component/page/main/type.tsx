@@ -78,7 +78,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		};
 		const type: any = dbStore.getObjectType(rootId) || {};
 		const templates = dbStore.getRecords(rootId, BLOCK_ID_TEMPLATE);
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const { total } = dbStore.getMeta([ 'listObject', rootId, BLOCK_ID_OBJECT ].join('-'), '');
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;

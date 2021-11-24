@@ -17,11 +17,11 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 	
 	render () {
-		const { rootId, blockId } = this.props;
+		const { rootId } = this.props;
 		const subId = this.getSubId();
 		const items = this.getItems();
-		const { offset, total, viewId } = dbStore.getMeta(rootId, blockId);
-		const isFileType = [ Constant.typeId.file, Constant.typeId.image ].indexOf(rootId) >= 0;
+		const { offset, total } = dbStore.getMeta(subId, '');
+		const isFileType = [ Constant.typeId.file, Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].indexOf(rootId) >= 0;
 
 		let pager = null;
 		if (total && items.length) {
@@ -30,7 +30,7 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 					offset={offset} 
 					limit={Constant.limit.dataview.records} 
 					total={total} 
-					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
+					onChange={(page: number) => { this.getData(page); }} 
 				/>
 			);
 		};
@@ -126,12 +126,14 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 
 	componentDidMount () {
+		this.getData(0);
+	};
+
+	getView () {
 		const { rootId, blockId } = this.props;
 		const views = dbStore.getViews(rootId, blockId);
 
-		if (views.length) {
-			this.getData(views[0].id, 0);
-		};
+		return views.length ? views[0] : null;		
 	};
 
 	getItems () {
@@ -152,14 +154,21 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		return Constant.defaultRelationKeys.concat([ 'creator', 'lastModifiedDate' ]);
 	};
 
-	getData (id: string, offset: number, callBack?: (message: any) => void) {
+	getData (page: number, callBack?: (message: any) => void) {
+		const view = this.getView();
+		if (!view) {
+			return;
+		};
+
 		const { rootId, blockId } = this.props;
-		const meta: any = { offset: offset };
-		const view = dbStore.getView(rootId, blockId, id);
+		const limit = Constant.limit.dataview.records;
+		const meta: any = { offset: (page - 1) * limit };
 		const block = blockStore.getLeaf(rootId, blockId);
+		const records = dbStore.getRecords(this.getSubId(), '');
+		const after = records[records.length - 1];
 
 		dbStore.metaSet(rootId, blockId, meta);
-		C.ObjectSearchSubscribe(this.getSubId(), view.filters, view.sorts, this.getKeys(), block.content.sources, '', Constant.limit.dataview.records, true, '', '', callBack);
+		C.ObjectSearchSubscribe(this.getSubId(), view.filters, view.sorts, this.getKeys(), block.content.sources, '', limit, true, '', '', callBack);
 	};
 
 });
