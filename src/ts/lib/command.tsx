@@ -947,7 +947,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request('objectSearch', request, callBack);
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	filters = filters.concat([
@@ -960,6 +960,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setFulltext(fullText);
 	request.setLimit(limit);
 	request.setKeysList(keys);
+	request.setSourceList(sources);
 	request.setIgnoreworkspace(ignoreWorkspace);
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);

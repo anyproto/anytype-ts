@@ -139,10 +139,10 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	getData (id: string, offset: number, callBack?: (message: any) => void) {
 		const { rootId, blockId } = this.props;
 		const meta: any = { offset: offset };
+		const view = dbStore.getView(rootId, blockId, id);
 
 		dbStore.metaSet(rootId, blockId, meta);
-		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, Constant.limit.dataview.records, callBack);
-		//C.ObjectSearchSubscribe([ 'listObject', rootId, blockId ].join('-'), view.filters, view.sorts, Constant.defaultRelationKeys, '', Constant.limit.dataview.records, true, '', '', callBack);
+		C.ObjectSearchSubscribe([ 'listObject', rootId, blockId ].join('-'), view.filters, view.sorts, Constant.defaultRelationKeys, [], '', Constant.limit.dataview.records, true, '', '', callBack);
 	};
 
 });
