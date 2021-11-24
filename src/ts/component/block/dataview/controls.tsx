@@ -83,7 +83,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					/>
 				))}
 
-				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
