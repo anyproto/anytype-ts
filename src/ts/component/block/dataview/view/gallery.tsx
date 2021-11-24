@@ -39,8 +39,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const viewRelations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
-		const records = dbStore.getRecords(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize } = view;
 
 		// Subscriptions on dependent objects

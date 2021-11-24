@@ -121,7 +121,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidUpdate () {
 		const { rootId, block } = this.props;
-		const { viewId } = dbStore.getMeta(rootId, block.id);
+		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
 		if (viewId != this.viewId) {
 			this.getData(viewId, 0);
@@ -143,7 +143,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.viewId = newViewId;
 
 		const { rootId, block } = this.props;
-		const { viewId } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset: offset };
 		const cb = (message: any) => {
@@ -152,6 +153,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
+		const relationKeys = view.relations.filter((it: any) => { return it.isVisible; }).map((it: any) => { return it.relationKey; });
+		const keys = Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys);
 		
 		let limit = Constant.limit.dataview.records;
 		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
@@ -160,11 +163,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (viewChange) {
 			meta.viewId = newViewId;
-			dbStore.recordsSet(rootId, block.id, []);
+			dbStore.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(rootId, block.id, meta);
-		C.BlockDataviewViewSetActive(rootId, block.id, newViewId, offset, limit, cb);
+		dbStore.metaSet(subId, '', meta);
+		DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, cb);
 
 		menuStore.closeAll();
 		$(window).trigger('resize.editor');
@@ -172,14 +175,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
-		const records = dbStore.getRecords(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 
 		if (index > records.length - 1) {
 			return {};
 		};
 
-		const item = records[index] || {};
-		
+		const record = records[index] || {};
+		const item = detailStore.get(subId, record.id);
+
 		let name = item.name;
 		let isReadonly = item.isReadonly;
 
@@ -206,7 +211,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		viewId = viewId || dbStore.getMeta(rootId, block.id).viewId;
+		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, block.id), '').viewId;
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 

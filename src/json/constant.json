@@ -91,6 +91,14 @@
 		]
 	},
 
+	"coverRelationKeys": [
+		"coverId",
+		"coverType",
+		"coverX",
+		"coverY",
+		"coverScale"
+	],
+
 	"defaultRelationKeys": [ 
 		"id", 
 		"name", 

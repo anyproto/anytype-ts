@@ -1344,7 +1344,7 @@ class DataUtil {
 		return fields;
 	};
 
-	getDataviewData (rootId: string, blockId: string, id: string, offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
 		const view = dbStore.getView(rootId, blockId, id);
 		if (!view) {
 			return;
@@ -1364,7 +1364,7 @@ class DataUtil {
 		};
 
 		dbStore.metaSet(subId, '', meta);
-		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, Constant.defaultRelationKeys, block.content.sources, '', offset, limit, true, '', '');
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
 	};
 };
 

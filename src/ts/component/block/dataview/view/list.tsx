@@ -20,8 +20,8 @@ const ViewList = observer(class ViewList extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, getData, getView, isPopup, readonly, onRowAdd } = this.props;
 		const view = getView();
-		const records = dbStore.getRecords(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const length = records.length;
 

@@ -29,11 +29,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getData, getView, readonly, onRowAdd, isPopup } = this.props;
+		const { rootId, block, getView, readonly, onRowAdd, isPopup } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const records = dbStore.getRecords(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const length = records.length;
 
@@ -56,7 +56,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 															height={Number(height) || 0}
 															width={Number(width) || 0}
 															isScrolling={isScrolling}
-															rowCount={records.length}
+															rowCount={length}
 															rowHeight={HEIGHT}
 															rowRenderer={({ key, index, style }) => (
 																<BodyRow 
@@ -146,7 +146,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const ww = $(scrollContainer).width();
 		const mw = ww - PADDING * 2;
-		const records = dbStore.getRecords(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const length = records.length;
 
 		let vw = 0;

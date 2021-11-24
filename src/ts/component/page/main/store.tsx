@@ -377,7 +377,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getDataviewData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, 0, 0, clear, callBack);
+		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, Constant.defaultRelationKeys, 0, 0, clear, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
