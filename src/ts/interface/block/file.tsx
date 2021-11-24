@@ -27,6 +27,7 @@ export interface ContentFile {
 	name: string;
 	mime: string;
 	size: number;
+	style: FileStyle;
 	state: FileState;
 	type: FileType;
 };

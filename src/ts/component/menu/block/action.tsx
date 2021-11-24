@@ -274,7 +274,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasFile) {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
 				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.File, style), name: 'File style', arrow: true });
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.File, style), name: 'File style', arrow: true, isFile: true });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
 			};
@@ -379,7 +379,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'turnStyle':
 				menuId = 'blockStyle';
 
-				if (item.isDiv) {
+				if (item.isDiv || item.isFile) {
 					menuParam.offsetY = 0;
 					menuParam.vertical = I.MenuDirection.Center;
 				};

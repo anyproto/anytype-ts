@@ -269,8 +269,7 @@ class Block implements I.Block {
 	};
 	
 	isFilePDF (): boolean {
-		// FIXME(@timopheym): When we would get PDF type from backend change it to ENUM
-		return this.isFile() && (this.content.mime == 'application/pdf');
+		return this.isFile() && (this.content.type == I.FileType.PDF);
 	};
 
 	isBookmark (): boolean {

@@ -118,6 +118,14 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
+				// Processing File style Link and Auto.
+				// Making BlockFile as a default one
+				if (content.style !== I.FileStyle.Embed) {
+					blockComponent = <BlockFile ref={setRef} {...this.props} />;
+					break;
+				}
+
+				// Process Embed File
 				switch (content.type) {
 					default: 
 					case I.FileType.File: 
@@ -135,15 +143,11 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					case I.FileType.Audio: 
 						blockComponent = <BlockAudio ref={setRef} {...this.props} />;
 						break;
-					// FIXME (@timopheym): Change when backend will send PDF type 
-					// case I.FileType.PDF: 
-					// 	blockComponent = <BlockPDF ref={setRef} {...this.props} />;
-					// 	break;
+					case I.FileType.PDF:
+						blockComponent = <BlockPDF ref={setRef} {...this.props} />;
+						break;
 				};
-				
-				if (content.mime == 'application/pdf') {
-					blockComponent = <BlockPDF ref={setRef} {...this.props} />;
-				}
+
 				break;
 				
 			case I.BlockType.Bookmark:

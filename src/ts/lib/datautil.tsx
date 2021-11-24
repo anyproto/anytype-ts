@@ -724,8 +724,8 @@ class DataUtil {
 
 	menuGetTurnFile () {
 		return [
-			{ type: I.BlockType.File, id: I.FileStyle.Link, icon: 'div-line', lang: 'Line' },
-			{ type: I.BlockType.File, id: I.FileStyle.Embed, icon: 'dot', lang: 'Dot' },
+			{ type: I.BlockType.File, id: I.FileStyle.Link, icon: 'div-line', lang: 'Link' },
+			{ type: I.BlockType.File, id: I.FileStyle.Embed, icon: 'dot', lang: 'Embed' },
 		].map(this.menuMapperBlock);
 	};
 
