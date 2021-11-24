@@ -400,7 +400,7 @@ class DataUtil {
 					return;
 				};
 
-				const object = detailStore.get(root, root, [ 'coverId', 'coverType' ]);
+				const object = detailStore.get(root, root, Constant.coverRelationKeys);
 
 				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
 					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
@@ -1103,7 +1103,7 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockType(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
