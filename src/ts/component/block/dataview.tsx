@@ -236,16 +236,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const keys = this.getKeys(view.id);
 
 		const create = (template: any) => {
-			DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, template?.id, {}, (message: any) => {
+			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				const details = { id: message.targetId };
-				keys.forEach((k: string) => { details[k] = ''; });
-				detailStore.update(subId, { id: message.targetId, details: details }, true);
-
-				const index = dbStore.recordAdd(subId, '', { id: message.targetId }, dir);
+				const records = dbStore.getRecords(subId, '');
+				const index = records.findIndex((it: any) => { return it.id == message.record.id; });
 				const id = DataUtil.cellId('dataviewCell', 'name', index);
 				const ref = this.cellRefs.get(id);
 
