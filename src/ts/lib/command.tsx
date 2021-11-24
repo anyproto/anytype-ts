@@ -947,7 +947,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request('objectSearch', request, callBack);
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	filters = filters.concat([
@@ -958,6 +958,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setFulltext(fullText);
+	request.setOffset(offset);
 	request.setLimit(limit);
 	request.setKeysList(keys);
 	request.setSourceList(sources);
@@ -966,19 +967,13 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setBeforeid(beforeId);
 
 	const cb = (message: any) => {
-		dbStore.metaSet(subId, '', { 
-			total: message.counters.total,
-			offset: message.counters.prevCount,
-		});
+		dbStore.metaSet(subId, '', { total: message.counters.total });
 
-		if (message.records.length) {
-			detailStore.set(subId, message.records.map((it: any) => { 
-				return { id: it.id, details: it }; 
-			}));
-			dbStore.recordsSet(subId, '', message.records.map((it: any) => { 
-				return { id: it.id }; 
-			}));
-		};
+		let details = [];
+		details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
+		details = details.concat(message.records.map((it: any) => { return { id: it.id, details: it }; }));
+		detailStore.set(subId, details);
+		dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
 
 		if (callBack) {
 			callBack(message);

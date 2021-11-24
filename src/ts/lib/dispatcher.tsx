@@ -682,7 +682,7 @@ class Dispatcher {
 					const nextCount = data.getNextcount();
 					const prevCount = data.getPrevcount();
 
-					dbStore.metaSet(rootId, '', { total: total, offset: prevCount });
+					dbStore.metaSet(rootId, '', { total: total });
 					break;
 
 				case 'processNew':

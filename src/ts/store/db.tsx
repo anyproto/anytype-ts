@@ -195,12 +195,12 @@ class DbStore {
     metaSet (rootId: string, blockId: string, meta: any) {
 		const data = this.metaMap.get(this.getId(rootId, blockId));
 
-		console.log('SET META', rootId, blockId, meta);
-
 		if (data) {
-			set(data, meta);
+			set(data, Object.assign(data, meta));
 		} else {
-			meta.offset = 0;
+			meta.total = Number(meta.total) || 0;
+			meta.offset = Math.max(0, Number(meta.offset) || 0);
+			meta.viewId = String(meta.viewId || '');
 			meta = observable(meta);
 
 			intercept(meta as any, (change: any) => {

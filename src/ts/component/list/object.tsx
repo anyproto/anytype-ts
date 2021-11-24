@@ -162,13 +162,12 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 
 		const { rootId, blockId } = this.props;
 		const limit = Constant.limit.dataview.records;
-		const meta: any = { offset: (page - 1) * limit };
+		const offset = (page - 1) * limit;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const records = dbStore.getRecords(this.getSubId(), '');
-		const after = records[records.length - 1];
+		const subId = this.getSubId();
 
-		dbStore.metaSet(rootId, blockId, meta);
-		C.ObjectSearchSubscribe(this.getSubId(), view.filters, view.sorts, this.getKeys(), block.content.sources, '', limit, true, '', '', callBack);
+		dbStore.metaSet(subId, '', { offset: offset });
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, this.getKeys(), block.content.sources, '', offset, limit, true, '', '', callBack);
 	};
 
 });

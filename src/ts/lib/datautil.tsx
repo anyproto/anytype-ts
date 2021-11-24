@@ -382,7 +382,7 @@ class DataUtil {
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: profile },
 				];
 
-				C.ObjectSearchSubscribe(Constant.subIds.profile, filters, [], Constant.defaultRelationKeys, [], '', 1, true, '', '', (message: any) => {
+				C.ObjectSearchSubscribe(Constant.subIds.profile, filters, [], Constant.defaultRelationKeys, [], '', 0, 1, true, '', '', (message: any) => {
 					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 						Util.onErrorUpdate();
 						return;

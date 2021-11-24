@@ -397,7 +397,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		this.setState({ loading: true, n: -1 });
 
-		C.ObjectSearchSubscribe(Constant.subIds.search, filters, sorts, Constant.defaultRelationKeys, [], filter, 0, true, '', '', (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.search, filters, sorts, Constant.defaultRelationKeys, [], filter, 0, 0, true, '', '', (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
