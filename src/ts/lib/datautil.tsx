@@ -721,7 +721,14 @@ class DataUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
 	};
-	
+
+	menuGetTurnFile () {
+		return [
+			{ type: I.BlockType.File, id: I.FileStyle.Link, icon: 'div-line', lang: 'Line' },
+			{ type: I.BlockType.File, id: I.FileStyle.Embed, icon: 'dot', lang: 'Dot' },
+		].map(this.menuMapperBlock);
+	};
+
 	// Action menu
 	menuGetActions (hasFile: boolean, hasLink: boolean) {
 		let { config } = commonStore;

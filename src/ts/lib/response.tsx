@@ -302,6 +302,9 @@ const BlockListTurnInto = (response: any) => {
 const BlockListSetDivStyle = (response: any) => {
 	return {};
 };
+const BlockListSetFileStyle = (response: any) => {
+	return {};
+};
 
 const BlockListSetTextColor = (response: any) => {
 	return {};

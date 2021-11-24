@@ -274,6 +274,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasFile) {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
 				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
+				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.File, style), name: 'File style', arrow: true });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
 			};
@@ -390,9 +391,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 								this.setFocus(blockIds[0]);
 							});
 						};
-							
+
 						if (item.type == I.BlockType.Div) {
 							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
+
+						if (item.type == I.BlockType.File) {
+							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};

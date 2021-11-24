@@ -80,10 +80,12 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
 		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+		const turnFile = { id: 'turnFile', icon: '', name: 'Turn into file', color: '', children: DataUtil.menuGetTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;
 		let hasTurnDiv = true;
+		let hasTurnFile = true;
 
 		let sections: any[] = [];
 
@@ -95,12 +97,14 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 			if (!block.canTurnText())		 hasTurnText = false;
 			if (!block.canTurnList())		 hasTurnList = false;
 			if (!block.isDiv())				 hasTurnDiv = false;
+			if (!block.isFile())			 hasTurnFile = false;
 		};
 
 		if (hasTurnText)	 sections.push(turnText);
 		if (hasTurnList)	 sections.push(turnList);
 		if (hasTurnDiv)		 sections.push(turnDiv);
-		
+		if (hasTurnFile)     sections.push(turnFile);
+
 		return DataUtil.menuSectionsMap(sections);
 	};
 	
