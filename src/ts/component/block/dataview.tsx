@@ -326,13 +326,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const record = dbStore.getRecord(rootId, block.id, id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const record = dbStore.getRecord(subId, '', id);
+		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
-		dbStore.recordUpdate(rootId, block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, callBack);
+		dbStore.recordUpdate(subId, '', obj);
+
+		C.BlockSetDetails(record.id, [ 
+			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
+		]);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {
