@@ -133,15 +133,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		});
 	};
 
-	getDataviewData (blockId: string, limit: number) {
-		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, blockId);
-
-		if (views.length) {
-			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
-		};
-	};
-
 	close () {
 		const { isPopup, match } = this.props;
 		const rootId = this.getRootId();

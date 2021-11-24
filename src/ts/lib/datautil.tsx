@@ -1345,19 +1345,26 @@ class DataUtil {
 	};
 
 	getDataviewData (rootId: string, blockId: string, id: string, offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+		const view = dbStore.getView(rootId, blockId, id);
+		if (!view) {
+			return;
+		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(rootId, blockId);
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (viewChange) {
 			meta.viewId = id;
 		};
 		if (viewChange || clear) {
-			dbStore.recordsSet(rootId, blockId, []);
+			dbStore.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(rootId, blockId, meta);
-		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
+		dbStore.metaSet(subId, '', meta);
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, Constant.defaultRelationKeys, block.content.sources, '', offset, limit, true, '', '');
 	};
 };
 

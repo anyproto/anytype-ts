@@ -49,6 +49,7 @@ const Tabs = [
 ];
 
 const BLOCK_ID = 'dataview';
+const Constant = require('json/constant.json');
 
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
@@ -334,13 +335,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.setState({ tab: id, loading: true });
 
 		C.BlockOpen(this.getRootId(), '', (message: any) => {
-			this.getData('library', true);
+			this.getDataviewData('library', true);
 			this.setState({ loading: false });
 		});
 	};
 
 	onView (e: any, item: any) {
-		this.getData(item.id, true);
+		this.getDataviewData(item.id, true);
 	};
 
 	onClick (e: any, item: any) {
@@ -375,8 +376,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onCreateTemplate () {
 	};
 
-	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, this.offset, 0, clear, callBack);
+	getDataviewData (id: string, clear: boolean, callBack?: (message: any) => void) {
+		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, 0, 0, clear, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -385,17 +386,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
         return new Promise((resolve, reject) => {
 			this.offset += 25 * this.getRowLimit();
-			this.getData(viewId, false, resolve);
+			this.getDataviewData(viewId, false, resolve);
 		});
 	};
 
 	getItems () {
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
-		const records = Util.objectCopy(dbStore.getRecords(rootId, BLOCK_ID)).map((it: any) => {
-			it.name = String(it.name || DataUtil.defaultName('page'));
-			return it;
-		});
+		const subId = dbStore.getSubId(rootId, BLOCK_ID);
+		const records = dbStore.getRecords(subId, '').map((it: any) => { return detailStore.get(subId, it.id); });
 
 		let ret: any[] = [
 			{ children: [ { id: 'mid' } ] }
