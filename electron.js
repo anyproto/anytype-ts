@@ -20,6 +20,7 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
+const isDev = require('electron-is-dev');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,6 +29,17 @@ const KEYTAR_SERVICE = 'Anytype';
 const CONFIG_NAME = 'devconfig';
 
 let env = {};
+let deeplinkingUrl;
+
+if (isDev && (process.platform === 'win32')) {
+	if (!app.isDefaultProtocolClient(protocol)) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ resolve(process.argv[1]) ]);
+	};
+} else {
+	if (!app.isDefaultProtocolClient(protocol)) {
+		app.setAsDefaultProtocolClient(protocol);
+	};
+};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
 
 app.setAsDefaultProtocolClient(protocol);
@@ -229,6 +241,10 @@ function createWindow () {
 
 	win.once('ready-to-show', () => {
 		win.show();
+
+		if (deeplinkingUrl) {
+			send('route', deeplinkingUrl.replace(`${protocol}://`, '/'));
+		};
 	});
 
 	win.on('close', (e) => {
@@ -751,6 +767,10 @@ app.on('ready', () => {
 app.on('second-instance', (event, argv, cwd) => {
 	Util.log('info', 'second-instance');
 
+	if (process.platform !== 'darwin') {
+		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+	};
+
 	if (win) {
 		if (win.isMinimized()) {
 			win.restore();
@@ -784,9 +804,7 @@ app.on('activate', () => {
 });
 
 app.on('open-url', (e, url) => {
-	if (process.platform == 'win32') {
-		url = process.argv.slice(1);
-	};
+	e.preventDefault();
 	send('route', url.replace(`${protocol}://`, '/'));
 });
 
