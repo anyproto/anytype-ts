@@ -268,8 +268,8 @@ class Block implements I.Block {
 		return this.isFile() && (this.content.type == I.FileType.Audio);
 	};
 	
-	isFilePDF (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.PDF);
+	isFilePdf (): boolean {
+		return this.isFile() && (this.content.type == I.FileType.Pdf);
 	};
 
 	isBookmark (): boolean {

@@ -144,7 +144,7 @@ export interface Block {
 	isFileImage?(): boolean;
 	isFileVideo?(): boolean;
 	isFileAudio?(): boolean;
-	isFilePDF?(): boolean;
+	isFilePdf?(): boolean;
 
 	isLatex?(): boolean;
 

@@ -12,7 +12,7 @@ export enum FileType {
 	Image	 = 2,
 	Video	 = 3,
 	Audio	 = 4,
-	PDF      = 5,
+	Pdf      = 5,
 };
 
 export enum FileState {

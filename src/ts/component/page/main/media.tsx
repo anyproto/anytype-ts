@@ -65,7 +65,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
 		const isAudio = file?.isFileAudio();
-		const isPdf = file?.isFilePDF();
+		const isPdf = file?.isFilePdf();
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio) {
