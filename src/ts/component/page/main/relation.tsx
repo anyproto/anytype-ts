@@ -48,7 +48,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const { total } = dbStore.getMeta([ 'listObject', rootId, BLOCK_ID_OBJECT ].join('-'), '');
 
 		return (
 			<div>
@@ -123,8 +123,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
-
-			this.getDataviewData(BLOCK_ID_OBJECT, 50);
 
 			this.loading = false;
 			this.forceUpdate();
