@@ -49,19 +49,17 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		let cover = null;
 		if (view.coverRelationKey) {
+			cover = <BlankCover />;
+
 			if (view.coverRelationKey == 'pageCover') {
 				const { coverType, coverId, coverX, coverY, coverScale } = record;
 				if (coverId && coverType) {
 					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
-				} else {
-					cover = <BlankCover />;
 				};
 			} else {
 				const src = this.getPicture();
 				if (src) {
 					cover = <Cover type={I.CoverType.Upload} src={src} />;
-				} else {
-					cover = <BlankCover />;
 				};
 			};
 		};
@@ -121,20 +119,23 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		};
 	};
 
-	getPicture () {
+	getPicture (): string {
 		const { rootId, index, getView, getRecord } = this.props;
 		const view = getView();
 
+		if (!view || !view.coverRelationKey) {
+			return '';
+		};
+
+		const record = getRecord(index);
+		const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
+
 		let picture = '';
-		if (view.coverRelationKey) {
-			const record = getRecord(index);
-			const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
-			for (let id of value) {
-				const f = detailStore.get(rootId, id, []);
-				if (f && (f.type == Constant.typeId.image)) {
-					picture = commonStore.imageUrl(f.id, 600);
-					break;
-				};
+		for (let id of value) {
+			const f = detailStore.get(rootId, id, []);
+			if (f && (f.type == Constant.typeId.image)) {
+				picture = commonStore.imageUrl(f.id, 600);
+				break;
 			};
 		};
 		return picture;
