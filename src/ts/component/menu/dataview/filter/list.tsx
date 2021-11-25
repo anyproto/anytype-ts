@@ -309,6 +309,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 				onSave(message);
 			};
 			window.setTimeout(() => { this.forceUpdate(); }, 50);
+
 			getData(view.id, 0);
 		});
 	};
