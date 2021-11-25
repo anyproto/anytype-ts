@@ -295,7 +295,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		let tabs: any[] = [
 			{ id: I.TabIndex.Favorite, name: 'Favorites' },
-			{ id: I.TabIndex.Recent, name: 'History', load: true },
+			{ id: I.TabIndex.Recent, name: 'History' },
 			{ id: I.TabIndex.Set, name: 'Sets', load: true },
 		];
 
@@ -349,10 +349,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
-
-		if (tab.id == I.TabIndex.Recent) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: crumbs.get(I.CrumbsType.Recent).ids });
-		};
 
 		if (tab.id == I.TabIndex.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
@@ -834,7 +830,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let reg = null;
 		let list: any[] = [];
 		let rootId = root;
-		let recentIds = crumbs.get(I.CrumbsType.Recent).ids;
+		let recentIds = [];
 
 		if (filter) {
 			reg = new RegExp(Util.filterFix(filter), 'gi');
@@ -842,6 +838,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		switch (tab) {
 			case I.TabIndex.Favorite:
+			case I.TabIndex.Recent:
+				if (tab == I.TabIndex.Recent) {
+					rootId = recent;
+					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
+				};
+
 				list = blockStore.getChildren(rootId, rootId, (it: any) => {
 					if (!it.content.targetBlockId) {
 						return false;
@@ -855,18 +857,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 					return !isArchived && !isDeleted;
 				}).map((it: any) => {
+					if (tab == I.TabIndex.Recent) {
+						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
+					};
+
 					it._object_ = detailStore.get(rootId, it.content.targetBlockId, [ 'templateIsBundled' ]);
 					it.isBlock = true;
 					return it;
-				});
-				break;
-
-			default:
-				list = records.map((it: any) => {
-					return { 
-						...detailStore.get(Constant.subIds.index, it.id), 
-						_order: recentIds.findIndex((id: string) => { return id == it.id; }),
-					};
 				});
 
 				if (tab == I.TabIndex.Recent) {
@@ -877,6 +874,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					});
 				};
 
+				break;
+
+			default:
+				list = records.map((it: any) => {
+					return detailStore.get(Constant.subIds.index, it.id);
+				});
 				break;
 		};
 
