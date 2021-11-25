@@ -84,6 +84,8 @@
 			}
 			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
+
+		.react-pdf__Document { display: inline-block; }
 				
 		.icon.dots {
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;

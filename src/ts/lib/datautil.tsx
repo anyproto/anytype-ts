@@ -79,12 +79,17 @@ class DataUtil {
 				if (state == I.FileState.Done) {
 					c.push('withFile');
 				};
+
+				if (style == I.FileStyle.Link) {
+					c.push('blockFile');
+					break;
+				};
+
 				switch (type) {
 					default: 
 					case I.FileType.File: 
 						c.push('blockFile');
 						break;
-						
 					case I.FileType.Image: 
 						c.push('blockMedia isImage');
 						break;
@@ -93,6 +98,9 @@ class DataUtil {
 						break;
 					case I.FileType.Audio: 
 						c.push('blockMedia isAudio');
+						break;
+					case I.FileType.Pdf: 
+						c.push('blockMedia isPdf');
 						break;
 				};
 				break;
@@ -611,6 +619,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }

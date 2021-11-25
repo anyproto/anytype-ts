@@ -19,7 +19,7 @@ interface State {
 	page: number;
 };
 
-const BlockPDF = observer(class BlockPDF extends React.Component<Props, State> {
+const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 	
 	state = {
 		pages: 0,
@@ -61,7 +61,7 @@ const BlockPDF = observer(class BlockPDF extends React.Component<Props, State> {
 						<InputWithFile 
 							block={block} 
 							icon="pdf" 
-							textFile="Upload a pdf file" 
+							textFile="Upload a PDF file" 
 							accept={Constant.extension.pdf} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
@@ -147,4 +147,4 @@ const BlockPDF = observer(class BlockPDF extends React.Component<Props, State> {
 	};
 });
 
-export default BlockPDF;
+export default BlockPdf;

@@ -14,7 +14,7 @@ import BlockFile from './file';
 import BlockImage from './image';
 import BlockVideo from './video';
 import BlockAudio from './audio';
-import BlockPDF from './pdf'; 
+import BlockPdf from './pdf'; 
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
@@ -118,12 +118,14 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
+				
 				// Processing File style Link.
 				// Making Embed as a default one
+
 				if (content.style == I.FileStyle.Link) {
 					blockComponent = <BlockFile ref={setRef} {...this.props} />;
 					break;
-				}
+				};
 
 				// Process Embed File
 				switch (content.type) {
@@ -144,7 +146,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 						blockComponent = <BlockAudio ref={setRef} {...this.props} />;
 						break;
 					case I.FileType.Pdf:
-						blockComponent = <BlockPDF ref={setRef} {...this.props} />;
+						blockComponent = <BlockPdf ref={setRef} {...this.props} />;
 						break;
 				};
 
