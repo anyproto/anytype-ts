@@ -46,6 +46,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSearch = this.onSearch.bind(this);
+		this.onClear = this.onClear.bind(this);
+		
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
 		this.onSelectionArchive = this.onSelectionArchive.bind(this);
@@ -898,6 +900,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const recent = crumbs.get(I.CrumbsType.Recent);
 		recent.ids = [];
 		crumbs.save(I.CrumbsType.Recent, recent);
+
+		this.load();
 	};
 
 });
