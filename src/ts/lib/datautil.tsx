@@ -684,6 +684,17 @@ class DataUtil {
 		].map(this.menuMapperBlock);
 	};
 
+	menuGetBlockDataview () {
+		return [
+			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: '', lang: 'List' },
+		].map((it: any) => {
+			it.type = I.BlockType.Dataview;
+			return this.menuMapperBlock(it);
+		});
+	};
+
 	menuGetTurnPage () {
 		const { config } = commonStore;
 		const ret = [];
