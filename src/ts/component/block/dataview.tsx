@@ -49,20 +49,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		// Subscriptions
-
-		const { filters, sorts } = view;
-		const lf = filters.length;
-		const ls = sorts.length;
-
-		for (let filter of filters) {
-			const { relationKey, condition, operator, value } = filter;
-		};
-
-		for (let sort of sorts) {
-			const { relationKey, type } = sort;
-		};
-
 		let ViewComponent: React.ReactType<I.ViewComponent>;
 		let className = '';
 
