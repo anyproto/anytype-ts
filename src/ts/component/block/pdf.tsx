@@ -96,7 +96,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 						offset={page - 1} 
 						limit={1} 
 						total={pages} 
-						pageLimit={2}
+						pageLimit={1}
 						onChange={(page: number) => { this.setState({ page }); }} 
 					/>
 				);
