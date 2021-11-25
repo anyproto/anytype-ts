@@ -133,7 +133,6 @@ class Page extends React.Component<Props, {}> {
 		const { isPopup, history } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
-		const popupIntroBlock = Storage.get('popupIntroBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -180,16 +179,10 @@ class Page extends React.Component<Props, {}> {
 
 		window.setTimeout(() => {
 			if (isMain && account) {
-				if (!popupIntroBlock) {
-					popupStore.open('help', { data: { document: 'intro' } });
-					Storage.set('popupIntroBlock', 1);
-					Storage.set('popupNewBlock', 1);
-				} else
 				if (!popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', 1);
 				};
-
 				Storage.set('redirect', history.location.pathname);
 			};
 

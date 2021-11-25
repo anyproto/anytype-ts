@@ -536,10 +536,6 @@ function menuInit () {
 					label: 'What\'s new',
 					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
 				},
-				{
-					label: 'Introduction',
-					click: () => { send('popup', 'help', { data: { document: 'intro' } }); }
-				},
 			]
 		},
 	];
