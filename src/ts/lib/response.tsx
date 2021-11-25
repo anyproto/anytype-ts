@@ -438,6 +438,13 @@ const ObjectSearchSubscribe = (response: any) => {
 	};
 };
 
+const ObjectIdsSubscribe = (response: any) => {
+	return {
+		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
+	};
+};
+
 const ObjectGraph = (response: any) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
@@ -607,6 +614,7 @@ export {
 
 	ObjectSearch,
 	ObjectSearchSubscribe,
+	ObjectIdsSubscribe,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,

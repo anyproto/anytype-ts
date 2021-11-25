@@ -378,16 +378,7 @@ class DataUtil {
 			});
 			
 			if (profile) {
-				const filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.Equal, value: profile },
-				];
-
-				C.ObjectSearchSubscribe(Constant.subIds.profile, filters, [], Constant.defaultRelationKeys, [], '', 0, 1, true, '', '', (message: any) => {
-					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-						Util.onErrorUpdate();
-						return;
-					};
-
+				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
 					blockStore.profileSet(profile);
 				});
 			};

@@ -947,6 +947,21 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request('objectSearch', request, callBack);
 };
 
+const OnSubscribe = (subId: string, keys: string[], message: any) => {
+	if (message.counters) {
+		dbStore.metaSet(subId, '', { total: message.counters.total });
+	};
+
+	let details = [];
+	details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
+	details = details.concat(message.records.map((it: any) => { 
+		keys.forEach((k: string) => { it[k] = it[k] || ''; });
+		return { id: it.id, details: it }; 
+	}));
+	detailStore.set(subId, details);
+	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+};
+
 const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
@@ -967,18 +982,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setBeforeid(beforeId);
 
 	const cb = (message: any) => {
-		dbStore.metaSet(subId, '', { total: message.counters.total });
-
-		let details = [];
-		details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
-		details = details.concat(message.records.map((it: any) => { 
-			keys.forEach((k: string) => {
-				it[k] = it[k] || '';
-			});
-			return { id: it.id, details: it }; 
-		}));
-		detailStore.set(subId, details);
-		dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+		OnSubscribe(subId, keys, message);
 
 		if (callBack) {
 			callBack(message);
@@ -986,6 +990,25 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	};
 
 	dispatcher.request('objectSearchSubscribe', request, cb);
+};
+
+const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.IdsSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setIdsList(ids);
+	request.setKeysList(keys);
+	request.setIgnoreworkspace(ignoreWorkspace);
+
+	const cb = (message: any) => {
+		OnSubscribe(subId, keys, message);
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectIdsSubscribe', request, cb);
 };
 
 const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
@@ -1372,6 +1395,7 @@ export {
 
 	ObjectSearch,
 	ObjectSearchSubscribe,
+	ObjectIdsSubscribe,
 	ObjectSearchUnsubscribe,
 	
 	ObjectListDelete,
