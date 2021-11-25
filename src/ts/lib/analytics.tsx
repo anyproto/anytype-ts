@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Mapper, Util, translate } from 'ts/lib';
+import { I, M, Mapper, Util, translate, Storage } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -11,7 +11,7 @@ const os = window.require('os');
 const KEYS = [ 
 	'cmd', 'id', 'action', 'style', 'code', 
 	'type', 'objectType', 'layout', 'template', 
-	'tab', 'document', 'page', 'count'
+	'tab', 'document', 'page', 'count', 'context'
 ];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
 
@@ -66,6 +66,10 @@ class Analytics {
 		};
 		this.instance.setUserId(profile.id);
 	};
+
+	setContext (v: string) {
+		Storage.set('analyticsContext', v);
+	};
 	
 	event (code: string, data?: any) {
 		if (!this.instance) {
@@ -85,6 +89,7 @@ class Analytics {
 		let param: any = { 
 			middleTime: Number(data.middleTime) || 0, 
 			renderTime: Number(data.renderTime) || 0,
+			context: String(Storage.get('analyticsContext') || ''),
 		};
 
 		const converted: any = {};

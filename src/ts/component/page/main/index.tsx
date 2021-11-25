@@ -197,12 +197,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const tabs = this.getTabs();
 
-		crumbs.delete(I.CrumbsType.Page);
-
 		this.onTab(Storage.get('tabIndex') || tabs[0].id);
 		this.onScroll();
 		this.selectionRender();
 		this.rebind();
+
+		crumbs.delete(I.CrumbsType.Page);
+		analytics.setContext('');
 	};
 	
 	componentDidUpdate () {
