@@ -247,10 +247,15 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getView } = data;
+		const { rootId, blockId, onSave, getView, getData } = data;
 		const view = getView();
 
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
+		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
+			if (onSave) {
+				onSave(message);
+			};
+			getData(view.id, 0);
+		});
 	};
 	
 });
