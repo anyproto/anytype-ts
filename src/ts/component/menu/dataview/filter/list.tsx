@@ -301,7 +301,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, rootId, blockId, onSave } = data;
+		const { getView, getData, rootId, blockId, onSave } = data;
 		const view = getView();
 
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
@@ -309,6 +309,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 				onSave(message);
 			};
 			window.setTimeout(() => { this.forceUpdate(); }, 50);
+
+			getData(view.id, 0);
 		});
 	};
 

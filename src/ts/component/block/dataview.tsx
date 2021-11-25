@@ -49,6 +49,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
+		// Subscriptions
+
+		const { filters, sorts } = view;
+		const lf = filters.length;
+		const ls = sorts.length;
+
+		for (let filter of filters) {
+			const { relationKey, condition, operator, value } = filter;
+		};
+
+		for (let sort of sorts) {
+			const { relationKey, type } = sort;
+		};
+
 		let ViewComponent: React.ReactType<I.ViewComponent>;
 		let className = '';
 
@@ -178,9 +192,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		dbStore.metaSet(subId, '', meta);
 		DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, cb);
-
-		menuStore.closeAll();
-		$(window).trigger('resize.editor');
 	};
 
 	getRecord (index: number) {
@@ -238,9 +249,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const element = $(e.currentTarget);
 		const view = this.getView();
 		const subId = dbStore.getSubId(rootId, block.id);
+		const conditions = [
+			I.FilterCondition.Equal,
+			I.FilterCondition.In,
+			I.FilterCondition.AllIn,
+		]; 
+
+		const newRecord: any = {};
+		for (let filter of view.filters) {
+			if (!conditions.includes(filter.condition) || !filter.value) {
+				continue;
+			};
+			
+			const relation = dbStore.getRelation(rootId, block.id, filter.relationKey);
+			if (relation.isReadonlyValue) {
+				continue;
+			};
+
+			newRecord[filter.relationKey] = DataUtil.formatRelationValue(relation, filter.value, true);
+		};
 
 		const create = (template: any) => {
-			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
+			C.BlockDataviewRecordCreate(rootId, block.id, newRecord, template?.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
