@@ -196,7 +196,7 @@
 	"blockNameLink": { "en": "Show as link" },
 	"blockTextLink": { "en": "Display file as a link" },
 
-	"blockNameEmbed": { "en": "Show embed" },
+	"blockNameEmbed": { "en": "Show as embed" },
 	"blockTextEmbed": { "en": "Embed file into the document" },
 
 	"blockNameRelation": { "en": "Relation" },

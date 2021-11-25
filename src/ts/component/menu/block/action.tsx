@@ -277,7 +277,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasFile) {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
 				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.File, style), name: 'File style', arrow: true, isFile: true });
+				sections[1].children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
 			};
