@@ -9,6 +9,7 @@ import { throttle } from 'lodash';
 
 import Controls from './controls';
 import EditorHeaderPage from './header/page';
+import { analytics } from '../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -242,6 +243,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			if (onOpen) {
 				onOpen();
+			};
+
+			const root = blockStore.getLeaf(rootId, rootId);
+			if (root && root.fields.analyticsContext) {
+				analytics.setContext(root.fields.analyticsContext);
 			};
 
 			window.clearTimeout(this.timeoutMove);
