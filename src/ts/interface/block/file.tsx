@@ -1,9 +1,9 @@
 import { I } from 'ts/lib';
 
 export enum FileStyle {
-	Auto = 0,
-	Link = 1,
-	Embed = 2,
+	Auto	 = 0,
+	Link	 = 1,
+	Embed	 = 2,
 };
 
 export enum FileType {
