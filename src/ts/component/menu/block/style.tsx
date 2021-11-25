@@ -63,13 +63,23 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		$(window).unbind('keydown.menu');
 	};
 	
-	getActive () {
+	getActive (): number {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!block) {
+			return 0;
+		};
+
+		let style = block.content.style;
+
+		if (block.isFile()) {
+			return style != I.FileStyle.Link ? I.FileStyle.Embed : I.FileStyle.Link;
+		};
 		
-		return block ? block.content.style : 0;
+		return style;
 	};
 	
 	getSections () {
