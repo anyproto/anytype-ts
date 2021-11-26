@@ -195,8 +195,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(value);
-		menuStore.updateData(id, { value: value });
+		onChange(value, (message: any) => {
+			menuStore.updateData(id, { value: value });
+		});
 	};
 
 	onMore (e: any, item: any) {

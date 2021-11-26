@@ -233,11 +233,11 @@ class Cell extends React.Component<Props, {}> {
 				record: record,
 				optionCommand: optionCommand,
 				placeholder: placeholder,
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
 					};
-					this.onChange(value);
+					this.onChange(value, callBack);
 				},
 			},
 		};
