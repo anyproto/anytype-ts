@@ -615,8 +615,6 @@ class Util {
 		const mime = String(obj.mime || obj.mimeType || obj.fileMimeType || '').toLowerCase();
 		const e = String(obj.fileExt || n[n.length - 1] || '').toLowerCase();
 
-		console.log(obj, e);
-
 		let t: string[] = [];
 		let icon = '';
 
