@@ -112,7 +112,7 @@
 			.txt { width: 100%; }
 		}
 
-		.item.withCaption { display: flex; }
+		.item.withCaption { display: flex; align-items: stretch; }
 		.item.withCaption {
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }

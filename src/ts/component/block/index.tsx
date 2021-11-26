@@ -160,7 +160,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 			
 			case I.BlockType.Dataview:
-				canSelect = false;
 				blockComponent = <BlockDataview ref={setRef} {...this.props} />;
 				break;
 				
