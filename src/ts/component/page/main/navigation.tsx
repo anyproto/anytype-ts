@@ -2,12 +2,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Cover, Loader, IconObject, HeaderMainNavigation as Header } from 'ts/component';
-import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { I, C, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
+import { blockStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
-import { popupStore } from '../../../store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
