@@ -32,6 +32,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const subId = dbStore.getSubId(rootId, blockId);
 
 		if (!view) {
 			return null;
@@ -107,7 +108,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 						);
 					};
 
-					list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
+					list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); });
 					list = list.filter((it: any) => { return !it._empty_; });
 
 					value = (
