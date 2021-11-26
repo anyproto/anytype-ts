@@ -16,6 +16,8 @@ interface State {
 	loading: boolean;
 };
 
+const TRACE = 'preview';
+
 const GraphPreview = observer(class PreviewObject extends React.Component<Props, State> {
 	
 	state = {
@@ -66,7 +68,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 									<div className="description">{description || snippet}</div>
 								</React.Fragment>
 							)}
-							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
+							<Block {...this.props} key={featured.id} rootId={contextId} traceId={TRACE} iconSize={20} block={featured} readonly={true} />
 						</div>
 						<div className="buttons">
 							<Button text="Open" onClick={(e: any) => { DataUtil.objectOpenPopup(object); }} />
@@ -102,7 +104,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 		this.id = rootId;
 		this.setState({ loading: true });
 
-		C.BlockShow(rootId, 'preview', (message: any) => {
+		C.BlockShow(rootId, TRACE, (message: any) => {
 			if (!this._isMounted) {
 				return;
 			};
@@ -114,7 +116,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 
 	getRootId () {
 		const { rootId } = this.props;
-		return [ rootId, 'preview' ].join('-');
+		return [ rootId, TRACE ].join('-');
 	};
 
 });

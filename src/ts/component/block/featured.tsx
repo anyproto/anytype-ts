@@ -45,8 +45,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, iconSize, isPopup, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 
+		const { rootId, traceId, block, iconSize, isPopup, readonly } = this.props;
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId, [ 
 			Constant.relationKey.featured, 
 			Constant.relationKey.space, 
 			Constant.relationKey.setOf, 
@@ -139,7 +140,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					const relation = dbStore.getRelation(rootId, rootId, relationKey);
 					const canEdit = !readonly && allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
-					const record = detailStore.get(rootId, rootId, [ relationKey ]);
+					const record = detailStore.get(rootId, storeId, [ relationKey ]);
 					const check = DataUtil.checkRelationValue(relation, record[relationKey]);
 
 					if (!check && !canEdit) {
@@ -213,7 +214,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	getItems () {
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId);
+		const storeId = this.getStoreId();
+		const object = detailStore.get(rootId, storeId);
 		const skipIds = [ 
 			Constant.relationKey.type, 
 			Constant.relationKey.description,
@@ -531,6 +533,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		return item;
+	};
+
+	getStoreId (): string {
+		const { rootId, traceId } = this.props;
+		return rootId.replace('-' + traceId, '');
 	};
 	
 });
