@@ -29,6 +29,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	css?: any;
 	className?: string;
 	iconSize?: number;
+	isDragging?: boolean;
 }
 
 const $ = require('jquery');
@@ -61,7 +62,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly } = this.props;
+		const { rootId, css, className, block, readonly, isDragging } = this.props;
 		const { id, type, fields, content, align, bgColor } = block;
 
 		if (!id) {
@@ -73,7 +74,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		let canSelect = true;
 		let canDrop = !readonly;
-		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block), 'index-' + index ];
+		let cn: string[] = [ 'block', 'align' + align, DataUtil.blockClass(block, isDragging), 'index-' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -123,7 +124,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				// Processing File style Link.
 				// Making Embed as a default one
 
-				if (content.style == I.FileStyle.Link) {
+				if (isDragging || (content.style == I.FileStyle.Link)) {
 					blockComponent = <BlockFile ref={setRef} {...this.props} />;
 					break;
 				};
@@ -192,7 +193,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				blockComponent = <BlockLatex ref={setRef} {...this.props} />;
 				break;
 		};
-		
+
 		let object = null;
 
 		if (canDrop) {

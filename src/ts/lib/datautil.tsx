@@ -64,13 +64,13 @@ class DataUtil {
 		return icon;
 	};
 
-	blockClass (block: any) {
+	blockClass (block: any, isDragging?: boolean) {
 		const { content } = block;
 		const { style, type, state } = content;
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:	 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Text:		 c.push('blockText ' + this.textClass(style)); break;
 			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
 			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
 			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
@@ -80,7 +80,7 @@ class DataUtil {
 					c.push('withFile');
 				};
 
-				if (style == I.FileStyle.Link) {
+				if (isDragging || (style == I.FileStyle.Link)) {
 					c.push('blockFile');
 					break;
 				};
