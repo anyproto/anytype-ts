@@ -365,6 +365,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const record = dbStore.getRecord(subId, '', id);
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 
+		if (!record || !relation) {
+			return;
+		};
+
 		value = DataUtil.formatRelationValue(relation, value, true);
 
 		let obj: any = { id: record.id };
