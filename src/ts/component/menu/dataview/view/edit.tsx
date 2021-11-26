@@ -370,8 +370,13 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					close();
 
 					const views = dbStore.getViews(rootId, blockId);
+					const idx = views.findIndex((it: I.View) => { return it.id == view.id; });
 					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
-					const next = filtered[filtered.length - 1];
+					
+					let next = idx >= 0 ? filtered[idx] : filtered[0];
+					if (!next) {
+						next = filtered[filtered.length - 1];
+					};
 
 					if (next) {
 						C.BlockDataviewViewDelete(rootId, blockId, view.id, () => {
@@ -433,7 +438,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 				},
 			}
 		});
-};
+	};
 
 	getSizeOptions () {
 		return [
