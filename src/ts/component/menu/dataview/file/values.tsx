@@ -195,7 +195,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(value, (message: any) => {
+		onChange(value, () => {
 			menuStore.updateData(id, { value: value });
 		});
 	};
@@ -245,9 +245,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							value = value.filter((it: any) => { return it != item.id; });
 							value = Util.arrayUnique(value);
 
-							onChange(value);
-							menuStore.updateData(id, { value: value });
-							menuStore.updateData('dataviewFileList', { value: value });
+							onChange(value, () => {
+								menuStore.updateData(id, { value: value });
+								menuStore.updateData('dataviewFileList', { value: value });
+							});
 							break;
 					};
 				},
