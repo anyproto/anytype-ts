@@ -1,10 +1,13 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { @include text-paragraph; word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; }
+	.block { 
+		@include text-paragraph; word-break: break-word; display: flex; flex-direction: row; flex: auto; 
+		position: relative; margin: 0px 0px 2px 0px; align-items: stretch;
+	}
 	.block {
-		.wrapMenu { width: 48px; text-align: right; position: relative; }
-		.wrapContent { width: calc(100% - 48px); position: relative; }
+		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
+		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
 		
 		.flex { position: relative; z-index: 2; }
 		.icon.dnd { 

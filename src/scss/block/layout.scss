@@ -22,6 +22,10 @@
 	.block.blockLayout.c1 > .wrapMenu { display: none; }
 	.block.blockLayout.c1 > .wrapContent { width: 100%; display: flex; flex-flow: column; }
 
+	.block.blockLayout.c1 > .wrapContent > .children > .blockDataview {
+		.content { overflow: hidden; }
+	}
+
 	.block.blockLayout.c1 > .wrapContent > .children > .block.first.blockText.header1 { padding-top: 0px; }
 	.block.blockLayout.c1 > .wrapContent > .children > .block.last.blockText.header1 { padding-bottom: 0px; }
 

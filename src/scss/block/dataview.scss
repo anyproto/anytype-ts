@@ -3,8 +3,6 @@
 .blocks {
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
-		.wrapContent { width: 100%; }
-
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		
