@@ -121,10 +121,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { subId } = data;
 
 		let value: any[] = DataUtil.getRelationArrayValue(data.value);
-		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 		
 		if (!config.debug.ho) {

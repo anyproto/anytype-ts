@@ -59,6 +59,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					<Cell 
 						ref={(ref: any) => { onRef(id, ref); }} 
 						rootId={rootId}
+						subId={rootId}
 						storeId={rootId}
 						block={block}
 						relationKey={relationKey}

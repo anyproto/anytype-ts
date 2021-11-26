@@ -29,11 +29,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	render () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const { rootId, subId } = data;
 		
 		let value = DataUtil.getRelationArrayValue(data.value);
-		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 
         const Handle = SortableHandle(() => (

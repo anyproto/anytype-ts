@@ -25,7 +25,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, block, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
+		const { rootId, block, subId, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		const cn = [ 'wrap' ];
 
@@ -50,7 +50,16 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 					<React.Fragment>
 						<span className="over">
 							{value.map((id: string) => (
-								<ItemObject key={id} rootId={rootId} block={block} id={id} iconSize={iconSize} onClick={this.onClick} relation={relation} elementMapper={elementMapper} />
+								<ItemObject 
+									key={id} 
+									rootId={rootId} 
+									subId={subId} 
+									id={id} 
+									iconSize={iconSize} 
+									onClick={this.onClick} 
+									relation={relation} 
+									elementMapper={elementMapper} 
+								/>
 							))}
 						</span>
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}

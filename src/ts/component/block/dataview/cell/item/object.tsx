@@ -6,19 +6,18 @@ import { IconObject, ObjectName } from 'ts/component';
 
 interface Props {
 	rootId: string;
-	block: I.Block;
+	subId: string;
 	id: string;
 	iconSize: number;
 	relation?: any;
 	elementMapper?: (relation: any, item: any) => any;
 	onClick?: (e: any, item: any) => void;
-}
+};
 
 const ItemObject = observer(class ItemObject extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, id, iconSize, relation, elementMapper, onClick } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const { subId, id, iconSize, relation, elementMapper, onClick } = this.props;
 		
 		let object = detailStore.get(subId, id, []);
 		if (object._empty_) {

@@ -146,7 +146,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
@@ -226,6 +226,7 @@ class Cell extends React.Component<Props, {}> {
 			onClose: setOff,
 			data: { 
 				rootId: rootId,
+				subId: subId,
 				blockId: block.id,
 				value: value, 
 				relation: observable.box(relation),

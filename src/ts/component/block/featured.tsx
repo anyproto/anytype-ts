@@ -164,6 +164,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									ref={(ref: any) => { this.cellRefs.set(id, ref); }} 
 									elementId={id}
 									rootId={rootId}
+									subId={rootId}
 									storeId={rootId}
 									block={block}
 									relationKey={relationKey}

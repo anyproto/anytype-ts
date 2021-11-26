@@ -29,6 +29,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
 		//const readonly = this.props.readonly || record.isReadonly;
 		const readonly = true;
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (coverFit) {
 			cn.push('coverFit');
@@ -75,6 +76,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 								elementId={id}
 								key={'list-cell-' + view.id + relation.relationKey} 
 								{...this.props}
+								subId={subId}
 								ref={(ref: any) => { onRef(ref, id); }} 
 								relationKey={relation.relationKey}
 								viewType={view.type}

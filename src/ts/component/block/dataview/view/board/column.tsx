@@ -28,6 +28,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 		const group = view.getRelation(groupId);
 		const records = dbStore.getRecords(rootId, block.id);
 		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		const Add = (item: any) => (
 			<Draggable draggableId={columnId + '-add'} index={item.index}>
@@ -55,6 +56,7 @@ const Column = observer(class Column extends React.Component<Props, {}> {
 					<Cell 
 						id={'board-head-' + item.index} 
 						rootId={rootId}
+						subId={subId}
 						block={block}
 						relationKey={groupId} 
 						viewType={I.ViewType.Board}

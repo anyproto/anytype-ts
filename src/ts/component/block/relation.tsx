@@ -55,6 +55,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 							<Cell 
 								ref={(ref: any) => { this.refCell = ref; }}
 								rootId={rootId}
+								subId={rootId}
 								storeId={rootId}
 								block={block}
 								relationKey={relation.relationKey}

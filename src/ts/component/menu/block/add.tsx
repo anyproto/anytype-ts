@@ -92,6 +92,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						>
 							<Cell 
 								rootId={rootId}
+								subId={rootId}
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
