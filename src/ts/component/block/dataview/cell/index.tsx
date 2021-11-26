@@ -406,12 +406,14 @@ class Cell extends React.Component<Props, {}> {
 	onChange (value: any, callBack?: (message: any) => void) {
 		const { onCellChange, index, getRecord } = this.props;
 		const relation = this.getRelation();
-		if (!relation) {
+		const record = getRecord(index);
+
+		if (!relation || !record) {
 			return null;
 		};
 
-		const record = getRecord(index);
-		if (record && onCellChange) {
+		value = DataUtil.formatRelationValue(relation, value, true);
+		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
