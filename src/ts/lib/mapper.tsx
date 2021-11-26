@@ -145,6 +145,7 @@ const Mapper = {
 					hash: content.getHash(),
 					name: content.getName(),
 					type: content.getType(),
+					style: content.getStyle(),
 					mime: content.getMime(),
 					size: content.getSize(),
 					addedAt: content.getAddedat(),

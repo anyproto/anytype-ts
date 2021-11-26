@@ -178,6 +178,9 @@
 	"blockNameAudio": { "en": "Audio" },
 	"blockTextAudio": { "en": "Upload playable audio" },
 
+	"blockNamePdf": { "en": "Pdf" },
+	"blockTextPdf": { "en": "Upload a PDF file" },
+
 	"blockNameBookmark": { "en": "Bookmark" },
 	"blockTextBookmark": { "en": "Save your favorite link with summary" },
 
@@ -189,6 +192,12 @@
 
 	"blockNameDot": { "en": "Dots divider" },
 	"blockTextDot": { "en": "Separate information with three dots" },
+
+	"blockNameLink": { "en": "Show as link" },
+	"blockTextLink": { "en": "Display file as a link" },
+
+	"blockNameEmbed": { "en": "Show as embed" },
+	"blockTextEmbed": { "en": "Embed file into the document" },
 
 	"blockNameRelation": { "en": "Relation" },
 	"blockTextRelation": { "en": "Meaningful connection between objects" },

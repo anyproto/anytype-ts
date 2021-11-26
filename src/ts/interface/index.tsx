@@ -46,7 +46,7 @@ import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, LinkIconSize, LinkCardStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
-import { FileType, FileState, ContentFile, BlockFile } from './block/file';
+import { FileType, FileState, FileStyle, ContentFile, BlockFile } from './block/file';
 import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
@@ -156,6 +156,7 @@ export {
 
 	FileType,
 	FileState,
+	FileStyle,
 	ContentFile,
 	BlockFile,
 

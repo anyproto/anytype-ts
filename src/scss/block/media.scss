@@ -84,6 +84,18 @@
 			}
 			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
+
+		.pager { position: absolute; z-index: 1; top: 0px; left: 50%; transform: translateX(-50%); @include text-small; }
+		.pdfWrapper { width: 100%; height: calc(100% - 30px); overflow: hidden; position: relative; padding-top: 20px; }
+		.pdfWrapper {
+			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
+
+			.react-pdf__Document { width: 100%; display: inline-block; }
+			.react-pdf__Page__svg { width: 100% !important; height: 100% !important; overflow: hidden; }
+			.react-pdf__Page__svg svg { width: 100%; height: auto; }
+			.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
+			.react-pdf__Page__annotations { display: none; }
+		}
 				
 		.icon.dots {
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;

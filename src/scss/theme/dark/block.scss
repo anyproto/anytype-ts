@@ -42,6 +42,8 @@
     .block.blockMedia {
         .focusable.isFocused::before { background: $colorHover; }
 
+        .loaderWrapper { border: 0px; }
+
         .audioControls {
 			.icon.play { background-image: url('~img/theme/dark/icon/audio/play.svg'); }
 			.icon.play.active { background-image: url('~img/theme/dark/icon/audio/pause.svg'); }
