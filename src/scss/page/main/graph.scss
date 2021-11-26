@@ -121,7 +121,10 @@
             }
             .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
-            .description { @include text-common; margin: 4px 0px 12px 0px; }
+            .description { 
+                @include text-common; margin: 4px 0px 12px 0px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; 
+                display: -webkit-box; overflow: hidden;
+            }
             .description:empty { display: none; }
             .author { @include text-very-small; color: $colorMediumGrey; }
         }
