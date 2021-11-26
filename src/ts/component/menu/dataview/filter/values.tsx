@@ -331,6 +331,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			offsetX: getSize().width,
 			offsetY: -36,
 			isSub: true,
+			noFlipY: true,
 			data: {
 				rebind: this.rebind,
 				value: item[key],
