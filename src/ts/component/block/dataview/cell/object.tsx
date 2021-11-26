@@ -25,7 +25,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 	};
 
 	render () {
-		const { rootId, block, subId, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
+		const { rootId, subId, getRecord, index, relation, iconSize, placeholder, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		const cn = [ 'wrap' ];
 
