@@ -52,7 +52,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 			<div className={cn.join(' ')}>
 				{loading ? <Loader /> : (
 					<React.Fragment>
-						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
+						{coverType && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} /> : ''}
 						<div className="heading">
 							{isTask ? (
 								<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
