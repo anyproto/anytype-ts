@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockFile { padding: 6px 0px; }
+	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
 	.block.blockFile.withFile { padding: 0px; }
 	.block.blockFile {
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }

@@ -573,6 +573,16 @@ const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.Te
 	dispatcher.request('blockListSetDivStyle', request, callBack);
 };
 
+const BlockListSetFileStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockList.Set.File.Style.Request();
+
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setStyle(style);
+
+	dispatcher.request('blockListSetFileStyle', request, callBack);
+};
+
 const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Set.Text.Color.Request();
 	
@@ -1333,6 +1343,7 @@ export {
 	BlockListTurnInto,
 	BlockListSetTextMark,
 	BlockListSetDivStyle,
+	BlockListSetFileStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
 

@@ -380,6 +380,10 @@ class Dispatcher {
 						block.content.type = data.getType().getValue();
 					};
 
+					if (data.hasStyle()) {
+						block.content.style = data.getStyle().getValue();
+					};
+
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};

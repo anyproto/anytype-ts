@@ -163,10 +163,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', color: '', children: DataUtil.menuGetBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', color: '', children: DataUtil.menuGetBlockList() };
 			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', color: '', children: DataUtil.menuGetTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', color: '', children: DataUtil.menuGetTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() };
@@ -176,6 +177,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnPage = true;
 			let hasTurnList = true;
 			let hasTurnDiv = true;
+			let hasTurnFile = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasQuote = false;
@@ -194,6 +196,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
+				if (!block.isFile())			 hasTurnFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -210,6 +213,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasTurnPage)	 sections.push(turnPage);
 			if (hasTurnList)	 sections.push(turnList);
 			if (hasTurnDiv)		 sections.push(turnDiv);
+			if (hasTurnFile)	 sections.push(turnFile);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
 
@@ -281,6 +285,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasFile) {
 				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
 				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
+				sections[1].children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true });
 				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
 				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
 			};
@@ -385,7 +390,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'turnStyle':
 				menuId = 'blockStyle';
 
-				if (item.isDiv) {
+				if (item.isDiv || item.isFile) {
 					menuParam.offsetY = 0;
 					menuParam.vertical = I.MenuDirection.Center;
 				};
@@ -397,9 +402,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 								this.setFocus(blockIds[0]);
 							});
 						};
-							
+
 						if (item.type == I.BlockType.Div) {
 							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
+
+						if (item.type == I.BlockType.File) {
+							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
@@ -565,6 +576,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
+					} else 
+					if (item.type == I.BlockType.File) {
+						C.BlockListSetFileStyle(rootId, blockIds, item.itemId);
 					} else {
 						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
 							this.setFocus(blockIds[0]);

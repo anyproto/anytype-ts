@@ -53,6 +53,7 @@ export enum BlockAlign {
 export interface BlockComponent {
 	dataset?: any;
 	rootId: string;
+	traceId?: string;
 	block: I.Block;
 	readonly?: boolean;
 	isPopup?: boolean;
@@ -144,6 +145,7 @@ export interface Block {
 	isFileImage?(): boolean;
 	isFileVideo?(): boolean;
 	isFileAudio?(): boolean;
+	isFilePdf?(): boolean;
 
 	isLatex?(): boolean;
 
