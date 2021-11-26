@@ -214,12 +214,10 @@ declare global {
 
 window.Store = rootStore;
 window.Cmd = C;
-window.Util = Util;
 window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
 window.Go = (route: string) => { history.push(route); };
-window.Graph = {};
 
 class App extends React.Component<Props, State> {
 	

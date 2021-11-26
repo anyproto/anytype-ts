@@ -86,10 +86,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		);
 	};
 
-	componentDidMount () {
-		window.Graph = this;
-	};
-
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
