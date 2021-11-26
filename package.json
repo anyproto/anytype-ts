@@ -93,6 +93,7 @@
 		"d3-graphviz": "^4.0.0",
 		"electron-devtools-installer": "^3.1.1",
 		"electron-dl": "^1.14.0",
+		"electron-is-dev": "^2.0.0",
 		"electron-json-storage": "^4.3.0",
 		"electron-log": "^3.0.9",
 		"electron-updater": "^4.3.7",
