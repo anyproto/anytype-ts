@@ -229,20 +229,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		} else {
-			sections = [
-				{ 
-					children: [
-						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-						{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-					] 
-				},
-				{ 
-					children: [
-						//{ id: 'comment', icon: 'comment', name: 'Comment' },
-					]
-				},
-			];
+			const section1: any = { 
+				children: [
+					{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+					{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
+				] 
+			};
+			const section2: any = { 
+				children: [
+					//{ id: 'comment', icon: 'comment', name: 'Comment' },
+				]
+			};
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -279,44 +277,48 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnObject) {
-				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+				section1.children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
-				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
-				sections[0].children.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
-				sections[1].children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true });
-				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
-				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
+				section1.children = section1.children.concat([
+					{ id: 'download', icon: 'download', name: 'Download' },
+					{ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' },
+					//{ id: 'rename', icon: 'rename', name: 'Rename' },
+					//{ id: 'replace', icon: 'replace', name: 'Replace' }
+				]);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
 			};
 
 			if (hasLink) {
-				sections[0].children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
+				section1.children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 			};
 
 			if (hasTitle) {
-				sections[0].children = [];
+				section1.children = [];
 			};
 
 			if (hasTurnText) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
+				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
-				sections[1].children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
 			};
 
 			if (hasColor) {
-				sections[1].children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
+				section2.children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
 			};
 
 			if (hasBg) {
-				sections[1].children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
+				section2.children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
 			};
+
+			sections = [ section1, section2 ];
 		};
 
 		return DataUtil.menuSectionsMap(sections);
