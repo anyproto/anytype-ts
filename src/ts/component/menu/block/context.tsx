@@ -61,7 +61,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			<div className="flex">
 				{block.canTurn() ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" className={[ icon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
+						<Icon id={'button-' + blockId + '-style'} arrow={true} tooltip="Switch style" tooltipY={I.MenuDirection.Top} className={[ icon, 'blockStyle' ].join(' ')} onMouseDown={(e: any) => { this.onMark(e, 'style'); }} />
 					</div>
 				) : ''}
 				
@@ -80,21 +80,21 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							if (isSet) {
 								cn.push('active');
 							};
-							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} onMouseDown={(e: any) => { this.onMark(e, action.type); }} />;
+							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, action.type); }} />;
 						})}
 					</div>
 				) : ''}
 				
 				{block.canHaveMarks() ? (
 					<div className="section">
-						<Icon id={`button-${blockId}-${I.MarkType.Color}`} className="color" inner={color} tooltip="Сolor" onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} />
-						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.Color}`} className="color" inner={color} tooltip="Сolor" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} />
+						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
 					</div>
 				) : ''}
 				
 				<div className="section">
-					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" onMouseDown={(e: any) => {}} />
-					<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
+					<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => {}} />
+					<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
 				</div>
 			</div>
 		);

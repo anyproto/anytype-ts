@@ -64,7 +64,6 @@ class Focus {
 	
 	apply (): Focus {
 		const { focused, range } = this.state;
-
 		if (!focused) {
 			return;
 		};
