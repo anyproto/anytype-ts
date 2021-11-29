@@ -248,7 +248,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 			
 			const relation = dbStore.getRelation(rootId, block.id, filter.relationKey);
-			if (relation.isReadonlyValue) {
+			if (!relation || relation.isReadonlyValue) {
 				continue;
 			};
 
