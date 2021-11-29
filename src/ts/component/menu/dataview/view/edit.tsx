@@ -113,12 +113,18 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		const k = e.key.toLowerCase();
 
 		let ret = false;
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.save();
+			close();
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
+
 		if (this.isFocused) {
-			if (k == Key.enter) {
-				this.save();
-				close();
-				return;
-			} else
 			if (k != Key.down) {
 				return;
 			} else {
@@ -353,7 +359,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (item.sectionId == 'type') {
 			view.type = item.id;
 			this.forceUpdate();
-			this.save();
 		} else 
 		if (view.id) {
 			switch (item.id) {
