@@ -164,7 +164,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedArchive = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]) && !object.isReadonly;
-		const allowedDelete = allowedArchive && !object.isArchived;
+		const allowedDelete = allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);

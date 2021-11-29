@@ -135,7 +135,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 							<div className="content">
 								<ListObjectPreview 
 									key="listTemplate"
-									getItems={() => { return dbStore.getRecords(rootId, BLOCK_ID_HIGHLIGHTED); }}
+									getItems={() => { return highlighted; }}
 									canAdd={false}
 									onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
 								/>
