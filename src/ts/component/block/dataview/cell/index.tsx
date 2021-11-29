@@ -146,7 +146,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, scrollContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, optionCommand, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
@@ -177,7 +177,7 @@ class Cell extends React.Component<Props, {}> {
 
 			if (menuId) {
 				keyboard.disableBlur(true);
-				$(scrollContainer).addClass('overMenu');
+				$(bodyContainer).addClass('overMenu');
 			};
 
 			if (this.ref) {
@@ -198,7 +198,7 @@ class Cell extends React.Component<Props, {}> {
 
 			if (menuId) {
 				keyboard.disableBlur(false);
-				$(scrollContainer).removeClass('overMenu');
+				$(bodyContainer).removeClass('overMenu');
 			};
 
 			if (this.ref) {

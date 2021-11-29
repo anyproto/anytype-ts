@@ -624,6 +624,10 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			ret = true;
 		});
 
+		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
+			keyboard.disableContext(false);
+		});
+
 		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d, ${cmd}+a`, e, (pressed: string) => {
 			e.preventDefault();
 
@@ -1032,7 +1036,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			this.placeholderHide();
 		};
 
-		focus.clearRange(true);
+		focus.clear(true);
 		keyboard.setFocus(false);
 
 		if (!this.preventSaveOnBlur) {

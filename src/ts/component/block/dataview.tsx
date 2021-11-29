@@ -91,7 +91,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
-						scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
+						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 						readonly={false} 
 						getData={this.getData} 

@@ -345,7 +345,7 @@ class Mark {
 		obj.find('font').removeAttr('face').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('span').html());
-		})
+		});
 
 		obj.find('emoji').removeAttr('class').html(' ');
 		return obj;
@@ -362,6 +362,16 @@ class Mark {
 
 		let text = html;
 		let marks: any[] = [];
+
+		// TODO: find classes by color or background
+		html.replace(/<font color="([^"]+)">([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
+			text = text.replace(s, p2);
+			return '';
+		});
+		html.replace(/<span style="background-color: ([^;]+);">([^<]*)<\/span>/g, (s: string, p1: string, p2: string) => {
+			text = text.replace(s, p2);
+			return '';
+		});
 
 		// Fix browser markup bug
 		html.replace(/<\/?(i|b|font|search)>/g, (s: string, p: string) => {

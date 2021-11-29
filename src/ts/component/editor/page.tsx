@@ -153,14 +153,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => { 
+			focus.restore();
 			focus.apply(); 
-			this.getScrollContainer().scrollTop(this.scrollTop);
+			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 		});
 
 		this.resize();
 		win.on('resize.editor' + namespace, (e: any) => { this.resize(); });
 
-		this.getScrollContainer().on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
+		Util.getScrollContainer(isPopup).on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
 
 		Storage.set('askSurvey', 1);
 
@@ -169,13 +170,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 
 	componentDidUpdate () {
+		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const resizable = node.find('.resizable');
 		
 		this.open();
 		
 		focus.apply();
-		this.getScrollContainer().scrollTop(this.scrollTop);
+		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
 		if (resizable.length) {
 			resizable.trigger('resizeInit');
@@ -193,11 +195,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.clear(false);
 		window.clearInterval(this.timeoutScreen);
 		ipcRenderer.removeAllListeners('commandEditor');
-	};
-
-	getScrollContainer () {
-		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getWrapper () {
@@ -239,7 +236,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			this.loading = false;
 			this.focusTitle();
 			this.forceUpdate();
-			this.getScrollContainer().scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
+			Util.getScrollContainer(isPopup).scrollTop(Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId));
 
 			if (onOpen) {
 				onOpen();
@@ -1200,7 +1197,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	onScroll (e: any) {
 		const { rootId, isPopup } = this.props;
-		const top = this.getScrollContainer().scrollTop();
+		const top = Util.getScrollContainer(isPopup).scrollTop();
 
 		if (Math.abs(top - this.scrollTop) >= 10) {
 			this.uiHide();
@@ -1665,14 +1662,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const note = node.find('#note');
 		const blocks = node.find('.blocks');
 		const last = node.find('.blockLast');
-		const controls = node.find('.editorControls');
 		const size = node.find('#editorSize');
 		const cover = node.find('.block.blockCover');
-		const wrapper = $('.pageMainEdit .wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
-		const container = this.getScrollContainer();
+		const container = Util.getScrollContainer(isPopup);
 		const hh = header.height();
 
 		if (blocks.length && last.length) {
@@ -1686,17 +1681,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (note.length) {
 			note.css({ top: hh });
 		};
-		if (controls.length) {	
-			controls.css({ top: hh });
-		};
 		if (size.length) {
 			size.css({ top: hh + 8 });
 		};
 		if (cover.length) {
 			cover.css({ top: hh });
-		};
-		if (isPopup) {
-			wrapper.css({ paddingTop: hh });
 		};
 
 		this.onResize(root?.fields?.width);
@@ -1709,7 +1698,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.apply();
 
 		if (scroll) {
-			focus.scroll(isPopup);
+			focus.scroll(isPopup, id);
 		};
 
 		this.resize();
@@ -1734,7 +1723,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	getWidth (w: number) {
 		w = Number(w) || 0;
 
-		const container = this.getScrollContainer();
+		const { isPopup } = this.props;
+		const container = Util.getScrollContainer(isPopup);
 		const mw = container.width() - 120;
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);

@@ -13,6 +13,7 @@ interface Props {
 }
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
@@ -63,6 +64,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	componentDidMount () {
+		const { isPopup } = this.props;
 		const win = $(window); 
 		const ns = this.nameSpace();
 
@@ -70,7 +72,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.unbind();
 
 		win.on(`keydown.selection${ns}`, (e: any) => { this.onKeyDown(e); })
-		this.getScrollContainer().on('scroll.selection', (e: any) => { this.onScroll(e); });
+		Util.getScrollContainer(isPopup).on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
 	componentWillUnmount () {
@@ -84,7 +86,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 		
 		const { rootId } = this.props;
-		const k = e.key.toLowerCase();
 		const cmd = keyboard.ctrlKey();
 
 		const ids = this.get();
@@ -131,25 +132,47 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				method = dir < 0 ? 'unshift' : 'push';
 				if (next) {
 					ids[method](next.id);
+					this.scrollToElement(next.id, dir);
 				};
 			};
 			
 			this.set(ids);
 		});
+	};
 
+	scrollToElement (id: string, dir: number) {
+		const { isPopup } = this.props;
+
+		if (dir > 0) {
+			focus.scroll(isPopup, id);
+		} else {
+			const node = $('.focusable.c' + id);
+			if (!node.length) {
+				return;
+			};
+
+			const container = Util.getScrollContainer(isPopup);
+			const no = node.offset().top;
+			const nh = node.outerHeight();
+			const st = container.scrollTop();
+			const ch = container.height();
+			const hh = Util.sizeHeader();
+			const o = Constant.size.lastBlock + hh;
+			const y = isPopup ? (no - container.offset().top + st) : no;
+
+			if (y <= st + hh) {
+				container.scrollTop(y - nh - hh);
+			};
+		};
 	};
 	
-	getScrollContainer () {
-		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
-	};
-
 	onScroll (e: any) {
 		if (!this.selecting || !this.moved) {
 			return;
 		};
 
 		const { isPopup } = this.props;
-		const top = this.getScrollContainer().scrollTop();
+		const top = Util.getScrollContainer(isPopup).scrollTop();
 		const d = top > this.top ? 1 : -1;
 
 		let { x, y } = keyboard.mouse.page;
@@ -195,7 +218,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.lastIds = [];
 		this.focused = focused;
 		this.selecting = true;
-		this.top = this.getScrollContainer().scrollTop();
+		this.top = Util.getScrollContainer(isPopup).scrollTop();
 
 		if (isPopup) {
 			this.containerOffset = $('#popupPage #innerWrap').offset();
@@ -238,12 +261,14 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
+		const { isPopup } = this.props;
 		const rect = this.getRect(e.pageX, e.pageY);
+
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
 			return;
 		};
 
-		this.top = this.getScrollContainer().scrollTop();
+		this.top = Util.getScrollContainer(isPopup).scrollTop();
 		this.checkNodes(e);
 		this.drawRect(rect);
 		
@@ -328,7 +353,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { isPopup } = this.props;
 		
 		if (isPopup) {
-			const top = this.getScrollContainer().scrollTop();
+			const top = Util.getScrollContainer(isPopup).scrollTop();
 			x -= this.containerOffset.left;
 			y -= this.containerOffset.top - top;
 		};
@@ -361,7 +386,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let y = offset.top;
 
 		if (isPopup) {
-			const top = this.getScrollContainer().scrollTop();
+			const top = Util.getScrollContainer(isPopup).scrollTop();
 			x -= this.containerOffset.left;
 			y -= this.containerOffset.top - top;
 		};
@@ -503,10 +528,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	unbindKeyboard () {
+		const { isPopup } = this.props;
 		const ns = this.nameSpace();
 
 		$(window).unbind(`keydown.selection${ns} keyup.selection${ns}`);
-		this.getScrollContainer().unbind('scroll.selection');
+		Util.getScrollContainer(isPopup).unbind('scroll.selection');
 	};
 
 	nameSpace () {

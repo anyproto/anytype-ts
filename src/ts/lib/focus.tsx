@@ -64,7 +64,6 @@ class Focus {
 	
 	apply (): Focus {
 		const { focused, range } = this.state;
-
 		if (!focused) {
 			return;
 		};
@@ -104,18 +103,12 @@ class Focus {
 			return;
 		};
 
-		const container = isPopup ? $('#popupPage #innerWrap') : $(window);
+		const container = Util.getScrollContainer(isPopup);
 		const h = container.height();
 		const no = node.offset().top;
 		const o = Constant.size.lastBlock + Util.sizeHeader();
 		const st = container.scrollTop();
-
-		let y = 0;
-		if (isPopup) {
-			y = no - container.offset().top + st;
-		} else {
-			y = no;
-		};
+		const y = isPopup ? (no - container.offset().top + st) : no;
 
 		if ((y >= st) && (y <= st + h - o)) {
 			return;
