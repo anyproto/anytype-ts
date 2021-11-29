@@ -237,7 +237,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		};
 		const namespace = isPopup ? '.popup' : '';
 
-		this.getScrollContainer().scrollTop(0);
+		Util.getScrollContainer(isPopup).scrollTop(0);
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
 
 		let first = null;
@@ -315,11 +315,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		this.setState({ filter: this.ref.getValue() });
 	};
 
-	getScrollContainer () {
-		const { isPopup } = this.props;
-		return isPopup ? $('#popupPage #innerWrap') : $(window);
-	};
-	
 });
 
 export default BlockType;
