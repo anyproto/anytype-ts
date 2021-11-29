@@ -72,6 +72,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	render () {
 		const { tab, loading } = this.state;
 		const rootId = this.getRootId();
+		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
 		const views = block.content?.views || [];
@@ -107,7 +108,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(rootId, item.creator, []);
+					const author = detailStore.get(subId, item.creator, []);
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
@@ -137,8 +138,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 			case Tab.Template:
 				Item = (item: any) => {
-					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(rootId, item.creator, []);
+					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
+					const author = detailStore.get(subId, item.creator, []);
+
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
@@ -166,7 +168,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Relation:
 				Item = (item: any) => {
 					const { name, description } = item;
-					const author = detailStore.get(rootId, item.creator, []);
+					const author = detailStore.get(subId, item.creator, []);
+					
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
@@ -377,7 +380,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getDataviewData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, Constant.defaultRelationKeys, 0, 0, clear, callBack);
+		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, [ 'creator' ].concat(Constant.defaultRelationKeys), 0, 0, clear, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

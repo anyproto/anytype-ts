@@ -104,7 +104,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, {}> {
 		});
 
 		return (
-			<div>
+			<div className="list">
 				<List 
 					axis="xy" 
 					transitionDuration={150}

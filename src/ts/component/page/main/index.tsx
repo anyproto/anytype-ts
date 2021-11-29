@@ -794,7 +794,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
 		const height = this.getListHeight();
 
-		items.css({ width: width }).removeClass('last');
+		items.css({ width: width });
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - size.titleY - height - hh });
@@ -802,10 +802,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		items.each((i: number, item: any) => {
 			item = $(item);
 			const icon = item.find('.iconObject');
-
-			if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
-				item.addClass('last');
-			};
 			if (icon.length) {
 				item.addClass('withIcon');
 			};
