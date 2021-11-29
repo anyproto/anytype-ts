@@ -153,6 +153,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => { 
+			focus.restore();
 			focus.apply(); 
 			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 		});
