@@ -96,7 +96,6 @@ class MenuStore {
 
     close (id: string, callBack?: () => void) {
 		const item = this.get(id);
-
 		if (!item) {
 			if (callBack) {
 				callBack();

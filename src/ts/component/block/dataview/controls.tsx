@@ -196,6 +196,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		menuStore.open('dataviewViewEdit', {
 			element: `#button-view-add`,
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
@@ -227,6 +228,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		menuStore.open('dataviewViewEdit', { 
 			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
@@ -255,7 +257,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const views = node.find('#views');
 		const sideLeft = node.find('#sideLeft');
 
-		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
+		menuStore.closeAll([ 'dataviewViewList' ]);
 		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 

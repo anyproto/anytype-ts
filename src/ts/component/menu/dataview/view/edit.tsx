@@ -106,7 +106,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { view } = data;
 		const item = this.getItems()[this.n];
@@ -116,7 +116,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (this.isFocused) {
 			if (k == Key.enter) {
 				this.save();
-				this.props.close();
+				close();
 				return;
 			} else
 			if (k != Key.down) {
@@ -194,7 +194,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
 				cb();
-				close();
 			});
 		};
 	};
