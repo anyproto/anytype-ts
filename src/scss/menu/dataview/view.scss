@@ -3,14 +3,17 @@
 .menus {
 	.menu.menuDataviewViewList { width: 360px; }
 	.menu.menuDataviewViewList {
-		.item.big { display: flex; padding: 10px; line-height: 26px; }
+		.item.big { display: flex; padding: 10px; line-height: 40px; align-items: center; }
 		.item.big {
 			.icon.dnd { height: 26px; background-size: 20px; vertical-align: middle; }
 			.buttons {
 				.icon { vertical-align: middle; }
 			}
 
-			.name { @include text-header3; }
+			.name { 
+				@include text-header3; @include text-overflow-nw; vertical-align: middle; 
+				width: 100%;
+			}
 
 			.icon.view { width: 40px; height: 40px; margin-right: 10px; }
 			.icon.view.c0 { background-image: url('~img/icon/dataview/view/grid1.svg'); }
@@ -18,9 +21,13 @@
 			.icon.view.c2 { background-image: url('~img/icon/dataview/view/gallery1.svg'); }
 			.icon.view.c3 { background-image: url('~img/icon/dataview/view/board1.svg'); }
 
-			.clickable { width: calc(100% - 22px); }
+			.clickable { width: calc(100% - 22px); margin-right: 10px; display: flex; align-items: center; }
+		}
+		.item.big:hover {
+			.clickable { width: calc(100% - 52px); }
 		}
 
+		.item.add:hover::before { background: $colorHover; }
 	}
 
 	.menu.menuDataviewViewEdit { width: 360px; }

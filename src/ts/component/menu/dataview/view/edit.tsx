@@ -23,7 +23,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { param, setHover } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, view } = data;
 		const sections = this.getSections();
@@ -173,7 +173,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	save () {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, onSave } = data;
+		const { rootId, blockId, view, onSave, getData } = data;
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		if (!allowedView) {
@@ -193,6 +193,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
+				getData(view.id, 0);
+
 				cb();
 			});
 		};

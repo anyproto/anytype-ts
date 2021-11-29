@@ -40,6 +40,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 				<div id={'item-' + item.id} className="item big" onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 					{allowed ? <Handle /> : ''}
 					<div className="clickable" onClick={(e: any) => { getData(item.id, 0); }}>
+						<Icon className={'view c' + item.type} />
 						<div className="name">{item.name}</div>
 					</div>
 					<div className="buttons">

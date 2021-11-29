@@ -222,7 +222,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onViewEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
@@ -235,6 +235,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				readonly: !allowed,
 				view: item,
 				getView: getView,
+				getData: getData,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});
