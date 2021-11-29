@@ -84,7 +84,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 		
 		const { rootId } = this.props;
-		const k = e.key.toLowerCase();
 		const cmd = keyboard.ctrlKey();
 
 		const ids = this.get();
@@ -131,6 +130,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				method = dir < 0 ? 'unshift' : 'push';
 				if (next) {
 					ids[method](next.id);
+
+					focus.scroll(this.props.isPopup, next.id);
 				};
 			};
 			
