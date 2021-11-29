@@ -922,7 +922,7 @@ class Util {
 	};
 
 	getScrollContainer (isPopup?: boolean) {
-		return isPopup ? $('#popupPage #innerWrap') : $(window);
+		return $(isPopup ? '#popupPage #innerWrap' : window);
 	};
 
 	getBodyContainer (type: string) {

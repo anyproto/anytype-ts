@@ -1697,7 +1697,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		focus.apply();
 
 		if (scroll) {
-			focus.scroll(isPopup);
+			focus.scroll(isPopup, id);
 		};
 
 		this.resize();

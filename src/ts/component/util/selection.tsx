@@ -13,6 +13,7 @@ interface Props {
 }
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
@@ -131,14 +132,38 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				method = dir < 0 ? 'unshift' : 'push';
 				if (next) {
 					ids[method](next.id);
-
-					focus.scroll(this.props.isPopup, next.id);
+					this.scrollToElement(next.id, dir);
 				};
 			};
 			
 			this.set(ids);
 		});
+	};
 
+	scrollToElement (id: string, dir: number) {
+		const { isPopup } = this.props;
+
+		if (dir > 0) {
+			focus.scroll(isPopup, id);
+		} else {
+			const node = $('.focusable.c' + id);
+			if (!node.length) {
+				return;
+			};
+
+			const container = Util.getScrollContainer(isPopup);
+			const no = node.offset().top;
+			const nh = node.outerHeight();
+			const st = container.scrollTop();
+			const ch = container.height();
+			const hh = Util.sizeHeader();
+			const o = Constant.size.lastBlock + hh;
+			const y = isPopup ? (no - container.offset().top + st) : no;
+
+			if (y <= st + hh) {
+				container.scrollTop(y - nh - hh);
+			};
+		};
 	};
 	
 	onScroll (e: any) {
