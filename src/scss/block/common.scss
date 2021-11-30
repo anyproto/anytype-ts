@@ -20,7 +20,7 @@
 
 		.inputWithFile { position: relative; }
 		
-		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
+		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; flex: 0; }
 		.colResize.active { opacity: 1; }
 		.colResize {
 			.inner { 
