@@ -104,7 +104,9 @@
 .cellContent.canEdit.c-phone, 
 .cellContent.canEdit.c-email, 
 .cellContent.canEdit.c-date { cursor: text; }
-.cellContent.canEdit.c-checkbox { cursor: pointer; }
+
+.cellContent.canEdit.c-checkbox,
+.cellContent.canEdit.c-select { cursor: pointer; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
 	a { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; }
