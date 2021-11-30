@@ -8,15 +8,18 @@
 		white-space: nowrap; user-select: none;
 	}
 	.title {
-		.rightMenu { position: absolute; right: 0px; top: 0px; }
+		.rightMenu { 
+			position: absolute; right: 0px; top: 0px; height: 64px; display: flex; flex-direction: row; align-items: center; 
+			gap: 0px 16px;
+		}
 		.icon { 
-			width: 44px; height: 44px; vertical-align: middle; margin-right: 16px; border-radius: 100%; cursor: pointer; 
-			background-color: rgba(0,0,0,0.3); background-size: 20px 20px;
+			width: 44px; height: 44px; border-radius: 100%; cursor: pointer; background-color: rgba(0,0,0,0.3); 
+			background-size: 20px 20px;
 		}
 		.icon:hover, .icon.active { background-color: rgba(0, 0, 0, 0.5); }
 		.icon:last-child { margin-right: 0px; }
 
-		.iconObject { cursor: pointer; user-select: none; display: inline-block; vertical-align: middle; }
+		.iconObject { cursor: pointer; user-select: none; }
 
 		.icon.account { background-image: url('~img/icon/account.svg'); display: none; }
 		.icon.add { background-image: url('~img/icon/plus/object.svg'); }
