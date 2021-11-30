@@ -85,8 +85,8 @@
 			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
 
-		.pager { position: absolute; z-index: 1; top: 0px; left: 50%; transform: translateX(-50%); @include text-small; }
-		.pdfWrapper { width: 100%; height: calc(100% - 30px); overflow: hidden; position: relative; padding-top: 20px; }
+		.pager { position: absolute; z-index: 1; top: 0px; left: 50%; transform: translateX(-50%); @include text-common; }
+		.pdfWrapper { width: 100%; height: calc(100% - 30px); overflow: hidden; position: relative; padding-top: 30px; }
 		.pdfWrapper {
 			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
 
