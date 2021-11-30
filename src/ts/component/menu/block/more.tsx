@@ -563,6 +563,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 							value: message.link,
 							readonly: true,
 							select: true,
+							textConfirm: 'Copy',
+							onChange: (v: string) => {
+								Util.clipboardCopy({ text: v });
+							}
 						}
 					});
 				});
