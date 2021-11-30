@@ -10,7 +10,7 @@
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
-		.cellContent { display: inline; vertical-align: top; padding: 5.5px 6px; transition: background 0.2s ease-in-out; cursor: pointer; }
+		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background 0.2s ease-in-out; cursor: pointer; }
 		.cellContent:hover, .cellContent.hover { background: $colorHover; }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }

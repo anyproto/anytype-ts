@@ -172,7 +172,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
-		this.top = this.getScrollContainer().scrollTop();
+		this.top = Util.getScrollContainer(isPopup).scrollTop();
 		this.refLayer.show(type, ids, component);
 		this.set(type, ids);
 		this.unbind();
@@ -200,7 +200,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const { isPopup } = this.props;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
-		const top = this.getScrollContainer().scrollTop();
+		const top = Util.getScrollContainer(isPopup).scrollTop();
 		const d = top > this.top ? 1 : -1;
 		const diff = isPopup ? Math.abs(top - this.top) * d : 0;
 
@@ -426,10 +426,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		for (let id of this.ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
-	};
-
-	getScrollContainer () {
-		return this.props.isPopup ? $('#popupPage #innerWrap') : $(window);
 	};
 
 	getParentIds (rootId: string, blockId: string, parentIds: string[]) {

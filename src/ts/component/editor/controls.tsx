@@ -37,17 +37,17 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	render (): any {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const checkType = blockStore.checkBlockType(rootId);
 
-		if (!root || !allowedDetails || checkType) {
+		if (!root) {
 			return null;
 		};
 
-		const allowedLayout = !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
-		const allowedRelation = true;
-		const allowIcon = !root.isObjectTask() && !root.isObjectNote();
-		const allowCover = !root.isObjectNote();
+		const checkType = blockStore.checkBlockType(rootId);
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedRelation = !checkType && allowedDetails;
+		const allowIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
+		const allowCover = !checkType && allowedDetails && !root.isObjectNote();
 
 		return (
 			<div 

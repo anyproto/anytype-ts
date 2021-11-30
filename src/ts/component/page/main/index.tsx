@@ -599,7 +599,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selected = [];
 		this.selectionRender();
 
-		C.ObjectListSetIsFavorite(ids, v, this.load);
+		C.ObjectListSetIsFavorite(ids, v, () => { this.load(); });
 	};
 
 	onSelectionAll () {
