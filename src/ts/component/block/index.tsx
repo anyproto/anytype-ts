@@ -125,7 +125,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				// Processing File style Link.
 				// Making Embed as a default one
 
-				if (isDragging || (content.style == I.FileStyle.Link)) {
+				if (isDragging || (style == I.FileStyle.Link)) {
 					blockComponent = <BlockFile ref={setRef} {...this.props} />;
 					break;
 				};
@@ -133,7 +133,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				// Process Embed File
 				switch (content.type) {
 					default: 
-					case I.FileType.File: 
 						blockComponent = <BlockFile ref={setRef} {...this.props} />;
 						break;
 						
@@ -148,6 +147,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 					case I.FileType.Audio: 
 						blockComponent = <BlockAudio ref={setRef} {...this.props} />;
 						break;
+
 					case I.FileType.Pdf:
 						blockComponent = <BlockPdf ref={setRef} {...this.props} />;
 						break;

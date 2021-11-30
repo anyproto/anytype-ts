@@ -30,7 +30,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const { state } = content;
+		const { state, style } = content;
 		
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._empty_) {
