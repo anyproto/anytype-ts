@@ -41,7 +41,7 @@
 		
 		.emptyToggle { 
 			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2; cursor: pointer;
-			transition: $transitionFast; @include text-overflow-nw;
+			transition: color 0.2s ease-in-out; @include text-overflow-nw;
 		}
 		.emptyToggle:hover { color: $colorBlack; }
 	}
