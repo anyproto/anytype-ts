@@ -6,7 +6,7 @@ import { I } from 'ts/lib';
 
 interface Props {
 	history: any;
-}
+};
 
 const ListMenu = observer(class ListMenu extends React.Component<Props, {}> {
 

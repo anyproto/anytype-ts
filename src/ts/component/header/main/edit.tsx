@@ -48,10 +48,6 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
-			cn.push('active');
-		};
-
 		return (
 			<div id="header" className={cn.join(' ')}>
 				<div className="side left">

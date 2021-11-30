@@ -104,6 +104,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		this.resize();
 		$('body').addClass('overMenu');
+		$('#header').addClass('active');
 
 		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
@@ -118,6 +119,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	componentWillUnmount () {
 		$('body').removeClass('overMenu');
+		$('#header').removeClass('active');
 	};
 
 	onScroll () {

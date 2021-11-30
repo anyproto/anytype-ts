@@ -141,12 +141,12 @@ class MenuStore {
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.includes(it.id); }) : this.menuList;
 
+		this.clearTimeout();
+
 		for (let item of items) {
 			this.close(item.id);
 		};
-
-		this.clearTimeout();
-
+		
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};

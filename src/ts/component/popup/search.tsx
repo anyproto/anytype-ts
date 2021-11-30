@@ -193,6 +193,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.resize();
 
 		focus.clear(true);
+
+		$('#header').addClass('active');
 	};
 	
 	componentDidUpdate (prevProps: any, prevState: any) {
@@ -231,6 +233,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		window.clearTimeout(this.timeout);
 		C.ObjectSearchUnsubscribe([ Constant.subIds.search ]);
+
+		$('#header').removeClass('active');
 	};
 
 	rebind () {

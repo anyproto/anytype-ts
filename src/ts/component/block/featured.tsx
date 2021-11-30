@@ -323,6 +323,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				data: {
 					options: options,
 					noClose: true,
+					onOver: this.onTypeOver,
 					onSelect: (e: any, item: any) => {
 						item.arrow ? this.onTypeOver(e, item) : this.onTypeSelect(e, item);
 					},
@@ -411,9 +412,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (menuId) {
-			menuStore.closeAll(Constant.menuIds.featuredType, () => {
-				menuStore.open(menuId, menuParam);
-			});
+			if (menuStore.isOpen(menuId)) {
+				menuStore.update(menuId, menuParam);
+			} else {
+				menuStore.closeAll(Constant.menuIds.featuredType, () => {
+					menuStore.open(menuId, menuParam);
+				});
+			};
 		};
 	};
 
