@@ -93,7 +93,7 @@
 		#selectWrap {
 			.tabs { 
 				width: 100%; @include text-common; font-weight: normal; color: $colorWhite; 
-				justify-content: space-between; overflow: hidden;
+				justify-content: space-between; overflow: hidden; 
 			}
 			.side { white-space: nowrap; line-height: 44px; }
 			.side.left { flex: 0; padding: 0px 16px; }
