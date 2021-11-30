@@ -66,8 +66,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		);
 
 		const Item = (item: any) => {
-			let type = dbStore.getObjectType(item.type);
-			let description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
+			const type = dbStore.getObjectType(item.type);
+			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
 				<div 
@@ -83,7 +83,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
+							<div className="type">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 

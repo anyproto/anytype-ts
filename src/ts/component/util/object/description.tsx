@@ -14,15 +14,8 @@ class Description extends React.Component<Props, {}> {
 
 	render () {
 		const { object, className } = this.props;
-		const { layout, snippet } = object;
+		const description = (object.layout != I.ObjectLayout.Note) ? (object.description || object.snippet) : '';
 
-		let description = '';
-		if (layout == I.ObjectLayout.Note) {
-			description = '';
-		} else {
-			description = description || snippet;
-		};
-		
 		return (
 			<div className={className}>
 				{description}
