@@ -119,7 +119,9 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		DataUtil.objectOpen(object);
+		popupStore.closeAll(null, () => {
+			DataUtil.objectOpen(object);
+		});
 	};
 	
 	onMore (e: any) {

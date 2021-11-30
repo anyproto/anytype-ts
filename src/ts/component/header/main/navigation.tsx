@@ -108,7 +108,10 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/navigation/' + rootId);
+
+		popupStore.closeAll(null, () => {
+			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Navigation });
+		});
 	};
 
 	onGraph (e: any) {

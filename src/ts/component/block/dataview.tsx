@@ -12,17 +12,23 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {}
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface State {
+	viewId: string;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
+const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
+	state = {
+		viewId: '',
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -124,7 +130,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
-		if (viewId != this.viewId) {
+		if (viewId != this.state.viewId) {
 			this.getData(viewId, 0);
 		};
 
@@ -151,7 +157,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		this.viewId = newViewId;
+		this.state.viewId = newViewId;
+		this.setState({ viewId: newViewId });
 
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);

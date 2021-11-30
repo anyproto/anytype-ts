@@ -107,7 +107,10 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/graph/' + rootId);
+
+		popupStore.closeAll(null, () => {
+			DataUtil.objectOpen({ id: rootId, layout: I.ObjectLayout.Graph });
+		});
 	};
 
 	onNavigation (e: any) {
