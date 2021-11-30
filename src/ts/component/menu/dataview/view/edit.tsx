@@ -358,6 +358,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		if (item.sectionId == 'type') {
 			view.type = item.id;
+			
+			this.save();
 			this.forceUpdate();
 		} else 
 		if (view.id) {
