@@ -141,9 +141,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
-						{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						<div className="side left">
+							{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						</div>
 						
-						<div className="rightMenu">
+						<div className="side right">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
