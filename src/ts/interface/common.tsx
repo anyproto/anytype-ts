@@ -12,8 +12,10 @@ export enum Platform {
 };
 
 export enum DragItem {
-	Block = 'block',
-	Menu = 'menu',
+	None	 = '',
+	Block	 = 'block',
+	Menu	 = 'menu',
+	Relation = 'relation',
 };
 
 export enum CoverType {

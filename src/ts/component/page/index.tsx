@@ -89,25 +89,20 @@ class Page extends React.Component<Props, {}> {
 			return <div>Page component "{path}" not found</div>;
 		};
 
-		let lists = null;
-		if (!isPopup) {
-			lists = (
-				<React.Fragment>
-					<ListPopup key="listPopup" {...this.props} />
-					<ListMenu key="listMenu" {...this.props} />
-				</React.Fragment>
-			);
-		};
-		
 		return (
-			<SelectionProvider rootId={rootId} isPopup={isPopup}>
-				<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
-					{lists}
-					<div className={'page ' + this.getClass('page')}>
-						<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
-					</div>
-				</DragProvider>
-			</SelectionProvider>
+			<React.Fragment>
+				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
+
+				<SelectionProvider rootId={rootId} isPopup={isPopup}>
+					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
+						{!isPopup ? <ListMenu key="listMenu" {...this.props} /> : ''}
+
+						<div className={'page ' + this.getClass('page')}>
+							<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+						</div>
+					</DragProvider>
+				</SelectionProvider>
+			</React.Fragment>
 		);
 	};
 	

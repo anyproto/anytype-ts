@@ -3,26 +3,28 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block } from 'ts/component';
 import { I, M, Util } from 'ts/lib';
-import { blockStore } from 'ts/store';
+import { blockStore, dbStore } from 'ts/store';
 
-const $ = require('jquery');
-const Constant = require('json/constant.json');
+import RelationItem from 'ts/component/menu/item/relationView';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
 };
 
 interface State {
-	type: string;
+	type: I.DragItem;
 	width: number;
 	ids: string[];
 };
+
+const $ = require('jquery');
+const Constant = require('json/constant.json');
 
 class DragLayer extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
 	state = {
-		type: '',
+		type: I.DragItem.None,
 		width: 0,
 		ids: [] as string[],
 	};
@@ -35,21 +37,22 @@ class DragLayer extends React.Component<Props, State> {
 	};
 	
 	render () {
-		let { ids, type, width } = this.state;
+		let { type, width } = this.state;
 		let { rootId } = this.props;
 		let content = null;
+		let ids = this.state.ids.slice(0, 10);
+		let items: any[] = [];
 		
 		switch (type) {
 			case I.DragItem.Block:
-				const blocks = ids.slice(0, 10).map((id: string) => {
-					let block = blockStore.getLeaf(rootId, id);
-					block = new M.Block(Util.objectCopy(block));
-					return block;
+				items = ids.map((id: string) => {
+					const block = blockStore.getLeaf(rootId, id);
+					return new M.Block(Util.objectCopy(block));
 				});
 			
 				content = (
 					<div className="blocks">
-						{blocks.map((block: any, i: number) => (
+						{items.map((block: any, i: number) => (
 							<Block 
 								key={'drag-layer-' + block.id} 
 								{...this.props} 
@@ -61,6 +64,45 @@ class DragLayer extends React.Component<Props, State> {
 								getWrapperWidth={() => { return Constant.size.editor; }} 
 							/>
 						))}
+					</div>
+				);
+				break;
+
+			case I.DragItem.Relation:
+				const block = blockStore.getLeaf(rootId, rootId);
+
+				items = ids.map((relationKey: string) => {
+					return dbStore.getRelation(rootId, rootId, relationKey);
+				});
+
+				console.log(block);
+				console.log(items);
+
+				content = (
+					<div className="menus">
+						<div className="menu vertical menuBlockRelationView">
+							{items.map((item: any, i: number) => {
+								return (
+									<RelationItem 
+										key={'drag-layer-' + item.relationKey} 
+										rootId={rootId}
+										{...item}
+										block={block}
+										onEdit={() => {}}
+										onRef={() => {}}
+										onFav={() => {}}
+										readonly={true}
+										canEdit={false}
+										canFav={false}
+										isFeatured={false}
+										classNameWrap=""
+										onCellClick={() => {}}
+										onCellChange={() => {}}
+										optionCommand={() => {}}
+									/>
+								);
+							})}
+						</div>
 					</div>
 				);
 				break;
@@ -94,7 +136,7 @@ class DragLayer extends React.Component<Props, State> {
 		this._isMounted = false;
 	};
 	
-	show (type: string, ids: string[], component: any, x: number, y: number) {
+	show (type: I.DragItem, ids: string[], component: any, x: number, y: number) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -110,7 +152,7 @@ class DragLayer extends React.Component<Props, State> {
 			return;
 		};
 
-		this.setState({ type: '', ids: [] });
+		this.setState({ type: I.DragItem.None, ids: [] });
 	};
 	
 };

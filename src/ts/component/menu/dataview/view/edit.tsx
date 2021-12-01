@@ -32,8 +32,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
-		console.log(view);
-
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}

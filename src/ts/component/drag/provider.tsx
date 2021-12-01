@@ -22,7 +22,7 @@ const THROTTLE = 20;
 const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
 	refLayer: any = null;
-	type: string = '';
+	type: I.DragItem = I.DragItem.None;
 	ids: string[] = [];
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
@@ -160,7 +160,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.onDragMove(e);
 	};
 
-	onDragStart (e: any, type: string, ids: string[], component: any) {
+	onDragStart (e: any, type: I.DragItem, ids: string[], component: any) {
 		const { rootId, dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
@@ -239,6 +239,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
+		if (selection) {
+			selection.preventClear(false);
+			selection.clearState();
+		};
+
+		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
+
 		let targetContextId = rootId;
 		let contextId = rootId;
 
@@ -254,27 +261,39 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		} else {
 			const element = blockStore.getMapElement(rootId, targetId);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
+
 			if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 				targetId = parent.id;
 			};	
 		};
 
-		if (selection) {
-			selection.preventClear(false);
-			selection.clearState();
+		switch (this.type) {
+			default:
+				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+					if (selection) {
+						selection.set(this.ids);
+					};
+		
+					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+						blockStore.toggle(rootId, targetId, true);
+					};
+				});
+				break;
+
+			case I.DragItem.Relation:
+				this.ids.forEach((key: string) => {
+					let param: any = {
+						type: I.BlockType.Relation,
+						content: { key }
+					};
+
+					C.BlockCreate(param, targetContextId, targetId, position, (message: any) => {
+					});
+				});
+				break;
 		};
 
-		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
-
-		C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-			if (selection) {
-				selection.set(this.ids);
-			};
-
-			if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
-				blockStore.toggle(rootId, targetId, true);
-			};
-		});
+		
 	};
 
 	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
@@ -418,7 +437,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		$(window).unbind('dragend.drag drag.drag');
 	};
 
-	set (type: string, ids: string[]) {
+	set (type: I.DragItem, ids: string[]) {
 		this.type = type;
 		this.ids = ids.map((id: any) => { return id.toString(); });
 
@@ -453,6 +472,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	injectProps (children: any) {
 		return React.Children.map(children, (child: any) => {
+			if (!child) {
+				return null;
+			};
+
 			let children = child.props.children;
 			let dataset = child.props.dataset || {};
 

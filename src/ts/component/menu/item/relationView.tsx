@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Cell, Icon } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
-import { detailStore, blockStore } from 'ts/store';
-import { observer } from 'mobx-react';
+import { detailStore } from 'ts/store';
 
 interface Props extends I.Relation {
+	dataset?: any;
 	rootId: string;
 	block: I.Block;
 	isFeatured: boolean;
@@ -23,6 +23,14 @@ interface Props extends I.Relation {
 const PREFIX = 'menuBlockRelationView';
 
 class MenuItemRelationView extends React.Component<Props, {}> {
+
+	_isMounted: boolean = false;
+
+	constructor (props: any) {
+		super(props);
+
+		this.onDragStart = this.onDragStart.bind(this);
+	};
 
 	render () {
 		const { rootId, block, relationKey, canEdit, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
@@ -49,6 +57,8 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onEdit(e, relationKey); }}
 				>
+					<Icon className="dnd" draggable={true} onDragStart={this.onDragStart} />
+
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
@@ -82,6 +92,34 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 			</div>
 		);
     };
+
+	componentDidMount () {
+		this._isMounted = true;
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+	};
+
+	onDragStart (e: any) {
+		e.stopPropagation();
+
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const { dataset, relationKey } = this.props;
+		const { selection, onDragStart } = dataset || {};
+
+		if (!selection || !onDragStart) {
+			return;
+		};
+		
+		selection.preventSelect(true);
+		selection.clear();
+
+		onDragStart(e, I.DragItem.Relation, [ relationKey ], this);
+	};
 
 };
 

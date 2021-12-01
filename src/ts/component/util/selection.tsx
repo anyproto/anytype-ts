@@ -616,7 +616,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	injectProps (children: any) {
 		return React.Children.map(children, (child: any) => {
-			let children = child.props.children;
+			if (!child) {
+				return;
+			};
+
+			let children = (child?.props || {}).children;
 			let dataset = child.props.dataset || {};
 			
 			if (children) {

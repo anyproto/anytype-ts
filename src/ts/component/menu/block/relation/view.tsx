@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -55,6 +55,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						return (
 							<Item 
 								key={id} 
+								{...this.props}
 								{...item}
 								rootId={rootId}
 								block={block}
