@@ -68,6 +68,9 @@
 			.cellContent.c-longText {
 				.name { overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box; }
 			}
+			.cellContent.c-object, .cellContent.c-file {
+				.element { max-width: 40%; }
+			}
 		}
 	}
 }
