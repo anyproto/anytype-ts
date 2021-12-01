@@ -66,7 +66,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cn.join(' ')} style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(record); }}>
+			<div className={cn.join(' ')} style={style} onMouseDown={(e: any) => { DataUtil.objectOpenPopup(record); }}>
 				{cover}
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
