@@ -23,7 +23,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, 
 		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 		const canCancel = undefined === data.canCancel ? true : data.canCancel;
 		const textConfirm = data.textConfirm || translate('commonOk');
-		const textCancel = data.textCancel || translate('commonCancle');
+		const textCancel = data.textCancel || translate('commonCancel');
 		
 		return (
 			<React.Fragment>

@@ -198,7 +198,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 							onCheckbox={this.onCheckbox}
 							size={size} 
 							iconSize={is}
-							canEdit={canEdit} 
+							canEdit={!record.isReadonly} 
 							offsetY={4} 
 							object={record} 
 						/>
@@ -428,6 +428,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	onCheckbox () {
 		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
+
+		console.log('onCheckbox');
 
 		onCellChange(record.id, Constant.relationKey.done, !record.done);
 	};
