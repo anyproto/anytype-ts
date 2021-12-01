@@ -58,7 +58,7 @@
 		italic { font-style: italic; }
 		strike { text-decoration: line-through; }
 		
-		.markers { white-space: nowrap; }
+		.markers { display: flex; }
 		.markers {
 			.marker { 
 				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
@@ -185,6 +185,7 @@
 .editorWrapper.isTask {
 	.blocks .block.blockText.title { @include text-header1; }
 	.blocks .block.blockText.title {
-		.marker { margin: 3px 12px 0px 0px; }
+		.flex { gap: 0px 8px; }
+		.marker { width: 30px; height: 30px; margin: 0px; }
 	}
 }

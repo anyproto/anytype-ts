@@ -9,7 +9,7 @@
 		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
 		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
 		
-		.flex { position: relative; z-index: 2; }
+		.flex { position: relative; z-index: 2; align-items: center; }
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
 			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorLightGrey; border-radius: 12px; 
