@@ -136,14 +136,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
+		const { dataset, isPopup } = this.props;
+		const { selection } = dataset || {};
 
 		this._isMounted = true;
-		const win = $(window);
-		const namespace = isPopup ? '.popup' : '';
-		
 		this.unbind();
 		this.open();
+
+		const win = $(window);
+		const namespace = isPopup ? '.popup' : '';
+
+		let ids: string[] = [];
+		if (selection) {
+			ids = selection.get(true);
+		};
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
@@ -153,8 +159,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => { 
-			focus.restore();
-			focus.apply(); 
+			if (!ids) {
+				focus.restore();
+				focus.apply(); 
+			};
 			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 		});
 
@@ -944,7 +952,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Expand selection
-		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
+		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 			if (selection.get(true).length) {
 				return;
 			};
@@ -976,11 +984,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 			};
 
-			if ((dir < 0) && (sy - 4 <= vy)) {
+			if ((dir < 0) && (sy - 4 <= vy) && (range.from == 0)) {
 				cb();
 			};
 
-			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height)) {
+			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height) && (range.to == length)) {
 				cb();
 			};
 		});
