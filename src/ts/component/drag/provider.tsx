@@ -122,14 +122,21 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		const { rootId } = this.props;
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
+		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
+			return !it.isSystem() && !it.isLayoutFooter();
+		});
 
-		let data: any = {};
+		let position = this.position;
+		let data: any = null;
 		if (this.hoverData && (this.position != I.BlockPosition.None)) {
 			data = this.hoverData;
+		} else 
+		if (last) {
+			data = this.objectData.get(last.id);
+			position = I.BlockPosition.Bottom;
 		};
 		let targetId = String(data.id || '');
 		let target = blockStore.getLeaf(rootId, targetId);
-		let position = this.position;
 
 		if (dt.files && dt.files.length) {
 			let paths: string[] = [];
@@ -145,7 +152,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			});
 		} else
-		if (this.hoverData && this.canDrop && (position != I.BlockPosition.None)) {
+		if (data && this.canDrop && (position != I.BlockPosition.None)) {
 			this.onDrop(e, data.dropType, data.rootId, targetId, position);
 		};
 
@@ -291,8 +298,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				});
 				break;
 		};
-
-		
 	};
 
 	checkNodes (ex: number, ey: number, isFileDrag: boolean) {

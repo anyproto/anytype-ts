@@ -121,7 +121,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
-				
 				// Processing File style Link.
 				// Making Embed as a default one
 
