@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
+import { ListPopup, ListMenu, DragProvider, SelectionProvider } from 'ts/component';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -77,6 +77,7 @@ class Page extends React.Component<Props, {}> {
 		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
+		const rootId = this.getRootId();
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -87,14 +88,26 @@ class Page extends React.Component<Props, {}> {
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
+
+		let lists = null;
+		if (!isPopup) {
+			lists = (
+				<React.Fragment>
+					<ListPopup key="listPopup" {...this.props} />
+					<ListMenu key="listMenu" {...this.props} />
+				</React.Fragment>
+			);
+		};
 		
 		return (
-			<React.Fragment>
-				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-				<div className={'page ' + this.getClass('page')}>
-					<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
-				</div>
-			</React.Fragment>
+			<SelectionProvider rootId={rootId} isPopup={isPopup}>
+				<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
+					{lists}
+					<div className={'page ' + this.getClass('page')}>
+						<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+					</div>
+				</DragProvider>
+			</SelectionProvider>
 		);
 	};
 	
@@ -126,6 +139,12 @@ class Page extends React.Component<Props, {}> {
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
 		return isPopup ? matchPopup : match;
+	};
+
+	getRootId () {
+		const { isPopup } = this.props;
+		const match = this.getMatch();
+		return match?.params?.id || blockStore.root;
 	};
 
 	init () {

@@ -254,7 +254,6 @@ class App extends React.Component<Props, State> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
-						<ListMenu history={history} />
 						<Preview />
 						<Progress />
 						<Tooltip />

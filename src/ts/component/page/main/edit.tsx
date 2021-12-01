@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, DragProvider, SelectionProvider, EditorPage } from 'ts/component';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, EditorPage } from 'ts/component';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -24,15 +24,11 @@ class PageMainEdit extends React.Component<Props, {}> {
 
 		return (
 			<React.Fragment>
-				<SelectionProvider rootId={rootId} isPopup={isPopup}>
-					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
-						<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
-	
-						<div id="bodyWrapper" className="wrapper">
-							<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
-						</div>
-					</DragProvider>
-				</SelectionProvider>
+				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+
+				<div id="bodyWrapper" className="wrapper">
+					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
+				</div>
 				
 				<Footer ref={(ref: any) => { this.refFooter = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
 			</React.Fragment>

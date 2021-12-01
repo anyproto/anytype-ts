@@ -73,7 +73,6 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
