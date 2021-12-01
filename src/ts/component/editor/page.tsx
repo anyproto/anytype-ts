@@ -136,14 +136,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
+		const { dataset, isPopup } = this.props;
+		const { selection } = dataset || {};
 
 		this._isMounted = true;
-		const win = $(window);
-		const namespace = isPopup ? '.popup' : '';
-		
 		this.unbind();
 		this.open();
+
+		const win = $(window);
+		const namespace = isPopup ? '.popup' : '';
+
+		let ids: string[] = [];
+		if (selection) {
+			ids = selection.get(true);
+		};
 		
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
 		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
@@ -153,8 +159,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		});
 		win.on('focus.editor' + namespace, (e: any) => { 
-			focus.restore();
-			focus.apply(); 
+			if (!ids) {
+				focus.restore();
+				focus.apply(); 
+			};
 			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 		});
 
