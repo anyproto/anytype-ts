@@ -499,8 +499,7 @@ class BlockStore {
 		};
 
 		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
-		const checkType = object.type == commonStore.type;
-		const checkBlocks = checkType && (root.childrenIds.length <= cnt);
+		const checkBlocks = root.childrenIds.length <= cnt;
 
 		let change = false;
 		if (checkBlocks) {
