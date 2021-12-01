@@ -287,8 +287,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 						content: { key }
 					};
 
-					C.BlockCreate(param, targetContextId, targetId, position, (message: any) => {
-					});
+					C.BlockCreate(param, targetContextId, targetId, position,);
 				});
 				break;
 		};

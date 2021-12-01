@@ -26,6 +26,20 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
+	public static defaultProps = {
+		readonly: true,
+		canEdit: false,
+		canFav: false,
+		isFeatured: false,
+		classNameWrap: '',
+		onEdit: () => {},
+		onRef: () => {},
+		onFav: () => {},
+		onCellClick: () => {},
+		onCellChange: () => {},
+		optionCommand: () => {},
+	};
+
 	constructor (props: any) {
 		super(props);
 

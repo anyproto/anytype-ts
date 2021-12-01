@@ -75,9 +75,6 @@ class DragLayer extends React.Component<Props, State> {
 					return dbStore.getRelation(rootId, rootId, relationKey);
 				});
 
-				console.log(block);
-				console.log(items);
-
 				content = (
 					<div className="menus">
 						<div className="menu vertical menuBlockRelationView">
@@ -88,17 +85,6 @@ class DragLayer extends React.Component<Props, State> {
 										rootId={rootId}
 										{...item}
 										block={block}
-										onEdit={() => {}}
-										onRef={() => {}}
-										onFav={() => {}}
-										readonly={true}
-										canEdit={false}
-										canFav={false}
-										isFeatured={false}
-										classNameWrap=""
-										onCellClick={() => {}}
-										onCellChange={() => {}}
-										optionCommand={() => {}}
 									/>
 								);
 							})}
