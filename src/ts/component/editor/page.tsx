@@ -944,7 +944,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		// Expand selection
-		keyboard.shortcut('shift+arrowup, shift+arrowup, shift+arrowdown, shift+arrowdown', e, (pressed: string) => {
+		keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
 			if (selection.get(true).length) {
 				return;
 			};
@@ -976,11 +976,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 			};
 
-			if ((dir < 0) && (sy - 4 <= vy)) {
+			if ((dir < 0) && (sy - 4 <= vy) && (range.from == 0)) {
 				cb();
 			};
 
-			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height)) {
+			if ((dir > 0) && (sy + sRect.height + lh >= vy + vRect.height) && (range.to == length)) {
 				cb();
 			};
 		});
