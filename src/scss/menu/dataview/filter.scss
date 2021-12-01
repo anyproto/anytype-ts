@@ -32,8 +32,8 @@
 
 			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
 			.txt {
-				.name { @include text-overflow-nw; width: 100%; flex-shrink: 0; }
-				.flex { line-height: 20px; flex-shrink: 0; }
+				.name { @include text-overflow-nw; width: 100%; }
+				.flex { line-height: 20px; }
 
 				.condition { color: $colorDarkGrey; margin-right: 4px; }
 				.value { color: $colorDarkGrey; white-space: nowrap; overflow: hidden; }

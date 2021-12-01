@@ -6,10 +6,8 @@
 		.content { overflow: visible; max-height: unset; padding: 0px; }
 		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: overlay; max-height: 350px; }
 
-		.item { padding: 4px 10px; white-space: nowrap; display: flex; }
+		.item { padding: 4px 10px; white-space: nowrap; display: flex; align-items: center; }
 		.item {
-			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; }
-
 			.iconObject { margin-right: 10px; }
 			
 			.select { border: 0px; padding: 0px; display: block; }
@@ -24,6 +22,8 @@
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
+
+			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
 		}
 		.item.empty { padding: 13px 16px; }
 
