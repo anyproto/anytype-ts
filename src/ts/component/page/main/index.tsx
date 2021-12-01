@@ -126,7 +126,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						onSortStart={this.onSortStart}
 						onSortEnd={this.onSortEnd}
 						getList={this.getList}
-						helperContainer={() => { return $('#documents').get(0); }} 
+						helperContainer={() => { return $('#documents .list').get(0); }} 
 						canDrag={canDrag}
 					/>
 				);
