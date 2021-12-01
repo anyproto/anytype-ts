@@ -339,7 +339,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					menuStore.closeAll(Constant.menuIds.cell);
 
 					this.range = null;
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				});
 			};
 		});
@@ -383,14 +383,14 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			value = this.fixDateValue(value);
 		} else 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
-			this.setState({ isEditing: false });
+			this.setEditing(false);
 			return;
 		};
 
 		if (onChange) {
 			onChange(value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				};
 			});
 		};

@@ -95,7 +95,6 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this._isMounted = true;
-
 		this.resize();
 	};
 

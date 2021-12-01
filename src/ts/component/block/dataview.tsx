@@ -296,45 +296,45 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const showMenu = () => {
-			menuStore.open('searchObject', {
-				element: element,
-				vertical: I.MenuDirection.Top,
-				className: 'single',
-				subIds: [ 'previewObject' ],
-				data: {
-					label: 'Choose a template',
-					noFilter: true,
-					noIcon: true,
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-						{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-					],
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onOver: (e: any, context: any, item: any) => {
-						menuStore.open('previewObject', {
-							element: `#${context.props.getId()} #item-${item.id}`,
-							offsetX: context.props.getSize().width,
-							isSub: true,
-							vertical: I.MenuDirection.Center,
-							data: { rootId: item.id }
-						});
-					},
-					onSelect: (item: any) => {
-						create(item);
+		const menuParam: any = {
+			element: element,
+			className: 'single',
+			subIds: [ 'previewObject' ],
+			data: {
+				label: 'Choose a template',
+				noFilter: true,
+				noIcon: true,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
+					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				onOver: (e: any, context: any, item: any) => {
+					menuStore.open('previewObject', {
+						element: `#${context.props.getId()} #item-${item.id}`,
+						offsetX: context.props.getSize().width,
+						isSub: true,
+						vertical: I.MenuDirection.Center,
+						data: { rootId: item.id }
+					});
+				},
+				onSelect: (item: any) => {
+					create(item);
 
-						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
-					},
-				}
-			});
+					window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
+				},
+			}
 		};
+
+		menuParam.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+		menuParam.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
 
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				showMenu();
+				menuStore.open('searchObject', menuParam);
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};
