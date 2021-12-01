@@ -457,9 +457,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			};
 		});
 
-		options.unshift({ id: 'pageCover', icon: 'image', name: 'Page cover' });
-		options.unshift({ id: '', icon: '', name: 'None' });
-		return options;
+		return [
+			{ id: '', icon: '', name: 'None' },
+			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
+		].concat(options);
 	};
 	
 };
