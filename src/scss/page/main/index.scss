@@ -134,8 +134,8 @@
 				.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 11px; left: 0px; padding: 0px 16px; }
 				
 				.icon.more { 
-					background-image: url('~img/icon/index/more0.svg'); width: 20px; height: 20px; cursor: pointer; position: absolute;
-					right: 14px; bottom: 10px; opacity: 0; z-index: 2; transition: none;
+					background-image: url('~img/icon/index/more0.svg'); width: 40px; height: 40px; cursor: pointer; position: absolute;
+					right: 0px; bottom: 0px; opacity: 0; z-index: 2; transition: none; background-size: 20px;
 				}
 				.icon.more:hover { background-image: url('~img/icon/index/more1.svg'); }
 				.icon.more.hover { background-image: url('~img/icon/index/more1.svg'); opacity: 1; }
