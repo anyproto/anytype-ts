@@ -427,11 +427,13 @@ class DataUtil {
 	};
 
 	objectOpenEvent (e: any, object: any, popupParam?: any) {
+		const { root } = blockStore;
+
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
-			this.objectOpenPopup(object);
+		if ((e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page'))) {
+			this.objectOpenPopup(object, popupParam);
 		} else {
 			this.objectOpen(object);
 		};
@@ -456,8 +458,14 @@ class DataUtil {
 	};
 
 	objectOpenPopup (object: any, popupParam?: any) {
-		let param: any = Object.assign(popupParam || {}, {});
+		const { root } = blockStore;
+
+		if (object.id == root) {
+			this.objectOpen(object);
+			return;
+		};
 		
+		let param: any = Object.assign(popupParam || {}, {});
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {
