@@ -459,8 +459,9 @@ class DataUtil {
 
 	objectOpenPopup (object: any, popupParam?: any) {
 		const { root } = blockStore;
+		const action = this.actionByLayout(object.layout);
 
-		if (object.id == root) {
+		if ((action == 'edit') && (object.id == root)) {
 			this.objectOpen(object);
 			return;
 		};
@@ -470,7 +471,7 @@ class DataUtil {
 			matchPopup: { 
 				params: {
 					page: 'main',
-					action: this.actionByLayout(object.layout),
+					action: action,
 					id: object.id,
 				},
 			},
