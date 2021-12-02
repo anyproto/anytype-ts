@@ -7,10 +7,11 @@ interface Props extends I.Relation {
 	dataset?: any;
 	rootId: string;
 	block: I.Block;
-	isFeatured: boolean;
+	isFeatured?: boolean;
 	classNameWrap?: string;
 	readonly?: boolean;
 	canEdit?: boolean;
+	canDrag?: boolean;
 	canFav?: boolean;
 	onEdit(e: any, relationKey: string): void;
 	onRef(id: string, ref: any): void;
@@ -47,7 +48,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, relationKey, canEdit, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
+		const { rootId, block, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange, optionCommand } = this.props;
 
 		const id = DataUtil.cellId(PREFIX, relationKey, '0');
 		const fcn = [ 'fav' ];
@@ -71,8 +72,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
 					onClick={(e: any) => { onEdit(e, relationKey); }}
 				>
-					<Icon className="dnd" draggable={true} onDragStart={this.onDragStart} />
-
+					{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>

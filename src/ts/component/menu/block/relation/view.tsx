@@ -34,6 +34,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId, readonly } = data;
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
+		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
@@ -64,6 +65,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
+								canDrag={allowedBlock}
 								canFav={canFav}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}

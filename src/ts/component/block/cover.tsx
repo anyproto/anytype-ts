@@ -287,7 +287,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				menuStore.closeAll();
 			},
 			data: {
-				rootId: rootId,
+				rootId,
+				isPopup,
 			},
 		};
 
