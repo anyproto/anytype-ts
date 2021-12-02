@@ -30,7 +30,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	className?: string;
 	iconSize?: number;
 	isDragging?: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');

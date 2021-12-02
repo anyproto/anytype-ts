@@ -61,7 +61,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { match, history } = this.props;
+		const { match } = this.props;
 		const value = this.ref.getValue();
 
 		if (!value) {

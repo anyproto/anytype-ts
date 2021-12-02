@@ -4,13 +4,11 @@ import { authStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'ts/lib';
 
-interface Props extends I.Menu { 
-	history: any; 
-}
+interface Props extends I.Menu {};
 
 interface State {
 	error: string;
-}
+};
 
 const MenuAccount = observer(class MenuAccount extends React.Component<Props, State> {
 	
@@ -94,7 +92,6 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 	};
 	
 	onAdd (e: any) {
-		const { history } = this.props;
 		Util.route('/auth/register/add');
 	};
 	

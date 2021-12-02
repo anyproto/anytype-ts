@@ -7,12 +7,6 @@ const Errors = require('json/error.json');
 
 class DataUtil {
 
-	history: any = null;
-
-	init (history: any) {
-		this.history = history;
-	};
-	
 	map (list: any[], field: string): any {
 		list = list|| [] as any[];
 		

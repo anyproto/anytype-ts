@@ -9,7 +9,6 @@ const Constant = require('json/constant.json');
 
 class Keyboard {
 	
-	history: any = null;
 	mouse: any = { 
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
@@ -29,8 +28,7 @@ class Keyboard {
 	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
 	
-	init (history: any) {
-		this.history = history;
+	init () {
 		this.unbind();
 		
 		let win = $(window); 
@@ -232,7 +230,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			const prev = this.history.entries[this.history.index - 1];
+			const prev = Util.history.entries[Util.history.index - 1];
 			if (prev) {
 				let route = Util.getRoute(prev.pathname);
 				if ((route.page == 'auth') && account) {
@@ -243,7 +241,7 @@ class Keyboard {
 				};
 			};
 
-			this.history.goBack();
+			Util.history.goBack();
 		};
 
 		this.restoreSource();
@@ -261,7 +259,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			this.history.goForward();
+			Util.history.goForward();
 		};
 
 		analytics.event('HistoryForward');

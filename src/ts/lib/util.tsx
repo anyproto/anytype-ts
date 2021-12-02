@@ -1022,13 +1022,13 @@ class Util {
 		});
 	};
 
-	route (route: string, replace?: boolean) {
+	route (route: string) {
 		this.tooltipHide(true);
 		this.previewHide(true);
 
 		menuStore.closeAll();
 		popupStore.closeAll(null, () => {
-			this.history[replace ? 'replace' : 'push'](route);
+			this.history.push(route);
 		});
 	};
 
