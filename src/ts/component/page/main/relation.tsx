@@ -100,7 +100,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -116,7 +115,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};

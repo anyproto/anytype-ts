@@ -1,12 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { I, Util } from 'ts/lib';
-import { Label } from 'ts/component';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	page: string;

@@ -3,13 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Block, Icon, Loader, Deleted } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'ts/store';
-import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate } from 'ts/lib';
+import { I, C, Key, Util, DataUtil, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
 import Controls from './controls';
 import EditorHeaderPage from './header/page';
-import { analytics } from '../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	dataset?: any;
@@ -228,12 +227,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		C.BlockOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => { history.push('/main/index'); });
+					Util.onErrorUpdate(() => { Util.route('/main/index'); });
 				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};

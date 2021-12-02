@@ -23,8 +23,8 @@ const PageAuthShare = observer(class PageAuthShare extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { history, location } = this.props;
-		history.push('/auth/setup/share' + location.search);
+		const { location } = this.props;
+		Util.route('/auth/setup/share' + location.search);
 	};
 
 });

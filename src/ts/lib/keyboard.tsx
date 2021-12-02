@@ -154,7 +154,7 @@ class Keyboard {
 					return;
 				};
 
-				this.history.push('/main/index');
+				Util.route('/main/index');
 			});
 
 			// Create new page
@@ -205,8 +205,12 @@ class Keyboard {
 		});
 	};
 
+	isPopup () {
+		return popupStore.isOpen('page');
+	};
+
 	getRootId (): string {
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
 	};
@@ -219,7 +223,7 @@ class Keyboard {
 
 	back () {
 		const { account } = authStore;
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
 		
@@ -248,7 +252,7 @@ class Keyboard {
 	};
 
 	forward () {
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
 
@@ -313,7 +317,7 @@ class Keyboard {
 
 	onPrint () {
 		const { theme } = commonStore;
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 		const html = $('html');
 
 		if (isPopup) {
@@ -421,7 +425,7 @@ class Keyboard {
 				this.setPinChecked(false);
 				
 				popupStore.closeAll(null, () => {
-					this.history.push('/auth/pin-check');
+					Util.route('/auth/pin-check');
 				});
 			};
 		}, pinTime);

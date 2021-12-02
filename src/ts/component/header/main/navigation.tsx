@@ -95,7 +95,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		Util.route('/main/index');
 	};
 	
 	onBack (e: any) {
@@ -108,7 +108,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/navigation/' + rootId);
+		Util.route('/main/navigation/' + rootId);
 	};
 
 	onGraph (e: any) {

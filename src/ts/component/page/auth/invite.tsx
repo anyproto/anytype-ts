@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C } from 'ts/lib';
+import { Util, translate } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -70,7 +70,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 		};
 		
 		authStore.codeSet(this.ref.getValue());
-		history.push('/auth/setup/' + match.params.id);	
+		Util.route('/auth/setup/' + match.params.id);	
 	};
 	
 });

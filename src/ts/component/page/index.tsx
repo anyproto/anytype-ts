@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup, ListMenu, DragProvider, SelectionProvider } from 'ts/component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -62,6 +61,7 @@ const Components: any = {
 };
 
 interface Props extends RouteComponentProps<any> {
+	dataset?: any;
 	isPopup?: boolean;
 	matchPopup?: any;
 	rootId?: string;
@@ -77,7 +77,6 @@ class Page extends React.Component<Props, {}> {
 		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
-		const rootId = this.getRootId();
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -90,19 +89,9 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		return (
-			<React.Fragment>
-				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-
-				<SelectionProvider rootId={rootId} isPopup={isPopup}>
-					<DragProvider {...this.props} rootId={rootId} isPopup={isPopup}>
-						{!isPopup ? <ListMenu key="listMenu" {...this.props} /> : ''}
-
-						<div className={'page ' + this.getClass('page')}>
-							<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
-						</div>
-					</DragProvider>
-				</SelectionProvider>
-			</React.Fragment>
+			<div className={'page ' + this.getClass('page')}>
+				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+			</div>
 		);
 	};
 	
@@ -137,14 +126,13 @@ class Page extends React.Component<Props, {}> {
 	};
 
 	getRootId () {
-		const { isPopup } = this.props;
 		const match = this.getMatch();
 		return match?.params?.id || blockStore.root;
 	};
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup, history, dataset } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
@@ -162,17 +150,17 @@ class Page extends React.Component<Props, {}> {
 		const Component = Components[path];
 
 		if (!Component) {
-			history.push('/main/index');
+			Util.route('/main/index');
 			return;
 		};
 
 		if (isMain && !account) {
-			history.push('/');
+			Util.route('/');
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			history.push('/auth/pin-check');
+			Util.route('/auth/pin-check');
 			return;
 		};
 
@@ -188,8 +176,6 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		keyboard.setMatch(match);
-		popupStore.closeAll();
-		menuStore.closeAll();
 
 		window.setTimeout(() => {
 			if (isMain && account) {

@@ -90,16 +90,15 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	};
 
 	onSelect (account: I.Account) {
-		const { history } = this.props;
 		const { phrase } = authStore;
 		
 		authStore.accountSet(account);
 		ipcRenderer.send('keytarSet', account.id, phrase);
-		history.push('/auth/setup/select');
+		Util.route('/auth/setup/select');
 	};
 	
 	onAdd (e: any) {
-		this.props.history.push('/auth/register/add');
+		Util.route('/auth/register/add');
 	};
 	
 });

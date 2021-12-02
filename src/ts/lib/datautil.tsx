@@ -428,7 +428,7 @@ class DataUtil {
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push(redirectTo ? redirectTo : '/main/index');
+			Util.route(redirectTo ? redirectTo : '/main/index');
 		});
 	};
 
@@ -457,7 +457,7 @@ class DataUtil {
 		};
 
 		if (action) {
-			this.history.push('/main/' + action + (id ? '/' + id : ''));
+			Util.route('/main/' + action + (id ? '/' + id : ''));
 		};
 	};
 

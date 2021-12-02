@@ -43,6 +43,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	public static defaultProps = {
 		align: I.BlockAlign.Left,
 		traceId: '',
+		history: null,
+		location: null,
+		match: null,
 	};
 
 	_isMounted: boolean = false;

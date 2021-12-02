@@ -95,7 +95,7 @@ const MenuAccount = observer(class MenuAccount extends React.Component<Props, St
 	
 	onAdd (e: any) {
 		const { history } = this.props;
-		history.push('/auth/register/add');
+		Util.route('/auth/register/add');
 	};
 	
 });

@@ -79,6 +79,8 @@ class PopupStore {
 	};
 
     close (id: string, callBack?: () => void) {
+		console.log('close', id);
+
 		const item = this.get(id);
 		if (!item) {
 			if (callBack) {

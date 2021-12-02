@@ -1,16 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util, scrollOnMove } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
 	dataset?: any;
-	rootId: string;
-	isPopup: boolean;
 }
 
 const $ = require('jquery');
@@ -49,12 +46,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	render () {
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		const children = this.injectProps(this.props.children);
 
 		return (
-			<div className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
-				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
+			<div id="dragProvider" className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
+				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} />
 				{children}
 			</div>
 		);
@@ -120,7 +117,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
 			return !it.isSystem() && !it.isLayoutFooter();
@@ -168,7 +165,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	onDragStart (e: any, type: I.DragItem, ids: string[], component: any) {
-		const { rootId, dataset, isPopup } = this.props;
+		const { dataset } = this.props;
+		const rootId = keyboard.getRootId();
+		const isPopup = keyboard.isPopup();
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -180,7 +179,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
-		this.refLayer.show(type, ids, component);
+		this.refLayer.show(rootId, type, ids, component);
 		this.set(type, ids);
 		this.unbind();
 		this.initData();
@@ -204,7 +203,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	onDragMove (e: any) {
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
@@ -257,7 +256,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		let contextId = rootId;
 
 		if (target.isLink() && (position == I.BlockPosition.Inner)) {
-			contextId = this.props.rootId;
+			contextId = keyboard.getRootId();
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
 
@@ -301,7 +300,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
@@ -480,8 +479,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				return null;
 			};
 
-			let children = child.props.children;
-			let dataset = child.props.dataset || {};
+			let props = child.props || {};
+			let children = props.children;
+			let dataset = props.dataset || {};
 
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });

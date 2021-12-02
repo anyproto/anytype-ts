@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Error, Pin, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { Storage, translate, keyboard } from 'ts/lib';
-import { authStore, commonStore, popupStore } from 'ts/store';
+import { Util, Storage, translate, keyboard } from 'ts/lib';
+import { authStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	error: string;
-}
+};
 
 const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component<Props, State> {
 	
@@ -48,16 +48,15 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	};
 
 	onSuccess (pin: string) {
-		const { history } = this.props;
 		const { account } = authStore;
 		const redirect = Storage.get('redirect');
 
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			history.push(redirect || '/main/index');
+			Util.route(redirect || '/main/index');
 		} else {
-			history.push('/');
+			Util.route('/');
 		};
 	};
 	
