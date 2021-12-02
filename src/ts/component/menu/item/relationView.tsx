@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Cell, Icon } from 'ts/component';
 import { I, Util, DataUtil } from 'ts/lib';
 import { detailStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Relation {
 	dataset?: any;
@@ -23,7 +24,7 @@ interface Props extends I.Relation {
 
 const PREFIX = 'menuBlockRelationView';
 
-class MenuItemRelationView extends React.Component<Props, {}> {
+const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
 
@@ -54,6 +55,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
 		const cn = [ 'item', 'sides' ];
+		const object = detailStore.get(rootId, rootId, [ relationKey ]);
 
 		if (isHidden) {
 			cn.push('isHidden');
@@ -86,7 +88,7 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 						storeId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => { return detailStore.get(rootId, rootId, [ relationKey ]); }}
+						getRecord={() => { return object; }}
 						viewType={I.ViewType.Grid}
 						index={0}
 						idPrefix={PREFIX}
@@ -135,6 +137,6 @@ class MenuItemRelationView extends React.Component<Props, {}> {
 		onDragStart(e, I.DragItem.Relation, [ relationKey ], this);
 	};
 
-};
+});
 
 export default MenuItemRelationView;

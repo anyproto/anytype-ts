@@ -279,10 +279,8 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				cellPosition(id);
 			};
 		} else {
-			raf(() => {
-				cell.removeClass('isEditing');
-				cell.find('.cellContent').css({ left: '', right: '' });
-			});
+			cell.removeClass('isEditing');
+			cell.find('.cellContent').css({ left: '', right: '' });
 		};
 
 		if (commonStore.cellId) {
