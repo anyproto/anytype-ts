@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Mapper, Util, translate, Storage } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, M, C, Mapper, Util, translate, Storage } from 'ts/lib';
+import { authStore, commonStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('@electron/remote');
@@ -26,9 +26,14 @@ class Analytics {
 	};
 	
 	init () {
-		if (!isProduction && !this.debug()) {
+		if (this.isInit) {
 			return;
 		};
+
+		const platform = Util.getPlatform();
+		const { device } = authStore;
+
+		C.MetricsSetParameters(platform);
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
@@ -36,15 +41,16 @@ class Analytics {
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
-			platform: Util.getPlatform(),
+			platform: platform,
 		});
 
 		this.instance.setVersionName(version);
-		this.instance.setGlobalUserProperties({ 
-			deviceType: 'Desktop', 
+		this.instance.setUserProperties({ 
+			deviceType: 'Desktop',
 			platform: Util.getPlatform(),
 			osVersion: os.release(),
 		});
+		this.instance.setDeviceId(device);
 
 		this.isInit = true;
 

@@ -26,6 +26,14 @@ const DebugTree = (blockId: string, path: string, callBack?: (message: any) => v
 	dispatcher.request('debugTree', request, callBack);
 };
 
+const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
+	const request = new Rpc.Metrics.SetParameters.Request();
+
+	request.setPlatform(platform);
+
+	dispatcher.request('metricsSetParameters', request, callBack);
+};
+
 const ConfigGet = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('configGet', request, callBack);
@@ -1192,6 +1200,7 @@ export {
 	VersionGet,
 	DebugSync,
 	DebugTree,
+	MetricsSetParameters,
 
 	ConfigGet,
 	Shutdown,

@@ -129,9 +129,10 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		if (view.coverRelationKey) {
 			const record = getRecord(index);
 			const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
+			
 			for (let id of value) {
 				const f = detailStore.get(rootId, id, []);
-				if (f && (f.type == Constant.typeId.image)) {
+				if (f.type == Constant.typeId.image) {
 					picture = commonStore.imageUrl(f.id, 600);
 					break;
 				};

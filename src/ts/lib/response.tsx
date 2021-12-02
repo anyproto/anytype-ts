@@ -12,6 +12,7 @@ const ConfigGet = (response: any) => {
 		marketplaceTypeId: response.getMarketplacetypeid(),
 		marketplaceTemplateId: response.getMarketplacetemplateid(),
 		marketplaceRelationId: response.getMarketplacerelationid(),
+		deviceId: response.getMarketplacerelationid(),
 	};
 };
 
