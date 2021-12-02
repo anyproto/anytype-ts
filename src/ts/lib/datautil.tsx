@@ -452,9 +452,15 @@ class DataUtil {
 			id = '';
 		};
 
-		if (action) {
-			Util.route('/main/' + action + (id ? '/' + id : ''));
+		if (!action) {
+			return;
 		};
+
+		let route = [ '', 'main', action ];
+		if (id) {
+			route.push(id);
+		};
+		Util.route(route.join('/'));
 	};
 
 	objectOpenPopup (object: any, popupParam?: any) {
