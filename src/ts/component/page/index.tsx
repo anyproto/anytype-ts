@@ -98,12 +98,10 @@ class Page extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
-		Util.previewHide(true);
 	};
 
 	componentDidUpdate () {
 		this.init();
-		Util.previewHide(true);
 	};
 	
 	componentWillUnmount () {
@@ -117,6 +115,7 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
+		Util.tooltipHide(true);
 		Util.previewHide(true);
 	};
 
@@ -216,7 +215,6 @@ class Page extends React.Component<Props, {}> {
 
 	shareCheck () {
 		const shareSuccess = Storage.get('shareSuccess');
-
 		if (!shareSuccess) {
 			return;
 		};
