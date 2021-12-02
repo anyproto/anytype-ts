@@ -230,9 +230,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 						left: '50%',
 						top: '50%',
 						width: w, 
-						height: h, 
-						marginTop: -h / 2, 
-						marginLeft: -w / 2,
+						height: h,
+						transform: 'translate3d(-50%, -50%, 0px)',
 					});
 				};
 			});
