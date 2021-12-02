@@ -495,8 +495,6 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
-			analytics.init();
-
 			this.initTheme(config.theme);
 		});
 
