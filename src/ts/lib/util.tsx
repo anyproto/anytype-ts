@@ -1027,21 +1027,9 @@ class Util {
 		this.previewHide(true);
 
 		menuStore.closeAll();
-		popupStore.closeAll(null, () => {
-			this.history.push(route);
-		});
+		popupStore.closeAll(null, () => { this.history.push(route); });
 	};
 
-	simpleStringify (o: any) {
-		let so: any = {};
-		for (let p in o) {
-			if (!o.hasOwnProperty(p) || [ 'object', 'function' ].includes(typeof(o[p]))) {
-				continue;
-			};
-			so[p] = o[p];
-		}
-		return JSON.stringify(so, null, 3); // returns cleaned up JSON
-	};
 };
 
 export default new Util();
