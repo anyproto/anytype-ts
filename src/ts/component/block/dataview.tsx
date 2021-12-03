@@ -2,7 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, analytics, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, dbStore, detailStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore } from 'ts/store';
+import { throttle } from 'lodash';
 
 import Controls from './dataview/controls';
 
@@ -22,6 +23,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
 	viewId: string = '';
+	creating: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -146,15 +148,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const win = $(window);
 		win.on('resize.dataview', () => { this.resize(); });
-		win.on('keydown.dataview', (e: any) => { this.onKeyDown(e); });
+		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
 	};
 
 	onKeyDown (e: any) {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
 
-		keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
-			this.onRowAdd(e, -1);
-		});
+		if (root.isObjectSet() && !this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
+				this.onRowAdd(e, -1);
+			});
+		};
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
@@ -243,8 +249,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const element = $(e.currentTarget);
 		const view = this.getView();
 
+		this.creating = true;
+
 		const create = (template: any) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
+				this.creating = false;
+
 				if (!message.error.code) {
 					const index = dbStore.recordAdd(rootId, block.id, message.record, dir);
 					const id = DataUtil.cellId('dataviewCell', 'name', index);
