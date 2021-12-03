@@ -49,10 +49,11 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 				<Frame>
 					{loading ? <Loader /> : (
 						<React.Fragment>
-							<Title text={translate('authAccountSelectTitle')} />
 							<Error text={error} />
 
 							<div className="list dn">
+								<Title text={translate('authAccountSelectTitle')} />
+
 								{accounts.map((item: I.Account, i: number) => (
 									<Item key={i} {...item} />	
 								))}
