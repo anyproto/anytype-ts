@@ -5,7 +5,7 @@
 	.block.blockText {
 		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; padding-bottom: 1px; }
 
-		.placeholder { display: none; overflow: hidden; }
+		.placeholder { display: none; }
 
 		kbd { 
 			display: inline-block; font-family: 'Plex'; border-radius: 4px; background: $colorLightGrey; padding: 0px 4px;
@@ -96,7 +96,7 @@
 	.block.blockText.title { padding: 22px 0px 6px 0px; @include text-title; }
 	.block.blockText.title {
 		.placeholder { 
-			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
+			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none;
 			width: 100%; height: 100%; cursor: text; 
 		}
 		.value { -webkit-user-modify: read-write-plaintext-only; }

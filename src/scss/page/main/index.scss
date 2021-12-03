@@ -120,8 +120,7 @@
 
 			.iconObject { margin-bottom: 10px; }
 			.name { 
-				@include text-common; width: calc(100% - 20px); word-break: break-word; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; 
-				display: -webkit-box; line-height: 20px;
+				@include text-common; @include clamp4; width: calc(100% - 20px); word-break: break-word; line-height: 20px;
 			}
 			.type { @include text-small; color: $colorMediumGrey; position: absolute; bottom: 11px; left: 0px; padding: 0px 16px; }
 			
