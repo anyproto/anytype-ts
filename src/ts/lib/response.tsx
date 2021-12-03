@@ -1,9 +1,5 @@
 import { Mapper, Decode } from 'ts/lib';
 
-const VersionGet = (response: any) => {
-	return {};
-};
-
 const DebugSync = (response: any) => {
 	return response.toObject();
 };
@@ -18,10 +14,6 @@ const ConfigGet = (response: any) => {
 		marketplaceRelationId: response.getMarketplacerelationid(),
 		deviceId: response.getMarketplacerelationid(),
 	};
-};
-
-const Shutdown = () => {
-	return {};
 };
 
 const Export = (response: any) => {
@@ -55,18 +47,10 @@ const DownloadFile = (response: any) => {
 	};
 };
 
-const ProcessCancel = (response: any) => {
-	return {};
-};
-
 const WalletCreate = (response: any) => {
 	return {
 		mnemonic: response.getMnemonic(),
 	};
-};
-
-const WalletRecover = (response: any) => {
-	return {};
 };
 
 const WalletConvert = (response: any) => {
@@ -83,23 +67,11 @@ const AccountCreate = (response: any) => {
 	};
 };
 
-const AccountRecover = (response: any) => {
-	return {};
-};
-
 const AccountSelect = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
 		config: response.hasConfig() ? Mapper.From.AccountConfig(response.getConfig()) : null,
 	};
-};
-
-const AccountStop = (response: any) => {
-	return {};
-};
-
-const ExternalDropFiles = (response: any) => {
-	return {};
 };
 
 const PageCreate = (response: any) => {
@@ -129,14 +101,6 @@ const BlockGetPublicWebURL = (response: any) => {
 	};
 };
 
-const BlockOpen = (response: any) => {
-	return {};
-};
-
-const BlockShow = (response: any) => {
-	return {};
-}
-
 const ObjectShow = (response: any) => {
 	return {
 		rootId: response.getRootid(),
@@ -152,22 +116,6 @@ const BlockOpenBreadcrumbs = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 	};
-};
-
-const BlockSetBreadcrumbs = (response: any) => {
-	return {};
-};
-
-const BlockClose = (response: any) => {
-	return {};
-};
-
-const BlockUndo = (response: any) => {
-	return {};
-};
-
-const BlockRedo = (response: any) => {
-	return {};
 };
 
 const BlockCreate = (response: any) => {
@@ -190,42 +138,10 @@ const BlockCreateSet = (response: any) => {
 	};
 };
 
-const BlockUnlink = (response: any) => {
-	return {};
-};
-
-const BlockSetTextText = (response: any) => {
-	return {};
-};
-
-const BlockSetTextChecked = (response: any) => {
-	return {};
-};
-
-const BlockSetFields = (response: any) => {
-	return {};
-};
-
-const BlockSetDetails = (response: any) => {
-	return {};
-};
-
-const BlockMerge = (response: any) => {
-	return {};
-};
-
 const BlockSplit = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
 	};
-};
-
-const BlockUpload = (response: any) => {
-	return {};
-};
-
-const BlockBookmarkFetch = (response: any) => {
-	return {};
 };
 
 const BlockBookmarkCreateAndFetch = (response: any) => {
@@ -270,10 +186,6 @@ const BlockImportMarkdown = (response: any) => {
 	};
 };
 
-const BlockListMove = (response: any) => {
-	return {};
-};
-
 const BlockListMoveToNewPage = (response: any) => {
 	return {
 		linkId: response.getLinkid(),
@@ -292,67 +204,16 @@ const BlockListConvertChildrenToPages = (response: any) => {
 	};
 };
 
-const BlockListSetTextStyle = (response: any) => {
-	return {};
-};
-
-const BlockListTurnInto = (response: any) => {
-	return {};
-};
-
-const BlockListSetDivStyle = (response: any) => {
-	return {};
-};
-const BlockListSetFileStyle = (response: any) => {
-	return {};
-};
-
-const BlockListSetTextColor = (response: any) => {
-	return {};
-};
-
-const BlockListSetTextMark = (response: any) => {
-	return {};
-};
-
-const BlockListSetFields = (response: any) => {
-	return {};
-};
-
-const BlockListSetBackgroundColor = (response: any) => {
-	return {};
-};
-
-const BlockListSetAlign = (response: any) => {
-	return {};
-};
-
 const BlockDataviewViewCreate = (response: any) => {
 	return {
 		viewId: response.getViewid(),
 	};
 };
 
-const BlockDataviewViewUpdate = (response: any) => {
-	return {};
-};
-
-const BlockDataviewViewSetActive = (response: any) => {
-	return {};
-};
-
 const BlockDataviewRecordCreate = (response: any) => {
 	return {
 		record: Mapper.From.Record(response.getRecord()),
 	};
-};
-
-const BlockDataviewRecordUpdate = (response: any) => {
-	return {};
-};
-
-const BlockDataviewRecordDelete = (response: any) => {
-	return {};
 };
 
 const BlockDataviewRelationAdd = (response: any) => {
@@ -373,14 +234,6 @@ const BlockDataviewRecordRelationOptionAdd = (response: any) => {
 	};
 };
 
-const BlockDataviewRecordRelationOptionUpdate = (response: any) => {
-	return {};
-};
-
-const BlockDataviewRecordRelationOptionDelete = (response: any) => {
-	return {};
-};
-
 const HistoryVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
@@ -393,10 +246,6 @@ const HistoryShow = (response: any) => {
 		version: version ? Mapper.From.HistoryVersion(response.getVersion()) : null,
 		objectShow: ObjectShow(response.getObjectshow()),
 	};
-};
-
-const HistorySetVersion = (response: any) => {
-	return {};
 };
 
 const ObjectTypeList = (response: any) => {
@@ -460,10 +309,6 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
-const ObjectListDelete = (response: any) => {
-	return {};
-};
-
 const ObjectShareByLink = (response: any) => {
 	return {
 		link: response.getLink(),
@@ -495,28 +340,20 @@ const WorkspaceCreate = (response: any) => {
 };
 
 export {
-	VersionGet,
 	DebugSync,
 
 	ConfigGet,
 	Export,
-	Shutdown,
 	UploadFile,
 	DownloadFile,
-	ProcessCancel,
 	LinkPreview,
 	FileListOffload,
 
 	WalletCreate,
-	WalletRecover,
 	WalletConvert,
 
 	AccountCreate,
-	AccountRecover,
 	AccountSelect,
-	AccountStop,
-
-	ExternalDropFiles,
 
 	PageCreate,
 	SetCreate,
@@ -525,25 +362,14 @@ export {
 
 	BlockGetPublicWebURL,
 
-	BlockOpen,
-	BlockShow,
 	BlockOpenBreadcrumbs,
-	BlockSetBreadcrumbs,
 	
-	BlockUnlink,
-	BlockClose,
-	BlockUndo,
-	BlockRedo,
-
-	BlockMerge,
 	BlockSplit,
 	BlockCopy,
 	BlockCut,
 	BlockPaste,
-	BlockUpload,
 
 	BlockFileCreateAndUpload,
-	BlockBookmarkFetch,
 	BlockBookmarkCreateAndFetch,
 	
 	BlockImportMarkdown,
@@ -553,42 +379,19 @@ export {
 	BlockDataviewViewCreate,
 	BlockCreateSet,
 
-	BlockSetTextText,
-	BlockSetTextChecked,
-	BlockSetFields,
-	BlockSetDetails,
-	
-	BlockDataviewViewUpdate,
-	BlockDataviewViewSetActive,
-
 	BlockDataviewRecordCreate,
-	BlockDataviewRecordUpdate,
-	BlockDataviewRecordDelete,
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationListAvailable,
 
 	BlockDataviewRecordRelationOptionAdd,
-	BlockDataviewRecordRelationOptionUpdate,
-	BlockDataviewRecordRelationOptionDelete,
 
-	BlockListMove,
 	BlockListMoveToNewPage,
 	BlockListDuplicate,
 	BlockListConvertChildrenToPages,
 
-	BlockListSetBackgroundColor,
-	BlockListSetTextColor,
-	BlockListSetTextStyle,
-	BlockListTurnInto,
-	BlockListSetTextMark,
-	BlockListSetDivStyle,
-	BlockListSetFields,
-	BlockListSetAlign,
-
 	HistoryVersions,
 	HistoryShow,
-	HistorySetVersion,
 
 	ObjectShow,
 
@@ -603,8 +406,6 @@ export {
 	ObjectRelationOptionAdd,
 	ObjectToSet,
 	ObjectShareByLink,
-
-	ObjectListDelete,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,

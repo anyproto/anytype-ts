@@ -651,7 +651,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 					close();
 
-					C.Export(files[0], [], format, true, (message: any) => {	
+					C.Export(files[0], [], format, true, true, (message: any) => {	
 						if (message.error.code) {
 							popupStore.open('confirm', {
 								data: {
