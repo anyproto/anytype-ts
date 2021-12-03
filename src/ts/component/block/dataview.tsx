@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, dbStore, detailStore } from 'ts/store';
 
@@ -116,7 +116,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.resize();
-		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -128,11 +128,33 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.resize();
+		this.rebind();
+
 		$(window).trigger('resize.editor');
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.dataview');
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).unbind('resize.dataview keydown.dataview');
+	};
+
+	rebind () {
+		this.unbind();
+
+		const win = $(window);
+		win.on('resize.dataview', () => { this.resize(); });
+		win.on('keydown.dataview', (e: any) => { this.onKeyDown(e); });
+	};
+
+	onKeyDown (e: any) {
+		const cmd = keyboard.ctrlKey();
+
+		keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
+			this.onRowAdd(e, -1);
+		});
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
@@ -211,7 +233,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRowAdd (e: any, dir: number) {
-		e.persist();
+		if (e.persist) {
+			e.persist();
+		};
 
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
