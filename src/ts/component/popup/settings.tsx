@@ -359,18 +359,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						<Label text={translate('popupSettingsImportFirst')} />
 
 						<div className="path">
-							<b>{translate('popupSettingsImportGetTitle')}</b><br/>
-							<IconObject object={{ iconEmoji: ':gear:' }} /> Settings & Members → <IconObject object={{ iconEmoji: ':house:' }} /> Settings → Export all workspace content → <br/>
-							Export format : "Markdown & CSV".
-						</div>
-
-						<div className="path">
 							<b>{translate('popupSettingsImportPageTitle')}</b><br/>
 							Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : "Markdown & CSV".
 						</div>
 
 						<Label className="last" text={translate('popupSettingsImportZip')} />
+						
 						<Button text={translate('popupSettingsImportOk')} onClick={() => { this.onImport('notion'); }} />
+
+						<Label className="last" text={translate('popupSettingsImportWarning')} />
 					</div>
 				);
 				break;
