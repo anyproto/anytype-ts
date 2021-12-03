@@ -17,8 +17,7 @@ const PageAuthShare = observer(class PageAuthShare extends React.Component<Props
 
 	render () {
 		return (
-			<div>
-			</div>
+			<div />
 		);
 	};
 
