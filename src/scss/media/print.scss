@@ -1,16 +1,15 @@
 @media print {
-	@page { size: A4; margin: 1.5cm 0px; }
+	@page { size: A4; margin: 1.5cm; }
 	@page:first { margin-top: 0px; }
 
-	body { -webkit-print-color-adjust: exact; }
-	#drag { display: none !important; }
-	#previewLink { display: none !important; }
-	.menu { display: none !important; }
-	.editorControls { display: none !important; }
-	.controlButtons { display: none !important; }
-	html.withPopup .page.isFull { display: none !important; }
-	.header { display: none; }
-	.footer { display: none; }
+	* { overflow: visible !important; }
+
+	body { margin: 0px; -webkit-print-color-adjust: exact; }
+	
+	#drag, #previewLink, .menu, 
+	.editorControls, .controlButtons, 
+	html.withPopup .page.isFull, 
+	.header, .footer { display: none !important; }
 
 	.overPopup, .overMenu { overflow: visible !important; }
 
@@ -21,7 +20,6 @@
 	
 	#editorWrapper { width: 100% !important; }
 
-	.pageMainEdit .blocks { padding: 0px 1.5cm; }
 	.pageMainType, .pageMainRelation {
 		.wrapper {
 			.head {
@@ -40,9 +38,16 @@
 
 	.block.blockCover { left: 0px; top: 0px; width: 100%; }
 
+	.blocks { margin-left: -96px !important; }
 	.blocks {
+		.wrapMenu { display: none; }
+		.wrapContent { width: 100% !important; padding-left: 48px; }
+
+		.flex { display: block; }
+
 		#button-add { display: none; }
 
+		.block { display: block !important; }
 		.block {
 			.icon.dnd { display: none; }
 		}
@@ -53,7 +58,6 @@
 		}
 		
 		.block.blockText {
-			#value { overflow: visible; break-inside: avoid-page; }
 			.placeholder { display: none !important; }
 		}
 		

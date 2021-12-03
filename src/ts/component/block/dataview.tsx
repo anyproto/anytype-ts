@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, analytics, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { blockStore, menuStore, dbStore, detailStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
 import { throttle } from 'lodash';
 
 import Controls from './dataview/controls';
@@ -158,7 +158,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (root.isObjectSet() && !this.creating) {
 			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
-				this.onRowAdd(e, -1);
+				this.onRowAdd(e, -1, true);
 			});
 		};
 	};
@@ -238,7 +238,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any, dir: number) {
+	onRowAdd (e: any, dir: number, withPopup?: boolean) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -280,6 +280,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
+		const showPopup = () => {
+			popupStore.open('template', {
+				data: {
+					typeId: setOf[0],
+					onSelect: create,
+				},
+			});
+		};
+
 		const showMenu = () => {
 			menuStore.open('searchObject', {
 				element: element,
@@ -318,7 +327,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				showMenu();
+				withPopup ? showPopup() : showMenu();
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};
