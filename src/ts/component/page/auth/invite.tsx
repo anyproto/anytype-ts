@@ -62,7 +62,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 		e.preventDefault();
 		
 		const { match, history } = this.props;
-		const value = this.ref.getValue();
+		const value = this.ref.getValue().trim();
 
 		if (!value) {
 			this.setState({ error: translate('authInviteEmpty') });
