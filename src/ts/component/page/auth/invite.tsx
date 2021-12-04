@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C } from 'ts/lib';
+import { translate } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
-}
+};
 
 const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Props, State> {
 
@@ -69,7 +69,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 			return;
 		};
 		
-		authStore.codeSet(this.ref.getValue());
+		authStore.codeSet(value);
 		history.push('/auth/setup/' + match.params.id);	
 	};
 	
