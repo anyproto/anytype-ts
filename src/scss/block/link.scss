@@ -45,8 +45,8 @@
                 }
 
                 .cardDescription { 
-                    @include text-common; color: $colorVeryDarkGrey; overflow: hidden; -webkit-line-clamp: 2; 
-                    -webkit-box-orient: vertical; display: -webkit-box; margin: 2px 0px 0px 0px;
+                    @include text-common; @include clamp2; color: $colorVeryDarkGrey; overflow: hidden;
+                    margin: 2px 0px 0px 0px;
                 }
                 .cardDescription:empty { display: none; }
 

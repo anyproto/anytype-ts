@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+<<<<<<< HEAD
 import { Util, translate } from 'ts/lib';
+=======
+import { translate } from 'ts/lib';
+>>>>>>> fbdf533831633e4313ee0c3423c1fe00cb314542
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
-}
+};
 
 const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Props, State> {
 
@@ -62,14 +66,14 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 		e.preventDefault();
 		
 		const { match } = this.props;
-		const value = this.ref.getValue();
+		const value = this.ref.getValue().trim();
 
 		if (!value) {
 			this.setState({ error: translate('authInviteEmpty') });
 			return;
 		};
 		
-		authStore.codeSet(this.ref.getValue());
+		authStore.codeSet(value);
 		Util.route('/auth/setup/' + match.params.id);	
 	};
 	

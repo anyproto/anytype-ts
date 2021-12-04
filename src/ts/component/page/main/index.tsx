@@ -170,7 +170,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						</div>
 						<div id="selectWrap" className="tabWrap">
 							<div className="tabs">
-								<div id="selectCnt" className="side left"></div>
+								<div id="selectCnt" className="side left" />
 								<div className="side right">
 									{selectionButtons.map((item: any, i: number) => (
 										<div id={'button-' + item.id} key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>

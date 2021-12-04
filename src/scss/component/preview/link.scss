@@ -2,7 +2,9 @@
 
 .previewLink {
 	.name { @include text-common; height: 22px; color: $colorBlack; @include text-overflow-nw; margin-bottom: 3px; }
-	.descr { @include text-small; height: 36px; color: $colorVeryDarkGrey; margin: 2px 0px 7px 0px; @include text-overflow; }
+	.descr { 
+		@include text-small; @include clamp2; height: 36px; color: $colorVeryDarkGrey; margin: 2px 0px 7px 0px;
+	}
 	.link { @include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw;  }
 		
 	.img {

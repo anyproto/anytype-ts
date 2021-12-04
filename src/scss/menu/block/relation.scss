@@ -126,10 +126,7 @@
 			}
 
 			.cell.c-longText {
-				.name, span { 
-					-webkit-line-clamp: 3; -webkit-box-orient: vertical; display: -webkit-box; overflow: hidden; word-wrap: break-word; 
-					line-height: 22px;
-				}
+				.name, span { @include clamp3; word-wrap: break-word; line-height: 22px; }
 			}
 			.cell.isEditing.c-longText {
 				.cellContent { box-shadow: 0px 0px; visibility: hidden; }

@@ -67,7 +67,7 @@
 				.more { margin-top: 0px; }
 			}
 			.cellContent.c-longText {
-				.name { overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box; }
+				.name { overflow: hidden; @include clamp2; }
 			}
 		}
 	}

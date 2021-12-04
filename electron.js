@@ -628,6 +628,10 @@ function menuInit () {
 					click: () => { send('command', 'exportTemplates'); }
 				},
 				{
+					label: 'Export objects',
+					click: () => { send('command', 'exportObjects'); }
+				},
+				{
 					label: 'Export localstore',
 					click: () => { send('command', 'exportLocalstore'); }
 				},
