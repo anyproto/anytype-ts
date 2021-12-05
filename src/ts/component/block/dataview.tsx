@@ -143,7 +143,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		const { rootId, block } = this.props;
+
 		this.unbind();
+
+		const subId = dbStore.getSubId(rootId, block.id);
+		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
 	unbind () {

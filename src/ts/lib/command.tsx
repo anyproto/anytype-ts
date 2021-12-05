@@ -1038,6 +1038,8 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 	const cb = (message: any) => {
 		subIds.forEach((id: string) => {
 			dbStore.recordsClear(id, '');
+			dbStore.recordsClear(id + '/dep', '');
+			
 			detailStore.clear(id);
 		});
 
