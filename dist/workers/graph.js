@@ -7,8 +7,14 @@ importScripts('d3/d3-selection.min.js');
 importScripts('d3/d3-force.min.js');
 
 // CONSTANTS
+
 const baseFontFamily = 'Helvetica';
 const baseFontStyle = `3px ${baseFontFamily}`;
+
+const ObjectLayout = {
+	Human:	 1,
+	Task:	 2,
+};
 
 let offscreen = null;
 let canvas = null;
@@ -26,6 +32,7 @@ let simulation = null;
 let theme = '';
 let Color = {};
 let LineWidth = 0.25;
+let frame = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -203,11 +210,11 @@ draw = () => {
 };
 
 redraw = () => {
-	requestAnimationFrame(draw);
+	cancelAnimationFrame(frame);
+	frame = requestAnimationFrame(draw);
 };
 
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
-	let source = nodes.find(it => it.id == d.source.id);
 	let x1 = d.source.x;
 	let y1 = d.source.y;
 	let r1 = d.source.radius + 3;
@@ -221,7 +228,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = 0.2;
 	};
 
-	if (source.isOver) {
+	if (d.source.isOver) {
 		bg = Color.link.over;
 	};
 
@@ -378,7 +385,7 @@ drawNode = (d) => {
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	} else 
-	if (isHumanLayoutType(d)) {
+	if (isLayoutHuman(d)) {
 		nameCircleIcon(d);
 	};
 
@@ -476,31 +483,26 @@ onResize = (data) => {
 	redraw();
 };
 
-// Graph utils
+// Utils
 
-// 1 - Human layout type
-const isHumanLayoutType = (d) => {
-	return d.layout === 1;
+const isLayoutHuman = (d) => {
+	return d.layout === ObjectLayout.Human;
 };
 
-// 2 - Task layout type
-const isTaskLayoutType = (d) => {
-	return d.layout === 2;
+const isLayoutTask = (d) => {
+	return d.layout === ObjectLayout.Task;
 };
 
 const isCustomIconLayoutType = (d) => {
-	return isHumanLayoutType(d) || isTaskLayoutType(d);
+	return isLayoutHuman(d) || isLayoutTask(d);
 };
 
 const nameCircleIcon = (d) => {
-	// Get First upper char
-	const name = d.name.trim().substr(0, 1).toUpperCase();
-	
 	ctx.save();
 	ctx.font = baseFontStyle;  
 	ctx.fillStyle = Color.iconText;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(name, d.x, d.y);
+	ctx.fillText(d.letter, d.x, d.y);
 	ctx.restore();
 };

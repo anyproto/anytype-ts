@@ -357,8 +357,8 @@ const Mapper = {
 				description: obj.getDescription(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
-				//done: obj.getDone(),
-				//relationFormat: obj.getRelationformat(),
+				done: obj.getDone(),
+				relationFormat: obj.getRelationformat(),
             };
         },
 

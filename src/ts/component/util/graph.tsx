@@ -123,7 +123,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.name = d.name || translate('defaultNamePage');
 			d.name = SmileUtil.strip(d.name);
 			d.shortName = Util.shorten(d.name, 16);
-			d.radius = Math.max(3, Math.min(10, sourceCnt + targetCnt));
+			d.letter = d.name.trim().substr(0, 1).toUpperCase();
+			d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
