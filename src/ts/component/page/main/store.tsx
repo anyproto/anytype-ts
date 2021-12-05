@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
-import { I, C, DataUtil, Util, Storage, keyboard } from 'ts/lib';
+import { I, C, DataUtil, Util, Storage, keyboard, Action } from 'ts/lib';
 import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -286,7 +286,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		const { storeType, storeRelation, storeTemplate } = blockStore;
+
 		this._isMounted = false;
+
+		Action.pageClose(storeType, true);
+		Action.pageClose(storeRelation, true);
+		Action.pageClose(storeTemplate, true);
 	};
 
 	getRootId () {
