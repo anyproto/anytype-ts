@@ -310,6 +310,10 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			case I.ObjectLayout.Human:
 				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
 				break;
+
+			case I.ObjectLayout.Note:
+				src = 'img/icon/note.svg';
+				break;
 				
 			default:
 				if (d.iconImage) {
