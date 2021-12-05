@@ -64,7 +64,6 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 								<ObjectName object={object} className="description" />
 							) : (
 								<React.Fragment>
-									<div className="title">{name}</div>
 									<ObjectName object={object} className="title" />
 									<ObjectDescription object={object} className="description" />
 								</React.Fragment>
