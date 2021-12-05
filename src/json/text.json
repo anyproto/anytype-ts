@@ -257,6 +257,7 @@
 	"popupSettingsImportPageTitle": { "en": "Get certain pages:" },
 	"popupSettingsImportZip": { "en": "After that you need to select Zip archive and Anytype will do the rest." },
 	"popupSettingsImportOk": { "en": "Import data" },
+	"popupSettingsImportWarning": { "en": "Please don’t add entire Notion workspace content if it’s too big. Anytype has different data structure and can’t parse Notion databases at the moment." },
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportMarkdownTitle": { "en": "Export to markdown" },
 	"popupSettingsExportMarkdownText": { "en": "All your workspace data except columns and text color styling will be exported to markdown. It’s a free and readable format that can be opened and edited with many free and beautiful applications.<br/><br/>If you want to add all your data back in Anytype, use the <b>Import</b> section." },

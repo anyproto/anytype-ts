@@ -15,6 +15,7 @@ class AuthStore {
 	public name: string = '';
 	public phrase: string = '';
 	public code: string = '';
+	public deviceId: string = '';
 	public threadMap: Map<string, any> = new Map();
 
 	constructor () {
@@ -57,7 +58,11 @@ class AuthStore {
     };
 
 	get path (): string {
-		return this.dataPath || '';
+		return String(this.dataPath || '');
+    };
+
+	get device (): string {
+		return String(this.deviceId || '');
     };
 
 	pathSet (v: string) {
@@ -87,6 +92,10 @@ class AuthStore {
 	nameSet (v: string) {
 		this.name = v;
     };
+
+	deviceSet (v: string) {
+		this.deviceId = v;
+	};
 
 	accountAdd (account: I.Account) {
 		this.accountList.push(account);

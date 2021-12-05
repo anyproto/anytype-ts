@@ -5,18 +5,20 @@ import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { I, C, Util, translate } from 'ts/lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	error: string;
-}
+	loading: boolean;
+};
 
 const { ipcRenderer } = window.require('electron');
 
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<Props, State> {
 
 	state = {
-		error: ''
+		error: '',
+		loading: false,
 	};
 
 	constructor (props: any) {
@@ -28,7 +30,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	
 	render () {
 		const { cover } = commonStore;
-		const { error } = this.state;
+		const { error, loading } = this.state;
 		const { accounts } = authStore;
 
 		const Item = (item: any) => (
@@ -45,12 +47,13 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 				<Footer />
 				
 				<Frame>
-					{!accounts.length ? <Loader /> : (
+					{loading ? <Loader /> : (
 						<React.Fragment>
-							<Title text={translate('authAccountSelectTitle')} />
 							<Error text={error} />
 
-							<div className="list">
+							<div className="list dn">
+								<Title text={translate('authAccountSelectTitle')} />
+
 								{accounts.map((item: I.Account, i: number) => (
 									<Item key={i} {...item} />	
 								))}
@@ -70,13 +73,19 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		const { path, phrase } = authStore;
 		
 		authStore.accountClear();
+
+		this.setState({ loading: true });
 		
 		C.WalletRecover(path, phrase, (message: any) => {
 			C.AccountRecover((message: any) => {
+				const state: any = { loading: false };
+
 				if (message.error.code) {
 					Util.checkError(message.error.code);
-					this.setState({ error: message.error.description });
+					state.error = message.error.description;
 				};
+
+				this.setState(state);
 			});
 		});
 	};

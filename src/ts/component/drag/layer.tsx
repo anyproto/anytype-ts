@@ -48,20 +48,18 @@ class DragLayer extends React.Component<Props, State> {
 			
 				content = (
 					<div className="blocks">
-						{blocks.map((block: any, i: number) => {
-							return (
-								<Block 
-									key={'drag-layer-' + block.id} 
-									{...this.props} 
-									block={block} 
-									rootId={rootId} 
-									index={i} 
-									readonly={true} 
-									isDragging={true}
-									getWrapperWidth={() => { return Constant.size.editor; }} 
-								/>
-							);
-						})}
+						{blocks.map((block: any, i: number) => (
+							<Block 
+								key={'drag-layer-' + block.id} 
+								{...this.props} 
+								block={block} 
+								rootId={rootId} 
+								index={i} 
+								readonly={true} 
+								isDragging={true}
+								getWrapperWidth={() => { return Constant.size.editor; }} 
+							/>
+						))}
 					</div>
 				);
 				break;

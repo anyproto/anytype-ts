@@ -13,6 +13,7 @@ function dateForFile() {
 let maxStdErrChunksBuffer = 10;
 
 class Server {
+
 	start (binPath, workingDir) {
 		return new Promise((resolve, reject) => {
 
@@ -106,17 +107,18 @@ class Server {
 	stop () {
 		return new Promise((resolve, reject) => {
 			if (this.cp && this.isRunning) {
-				this.cp.on( 'exit', () => {
-					resolve( true );
+				this.cp.on('exit', () => {
+					resolve(true);
+
 					this.isRunning = false;
 					this.cp = null;
-				} )
+				});
 				
 				this.stopTriggered = true;
-				this.cp.kill( 'SIGTERM' );
+				this.cp.kill('SIGTERM');
 			} else {
 				resolve();
-			}
+			};
 		});
 	};
 	

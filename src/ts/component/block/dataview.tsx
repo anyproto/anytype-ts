@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, dbStore, detailStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
+import { throttle } from 'lodash';
 import arrayMove from 'array-move';
 
 import Controls from './dataview/controls';
@@ -29,6 +30,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		viewId: '',
 	};
+	creating: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -123,7 +125,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.resize();
-		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -135,14 +137,37 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.resize();
+		this.rebind();
+
 		$(window).trigger('resize.editor');
 	};
 
 	componentWillUnmount () {
-		const { rootId, block } = this.props;
+		this.unbind();
+	};
 
-		$(window).unbind('resize.dataview');
-		C.ObjectSearchUnsubscribe([ dbStore.getSubId(rootId, block.id) ]);
+	unbind () {
+		$(window).unbind('resize.dataview keydown.dataview');
+	};
+
+	rebind () {
+		this.unbind();
+
+		const win = $(window);
+		win.on('resize.dataview', () => { this.resize(); });
+		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
+	};
+
+	onKeyDown (e: any) {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const cmd = keyboard.ctrlKey();
+
+		if (root.isObjectSet() && !this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
+				this.onRowAdd(e, -1, true);
+			});
+		};
 	};
 
 	getKeys (id: string) {
@@ -233,8 +258,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any, dir: number) {
-		e.persist();
+	onRowAdd (e: any, dir: number, withPopup?: boolean) {
+		if (e.persist) {
+			e.persist();
+		};
 
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
@@ -262,8 +289,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			newRecord[filter.relationKey] = DataUtil.formatRelationValue(relation, filter.value, true);
 		};
 
+		this.creating = true;
+
 		const create = (template: any) => {
 			C.BlockDataviewRecordCreate(rootId, block.id, newRecord, template?.id, (message: any) => {
+				this.creating = false;
 				if (message.error.code) {
 					return;
 				};
@@ -329,12 +359,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			}
 		};
 
+		const showPopup = () => {
+			popupStore.open('template', {
+				data: {
+					typeId: setOf[0],
+					onSelect: create,
+				},
+			});
+		};
+
+		const showMenu = () => {
+			menuStore.open('searchObject', menuParam);
+		};
+
 		menuParam.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
 		menuParam.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
 
 		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				menuStore.open('searchObject', menuParam);
+				withPopup ? showPopup() : showMenu();
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};

@@ -29,7 +29,7 @@ class Button extends React.Component<Props, {}> {
 		switch (type) {
 		
 			default:
-				content = ( 
+				content = (
 					<div id={id} className={cn.join(' ')} onMouseDown={onClick}>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />

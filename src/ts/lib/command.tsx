@@ -27,6 +27,14 @@ const DebugTree = (blockId: string, path: string, callBack?: (message: any) => v
 	dispatcher.request('debugTree', request, callBack);
 };
 
+const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
+	const request = new Rpc.Metrics.SetParameters.Request();
+
+	request.setPlatform(platform);
+
+	dispatcher.request('metricsSetParameters', request, callBack);
+};
+
 const ConfigGet = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	dispatcher.request('configGet', request, callBack);
@@ -54,13 +62,14 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('linkPreview', request, callBack);
 };
 
-const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Export.Request();
+const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Export.Request();
 
 	request.setPath(path);
 	request.setDocidsList(ids);
 	request.setFormat(format);
 	request.setZip(zip);
+	request.setIncludenested(includeNested);
 
 	dispatcher.request('export', request, callBack);
 };
@@ -1275,6 +1284,7 @@ export {
 	VersionGet,
 	DebugSync,
 	DebugTree,
+	MetricsSetParameters,
 
 	ConfigGet,
 	Shutdown,

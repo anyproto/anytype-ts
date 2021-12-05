@@ -27,7 +27,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		const sections = this.getSections();
 		const restrictions = blockStore.getRestrictions(rootId, rootId);
@@ -128,7 +127,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
 		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
-		let link = { id: 'link', name: 'Link to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
@@ -186,7 +184,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
 				{ children: [ archive, removePage ] },
-				{ children: [ fav, link, highlight ] },
+				{ children: [ fav, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ share, highlight ] },
@@ -195,7 +193,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, removePage ] },
-				{ children: [ fav, link, template ] },
+				{ children: [ fav, template ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 				{ children: [ highlight ] },
@@ -247,7 +245,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { rootId, blockId, onMenuSelect } = data;
 		const object = detailStore.get(rootId, rootId, [ 'isHightlighted' ]);
-		const { config } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -307,28 +304,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
-					skipIds: [ rootId ],
-					position: I.BlockPosition.Bottom,
-					onSelect: (item: any) => {
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-
-			case 'link':
-				menuId = 'searchObject';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-				];
-
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: filters,
-					type: I.NavigationType.LinkTo,
 					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {

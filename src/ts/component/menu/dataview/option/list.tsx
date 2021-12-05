@@ -185,6 +185,13 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		let item = this.getItems(false)[this.n];
 		let ret = false;
 
+		if (this.n == -1) {
+			keyboard.shortcut('enter', e, (pressed: string) => {
+				this.onOptionAdd();
+				ret = true;
+			});
+		};
+
 		keyboard.shortcut('arrowright', e, (pressed: string) => {
 			this.onEdit(e, item);
 			ret = true;
@@ -244,6 +251,14 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 		const option = { text: filter, color: colors[Util.rand(1, colors.length - 1)].value };
 
 		if (!option.text) {
+			return;
+		};
+
+		const items = this.getItems(false);
+		const match = items.find((it: any) => { return it.text == option.text; });
+
+		if (match) {
+			this.onValueAdd(match.id);
 			return;
 		};
 

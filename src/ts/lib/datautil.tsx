@@ -1,5 +1,6 @@
 import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
+import { authStore } from '../store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
@@ -374,7 +375,9 @@ class DataUtil {
 				return;
 			};
 
+			analytics.init();
 			commonStore.gatewaySet(message.gatewayUrl);
+			authStore.deviceSet(message.deviceId);
 			
 			blockStore.rootSet(root);
 			blockStore.storeSetType(message.marketplaceTypeId);

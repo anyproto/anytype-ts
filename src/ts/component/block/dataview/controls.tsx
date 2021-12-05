@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { C, I, Util, analytics } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
+import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -169,7 +170,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
-				view: getView(),
+				view: observable.box(getView()),
 			},
 		});
 	};
@@ -202,11 +203,11 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				blockId: block.id,
 				getData: getData,
 				getView: getView,
-				view: { 
+				view: observable.box({ 
 					type: I.ViewType.Grid,
 					relations: relations,
 					filters: filters,
-				},
+				}),
 				onSave: () => {
 					this.forceUpdate();
 				},
