@@ -19,4 +19,8 @@
 		}
 		.block:last-child { margin: 0px; }
 	}
+
+	.menus {
+		.menu { position: relative; opacity: 1; transform: none; width: 100%; }
+	}
 }

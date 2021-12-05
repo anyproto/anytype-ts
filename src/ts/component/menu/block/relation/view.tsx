@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -34,6 +34,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId, readonly } = data;
 		const sections = this.getSections();
 		const block = blockStore.getLeaf(rootId, rootId);
+		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedValue = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.featured ]);
@@ -55,6 +56,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 						return (
 							<Item 
 								key={id} 
+								{...this.props}
 								{...item}
 								rootId={rootId}
 								block={block}
@@ -63,6 +65,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue)}
 								canEdit={allowedRelation && !item.isReadonlyRelation}
+								canDrag={allowedBlock}
 								canFav={canFav}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}

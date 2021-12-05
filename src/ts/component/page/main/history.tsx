@@ -279,7 +279,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 	
 	loadList (lastId: string) { 
-		const { history } = this.props;
 		const { versions, loading } = this.state;
 		const rootId = this.getRootId();
 		
@@ -294,7 +293,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				history.push('/main/edit/' + rootId);
+				Util.route('/main/edit/' + rootId);
 				return;
 			};
 
@@ -308,7 +307,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
   	};
   
 	loadVersion (id: string) {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		C.HistoryShow(rootId, id, (message: any) => {
@@ -316,7 +314,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};

@@ -61,6 +61,7 @@ import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
 
 interface Props extends I.Menu {
+	dataset?: any;
 	history: any;
 };
 
@@ -202,7 +203,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				{item.name}
 			</div>
 		);
-		
+
 		return (
 			<div id={menuId + '-wrap'} className="menuWrap">
 				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>

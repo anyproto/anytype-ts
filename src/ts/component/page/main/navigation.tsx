@@ -141,7 +141,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				name = 'Home';
 				description = '';
 				withScale = false;
-				withButtons = false;
 				
 				if (!coverId && !coverType) {
 					coverId = 'c' + Constant.default.cover;
@@ -344,7 +343,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			const hh = header.height();
 			const oh = obj.height() - hh;
 
-			node.css({ paddingTop: hh });
+			node.css({ paddingTop: isPopup ? 0 : hh });
 			sides.css({ height: oh });
 			items.css({ height: oh });
 			empty.css({ height: oh, lineHeight: oh + 'px' });
@@ -527,6 +526,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
+		e.persist();
+
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, item.details);
 		});

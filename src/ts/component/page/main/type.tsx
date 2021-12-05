@@ -285,7 +285,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -301,7 +300,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};

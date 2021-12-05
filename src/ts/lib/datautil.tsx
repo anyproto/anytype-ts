@@ -7,12 +7,6 @@ const Errors = require('json/error.json');
 
 class DataUtil {
 
-	history: any = null;
-
-	init (history: any) {
-		this.history = history;
-	};
-	
 	map (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
@@ -423,16 +417,18 @@ class DataUtil {
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push(redirectTo ? redirectTo : '/main/index');
+			Util.route(redirectTo ? redirectTo : '/main/index');
 		});
 	};
 
 	objectOpenEvent (e: any, object: any, popupParam?: any) {
+		const { root } = blockStore;
+
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
-			this.objectOpenPopup(object);
+		if ((e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page'))) {
+			this.objectOpenPopup(object, popupParam);
 		} else {
 			this.objectOpen(object);
 		};
@@ -451,19 +447,32 @@ class DataUtil {
 			id = '';
 		};
 
-		if (action) {
-			this.history.push('/main/' + action + (id ? '/' + id : ''));
+		if (!action) {
+			return;
 		};
+
+		let route = [ '', 'main', action ];
+		if (id) {
+			route.push(id);
+		};
+		Util.route(route.join('/'));
 	};
 
 	objectOpenPopup (object: any, popupParam?: any) {
-		let param: any = Object.assign(popupParam || {}, {});
+		const { root } = blockStore;
+		const action = this.actionByLayout(object.layout);
+
+		if ((action == 'edit') && (object.id == root)) {
+			this.objectOpen(object);
+			return;
+		};
 		
+		let param: any = Object.assign(popupParam || {}, {});
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {
 					page: 'main',
-					action: this.actionByLayout(object.layout),
+					action: action,
 					id: object.id,
 				},
 			},

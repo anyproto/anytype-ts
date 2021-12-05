@@ -30,7 +30,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	className?: string;
 	iconSize?: number;
 	isDragging?: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -43,6 +43,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	public static defaultProps = {
 		align: I.BlockAlign.Left,
 		traceId: '',
+		history: null,
+		location: null,
+		match: null,
 	};
 
 	_isMounted: boolean = false;
@@ -121,7 +124,6 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				break;
 				
 			case I.BlockType.File:
-				
 				// Processing File style Link.
 				// Making Embed as a default one
 

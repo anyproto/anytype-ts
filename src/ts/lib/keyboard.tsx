@@ -9,7 +9,6 @@ const Constant = require('json/constant.json');
 
 class Keyboard {
 	
-	history: any = null;
 	mouse: any = { 
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
@@ -29,8 +28,7 @@ class Keyboard {
 	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
 	
-	init (history: any) {
-		this.history = history;
+	init () {
 		this.unbind();
 		
 		let win = $(window); 
@@ -73,7 +71,6 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
@@ -155,7 +152,7 @@ class Keyboard {
 					return;
 				};
 
-				this.history.push('/main/index');
+				Util.route('/main/index');
 			});
 
 			// Create new page
@@ -206,8 +203,12 @@ class Keyboard {
 		});
 	};
 
+	isPopup () {
+		return popupStore.isOpen('page');
+	};
+
 	getRootId (): string {
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
 	};
@@ -220,7 +221,7 @@ class Keyboard {
 
 	back () {
 		const { account } = authStore;
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
 		
@@ -229,7 +230,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			const prev = this.history.entries[this.history.index - 1];
+			const prev = Util.history.entries[Util.history.index - 1];
 			if (prev) {
 				let route = Util.getRoute(prev.pathname);
 				if ((route.page == 'auth') && account) {
@@ -240,7 +241,7 @@ class Keyboard {
 				};
 			};
 
-			this.history.goBack();
+			Util.history.goBack();
 		};
 
 		this.restoreSource();
@@ -249,7 +250,7 @@ class Keyboard {
 	};
 
 	forward () {
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
 
@@ -258,7 +259,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			this.history.goForward();
+			Util.history.goForward();
 		};
 
 		analytics.event('HistoryForward');
@@ -314,7 +315,7 @@ class Keyboard {
 
 	onPrint () {
 		const { theme } = commonStore;
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 		const html = $('html');
 
 		if (isPopup) {
@@ -422,7 +423,7 @@ class Keyboard {
 				this.setPinChecked(false);
 				
 				popupStore.closeAll(null, () => {
-					this.history.push('/auth/pin-check');
+					Util.route('/auth/pin-check');
 				});
 			};
 		}, pinTime);

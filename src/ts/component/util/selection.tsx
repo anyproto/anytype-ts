@@ -8,12 +8,9 @@ import { throttle } from 'lodash';
 
 interface Props {
 	className?: string;
-	rootId: string;
-	isPopup: boolean;
 }
 
 const $ = require('jquery');
-const Constant = require('json/constant.json');
 
 const THROTTLE = 20;
 const THRESHOLD = 10;
@@ -56,7 +53,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		return (
-			<div className={cn.join(' ')} onMouseDown={this.onMouseDown}>
+			<div id="selection" className={cn.join(' ')} onMouseDown={this.onMouseDown}>
 				<div id="selection-rect" />
 				{children}
 			</div>
@@ -64,7 +61,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const win = $(window); 
 		const ns = this.nameSpace();
 
@@ -85,7 +82,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return
 		};
 		
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		const cmd = keyboard.ctrlKey();
 
 		const ids = this.get();
@@ -141,7 +138,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	scrollToElement (id: string, dir: number) {
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 
 		if (dir > 0) {
 			focus.scroll(isPopup, id);
@@ -155,9 +152,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const no = node.offset().top;
 			const nh = node.outerHeight();
 			const st = container.scrollTop();
-			const ch = container.height();
 			const hh = Util.sizeHeader();
-			const o = Constant.size.lastBlock + hh;
 			const y = isPopup ? (no - container.offset().top + st) : no;
 
 			if (y <= st + hh) {
@@ -171,7 +166,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const top = Util.getScrollContainer(isPopup).scrollTop();
 		const d = top > this.top ? 1 : -1;
 
@@ -202,7 +197,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -261,7 +256,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const rect = this.getRect(e.pageX, e.pageY);
 
 		if ((rect.width < THRESHOLD) && (rect.height < THRESHOLD)) {
@@ -281,7 +276,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return
 		};
 		
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		
 		let ids = this.get(true);
 		let first = ids.length ? ids[0] : this.focused;
@@ -350,7 +345,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	getRect (x: number, y: number) {
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		
 		if (isPopup) {
 			const top = Util.getScrollContainer(isPopup).scrollTop();
@@ -378,7 +373,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return cached;
 		};
 		
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const offset = obj.offset();
 		const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 		
@@ -528,7 +523,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	unbindKeyboard () {
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const ns = this.nameSpace();
 
 		$(window).unbind(`keydown.selection${ns} keyup.selection${ns}`);
@@ -536,7 +531,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	nameSpace () {
-		return this.props.isPopup ? 'Popup' : '';
+		return keyboard.isPopup() ? 'Popup' : '';
 	};
 	
 	preventSelect (v: boolean) {
@@ -602,8 +597,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	getChildrenIds (id: string, ids: string[]) {
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
+
 		if (!childrenIds.length) {
 			return;
 		};
@@ -616,8 +612,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	injectProps (children: any) {
 		return React.Children.map(children, (child: any) => {
-			let children = child.props.children;
-			let dataset = child.props.dataset || {};
+			if (!child) {
+				return;
+			};
+
+			let props = child.props || {};
+			let children = props.children;
+			let dataset = props.dataset || {};
 			
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });

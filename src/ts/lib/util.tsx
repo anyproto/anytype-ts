@@ -2,6 +2,7 @@ import { I, keyboard } from 'ts/lib';
 import { commonStore, popupStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
+import { menuStore } from '../store';
 
 const { ipcRenderer } = window.require('electron');
 const raf = require('raf');
@@ -17,12 +18,18 @@ const path = window.require('path');
 const Cover = require('json/cover.json');
 
 class Util {
+
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
 	
 	timeoutTooltip: number = 0;
 	timeoutPreviewShow: number = 0;
 	timeoutPreviewHide: number = 0;
 	isPreviewOpen: boolean = false;
-	
+
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		let a = arguments, i = 0, format = a[i++];
@@ -1021,6 +1028,15 @@ class Util {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
 		});
 	};
+
+	route (route: string) {
+		this.tooltipHide(true);
+		this.previewHide(true);
+
+		menuStore.closeAll();
+		popupStore.closeAll(null, () => { this.history.push(route); });
+	};
+
 };
 
 export default new Util();

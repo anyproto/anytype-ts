@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard } from 'ts/lib';
 import arrayMove from 'array-move';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	tab: I.TabIndex;

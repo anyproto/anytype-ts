@@ -94,7 +94,7 @@
 	#block-div-1 > .wrapContent > .children > .block.first { padding-top: 0px !important; }
 }
 
-.dragProvider.isDragging {
+#dragProvider.isDragging {
 	.block > .wrapContent > .selectable > .menuOver { opacity: 1; }
 	.block > .wrapContent > .selectable > .selectionOver { display: none; }
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }

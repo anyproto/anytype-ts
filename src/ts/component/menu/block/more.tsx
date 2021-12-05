@@ -458,7 +458,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 
 							DataUtil.objectOpen(detailStore.get(breadcrumbs, prev.content.targetBlockId, []));
 						} else {
-							history.push('/main/index');
+							Util.route('/main/index');
 						};
 					} else {
 						popupStore.close('page');
@@ -490,7 +490,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {
-							history.push('/main/index');
+							Util.route('/main/index');
 						};
 					} else {
 						popupStore.close('page');
@@ -521,7 +521,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'removePage':
 				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (block.isPage()) {
-						history.push('/main/index');
+						Util.route('/main/index');
 					};
 				});
 				break;

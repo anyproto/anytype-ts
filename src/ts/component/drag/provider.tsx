@@ -1,16 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
 import { DragLayer } from 'ts/component';
 import { I, C, focus, keyboard, Util, scrollOnMove } from 'ts/lib';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 
-interface Props extends RouteComponentProps<any> {
+interface Props {
 	dataset?: any;
-	rootId: string;
-	isPopup: boolean;
 }
 
 const $ = require('jquery');
@@ -22,7 +19,7 @@ const THROTTLE = 20;
 const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
 	refLayer: any = null;
-	type: string = '';
+	type: I.DragItem = I.DragItem.None;
 	ids: string[] = [];
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
@@ -49,12 +46,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	render () {
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		const children = this.injectProps(this.props.children);
 
 		return (
-			<div className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
-				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} rootId={rootId} />
+			<div id="dragProvider" className="dragProvider" onDragOver={this.onDragOver} onDrop={this.onDropCommon}>
+				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} />
 				{children}
 			</div>
 		);
@@ -120,16 +117,23 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
+		const last = blockStore.getFirstBlock(rootId, -1, (it: I.Block) => {
+			return !it.isSystem() && !it.isLayoutFooter();
+		});
 
-		let data: any = {};
+		let position = this.position;
+		let data: any = null;
 		if (this.hoverData && (this.position != I.BlockPosition.None)) {
 			data = this.hoverData;
+		} else 
+		if (last) {
+			data = this.objectData.get(last.id);
+			position = I.BlockPosition.Bottom;
 		};
 		let targetId = String(data.id || '');
 		let target = blockStore.getLeaf(rootId, targetId);
-		let position = this.position;
 
 		if (dt.files && dt.files.length) {
 			let paths: string[] = [];
@@ -145,7 +149,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				};
 			});
 		} else
-		if (this.hoverData && this.canDrop && (position != I.BlockPosition.None)) {
+		if (data && this.canDrop && (position != I.BlockPosition.None)) {
 			this.onDrop(e, data.dropType, data.rootId, targetId, position);
 		};
 
@@ -160,8 +164,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.onDragMove(e);
 	};
 
-	onDragStart (e: any, type: string, ids: string[], component: any) {
-		const { rootId, dataset, isPopup } = this.props;
+	onDragStart (e: any, type: I.DragItem, ids: string[], component: any) {
+		const { dataset } = this.props;
+		const rootId = keyboard.getRootId();
+		const isPopup = keyboard.isPopup();
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
@@ -173,7 +179,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		console.log('[dragProvider.onDragStart]', type, ids);
 
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
-		this.refLayer.show(type, ids, component);
+		this.refLayer.show(rootId, type, ids, component);
 		this.set(type, ids);
 		this.unbind();
 		this.initData();
@@ -197,7 +203,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	};
 
 	onDragMove (e: any) {
-		const { isPopup } = this.props;
+		const isPopup = keyboard.isPopup();
 		const dt = (e.dataTransfer || e.originalEvent.dataTransfer);
 		const isFileDrag = dt.types.indexOf('Files') >= 0;
 		const top = Util.getScrollContainer(isPopup).scrollTop();
@@ -239,11 +245,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
+		if (selection) {
+			selection.preventClear(false);
+			selection.clearState();
+		};
+
+		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
+
 		let targetContextId = rootId;
 		let contextId = rootId;
 
 		if (target.isLink() && (position == I.BlockPosition.Inner)) {
-			contextId = this.props.rootId;
+			contextId = keyboard.getRootId();
 			targetContextId = target.content.targetBlockId;
 			targetId = '';
 
@@ -254,31 +267,40 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		} else {
 			const element = blockStore.getMapElement(rootId, targetId);
 			const parent = blockStore.getLeaf(rootId, element.parentId);
+
 			if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
 				targetId = parent.id;
 			};	
 		};
 
-		if (selection) {
-			selection.preventClear(false);
-			selection.clearState();
+		switch (this.type) {
+			default:
+				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+					if (selection) {
+						selection.set(this.ids);
+					};
+		
+					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
+						blockStore.toggle(rootId, targetId, true);
+					};
+				});
+				break;
+
+			case I.DragItem.Relation:
+				this.ids.forEach((key: string) => {
+					let param: any = {
+						type: I.BlockType.Relation,
+						content: { key }
+					};
+
+					C.BlockCreate(param, targetContextId, targetId, position,);
+				});
+				break;
 		};
-
-		console.log('[dragProvider.onDrop]', type, targetId, this.type, this.ids, position);
-
-		C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
-			if (selection) {
-				selection.set(this.ids);
-			};
-
-			if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
-				blockStore.toggle(rootId, targetId, true);
-			};
-		});
 	};
 
 	checkNodes (ex: number, ey: number, isFileDrag: boolean) {
-		const { rootId } = this.props;
+		const rootId = keyboard.getRootId();
 
 		this.hoverData = null;
 		this.position = I.BlockPosition.None;
@@ -418,7 +440,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		$(window).unbind('dragend.drag drag.drag');
 	};
 
-	set (type: string, ids: string[]) {
+	set (type: I.DragItem, ids: string[]) {
 		this.type = type;
 		this.ids = ids.map((id: any) => { return id.toString(); });
 
@@ -453,8 +475,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	injectProps (children: any) {
 		return React.Children.map(children, (child: any) => {
-			let children = child.props.children;
-			let dataset = child.props.dataset || {};
+			if (!child) {
+				return null;
+			};
+
+			let props = child.props || {};
+			let children = props.children;
+			let dataset = props.dataset || {};
 
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });
