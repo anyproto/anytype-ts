@@ -260,17 +260,21 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 
 	onRelation () {
-		const { isPopup, rootId, block } = this.props;
+		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const elements = node.find('.elements');
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
-		const st = container.scrollTop();
-		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		};
+
+		const cnw = [ 'fixed' ];
+		if (!isPopup) {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -279,6 +283,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -287,12 +292,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				menuStore.closeAll();
 			},
 			data: {
-				rootId: rootId,
+				rootId,
+				isPopup,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });

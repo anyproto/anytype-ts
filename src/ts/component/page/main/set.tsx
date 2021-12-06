@@ -168,7 +168,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -184,7 +183,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};
@@ -381,7 +380,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		const check = DataUtil.checkDetails(rootId);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const controls = node.find('.editorControls');
 		const wrapper = node.find('.blocks.wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
@@ -389,11 +387,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 
 		if (cover.length) {
 			cover.css({ top: hh });
-		};
-
-		if (controls.length) {	
-			controls.css({ top: hh, height: 128 - hh });
-			wrapper.css({ paddingTop: 128 - hh + 10 });
 		};
 
 		if (check.withCover) {

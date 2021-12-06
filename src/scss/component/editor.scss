@@ -32,7 +32,7 @@
 	.dragEmpty { height: 40px; transition: $transitionFast; }
 }
 
-.editorControls { width: 100%; height: 72px; margin-bottom: 16px; z-index: 1; position: relative; line-height: 16px; opacity: 0; }
+.editorControls { width: 100%; height: 72px; margin: 0px auto 16px auto; z-index: 1; position: relative; line-height: 16px; opacity: 0; }
 .editorControls {
 	.controlButtons { position: absolute; bottom: 0px; width: 100%; }
 	

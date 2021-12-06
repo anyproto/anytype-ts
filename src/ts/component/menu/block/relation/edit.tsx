@@ -5,9 +5,7 @@ import { Input, MenuItemVertical, Button, Icon, Switch } from 'ts/component';
 import { dbStore, menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {
-	history: any; 
-}
+interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');

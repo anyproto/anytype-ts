@@ -5,9 +5,7 @@ import { Label, Icon, Cover } from 'ts/component';
 import { I, Docs, Util, translate } from 'ts/lib';
 import Block from 'ts/component/block/help';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const Url = require('json/url.json');
 const { ipcRenderer } = window.require('electron');

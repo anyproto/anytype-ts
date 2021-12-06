@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -62,6 +61,7 @@ const Components: any = {
 };
 
 interface Props extends RouteComponentProps<any> {
+	dataset?: any;
 	isPopup?: boolean;
 	matchPopup?: any;
 	rootId?: string;
@@ -87,26 +87,21 @@ class Page extends React.Component<Props, {}> {
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
-		
+
 		return (
-			<React.Fragment>
-				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-				<div className={'page ' + this.getClass('page')}>
-					<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
-				</div>
-			</React.Fragment>
+			<div className={'page ' + this.getClass('page')}>
+				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+			</div>
 		);
 	};
 	
 	componentDidMount () {
 		this._isMounted = true;
 		this.init();
-		Util.previewHide(true);
 	};
 
 	componentDidUpdate () {
 		this.init();
-		Util.previewHide(true);
 	};
 	
 	componentWillUnmount () {
@@ -120,6 +115,7 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
+		Util.tooltipHide(true);
 		Util.previewHide(true);
 	};
 
@@ -128,9 +124,14 @@ class Page extends React.Component<Props, {}> {
 		return isPopup ? matchPopup : match;
 	};
 
+	getRootId () {
+		const match = this.getMatch();
+		return match?.params?.id || blockStore.root;
+	};
+
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup, history, dataset } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
 		const isIndex = !match.params.page;
@@ -148,17 +149,17 @@ class Page extends React.Component<Props, {}> {
 		const Component = Components[path];
 
 		if (!Component) {
-			history.push('/main/index');
+			Util.route('/main/index');
 			return;
 		};
 
 		if (isMain && !account) {
-			history.push('/');
+			Util.route('/');
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			history.push('/auth/pin-check');
+			Util.route('/auth/pin-check');
 			return;
 		};
 
@@ -174,8 +175,6 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		keyboard.setMatch(match);
-		popupStore.closeAll();
-		menuStore.closeAll();
 
 		window.setTimeout(() => {
 			if (isMain && account) {
@@ -216,7 +215,6 @@ class Page extends React.Component<Props, {}> {
 
 	shareCheck () {
 		const shareSuccess = Storage.get('shareSuccess');
-
 		if (!shareSuccess) {
 			return;
 		};

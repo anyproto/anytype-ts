@@ -9,7 +9,7 @@ interface Props {
 	targetContextId?: string;
 	style?: number;
 	type?: I.BlockType;
-	dropType: I.DragItem;
+	dropType: I.DragType;
 	className?: string;
 	onClick?(e: any): void;
 };

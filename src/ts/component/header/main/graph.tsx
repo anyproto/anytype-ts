@@ -94,7 +94,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 	};
 
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		Util.route('/main/index');
 	};
 	
 	onBack (e: any) {
@@ -107,7 +107,7 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 
 	onOpen () {
 		const { rootId } = this.props;
-		this.props.history.push('/main/graph/' + rootId);
+		Util.route('/main/graph/' + rootId);
 	};
 
 	onNavigation (e: any) {

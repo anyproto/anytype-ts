@@ -118,7 +118,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	};
 	
 	init () {
-		const { history } = this.props;
 		const { path, phrase } = authStore;
 		const accountId = Storage.get('accountId');
 
@@ -148,13 +147,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 					};
 				});
 			} else {
-				history.push('/auth/account-select');
+				Util.route('/auth/account-select');
 			};
 		});
 	};
 	
 	add () {
-		const { history, match } = this.props;
+		const { match } = this.props;
 		const { name, icon, code, phrase } = authStore;
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
@@ -177,18 +176,17 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {
-					history.push('/auth/success');
+					Util.route('/auth/success');
 				};
 					
 				if (match.params.id == 'add') {
-					history.push('/auth/pin-select/add');
+					Util.route('/auth/pin-select/add');
 				};
 			};
 		});
 	};
 	
 	select () {
-		const { history } = this.props;
 		const { account, path } = authStore;
 		
 		C.AccountSelect(account.id, path, (message: any) => {
@@ -204,14 +202,14 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit(() => {
-					history.push('/main/index');
+					Util.route('/main/index');
 				});
 			};
 		}); 
 	};
 
 	share () {
-		const { history, location } = this.props;
+		const { location } = this.props;
 		const param = Util.searchParam(location.search);
 
 		C.ObjectAddWithObjectId(param.id, param.payload, (message: any) => {
@@ -219,7 +217,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				this.setError(message.error.description);
 			} else {
 				Storage.set('shareSuccess', 1);
-				history.push('/main/index');
+				Util.route('/main/index');
 			};
 		});
 	};

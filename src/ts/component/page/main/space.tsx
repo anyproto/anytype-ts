@@ -190,7 +190,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -206,7 +205,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					history.push('/main/index');
+					Util.route('/main/index');
 				};
 				return;
 			};
@@ -414,7 +413,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const check = DataUtil.checkDetails(rootId);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const controls = node.find('.editorControls');
 		const wrapper = node.find('.blocks.wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
@@ -424,17 +422,12 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			cover.css({ top: hh });
 		};
 
-		if (controls.length) {	
-			controls.css({ top: hh, height: 128 - hh });
-			wrapper.css({ paddingTop: 128 - hh + 10 });
-		};
-
 		if (check.withCover) {
 			wrapper.css({ paddingTop: 330 });
 		};
 
 		obj.css({ minHeight: isPopup ? '' : win.height() });
-		node.css({ paddingTop: hh });
+		node.css({ paddingTop: isPopup ? 0 : hh });
 	};
 
 });

@@ -2,14 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard } from 'ts/lib';
 import arrayMove from 'array-move';
-import { popupStore } from '../../../store';
-import { keyboard } from '../../../lib';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
 	tab: I.TabIndex;
@@ -220,8 +218,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
-
-		menuStore.closeAll(Constant.menuIds.index);
 	};
 
 	rebind () {

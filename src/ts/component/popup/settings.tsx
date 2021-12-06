@@ -585,7 +585,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onLogout (e: any) {
-		const { history, close } = this.props;
+		const { close } = this.props;
 
 		this.onConfirmPhrase = () => {
 			close();
@@ -593,7 +593,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			window.setTimeout(() => {
 				C.AccountStop(false);
 				authStore.logout();
-				history.push('/');
+				Util.route('/');
 	
 				this.pinConfirmed = false;
 				this.onConfirmPhrase = null;
@@ -605,7 +605,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onImport (format: string) {
 		const platform = Util.getPlatform();
-		const { history, close } = this.props;
+		const { close } = this.props;
 		const { root } = blockStore;
 		const options: any = { 
 			properties: [ 'openFile' ],

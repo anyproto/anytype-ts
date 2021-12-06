@@ -30,7 +30,7 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	className?: string;
 	iconSize?: number;
 	isDragging?: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -43,6 +43,9 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 	public static defaultProps = {
 		align: I.BlockAlign.Left,
 		traceId: '',
+		history: null,
+		location: null,
+		match: null,
 	};
 
 	_isMounted: boolean = false;
@@ -110,18 +113,15 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 				
 			case I.BlockType.IconPage:
 				canSelect = false;
-				canDrop = false;
 				blockComponent = <BlockIconPage ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.IconUser:
 				canSelect = false;
-				canDrop = false;
 				blockComponent = <BlockIconUser ref={setRef} {...this.props} />;
 				break;
 				
 			case I.BlockType.File:
-				
 				// Processing File style Link.
 				// Making Embed as a default one
 
@@ -199,7 +199,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block}>
+				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block}>
 					{blockComponent}
 				</DropTarget>
 			);
@@ -239,8 +239,8 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 			} else {
 				rowDropTargets = (
 					<React.Fragment>
-						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
-						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragItem.Block} />
+						<DropTarget {...this.props} className="targetTop" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
+						<DropTarget {...this.props} className="targetBot" rootId={rootId} id={id} style={style} type={type} dropType={I.DragType.Block} />
 					</React.Fragment>
 				);
 			};
@@ -337,7 +337,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		selection.preventClear(true);
 
 		const ids: string[] = DataUtil.selectionGet(block.id, false, this.props);
-		onDragStart(e, I.DragItem.Block, ids, this);
+		onDragStart(e, I.DragType.Block, ids, this);
 	};
 	
 	onMenuDown (e: any) {

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { enableLogging } from 'mobx-logger';
-import { Page, ListMenu, Progress, Tooltip, Preview, Icon } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Preview, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
@@ -169,6 +170,7 @@ const rootStore = {
 };
 
 console.log('[OS Version]', process.getSystemVersion());
+console.log('[APP Version]', version, 'isPackaged', app.isPackaged);
 
 /*
 enableLogging({
@@ -179,8 +181,6 @@ enableLogging({
 	compute: true,
 });
 */
-
-console.log('[Version]', version, 'isPackaged', app.isPackaged);
 
 Sentry.init({
 	release: version,
@@ -218,8 +218,28 @@ window.Util = Util;
 window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
-window.Go = (route: string) => { history.push(route); };
+window.Go = (route: string) => { Util.route(route); };
 window.Graph = {};
+
+class RoutePage extends React.Component<RouteComponentProps, {}> { 
+
+	constructor (props: any) {
+		super(props);
+	};
+
+	render () {
+		return (
+			<SelectionProvider>
+				<DragProvider>
+					<ListPopup key="listPopup" {...this.props} />
+					<ListMenu key="listMenu" {...this.props} />
+
+					<Page {...this.props} />
+				</DragProvider>
+			</SelectionProvider>
+		);
+	};
+};
 
 class App extends React.Component<Props, State> {
 	
@@ -254,7 +274,6 @@ class App extends React.Component<Props, State> {
 			<Router history={history}>
 				<Provider {...rootStore}>
 					<div>
-						<ListMenu history={history} />
 						<Preview />
 						<Progress />
 						<Tooltip />
@@ -276,9 +295,8 @@ class App extends React.Component<Props, State> {
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
-								<Route path={item.path} exact={true} key={i} component={Page} />
+								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
-
 							<Redirect to='/main/index' />
 						</Switch>
 					</div>
@@ -297,8 +315,9 @@ class App extends React.Component<Props, State> {
 	};
 	
 	init () {
-		keyboard.init(history);
-		DataUtil.init(history);
+		Util.init(history);
+		keyboard.init();
+		
 		Storage.delete('lastSurveyCanceled');
 
 		const storageKeys = [
@@ -364,7 +383,7 @@ class App extends React.Component<Props, State> {
 
 					if (value) {
 						authStore.phraseSet(value);
-						history.push('/auth/setup/init');
+						Util.route('/auth/setup/init');
 					} else {
 						Storage.logout();
 					};
@@ -382,7 +401,7 @@ class App extends React.Component<Props, State> {
 		});
 		
 		ipcRenderer.on('route', (e: any, route: string) => {
-			history.push(route);
+			Util.route(route);
 		});
 
 		ipcRenderer.on('popup', (e: any, id: string, param: any, close?: boolean) => {

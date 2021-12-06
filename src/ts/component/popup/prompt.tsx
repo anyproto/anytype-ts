@@ -3,9 +3,7 @@ import { Title, Label, Input, Button } from 'ts/component';
 import { I, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {
-	history: any;
-};
+interface Props extends I.Popup {};
 
 const $ = require('jquery');
 
