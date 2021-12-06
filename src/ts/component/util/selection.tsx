@@ -216,9 +216,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.top = Util.getScrollContainer(isPopup).scrollTop();
 
 		if (isPopup) {
-			this.containerOffset = $('#popupPage #innerWrap').offset();
-			this.x -= this.containerOffset.left;
-			this.y -= this.containerOffset.top - this.top;
+			const container = $('#popupPage #innerWrap');
+			if (container.length) {
+				this.containerOffset = $('#popupPage #innerWrap').offset();
+				this.x -= this.containerOffset.left;
+				this.y -= this.containerOffset.top - this.top;
+			};
 		};
 
 		keyboard.disablePreview(true);
