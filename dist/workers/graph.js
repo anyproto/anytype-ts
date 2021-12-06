@@ -8,12 +8,19 @@ importScripts('d3/d3-force.min.js');
 
 // CONSTANTS
 
-const baseFontFamily = 'Helvetica';
-const baseFontStyle = `3px ${baseFontFamily}`;
+const fontFamily = 'Helvetica';
+const font = `3px ${fontFamily}`;
+const fontBig = `20px ${fontFamily}`;
+const fontItalic = `italic ${font}`;
 
 const ObjectLayout = {
 	Human:	 1,
 	Task:	 2,
+};
+
+const EdgeType = {
+	Link:		 0,
+	Relation:	 1,
 };
 
 let offscreen = null;
@@ -51,6 +58,8 @@ init = (data) => {
 	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
+	ctx.lineCap = 'round';
+
 	initColor();
 	resize(data);
 
@@ -66,7 +75,7 @@ init = (data) => {
 
 		octx.save();
 		octx.clearRect(0, 0, 250, 40);
-		octx.font = `20px ${baseFontFamily}`;
+		octx.font = fontBig;
 		octx.fillStyle = Color.text;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 125, 20);
@@ -188,10 +197,10 @@ draw = () => {
 	ctx.scale(transform.k, transform.k);
 
 	edges.forEach(d => {
-		if (!forceProps.links && (d.type == 0)) {
+		if (!forceProps.links && (d.type == EdgeType.Link)) {
 			return;
 		};
-		if (!forceProps.relations && (d.type == 1)) {
+		if (!forceProps.relations && (d.type == EdgeType.Relation)) {
 			return;
 		};
 
@@ -242,7 +251,6 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let mx = (x1 + x2) / 2;  
     let my = (y1 + y2) / 2;
 
-	ctx.lineCap = 'round';
 	ctx.lineWidth = LineWidth;
 	ctx.strokeStyle = bg;
 	ctx.beginPath();
@@ -278,7 +286,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	if (d.name && forceProps.labels && (transform.k > 1.5)) {
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.font = `italic ${baseFontStyle}`;
+		ctx.font = fontItalic;
 
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
@@ -327,7 +335,7 @@ drawNode = (d) => {
 		ctx.globalAlpha = 0.4;
 	};
 
-	if (isCustomIconLayoutType(d)) {
+	if (isIconCircle(d)) {
 		ctx.beginPath();
 		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 		ctx.closePath();
@@ -360,7 +368,7 @@ drawNode = (d) => {
 			x = d.x - d.radius;
 			y = d.y - d.radius;
 	
-			if (isCustomIconLayoutType(d)) {
+			if (isIconCircle(d)) {
 				ctx.beginPath();
 				ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 				ctx.closePath();
@@ -475,7 +483,7 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
-	ctx.font = baseFontStyle;
+	ctx.font = font;
 };
 
 onResize = (data) => {
@@ -493,13 +501,13 @@ const isLayoutTask = (d) => {
 	return d.layout === ObjectLayout.Task;
 };
 
-const isCustomIconLayoutType = (d) => {
+const isIconCircle = (d) => {
 	return isLayoutHuman(d) || isLayoutTask(d);
 };
 
 const nameCircleIcon = (d) => {
 	ctx.save();
-	ctx.font = baseFontStyle;  
+	ctx.font = font;  
 	ctx.fillStyle = Color.iconText;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
