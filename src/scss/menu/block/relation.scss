@@ -153,3 +153,9 @@
 	}
 
 }
+
+body.isDragging {
+	.menus {
+		.menu.menuBlockRelationView { opacity: 0.5; }
+	}
+}

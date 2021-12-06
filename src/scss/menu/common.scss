@@ -4,6 +4,7 @@
 	.menuWrap { position: absolute; left: 0px; top: 0px; width: 100%; z-index: 19; }
 	.menuWrap.fromPopup { z-index: 103; }
 	.menuWrap.fromHeader { z-index: 103; }
+	.menuWrap.fixed { position: fixed; }
 
 	.dimmer { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0); }
 	#menu-polygon { z-index: 1000; position: absolute; }

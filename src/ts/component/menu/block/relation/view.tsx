@@ -106,9 +106,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const scrollWrap = node.find('#scrollWrap');
 
 		this.resize();
-		$('body').addClass('overMenu');
-		$('#header').addClass('active');
-
 		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
 	};
 
@@ -118,11 +115,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		if (commonStore.cellId) {
 			$(`#${commonStore.cellId}`).addClass('isEditing');
 		};
-	};
-
-	componentWillUnmount () {
-		$('body').removeClass('overMenu');
-		$('#header').removeClass('active');
 	};
 
 	onScroll () {

@@ -19,7 +19,7 @@ const THROTTLE = 20;
 const DragProvider = observer(class DragProvider extends React.Component<Props, {}> {
 
 	refLayer: any = null;
-	type: I.DragItem = I.DragItem.None;
+	type: I.DragType = I.DragType.None;
 	ids: string[] = [];
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
@@ -87,7 +87,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			if (isTargetBot) key += '-bot';
 
 			// Add block's paddings to height
-			if ((data.dropType == I.DragItem.Block) && (data.type != I.BlockType.Layout)) {
+			if ((data.dropType == I.DragType.Block) && (data.type != I.BlockType.Layout)) {
 				const block = $('#block-' + data.id);
 				if (block.length) {
 					const top = parseInt(block.css('paddingTop'));
@@ -164,7 +164,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.onDragMove(e);
 	};
 
-	onDragStart (e: any, type: I.DragItem, ids: string[], component: any) {
+	onDragStart (e: any, type: I.DragType, ids: string[], component: any) {
 		const { dataset } = this.props;
 		const rootId = keyboard.getRootId();
 		const isPopup = keyboard.isPopup();
@@ -172,6 +172,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const layer = $('#dragLayer');
+		const body = $('body');
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -186,6 +187,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		e.dataTransfer.setDragImage(layer.get(0), 0, 0);
 		node.addClass('isDragging');
+		body.addClass('isDragging');
 		keyboard.setDrag(true);
 		Util.previewHide(false);
 
@@ -196,7 +198,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		scrollOnMove.onMouseDown(e, isPopup);
 
 		if (selection) {
-			selection.set(this.ids);
+			if (type == I.DragType.Block) {
+				selection.set(this.ids);
+			};
 			selection.hide();
 			selection.preventSelect(true);
 		};
@@ -218,6 +222,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
+		const body = $('body');
 
 		this.refLayer.hide();
 		this.unbind();
@@ -225,6 +230,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		keyboard.setDrag(false);
 		node.removeClass('isDragging');
+		body.removeClass('isDragging');
 
 		if (selection) {
 			selection.preventSelect(false);
@@ -286,7 +292,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 				});
 				break;
 
-			case I.DragItem.Relation:
+			case I.DragType.Relation:
 				this.ids.forEach((key: string) => {
 					let param: any = {
 						type: I.BlockType.Relation,
@@ -312,7 +318,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.objectData.forEach((value: any) => {
 			let { x, y, width, height, dropType } = value;
 
-			if (dropType == I.DragItem.Block) {
+			if (dropType == I.DragType.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
 			};
@@ -325,7 +331,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		this.canDrop = true;
 
 		if (this.hoverData) {
-			if (!isFileDrag && (this.type == I.DragItem.Block)) {
+			if (!isFileDrag && (this.type == I.DragType.Block)) {
 				let parentIds: string[] = [];
 				this.getParentIds(rootId, this.hoverData.id, parentIds);
 
@@ -416,7 +422,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			};
 
 			// You can only drop inside of menu items
-			if ((this.hoverData.dropType == I.DragItem.Menu) && (this.position != I.BlockPosition.None)) {
+			if ((this.hoverData.dropType == I.DragType.Menu) && (this.position != I.BlockPosition.None)) {
 				this.position = I.BlockPosition.Inner;
 
 				if (rootId == this.hoverData.targetContextId) {
@@ -440,7 +446,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		$(window).unbind('dragend.drag drag.drag');
 	};
 
-	set (type: I.DragItem, ids: string[]) {
+	set (type: I.DragType, ids: string[]) {
 		this.type = type;
 		this.ids = ids.map((id: any) => { return id.toString(); });
 

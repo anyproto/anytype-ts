@@ -976,12 +976,7 @@ class Util {
 	};
 
 	sizeHeader (): number {
-		const platform = this.getPlatform();
-		let s = 52;
-		if (platform == I.Platform.Windows) {
-			s = 68;
-		};
-		return s;
+		return this.getPlatform() == I.Platform.Windows ? 68 : 52;
 	};
 
 	deleteFolderRecursive (p: string) {

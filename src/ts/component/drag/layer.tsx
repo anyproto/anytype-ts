@@ -8,7 +8,7 @@ import RelationItem from 'ts/component/menu/item/relationView';
 
 interface State {
 	rootId: string;
-	type: I.DragItem;
+	type: I.DragType;
 	width: number;
 	ids: string[];
 };
@@ -21,7 +21,7 @@ class DragLayer extends React.Component<{}, State> {
 	_isMounted: boolean = false;
 	state = {
 		rootId: '',
-		type: I.DragItem.None,
+		type: I.DragType.None,
 		width: 0,
 		ids: [] as string[],
 	};
@@ -40,7 +40,7 @@ class DragLayer extends React.Component<{}, State> {
 		let items: any[] = [];
 		
 		switch (type) {
-			case I.DragItem.Block:
+			case I.DragType.Block:
 				items = ids.map((id: string) => {
 					const block = blockStore.getLeaf(rootId, id);
 					return new M.Block(Util.objectCopy(block));
@@ -64,7 +64,7 @@ class DragLayer extends React.Component<{}, State> {
 				);
 				break;
 
-			case I.DragItem.Relation:
+			case I.DragType.Relation:
 				const block = blockStore.getLeaf(rootId, rootId);
 
 				items = ids.map((relationKey: string) => {
@@ -118,7 +118,7 @@ class DragLayer extends React.Component<{}, State> {
 		this._isMounted = false;
 	};
 	
-	show (rootId: string, type: I.DragItem, ids: string[], component: any, x: number, y: number) {
+	show (rootId: string, type: I.DragType, ids: string[], component: any, x: number, y: number) {
 		if (!this._isMounted) {
 			return;
 		};
@@ -134,7 +134,7 @@ class DragLayer extends React.Component<{}, State> {
 			return;
 		};
 
-		this.setState({ rootId: '', type: I.DragItem.None, ids: [] });
+		this.setState({ rootId: '', type: I.DragType.None, ids: [] });
 	};
 	
 };

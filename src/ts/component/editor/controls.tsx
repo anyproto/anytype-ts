@@ -194,11 +194,14 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const st = container.scrollTop();
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		} else {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -207,6 +210,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -218,10 +222,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				isPopup: isPopup,
 				rootId: rootId,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
