@@ -11,7 +11,7 @@ export enum Platform {
 	Linux = 'Linux',
 };
 
-export enum DragItem {
+export enum DragType {
 	None	 = '',
 	Block	 = 'block',
 	Menu	 = 'menu',
