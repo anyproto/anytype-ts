@@ -265,15 +265,13 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const elements = node.find('.elements');
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
-		};
-
-		const cnw = [ 'fixed' ];
-		if (!isPopup) {
+		} else {
 			cnw.push('fromHeader');
 		};
 
