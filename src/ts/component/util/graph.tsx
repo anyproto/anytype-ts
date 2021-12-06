@@ -269,10 +269,9 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 				break;
 
 			case 'onMouseMove':
-				const d = data.node;
 				if (!this.isDragging) {
-					this.subject = d;
-					d ? body.addClass('cp') : body.removeClass('cp');
+					this.subject = this.nodes.find((d: any) => { return d.id == data.node; });
+					this.subject ? body.addClass('cp') : body.removeClass('cp');
 				};
 				break;
 

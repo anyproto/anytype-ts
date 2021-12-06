@@ -472,7 +472,7 @@ onMouseMove = ({ x, y }) => {
 	};
 
 	redraw();
-	this.postMessage({ id: 'onMouseMove', node: d, x: x, y: y });
+	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x: x, y: y });
 };
 
 resize = (data) => {
