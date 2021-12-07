@@ -427,8 +427,6 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		const { index, getRecord, onCellChange } = this.props;
 		const record = getRecord(index);
 
-		console.log('onCheckbox');
-
 		onCellChange(record.id, Constant.relationKey.done, !record.done);
 	};
 

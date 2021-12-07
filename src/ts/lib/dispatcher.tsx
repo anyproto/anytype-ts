@@ -23,6 +23,9 @@ const SORT_IDS = [
 	'subscriptionRemove', 
 	'subscriptionPosition', 
 	'subscriptionCounters',
+	'blockDataviewSourceSet',
+	'blockDataviewViewSet',
+	'blockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
 
@@ -125,6 +128,8 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
+		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
+
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
 
@@ -189,6 +194,7 @@ class Dispatcher {
 		let keys: string[] = [];
 		let ids: string[] = [];
 		let subIds: string[] = [];
+		let subId: string = '';
 		let afterId: string = '';
 		let records: any[] = [];
 		let oldIndex: number = 0;
@@ -485,7 +491,8 @@ class Dispatcher {
 
 				case 'blockDataviewViewDelete':
 					id = data.getId();
-					viewId = dbStore.getMeta(rootId, id).viewId;
+					subId = dbStore.getSubId(rootId, id);
+					viewId = dbStore.getMeta(subId, '').viewId;
 					
 					const deleteId = data.getViewid();
 					dbStore.viewDelete(rootId, id, deleteId);
@@ -493,7 +500,8 @@ class Dispatcher {
 					if (deleteId == viewId) {
 						const views = dbStore.getViews(rootId, id);
 						viewId = views.length ? views[views.length - 1].id : '';
-						dbStore.metaSet(rootId, id, { viewId: viewId });
+
+						dbStore.metaSet(subId, '', { viewId: viewId });
 					};
 					break;
 
@@ -502,6 +510,19 @@ class Dispatcher {
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
 					break; 
 
+				case 'blockDataviewSourceSet':
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+
+					if (!block || !block.id) {
+						break;
+					};
+
+					block.content.sources = data.getSourceList();
+					blockStore.update(rootId, block);
+					break;
+
+				/*
 				case 'blockDataviewRecordsSet':
 					id = data.getId();
 					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
@@ -537,6 +558,7 @@ class Dispatcher {
 						dbStore.recordDelete(rootId, id, recordId);
 					};
 					break;
+				*/
 
 				case 'blockDataviewRelationSet':
 					id = data.getId();
