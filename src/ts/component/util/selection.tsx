@@ -351,9 +351,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const isPopup = keyboard.isPopup();
 		
 		if (isPopup) {
-			const top = Util.getScrollContainer(isPopup).scrollTop();
-			x -= this.containerOffset.left;
-			y -= this.containerOffset.top - top;
+			if (this.containerOffset) {
+				const top = Util.getScrollContainer(isPopup).scrollTop();
+				x -= this.containerOffset.left;
+				y -= this.containerOffset.top - top;
+			};
 		};
 
 		const rect = {
