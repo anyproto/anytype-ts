@@ -1046,6 +1046,14 @@ class DataUtil {
 		return ret;
 	};
 
+	getRelationStringValue (value: any) {
+		if (('object' == typeof(value)) && value && value.hasOwnProperty('length')) {
+			return String(value.length ? value[0] : '');
+		} else {
+			return String(value || '');
+		};
+	};
+
 	getRelationArrayValue (value: any): string[] {
 		value = Util.objectCopy(value || []);
 		if ('object' != typeof(value)) {
@@ -1291,14 +1299,6 @@ class DataUtil {
 				break;
 		};
 		return value;
-	};
-
-	convertRelationValueToString (value: any) {
-		if (('object' == typeof(value)) && value.hasOwnProperty('length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
-		};
 	};
 
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
