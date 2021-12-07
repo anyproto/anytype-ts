@@ -522,44 +522,6 @@ class Dispatcher {
 					blockStore.update(rootId, block);
 					break;
 
-				/*
-				case 'blockDataviewRecordsSet':
-					id = data.getId();
-					data.records = (data.getRecordsList() || []).map((it: any) => { return Decode.decodeStruct(it) || {}; });
-					dbStore.recordsSet(rootId, id, data.records);
-					dbStore.metaSet(rootId, id, { viewId: data.getViewid(), total: data.getTotal() });
-					break;
-
-				case 'blockDataviewRecordsInsert':
-					id = data.getId();
-					data.records = data.getRecordsList() || [];
-
-					for (let item of data.records) {
-						item = Decode.decodeStruct(item) || {};
-						dbStore.recordAdd(rootId, id, item, 1);
-					};
-					break;
-
-				case 'blockDataviewRecordsUpdate':
-					id = data.getId();
-					data.records = data.getRecordsList() || [];
-
-					for (let item of data.records) {
-						item = Decode.decodeStruct(item) || {};
-						dbStore.recordUpdate(rootId, id, item);
-					};
-					break;
-
-				case 'blockDataviewRecordsDelete':
-					id = data.getId();
-					ids = data.getRemovedList() || [];
-
-					for (let recordId of ids) {
-						dbStore.recordDelete(rootId, id, recordId);
-					};
-					break;
-				*/
-
 				case 'blockDataviewRelationSet':
 					id = data.getId();
 
