@@ -120,6 +120,8 @@ class Filter extends React.Component<Props, {}> {
 	};
 
 	onClear (e: any) {
+		e.stopPropagation();
+
 		const { onClear } = this.props;
 
 		this.ref.setValue('');
