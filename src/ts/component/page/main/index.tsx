@@ -678,6 +678,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			link,
 		];
 
+		this.selectionRender();
+
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
