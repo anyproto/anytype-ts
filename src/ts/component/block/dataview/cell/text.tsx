@@ -185,7 +185,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			value = value || DataUtil.defaultName('page');
 			if (record.layout == I.ObjectLayout.Note) {
-				value = record.snippet || '<span class="emptyText">Empty</span>';
+				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
 
 			content = (

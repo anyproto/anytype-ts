@@ -345,6 +345,7 @@ const Mapper = {
 				description: obj.getDescription(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
+				isHidden: obj.getHidden(),
             };
         },
 
@@ -355,6 +356,7 @@ const Mapper = {
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				description: obj.getDescription(),
+				snippet: obj.getSnippet(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
 				done: obj.getDone(),
