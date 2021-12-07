@@ -234,7 +234,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				rootId: rootId,
 				blockId: block.id,
 				readonly: !allowed,
-				view: item,
+				view: observable.box(item),
 				getView: getView,
 				getData: getData,
 				onSave: () => { this.forceUpdate(); },

@@ -93,7 +93,7 @@
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 
-	.block.blockText.title { padding: 22px 0px 6px 0px; @include text-title; }
+	.block.blockText.title { padding: 22px 0px 6px 0px !important; @include text-title; }
 	.block.blockText.title {
 		.placeholder { 
 			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none;
