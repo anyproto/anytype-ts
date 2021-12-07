@@ -49,6 +49,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 		this.onSelectionDelete = this.onSelectionDelete.bind(this);
 		this.onSelectionArchive = this.onSelectionArchive.bind(this);
 		this.onSelectionFavorite = this.onSelectionFavorite.bind(this);
@@ -163,6 +164,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										placeholderFocus="" 
 										value={filter}
 										onChange={this.onFilterChange}
+										onClear={this.onFilterClear}
 									/>
 								</div>
 								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
@@ -375,7 +377,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const searchWrap = node.find('#searchWrap');
-		const page = $('.page');
 
 		if (searchWrap.hasClass('active')) {
 			return;
@@ -383,24 +384,23 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		searchWrap.addClass('active');
 		this.refFilter.focus();
-
-		window.setTimeout(() => {
-			page.unbind('click').on('click', (e: any) => {
-				if ($.contains(searchWrap.get(0), e.target)) {
-					return;
-				};
-
-				searchWrap.removeClass('active');
-				page.unbind('click');
-
-				window.setTimeout(() => { this.setFilter(''); }, 210);
-			});
-		}, 210);
 	};
 
 	onFilterChange (v: string) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => { this.setFilter(v); }, 500);
+	};
+
+	onFilterClear () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const searchWrap = node.find('#searchWrap');
+
+		searchWrap.removeClass('active');
+
+		console.log(searchWrap);
+
+		this.refFilter.blur();
+		this.setFilter('');
 	};
 
 	setFilter (v: string) {
