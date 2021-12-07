@@ -218,7 +218,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (isPopup) {
 			const container = $('#popupPage #innerWrap');
 			if (container.length) {
-				this.containerOffset = $('#popupPage #innerWrap').offset();
+				this.containerOffset = container.offset();
 				this.x -= this.containerOffset.left;
 				this.y -= this.containerOffset.top - this.top;
 			};
@@ -350,12 +350,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	getRect (x: number, y: number) {
 		const isPopup = keyboard.isPopup();
 		
-		if (isPopup) {
-			if (this.containerOffset) {
-				const top = Util.getScrollContainer(isPopup).scrollTop();
-				x -= this.containerOffset.left;
-				y -= this.containerOffset.top - top;
-			};
+		if (isPopup && this.containerOffset) {
+			const top = Util.getScrollContainer(isPopup).scrollTop();
+			x -= this.containerOffset.left;
+			y -= this.containerOffset.top - top;
 		};
 
 		const rect = {
@@ -385,7 +383,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let x = offset.left;
 		let y = offset.top;
 
-		if (isPopup) {
+		if (isPopup && this.containerOffset) {
 			const top = Util.getScrollContainer(isPopup).scrollTop();
 			x -= this.containerOffset.left;
 			y -= this.containerOffset.top - top;
