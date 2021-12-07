@@ -1676,7 +1676,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const header = obj.find('#header');
 		const root = blockStore.getLeaf(rootId, rootId);
 		const container = Util.getScrollContainer(isPopup);
-		const hh = header.height();
+		const hh = isPopup ? header.height() : Util.sizeHeader();
 
 		if (blocks.length && last.length) {
 			const ct = isPopup ? container.offset().top : 0;
