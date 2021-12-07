@@ -629,7 +629,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 		});
 
-		if (this.ref.onClick) {	
+		if (this.ref && this.ref.onClick) {	
 			keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
 				e.preventDefault();
 				if (item) {
@@ -638,7 +638,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref.onSortEnd) {
+		if (this.ref && this.ref.onSortEnd) {
 			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
 				e.preventDefault();
 				this.onSortMove(-1);
@@ -650,7 +650,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref.onRemove && refInput && !refInput.isFocused) {
+		if (this.ref && this.ref.onRemove && refInput && !refInput.isFocused) {
 			keyboard.shortcut('backspace', e, (pressed: string) => {
 				e.preventDefault();
 
