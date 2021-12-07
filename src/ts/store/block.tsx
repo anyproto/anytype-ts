@@ -492,17 +492,19 @@ class BlockStore {
 
 	checkDraft (rootId: string) {
 		const object = detailStore.get(rootId, rootId, []);
-		const root = this.getMapElement(rootId, rootId);
+		const root = this.getLeaf(rootId, rootId);
+		const rootElement = this.getMapElement(rootId, rootId);
+
 		const footer = this.getMapElement(rootId, Constant.blockId.footer);
 		if (!footer) {
 			return;
 		};
 
 		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
-		const checkBlocks = root.childrenIds.length <= cnt;
+		const checkBlocks = rootElement.childrenIds.length <= cnt;
 
 		let change = false;
-		if (checkBlocks) {
+		if (checkBlocks && root.fields?.needTypeSelection) {
 			if (!footer.childrenIds.includes(Constant.blockId.type)) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;

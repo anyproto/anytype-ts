@@ -235,6 +235,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
+		const root = blockStore.getLeaf(rootId, rootId);
 		const namespace = isPopup ? '.popup' : '';
 
 		Util.getScrollContainer(isPopup).scrollTop(0);
@@ -286,22 +287,26 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			});
 		};
 
-		if (item.id == Constant.typeId.set) {
-			C.ObjectToSet(rootId, [], (message: any) => {
-				if (isPopup) {
-					historyPopup.clear();
-				};
-				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
-			});
-		} else {
-			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
-				if (message.records.length > 1) {
-					showMenu();
-				} else {
-					create(message.records.length ? message.records[0] : '');
-				};
-			});
-		};
+		C.BlockListSetFields(rootId, [
+			{ blockId: rootId, fields: { ...root.fields, needTypeSelection: false } },
+		], () => {
+			if (item.id == Constant.typeId.set) {
+				C.ObjectToSet(rootId, [], (message: any) => {
+					if (isPopup) {
+						historyPopup.clear();
+					};
+					DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+				});
+			} else {
+				DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
+					if (message.records.length > 1) {
+						showMenu();
+					} else {
+						create(message.records.length ? message.records[0] : '');
+					};
+				});
+			};
+		});
 	};
 
 	onFilterFocus (e: any) {
