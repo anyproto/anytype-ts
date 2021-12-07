@@ -179,7 +179,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView(id);
 		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
 
-		return Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys);
+		return Util.arrayUnique(Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys));
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
