@@ -157,8 +157,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.onPaste(e); 
 			};
 		});
-		win.on('focus.editor' + namespace, (e: any) => { 
-			if (!ids) {
+		win.on('focus.editor' + namespace, (e: any) => {
+			if (!ids.length) {
 				focus.restore();
 				focus.apply(); 
 			};
