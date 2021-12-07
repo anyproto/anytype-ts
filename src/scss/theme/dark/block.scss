@@ -55,6 +55,11 @@
 				.back { background: $colorHover; }
 			}
         }
+
+        .wrap.broken { border-color: $colorLinePrimary; }
+        .wrap.broken {
+            img:before { background: $colorBgLight; }
+        }
     }
     .block.blockMedia.isAudio > .wrapContent { background: $colorHover; }
 
@@ -146,6 +151,11 @@
             .side.right {
                 .cardDescription { color: $colorPrimary; }
             }
+        }
+
+        .sides.bgColor {
+            .cardName span::before { color: $colorTertiary !important; }
+            .cardDescription { color: $colorTertiary !important; }
         }
 
         .loading, .deleted { color: $colorSecondary; }

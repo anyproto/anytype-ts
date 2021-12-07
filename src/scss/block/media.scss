@@ -23,16 +23,19 @@
 		.media { width: 100%; display: block; }
 
 		.wrap.broken { 
-			@include text-common; position: static; width: 100%; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
+			@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorLightGrey; 
 			color: $colorMediumGrey; height: 44px;
 		}
 		.wrap.broken {
 			img:before { 
-				content: " "; display: block; position: absolute; left: 13px; top: 11px; height: calc(100% - 22px); width: calc(100% - 26px);
-				background: $colorWhite;
+				content: " "; display: block; position: absolute; left: 0px; top: 0px; height: 100%; width: 100%;
+				background: $colorWhite; border-radius: inherit;
 			}
 
-			img:after { content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 13px; top: 11px; }
+			img:after { 
+				content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 0px; top: 0px; 
+				@include text-overflow-nw; padding: 11px 13px; width: calc(100% - 26px); height: calc(100% - 22px);
+			}
 			
 			.icon.resize { display: none; }
 		}
