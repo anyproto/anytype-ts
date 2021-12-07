@@ -120,17 +120,20 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			const targetCnt = this.edges.filter((it: any) => { return it.target == d.id; }).length;
 
 			d.layout = Number(d.layout) || 0;
-			d.name = SmileUtil.strip(d.name);
-			d.shortName = Util.shorten(d.name, 16);
-			d.letter = d.name.trim().substr(0, 1).toUpperCase();
 			d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
 
 			if (d.layout == I.ObjectLayout.Note) {
-				d.name = d.snippet || translate('defaultNamePage');
+				d.name = d.snippet || translate('commonEmpty');
+			} else {
+				d.name = d.name || DataUtil.defaultName('page');
 			};
+
+			d.name = SmileUtil.strip(d.name);
+			d.shortName = Util.shorten(d.name, 16);
+			d.letter = d.name.trim().substr(0, 1).toUpperCase();
 
 			// Clear icon props to fix image size
 			if (d.layout == I.ObjectLayout.Task) {
