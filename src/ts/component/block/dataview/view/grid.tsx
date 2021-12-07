@@ -181,13 +181,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const scroll = node.find('.scroll');
 		const content = cell.find('.cellContent');
 		const x = cell.position().left;
 		const width = content.outerWidth();
 		const sx = scroll.scrollLeft();
-		const ww = $(window).width();
+		const container = $(Util.getBodyContainer(isPopup ? 'popup' : 'page'));
+		const ww = container.width();
 
 		content.css({ left: 0, right: 'auto' });
 

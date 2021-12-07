@@ -166,14 +166,14 @@ class Cell extends React.Component<Props, {}> {
 			width = Math.max(cell.outerWidth(), maxWidth);
 		};
 
-		if (cellPosition) {
-			cellPosition(cellId);
-		};
-
 		let closeIfOpen = true;
 		let menuId = '';
 		let setOn = () => {
 			cell.addClass('isEditing');
+
+			if (cellPosition) {
+				cellPosition(cellId);
+			};
 
 			if (menuId) {
 				keyboard.disableBlur(true);
