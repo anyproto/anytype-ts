@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard, translate } from 'ts/lib';
+import { I, Util, keyboard, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { setRange } from 'selection-ranges';
 
@@ -38,6 +38,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 					onFocus={this.onFocus}
 					onBlur={this.onBlur}
 					onInput={this.onInput}
+					onPaste={this.onInput}
 				>
 					{value}
 				</div>
@@ -137,12 +138,13 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		const input = node.find('#input');
 		const win = $(window);
 		const wh = win.height();
+		const hh = Util.sizeHeader();
 
 		obj.css({ height: 'auto' });
 		input.css({ height: 'auto' });
 
 		const sh = input.get(0).scrollHeight;
-		input.css({ height: Math.min(wh - 100, sh) });
+		input.css({ height: Math.min(wh - hh - 20, sh) });
 		input.scrollTop(sh);
 
 		position();

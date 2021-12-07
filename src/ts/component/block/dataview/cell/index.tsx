@@ -159,7 +159,6 @@ class Cell extends React.Component<Props, {}> {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const value = record[relation.relationKey] || '';
-		const height = cell.outerHeight();
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
@@ -293,6 +292,10 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.LongText:
+				const wh = win.height();
+				const hh = Util.sizeHeader();
+				const height = Math.min(wh - hh - 20, cell.outerHeight());
+
 				param = Object.assign(param, {
 					noFlipX: true,
 					noFlipY: true,
