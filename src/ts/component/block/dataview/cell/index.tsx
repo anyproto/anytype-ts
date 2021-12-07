@@ -159,21 +159,20 @@ class Cell extends React.Component<Props, {}> {
 		const win = $(window);
 		const cell = $(`#${cellId}`);
 		const value = record[relation.relationKey] || '';
-		const height = cell.outerHeight();
 
 		let width = cell.outerWidth();
 		if (undefined !== maxWidth) {
 			width = Math.max(cell.outerWidth(), maxWidth);
 		};
 
-		if (cellPosition) {
-			cellPosition(cellId);
-		};
-
 		let closeIfOpen = true;
 		let menuId = '';
 		let setOn = () => {
 			cell.addClass('isEditing');
+
+			if (cellPosition) {
+				cellPosition(cellId);
+			};
 
 			if (menuId) {
 				keyboard.disableBlur(true);
@@ -294,6 +293,10 @@ class Cell extends React.Component<Props, {}> {
 				break;
 
 			case I.RelationType.LongText:
+				const wh = win.height();
+				const hh = Util.sizeHeader();
+				const height = Math.min(wh - hh - 20, cell.outerHeight());
+
 				param = Object.assign(param, {
 					noFlipX: true,
 					noFlipY: true,

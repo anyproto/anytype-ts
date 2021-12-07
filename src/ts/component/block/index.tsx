@@ -296,8 +296,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const { rootId, block } = this.props;
 
 		if (block.id && block.isTextToggle()) {
-			const node = $(ReactDOM.findDOMNode(this));
-			Storage.checkToggle(rootId, block.id) ? node.addClass('isToggled') : node.removeClass('isToggled');
+			blockStore.toggle(rootId, block.id, Storage.checkToggle(rootId, block.id));
 		};
 	};
 	
