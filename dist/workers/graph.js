@@ -70,7 +70,7 @@ init = (data) => {
 		if (d.isRoot) {
 			d.fx = width / 2;
 			d.fy = height / 2;
-			d.radius = 6;
+			d.radius = 10;
 		};
 
 		octx.save();
