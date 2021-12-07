@@ -397,8 +397,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		searchWrap.removeClass('active');
 
-		console.log(searchWrap);
-
 		this.refFilter.blur();
 		this.setFilter('');
 	};
@@ -455,18 +453,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (e.shiftKey) {
 			const list = this.getList();
-			const idxInList = list.findIndex(it => it.id == item.id);
+			const idx = list.findIndex(it => it.id == item.id);
 			
-			if ((idxInList >= 0) && (this.selected.length > 0)) {
-				const selectedItemsIndexes = this.getSelectedListItemsIndexes();
-				const selectedItemsIndexesWithoutCurrent = selectedItemsIndexes.filter(i => i != idxInList);
-				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexesWithoutCurrent, idxInList);
+			if ((idx >= 0) && (this.selected.length > 0)) {
+				const selectedItemsIndexes = this.getSelectedListItemsIndexes().filter(i => i != idx);
+				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexes, idx);
 				
 				if (isFinite(closestSelectedIdx)) {
-					const [ start, end ] = this.getSelectionRangeFromTwoIndexes(closestSelectedIdx, idxInList);
-					const itemIdsToSelect = list.slice(start, end).map(item => item.id);
+					const [ start, end ] = this.getSelectionRangeFromTwoIndexes(closestSelectedIdx, idx);
+					const ids = list.slice(start, end).map(item => item.id);
 
-					this.selected = this.selected.concat(itemIdsToSelect);
+					this.selected = this.selected.concat(ids);
 				};
 			};
 		} else {
@@ -677,8 +674,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			move,
 			link,
 		];
-
-		this.selectionRender();
 
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,

@@ -411,22 +411,22 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		
 		if ((e.ctrlKey || e.metaKey)) {
 			if (this.lastIds.indexOf(id) < 0) {
-				if (item.hasClass('isSelected')) {
-					item.removeClass('isSelected');
-					block.removeClass('isSelected');
+				if (item.hasClass('isSelectionSelected')) {
+					item.removeClass('isSelectionSelected');
+					block.removeClass('isSelectionSelected');
 				} else {
-					item.addClass('isSelected');
-					block.addClass('isSelected');
+					item.addClass('isSelectionSelected');
+					block.addClass('isSelectionSelected');
 				};
 			};
 		} else
 		if (e.altKey) {
-			item.removeClass('isSelected');
-			block.removeClass('isSelected');
+			item.removeClass('isSelectionSelected');
+			block.removeClass('isSelectionSelected');
 		} else 
-		if (!item.hasClass('isSelected')) {
-			item.addClass('isSelected');
-			block.addClass('isSelected');
+		if (!item.hasClass('isSelectionSelected')) {
+			item.addClass('isSelectionSelected');
+			block.addClass('isSelectionSelected');
 		};
 			
 		this.lastIds.push(id);
@@ -448,7 +448,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.checkEachNode(e, Util.objectCopy(rect), $(item)); 
 		});
 		
-		const selected = $('.selectable.isSelected');
+		const selected = $('.selectable.isSelectionSelected');
 		const length = selected.length;
 		if (!length) {
 			return;
@@ -470,7 +470,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 			if (this.range) {
 				if (this.range.end) {
-					$('.isSelected').removeClass('isSelected');
+					$('.isSelectionSelected').removeClass('isSelectionSelected');
 				};
 				
 				if (!range) {
@@ -511,7 +511,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		if (force) {
 			this.preventClear(false);
 		};
-		$('.isSelected').removeClass('isSelected');
+		$('.isSelectionSelected').removeClass('isSelectionSelected');
 	};
 	
 	unbind () {
@@ -562,12 +562,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.lastIds = ids;
 
 		for (let id of ids) {
-			node.find('#block-' + id).addClass('isSelected');
-			node.find('#selectable-' + id).addClass('isSelected');
-			node.find('#block-children-' + id + ' .block').addClass('isSelected');
+			node.find('#block-' + id).addClass('isSelectionSelected');
+			node.find('#selectable-' + id).addClass('isSelectionSelected');
+			node.find('#block-children-' + id + ' .block').addClass('isSelectionSelected');
 		};
 
-		node.find('.block.isSelected .children .selectable.isSelected').removeClass('isSelected');
+		node.find('.block.isSelectionSelected .children .selectable.isSelectionSelected').removeClass('isSelectionSelected');
 		
 		if (ids.length) {
 			focus.clear(true);
@@ -583,7 +583,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		let ids = [] as string[];
 
-		node.find('.selectable.isSelected').each((i: number, item: any) => {
+		node.find('.selectable.isSelectionSelected').each((i: number, item: any) => {
 			let id = String($(item).data('id') || '');
 			if (!id) {
 				return;

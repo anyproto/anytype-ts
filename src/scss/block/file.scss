@@ -28,6 +28,6 @@
 	}
 	
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
-	.block.blockFile > .wrapContent > .selectable.isSelected .download { display: none; }
+	.block.blockFile > .wrapContent > .selectable.isSelectionSelected .download { display: none; }
 	.block.blockFile.withFile > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 }
