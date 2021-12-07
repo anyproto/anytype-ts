@@ -298,14 +298,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('click.link mouseenter.link');
+		items.unbind('mouseenter.link');
 			
 		items.on('mouseenter.link', function (e: any) {
 			const el = $(this);
 			const range = el.data('range').split('-');
 			const url = el.attr('href');
 
-			el.on('click.link', function (e: any) {
+			el.unbind('click.link').on('click.link', function (e: any) {
 				e.preventDefault();
 				ipcRenderer.send('urlOpen', $(this).attr('href'));
 			});
@@ -340,7 +340,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		items.unbind('click.object mouseenter.object mouseleave.object');
+		items.unbind('mouseenter.object mouseleave.object');
 
 		items.each((i: number, item: any) => {
 			item = $(item);
@@ -383,7 +383,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 				return;
 			};
 
-			el.on('click.object', function (e: any) {
+			el.unbind('click.object').on('click.object', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -461,7 +461,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		});
 		
-		items.unbind('click.mention mouseenter.mention');
+		items.unbind('mouseenter.mention');
 
 		items.on('mouseenter.mention', function (e: any) {
 			const el = $(this);
@@ -474,7 +474,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 			const object = detailStore.get(rootId, data.param, []);
 
-			el.on('click.mention', function (e: any) {
+			el.unbind('click.mention').on('click.mention', function (e: any) {
 				e.preventDefault();
 				DataUtil.objectOpenEvent(e, object);
 			});
@@ -1134,6 +1134,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		this.timeoutContext = window.setTimeout(() => {
 			const pageContainer = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
+
 			pageContainer.unbind('click.context').on('click.context', () => { 
 				pageContainer.unbind('click.context');
 				menuStore.close('blockContext'); 
