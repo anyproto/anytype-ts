@@ -77,8 +77,8 @@
 						.inner { height: 20px; }
 						.input { height: 20px; color: $colorWhite; }
 						.line { display: none; }
-						.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); }
-						.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); }
+						.icon.clear { top: 0px; background-image: url('~img/icon/index/clear.svg'); opacity: 0.5; }
+						.icon.clear:hover { background-image: url('~img/icon/index/clear.svg'); opacity: 1; }
 					}
 				}
 
