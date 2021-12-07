@@ -400,10 +400,20 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	getItems () {
+		const { profile } = blockStore;
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '').map((it: any) => { return detailStore.get(subId, it.id); });
+
+		records.sort((c1: any, c2: any) => {
+			const cr1 = c1.creator;
+			const cr2 = c2.creator;
+
+			if ((cr1 == profile) && (cr2 != profile)) return -1;
+			if ((cr1 != profile) && (cr2 == profile)) return 1;
+			return 0;
+		});
 
 		let ret: any[] = [
 			{ children: [ { id: 'mid' } ] }
