@@ -156,6 +156,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	onNameFocus (e: any) {
 		this.isFocused = true;
 		this.props.setActive();
+
+		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 	
 	onNameBlur (e: any) {
@@ -340,7 +342,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		view[key] = v;
 
-		this.save();
+		if (view.id) {
+			this.save();
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -356,7 +360,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		if (item.sectionId == 'type') {
 			view.type = item.id;
-			
+
 			if (view.id) {
 				this.save();
 			};
@@ -412,7 +416,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				onSelect: (e: any, item: any) => {
 					view.coverRelationKey = item.id;
 
-					this.save();
+					if (view.id) {
+						this.save();
+					};
 				},
 			}
 		});
@@ -431,11 +437,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			data: {
 				value: view.cardSize,
 				options: this.getSizeOptions(),
-				onSelect: (e, item) => {
+				onSelect: (e: any, item: any) => {
 					view.cardSize = item.id;
 
-					this.forceUpdate();
-					this.save();
+					if (view.id) {
+						this.save();
+					};
 				},
 			}
 		});
