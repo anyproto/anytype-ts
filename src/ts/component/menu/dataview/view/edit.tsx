@@ -18,6 +18,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	constructor(props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
@@ -302,6 +303,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			data: {
+				rebind: this.rebind,
 				value: view[item.id],
 				onSelect: (e: any, el: any) => {
 					view[item.id] = el.id;
