@@ -317,7 +317,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				value: view[item.id],
 				onSelect: (e: any, el: any) => {
 					view[item.id] = el.id;
-					this.save();
+					
+					if (view.id) {
+						this.save();
+					};
 				},
 			}
 		};
@@ -407,54 +410,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			onSelect();
 		};
 	};
-
-	onCoverRelation (e: any) {
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-
-		menuStore.open('select', { 
-			element: `#${getId()} #item-coverRelationKey`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {
-				value: view.coverRelationKey,
-				options: this.getFileOptions(),
-				onSelect: (e: any, item: any) => {
-					view.coverRelationKey = item.id;
-
-					if (view.id) {
-						this.save();
-					};
-				},
-			}
-		});
-	};
-
-	onCardSize (e: any) {
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-
-		menuStore.open('select', { 
-			element: `#${getId()} #item-cardSize`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {
-				value: view.cardSize,
-				options: this.getSizeOptions(),
-				onSelect: (e: any, item: any) => {
-					view.cardSize = item.id;
-
-					if (view.id) {
-						this.save();
-					};
-				},
-			}
-		});
-};
 
 	getSizeOptions () {
 		return [
