@@ -56,6 +56,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
 		const cn = [ 'item', 'sides' ];
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
+		const value = object[relationKey];
+
+		console.log(relationKey, value);
 
 		if (isHidden) {
 			cn.push('isHidden');
