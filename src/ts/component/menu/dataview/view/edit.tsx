@@ -356,7 +356,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		if (item.sectionId == 'type') {
 			view.type = item.id;
-			this.save();
+			if (view.id) {
+				this.save();
+			};
 		} else 
 		if (view.id) {
 			switch (item.id) {
