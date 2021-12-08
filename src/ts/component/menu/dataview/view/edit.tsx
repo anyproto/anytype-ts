@@ -45,6 +45,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
+							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -154,6 +155,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	onNameFocus (e: any) {
+		this.n = -1;
 		this.isFocused = true;
 		this.props.setActive();
 
@@ -282,6 +284,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		if (!keyboard.isMouseDisabled) {
 			this.onOver(e, item);
 			this.props.setActive(item, false);
+		};
+	};
+
+	onMouseLeave (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setHover(null, false);
 		};
 	};
 	
