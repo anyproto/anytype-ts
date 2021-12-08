@@ -20,6 +20,8 @@ interface Props {
 	onPaste?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
 	onKeyDown?(e: any, value: string): void;
+	onMouseEnter?(e: any): void;
+	onMouseLeave?(e: any): void;
 	onFocus?(e: any, value: string): void;
 	onBlur?(e: any, value: string): void;
 	onSelect?(e: any, value: string): void;
@@ -61,7 +63,7 @@ class Input extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick } = this.props;
+		const { id, name, placeholder, className, autoComplete, readonly, maxLength, multiple, accept, onClick, onMouseEnter, onMouseLeave } = this.props;
 		
 		let type: string = this.state.type || this.props.type;
 		let cn = [ 'input', 'input-' + type ];
@@ -85,6 +87,8 @@ class Input extends React.Component<Props, State> {
 				onChange={this.onChange}
 				onKeyUp={this.onKeyUp}
 				onKeyDown={this.onKeyDown}
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onPaste={this.onPaste}

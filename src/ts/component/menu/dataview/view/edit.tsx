@@ -66,6 +66,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
 							onBlur={this.onNameBlur}
+							onMouseEnter={() => { menuStore.closeAll(Constant.menuIds.viewEdit); }}
 						/>
 					</div>
 					<div className="line" />
