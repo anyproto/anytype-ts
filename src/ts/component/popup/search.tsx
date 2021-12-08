@@ -178,10 +178,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const { data } = param;
 		const { rootId, disableFirstKey } = data;
 
-		this.disableFirstKey = Boolean(disableFirstKey);
-		this._isMounted = true;
-
 		crumbs.addPage(rootId);
+
+		this._isMounted = true;
+		this.disableFirstKey = Boolean(disableFirstKey);
 		this.focus = true;
 		this.select = true;
 
@@ -382,12 +382,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	load () {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		
-		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.Video ];
+		const skipTypes = [
+			Constant.typeId.file,
+			Constant.typeId.image,
+			Constant.typeId.video,
+			Constant.typeId.audio,
+		];
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
