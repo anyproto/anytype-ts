@@ -402,6 +402,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	setFilter (v: string) {
+		console.log('setFilter', this.state.filter, v);
+
 		if (this.state.filter == v) {
 			return;
 		};
@@ -409,6 +411,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (this.refFilter) {
 			this.refFilter.setValue(v);
 		};
+		
+		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
 	};
