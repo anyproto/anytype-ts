@@ -201,7 +201,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.rebind();
 
 		crumbs.delete(I.CrumbsType.Page);
-		analytics.setContext('');
+		analytics.setContext('', '');
 	};
 	
 	componentDidUpdate () {
