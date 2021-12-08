@@ -11,9 +11,11 @@ const os = window.require('os');
 const KEYS = [ 
 	'cmd', 'id', 'action', 'style', 'code', 
 	'type', 'objectType', 'layout', 'template', 
-	'tab', 'document', 'page', 'count', 'context'
+	'tab', 'document', 'page', 'count', 'context', 'originalId'
 ];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
+const KEY_CONTEXT = 'analyticsContext';
+const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
 class Analytics {
 	
@@ -73,14 +75,15 @@ class Analytics {
 		this.instance.setUserId(profile.id);
 	};
 
-	setContext (v: string) {
-		Storage.set('analyticsContext', v);
+	setContext (context: string, id: string) {
+		Storage.set(KEY_CONTEXT, context);
+		Storage.set(KEY_ORIGINAL_ID, id);
 
 		if (this.debug()) {
-			console.log('[Analytics.setContext]', v);
+			console.log('[Analytics.setContext]', context, id);
 		};
 	};
-	
+
 	event (code: string, data?: any) {
 		if (!this.instance) {
 			return;
@@ -99,7 +102,8 @@ class Analytics {
 		let param: any = { 
 			middleTime: Number(data.middleTime) || 0, 
 			renderTime: Number(data.renderTime) || 0,
-			context: String(Storage.get('analyticsContext') || ''),
+			context: String(Storage.get(KEY_CONTEXT) || ''),
+			originalId: String(Storage.get(KEY_ORIGINAL_ID) || ''),
 		};
 
 		const converted: any = {};

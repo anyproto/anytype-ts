@@ -652,7 +652,7 @@ class Dispatcher {
 		let root = blocks.find((it: any) => { return it.id == rootId; });
 
 		if (root && root.fields.analyticsContext) {
-			analytics.setContext(root.fields.analyticsContext);
+			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		};
 
 		dbStore.relationsSet(rootId, rootId, message.relations);
