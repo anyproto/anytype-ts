@@ -75,6 +75,10 @@ class Analytics {
 
 	setContext (v: string) {
 		Storage.set('analyticsContext', v);
+
+		if (this.debug()) {
+			console.log('[Analytics.setContext]', v);
+		};
 	};
 	
 	event (code: string, data?: any) {
