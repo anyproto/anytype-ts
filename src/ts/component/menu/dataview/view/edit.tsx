@@ -22,6 +22,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
+		this.onNameEnter = this.onNameEnter.bind(this);
 	};
 
 	render () {
@@ -66,7 +67,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
 							onBlur={this.onNameBlur}
-							onMouseEnter={() => { menuStore.closeAll(Constant.menuIds.viewEdit); }}
+							onMouseEnter={this.onNameEnter}
 						/>
 					</div>
 					<div className="line" />
@@ -165,6 +166,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	
 	onNameBlur (e: any) {
 		this.isFocused = false;
+	};
+
+	onNameEnter (e: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.n = -1;
+			this.props.setHover(null, false);
+			menuStore.closeAll(Constant.menuIds.viewEdit);
+		};
 	};
 
 	onKeyUp (e: any, v: string) {
