@@ -142,6 +142,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.unbind();
 		this.open();
 
+		keyboard.disableClose(false);
+
 		const win = $(window);
 		const namespace = isPopup ? '.popup' : '';
 
@@ -313,7 +315,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-		if (object.type == Constant.typeId.template) {
+		if (keyboard.isCloseDisabled) {
 			close = false;
 		};
 
