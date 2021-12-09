@@ -370,9 +370,13 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
+		if (filter) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+		};
+
 		this.setState({ loading: true });
 
-		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], filter, 0, 100, true, '', '', (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], '', 0, 100, true, '', '', (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
@@ -411,8 +415,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	setFilter (v: string) {
-		console.log('setFilter', this.state.filter, v);
-
 		if (this.state.filter == v) {
 			return;
 		};
@@ -469,11 +471,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			const idx = list.findIndex(it => it.id == item.id);
 			
 			if ((idx >= 0) && (this.selected.length > 0)) {
-				const selectedItemsIndexes = this.getSelectedListItemsIndexes().filter(i => i != idx);
-				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexes, idx);
+				const selectedIndexes = this.getSelectedIndexes().filter(i => i != idx);
+				const closest = Util.findClosestElement(selectedIndexes, idx);
 				
-				if (isFinite(closestSelectedIdx)) {
-					const [ start, end ] = this.getSelectionRangeFromTwoIndexes(closestSelectedIdx, idx);
+				if (isFinite(closest)) {
+					const [ start, end ] = this.getSelectionRange(closest, idx);
 					const ids = list.slice(start, end).map(item => item.id);
 
 					this.selected = this.selected.concat(ids);
@@ -884,15 +886,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		return list;
 	};
 
-	getSelectedListItemsIndexes () {
+	getSelectedIndexes () {
 		const list = this.getList();
-		const selectedItemsIndexes = this.selected.map(selectedItemId => {
-			return list.findIndex(it => it.id === selectedItemId);
+		const indexes = this.selected.map(id => {
+			return list.findIndex(it => it.id === id);
 		});
-		return selectedItemsIndexes.filter(idx => idx >= 0);
+		return indexes.filter(idx => idx >= 0);
 	};
 
-	getSelectionRangeFromTwoIndexes (index1: number, index2: number) {
+	getSelectionRange (index1: number, index2: number) {
 		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
 		return [ start, end ];
 	};

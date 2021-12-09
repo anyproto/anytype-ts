@@ -38,6 +38,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	cache: any = null;
 	focus: boolean = false;
 	select: boolean = false;
+	records: any[] = [];
 	
 	constructor (props: any) {
 		super (props);
@@ -403,7 +404,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		this.setState({ loading: true, n: -1 });
 
-		C.ObjectSearchSubscribe(Constant.subIds.search, filters, sorts, Constant.defaultRelationKeys, [], filter, 0, 0, true, '', '', (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
@@ -413,20 +414,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.ref.focus();
 			};
 			
+			this.records = message.records;
 			this.setState({ loading: false });
 		});
 	};
 
 	getItems () {
-		const { root } = blockStore;
-
-		return dbStore.getRecords(Constant.subIds.search, '').map((it: any) => {
-			const object = detailStore.get(Constant.subIds.search, it.id);
-			return { 
-				...object, 
-				isRoot: it.id == root, 
-			};
-		});
+		return this.records;
 	};
 
 	filterMapper (it: any) {
