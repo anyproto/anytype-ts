@@ -74,7 +74,7 @@ jobs:
       #    path: artifacts
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.14
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "artifacts/**"
