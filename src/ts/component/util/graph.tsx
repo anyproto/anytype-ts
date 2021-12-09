@@ -94,6 +94,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		if (this.worker) {
 			this.worker.terminate();
 		};
+
+		$('body').removeClass('cp');
 	};
 
 	init () {
