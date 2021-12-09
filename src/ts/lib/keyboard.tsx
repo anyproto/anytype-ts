@@ -226,9 +226,13 @@ class Keyboard {
 		crumbs.restore(I.CrumbsType.Page);
 		
 		if (isPopup) {
-			historyPopup.goBack((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
+			if (!historyPopup.checkBack()) {
+				popupStore.close('page');
+			} else {
+				historyPopup.goBack((match: any) => { 
+					popupStore.updateData('page', { matchPopup: match }); 
+				});
+			};
 		} else {
 			const prev = Util.history.entries[Util.history.index - 1];
 			if (prev) {

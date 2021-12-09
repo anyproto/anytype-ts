@@ -55,7 +55,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
 					{isPopup ? (
 						<React.Fragment>
-							<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+							<Icon className="back big" tooltip="Back" onClick={this.onBack} />
 							<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
 						</React.Fragment>
 					) : (
