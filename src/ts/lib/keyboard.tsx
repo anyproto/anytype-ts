@@ -27,6 +27,7 @@ class Keyboard {
 	isPinChecked: boolean = false;
 	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
+	isCloseDisabled: boolean = false;
 	
 	init () {
 		this.unbind();
@@ -471,6 +472,11 @@ class Keyboard {
 	
 	disablePreview (v: boolean) {
 		this.isPreviewDisabled = v;
+	};
+
+	// Flag to prevent document from sending close, to prevent deletion of drafts
+	disableClose (v: boolean) {
+		this.isCloseDisabled = v;
 	};
 	
 	setCoords (e: any) {
