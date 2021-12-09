@@ -110,9 +110,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		popupStore.closeAll(null, () => {
-			DataUtil.objectOpen(object);
-		});
+		keyboard.disableClose(true);
+		popupStore.closeAll(null, () => { DataUtil.objectOpen(object); });
 	};
 	
 	onMore (e: any) {

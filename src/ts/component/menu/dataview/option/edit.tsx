@@ -23,23 +23,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const relation = data.relation.get();
 		const sections = this.getSections();
 
-		let prefix = '';
-		switch (relation.format) {
-			default:
-				prefix = 'tagColor';
-				break;
-
-			case I.RelationType.Status:
-				prefix = 'textColor';
-				break;
-		};
-
 		const Section = (item: any) => (
 			<div className="section">
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						if (action.isBgColor) {
-							action.inner = <div className={`inner isTag ${prefix} ${prefix}-${action.className}`} />;
+							action.inner = <div className={`inner isTag textColor textColor-${action.className}`} />;
 							action.icon = 'color';
 							action.checkbox = action.value == this.color;
 						};
