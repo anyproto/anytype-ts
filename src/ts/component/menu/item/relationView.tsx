@@ -58,8 +58,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
 		const value = object[relationKey];
 
-		console.log(relationKey, value);
-
 		if (isHidden) {
 			cn.push('isHidden');
 		};

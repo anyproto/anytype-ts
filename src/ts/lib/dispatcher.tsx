@@ -546,10 +546,15 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
-						it = it.split('/')[0];
-
-						dbStore.recordAdd(it, '', { id: id }, -1);
-						detailStore.update(it, { id: id, details: details }, true);
+						const [ subId, dep ] = it.split('/');
+						if (!dep) {
+							const record = dbStore.getRecord(subId, '', id);
+							if (!record) {
+								dbStore.recordAdd(subId, '', { id: id }, -1);
+							};
+						};
+						
+						detailStore.update(subId, { id: id, details: details }, true);
 					});
 
 					if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
@@ -570,13 +575,14 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
-						it = it.split('/')[0];
-
-						const record = dbStore.getRecord(it, '', id);
-						if (!record) {
-							dbStore.recordAdd(it, '', { id: id }, -1);
+						const [ subId, dep ] = it.split('/');
+						if (!dep) {
+							const record = dbStore.getRecord(subId, '', id);
+							if (!record) {
+								dbStore.recordAdd(subId, '', { id: id }, -1);
+							};
 						};
-						detailStore.update(it, { id: id, details: details }, false);
+						detailStore.update(subId, { id: id, details: details }, false);
 					});
 
 					if ((id == rootId) && block) {
@@ -595,15 +601,8 @@ class Dispatcher {
 
 					// Subscriptions
 					subIds.forEach((it: string) => {
-						it = it.split('/')[0];
-
-						const record = dbStore.getRecord(it, '', id);
-						if (!record) {
-							return;
-						};
-
-						keys.forEach((key: string) => { delete(record[key]); });
-						dbStore.recordUpdate(it, '', record);
+						const [ subId, dep ] = it.split('/');
+						detailStore.delete(subId, '', keys);
 					});
 					
 					detailStore.delete(rootId, id, keys);
@@ -635,6 +634,10 @@ class Dispatcher {
 					break;
 
 				case 'subscriptionAdd':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
 					id = data.getId();
 					afterId = data.getAfterid();
 
@@ -650,11 +653,19 @@ class Dispatcher {
 					break;
 
 				case 'subscriptionRemove':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
 					id = data.getId();
 					dbStore.recordDelete(rootId, '', id);
 					break;
 
 				case 'subscriptionPosition':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
 					id = data.getId();
 					afterId = data.getAfterid();
 
@@ -672,6 +683,10 @@ class Dispatcher {
 					break;
 
 				case 'subscriptionCounters':
+					if (rootId.match('/dep')) {
+						break;
+					};
+
 					const total = data.getTotal();
 					const nextCount = data.getNextcount();
 					const prevCount = data.getPrevcount();
