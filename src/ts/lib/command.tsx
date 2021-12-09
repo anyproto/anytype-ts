@@ -708,27 +708,6 @@ const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: a
 	dispatcher.request('blockDataviewRecordCreate', request, callBack);
 };
 
-const BlockDataviewRecordUpdate = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordUpdate.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecordid(recordId);
-	request.setRecord(Encode.encodeStruct(record));
-
-	dispatcher.request('blockDataviewRecordUpdate', request, callBack);
-};
-
-const BlockDataviewRecordDelete = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordDelete.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecordid(recordId);
-
-	dispatcher.request('blockDataviewRecordDelete', request, callBack);
-};
-
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationListAvailable.Request();
 	
@@ -1375,9 +1354,6 @@ export {
 	BlockDataviewRecordRelationOptionDelete,
 
 	BlockDataviewRecordCreate,
-	BlockDataviewRecordUpdate,
-	BlockDataviewRecordDelete,
-
 	BlockDataviewSetSource,
 
 	BlockRelationSetKey,
