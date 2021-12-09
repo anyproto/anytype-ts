@@ -47,17 +47,8 @@ const HeaderMainGraph = observer(class HeaderMainEdit extends React.Component<Pr
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-					{isPopup ? (
-						<React.Fragment>
-							<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-							<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						</React.Fragment>
-					) : (
-						<React.Fragment>
-							<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-							<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						</React.Fragment>
-					)}
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
 					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
 				</div>
 

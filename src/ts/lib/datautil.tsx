@@ -417,7 +417,7 @@ class DataUtil {
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			Util.route(redirectTo ? redirectTo : '/main/index');
+			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});
 	};
 

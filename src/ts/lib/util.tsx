@@ -931,6 +931,16 @@ class Util {
 		return { page, action };
 	};
 
+	route (route: string, replace?: boolean) {
+		const method = replace ? 'replace' : 'push';
+
+		this.tooltipHide(true);
+		this.previewHide(true);
+
+		menuStore.closeAll();
+		popupStore.closeAll(null, () => { this.history[method](route); });
+	};
+
 	intercept (obj: any, change: any) {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
@@ -1022,14 +1032,6 @@ class Util {
 		return array.reduce((prev: number, curr: number) => {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
 		});
-	};
-
-	route (route: string) {
-		this.tooltipHide(true);
-		this.previewHide(true);
-
-		menuStore.closeAll();
-		popupStore.closeAll(null, () => { this.history.push(route); });
 	};
 
 };

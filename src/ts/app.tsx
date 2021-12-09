@@ -381,7 +381,7 @@ class App extends React.Component<Props, State> {
 
 					if (value) {
 						authStore.phraseSet(value);
-						Util.route('/auth/setup/init');
+						Util.route('/auth/setup/init', true);
 					} else {
 						Storage.logout();
 					};
