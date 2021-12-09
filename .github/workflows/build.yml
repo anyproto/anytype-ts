@@ -40,6 +40,22 @@ jobs:
 
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
+        if: matrix.os != 'macos-10.15' && matrix.os != 'macos-11'
+        with:
+          github_token: ${{secrets.TOKEN}}
+          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
+          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        env:
+          DEBUG: electron-builder
+          APPLEID: ${{ secrets.APPLEID }}
+          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
+          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+
+      - name: Build Front
+        uses: samuelmeuli/action-electron-builder@v1
+        if: matrix.os == 'macos-10.15' || matrix.os == 'macos-11'
         with:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
