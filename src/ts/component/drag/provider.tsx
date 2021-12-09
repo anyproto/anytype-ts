@@ -63,9 +63,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		};
 
 		const node = $(ReactDOM.findDOMNode(this));
+		const rootId = keyboard.getRootId();
 
 		this.init = true;
-		this.objects = node.find('.dropTarget');
+		this.objects = node.find('.dropTarget.root-' + rootId);
 		this.emptyObj = $('<div class="dragEmpty" />');
 		this.emptyObj.css({ height: $('#dragLayer').height() });
 

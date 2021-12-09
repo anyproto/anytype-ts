@@ -25,7 +25,7 @@ class DropTarget extends React.Component<Props, {}> {
 	render () {
 		const { id, rootId, targetContextId, dropType, type, style, children, className } = this.props;
 		
-		let cn = [ 'dropTarget' ];
+		let cn = [ 'dropTarget', 'root-' + rootId ];
 		if (className) {
 			cn.push(className);
 		};
