@@ -121,19 +121,20 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	};
 
 	getPicture (): string {
-		const { rootId, index, getView, getRecord } = this.props;
+		const { rootId, block, index, getView, getRecord } = this.props;
 		const view = getView();
 
 		if (!view || !view.coverRelationKey) {
 			return '';
 		};
 
+		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 		const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
 
 		let picture = '';
 		for (let id of value) {
-			const f = detailStore.get(rootId, id, []);
+			const f = detailStore.get(subId, id, []);
 			if (f && (f.type == Constant.typeId.image)) {
 				picture = commonStore.imageUrl(f.id, 600);
 				break;
