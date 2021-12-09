@@ -502,9 +502,10 @@ class BlockStore {
 
 		const cnt = object.layout == I.ObjectLayout.Note ? 3 : 2;
 		const checkBlocks = rootElement.childrenIds.length <= cnt;
+		const checkType = object.type == commonStore.type;
 
 		let change = false;
-		if (checkBlocks && root.fields?.needTypeSelection) {
+		if (checkBlocks && checkType) {
 			if (!footer.childrenIds.includes(Constant.blockId.type)) {
 				footer.childrenIds.push(Constant.blockId.type);
 				change = true;

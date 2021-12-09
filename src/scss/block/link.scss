@@ -110,6 +110,7 @@
         .linkCard.card {
             .sides { border: 1px solid $colorBorderDark; }
             .sides.hidden { visibility: hidden; }
+            .cardName span::before { display: none; }
         }
         .linkCard.withCover {
             .sides { border: 0px; }
