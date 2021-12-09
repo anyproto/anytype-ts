@@ -514,8 +514,22 @@
 			"entitlements": "electron/entitlements.mac.plist",
 			"entitlementsInherit": "electron/entitlements.mac.plist",
 			"target": [
-				"dmg",
-				"zip"
+				{
+					"target": "zip",
+					"arch": "x64"
+				},
+				{
+					"target": "dmg",
+					"arch": "x64"
+				},
+				{
+					"target": "zip",
+					"arch": "arm64"
+				},
+				{
+					"target": "dmg",
+					"arch": "arm64"
+				}
 			],
 			"identity": "6SFR4648FW",
 			"category": "public.app-category.productivity",
