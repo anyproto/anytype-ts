@@ -18,9 +18,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	constructor(props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
+		this.onNameEnter = this.onNameEnter.bind(this);
 	};
 
 	render () {
@@ -44,6 +46,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
+							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -64,6 +67,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
 							onBlur={this.onNameBlur}
+							onMouseEnter={this.onNameEnter}
 						/>
 					</div>
 					<div className="line" />
@@ -159,12 +163,23 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	onNameFocus (e: any) {
+		this.n = -1;
 		this.isFocused = true;
 		this.props.setActive();
+
+		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 	
 	onNameBlur (e: any) {
 		this.isFocused = false;
+	};
+
+	onNameEnter (e: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.n = -1;
+			this.props.setHover(null, false);
+			menuStore.closeAll(Constant.menuIds.viewEdit);
+		};
 	};
 
 	onKeyUp (e: any, v: string) {
@@ -288,6 +303,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			this.props.setActive(item, false);
 		};
 	};
+
+	onMouseLeave (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setHover(null, false);
+		};
+	};
 	
 	onOver (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
@@ -309,10 +330,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			data: {
+				rebind: this.rebind,
 				value: view[item.id],
 				onSelect: (e: any, el: any) => {
 					view[item.id] = el.id;
-					this.save();
+					
+					if (view.id) {
+						this.save();
+					};
 				},
 			}
 		};
@@ -345,7 +370,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		view[key] = v;
 
-		this.save();
+		if (view.id) {
+			this.save();
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -361,8 +388,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 		if (item.sectionId == 'type') {
 			view.type = item.id;
-			
-			this.save();
+
+			if (view.id) {
+				this.save();
+			};
 		} else 
 		if (view.id) {
 			switch (item.id) {
@@ -402,51 +431,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		if (onSelect) {
 			onSelect();
 		};
-	};
-
-	onCoverRelation (e: any) {
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-
-		menuStore.open('select', { 
-			element: `#${getId()} #item-coverRelationKey`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {
-				value: view.coverRelationKey,
-				options: this.getFileOptions(),
-				onSelect: (e: any, item: any) => {
-					view.coverRelationKey = item.id;
-
-					this.save();
-				},
-			}
-		});
-	};
-
-	onCardSize (e: any) {
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-
-		menuStore.open('select', { 
-			element: `#${getId()} #item-cardSize`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {
-				value: view.cardSize,
-				options: this.getSizeOptions(),
-				onSelect: (e, item) => {
-					view.cardSize = item.id;
-
-					this.forceUpdate();
-					this.save();
-				},
-			}
-		});
 	};
 
 	getSizeOptions () {

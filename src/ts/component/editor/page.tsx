@@ -250,11 +250,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onOpen();
 			};
 
-			const root = blockStore.getLeaf(rootId, rootId);
-			if (root && root.fields.analyticsContext) {
-				analytics.setContext(root.fields.analyticsContext);
-			};
-
 			window.clearTimeout(this.timeoutMove);
 			window.setTimeout(() => { this.uiShow(); }, 10);
 			this.resize();
