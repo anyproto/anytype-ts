@@ -151,6 +151,7 @@ class DetailStore {
 			iconImage: DataUtil.getRelationStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
+			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,
