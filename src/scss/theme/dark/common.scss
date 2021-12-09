@@ -110,6 +110,12 @@ html.themeDark {
         .blocks {
             .element {
                 .line { background: $colorSecondary; }
+
+                .inner {
+                    .bookmark {
+                        .side.left { border-color: $colorLinePrimary; }
+                    }
+                }
             }
         }
     }
