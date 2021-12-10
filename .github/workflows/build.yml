@@ -38,9 +38,11 @@ jobs:
       - name: Update Deps
         run: npm run build:deps
 
+      # Macos
+
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os != 'macos-latest'
+        if: matrix.os != 'macos-10.15' && matrix.os != 'macos-11'
         with:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
@@ -53,9 +55,11 @@ jobs:
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
 
+      # Other platforms
+
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-10.15' || matrix.os == 'macos-11'
         with:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
