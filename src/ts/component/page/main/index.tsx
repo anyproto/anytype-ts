@@ -566,16 +566,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const l = this.selected.length;
 		const ids = this.getSelectedObjectIds();
 
+		const cb = () => {
+			this.selected = [];
+			this.selectionRender();
+		};
+
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
-				onConfirm: () => { C.ObjectListDelete(ids); },
-				onCancel: () => {
-					this.selected = [];
-					this.selectionRender();
-				}
+				onConfirm: () => { 
+					C.ObjectListDelete(ids); 
+					cb();
+				},
+				onCancel: () => { cb(); }
 			},
 		});
 	};
