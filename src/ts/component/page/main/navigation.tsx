@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Button, Cover, Loader, IconObject, HeaderMainNavigation as Header, ObjectName, ObjectDescription } from 'ts/component';
 import { I, C, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
-import { blockStore, popupStore } from 'ts/store';
+import { blockStore, popupStore, commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -84,7 +84,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} />}
 						<div className="info">
 							<ObjectName object={item} />
-							<div className="descr">{description}</div>
 							<ObjectDescription object={item} />
 						</div>
 					</div>
@@ -494,7 +493,16 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	filterMapper (it: any) {
-		return !it.isArchived && !it.isDeleted;
+		const { config } = commonStore;
+
+		let ret = !it.isArchived && !it.isDeleted;
+		if (!config.debug.ho) {
+			ret = ret && !it.isHidden;
+		};
+		if (!config.experimental) {
+			ret = ret && ![ Constant.typeId.space ].includes(it.type);
+		};
+		return ret;
 	};
 
 	getPage (item: any) {
