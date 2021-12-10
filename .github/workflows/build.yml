@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.16.x ]
-        os: [ macos-10.15, macos-11, ubuntu-latest, windows-latest ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
       - name: Setup
@@ -38,52 +38,13 @@ jobs:
       - name: Update Deps
         run: npm run build:deps
 
-      # Non Macos
-
       - name: Build Front
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os != 'macos-10.15' && matrix.os != 'macos-11'
         with:
           github_token: ${{secrets.TOKEN}}
           mac_certs: ${{ secrets.MAC_CERT_TEXT }}
           mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        env:
-          DEBUG: electron-builder
-          APPLEID: ${{ secrets.APPLEID }}
-          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
-          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
-          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
-
-      # Macos 11
- 
-      - name: Build Front
-        uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os == 'macos-11'
-        with:
-          github_token: ${{secrets.TOKEN}}
-          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
-          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          args: '--arm64'
-        env:
-          DEBUG: electron-builder
-          APPLEID: ${{ secrets.APPLEID }}
-          APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
-          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
-          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
-
-      # Macos 10.15
-
-      - name: Build Front
-        uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os == 'macos-10.15'
-        with:
-          github_token: ${{secrets.TOKEN}}
-          mac_certs: ${{ secrets.MAC_CERT_TEXT }}
-          mac_certs_password: ${{ secrets.MAC_CERT_PASS }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          args: '--x64'
         env:
           DEBUG: electron-builder
           APPLEID: ${{ secrets.APPLEID }}
@@ -104,12 +65,6 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           mv dist/*.exe artifacts
-
-      #- name: Upload artifacts
-      #  uses: actions/upload-artifact@v1
-      #  with:
-      #    name: ${{matrix.os}}
-      #    path: artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v0.1.14
