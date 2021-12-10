@@ -74,6 +74,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			} else
 			if (item.isRelation) {
 				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+				const record = detailStore.get(rootId, rootId, [ item.relationKey ]);
+
+				console.log(item.relationKey, record);
 
 				content = (
 					<div 
@@ -96,7 +99,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ], true); }}
+								getRecord={() => { return record; }}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}

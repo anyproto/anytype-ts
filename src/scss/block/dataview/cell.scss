@@ -51,6 +51,11 @@
 	}
 }
 
+.cellContent.c-checkbox {
+	.icon { width: 20px; height: 20px; background-image: url('~img/icon/checkbox0.svg'); }
+	.icon.active { background-image: url('~img/icon/checkbox1.svg'); }
+}
+
 .cellContent.c-file {
 	.inputWithFile { border: 0px; padding: 0px; display: none; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
