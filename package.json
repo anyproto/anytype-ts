@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.21.10-alpha",
+	"version": "0.21.18-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -514,8 +514,8 @@
 			"entitlements": "electron/entitlements.mac.plist",
 			"entitlementsInherit": "electron/entitlements.mac.plist",
 			"target": [
-				"dmg",
-				"zip"
+				"zip",
+				"dmg"
 			],
 			"identity": "6SFR4648FW",
 			"category": "public.app-category.productivity",
