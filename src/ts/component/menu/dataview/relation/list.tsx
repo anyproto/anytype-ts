@@ -174,8 +174,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));
-
 		this.resize();
 		this.rebind();
 
