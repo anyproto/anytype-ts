@@ -10,7 +10,7 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
