@@ -210,7 +210,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};

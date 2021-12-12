@@ -309,7 +309,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	close () {
 		const { isPopup, rootId, match } = this.props;
-		const object = detailStore.get(rootId, rootId);
 		
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {

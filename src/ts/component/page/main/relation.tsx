@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
-import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
+import { I, M, C, crumbs, Action, Util, DataUtil, keyboard } from 'ts/lib';
 import { detailStore, dbStore, commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -140,7 +140,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};

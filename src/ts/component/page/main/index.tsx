@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -228,7 +228,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.index);
-		C.ObjectSearchUnsubscribe([ Constant.subIds.index ]);
+		Action.dbClear(Constant.subIds.index);
 	};
 
 	rebind () {

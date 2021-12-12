@@ -280,8 +280,6 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		C.ObjectSearchUnsubscribe([ this.getSubIdTemplate() ]);
 	};
 
 	open () {

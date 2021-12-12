@@ -187,8 +187,6 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		C.ObjectSearchUnsubscribe([ this.getSubIdHighlighted() ]);
 	};
 
 	open () {
