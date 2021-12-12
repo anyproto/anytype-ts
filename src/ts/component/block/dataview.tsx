@@ -385,6 +385,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
+		if (e.button) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 		const id = DataUtil.cellId('dataviewCell', relationKey, index);
