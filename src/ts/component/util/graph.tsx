@@ -48,7 +48,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		link: {
 			enabled: true,
 			strength: 0.3,
-			distance: 100,
+			distance: 50,
 			iterations: 3
 		},
 		forceX: {
