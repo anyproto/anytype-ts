@@ -13,7 +13,7 @@ interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
-const HEIGHT = 50;
+const HEIGHT = 48;
 const LIMIT = 20;
 
 const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
@@ -147,7 +147,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
 				/>
 				{allowedView ? (
 					<div className="bottom">

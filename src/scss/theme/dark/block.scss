@@ -72,6 +72,9 @@
         .dataviewControls {
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
+            .viewItem {
+                .icon.arrow { background-image: url('~img/theme/dark/arrow/view.svg'); }
+            }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
             .viewItem.isDragging { background: $colorHover; }
 
