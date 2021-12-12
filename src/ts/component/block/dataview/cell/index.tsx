@@ -57,6 +57,7 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const canEdit = this.canEdit();
 
 		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
@@ -73,7 +74,7 @@ class Cell extends React.Component<Props, {}> {
 			(!check ? 'isEmpty' :  ''),
 		];
 
-		let CellComponent: React.ReactType<Props>;
+		let CellComponent: any = null;
 		switch (relation.format) {
 			default:
 			case I.RelationType.ShortText:
@@ -107,10 +108,14 @@ class Cell extends React.Component<Props, {}> {
 				break;
 		};
 		
-		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
-
 		return (
-			<div id={elementId} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div 
+				id={elementId} 
+				className={cn.join(' ')} 
+				onClick={onClick} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
 					{...this.props} 
