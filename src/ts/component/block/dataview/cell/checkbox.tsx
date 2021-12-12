@@ -34,8 +34,6 @@ const CellCheckbox = observer(class CellCheckbox extends React.Component<Props, 
 		const { relation, index, getRecord } = this.props;
 		const record = getRecord(index);
 
-		console.log(record, relation.relationKey, record[relation.relationKey], Boolean(record[relation.relationKey]));
-
 		return Boolean(record[relation.relationKey]);
 	};
 
