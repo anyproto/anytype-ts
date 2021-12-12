@@ -6,9 +6,6 @@
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		.icon.plus:hover { background-image: url('~img/icon/plus/menu1.svg'); }
 		
-		.icon.checkbox { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); transition: none; }
-		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
-		
 		.icon.edit { 
 			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; 
 			background-size: 20px;
