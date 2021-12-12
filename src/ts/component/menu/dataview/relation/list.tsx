@@ -82,13 +82,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			);
 		});
 		
-		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">New relation</div>
-			</div>
-		);
-
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			return (
@@ -153,7 +146,16 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				{!readonly && allowedView ? (
 					<div className="bottom">
 						<div className="line" />
-						<ItemAdd /> 
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd} 
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
+							<Icon className="plus" />
+							<div className="name">New relation</div>
+						</div>
 					</div>
 				) : ''}
 			</div>
@@ -329,7 +331,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();

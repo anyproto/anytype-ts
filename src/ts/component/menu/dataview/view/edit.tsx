@@ -82,15 +82,17 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 	componentDidMount () {
 		this.rebind();
+		this.resize();
 		this.focus();
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 		this.props.setActive();
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 
@@ -459,6 +461,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			{ id: '', icon: '', name: 'None' },
 			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
 		].concat(options);
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()} .content`);
+
+		obj.css({ height: 'auto' });
+		position();
 	};
 	
 });

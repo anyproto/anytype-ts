@@ -68,7 +68,6 @@
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
 		}
-		.item.add:hover::before, .item.add.hover:hover::before { opacity: 1 !important; }
 
 		.item {
 			.clickable { width: 100%; height: 20px; display: flex; }

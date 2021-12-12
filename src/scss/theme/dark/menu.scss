@@ -133,12 +133,6 @@
         .item:hover::before { background: $colorHover; }
     }
 
-    /* MenuDataviewFilterList */
-
-    .menu.menuDataviewFilterList {
-        .item.add:hover::before { background: $colorHover; }
-    }
-
     /* MenuDataviewFileValues */
 
     .menu.menuDataviewFileValues {
@@ -154,13 +148,6 @@
         .item {
             .select.grey { color: $colorSecondary; }
         }
-        .item.add:hover::before { background: $colorHover; }
-    }
-
-    /* MenuDataviewSource */
-
-    .menu.menuDataviewSource {
-        .item.add:hover::before { background: $colorHover; }
     }
 
     /* MenuDataviewOptionEdit */

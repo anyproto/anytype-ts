@@ -152,7 +152,13 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 				{allowedView ? (
 					<div className="bottom">
 						<div className="line" />
-						<div className="item add" onClick={this.onAdd}>
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd}
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
 							<Icon className="plus" />
 							<div className="name">New sort</div>
 						</div> 
@@ -338,7 +344,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT + 58, Math.min(280, items.length * HEIGHT + 58));
+		const height = Math.max(HEIGHT + 58, Math.min(360, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });
 		position();

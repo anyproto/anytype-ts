@@ -31,8 +31,6 @@
 			.clickable { width: calc(100% - 52px); }
 		}
 
-		.item.add:hover::before { background: $colorHover; }
-
 		.bottom {  padding: 0px 0px 8px 0px; flex-shrink: 0; }
 		.bottom {
 			.line { margin-top: 0px; }

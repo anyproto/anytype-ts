@@ -44,13 +44,6 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 			);
 		};
 		
-		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">Add a relation</div>
-			</div>
-		);
-		
 		return (
 			<div className="items">
 				<div className="scrollWrap">
@@ -63,10 +56,20 @@ const MenuSource = observer(class MenuSource extends React.Component<Props, {}> 
 						</div>
 					) : ''}
 				</div>
+				
 				{!types.length && config.experimental ? (
 					<div className="bottom">
 						<div className="line" />
-						<ItemAdd disabled={true} /> 
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd} 
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
+							<Icon className="plus" />
+							<div className="name">Add a relation</div>
+						</div>
 					</div>
 				) : ''}
 			</div>
