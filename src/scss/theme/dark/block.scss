@@ -179,6 +179,8 @@
     /* BlockLatex */
 
     .block.blockLatex {
+        .select { color: $colorPrimary; }
+        .wrap.isEditing { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
         #input { background: $colorBgIcon; }
     }
 
