@@ -480,7 +480,7 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open('page', param);
+		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {

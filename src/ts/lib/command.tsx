@@ -1013,21 +1013,8 @@ const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => 
 	const request = new Rpc.Object.SearchUnsubscribe.Request();
 
 	request.setSubidsList(subIds);
-
-	const cb = (message: any) => {
-		subIds.forEach((id: string) => {
-			dbStore.recordsClear(id, '');
-			dbStore.recordsClear(id + '/dep', '');
-			
-			detailStore.clear(id);
-		});
-
-		if (callBack) {
-			callBack(message);
-		};
-	};
-
-	dispatcher.request('objectSearchUnsubscribe', request, cb);
+	
+	dispatcher.request('objectSearchUnsubscribe', request, callBack);
 };
 
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {

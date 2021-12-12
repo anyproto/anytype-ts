@@ -14,11 +14,18 @@ class Action {
 
 		const onClose = () => {
 			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
+
 			for (let block of blocks) {
+				const subId = dbStore.getSubId(rootId, block.id);
+
 				dbStore.relationsClear(rootId, block.id);
 				dbStore.viewsClear(rootId, block.id);
-				dbStore.metaClear(rootId, block.id);
-				dbStore.recordsClear(rootId, block.id);
+
+				dbStore.metaClear(subId, '');
+				dbStore.recordsClear(subId, '');
+				dbStore.recordsClear(subId + '/dep', '');
+
+				detailStore.clear(subId);
 			};
 
 			blockStore.clear(rootId);
