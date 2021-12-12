@@ -40,17 +40,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		));
 
 		const Item = SortableElement((item: any) => {
-			const cn = [ 'item' ];
-			
-			if (item.id == 'add') {
-				cn.push('add');
-			} else {	
-				cn.push('withCaption');
-			};
-			if (item.isHidden) {
-				cn.push('isHidden');
-			};
-
+			const cn = [ 'item', 'withCaption', (item.isHidden ? 'isHidden' : '') ];
 			return (
 				<div 
 					id={'item-' + item.id} 
@@ -58,27 +48,39 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					onMouseEnter={(e: any) => { this.onOver(e, item); }}
 					style={item.style}
 				>
-					{item.id == 'add' ? (
-						<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-							<Icon className="plus" />
-							<div className="name">Add object</div>
-						</span>
-					) : (
-						<React.Fragment>
-							<Handle />
-							<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
-								<IconObject object={item} />
-								<ObjectName object={item} />
-							</span>
-							<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
-						</React.Fragment>
-					)}
+					<Handle />
+					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
+						<IconObject object={item} />
+						<ObjectName object={item} />
+					</span>
+					<Icon className="delete" onClick={(e: any) => { this.onRemove(e, item); }} />
 				</div>
 			);
 		});
 
+		const ItemAdd = (item: any) => (
+			<div 
+				id="item-add" 
+				className="item add" 
+				onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+				onClick={(e: any) => { this.onClick(e, item); }}
+				style={item.style}
+			>
+				<Icon className="plus" />
+				<div className="name">{item.name}</div>
+			</div>
+		);
+
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
+			let content = null;
+			if (item.id == 'add') {
+				content = <ItemAdd key={item.id} {...item} index={param.index} disabled={true} style={param.style} />;
+			} else {
+				content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+			};
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -88,40 +90,38 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					rowIndex={param.index}
 					hasFixedWidth={() => {}}
 				>
-					<Item key={item.id} {...item} index={param.index} style={param.style} />
+					{content}
 				</CellMeasurer>
 			);
 		};
 
-		const List = SortableContainer((item: any) => {
-			return (
-				<InfiniteLoader
-					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => { return true; }}
-					threshold={LIMIT}
-				>
-					{({ onRowsRendered, registerChild }) => (
-						<AutoSizer className="scrollArea">
-							{({ width, height }) => (
-								<VList
-									ref={(ref: any) => { this.refList = ref; }}
-									width={width}
-									height={height}
-									deferredMeasurmentCache={this.cache}
-									rowCount={items.length}
-									rowHeight={HEIGHT}
-									rowRenderer={rowRenderer}
-									onRowsRendered={onRowsRendered}
-									overscanRowCount={LIMIT}
-									onScroll={this.onScroll}
-								/>
-							)}
-						</AutoSizer>
-					)}
-				</InfiniteLoader>
-			);
-		});
+		const List = SortableContainer((item: any) => (
+			<InfiniteLoader
+				rowCount={items.length}
+				loadMoreRows={() => {}}
+				isRowLoaded={() => { return true; }}
+				threshold={LIMIT}
+			>
+				{({ onRowsRendered, registerChild }) => (
+					<AutoSizer className="scrollArea">
+						{({ width, height }) => (
+							<VList
+								ref={(ref: any) => { this.refList = ref; }}
+								width={width}
+								height={height}
+								deferredMeasurmentCache={this.cache}
+								rowCount={items.length}
+								rowHeight={HEIGHT}
+								rowRenderer={rowRenderer}
+								onRowsRendered={onRowsRendered}
+								overscanRowCount={LIMIT}
+								onScroll={this.onScroll}
+							/>
+						)}
+					</AutoSizer>
+				)}
+			</InfiniteLoader>
+		));
 		
 		return (
 			<List 
@@ -189,7 +189,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = value.filter((it: any) => { return !it.isHidden; });
 		};
 
-		value.unshift({ id: 'add' });
+		value.unshift({ id: 'add', name: 'Add object' });
 		return value;
 	};
 
@@ -268,8 +268,9 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
-		const height = Math.max(HEIGHT * 2, Math.min(280, items.length * HEIGHT + 58));
+		const obj = $(`#${getId()} .content`);
+		const offset = 16;
+		const height = Math.max(HEIGHT + offset, Math.min(280, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();
