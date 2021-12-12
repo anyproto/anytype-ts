@@ -133,7 +133,12 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			};
 
 			return (
-				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<form 
+					id={'item-' + item.id}
+					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')} 
+					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					style={item.style}
+				>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
@@ -161,13 +166,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			);
 		});
 		
-		const ItemAdd = (item: any) => (
-			<div className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">Add a filter</div>
-			</div>
-		);
-
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			return (
@@ -238,7 +236,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 				{allowedView ? (
 					<div className="bottom">
 						<div className="line" />
-						<ItemAdd index={items.length + 1} disabled={true} /> 
+						<div className="item add" onClick={this.onAdd}>
+							<Icon className="plus" />
+							<div className="name">Add a filter</div>
+						</div>
 					</div>
 				) : ''}
 			</div>
@@ -260,6 +261,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 
 	componentDidUpdate () {
 		this.resize();
+
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
+
 		this.props.setActive();
 	};
 
@@ -406,7 +412,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
+		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT + 58, Math.min(280, items.length * HEIGHT + 58));
 
 		obj.css({ height: height });

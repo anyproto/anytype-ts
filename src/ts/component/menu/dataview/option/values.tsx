@@ -171,6 +171,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 	};
 
 	rebind () {
@@ -184,11 +185,9 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 	
 	unbind () {
 		const { getId } = this.props;
-		const win = $(window);
-		const obj = $(`#${getId()}`);
 
-		win.unbind('keydown.menu');
-		obj.unbind('click');
+		$(window).unbind('keydown.menu');
+		$(`#${getId()}`).unbind('click');
 	};
 
 	getItems () {
