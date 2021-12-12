@@ -2,19 +2,26 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'ts/component';
-import { I, C, DataUtil, Util } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const HEIGHT = 50;
+const LIMIT = 20;
 
 const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 	
 	n: number = 0;
+	top: number = 0;
+	cache: any = {};
+	refList: any = null;
 	
 	constructor (props: any) {
 		super(props);
@@ -22,6 +29,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -52,7 +60,12 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const Item = SortableElement((item: any) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 			return (
-				<div id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}>
+				<div 
+					id={'item-' + item.id} 
+					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')}
+					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					style={item.style}
+				>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
@@ -68,57 +81,108 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 				</div>
 			);
 		});
-		
-		const ItemAdd = SortableElement((item: any) => (
-			<div className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">New sort</div>
-			</div>
-		));
+
+		const rowRenderer = (param: any) => {
+			const item: any = items[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<Item key={item.id} {...item} index={param.index} style={param.style} />
+				</CellMeasurer>
+			);
+		};
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<div className="scrollWrap">
-						{items.map((item: any, i: number) => (
-							<Item key={i} {...item} id={i} index={i} />
-						))}
-						{!view.sorts.length ? (
-							<div className="item empty">No sorts applied to this view</div>
-						) : ''}
-					</div>
-					{allowedView ? (
-						<div className="bottom">
-							<div className="line" />
-							<ItemAdd index={view.sorts.length + 1} disabled={true} /> 
+					{!items.length ? (
+						<div className="item empty">
+							<div className="inner">No sorts applied to this view</div>
 						</div>
-					) : ''}
+					) : (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<VList
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={this.onScroll}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
 				</div>
 			);
 		});
 		
 		return (
-			<List 
-				axis="y"
-				lockAxis="y"
-				lockToContainerEdges={true}
-				transitionDuration={150}
-				distance={10}
-				onSortEnd={this.onSortEnd}
-				useDragHandle={true}
-				helperClass="isDragging"
-				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
-			/>
+			<div className="wrap">
+				<List 
+					axis="y"
+					lockAxis="y"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					onSortEnd={this.onSortEnd}
+					useDragHandle={true}
+					helperClass="isDragging"
+					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+				/>
+				{allowedView ? (
+					<div className="bottom">
+						<div className="line" />
+						<div className="item add" onClick={this.onAdd}>
+							<Icon className="plus" />
+							<div className="name">New sort</div>
+						</div> 
+					</div>
+				) : ''}
+			</div>
 		);
 	};
 
 	componentDidMount() {
+		const items = this.getItems();
+
 		this.rebind();
+		this.resize();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 	};
 	
 	componentDidUpdate () {
+		this.resize();
+
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
+
 		this.props.setActive();
-		this.props.position();
 	};
 
 	componentWillUnmount () {
@@ -159,6 +223,12 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { rootId, blockId, getView } = data;
 
 		return DataUtil.getRelationOptions(rootId, blockId, getView());
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+		};
 	};
 
 	onClick (e: any, item: any) {
@@ -256,6 +326,22 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 			};
 			getData(view.id, 0);
 		});
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems();
+		const obj = $(`#${getId()} .content`);
+		const height = Math.max(HEIGHT + 58, Math.min(280, items.length * HEIGHT + 58));
+
+		obj.css({ height: height });
+		position();
 	};
 	
 });

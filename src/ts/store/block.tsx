@@ -1,7 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, Util, Storage, Mark } from 'ts/lib';
+import { I, M, Util, Storage, Mark, translate } from 'ts/lib';
 import { detailStore, commonStore } from 'ts/store';
-import { DataUtil } from '../lib';
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -457,11 +456,16 @@ class BlockStore {
 
 				const { from, to } = mark.range;
 				const object = detailStore.get(rootId, mark.param, []);
-				const old = text.substr(from, to - from);
-				const name = Util.shorten(object.name, 30);
 
 				if (object._empty_) {
 					continue;
+				};
+
+				let old = text.substr(from, to - from);
+				let name = Util.shorten(object.name, 30);
+
+				if (object.layout == I.ObjectLayout.Note) {
+					name = name || translate('commonEmpty');
 				};
 
 				if (old != name) {

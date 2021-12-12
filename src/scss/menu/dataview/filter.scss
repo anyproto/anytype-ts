@@ -4,14 +4,15 @@
 	.menu.menuDataviewFilterList { width: 360px; }
 	.menu.menuDataviewFilterList {
 		.content { overflow: visible; max-height: unset; padding: 0px; }
-		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: overlay; max-height: 350px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.items { flex-grow: 1; }
 
 		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; align-items: center; }
 		.item {
 			.grey { color: $colorMediumGrey; }
 			.iconObject { margin-right: 10px; }
 
-			.buttons { line-height: 40px; margin: 0px; opacity: 0; transition: $transitionFast; }
+			.buttons { line-height: 44px; opacity: 0; transition: $transitionFast; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
@@ -39,7 +40,7 @@
 				.value { color: $colorDarkGrey; white-space: nowrap; overflow: hidden; }
 			}
 		}
-		.item.empty { padding: 13px 16px; }
+		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 
 		.item:hover, .item.hover {
 			.buttons { opacity: 1; }
@@ -51,7 +52,7 @@
 			.icon.dnd { margin-top: 0px; }
 		}
 
-		.bottom { padding: 0px 0px 8px 0px; }
+		.bottom {  padding: 0px 0px 8px 0px; flex-shrink: 0; }
 		.bottom {
 			.line { margin-top: 0px; }
 		}

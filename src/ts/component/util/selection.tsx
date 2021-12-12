@@ -187,8 +187,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		console.log('[Selection] onMouseDown');
-
 		if (!this._isMounted) {
 			return
 		};
@@ -275,8 +273,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseUp (e: any) {
-		console.log('[Selection] onMouseUp');
-
 		if (!this._isMounted) {
 			return
 		};

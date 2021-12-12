@@ -170,7 +170,7 @@ const rootStore = {
 };
 
 console.log('[OS Version]', process.getSystemVersion());
-console.log('[APP Version]', version, 'isPackaged', app.isPackaged);
+console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
 
 /*
 enableLogging({
