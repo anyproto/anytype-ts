@@ -40,14 +40,29 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const viewRelation = this.getViewRelation();
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const type = this.objectTypes.length ? this.objectTypes[0] : '';
-		const objectType = dbStore.getObjectType(type);
 		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 
 		let ccn = [ 'item' ];
 		if (relation) {
 			ccn.push('disabled');
+		};
+
+		let typeProps: any = { name: 'Select object type' };
+		if (isObject) {
+			const l = this.objectTypes.length;
+			const type = l ? this.objectTypes[0] : '';
+			const objectType = dbStore.getObjectType(type);
+
+			if (objectType) {
+				typeProps.name = objectType.name || DataUtil.defaultName('page');
+				typeProps.object = { ...objectType, layout: I.ObjectLayout.Type };
+			};
+
+			typeProps.caption = l > 1 ? '+' + (l - 1) : '';
+			if (typeProps.caption) {
+				typeProps.withCaption = true;
+			};
 		};
 
 		const opts = (
@@ -57,10 +72,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
-							name={objectType ? (objectType.name || DataUtil.defaultName('page')) : 'Select object type'} 
-							object={{ ...objectType, layout: I.ObjectLayout.Type }} 
 							onMouseEnter={this.onObjectType} 
 							arrow={!this.isReadonly()}
+							{...typeProps}
 						/>
 					</div>
 				) : ''}
