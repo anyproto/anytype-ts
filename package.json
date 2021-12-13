@@ -22,7 +22,7 @@
 		"publish:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
 		"publish:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
 		"publish:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
-		"postinstall": "patch-package"
+		"postinstall": "npx patch-package && electron-builder install-app-deps"
 	},
 	"repository": {
 		"type": "git",
@@ -175,6 +175,7 @@
 		"xtend": "^4.0.2"
 	},
 	"build": {
+		"npmRebuild": true,
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/beforebuild.js",
 		"afterSign": "./electron/notarize.js",
@@ -516,10 +517,13 @@
 			"gatekeeperAssess": false,
 			"entitlements": "electron/entitlements.mac.plist",
 			"entitlementsInherit": "electron/entitlements.mac.plist",
-			"target": [
-				"zip",
-				"dmg"
-			],
+			"target": {
+				"target": "default",
+				"arch": [
+					"x64",
+					"arm64"
+				]
+			},
 			"identity": "6SFR4648FW",
 			"category": "public.app-category.productivity",
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
