@@ -43,12 +43,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
 
+		let opts = null;
+		let typeProps: any = { name: 'Select object type' };
 		let ccn = [ 'item' ];
+		
 		if (relation) {
 			ccn.push('disabled');
 		};
 
-		let typeProps: any = { name: 'Select object type' };
 		if (isObject) {
 			const l = this.objectTypes.length;
 			const type = l ? this.objectTypes[0] : '';
@@ -65,43 +67,43 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 		};
 
-		const opts = (
-			<React.Fragment>
-				{isObject ? (
-					<div className="section noLine">
-						<div className="name">Type of target object</div>
-						<MenuItemVertical 
-							id="object-type" 
-							onMouseEnter={this.onObjectType} 
-							arrow={!this.isReadonly()}
-							{...typeProps}
-						/>
-					</div>
-				) : ''}
+		if (isObject) {
+			opts = (
+				<div className="section noLine">
+					<div className="name">Type of target object</div>
+					<MenuItemVertical 
+						id="object-type" 
+						onMouseEnter={this.onObjectType} 
+						arrow={!this.isReadonly()}
+						{...typeProps}
+					/>
+				</div>
+			);
+		};
 
-				{isDate && relation ? (
-					<div className="section noLine">
-						<MenuItemVertical 
-							id="includeTime" 
-							icon="clock" 
-							name="Include time" 
-							onMouseEnter={this.menuClose}
-							withSwitch={true}
-							switchValue={viewRelation?.includeTime}
-							onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
-						/>
+		if (isDate && relation) {
+			opts = (
+				<div className="section noLine">
+					<MenuItemVertical 
+						id="includeTime" 
+						icon="clock" 
+						name="Include time" 
+						onMouseEnter={this.menuClose}
+						withSwitch={true}
+						switchValue={viewRelation?.includeTime}
+						onSwitch={(e: any, v: boolean) => { this.onChangeTime(v); }}
+					/>
 
-						<MenuItemVertical 
-							id="date-settings" 
-							icon="settings" 
-							name="Preferences" 
-							arrow={true} 
-							onMouseEnter={this.onDateSettings} 
-						/>
-					</div>
-				) : ''}
-			</React.Fragment>
-		);
+					<MenuItemVertical 
+						id="date-settings" 
+						icon="settings" 
+						name="Preferences" 
+						arrow={true} 
+						onMouseEnter={this.onDateSettings} 
+					/>
+				</div>
+			);
+		};
 
 		return (
 			<form onSubmit={this.onSubmit}>
@@ -173,7 +175,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			this.ref.setValue(filter);
 		};
 
-		this.unbind();
+		this.rebind();
 		this.focus();
 		this.checkButton();
 	};
@@ -185,10 +187,22 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 	componentWillUnmount () {
 		this.menuClose();
+		this.unbind();
+	};
+
+	rebind () {
+		const { getId } = this.props;
+
+		this.unbind();
+
+		$(`#${getId()}`).on('click.menu', () => { this.menuClose(); });
 	};
 
 	unbind () {
+		const { getId } = this.props;
+
 		$(window).unbind('keydown.menu');
+		$(`#${getId()}`).unbind('click.menu');
 	};
 
 	focus () {
