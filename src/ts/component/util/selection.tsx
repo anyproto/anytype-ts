@@ -187,7 +187,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		if (!this._isMounted) {
+		if (e.button || !this._isMounted) {
 			return
 		};
 		
