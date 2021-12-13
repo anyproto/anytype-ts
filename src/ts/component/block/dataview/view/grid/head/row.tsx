@@ -25,6 +25,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 		});
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
+		// Subscriptions
 		relations.forEach((it: any) => {
 			const { width } = it;
 		});
