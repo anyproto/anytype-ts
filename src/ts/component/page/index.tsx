@@ -148,6 +148,9 @@ class Page extends React.Component<Props, {}> {
 		const path = [ match.params.page, match.params.action ].join('/');
 		const Component = Components[path];
 
+		Util.tooltipHide(true);
+		Util.previewHide(true);
+
 		if (!Component) {
 			Util.route('/main/index');
 			return;
