@@ -57,7 +57,7 @@
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
 		"electron": "^16.0.4",
-		"electron-builder": "^22.9.1",
+		"electron-builder": "^22.14.5",
 		"electron-notarize": "^0.2.1",
 		"git-revision-webpack-plugin": "^3.0.6",
 		"ifdef-loader": "^2.1.5",
@@ -176,6 +176,7 @@
 	},
 	"build": {
 		"npmRebuild": true,
+		"buildDependenciesFromSource": true,
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/beforebuild.js",
 		"afterSign": "./electron/notarize.js",
