@@ -83,7 +83,7 @@ class Pager extends React.Component<Props, {}> {
 		
 		if (items.length > 1) {
 			return (
-				<div className="pager">
+				<div className={[ 'pager', (isShort ? 'isShort' : '') ].join(' ')}>
 					{isShort ? <Icon className={[ 'arrow', 'end', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(1); }} /> : ''}
 					<Icon className={[ 'arrow', 'left', (page == 1 ? 'disabled' : '') ].join(' ')} onClick={() => { this.onChange(page - 1); }} />
 					

@@ -2,20 +2,20 @@
 
 .pager { 
     text-align: center; color: $colorMediumGrey; white-space: nowrap; @include text-common; user-select: none; 
-    line-height: 20px; display: flex; align-items: center; justify-content: center;
+    line-height: 20px; display: flex; align-items: center; justify-content: center; gap: 0px 8px;
 }
+.pager.isShort { gap: 0px 18px; }
 .pager {
     .pageItem { 
-        min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionFast; text-align: center; margin-right: 8px; 
+        min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionFast; text-align: center;
         vertical-align: top; line-height: 20px; cursor: pointer;
     }
-    .pageItem:last-child { margin: 0px; }
     .pageItem:hover, .pageItem.active { color: $colorBlack; }
 
-    .pageItem.list { margin: 0px 18px; cursor: default; }
+    .pageItem.list { cursor: default; }
     .pageItem.list:hover { color: $colorMediumGrey; }
 	
-	.dots { min-width: 24px; display: inline-block; padding: 0px 2px; text-align: center; margin-right: 8px; vertical-align: top; line-height: 24px; }
+	.dots { min-width: 24px; display: inline-block; padding: 0px 2px; text-align: center; vertical-align: top; line-height: 24px; }
 
     .icon.arrow { width: 20px; height: 20px; background-size: 16px; vertical-align: top; background-image: url('~img/arrow/pager0.svg'); cursor: pointer; }
     .icon.arrow:hover { background-image: url('~img/arrow/pager1.svg'); }
@@ -26,7 +26,4 @@
     .icon.arrow.end { background-image: url('~img/arrow/pagerEnd0.svg'); cursor: pointer; }
     .icon.arrow.end:hover { background-image: url('~img/arrow/pagerEnd1.svg'); }
     .icon.arrow.end.disabled:hover { background-image: url('~img/arrow/pagerEnd0.svg'); }
-
-    .icon.arrow.end.left { margin-right: 20px; }
-    .icon.arrow.end.right { margin-left: 20px; }
 }
