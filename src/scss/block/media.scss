@@ -88,10 +88,25 @@
 			.icon.play:hover { background-color: rgba(255,255,255,0.9); }
 		}
 
-		.pager { position: absolute; z-index: 1; top: 0px; left: 50%; transform: translateX(-50%); @include text-common; }
-		.pdfWrapper { width: 100%; height: calc(100% - 30px); overflow: hidden; position: relative; padding-top: 30px; }
+		.pdfWrapper { 
+			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorBorderDark;
+			border-radius: 6px;
+		}
 		.pdfWrapper {
-			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
+			.info { @include text-common; margin-bottom: 6px; text-align: center; }
+			.info {
+				.name {
+					min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
+					vertical-align: top; cursor: pointer; @include text-overflow-nw;  
+				}
+				.size {
+					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
+					display: inline-block; vertical-align: top;
+				}
+			}
+
+			.pager { margin-top: 6px; }
+			.loaderWrapper { width: 100%; position: relative; }
 
 			.react-pdf__Document { width: 100%; display: inline-block; }
 			.react-pdf__Page__svg { width: 100% !important; height: 100% !important; overflow: hidden; }
