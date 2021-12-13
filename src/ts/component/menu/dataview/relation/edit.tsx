@@ -4,6 +4,7 @@ import { I, C, M, DataUtil, Util, translate } from 'ts/lib';
 import { Icon, Input, MenuItemVertical, Button } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 interface Props extends I.Menu {
 	history: any;
@@ -51,8 +52,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const opts = (
 			<React.Fragment>
-				{/*isObject ? (
-					<div className="section">
+				{isObject ? (
+					<div className="section noLine">
 						<div className="name">Type of target object</div>
 						<MenuItemVertical 
 							id="object-type" 
@@ -62,10 +63,10 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							arrow={!this.isReadonly()}
 						/>
 					</div>
-				) : ''*/}
+				) : ''}
 
 				{isDate && relation ? (
-					<div className="section">
+					<div className="section noLine">
 						<MenuItemVertical 
 							id="includeTime" 
 							icon="clock" 
@@ -97,7 +98,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 							<Input 
 								ref={(ref: any) => { this.ref = ref; }} 
 								value={relation ? relation.name : ''} 
-								onChange={this.onChange} 
+								onChange={this.onChange}
+								onMouseEnter={this.menuClose}
 							/>
 						</div>
 					) : (
@@ -123,7 +125,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				{opts}
 
 				{!this.isReadonly() ? (
-					<div className="section">
+					<div className="section" onMouseEnter={this.menuClose}>
 						<div className="inputWrap">
 							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
 						</div>
@@ -209,28 +211,37 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	};
 
 	onObjectType (e: any) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+
 		if (this.isReadonly()) {
 			return;
 		};
 
 		const { getId } = this.props;
 		const relation = this.getRelation();
-		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
 
-		this.menuOpen('searchObject', { 
+		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
+			width: 256,
 			data: {
-				placeholder: 'Find a type of object...',
-				label: 'Your object type library',
-				value: value,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Type ] }
-				],
-				onSelect: (item: any) => {
-					this.objectTypes = [ item.id ];
+				rootId,
+				blockId,
+				nameAdd: 'Add object type',
+				placeholderFocus: 'Filter object types...',
+				value: this.objectTypes, 
+				types: [ Constant.typeId.type ],
+				relation: observable.box(relation),
+				valueMapper: (it: any) => {
+					const type = dbStore.getObjectType(it.id);
+					return { ...type, layout: I.ObjectLayout.Type };
+				},
+				onChange: (value: any) => {
+					this.objectTypes = value;
 					this.forceUpdate();
-				}
+				},
 			}
 		});
 	};

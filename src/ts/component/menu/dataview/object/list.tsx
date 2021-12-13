@@ -49,6 +49,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
+		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -96,7 +97,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className="wrap">
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter objects..." 
+					placeholderFocus={placeholderFocus} 
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>
