@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
-import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
+import { I, C, keyboard, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -346,9 +346,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close, getId, setActive } = this.props;
+		const { param, close, getId, setActive, dataset } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, dataset } = data;
+		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { config } = commonStore;
 		
@@ -384,7 +384,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 				blockId: blockId,
 				blockIds: blockIds,
 				rebind: this.rebind,
-				dataset: dataset,
 			},
 		};
 
@@ -599,9 +598,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	moveToPage (type: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId, dataset } = data;
+		const { blockId, rootId } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

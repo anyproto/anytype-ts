@@ -5,11 +5,11 @@ import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } 
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -664,9 +664,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	};
 
 	moveToPage (type: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId, dataset } = data;
+		const { blockId, rootId,  } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

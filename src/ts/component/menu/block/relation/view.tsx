@@ -107,6 +107,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		this.resize();
 		scrollWrap.unbind('scroll').on('scroll', (e: any) => { this.onScroll(); });
+
+		this.selectionPrevent(true);
 	};
 
 	componentDidUpdate () {
@@ -114,6 +116,19 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		
 		if (commonStore.cellId) {
 			$(`#${commonStore.cellId}`).addClass('isEditing');
+		};
+	};
+
+	componentWillUnmount () {
+		this.selectionPrevent(false);
+	};
+
+	selectionPrevent (v: boolean) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		if (selection) {
+			selection.preventSelect(v);
 		};
 	};
 

@@ -5,7 +5,7 @@ import { I, C, Mark, Util, DataUtil, focus, keyboard, analytics, Storage } from 
 import { blockStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -104,9 +104,9 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param, close, getId } = this.props;
+		const { param, close, getId, dataset } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, onChange, dataset, range } = data;
+		const { blockId, blockIds, rootId, onChange, range } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
@@ -135,7 +135,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				rootId: rootId,
 				blockId: blockId,
 				blockIds: blockIds,
-				dataset: dataset,
 			} as any,
 		};
 		

@@ -135,9 +135,9 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, getId, close } = this.props;
+		const { param, getId, close, dataset } = this.props;
 		const { data } = param;
-		const { onSelect, dataset } = data;
+		const { onSelect } = data;
 		const { selection } = dataset || {};
 		
 		close();
