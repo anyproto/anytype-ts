@@ -1028,7 +1028,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const nextId = parentElement.childrenIds[idx - 1];
 			const next = nextId ? blockStore.getLeaf(rootId, nextId) : blockStore.getNextBlock(rootId, block.id, -1);
 			const obj = shift ? parent : next;
-			const canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
+			
+			let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
+			if (parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
+				canTab = false;
+			};
 
 			if (!canTab) {
 				return;
