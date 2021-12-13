@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { InputWithFile, Icon, Loader, Error, Pager } from 'ts/component';
-import { I, C, translate, focus } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { InputWithFile, Loader, Error, Pager } from 'ts/component';
+import { I, C, translate, focus, Util } from 'ts/lib';
+import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
@@ -11,7 +10,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
 interface Props extends I.BlockComponent {}
 
-const $ = require('jquery');
+const { ipcRenderer } = window.require('electron');
+const { app } = window.require('@electron/remote');
+const userPath = app.getPath('userData');
+const path = window.require('path');
 const Constant = require('json/constant.json');
 
 interface State {
@@ -29,6 +31,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 	constructor (props: any) {
 		super(props);
 		
+		this.onOpen = this.onOpen.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -37,10 +40,18 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 	}
 
 	render () {
-		const { block, readonly } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { state, hash, type, mime } = content;		
 		const { page, pages } = this.state;
+
+		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
+		if (object._empty_) {
+			object = Util.objectCopy(content);
+			object.sizeInBytes = object.size;
+		};
+
+		let { name, sizeInBytes } = object;
 
 		let { width } = fields;
 		let element = null;
@@ -78,8 +89,26 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 				break;
 				
 			case I.FileState.Done:
+				if (pages > 1) {
+					pager = (
+						<Pager 
+							offset={page - 1} 
+							limit={1} 
+							total={pages} 
+							pageLimit={1}
+							isShort={true}
+							onChange={(page: number) => { this.setState({ page }); }} 
+						/>
+					);
+				};
+
 				element = (
-					<div className="wrap pdfWrapper" style={css}>
+					<div className={[ 'wrap', 'pdfWrapper', (pager ? 'withPager' : '') ].join(' ')} style={css}>
+						<div className="info" onMouseDown={this.onOpen}>
+							<span className="name">{name}</span>
+							<span className="size">{Util.fileSize(sizeInBytes)}</span>
+						</div>
+
 						<Document
 							file={commonStore.fileUrl(hash)}
 							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
@@ -88,17 +117,9 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 						>
 							<Page pageNumber={page} loading={<Loader />} />
 						</Document>
-					</div>
-				);
 
-				pager = (
-					<Pager 
-						offset={page - 1} 
-						limit={1} 
-						total={pages} 
-						pageLimit={1}
-						onChange={(page: number) => { this.setState({ page }); }} 
-					/>
+						{pager}
+					</div>
 				);
 				break;
 		};
@@ -106,7 +127,6 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		return (
 			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{element}
-				{pager}
 			</div>
 		);
 	};
@@ -144,6 +164,18 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { id } = block;
 		
 		C.BlockUpload(rootId, id, '', path);
+	};
+
+	onOpen (e: any) {
+		const { block } = this.props;
+		const { content } = block;
+		const { hash } = content;
+		
+		C.DownloadFile(hash, path.join(userPath, 'tmp'), (message: any) => {
+			if (message.path) {
+				ipcRenderer.send('pathOpen', message.path);
+			};
+		});
 	};
 });
 

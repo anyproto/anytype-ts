@@ -1029,7 +1029,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const obj = shift ? parent : next;
 			
 			let canTab = obj && !block.isTextTitle() && obj.canHaveChildren() && block.isIndentable();
-			if (parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
+			if (!shift && parentElement.childrenIds.length && (block.id == parentElement.childrenIds[0])) {
 				canTab = false;
 			};
 

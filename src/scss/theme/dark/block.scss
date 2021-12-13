@@ -60,6 +60,8 @@
         .wrap.broken {
             img:before { background: $colorBgLight; }
         }
+
+        .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
     .block.blockMedia.isAudio > .wrapContent { background: $colorHover; }
 

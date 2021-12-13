@@ -152,10 +152,15 @@ html.themeDark {
     .pager {
         .pageItem:hover { color: $colorPrimary; }
         .pageItem.active { color: $colorOrange; }
+        .pageItem.list:hover { color: $colorPrimary; }
 
         .icon.arrow { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
         .icon.arrow:hover { background-image: url('~img/theme/dark/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('~img/theme/dark/arrow/pager0.svg'); }
+
+        .icon.arrow.end { background-image: url('~img/theme/dark/arrow/pagerEnd0.svg'); cursor: pointer; }
+        .icon.arrow.end:hover { background-image: url('~img/theme/dark/arrow/pagerEnd1.svg'); }
+        .icon.arrow.end.disabled:hover { background-image: url('~img/theme/dark/arrow/pagerEnd0.svg'); }
     }
 
     /* Progress */
