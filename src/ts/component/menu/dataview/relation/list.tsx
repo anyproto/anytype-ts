@@ -224,10 +224,18 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onAdd (e: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, onAdd } = data;
+		const { rootId, blockId, getData, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		const menuIdEdit = 'dataviewRelationEdit';
+
+		const onAdd = (message: any) => {
+			getData(getView().id, 0);
+
+			if (data.onAdd) {
+				data.onAdd();
+			};
+		};
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,

@@ -274,6 +274,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					...data,
 					onChange: () => { 
 						close(); 
+						
 						if (onAdd) {
 							onAdd();
 						};

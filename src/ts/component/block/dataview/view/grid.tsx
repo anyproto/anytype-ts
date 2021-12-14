@@ -271,7 +271,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const view = getView();
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,
