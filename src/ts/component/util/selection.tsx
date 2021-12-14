@@ -187,7 +187,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		if (!this._isMounted) {
+		if (e.button || !this._isMounted) {
 			return
 		};
 		
@@ -528,10 +528,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		Util.getScrollContainer(isPopup).unbind('scroll.selection');
 	};
 
-	nameSpace () {
-		return keyboard.isPopup() ? 'Popup' : '';
-	};
-	
 	preventSelect (v: boolean) {
 		this.isSelectionPrevented = v;
 	};
