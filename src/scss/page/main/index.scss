@@ -116,11 +116,10 @@
 			.element:hover { background: rgba(0,0,0,0.15); }
 		}
 
-		.list { display: flex; flex-wrap: wrap; gap: 16px; padding-bottom: 16px; }
 		.list {
 			.item { 
 				width: 208px; height: 124px; background: $colorWhite; border-radius: 12px; display: inline-block; vertical-align: top;
-				padding: 14px 16px; position: relative; cursor: pointer; user-select: none;
+				padding: 14px 16px; position: relative; cursor: pointer; user-select: none; margin: 0px 16px 16px 0px;
 			}
 			
 			.item {

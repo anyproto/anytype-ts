@@ -812,10 +812,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		items.each((i: number, item: any) => {
 			item = $(item);
+
+			const n = i + 1;
 			const icon = item.find('.iconObject');
+
 			if (icon.length) {
 				item.addClass('withIcon');
 			};
+
+			item.css({ marginRight: (n % cnt == 0) ? 0 : '' });
 		});
 
 		this.onScroll();
