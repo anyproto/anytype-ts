@@ -62,7 +62,7 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 };
 
 const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectList.Export.Request();
+	const request = new Rpc.Export.Request();
 
 	request.setPath(path);
 	request.setDocidsList(ids);
