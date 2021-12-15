@@ -6,7 +6,7 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Updates for 14 December, 2021` },
+	{ style: I.TextStyle.Title, text: `Updates for 15 December, 2021` },
 
 	{ style: I.TextStyle.Header2, text: `Features` },
 	{ style: I.TextStyle.Bulleted, text: `All media files can be deleted from your current device. "Clear cache" option is available in "Setting" → "Other settings". They can be downloaded again from a backup node or another device.` },
