@@ -687,7 +687,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						popupStore.open('confirm',{
 							data: {
 								title: 'Files offloaded',
-								text: Util.sprintf('Files: %s, Size: %s', message.files, Util.fileSize(message.bytes)),
+								//text: Util.sprintf('Files: %s, Size: %s', message.files, Util.fileSize(message.bytes)),
 								textConfirm: 'Ok',
 								canCancel: false,
 							}
