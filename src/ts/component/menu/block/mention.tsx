@@ -221,7 +221,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			C.PageCreate({ type: commonStore.type, name: filter.text }, (message: any) => {
+			C.PageCreate({ type: commonStore.type, name: filter.text.replace(/\\/g, '') }, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
