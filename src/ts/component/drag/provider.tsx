@@ -283,9 +283,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		switch (this.type) {
 			default:
 				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+					/*
 					if (selection) {
 						selection.set(this.ids);
 					};
+					*/
 		
 					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
 						blockStore.toggle(rootId, targetId, true);
