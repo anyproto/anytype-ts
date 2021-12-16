@@ -21,8 +21,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `Optimisations to reduce the wait from starting Anytype to reaching the home screen.  <a href="https://community.anytype.io/t/anytype-taking-2-5-minutes-to-get-past-the-logging-in-screen/2859">Thanks, lynxlove, Srinath</a>` },
 
 	{ style: I.TextStyle.Header2, text: `Enhancements` },
-	{ style: I.TextStyle.Bulleted, text: `New users will be shown their keychain phrase during their first session` },
-	{ style: I.TextStyle.Bulleted, text: `⚠️ ⚠️ ⚠️ Please write it down. Please keep it safe.` },
+	{ style: I.TextStyle.Bulleted, text: `New users will be shown their keychain phrase during their first session. ⚠️⚠️⚠️ Please write it down. Please keep it safe.` },
 	{ style: I.TextStyle.Bulleted, text: `Change the view to non-popup when the window's width is smaller than the width of the pop-up. <a herf="https://community.anytype.io/d/969-default-to-non-popup-view-when-windows-width-is-popuppages-width/1">Thanks, triangles</a>` },
 	{ style: I.TextStyle.Bulleted, text: `The <span class="highlight">Done</span> relation will be added to new Sets views by default. ` },
 	{ style: I.TextStyle.Bulleted, text: `<span class="highlight">СTRL / CMD + N</span> now creates a new object inside a Set.` },
