@@ -2,7 +2,7 @@
 
 .pageMainMedia {
 
-	.blocks { margin: 0px auto; padding: 74px 0px 60px 0px; display: flex; }
+	.blocks { margin: 0px auto; padding: 60px 0px; display: flex; }
 	.blocks {
 		.side.right { padding-top: 25px; }
 	}
@@ -41,9 +41,8 @@
 		.descr { @include text-paragraph; word-wrap: break-word; margin-bottom: 10px; }
 		.descr:empty { display: none; }
 
-		.block.blockMedia { padding: 0px; overflow: hidden; border-radius: 6px; background: $colorHover; }
+		.block.blockMedia { padding: 0px; border-radius: 6px; background: $colorHover; }
 		.block.blockMedia {
-			.wrapContent { height: 100%; }
 			.wrap { position: static; overflow: visible; }
 		}
 		.block.blockMedia.isPdf { background: #fff; }
