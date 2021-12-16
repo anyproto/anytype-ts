@@ -108,7 +108,7 @@ class DetailStore {
     get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let list = this.getArray(rootId, id);
 		if (!list.length) {
-			return { _empty_: true };
+			return { id, _empty_: true };
 		};
 		
 		let object: any = {};

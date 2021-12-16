@@ -119,6 +119,7 @@
 
      .menu.menuDataviewRelationEdit {
         .input { border-color: $colorLinePrimary; }
+        .item:hover::before { background: $colorHover; }
     }
 
     /* MenuDataviewText */

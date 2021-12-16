@@ -52,7 +52,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					{item.id == 'add' ? (
 						<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 							<Icon className="plus" />
-							<div className="name">Add object</div>
+							<div className="name">{item.name}</div>
 						</span>
 					) : (
 						<React.Fragment>
@@ -121,17 +121,21 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
+		const { rootId, valueMapper, nameAdd } = data;
 
 		let value: any[] = DataUtil.getRelationArrayValue(data.value);
 		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
-		value = value.filter((it: any) => { return !it._empty_; });
 		
+		if (valueMapper) {
+			value = value.map(valueMapper);
+		};
+
+		value = value.filter((it: any) => { return !it._empty_; });
 		if (!config.debug.ho) {
 			value = value.filter((it: any) => { return !it.isHidden; });
 		};
 
-		value.unshift({ id: 'add' });
+		value.unshift({ id: 'add', name: (nameAdd || 'Add object') });
 		return value;
 	};
 
@@ -151,7 +155,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 	onAdd () {
 		const { param, getId, getSize, close } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
@@ -161,6 +165,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
+			className: className,
 			classNameWrap: classNameWrap,
 			data: {
 				...data,
@@ -177,7 +182,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		
 		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.filter((it: any) => { return it != item.id; });
-		value = DataUtil.formatRelationValue(relation, value, true);
+		
+		if (relation) {
+			value = DataUtil.formatRelationValue(relation, value, true);
+		};
 
 		this.n = -1;
 
