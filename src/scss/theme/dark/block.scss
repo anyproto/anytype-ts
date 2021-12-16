@@ -37,6 +37,12 @@
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
     }
 
+    /* BlockFile */
+
+    .block.blockFile {
+        .loaderWrapper { border: 0px; }
+    }
+
     /* BlockMedia */
 
     .block.blockMedia {
