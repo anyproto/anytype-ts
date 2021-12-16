@@ -76,8 +76,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
 				const record = detailStore.get(rootId, rootId, [ item.relationKey ]);
 
-				console.log(item.relationKey, record);
-
 				content = (
 					<div 
 						id={'item-' + item.id}
