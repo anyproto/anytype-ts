@@ -175,7 +175,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			this.ref.setValue(filter);
 		};
 
-		this.unbind();
+		this.rebind();
 		this.checkButton();
 		this.focus();
 	};
@@ -189,8 +189,19 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.menuClose();
 	};
 
+	rebind () {
+		const { getId } = this.props;
+
+		this.unbind();
+
+		$(`#${getId()}`).on('click.menu', () => { this.menuClose(); });
+	};
+
 	unbind () {
+		const { getId } = this.props;
+
 		$(window).unbind('keydown.menu');
+		$(`#${getId()}`).unbind('click.menu');
 	};
 
 	focus () {
