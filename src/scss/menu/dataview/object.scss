@@ -14,6 +14,14 @@
 		.label { color: $colorMediumGrey; @include text-common; padding: 0px 16px; }
 	}
 
+	.menu.menuDataviewObjectList.single { width: 256px; }
+	.menu.menuDataviewObjectList.single {
+		.item {
+			.name { margin: 0px; }
+			.caption { display: none; }
+		}
+	}
+
 	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
 		.content { padding: 0px; max-height: 280px; }

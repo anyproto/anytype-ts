@@ -537,6 +537,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	set (ids: string[]) {
+		console.trace();
+
 		if (!this._isMounted) {
 			return;
 		};

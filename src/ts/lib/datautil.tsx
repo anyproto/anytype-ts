@@ -503,7 +503,9 @@ class DataUtil {
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
-		details.type = details.type || commonStore.type;
+		if (!templateId) {
+			details.type = details.type || commonStore.type;
+		};
 		
 		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {

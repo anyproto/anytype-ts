@@ -31,6 +31,12 @@
 		.item.disabled { cursor: default; opacity: 1 !important; }
 		.item.disabled:hover::before { opacity: 0; }
 
+		.item.withCaption {
+			.caption { 
+				@include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible;
+			}
+		}
+
 		.icon.lock { margin-right: 6px; }
 		
 		.icon.arrow { 

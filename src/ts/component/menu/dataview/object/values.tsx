@@ -179,17 +179,21 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
-		const { subId } = data;
+		const { rootId, subId, valueMapper, nameAdd } = data;
 
 		let value: any[] = DataUtil.getRelationArrayValue(data.value);
 		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
-		value = value.filter((it: any) => { return !it._empty_; });
 
+		if (valueMapper) {
+			value = value.map(valueMapper);
+		};
+
+		value = value.filter((it: any) => { return !it._empty_; });
 		if (!config.debug.ho) {
 			value = value.filter((it: any) => { return !it.isHidden; });
 		};
 
-		value.unshift({ id: 'add', name: 'Add object' });
+		value.unshift({ id: 'add', name: (nameAdd || 'Add object') });
 		return value;
 	};
 
@@ -209,7 +213,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 	onAdd () {
 		const { param, getId, getSize, close } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
@@ -219,6 +223,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
+			className: className,
 			classNameWrap: classNameWrap,
 			data: {
 				...data,
@@ -235,7 +240,10 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		
 		let value = DataUtil.getRelationArrayValue(data.value);
 		value = value.filter((it: any) => { return it != item.id; });
-		value = DataUtil.formatRelationValue(relation, value, true);
+		
+		if (relation) {
+			value = DataUtil.formatRelationValue(relation, value, true);
+		};
 
 		this.n = -1;
 
