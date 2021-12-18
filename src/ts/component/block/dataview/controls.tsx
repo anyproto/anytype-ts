@@ -84,7 +84,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					/>
 				))}
 
-				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -197,6 +197,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		menuStore.open('dataviewViewEdit', {
 			element: `#button-view-add`,
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
@@ -222,18 +223,20 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onViewEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
 			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
 				readonly: !allowed,
 				view: observable.box(item),
 				getView: getView,
+				getData: getData,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});
@@ -256,7 +259,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const views = node.find('#views');
 		const sideLeft = node.find('#sideLeft');
 
-		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
 		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 

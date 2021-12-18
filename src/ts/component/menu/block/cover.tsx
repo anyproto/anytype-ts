@@ -117,7 +117,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
-		const object = detailStore.get(rootId, rootId, [ 'coverId' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		if (!object.coverId) {
 			this.props.close();

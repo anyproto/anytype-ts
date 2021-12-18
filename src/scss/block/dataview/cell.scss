@@ -51,6 +51,11 @@
 	}
 }
 
+.cellContent.c-checkbox {
+	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+	.icon.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+}
+
 .cellContent.c-file {
 	.inputWithFile { border: 0px; padding: 0px; display: none; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
@@ -104,7 +109,9 @@
 .cellContent.canEdit.c-phone, 
 .cellContent.canEdit.c-email, 
 .cellContent.canEdit.c-date { cursor: text; }
-.cellContent.canEdit.c-checkbox { cursor: pointer; }
+
+.cellContent.canEdit.c-checkbox,
+.cellContent.canEdit.c-select { cursor: pointer; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
 	a { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; }

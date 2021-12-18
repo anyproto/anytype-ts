@@ -185,7 +185,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 			value = value || DataUtil.defaultName('page');
 			if (record.layout == I.ObjectLayout.Note) {
-				value = record.snippet || '<span class="emptyText">Empty</span>';
+				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
 
 			content = (
@@ -198,7 +198,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 							onCheckbox={this.onCheckbox}
 							size={size} 
 							iconSize={is}
-							canEdit={canEdit} 
+							canEdit={!record.isReadonly} 
 							offsetY={4} 
 							object={record} 
 						/>
@@ -337,7 +337,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 					menuStore.closeAll(Constant.menuIds.cell);
 
 					this.range = null;
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				});
 			};
 		});
@@ -381,14 +381,14 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			value = this.fixDateValue(value);
 		} else 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
-			this.setState({ isEditing: false });
+			this.setEditing(false);
 			return;
 		};
 
 		if (onChange) {
 			onChange(value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				};
 			});
 		};

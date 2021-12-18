@@ -25,10 +25,10 @@ const Text = require('json/text.json');
 const lang = Storage.get('lang') || Constant.default.lang;
 
 const translate = (key: string): string => {
-	if (!Text[key]) {
+	if (undefined === Text[key]) {
 		return `*No key: ${key}*`;
 	};
-	if (!Text[key][lang]) {
+	if (undefined === Text[key][lang]) {
 		return `*No ${lang}: ${key}*`;
 	};
 	return Text[key][lang];

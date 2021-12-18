@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; padding-bottom: 1px; }
+		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
 
 		.placeholder { display: none; }
 
@@ -58,7 +58,7 @@
 		italic { font-style: italic; }
 		strike { text-decoration: line-through; }
 		
-		.markers { white-space: nowrap; }
+		.markers { display: flex; }
 		.markers {
 			.marker { 
 				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
@@ -87,7 +87,7 @@
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
 
 	.block.blockText.isReadonly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
-	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 44px; }
+	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
@@ -185,6 +185,7 @@
 .editorWrapper.isTask {
 	.blocks .block.blockText.title { @include text-header1; }
 	.blocks .block.blockText.title {
-		.marker { margin: 3px 12px 0px 0px; }
+		.flex { gap: 0px 8px; }
+		.marker { width: 30px; height: 30px; margin: 0px; }
 	}
 }

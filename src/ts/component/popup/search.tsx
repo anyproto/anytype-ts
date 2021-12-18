@@ -13,7 +13,6 @@ interface State {
 	pageId: string;
 	loading: boolean;
 	filter: string;
-	pages: any[];
 	n: number;
 };
 
@@ -30,7 +29,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		pageId: '',
 		loading: false,
 		filter: '',
-		pages: [] as any[],
 		n: 0,
 	};
 	ref: any = null;
@@ -40,6 +38,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	cache: any = null;
 	focus: boolean = false;
 	select: boolean = false;
+	records: any[] = [];
 	
 	constructor (props: any) {
 		super (props);
@@ -65,17 +64,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			</div>
 		);
 
-		let iconHome = (
-			<div className="iconObject c20">
-				<div className="iconEmoji c18">
-					<Icon className="home" />
-				</div>
-			</div>
-		);
-
 		const Item = (item: any) => {
-			let type = dbStore.getObjectType(item.type);
-			let description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
+			const type = dbStore.getObjectType(item.type);
+			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
 				<div 
@@ -84,14 +75,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					onMouseOver={(e: any) => { this.onOver(e, item); }} 
 					onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
+					<IconObject object={item} size={18} />
 					
 					<ObjectName object={item} />
 
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
+							<div className="type">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 
@@ -188,10 +179,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const { data } = param;
 		const { rootId, disableFirstKey } = data;
 
-		this.disableFirstKey = Boolean(disableFirstKey);
-		this._isMounted = true;
-
 		crumbs.addPage(rootId);
+
+		this._isMounted = true;
+		this.disableFirstKey = Boolean(disableFirstKey);
 		this.focus = true;
 		this.select = true;
 
@@ -201,6 +192,8 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.resize();
 
 		focus.clear(true);
+
+		$('#header').addClass('active');
 	};
 	
 	componentDidUpdate (prevProps: any, prevState: any) {
@@ -235,8 +228,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
+		$('#header').removeClass('active');
 	};
 
 	rebind () {
@@ -386,12 +381,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	load () {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		
-		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.Video ];
+		const skipTypes = [
+			Constant.typeId.file,
+			Constant.typeId.image,
+			Constant.typeId.video,
+			Constant.typeId.audio,
+		];
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -413,33 +412,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.ref.focus();
 			};
 			
-			const pages = message.records;
-			this.setState({ pages: pages, loading: false });
+			this.records = message.records;
+			this.setState({ loading: false });
 		});
 	};
 
 	getItems () {
-		const { root } = blockStore;
-		const pages = Util.objectCopy(this.state.pages);
-		const recent = crumbs.get(I.CrumbsType.Recent).ids;
-
-		for (let page of pages) {
-			page.order = recent.findIndex((id: string) => { return id == page.id; });
-		};
-
-		pages.sort((c1: any, c2: any) => {
-			if (c1.order > c2.order) return -1;
-			if (c2.order < c1.order) return 1;
-			return 0;
-		});
-
-		return pages.map((it: any) => {
-			return { 
-				...it, 
-				isRoot: it.id == root, 
-				name: String(it.name || '') 
-			};
-		});
+		return this.records;
 	};
 
 	filterMapper (it: any) {

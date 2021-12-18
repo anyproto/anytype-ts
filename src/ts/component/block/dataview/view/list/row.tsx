@@ -24,6 +24,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 		});
 		const idPrefix = 'dataviewCell';
 		const { hideIcon } = view;
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		return (
 			<div className="row" style={style}>
@@ -35,6 +36,7 @@ const Row = observer(class Row extends React.Component<Props, {}> {
 							elementId={id}
 							ref={(ref: any) => { onRef(ref, id); }} 
 							{...this.props}
+							subId={subId}
 							relationKey={relation.relationKey}
 							viewType={I.ViewType.List}
 							idPrefix={idPrefix}

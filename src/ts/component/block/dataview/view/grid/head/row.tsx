@@ -24,6 +24,11 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Relation ]);
+
+		// Subscriptions
+		relations.forEach((it: any) => {
+			const { width } = it;
+		});
 		
 		const Row = SortableContainer((item: any) => (
 			<div className="rowHead">

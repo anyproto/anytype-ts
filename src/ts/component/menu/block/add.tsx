@@ -5,11 +5,11 @@ import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } 
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -74,6 +74,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			} else
 			if (item.isRelation) {
 				const id = DataUtil.cellId(idPrefix, item.relationKey, '0');
+				const record = detailStore.get(rootId, rootId, [ item.relationKey ]);
 
 				content = (
 					<div 
@@ -92,10 +93,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 						>
 							<Cell 
 								rootId={rootId}
+								subId={rootId}
 								storeId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return detailStore.get(rootId, rootId, [ item.relationKey ], true); }}
+								getRecord={() => { return record; }}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}
@@ -320,6 +322,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
 			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
 			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
+			{ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() },
 			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
 
@@ -566,6 +569,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					param.content.key = item.relationKey;
 				};
 
+				if (item.type == I.BlockType.Dataview) {
+					param.content.views = [
+						{ 
+							name: item.name,
+							type: item.itemId,
+						}
+					];
+				};
+
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, onCommand);
 				} else 
@@ -650,9 +662,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	};
 
 	moveToPage (type: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId, dataset } = data;
+		const { blockId, rootId,  } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

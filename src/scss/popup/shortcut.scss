@@ -24,10 +24,10 @@
 				.name { @include text-paragraph; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid $colorLightGrey; }
 
 				.items {
-					.item { display: flex; padding: 12px 0px; border-bottom: 1px solid $colorLightGrey; }
+					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid $colorLightGrey; }
 					.item {
-						.key { width: 180px; font-weight: 500; color: $colorMediumGrey; }
-						.descr { width: calc(100% - 180px); }
+						.key { flex-basis: 180px; flex-shrink: 0; font-weight: 500; color: $colorMediumGrey; }
+						.descr { flex: 1; padding-left: 14px; }
 					}
 				}
 			}

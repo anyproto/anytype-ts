@@ -651,7 +651,14 @@ class Util {
 		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
 			icon = 'presentation';
 		};
-		
+
+		for (let k in Constant.extension) {
+			if (Constant.extension[k].indexOf(e) >= 0) {
+				icon = k;
+				break;
+			};
+		};
+
 		if (!icon && t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
@@ -924,6 +931,16 @@ class Util {
 		return { page, action };
 	};
 
+	route (route: string, replace?: boolean) {
+		const method = replace ? 'replace' : 'push';
+
+		this.tooltipHide(true);
+		this.previewHide(true);
+
+		menuStore.closeAll();
+		popupStore.closeAll(null, () => { this.history[method](route); });
+	};
+
 	intercept (obj: any, change: any) {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
@@ -1015,14 +1032,6 @@ class Util {
 		return array.reduce((prev: number, curr: number) => {
 			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
 		});
-	};
-
-	route (route: string) {
-		this.tooltipHide(true);
-		this.previewHide(true);
-
-		menuStore.closeAll();
-		popupStore.closeAll(null, () => { this.history.push(route); });
 	};
 
 };

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted } from 'ts/component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
+import { I, M, C, DataUtil, Util, crumbs, Action, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {

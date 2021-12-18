@@ -29,13 +29,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 	};
 
 	render () {
-		const { rootId, block, getData, getView, readonly, onRowAdd, isPopup } = this.props;
+		const { rootId, block, getView, readonly, onRowAdd, isPopup } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const data = dbStore.getData(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.Object ]);
-		const length = data.length;
+		const length = records.length;
 
 		return (
 			<div className="wrap">
@@ -56,7 +56,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 															height={Number(height) || 0}
 															width={Number(width) || 0}
 															isScrolling={isScrolling}
-															rowCount={data.length}
+															rowCount={length}
 															rowHeight={HEIGHT}
 															rowRenderer={({ key, index, style }) => (
 																<BodyRow 
@@ -146,8 +146,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const ww = $(bodyContainer).width();
 		const mw = ww - PADDING * 2;
-		const data = dbStore.getData(rootId, block.id);
-		const length = data.length;
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
+		const length = records.length;
 
 		let vw = 0;
 		let margin = 0;
@@ -270,7 +271,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, {}> {
 
 	onCellAdd (e: any) {
 		const { rootId, block, readonly, getData, getView } = this.props;
-		const view = getView();
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#cell-add`,

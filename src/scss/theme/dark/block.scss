@@ -37,6 +37,12 @@
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
     }
 
+    /* BlockFile */
+
+    .block.blockFile {
+        .loaderWrapper { border: 0px; }
+    }
+
     /* BlockMedia */
 
     .block.blockMedia {
@@ -74,6 +80,9 @@
         .dataviewControls {
             .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
+            .viewItem {
+                .icon.arrow { background-image: url('~img/theme/dark/arrow/view.svg'); }
+            }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
             .viewItem.isDragging { background: $colorHover; }
 
@@ -116,7 +125,7 @@
         .viewItem.viewGallery {
             .card { background: $colorBlack; border-color: $colorLinePrimary; }
             .card {
-                .cover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; background-color: $colorBgIcon; }
+                .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
 
             .cellContent.isName { color: $colorPrimary; }
@@ -178,6 +187,8 @@
     /* BlockLatex */
 
     .block.blockLatex {
+        .select { color: $colorPrimary; }
+        .wrap.isEditing { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
         #input { background: $colorBgIcon; }
     }
 

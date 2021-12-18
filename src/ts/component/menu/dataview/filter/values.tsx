@@ -43,6 +43,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return null;
 		};
 
+		const subId = dbStore.getSubId(rootId, blockId);
 		const item = view.getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
@@ -133,9 +134,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { 
-					return detailStore.get(rootId, it, []); 
-				})
+				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); })
 				list = list.filter((it: any) => { return !it._empty_; });
 
 				value = (
@@ -332,6 +331,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			offsetX: getSize().width,
 			offsetY: -36,
 			isSub: true,
+			noFlipY: true,
 			data: {
 				rebind: this.rebind,
 				value: item[key],

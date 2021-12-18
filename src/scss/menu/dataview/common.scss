@@ -25,8 +25,6 @@
 
     .menu.menuDataviewFilterList,
     .menu.menuDataviewSort {
-		.item.add:hover::before { background: $colorHover; }
-
 		.item {
             .icon.dnd { vertical-align: top; height: 40px; background-size: 20px; margin: 0px; }
             .icon.relation { margin-right: 4px; }

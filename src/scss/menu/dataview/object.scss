@@ -24,7 +24,7 @@
 
 	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
-		.content { max-height: 280px; }
+		.content { padding: 0px; max-height: 280px; }
 
 		.item { padding: 4px 16px 4px 10px; }
 		.item {
@@ -44,7 +44,6 @@
 		.item.add {
 			.clickable { width: 100%; display: block; }
 		}
-		.item.add:hover::before { background: $colorHover; }
 	}
 
 	.menu.menuDataviewObjectValues.fromFilter {

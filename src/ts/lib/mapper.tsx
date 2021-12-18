@@ -155,7 +155,7 @@ const Mapper = {
 	
 			if (type == I.BlockType.Dataview) {
 				item.content = {
-					//sources: content.getSourceList(),
+					sources: content.getSourceList(),
 					views: (content.getViewsList() || []).map(Mapper.From.View),
 					relations: (content.getRelationsList() || []).map(Mapper.From.Relation),
 				};
@@ -345,6 +345,7 @@ const Mapper = {
 				description: obj.getDescription(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
+				isHidden: obj.getHidden(),
             };
         },
 
@@ -355,6 +356,7 @@ const Mapper = {
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				description: obj.getDescription(),
+				snippet: obj.getSnippet(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
 				done: obj.getDone(),
@@ -495,6 +497,14 @@ const Mapper = {
 				content.setText(obj.content.text);
 	
 				block.setLatex(content);
+			};
+
+			if (obj.type == I.BlockType.Dataview) {
+				content = new Model.Block.Content.Dataview();
+	
+				content.setViewsList(obj.content.views.map(Mapper.To.View));
+	
+				block.setDataview(content);
 			};
 
 			return block;

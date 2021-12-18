@@ -7,8 +7,21 @@ importScripts('d3/d3-selection.min.js');
 importScripts('d3/d3-force.min.js');
 
 // CONSTANTS
-const baseFontFamily = 'Helvetica';
-const baseFontStyle = `3px ${baseFontFamily}`;
+
+const fontFamily = 'Helvetica';
+const font = `3px ${fontFamily}`;
+const fontBig = `20px ${fontFamily}`;
+const fontItalic = `italic ${font}`;
+
+const ObjectLayout = {
+	Human:	 1,
+	Task:	 2,
+};
+
+const EdgeType = {
+	Link:		 0,
+	Relation:	 1,
+};
 
 let offscreen = null;
 let canvas = null;
@@ -26,6 +39,7 @@ let simulation = null;
 let theme = '';
 let Color = {};
 let LineWidth = 0.25;
+let frame = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -44,6 +58,8 @@ init = (data) => {
 	offscreen = new OffscreenCanvas(250, 40);
 	octx = offscreen.getContext('2d');
 
+	ctx.lineCap = 'round';
+
 	initColor();
 	resize(data);
 
@@ -59,7 +75,7 @@ init = (data) => {
 
 		octx.save();
 		octx.clearRect(0, 0, 250, 40);
-		octx.font = `20px ${baseFontFamily}`;
+		octx.font = fontBig;
 		octx.fillStyle = Color.text;
 		octx.textAlign = 'center';
 		octx.fillText(d.shortName, 125, 20);
@@ -181,10 +197,10 @@ draw = () => {
 	ctx.scale(transform.k, transform.k);
 
 	edges.forEach(d => {
-		if (!forceProps.links && (d.type == 0)) {
+		if (!forceProps.links && (d.type == EdgeType.Link)) {
 			return;
 		};
-		if (!forceProps.relations && (d.type == 1)) {
+		if (!forceProps.relations && (d.type == EdgeType.Relation)) {
 			return;
 		};
 
@@ -203,11 +219,11 @@ draw = () => {
 };
 
 redraw = () => {
-	requestAnimationFrame(draw);
+	cancelAnimationFrame(frame);
+	frame = requestAnimationFrame(draw);
 };
 
 drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
-	let source = nodes.find(it => it.id == d.source.id);
 	let x1 = d.source.x;
 	let y1 = d.source.y;
 	let r1 = d.source.radius + 3;
@@ -221,7 +237,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = 0.2;
 	};
 
-	if (source.isOver) {
+	if (d.source.isOver) {
 		bg = Color.link.over;
 	};
 
@@ -235,7 +251,6 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	let mx = (x1 + x2) / 2;  
     let my = (y1 + y2) / 2;
 
-	ctx.lineCap = 'round';
 	ctx.lineWidth = LineWidth;
 	ctx.strokeStyle = bg;
 	ctx.beginPath();
@@ -271,7 +286,7 @@ drawLine = (d, aWidth, aLength, arrowStart, arrowEnd) => {
 	if (d.name && forceProps.labels && (transform.k > 1.5)) {
 		ctx.save();
 		ctx.translate(mx, my);
-		ctx.font = `italic ${baseFontStyle}`;
+		ctx.font = fontItalic;
 
 		const metrics = ctx.measureText(d.name);
 		const left = metrics.actualBoundingBoxLeft * -1;
@@ -320,7 +335,7 @@ drawNode = (d) => {
 		ctx.globalAlpha = 0.4;
 	};
 
-	if (isCustomIconLayoutType(d)) {
+	if (isIconCircle(d)) {
 		ctx.beginPath();
 		ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 		ctx.closePath();
@@ -353,7 +368,7 @@ drawNode = (d) => {
 			x = d.x - d.radius;
 			y = d.y - d.radius;
 	
-			if (isCustomIconLayoutType(d)) {
+			if (isIconCircle(d)) {
 				ctx.beginPath();
 				ctx.arc(d.x, d.y, d.radius, 0, 2 * Math.PI, true);
 				ctx.closePath();
@@ -378,7 +393,7 @@ drawNode = (d) => {
 	
 		ctx.drawImage(img, 0, 0, img.width, img.height, x, y, w, h);
 	} else 
-	if (isHumanLayoutType(d)) {
+	if (isLayoutHuman(d)) {
 		nameCircleIcon(d);
 	};
 
@@ -457,7 +472,7 @@ onMouseMove = ({ x, y }) => {
 	};
 
 	redraw();
-	this.postMessage({ id: 'onMouseMove', node: d, x: x, y: y });
+	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x: x, y: y });
 };
 
 resize = (data) => {
@@ -468,7 +483,7 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
-	ctx.font = baseFontStyle;
+	ctx.font = font;
 };
 
 onResize = (data) => {
@@ -476,31 +491,26 @@ onResize = (data) => {
 	redraw();
 };
 
-// Graph utils
+// Utils
 
-// 1 - Human layout type
-const isHumanLayoutType = (d) => {
-	return d.layout === 1;
+const isLayoutHuman = (d) => {
+	return d.layout === ObjectLayout.Human;
 };
 
-// 2 - Task layout type
-const isTaskLayoutType = (d) => {
-	return d.layout === 2;
+const isLayoutTask = (d) => {
+	return d.layout === ObjectLayout.Task;
 };
 
-const isCustomIconLayoutType = (d) => {
-	return isHumanLayoutType(d) || isTaskLayoutType(d);
+const isIconCircle = (d) => {
+	return isLayoutHuman(d) || isLayoutTask(d);
 };
 
 const nameCircleIcon = (d) => {
-	// Get First upper char
-	const name = d.name.trim().substr(0, 1).toUpperCase();
-	
 	ctx.save();
-	ctx.font = baseFontStyle;  
+	ctx.font = font;  
 	ctx.fillStyle = Color.iconText;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(name, d.x, d.y);
+	ctx.fillText(d.letter, d.x, d.y);
 	ctx.restore();
 };

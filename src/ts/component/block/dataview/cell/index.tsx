@@ -57,6 +57,7 @@ class Cell extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const canEdit = this.canEdit();
 
 		let check = DataUtil.checkRelationValue(relation, record[relation.relationKey]);
@@ -73,7 +74,7 @@ class Cell extends React.Component<Props, {}> {
 			(!check ? 'isEmpty' :  ''),
 		];
 
-		let CellComponent: React.ReactType<Props>;
+		let CellComponent: any = null;
 		switch (relation.format) {
 			default:
 			case I.RelationType.ShortText:
@@ -107,10 +108,14 @@ class Cell extends React.Component<Props, {}> {
 				break;
 		};
 		
-		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
-
 		return (
-			<div id={elementId} className={cn.join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div 
+				id={elementId} 
+				className={cn.join(' ')} 
+				onClick={onClick} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 				<CellComponent 
 					ref={(ref: any) => { this.ref = ref; }} 
 					{...this.props} 
@@ -146,7 +151,7 @@ class Cell extends React.Component<Props, {}> {
 	onClick (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, optionCommand, cellPosition, placeholder } = this.props;
+		const { rootId, subId, block, index, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, optionCommand, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(index);
 		const { config } = commonStore;
@@ -193,11 +198,6 @@ class Cell extends React.Component<Props, {}> {
 		};
 
 		let setOff = () => {
-			if (menuId) {
-				keyboard.disableBlur(false);
-				$(bodyContainer).removeClass('overMenu');
-			};
-
 			if (this.ref) {
 				if (this.ref.onBlur) {
 					this.ref.onBlur();
@@ -209,6 +209,13 @@ class Cell extends React.Component<Props, {}> {
 
 			$(`#${cellId}`).removeClass('isEditing');
 			commonStore.cellId = '';
+
+			if (menuId) {
+				window.setTimeout(() => {
+					keyboard.disableBlur(false);
+					$(bodyContainer).removeClass('overMenu');
+				}, Constant.delay.menu);
+			};
 		};
 
 		let ret = false;
@@ -224,17 +231,18 @@ class Cell extends React.Component<Props, {}> {
 			onClose: setOff,
 			data: { 
 				rootId: rootId,
+				subId: subId,
 				blockId: block.id,
 				value: value, 
 				relation: observable.box(relation),
 				record: record,
 				optionCommand: optionCommand,
 				placeholder: placeholder,
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (this.ref && this.ref.onChange) {
 						this.ref.onChange(value);
 					};
-					this.onChange(value);
+					this.onChange(value, callBack);
 				},
 			},
 		};
@@ -407,13 +415,15 @@ class Cell extends React.Component<Props, {}> {
 	onChange (value: any, callBack?: (message: any) => void) {
 		const { onCellChange, index, getRecord } = this.props;
 		const relation = this.getRelation();
-		if (!relation) {
+		const record = getRecord(index);
+
+		if (!relation || !record) {
 			return null;
 		};
 
-		const record = getRecord(index);
-		if (record && onCellChange) {
-			onCellChange(record.id, relation.relationKey, DataUtil.formatRelationValue(relation, value, true), callBack);
+		value = DataUtil.formatRelationValue(relation, value, true);
+		if (onCellChange) {
+			onCellChange(record.id, relation.relationKey, value, callBack);
 		};
 	};
 
@@ -451,7 +461,7 @@ class Cell extends React.Component<Props, {}> {
 		const relation = this.getRelation();
 		const record = getRecord(index);
 
-		if (!relation || readonly || relation.isReadonlyValue || record.isReadonly) {
+		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
 		if (relation.format == I.RelationType.Checkbox) {

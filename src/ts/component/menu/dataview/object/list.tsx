@@ -10,7 +10,7 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -301,9 +301,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 			data.value = value;
 
-			menuStore.updateData(MENU_ID, { value: value });
-			onChange(value);
-			position();
+			onChange(value, () => {
+				menuStore.updateData(MENU_ID, { value: value });
+				position();
+			});
 		};
 
 		if (item.id == 'add') {

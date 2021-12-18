@@ -278,6 +278,26 @@ const ObjectSearch = (response: any) => {
 	};
 };
 
+const ObjectSearchSubscribe = (response: any) => {
+	const counters = response.getCounters();
+	return {
+		counters: {
+			total: counters.getTotal(),
+			nextCount: counters.getNextcount(),
+			prevCount: counters.getPrevcount(),
+		},
+		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
+	};
+};
+
+const ObjectIdsSubscribe = (response: any) => {
+	return {
+		records: (response.getRecordsList() || []).map(Decode.decodeStruct),
+		dependencies: (response.getDependenciesList() || []).map(Decode.decodeStruct),
+	};
+};
+
 const ObjectGraph = (response: any) => {
 	return {
 		edges: (response.getEdgesList() || []).map(Mapper.From.GraphEdge),
@@ -400,6 +420,8 @@ export {
 	ObjectTypeRelationAdd,
 
 	ObjectSearch,
+	ObjectSearchSubscribe,
+	ObjectIdsSubscribe,
 	ObjectGraph,
 	ObjectRelationAdd,
 	ObjectRelationListAvailable,

@@ -181,13 +181,15 @@ html.themeDark {
 
     /* IconObject */
 
-    .iconObject.c56 { background-color: $colorBgIcon; }
-    .iconObject.c64 { background-color: $colorBgIcon; }
-    .iconObject.c96 { background-color: $colorBgIcon; }
-    .iconObject.c112 { background-color: $colorBgIcon; }
-    .iconObject.c128 { background-color: $colorBgIcon; }
-    .iconObject.c40.isRelation, .iconObject.c48.isRelation { background-color: $colorBgIcon; }
-    .iconObject.withLetter { background-color: $colorBgIcon; }
+    .iconObject.c40.isRelation, 
+    .iconObject.c48.isRelation,
+    .iconObject.c56, 
+    .iconObject.c64, 
+    .iconObject.c96,
+    .iconObject.c112,
+    .iconObject.c128,
+    .iconObject.withLetter
+    { background-color: $colorBgIcon; }
 
     /* EditorControls */
 

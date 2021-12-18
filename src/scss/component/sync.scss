@@ -2,13 +2,10 @@
 
 .sync {
 	background: $colorVeryLightGrey; border-radius: 4px; @include text-small; padding: 0px 6px; display: inline-block; vertical-align: middle;
-	color: $colorMediumGrey; white-space: nowrap;
+	color: $colorMediumGrey; white-space: nowrap; height: 18px; display: flex; align-items: center; gap: 0px 4px;
 }
 .sync {
-	.bullet { 
-		width: 8px; height: 8px; border-radius: 100%; display: inline-block; vertical-align: middle; margin: -2px 4px 0px 0px; 
-		background: $colorLightGrey;
-	}
+	.bullet { width: 8px; height: 8px; border-radius: 100%; background: $colorLightGrey; }
 	.bullet.green { background: $colorGreen; }
 	.bullet.orange { background: $colorOrange; }
 	.bullet.red { background: $colorRed; }

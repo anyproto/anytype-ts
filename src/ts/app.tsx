@@ -170,7 +170,7 @@ const rootStore = {
 };
 
 console.log('[OS Version]', process.getSystemVersion());
-console.log('[APP Version]', version, 'isPackaged', app.isPackaged);
+console.log('[APP Version]', version, 'isPackaged', app.isPackaged, 'Arch', process.arch);
 
 /*
 enableLogging({
@@ -214,12 +214,10 @@ declare global {
 
 window.Store = rootStore;
 window.Cmd = C;
-window.Util = Util;
 window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
 window.Go = (route: string) => { Util.route(route); };
-window.Graph = {};
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 
@@ -383,7 +381,7 @@ class App extends React.Component<Props, State> {
 
 					if (value) {
 						authStore.phraseSet(value);
-						Util.route('/auth/setup/init');
+						Util.route('/auth/setup/init', true);
 					} else {
 						Storage.logout();
 					};

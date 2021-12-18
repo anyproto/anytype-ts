@@ -52,10 +52,9 @@
 
 	.side.center { width: 40%; height: 28px; left: 50%; margin-left: -20%; white-space: nowrap; }
 
-	.side.right { right: 10px; z-index: 1; }
+	.side.right { right: 10px; z-index: 1; display: flex; align-items: center; gap: 0px 16px; }
 	.side.right {
-		.sync { margin: 5px 16px 0px 0px; cursor: pointer; vertical-align: top; }
-		.icon { margin: 0px; }
+		.sync { cursor: pointer; vertical-align: top; }
 	}
 }
 
