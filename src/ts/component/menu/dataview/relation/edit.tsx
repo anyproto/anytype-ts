@@ -42,6 +42,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const isObject = this.format == I.RelationType.Object;
 		const allowed = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+		const isReadonly = this.isReadonly();
 
 		let opts = null;
 		let typeProps: any = { name: 'Select object type' };
@@ -65,20 +66,22 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			if (typeProps.caption) {
 				typeProps.withCaption = true;
 			};
-		};
 
-		if (isObject && !this.isReadonly()) {
 			opts = (
 				<div className="section noLine">
 					<div className="name">Type of target object</div>
 					<MenuItemVertical 
 						id="object-type" 
 						onMouseEnter={this.onObjectType} 
-						arrow={!this.isReadonly()}
+						arrow={!isReadonly}
 						{...typeProps}
 					/>
 				</div>
 			);
+
+			if (isReadonly && !objectType) {
+				opts = null;
+			};
 		};
 
 		if (isDate && relation) {
@@ -109,7 +112,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			<form onSubmit={this.onSubmit}>
 				<div className="section">
 					<div className="name">Relation name</div>
-					{!this.isReadonly() ? (
+					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
 								ref={(ref: any) => { this.ref = ref; }} 
@@ -126,13 +129,13 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					)}
 				</div>
 
-				<div className={[ 'section', (!opts && !this.isReadonly() ? 'noLine' : '') ].join(' ')}>
+				<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
 						icon={'relation ' + DataUtil.relationClass(this.format)} 
 						name={translate('relationName' + this.format)} 
-						readonly={this.isReadonly()}
+						readonly={isReadonly}
 						onMouseEnter={this.onRelationType} 
 						arrow={!relation}
 					/>
@@ -140,7 +143,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				
 				{opts}
 
-				{!this.isReadonly() ? (
+				{!isReadonly ? (
 					<div className="section" onMouseEnter={this.menuClose}>
 						<div className="inputWrap">
 							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
@@ -148,7 +151,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					</div>
 				) : ''}
 				
-				{relation && (allowed || !this.isReadonly()) ? (
+				{relation && (allowed || !isReadonly) ? (
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open to edit" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}

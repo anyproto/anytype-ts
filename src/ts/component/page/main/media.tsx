@@ -274,7 +274,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const wh = container.height();
 
 		if (blocks.hasClass('vertical')) {
-			blocks.css({ height: wh });
+			blocks.css({ minHeight: wh });
 		};
 
 		if (empty.length) {

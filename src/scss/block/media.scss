@@ -106,6 +106,9 @@
 			}
 
 			.pager { margin-top: 6px; }
+			.pager {
+				.icon { opacity: 0 !important; }
+			}
 			.loaderWrapper { width: 100%; position: relative; }
 
 			.react-pdf__Document { width: 100%; display: inline-block; }
@@ -113,6 +116,12 @@
 			.react-pdf__Page__svg svg { width: 100%; height: auto; }
 			.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
 			.react-pdf__Page__annotations { display: none; }
+		}
+		.pdfWrapper:hover {
+			.pager {
+				.icon.disabled { opacity: 0.5 !important; }
+				.icon { opacity: 1 !important; }
+			}
 		}
 				
 		.icon.dots {
