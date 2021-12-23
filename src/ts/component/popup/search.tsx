@@ -503,7 +503,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const { getId } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(100, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
 
 		obj.css({ height: height });
 	};
