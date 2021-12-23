@@ -164,11 +164,6 @@
             }
         }
 
-        .sides.bgColor {
-            .cardName span::before { color: $colorTertiary !important; }
-            .cardDescription { color: $colorTertiary !important; }
-        }
-
         .loading, .deleted { color: $colorSecondary; }
     }
 
