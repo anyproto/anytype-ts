@@ -109,7 +109,6 @@ class AuthStore {
 		this.accountItem = account as I.Account;
 
 		Storage.set('accountId', account.id);
-		analytics.profile(account);
 		Sentry.setUser({ id: account.id });
     };
 
