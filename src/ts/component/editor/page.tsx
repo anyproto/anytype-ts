@@ -1570,12 +1570,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			style = content.style;
 		};
 
-		if ((!isToggle && !isOpen && childrenIds.length > 0) || (isToggle && isOpen)) {
+		if (isCode || (isToggle && isOpen)) {
+			style = I.TextStyle.Paragraph;
+		};
+
+		if (isToggle && isOpen) {
 			mode = I.BlockSplitMode.Inner;
 		};
 
-		if (isCode || (isToggle && isOpen)) {
-			style = I.TextStyle.Paragraph;
+		if (!isToggle && !isOpen && (childrenIds.length > 0)) {
+			mode = I.BlockSplitMode.Top;
 		};
 
 		range = Util.rangeFixOut(content.text, range);
@@ -1585,7 +1589,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.focus(message.blockId, 0, 0, true);
+			const focusId = (mode == I.BlockSplitMode.Top) ? focused.id : message.blockId;
+			this.focus(focusId, 0, 0, true);
 
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);
