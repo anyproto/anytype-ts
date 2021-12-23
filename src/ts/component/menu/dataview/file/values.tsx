@@ -171,7 +171,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
 
-			C.UploadFile('', file, I.FileType.None, false, (message: any) => {
+			C.UploadFile('', file, I.FileType.None, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.hash);
 				};

@@ -91,7 +91,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 			
 			this.setState({ loading: true });
 
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

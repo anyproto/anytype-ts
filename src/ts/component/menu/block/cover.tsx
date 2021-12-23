@@ -80,7 +80,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				onUploadStart();
 			};
 
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

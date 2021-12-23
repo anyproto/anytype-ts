@@ -91,7 +91,7 @@ const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any)
 	dispatcher.request('exportLocalstore', request, callBack);
 };
 
-const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
+const UploadFile = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
 	};
@@ -101,7 +101,6 @@ const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, c
 	request.setUrl(url);
 	request.setLocalpath(path);
 	request.setType(type);
-	request.setDisableencryption(enc);
 
 	dispatcher.request('uploadFile', request, callBack);
 };
