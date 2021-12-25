@@ -9,7 +9,7 @@ import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, po
 import { I, C, Util, DataUtil, keyboard, Storage, analytics, dispatcher, translate } from 'ts/lib';
 import { throttle } from 'lodash';
 import * as Sentry from '@sentry/browser';
-import { configure } from "mobx";
+import { configure } from 'mobx';
 
 configure({ enforceActions: 'never' });
 
@@ -416,7 +416,12 @@ class App extends React.Component<Props, State> {
 
 		ipcRenderer.on('checking-for-update', (e: any, auto: boolean) => {
 			if (!auto) {
-				commonStore.progressSet({ status: 'Checking for update...', current: 0, total: 1 });
+				commonStore.progressSet({ 
+					status: 'Checking for update...', 
+					current: 0, 
+					total: 1, 
+					isUnlocked: true 
+				});
 			};
 		});
 
