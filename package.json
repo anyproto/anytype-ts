@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.22.3",
+	"version": "0.22.4-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -515,11 +515,11 @@
 			"entitlementsInherit": "electron/entitlements.mac.plist",
 			"target": [
 				{
-				  "target": "default",
-				  "arch": [
-					"x64",
-					"arm64"
-				  ]
+					"target": "default",
+					"arch": [
+						"x64",
+						"arm64"
+					]
 				}
 			],
 			"identity": "6SFR4648FW",
