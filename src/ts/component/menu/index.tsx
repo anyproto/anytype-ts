@@ -470,10 +470,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 			menu.css(css);
 
-			if (this.ref && this.ref.resize) {
-				this.ref.resize();
-			};
-
 			if (isSub && (type == I.MenuType.Vertical)) {
 				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
