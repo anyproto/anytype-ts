@@ -1,4 +1,5 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
+import { dbStore, detailStore } from 'ts/store';
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -62,7 +63,7 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 };
 
 const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.ObjectList.Export.Request();
+	const request = new Rpc.Export.Request();
 
 	request.setPath(path);
 	request.setDocidsList(ids);
@@ -90,7 +91,7 @@ const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any)
 	dispatcher.request('exportLocalstore', request, callBack);
 };
 
-const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
+const UploadFile = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
 	};
@@ -100,7 +101,6 @@ const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, c
 	request.setUrl(url);
 	request.setLocalpath(path);
 	request.setType(type);
-	request.setDisableencryption(enc);
 
 	dispatcher.request('uploadFile', request, callBack);
 };
@@ -707,27 +707,6 @@ const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: a
 	dispatcher.request('blockDataviewRecordCreate', request, callBack);
 };
 
-const BlockDataviewRecordUpdate = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordUpdate.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecordid(recordId);
-	request.setRecord(Encode.encodeStruct(record));
-
-	dispatcher.request('blockDataviewRecordUpdate', request, callBack);
-};
-
-const BlockDataviewRecordDelete = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordDelete.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecordid(recordId);
-
-	dispatcher.request('blockDataviewRecordDelete', request, callBack);
-};
-
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationListAvailable.Request();
 	
@@ -963,6 +942,78 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	request.setKeysList(keys);
 
 	dispatcher.request('objectSearch', request, callBack);
+};
+
+const OnSubscribe = (subId: string, keys: string[], message: any) => {
+	if (message.counters) {
+		dbStore.metaSet(subId, '', { total: message.counters.total });
+	};
+
+	let details = [];
+	details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
+	details = details.concat(message.records.map((it: any) => { 
+		keys.forEach((k: string) => { it[k] = it[k] || ''; });
+		return { id: it.id, details: it }; 
+	}));
+	detailStore.set(subId, details);
+	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+};
+
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchSubscribe.Request();
+
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+	request.setSourceList(sources);
+	request.setIgnoreworkspace(ignoreWorkspace);
+	request.setAfterid(afterId);
+	request.setBeforeid(beforeId);
+
+	const cb = (message: any) => {
+		OnSubscribe(subId, keys, message);
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectSearchSubscribe', request, cb);
+};
+
+const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.IdsSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setIdsList(ids);
+	request.setKeysList(keys);
+	request.setIgnoreworkspace(ignoreWorkspace);
+
+	const cb = (message: any) => {
+		OnSubscribe(subId, keys, message);
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectIdsSubscribe', request, cb);
+};
+
+const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchUnsubscribe.Request();
+
+	request.setSubidsList(subIds);
+	
+	dispatcher.request('objectSearchUnsubscribe', request, callBack);
 };
 
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
@@ -1289,9 +1340,6 @@ export {
 	BlockDataviewRecordRelationOptionDelete,
 
 	BlockDataviewRecordCreate,
-	BlockDataviewRecordUpdate,
-	BlockDataviewRecordDelete,
-
 	BlockDataviewSetSource,
 
 	BlockRelationSetKey,
@@ -1313,7 +1361,6 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
-	ObjectSearch,
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
@@ -1330,6 +1377,11 @@ export {
 	ObjectToSet,
 	ObjectAddWithObjectId,
 	ObjectShareByLink,
+
+	ObjectSearch,
+	ObjectSearchSubscribe,
+	ObjectIdsSubscribe,
+	ObjectSearchUnsubscribe,
 	
 	ObjectListDelete,
 	ObjectListSetIsArchived,

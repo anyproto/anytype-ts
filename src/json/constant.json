@@ -48,6 +48,12 @@
 		}
 	},
 
+	"subIds": {
+		"index": "index",
+		"search": "search",
+		"profile": "profile"
+	},
+
 	"menuIds": {
 		"cell": [ 
 			"select", "button", "dataviewText", "dataviewRelationEdit", "dataviewObjectList", "dataviewObjectValues", "dataviewOptionValues", 
@@ -70,7 +76,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"select", "searchObject", "dataviewDate"
+			"select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList"
 		],
 		"layout": [
 			"blockAlign"
@@ -85,6 +91,14 @@
 			"searchObject"
 		]
 	},
+
+	"coverRelationKeys": [
+		"coverId",
+		"coverType",
+		"coverX",
+		"coverY",
+		"coverScale"
+	],
 
 	"defaultRelationKeys": [ 
 		"id", 

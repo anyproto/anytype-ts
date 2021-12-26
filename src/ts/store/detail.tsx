@@ -108,7 +108,7 @@ class DetailStore {
     get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let list = this.getArray(rootId, id);
 		if (!list.length) {
-			return { _empty_: true };
+			return { id, _empty_: true };
 		};
 		
 		let object: any = {};
@@ -147,10 +147,11 @@ class DetailStore {
 			name,
 			layout,
 			snippet,
-			type: DataUtil.convertRelationValueToString(object.type),
-			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
+			type: DataUtil.getRelationStringValue(object.type),
+			iconImage: DataUtil.getRelationStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
+			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,

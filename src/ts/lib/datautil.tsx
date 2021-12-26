@@ -383,12 +383,7 @@ class DataUtil {
 			});
 			
 			if (profile) {
-				C.BlockOpen(profile, '', (message: any) => {
-					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-						Util.onErrorUpdate();
-						return;
-					};
-
+				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
 					blockStore.profileSet(profile);
 				});
 			};
@@ -401,7 +396,7 @@ class DataUtil {
 					return;
 				};
 
-				const object = detailStore.get(root, root, [ 'coverId', 'coverType' ]);
+				const object = detailStore.get(root, root, Constant.coverRelationKeys);
 
 				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
 					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
@@ -422,7 +417,7 @@ class DataUtil {
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			Util.route(redirectTo ? redirectTo : '/main/index');
+			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});
 	};
 
@@ -485,7 +480,7 @@ class DataUtil {
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open('page', param);
+		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -508,7 +503,9 @@ class DataUtil {
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
-		details.type = details.type || commonStore.type;
+		if (!templateId) {
+			details.type = details.type || commonStore.type;
+		};
 		
 		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
 			if (message.error.code) {
@@ -708,6 +705,17 @@ class DataUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
+	};
+
+	menuGetBlockDataview () {
+		return [
+			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: '', lang: 'List' },
+		].map((it: any) => {
+			it.type = I.BlockType.Dataview;
+			return this.menuMapperBlock(it);
+		});
 	};
 
 	menuGetTurnPage () {
@@ -1040,6 +1048,14 @@ class DataUtil {
 		return ret;
 	};
 
+	getRelationStringValue (value: any) {
+		if (('object' == typeof(value)) && value && value.hasOwnProperty('length')) {
+			return String(value.length ? value[0] : '');
+		} else {
+			return String(value || '');
+		};
+	};
+
 	getRelationArrayValue (value: any): string[] {
 		value = Util.objectCopy(value || []);
 		if ('object' != typeof(value)) {
@@ -1127,7 +1143,7 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockType(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
@@ -1287,14 +1303,6 @@ class DataUtil {
 		return value;
 	};
 
-	convertRelationValueToString (value: any) {
-		if (('object' == typeof(value)) && value.hasOwnProperty('length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
-		};
-	};
-
 	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
@@ -1368,20 +1376,27 @@ class DataUtil {
 		return fields;
 	};
 
-	getDataviewData (rootId: string, blockId: string, id: string, offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+		const view = dbStore.getView(rootId, blockId, id);
+		if (!view) {
+			return;
+		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
 		const { viewId } = dbStore.getMeta(rootId, blockId);
 		const viewChange = id != viewId;
 		const meta: any = { offset: offset };
+		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (viewChange) {
 			meta.viewId = id;
 		};
 		if (viewChange || clear) {
-			dbStore.recordsSet(rootId, blockId, []);
+			dbStore.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(rootId, blockId, meta);
-		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, limit, callBack);
+		dbStore.metaSet(subId, '', meta);
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
 	};
 };
 

@@ -10,7 +10,7 @@ interface Props extends I.Menu {}
 
 interface State {
 	loading: boolean;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
@@ -49,6 +49,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter } = data;
 		const items = this.getItems();
+		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -96,7 +97,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className="wrap">
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }} 
-					placeholderFocus="Filter objects..." 
+					placeholderFocus={placeholderFocus} 
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>
@@ -300,9 +301,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 			data.value = value;
 
-			menuStore.updateData(MENU_ID, { value: value });
-			onChange(value);
-			position();
+			onChange(value, () => {
+				menuStore.updateData(MENU_ID, { value: value });
+				position();
+			});
 		};
 
 		if (item.id == 'add') {

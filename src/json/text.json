@@ -17,6 +17,7 @@
 	"commonProgress": { "en": "Processing..." },
 	"commonArchived": { "en": "Object is in the bin" },
 	"commonDeleted": { "en": "Non-existent object" },
+	"commonEmpty": { "en": "Empty" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -207,6 +208,15 @@
 
 	"blockNameLatex": { "en": "LaTex" },
 	"blockTextLatex": { "en": "Display a math equations" },
+
+	"blockNameTable": { "en": "Table" },
+	"blockTextTable": { "en": "" },
+
+	"blockNameGallery": { "en": "Gallery" },
+	"blockTextGallery": { "en": "" },
+
+	"blockNameList": { "en": "List" },
+	"blockTextList": { "en": "" },
 
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 

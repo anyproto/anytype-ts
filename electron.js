@@ -253,7 +253,7 @@ function createWindow () {
 		};
 		
 		e.preventDefault();
-		if (process.platform == 'darwin') {
+		if (process.platform != 'linux') {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
 				win.once('leave-full-screen', () => { win.hide(); });

@@ -126,6 +126,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 		let position = this.position;
 		let data: any = null;
+		let targetId = '';
+		let target: any = null;
+
 		if (this.hoverData && (this.position != I.BlockPosition.None)) {
 			data = this.hoverData;
 		} else 
@@ -133,9 +136,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			data = this.objectData.get(last.id);
 			position = I.BlockPosition.Bottom;
 		};
-		let targetId = String(data.id || '');
-		let target = blockStore.getLeaf(rootId, targetId);
-
+		
+		if (data) {
+			targetId = String(data.id || '');
+			target = blockStore.getLeaf(rootId, targetId);
+		};
+		
 		if (dt.files && dt.files.length) {
 			let paths: string[] = [];
 			for (let file of dt.files) {
@@ -283,9 +289,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		switch (this.type) {
 			default:
 				C.BlockListMove(contextId, targetContextId, this.ids || [], targetId, position, () => {
+					/*
 					if (selection) {
 						selection.set(this.ids);
 					};
+					*/
 		
 					if (target.isTextToggle() && (position == I.BlockPosition.Inner)) {
 						blockStore.toggle(rootId, targetId, true);

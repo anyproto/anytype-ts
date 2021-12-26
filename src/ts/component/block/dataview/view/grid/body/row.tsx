@@ -13,7 +13,7 @@ interface Props extends I.ViewComponent {
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
-}
+};
 
 const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 
@@ -41,7 +41,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-cell-' + relation.relationKey + record.id} 
-						{...this.props} 
+						{...this.props}
 						width={relation.width}
 						index={index} 
 						relationKey={relation.relationKey} 

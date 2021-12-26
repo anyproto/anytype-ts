@@ -3,7 +3,7 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; padding-bottom: 1px; }
+		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
 
 		.placeholder { display: none; }
 
@@ -26,8 +26,13 @@
 			name { display: none; }
 		}
 
+		lnk { position: relative; margin-right: 18px; }
 		lnk, obj { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
+		lnk::after {
+			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
+			width: 14px; height: 14px; vertical-align: middle; margin: -7px; position: absolute; right: -10px; top: 50%;
+		}
 
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
@@ -58,7 +63,7 @@
 		italic { font-style: italic; }
 		strike { text-decoration: line-through; }
 		
-		.markers { white-space: nowrap; }
+		.markers { display: flex; }
 		.markers {
 			.marker { 
 				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
@@ -87,7 +92,7 @@
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
 
 	.block.blockText.isReadonly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
-	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 44px; }
+	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
@@ -185,6 +190,7 @@
 .editorWrapper.isTask {
 	.blocks .block.blockText.title { @include text-header1; }
 	.blocks .block.blockText.title {
-		.marker { margin: 3px 12px 0px 0px; }
+		.flex { gap: 0px 8px; }
+		.marker { width: 30px; height: 30px; margin: 0px; }
 	}
 }

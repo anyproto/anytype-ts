@@ -29,6 +29,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 		const id = DataUtil.cellId(idPrefix, relation.relationKey, index);
 		const width = DataUtil.relationWidth(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (relation.relationKey == Constant.relationKey.name) {
 			cn.push('isName');
@@ -39,10 +40,17 @@ const BodyCell = observer(class BodyCell extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div key={id} id={id} className={cn.join(' ')} onMouseDown={(e: any) => { onCellClick(e, relation.relationKey, index); }} style={{ width: width }}>
+			<div 
+				key={id} 
+				id={id} 
+				className={cn.join(' ')} 
+				onMouseDown={(e: any) => { onCellClick(e, relation.relationKey, index); }} 
+				style={{ width: width }}
+			>
 				<Cell 
 					ref={(ref: any) => { onRef(ref, id); }} 
 					{...this.props}
+					subId={subId}
 					relationKey={relation.relationKey}
 					viewType={I.ViewType.Grid}
 					idPrefix={idPrefix}

@@ -15,11 +15,6 @@
 			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
 			display: inline-block; vertical-align: top;
 		}
-		.download {
-			@include text-common; width: 80px; height: 24px; line-height: 24px; color: #2aa7ee; transition: $transitionFast; 
-			opacity: 0; display: inline-block; cursor: pointer; vertical-align: top;
-		}
-		.download:hover { color: #1092d9; }
 
 		.iconObject { margin-right: 4px; }
 	}

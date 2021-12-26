@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Page } from 'ts/component';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const $ = require('jquery');
 const raf = require('raf');

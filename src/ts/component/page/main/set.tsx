@@ -210,7 +210,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};
@@ -376,21 +375,14 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		
 		const win = $(window);
 		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const wrapper = node.find('.blocks.wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
 
 		if (cover.length) {
 			cover.css({ top: hh });
-		};
-
-		if (check.withCover) {
-			wrapper.css({ paddingTop: 330 });
 		};
 
 		obj.css({ minHeight: isPopup ? '' : win.height() });

@@ -93,7 +93,7 @@
     .panelPreview { padding: 24px; }
     .panelPreview {
         .loaderWrapper { width: 100%; height: 100%; }
-        .cover { position: absolute; height: 146px; }
+        .cover { position: absolute; height: 86px; }
 
         .block {
 			.wrapMenu { display: none; }
@@ -101,10 +101,11 @@
 		}
 		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; line-height: 22px; }
         .block.blockFeatured {
-            .cellContent { padding: 2px 6px; }
+            .cellContent { padding: 2.5px 6px; }
             .cellContent {
                 .over { display: inline; }
-                .tagItem { @include text-small; margin: 0px 6px 0px 0px; }
+                .tagItem { @include text-small; margin: 2px 6px 0px 0px; }
+                .more { margin-top: 2px; }
             }
             .cellContent:hover { background: none; }
 
@@ -121,7 +122,10 @@
             }
             .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
 
-            .description { @include text-common; margin: 4px 0px 12px 0px; }
+            .description { 
+                @include text-common; margin: 4px 0px 12px 0px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; 
+                display: -webkit-box; overflow: hidden;
+            }
             .description:empty { display: none; }
             .author { @include text-very-small; color: $colorMediumGrey; }
         }
@@ -132,8 +136,8 @@
             .button:last-child { margin: 0px; }
         }
     }
-    .panelPreview.withCover { padding-top: 164px; }
-    .panelPreview.withIconAndCover { padding-top: 106px; }
+    .panelPreview.withCover { padding-top: 110px; }
+    .panelPreview.withIconAndCover { padding-top: 56px; }
     .panelPreview.isTask {
         .title { width: calc(100% - 26px); display: inline-block; vertical-align: middle; }
     }

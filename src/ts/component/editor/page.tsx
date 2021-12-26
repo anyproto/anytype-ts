@@ -309,7 +309,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	close () {
 		const { isPopup, rootId, match } = this.props;
-		const object = detailStore.get(rootId, rootId);
 		
 		let close = true;
 		if (isPopup && (match.params.id == rootId)) {
@@ -1240,17 +1239,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 		blocks = Util.arrayUniqueObjects(blocks, 'id');
 
-		blocks.map((it: I.Block) => {
+		blocks = blocks.map((it: I.Block) => {
+			const element = blockStore.getMapElement(rootId, it.id);
+
 			if (it.type == I.BlockType.Text) {
 				text.push(String(it.content.text || ''));
 			};
+
+			it.childrenIds = element.childrenIds;
+			return it;
 		});
 		
 		range = Util.objectCopy(range);
 		if (focusBlock) {
 			range = Util.rangeFixOut(focusBlock.content.text, range);
 		};
-		
+
 		const data = { 
 			text: text.join('\n'), 
 			html: null, 
@@ -1566,12 +1570,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			style = content.style;
 		};
 
-		if ((!isToggle && !isOpen && childrenIds.length > 0) || (isToggle && isOpen)) {
+		if (isCode || (isToggle && isOpen)) {
+			style = I.TextStyle.Paragraph;
+		};
+
+		if (isToggle && isOpen) {
 			mode = I.BlockSplitMode.Inner;
 		};
 
-		if (isCode || (isToggle && isOpen)) {
-			style = I.TextStyle.Paragraph;
+		if (!isToggle && !isOpen && (childrenIds.length > 0)) {
+			mode = I.BlockSplitMode.Top;
 		};
 
 		range = Util.rangeFixOut(content.text, range);
@@ -1581,7 +1589,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			this.focus(message.blockId, 0, 0, true);
+			const focusId = (mode == I.BlockSplitMode.Top) ? focused.id : message.blockId;
+			this.focus(focusId, 0, 0, true);
 
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);

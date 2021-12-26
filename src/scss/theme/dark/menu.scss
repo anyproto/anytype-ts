@@ -119,6 +119,7 @@
 
      .menu.menuDataviewRelationEdit {
         .input { border-color: $colorLinePrimary; }
+        .item:hover::before { background: $colorHover; }
     }
 
     /* MenuDataviewText */
@@ -131,12 +132,6 @@
 
     .menu.menuDataviewRelationList {
         .item:hover::before { background: $colorHover; }
-    }
-
-    /* MenuDataviewFilterList */
-
-    .menu.menuDataviewFilterList {
-        .item.add:hover::before { background: $colorHover; }
     }
 
     /* MenuDataviewFileValues */
@@ -154,13 +149,6 @@
         .item {
             .select.grey { color: $colorSecondary; }
         }
-        .item.add:hover::before { background: $colorHover; }
-    }
-
-    /* MenuDataviewSource */
-
-    .menu.menuDataviewSource {
-        .item.add:hover::before { background: $colorHover; }
     }
 
     /* MenuDataviewOptionEdit */

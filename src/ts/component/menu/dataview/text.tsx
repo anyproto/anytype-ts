@@ -133,21 +133,24 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		};
 
 		const { position, getId } = this.props;
-		const obj = $(`#${getId()}`);
-		const node = $(ReactDOM.findDOMNode(this));
-		const input = node.find('#input');
-		const win = $(window);
-		const wh = win.height();
-		const hh = Util.sizeHeader();
 
-		obj.css({ height: 'auto' });
-		input.css({ height: 'auto' });
+		raf(() => {
+			const obj = $(`#${getId()}`);
+			const input = obj.find('#input');
+			const win = $(window);
+			const wh = win.height();
+			const hh = Util.sizeHeader();
+			const o = obj.offset();
+	
+			obj.css({ height: 'auto' });
+			input.css({ height: 'auto' });
+	
+			const sh = input.get(0).scrollHeight;
+			input.css({ height: Math.min(wh - hh - o.top - 20, sh) });
+			input.scrollTop(sh);
 
-		const sh = input.get(0).scrollHeight;
-		input.css({ height: Math.min(wh - hh - 20, sh) });
-		input.scrollTop(sh);
-
-		position();
+			position();
+		});
 	};
 
 });

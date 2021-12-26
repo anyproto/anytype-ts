@@ -63,12 +63,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	componentDidMount () {
 		const isPopup = keyboard.isPopup();
 		const win = $(window); 
-		const ns = this.nameSpace();
 
 		this._isMounted = true;
 		this.unbind();
 
-		win.on(`keydown.selection${ns}`, (e: any) => { this.onKeyDown(e); })
+		win.on(`keydown.selection`, (e: any) => { this.onKeyDown(e); })
 		Util.getScrollContainer(isPopup).on('scroll.selection', (e: any) => { this.onScroll(e); });
 	};
 	
@@ -188,7 +187,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	onMouseDown (e: any) {
-		if (!this._isMounted) {
+		if (e.button || !this._isMounted) {
 			return
 		};
 		
@@ -202,7 +201,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const win = $(window);
 		const node = $(ReactDOM.findDOMNode(this));
 		const el = node.find('#selection-rect');
-		const ns = this.nameSpace();
 		
 		el.css({ transform: 'translate3d(0px, 0px, 0px)', width: 0, height: 0 }).show();
 
@@ -243,8 +241,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		scrollOnMove.onMouseDown(e, isPopup);
 		this.unbindMouse();
 
-		win.on(`mousemove.selection${ns}`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on(`mouseup.selection${ns}`, (e: any) => { this.onMouseUp(e); });
+		win.on(`mousemove.selection`, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
+		win.on(`mouseup.selection`, (e: any) => { this.onMouseUp(e); });
 	};
 	
 	onMouseMove (e: any) {
@@ -520,23 +518,16 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 	
 	unbindMouse () {
-		const ns = this.nameSpace();
-
-		$(window).unbind(`mousemove.selection${ns} mouseup.selection${ns}`);
+		$(window).unbind(`mousemove.selection mouseup.selection`);
 	};
 	
 	unbindKeyboard () {
 		const isPopup = keyboard.isPopup();
-		const ns = this.nameSpace();
 
-		$(window).unbind(`keydown.selection${ns} keyup.selection${ns}`);
+		$(window).unbind(`keydown.selection keyup.selection`);
 		Util.getScrollContainer(isPopup).unbind('scroll.selection');
 	};
 
-	nameSpace () {
-		return keyboard.isPopup() ? 'Popup' : '';
-	};
-	
 	preventSelect (v: boolean) {
 		this.isSelectionPrevented = v;
 	};

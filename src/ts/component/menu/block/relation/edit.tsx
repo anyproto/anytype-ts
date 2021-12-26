@@ -4,6 +4,7 @@ import { I, C, DataUtil, translate } from 'ts/lib';
 import { Input, MenuItemVertical, Button, Icon, Switch } from 'ts/component';
 import { dbStore, menuStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 interface Props extends I.Menu {};
 
@@ -41,24 +42,45 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const objectType = dbStore.getObjectType(type);
 		const allowed = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const canDelete = allowed && relation && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+		const isReadonly = this.isReadonly();
 
-		const opts = null;
+		let opts: any = null;
+		let typeProps: any = { name: 'Select object type' };
+
+		if (isObject) {
+			const l = this.objectTypes.length;
+			const type = l ? this.objectTypes[0] : '';
+			const objectType = dbStore.getObjectType(type);
+
+			if (objectType) {
+				typeProps.name = objectType.name || DataUtil.defaultName('page');
+				typeProps.object = { ...objectType, layout: I.ObjectLayout.Type };
+			};
+
+			typeProps.caption = l > 1 ? '+' + (l - 1) : '';
+			if (typeProps.caption) {
+				typeProps.withCaption = true;
+			};
+
+			opts = (
+				<div className="section noLine">
+					<div className="name">Type of target object</div>
+					<MenuItemVertical 
+						id="object-type" 
+						onMouseEnter={this.onObjectType} 
+						arrow={!isReadonly}
+						{...typeProps}
+					/>
+				</div>
+			);
+
+			if (isReadonly && !objectType) {
+				opts = null;
+			};
+		};
 		/*
 		const opts = (
 			<React.Fragment>
-				{isObject ? (
-					<div className="section">
-						<div className="name">Type of target object</div>
-						<MenuItemVertical 
-							id="object-type" 
-							object={{ ...objectType, layout: I.ObjectLayout.Type }} 
-							name={objectType ? objectType.name : 'Select object type'} 
-							onMouseEnter={this.onObjectType} 
-							readonly={this.isReadonly()}
-							arrow={this.isReadonly()}
-						/>
-					</div>
-				) : ''}
 
 				{isDate && relation ? (
 					<div className="section">
@@ -72,8 +94,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 							id="date-settings" 
 							icon="settings" 
 							name="Preferences" 
-							arrow={!this.isReadonly()} 
-							readonly={this.isReadonly()}
+							arrow={!isReadonly} 
+							readonly={isReadonly}
 							onMouseEnter={this.onDateSettings} 
 						/>
 					</div>
@@ -87,12 +109,13 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				<div className="section">
 					<div className="name">Relation name</div>
 
-					{!this.isReadonly() ? (
+					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
 								ref={(ref: any) => { this.ref = ref; }} 
 								value={relation ? relation.name : ''} 
 								onChange={this.onChange} 
+								onMouseEnter={this.menuClose}
 							/>
 						</div>
 					) : (
@@ -103,12 +126,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					)}
 				</div>
 
-				<div className={[ 'section', (!opts && !this.isReadonly() ? 'noLine' : '') ].join(' ')}>
+				<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
 					<div className="name">Relation type</div>
 					<MenuItemVertical 
 						id="relation-type" 
 						icon={'relation ' + DataUtil.relationClass(this.format)} 
-						readonly={this.isReadonly()}
+						readonly={isReadonly}
 						name={translate('relationName' + this.format)} 
 						onMouseEnter={this.onRelationType} 
 						arrow={!relation}
@@ -117,7 +140,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				
 				{opts}
 
-				{!this.isReadonly() ? (
+				{!isReadonly ? (
 					<div className="section">
 						<div className="inputWrap">
 							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
@@ -125,7 +148,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					</div>
 				) : ''}
 
-				{relation && (allowed || !this.isReadonly()) ? (
+				{relation && (allowed || !isReadonly) ? (
 					<div className="section">
 						{/*<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />*/}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
@@ -152,7 +175,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			this.ref.setValue(filter);
 		};
 
-		this.unbind();
+		this.rebind();
 		this.checkButton();
 		this.focus();
 	};
@@ -166,8 +189,19 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.menuClose();
 	};
 
+	rebind () {
+		const { getId } = this.props;
+
+		this.unbind();
+
+		$(`#${getId()}`).on('click.menu', () => { this.menuClose(); });
+	};
+
 	unbind () {
+		const { getId } = this.props;
+
 		$(window).unbind('keydown.menu');
+		$(`#${getId()}`).unbind('click.menu');
 	};
 
 	focus () {
@@ -231,27 +265,37 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	};
 
 	onObjectType (e: any) {
-		const { getId } = this.props;
-		const relation = this.getRelation();
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
 
-		if (relation && relation.isReadonlyRelation) {
+		if (this.isReadonly()) {
 			return;
 		};
 
-		const value = relation && relation.objectTypes.length ? relation.objectTypes[0] : '';
+		const { getId } = this.props;
+		const relation = this.getRelation();
 
-		this.menuOpen('searchObject', { 
+		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
+			width: 256,
 			data: {
-				value: value,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Type ] }
-				],
-				onSelect: (item: any) => {
-					this.objectTypes = [ item.id ];
+				rootId,
+				blockId,
+				nameAdd: 'Add object type',
+				placeholderFocus: 'Filter object types...',
+				value: this.objectTypes, 
+				types: [ Constant.typeId.type ],
+				relation: observable.box(relation),
+				valueMapper: (it: any) => {
+					const type = dbStore.getObjectType(it.id);
+					return { ...type, layout: I.ObjectLayout.Type };
+				},
+				onChange: (value: any) => {
+					this.objectTypes = value;
 					this.forceUpdate();
-				}
+				},
 			}
 		});
 	};

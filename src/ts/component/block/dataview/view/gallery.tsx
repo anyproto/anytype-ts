@@ -39,12 +39,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 		const viewRelations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
-		const data = dbStore.getData(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize } = view;
 
 		// Subscriptions on dependent objects
-		for (let item of data) {
+		for (let item of records) {
 			for (let k in item) {
 				const relation = dbStore.getRelation(rootId, block.id, k);
 				if (!relation) {
@@ -85,7 +85,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 														height={Number(height) || 0}
 														width={Number(width) || 0}
 														isScrolling={isScrolling}
-														cellCount={data.length}
+														cellCount={records.length}
 														cellMeasurerCache={this.cache}
 														cellPositioner={this.cellPositioner}
 														cellRenderer={({ key, index, parent, style }) => {

@@ -7,15 +7,22 @@ import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
 import { translate, Util, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {}
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
+const HEIGHT = 48;
+const LIMIT = 20;
 
 const MenuFilterList = observer(class MenuFilterList extends React.Component<Props, {}> {
 	
 	n: number = 0;
+	top: number = 0;
+	cache: any = {};
+	refList: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -24,6 +31,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -32,6 +40,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const subId = dbStore.getSubId(rootId, blockId);
 
 		if (!view) {
 			return null;
@@ -107,7 +116,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 						);
 					};
 
-					list = (item.value || []).map((it: string) => { return detailStore.get(rootId, it, []); });
+					list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); });
 					list = list.filter((it: any) => { return !it._empty_; });
 
 					value = (
@@ -125,7 +134,12 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			};
 
 			return (
-				<form id={'item-' + item.id} className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
+				<form 
+					id={'item-' + item.id}
+					className={[ 'item', (!allowedView ? 'isReadonly' : '') ].join(' ')} 
+					onMouseEnter={(e: any) => { this.onOver(e, item); }}
+					style={item.style}
+				>
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 
@@ -153,56 +167,112 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 			);
 		});
 		
-		const ItemAdd = SortableElement((item: any) => (
-			<div className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">Add a filter</div>
-			</div>
-		));
+		const rowRenderer = (param: any) => {
+			const item: any = items[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<Item key={item.id} {...item} index={param.index} style={param.style} />
+				</CellMeasurer>
+			);
+		};
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<div className="scrollWrap">
-						{items.map((item: any, i: number) => (
-							<Item key={i} {...item} id={i} index={i} />
-						))}
-						{!items.length ? (
-							<div className="item empty">
-								<div className="inner">No filters applied to this view</div>
-							</div>
-						) : ''}
-					</div>
-					{allowedView ? (
-						<div className="bottom">
-							<div className="line" />
-							<ItemAdd index={items.length + 1} disabled={true} /> 
+					{!items.length ? (
+						<div className="item empty">
+							<div className="inner">No filters applied to this view</div>
 						</div>
-					) : ''}
+					) : (
+						<InfiniteLoader
+							rowCount={items.length}
+							loadMoreRows={() => {}}
+							isRowLoaded={() => { return true; }}
+							threshold={LIMIT}
+						>
+							{({ onRowsRendered, registerChild }) => (
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => (
+										<VList
+											ref={(ref: any) => { this.refList = ref; }}
+											width={width}
+											height={height}
+											deferredMeasurmentCache={this.cache}
+											rowCount={items.length}
+											rowHeight={HEIGHT}
+											rowRenderer={rowRenderer}
+											onRowsRendered={onRowsRendered}
+											overscanRowCount={LIMIT}
+											onScroll={this.onScroll}
+										/>
+									)}
+								</AutoSizer>
+							)}
+						</InfiniteLoader>
+					)}
 				</div>
 			);
 		});
 		
 		return (
-			<List 
-				axis="y" 
-				lockAxis="y"
-				lockToContainerEdges={true}
-				transitionDuration={150}
-				distance={10}
-				onSortEnd={this.onSortEnd}
-				useDragHandle={true}
-				helperClass="isDragging"
-				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
-			/>
+			<div className="wrap">
+				<List 
+					axis="y" 
+					lockAxis="y"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					onSortEnd={this.onSortEnd}
+					useDragHandle={true}
+					helperClass="isDragging"
+					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+				/>
+				{allowedView ? (
+					<div className="bottom">
+						<div className="line" />
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd}
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
+							<Icon className="plus" />
+							<div className="name">Add a filter</div>
+						</div>
+					</div>
+				) : ''}
+			</div>
 		);
 	};
 	
 	componentDidMount () {
+		const items = this.getItems();
+
+		this.resize();
 		this.rebind();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 	};
 
 	componentDidUpdate () {
+		this.resize();
+
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
+
 		this.props.setActive();
 	};
 
@@ -301,7 +371,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, rootId, blockId, onSave } = data;
+		const { getView, getData, rootId, blockId, onSave } = data;
 		const view = getView();
 
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
@@ -309,6 +379,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 				onSave(message);
 			};
 			window.setTimeout(() => { this.forceUpdate(); }, 50);
+
+			getData(view.id, 0);
 		});
 	};
 
@@ -338,6 +410,22 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const { rootId, blockId, getView } = data;
 
 		return DataUtil.getRelationOptions(rootId, blockId, getView());
+	};
+
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems();
+		const obj = $(`#${getId()} .content`);
+		const height = Math.max(HEIGHT + 58, Math.min(360, items.length * HEIGHT + 58));
+
+		obj.css({ height: height });
+		position();
 	};
 
 });

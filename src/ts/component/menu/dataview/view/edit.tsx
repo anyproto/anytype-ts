@@ -82,15 +82,17 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 
 	componentDidMount () {
 		this.rebind();
+		this.resize();
 		this.focus();
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 		this.props.setActive();
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 
@@ -113,19 +115,25 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 	
 	onKeyDown (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const view = data.view.get();
 		const item = this.getItems()[this.n];
 		const k = e.key.toLowerCase();
 
 		let ret = false;
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.save();
+			close();
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
+
 		if (this.isFocused) {
-			if (k == Key.enter) {
-				this.save();
-				this.props.close();
-				return;
-			} else
 			if (k != Key.down) {
 				return;
 			} else {
@@ -189,9 +197,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	save () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave } = data;
+		const { rootId, blockId, onSave, getData } = data;
 		const view = data.view.get();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
@@ -211,8 +219,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
+				getData(view.id, 0);
+
 				cb();
-				close();
 			});
 		};
 	};
@@ -402,8 +411,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 					close();
 
 					const views = dbStore.getViews(rootId, blockId);
+					const idx = views.findIndex((it: I.View) => { return it.id == view.id; });
 					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
-					const next = filtered[filtered.length - 1];
+					
+					let next = idx >= 0 ? filtered[idx] : filtered[0];
+					if (!next) {
+						next = filtered[filtered.length - 1];
+					};
 
 					if (next) {
 						C.BlockDataviewViewDelete(rootId, blockId, view.id, () => {
@@ -447,6 +461,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 			{ id: '', icon: '', name: 'None' },
 			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
 		].concat(options);
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()} .content`);
+
+		obj.css({ height: 'auto' });
+		position();
 	};
 	
 });

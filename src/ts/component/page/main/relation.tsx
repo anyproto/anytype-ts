@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
-import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
+import { I, M, C, crumbs, Action, Util, DataUtil, keyboard } from 'ts/lib';
 import { detailStore, dbStore, commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
@@ -48,7 +48,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, BLOCK_ID_OBJECT), '');
 
 		return (
 			<div>
@@ -123,8 +123,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			crumbs.addPage(rootId);
 			crumbs.addRecent(rootId);
 
-			this.getDataviewData(BLOCK_ID_OBJECT, 50);
-
 			this.loading = false;
 			this.forceUpdate();
 
@@ -132,15 +130,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				this.refHeader.forceUpdate();
 			};
 		});
-	};
-
-	getDataviewData (blockId: string, limit: number) {
-		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, blockId);
-
-		if (views.length) {
-			DataUtil.getDataviewData(rootId, blockId, views[0].id, 0, limit, true);
-		};
 	};
 
 	close () {
@@ -151,7 +140,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};

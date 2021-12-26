@@ -68,7 +68,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji', 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -224,7 +224,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -337,7 +337,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onUpload (hash: string) {
 		const { rootId } = this.props;
 
-		this.old = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		this.old = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		DataUtil.pageSetCover(rootId, I.CoverType.Upload, hash, 0, -0.5);
 
@@ -350,7 +350,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		DataUtil.pageSetCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.old = null;
@@ -379,7 +379,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -572,7 +572,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

@@ -22,7 +22,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-		this.onDownload = this.onDownload.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
@@ -75,7 +74,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 							<span className="name">{name}</span>
 							<span className="size">{Util.fileSize(sizeInBytes)}</span>
 						</span>
-						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>
 				);
 				break;
@@ -151,13 +149,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 				};
 			});
 		};
-	};
-	
-	onDownload (e: any) {
-		const { block } = this.props;
-		const { content } = block;
-		
-		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	
 });

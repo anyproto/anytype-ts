@@ -48,26 +48,13 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
-			cn.push('active');
-		};
-
 		return (
 			<div id="header" className={cn.join(' ')}>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-					{isPopup ? (
-						<React.Fragment>
-							<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-							<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						</React.Fragment>
-					) : (
-						<React.Fragment>
-							<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-							<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						</React.Fragment>
-					)}
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
 					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
 					<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
 				</div>
@@ -124,7 +111,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const object = detailStore.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		DataUtil.objectOpen(object);
+		popupStore.closeAll(null, () => { DataUtil.objectOpen(object); });
 	};
 	
 	onMore (e: any) {

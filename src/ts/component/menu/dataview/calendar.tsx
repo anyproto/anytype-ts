@@ -19,7 +19,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 	refMonth: any = null;
 	refYear: any = null;
 	
-	render() {
+	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { value } = data;
@@ -95,7 +95,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 							<div 
 								key={i} 
 								className={cn.join(' ')} 
-								onMouseDown={() => { keyboard.disableBlur(true); }}
 								onClick={(e: any) => { 
 									e.stopPropagation();
 									this.setValue(Util.timestamp(item.y, item.m, item.d), true, true); 
@@ -142,8 +141,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<Props, 
 		if (close) {
 			this.props.close();
 		};
-
-		keyboard.disableBlur(false);
 	};
 	
 	getData () {

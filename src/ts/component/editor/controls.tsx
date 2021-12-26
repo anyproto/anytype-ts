@@ -145,7 +145,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -259,7 +259,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

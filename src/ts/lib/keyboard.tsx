@@ -227,14 +227,18 @@ class Keyboard {
 		crumbs.restore(I.CrumbsType.Page);
 		
 		if (isPopup) {
-			historyPopup.goBack((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
+			if (!historyPopup.checkBack()) {
+				popupStore.close('page');
+			} else {
+				historyPopup.goBack((match: any) => { 
+					popupStore.updateData('page', { matchPopup: match }); 
+				});
+			};
 		} else {
 			const prev = Util.history.entries[Util.history.index - 1];
 			if (prev) {
 				let route = Util.getRoute(prev.pathname);
-				if ((route.page == 'auth') && account) {
+				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return;
 				};
 				if ((route.page == 'main') && !account) {
@@ -264,6 +268,30 @@ class Keyboard {
 		};
 
 		analytics.event('HistoryForward');
+	};
+
+	checkBack (): boolean {
+		const isPopup = this.isPopup();
+		const history = Util.history;
+
+		let ret = true;
+		if (!isPopup) {
+			ret = history.index - 1 >= 0;
+		};
+		return ret;
+	};
+
+	checkForward (): boolean {
+		const isPopup = this.isPopup();
+		const history = Util.history;
+
+		let ret = true;
+		if (isPopup) {
+			ret = historyPopup.checkForward();
+		} else {
+			ret = history.index + 1 <= history.entries.length - 1;
+		};
+		return ret;
 	};
 
 	onCommand (cmd: string, arg: any) {

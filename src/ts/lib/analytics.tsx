@@ -33,7 +33,7 @@ class Analytics {
 		};
 
 		const platform = Util.getPlatform();
-		const { device } = authStore;
+		const { account, device } = authStore;
 
 		C.MetricsSetParameters(platform);
 
@@ -54,25 +54,22 @@ class Analytics {
 		});
 		this.instance.setDeviceId(device);
 
-		this.isInit = true;
-
 		if (this.debug()) {
 			console.log('[Analytics.init]', this.instance);
 		};
+
+		this.profile(account);
+		this.isInit = true;
 	};
 	
-	profile (profile: any) {
-		if (!this.instance) {
-			return;
-		};
-
-		if (!isProduction && !this.debug()) {
+	profile (account: I.Account) {
+		if (!this.instance || (!isProduction && !this.debug())) {
 			return;
 		};
 		if (this.debug()) {
-			console.log('[Analytics.profile]', profile.id);
+			console.log('[Analytics.profile]', account.id);
 		};
-		this.instance.setUserId(profile.id);
+		this.instance.setUserId(account.id);
 	};
 
 	setContext (context: string, id: string) {

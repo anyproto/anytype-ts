@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
 
 interface Props extends RouteComponentProps<any> {};
@@ -12,7 +12,6 @@ interface Props extends RouteComponentProps<any> {};
 interface State {
 	tab: I.TabIndex;
 	filter: string;
-	pages: any[];
 	loading: boolean;
 };
 
@@ -30,7 +29,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	state = {
 		tab: I.TabIndex.Favorite,
 		filter: '',
-		pages: [],
 		loading: false,
 	};
 
@@ -72,9 +70,15 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			return null;
 		};
 
-		const object = detailStore.get(profile, profile, []);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 		const { name } = object;
 		const list = this.getList();
+		const length = list.length;
+
+		// Subscriptions
+		list.forEach((it: any) => {
+			const { name, iconEmoji, iconImage, type, layout, relationFormat } = it;
+		});
 	
 		let selectionButtons = [
 			{ id: 'selectAll', icon: 'all', name: 'Select all' },
@@ -123,7 +127,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						onSortStart={this.onSortStart}
 						onSortEnd={this.onSortEnd}
 						getList={this.getList}
-						helperContainer={() => { return $('#documents').get(0); }} 
+						helperContainer={() => { return $('#documents .list').get(0); }} 
 						canDrag={canDrag}
 					/>
 				);
@@ -138,9 +142,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
-						{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						<div className="side left">
+							{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						</div>
 						
-						<div className="rightMenu">
+						<div className="side right">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
@@ -220,6 +226,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
+		menuStore.closeAll(Constant.menuIds.index);
+		Action.dbClear(Constant.subIds.index);
 	};
 
 	rebind () {
@@ -314,7 +323,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = [];
 		this.state.tab = id;	
-		this.setState({ tab: id, pages: [] });
+		this.setState({ tab: id });
 
 		Storage.set('tabIndex', id);
 		analytics.event('TabHome', { tab: tab.name });
@@ -361,14 +370,18 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
+		if (filter) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+		};
+
 		this.setState({ loading: true });
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
+		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], '', 0, 100, true, '', '', (message: any) => {
 			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			this.setState({ loading: false, pages: message.records });
+			this.setState({ loading: false });
 		});
 	};
 
@@ -402,8 +415,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	setFilter (v: string) {
-		console.log('setFilter', this.state.filter, v);
-
 		if (this.state.filter == v) {
 			return;
 		};
@@ -426,7 +437,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = detailStore.get(profile, profile, []);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 
 		DataUtil.objectOpenEvent(e, object);
 	};
@@ -460,11 +471,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			const idx = list.findIndex(it => it.id == item.id);
 			
 			if ((idx >= 0) && (this.selected.length > 0)) {
-				const selectedItemsIndexes = this.getSelectedListItemsIndexes().filter(i => i != idx);
-				const closestSelectedIdx = Util.findClosestElement(selectedItemsIndexes, idx);
+				const selectedIndexes = this.getSelectedIndexes().filter(i => i != idx);
+				const closest = Util.findClosestElement(selectedIndexes, idx);
 				
-				if (isFinite(closestSelectedIdx)) {
-					const [ start, end ] = this.getSelectionRangeFromTwoIndexes(closestSelectedIdx, idx);
+				if (isFinite(closest)) {
+					const [ start, end ] = this.getSelectionRange(closest, idx);
 					const ids = list.slice(start, end).map(item => item.id);
 
 					this.selected = this.selected.concat(ids);
@@ -555,19 +566,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const l = this.selected.length;
 		const ids = this.getSelectedObjectIds();
 
-		this.selected = [];
-		this.selectionRender();
+		const cb = () => {
+			this.selected = [];
+			this.selectionRender();
+		};
 
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
 				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
 				textConfirm: 'Delete',
-				onConfirm: () => {
-					C.ObjectListDelete(ids, () => {
-						this.load();
-					});
-				}
+				onConfirm: () => { 
+					C.ObjectListDelete(ids); 
+					cb();
+				},
+				onCancel: () => { cb(); }
 			},
 		});
 	};
@@ -586,7 +599,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
 				};
 			});
-			this.load();
 		});
 	};
 
@@ -596,7 +608,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.selected = [];
 		this.selectionRender();
 
-		C.ObjectListSetIsFavorite(ids, v, () => { this.load(); });
+		C.ObjectListSetIsFavorite(ids, v);
 	};
 
 	onSelectionAll () {
@@ -615,18 +627,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onStore (e: any) {
-		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store }, {
-			onClose: () => { this.load(); }
-		});
+		DataUtil.objectOpenPopup({ layout: I.ObjectLayout.Store });
 	};
 	
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
-			this.load();
-
-			DataUtil.objectOpenPopup({ id: message.targetId }, {
-				onClose: () => { this.load(); }
-			});
+			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
 
@@ -799,21 +805,22 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
 		const height = this.getListHeight();
 
-		items.css({ width: width }).removeClass('last');
+		items.css({ width: width });
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - size.titleY - height - hh });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
+
+			const n = i + 1;
 			const icon = item.find('.iconObject');
 
-			if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
-				item.addClass('last');
-			};
 			if (icon.length) {
 				item.addClass('withIcon');
 			};
+
+			item.css({ marginRight: (n % cnt == 0) ? 0 : '' });
 		});
 
 		this.onScroll();
@@ -827,8 +834,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	getList () {
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
-		const { tab, filter, pages } = this.state;
-		
+		const { tab, filter } = this.state;
+		const records = dbStore.getRecords(Constant.subIds.index, '');
+
 		let reg = null;
 		let list: any[] = [];
 		let rootId = root;
@@ -839,7 +847,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		switch (tab) {
-			default:
 			case I.TabIndex.Favorite:
 			case I.TabIndex.Recent:
 				if (tab == I.TabIndex.Recent) {
@@ -879,26 +886,25 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 				break;
 
-			case I.TabIndex.Archive:
-			case I.TabIndex.Set:
-			case I.TabIndex.Space:
-			case I.TabIndex.Shared:
-				list = pages;
+			default:
+				list = records.map((it: any) => {
+					return detailStore.get(Constant.subIds.index, it.id);
+				});
 				break;
 		};
 
 		return list;
 	};
 
-	getSelectedListItemsIndexes () {
+	getSelectedIndexes () {
 		const list = this.getList();
-		const selectedItemsIndexes = this.selected.map(selectedItemId => {
-			return list.findIndex(it => it.id === selectedItemId);
+		const indexes = this.selected.map(id => {
+			return list.findIndex(it => it.id === id);
 		});
-		return selectedItemsIndexes.filter(idx => idx >= 0);
+		return indexes.filter(idx => idx >= 0);
 	};
 
-	getSelectionRangeFromTwoIndexes (index1: number, index2: number) {
+	getSelectionRange (index1: number, index2: number) {
 		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
 		return [ start, end ];
 	};

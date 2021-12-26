@@ -13,7 +13,7 @@
 			.cellContent { padding: 2.5px 6px; }
 		}
 
-		.editorControls { width: 704px; }
+		.editorControls { width: 100%; }
 
 		.head { width: 704px; margin: 0px auto 40px auto; display: flex; }
 		.head {
@@ -72,7 +72,7 @@
 	}
 
 	.setWrapper.withCover, .setWrapper.withIconAndCover {
-		.wrapper { padding-top: 322px; }
+		.wrapper { padding-top: 328px; }
 		.editorControls { display: none; }
 	}
 }

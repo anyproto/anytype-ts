@@ -108,6 +108,7 @@ export interface View {
 
 export interface Cell {
 	rootId: string;
+	subId: string;
 	block: I.Block;
 	id?: string;
 	idPrefix?: string;
