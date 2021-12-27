@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { I, C, DataUtil, Util } from 'ts/lib';
-import { IconObject, Pager } from 'ts/component';
-import { detailStore, dbStore } from 'ts/store';
+import { IconObject, Pager, ObjectName } from 'ts/component';
+import { detailStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
 	blockId: string;
-}
+};
 
 const Constant = require('json/constant.json');
 
@@ -17,13 +17,11 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 	};
 	
 	render () {
-		const { rootId, blockId } = this.props;
-		const items = Util.objectCopy(dbStore.getData(rootId, blockId)).map((it: any) => {
-			it.name = String(it.name || DataUtil.defaultName('page'));
-			return it;
-		});
-		const { offset, total, viewId } = dbStore.getMeta(rootId, blockId);
-		const isFileType = [ Constant.typeId.file, Constant.typeId.image ].indexOf(rootId) >= 0;
+		const { rootId } = this.props;
+		const subId = this.getSubId();
+		const items = this.getItems();
+		const { offset, total } = dbStore.getMeta(subId, '');
+		const isFileType = [ Constant.typeId.file, Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].indexOf(rootId) >= 0;
 
 		let pager = null;
 		if (total && items.length) {
@@ -32,20 +30,35 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 					offset={offset} 
 					limit={Constant.limit.dataview.records} 
 					total={total} 
-					onChange={(page: number) => { this.getData(viewId, (page - 1) * Constant.limit.dataview.records); }} 
+					onChange={(page: number) => { this.getData(page); }} 
 				/>
 			);
 		};
 
 		const Row = (item: any) => {
-			const author = detailStore.get(rootId, item.creator, []);
+			const author = detailStore.get(subId, item.creator, []);
+			const cn = [ 'row' ];
+
+			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
+				cn.push('isDone');
+			};
+			if (item.isArchived) {
+				cn.push('isArchived');
+			};
+			if (item.isDeleted) {
+				cn.push('isDeleted');
+			};
+			if (item.isHidden) {
+				cn.push('isHidden');
+			};
+
 			return (
-				<tr className={[ 'row', (item.isHidden ? 'isHidden' : '') ].join(' ')}>
+				<tr className={cn.join(' ')}>
 					<td className="cell">
 						<div className="cellContent isName cp" onClick={(e: any) => { DataUtil.objectOpenEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
-								<div className="name">{item.name}</div>
+								<ObjectName object={item} />
 							</div>
 						</div>
 					</td>
@@ -112,12 +125,49 @@ const ListObject = observer(class ListObject extends React.Component<Props, {}> 
 		);
 	};
 
-	getData (id: string, offset: number, callBack?: (message: any) => void) {
-		const { rootId, blockId } = this.props;
-		const meta: any = { offset: offset };
+	componentDidMount () {
+		this.getData(0);
+	};
 
-		dbStore.metaSet(rootId, blockId, meta);
-		C.BlockDataviewViewSetActive(rootId, blockId, id, offset, Constant.limit.dataview.records, callBack);
+	getView () {
+		const { rootId, blockId } = this.props;
+		const views = dbStore.getViews(rootId, blockId);
+
+		return views.length ? views[0] : null;		
+	};
+
+	getItems () {
+		const subId = this.getSubId();
+		const records = dbStore.getRecords(subId, '');
+
+		return records.map((it: any) => {
+			return detailStore.get(subId, it.id, this.getKeys());
+		});
+	};
+
+	getSubId () {
+		const { rootId, blockId } = this.props;
+		return dbStore.getSubId(rootId, blockId);
+	};
+
+	getKeys () {
+		return Constant.defaultRelationKeys.concat([ 'creator', 'lastModifiedDate' ]);
+	};
+
+	getData (page: number, callBack?: (message: any) => void) {
+		const view = this.getView();
+		if (!view) {
+			return;
+		};
+
+		const { rootId, blockId } = this.props;
+		const limit = Constant.limit.dataview.records;
+		const offset = (page - 1) * limit;
+		const block = blockStore.getLeaf(rootId, blockId);
+		const subId = this.getSubId();
+
+		dbStore.metaSet(subId, '', { offset: offset });
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, this.getKeys(), block.content.sources, '', offset, limit, true, '', '', callBack);
 	};
 
 });

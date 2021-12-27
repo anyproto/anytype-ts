@@ -3,14 +3,18 @@
 .menus {
 	.menu.menuDataviewOptionList,
 	.menu.menuDataviewOptionValues {
-		.tagItem { vertical-align: top; margin-top: 1px; }
-		.tagItem.isStatus { margin-top: 0px; }
+		.content { overflow: visible; padding: 0px; }
+		.items { height: 100%; }
+
+
 		.item.add {
 			.name { @include text-overflow-nw; width: calc(100% - 24px); }
 		}
 
-		.item { display: flex; height: 28px; }
+		.item { display: flex; height: 28px; align-items: center; }
 		.item {
+			.tagItem { vertical-align: top; }
+			.clickable { line-height: 18px; }
 			.buttons { display: none; position: absolute; right: 8px; top: 4px; }
 		}
 		.item:hover {
@@ -50,7 +54,7 @@
 	
 	.menu.menuDataviewOptionEdit {
 		.filter { margin-bottom: 8px; }
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 		.item.active::before { z-index: 1; }
 	}
 

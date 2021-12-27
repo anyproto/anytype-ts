@@ -21,10 +21,10 @@ class MenuHelp extends React.Component<Props, {}> {
 	render () {
 		const items: any[] = [
 			{ id: 'feedback', name: 'Send Feedback' },
-			{ id: 'help', name: 'Welcome to Anytype', document: 'intro' },
+			{ id: 'docs', name: 'Help & Tutorials' },
 			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
+			{ id: 'community', name: 'Join our Community' },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts' },
-			{ id: 'community', name: 'Knowledge base & FAQ' },
 		];
 
 		return (
@@ -56,6 +56,10 @@ class MenuHelp extends React.Component<Props, {}> {
 
 			case 'community':
 				ipcRenderer.send('urlOpen', Url.community);
+				break;
+
+			case 'docs':
+				ipcRenderer.send('urlOpen', Url.docs);
 				break;
 
 		};

@@ -1,22 +1,32 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button } from 'ts/component';
-import { I, M, C, crumbs, Action, Util, DataUtil } from 'ts/lib';
-import { detailStore, dbStore } from 'ts/store';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, ListObject, Button, Deleted } from 'ts/component';
+import { I, M, C, crumbs, Action, Util, DataUtil, keyboard } from 'ts/lib';
+import { detailStore, dbStore, commonStore } from 'ts/store';
 
 interface Props extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 };
 
+interface State {
+	isDeleted: boolean;
+};
+
+const Errors = require('json/error.json');
+
 const BLOCK_ID_OBJECT = 'dataview';
 
-const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, {}> {
+const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {
 
 	id: string = '';
 	refHeader: any = null;
 	loading: boolean = false;
+
+	state = {
+		isDeleted: false,
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -25,15 +35,20 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
 
+		const { config } = commonStore;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, [ 'relationFormat' ]);
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const { total } = dbStore.getMeta(dbStore.getSubId(rootId, BLOCK_ID_OBJECT), '');
 
 		return (
 			<div>
@@ -52,9 +67,11 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 							</div>
 						</div>
-						<div className="side right">
-							<Button id="button-create" text="Create set" onClick={this.onCreate} className="dn" />
-						</div>
+						{config.experimental ? (
+							<div className="side right">
+								<Button id="button-create" text="Create set" onClick={this.onCreate} />
+							</div>
+						) : ''}
 					</div>
 
 					<div className="section set">
@@ -83,7 +100,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -94,14 +110,18 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		this.loading = true;
 		this.forceUpdate();
 		
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					Util.route('/main/index');
+				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();
@@ -120,7 +140,6 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};

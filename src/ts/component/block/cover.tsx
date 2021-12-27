@@ -68,10 +68,15 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { config } = commonStore;
 		const { isEditing, loading } = this.state;
 		const { rootId, readonly } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji', 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
 		const root = blockStore.getLeaf(rootId, rootId);
+
+		if (!root) {
+			return null;
+		};
+
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
@@ -141,11 +146,13 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				onDrop={this.onDrop}
 			>
 				{loading ? <Loader /> : ''}
+
 				{isImage ? (
 					<img id="cover" src="" className={[ 'cover', 'type' + coverType, coverId ].join(' ')} />
 				) : (
 					<Cover id={coverId} image={coverId} type={coverType} className={coverId} />
 				)}
+
 				{!readonly ? (
 					<div id="elements" className="elements">
 						{elements}
@@ -217,7 +224,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -253,17 +260,19 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 
 	onRelation () {
-		const { isPopup, rootId, block } = this.props;
+		const { isPopup, rootId } = this.props;
 		const node = $(ReactDOM.findDOMNode(this));
 		const elements = node.find('.elements');
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
-		const st = container.scrollTop();
-		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		} else {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -272,6 +281,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -280,12 +290,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				menuStore.closeAll();
 			},
 			data: {
-				rootId: rootId,
+				rootId,
+				isPopup,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
@@ -330,7 +337,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	onUpload (hash: string) {
 		const { rootId } = this.props;
 
-		this.old = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'coverX', 'coverY', 'coverScale' ], true);
+		this.old = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		DataUtil.pageSetCover(rootId, I.CoverType.Upload, hash, 0, -0.5);
 
@@ -343,7 +350,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		e.stopPropagation();
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		DataUtil.pageSetCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.old = null;
@@ -372,7 +379,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 		
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'coverId', 'coverType' ], true);
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(ReactDOM.findDOMNode(this));
 		const isImage = [ I.CoverType.Upload, I.CoverType.Image ].indexOf(coverType) >= 0;
@@ -488,7 +495,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		
-		selection.preventSelect(true);
+		if (selection) {
+			selection.preventSelect(true);
+		};
 	};
 	
 	onScaleMove (e: any, v: number) {
@@ -525,7 +534,9 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
-		selection.preventSelect(false);
+		if (selection) {
+			selection.preventSelect(false);
+		};
 		this.scale = v;
 	};
 	
@@ -561,7 +572,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			
@@ -575,12 +586,12 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	};
 	
 	setTransform (x: number, y: number) {
-		let mx = this.rect.cw - this.rect.width;
-		let my = this.rect.ch - this.rect.height;
+		let mx = (this.rect.cw - this.rect.width) / 2;
+		let my = (this.rect.ch - this.rect.height) / 2;
 
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
-		
+
 		let css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
 		
 		if (this.rect.ch < this.rect.height) {

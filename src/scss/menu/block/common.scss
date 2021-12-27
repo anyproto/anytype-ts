@@ -12,11 +12,10 @@
 		.item {
 			.name { @include text-overflow-nw; }
 		}
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item:hover::before { background: $colorHover; }
 
 		.item.isReadonly::before { opacity: 0 !important; }
 	}
-	.menu.menuBlockMore.fromIndex { width: 230px; }
 	
 	.menu.menuBlockAdd { width: 480px !important; }
 	.menu.menuBlockAdd {
@@ -61,7 +60,7 @@
 	}
 	.menu.menuBlockAdd {
 		.item.isBig {
-			.iconObject { background-color: #f3f2ec; }
+			.iconObject { background-color: $colorVeryLightGrey; }
 		}
 		.item.isBig {
 			.icon.text { background-image: url('~img/icon/menu/action/block/text1.svg'); }
@@ -86,6 +85,7 @@
 			.icon.image { background-image: url('~img/icon/menu/action/block/image1.svg'); }
 			.icon.video { background-image: url('~img/icon/menu/action/block/video1.svg'); }
 			.icon.audio { background-image: url('~img/icon/menu/action/block/audio1.svg'); }
+			.icon.pdf { background-image: url('~img/icon/menu/action/block/pdf1.svg'); }
 			.icon.bookmark { background-image: url('~img/icon/menu/action/block/bookmark1.svg'); }
 			.icon.code { background-image: url('~img/icon/menu/action/block/code1.svg'); }
 			

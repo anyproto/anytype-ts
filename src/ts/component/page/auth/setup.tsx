@@ -14,6 +14,7 @@ interface State {
 }
 
 const $ = require('jquery');
+const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 const Errors = require('json/error.json');
 const Icons: number[] = [
@@ -40,18 +41,24 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			case 'init':
 				title = translate('authSetupLogin'); 
 				break;
+
 			case 'register':
 			case 'add': 
 				title = translate('authSetupRegister');
 				break;
+
 			case 'select': 
 				title = translate('authSetupSelect');
+				break;
+
+			case 'share': 
+				title = translate('authSetupShare');
 				break;
 		};
 		
 		return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				
@@ -79,12 +86,18 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 			case 'init': 
 				this.init(); 
 				break;
+
 			case 'register':
 			case 'add': 
 				this.add();
 				break;
+
 			case 'select': 
 				this.select();
+				break;
+
+			case 'share': 
+				this.share();
 				break;
 		};
 	};
@@ -105,7 +118,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 	};
 	
 	init () {
-		const { history } = this.props;
 		const { path, phrase } = authStore;
 		const accountId = Storage.get('accountId');
 
@@ -135,14 +147,16 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 					};
 				});
 			} else {
-				history.push('/auth/account-select');
+				Util.route('/auth/account-select');
 			};
 		});
 	};
 	
 	add () {
-		const { history, match } = this.props;
+		const { match } = this.props;
 		const { name, icon, code, phrase } = authStore;
+
+		commonStore.defaultTypeSet(Constant.typeId.note);
 		
 		C.AccountCreate(name, icon, code, (message: any) => {
 			if (message.error.code) {
@@ -162,18 +176,17 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				ipcRenderer.send('keytarSet', accountId, phrase);
 				
 				if (match.params.id == 'register') {
-					history.push('/auth/success');
+					Util.route('/auth/success');
 				};
 					
 				if (match.params.id == 'add') {
-					history.push('/auth/pin-select/add');
+					Util.route('/auth/pin-select/add');
 				};
 			};
 		});
 	};
 	
 	select () {
-		const { history } = this.props;
 		const { account, path } = authStore;
 		
 		C.AccountSelect(account.id, path, (message: any) => {
@@ -189,10 +202,24 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.accountSet(message.account);
 				
 				DataUtil.pageInit(() => {
-					history.push('/main/index');
+					Util.route('/main/index');
 				});
 			};
 		}); 
+	};
+
+	share () {
+		const { location } = this.props;
+		const param = Util.searchParam(location.search);
+
+		C.ObjectAddWithObjectId(param.id, param.payload, (message: any) => {
+			if (message.error.code) {
+				this.setError(message.error.description);
+			} else {
+				Storage.set('shareSuccess', 1);
+				Util.route('/main/index');
+			};
+		});
 	};
 	
 	setError (v: string) {

@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, DataUtil } from 'ts/lib';
+import { I, Util, DataUtil, translate } from 'ts/lib';
 
 const Constant = require('json/constant.json');
 
@@ -108,7 +108,7 @@ class DetailStore {
     get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
 		let list = this.getArray(rootId, id);
 		if (!list.length) {
-			return { _empty_: true };
+			return { id, _empty_: true };
 		};
 		
 		let object: any = {};
@@ -124,15 +124,34 @@ class DetailStore {
 			object[item.relationKey] = item.value;
 		};
 
+		let layout = Number(object.layout) || I.ObjectLayout.Page;
+		let name = String(object.name || DataUtil.defaultName('page'));
+		let snippet = String(object.snippet || '').replace(/\n/g, ' ');
+
+		if (layout == I.ObjectLayout.Note) {
+			object.coverType = I.CoverType.None;
+			object.coverId = '';
+			object.iconEmoji = '';
+			object.iconImage = '';
+
+			name = snippet;
+		};
+
+		if (object.isDeleted) {
+			name = translate('commonDeleted');
+		};
+
 		return {
 			...object,
-			id: id,
-			name: String(object.name || DataUtil.defaultName('page')),
-			type: DataUtil.convertRelationValueToString(object.type),
-			iconImage: DataUtil.convertRelationValueToString(object.iconImage),
-			layout: Number(object.layout) || I.ObjectLayout.Page,
+			id,
+			name,
+			layout,
+			snippet,
+			type: DataUtil.getRelationStringValue(object.type),
+			iconImage: DataUtil.getRelationStringValue(object.iconImage),
 			layoutAlign: Number(object.layoutAlign) || I.BlockAlign.Left,
 			recommendedLayout: Number(object.recommendedLayout) || I.ObjectLayout.Page,
+			relationFormat: Number(object.relationFormat) || I.RelationType.LongText,
 			coverX: Number(object.coverX) || 0,
 			coverY: Number(object.coverY) || 0,
 			coverScale: Number(object.coverScale) || 0,

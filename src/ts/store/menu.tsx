@@ -96,7 +96,6 @@ class MenuStore {
 
     close (id: string, callBack?: () => void) {
 		const item = this.get(id);
-
 		if (!item) {
 			if (callBack) {
 				callBack();
@@ -120,9 +119,9 @@ class MenuStore {
 			el.css({ transform: '' }).removeClass('show');
 		};
 
-		window.setTimeout(() => {
+		const onTimeout = () => {
 			this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
-			
+				
 			if (onClose) {
 				onClose();
 			};
@@ -130,18 +129,24 @@ class MenuStore {
 			if (callBack) {
 				callBack();
 			};
-		}, t);
+		};
+
+		if (t) {
+			window.setTimeout(onTimeout, t);
+		} else {
+			onTimeout();
+		};
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.indexOf(it.id) >= 0; }) : this.menuList;
+		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.includes(it.id); }) : this.menuList;
+
+		this.clearTimeout();
 
 		for (let item of items) {
 			this.close(item.id);
 		};
-
-		this.clearTimeout();
-
+		
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};
@@ -149,6 +154,10 @@ class MenuStore {
 
     clearTimeout () {
 		window.clearTimeout(this.timeout);
+	};
+
+	checkKey (key: string) {
+		return this.menuList.find((it: I.Menu) => { return it.param.menuKey == key; }) ? true : false;
 	};
 
 };

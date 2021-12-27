@@ -61,7 +61,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 						isActive={item.id == value} 
 						checkbox={item.id == value} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
-						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						style={param.style}
 					/>
 				</CellMeasurer>
@@ -186,18 +186,21 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, {}> 
 		};
 		return items || [];
 	};
+
+	onMouseEnter (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setActive(item, false);
+			this.onOver(e, item);
+		};
+	};
 	
 	onOver (e: any, item: any) {
-		const { param, setActive } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { canSelectInitial, onOver } = data;
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
-		};
-
-		if (!keyboard.isMouseDisabled) {
-			setActive(item, false);
 		};
 
 		if (onOver) {

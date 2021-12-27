@@ -29,11 +29,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	render () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
-		const block = blockStore.getLeaf(rootId, blockId);
+		const { rootId, subId } = data;
 		
 		let value = DataUtil.getRelationArrayValue(data.value);
-		value = value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		value = value.map((it: string) => { return detailStore.get(subId, it, []); });
 		value = value.filter((it: any) => { return !it._empty_; });
 
         const Handle = SortableHandle(() => (
@@ -43,23 +42,23 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{item.name}</div>
+				<div className="name">{DataUtil.fileName(item)}</div>
 			</React.Fragment>
 		);
 
 		const Image = (item: any) => (
-			<img src={commonStore.imageUrl(item.id, 208)} className="preview" onLoad={() => { position(); }} />
+			<img src={commonStore.imageUrl(item.id, 208)} className="img" onLoad={() => { position(); }} />
 		);
 
         const Item = SortableElement((item: any) => {
 			let content = null;
 			let cn = [ 'item' ];
-			let name = DataUtil.fileName(item);
 
 			switch (item.layout) {
+				default:
 				case I.ObjectLayout.File:
 					cn.push('isFile');
-					content = <File {...item} name={name} />;
+					content = <File {...item} />;
 					break;
 
 				case I.ObjectLayout.Image:
@@ -172,7 +171,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 			const files = result.filePaths;
 			const file = files && files.length ? files[0] : '';
 
-			C.UploadFile('', file, I.FileType.None, false, (message: any) => {
+			C.UploadFile('', file, I.FileType.None, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.hash);
 				};
@@ -196,8 +195,9 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { data } = param;
 		const { onChange } = data;
 
-		onChange(value);
-		menuStore.updateData(id, { value: value });
+		onChange(value, () => {
+			menuStore.updateData(id, { value: value });
+		});
 	};
 
 	onMore (e: any, item: any) {
@@ -245,9 +245,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							value = value.filter((it: any) => { return it != item.id; });
 							value = Util.arrayUnique(value);
 
-							onChange(value);
-							menuStore.updateData(id, { value: value });
-							menuStore.updateData('dataviewFileList', { value: value });
+							onChange(value, () => {
+								menuStore.updateData(id, { value: value });
+								menuStore.updateData('dataviewFileList', { value: value });
+							});
 							break;
 					};
 				},

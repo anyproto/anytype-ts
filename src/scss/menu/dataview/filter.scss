@@ -4,19 +4,18 @@
 	.menu.menuDataviewFilterList { width: 360px; }
 	.menu.menuDataviewFilterList {
 		.content { overflow: visible; max-height: unset; padding: 0px; }
-		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: overlay; max-height: 350px; }
+		.wrap { height: 100%; display: flex; flex-direction: column; }
+		.items { flex-grow: 1; }
 
-		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
+		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; align-items: center; }
 		.item {
 			.grey { color: $colorMediumGrey; }
 			.iconObject { margin-right: 10px; }
 
-			.buttons { line-height: 44px; }
+			.buttons { line-height: 44px; opacity: 0; transition: $transitionFast; }
 			.buttons {
-				.icon { vertical-align: middle; }
+				.icon { vertical-align: middle; opacity: 1; }
 			}
-
-			.name { @include text-overflow-nw; width: 100%; }
 
 			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
 			.select:hover, .select.active { background: none; }
@@ -25,9 +24,6 @@
 				.icon.arrow { display: none; }
 			}
 
-			.condition { margin-right: 4px; }
-			.value { white-space: nowrap; overflow: hidden; line-height: 22px; }
-
 			.tagItem { margin: 2px 4px 0px 0px; vertical-align: top; }
 
 			.element { display: inline-block; vertical-align: top; margin-right: 4px; line-height: 22px; }
@@ -35,12 +31,19 @@
 				.iconObject { margin-right: 2px; }
 			}
 
-			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; }
+			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; display: flex; flex-direction: column; }
+			.txt {
+				.name { @include text-overflow-nw; width: 100%; }
+				.flex { line-height: 20px; }
+
+				.condition { color: $colorDarkGrey; margin-right: 4px; }
+				.value { color: $colorDarkGrey; white-space: nowrap; overflow: hidden; }
+			}
 		}
-		.item.empty { padding: 13px 16px; }
+		.item.empty { margin: 8px 0px; padding: 14px 16px; }
 
 		.item:hover, .item.hover {
-			.icon.delete { opacity: 1; }
+			.buttons { opacity: 1; }
 			.txt { width: calc(100% - 116px); }
 		}
 
@@ -49,7 +52,7 @@
 			.icon.dnd { margin-top: 0px; }
 		}
 
-		.bottom { padding: 0px 0px 8px 0px; }
+		.bottom {  padding: 0px 0px 8px 0px; flex-shrink: 0; }
 		.bottom {
 			.line { margin-top: 0px; }
 		}
@@ -65,7 +68,6 @@
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
 		}
-		.item.add:hover::before, .item.add.hover:hover::before { opacity: 1 !important; }
 
 		.item {
 			.clickable { width: 100%; height: 20px; display: flex; }

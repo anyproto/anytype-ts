@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListTemplate, ListObject, Select } from 'ts/component';
+import { Icon, IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, ListObjectPreview, ListObject, Select, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action, analytics } from 'ts/lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -13,17 +13,18 @@ interface Props extends RouteComponentProps<any> {
 }
 
 interface State {
-	templates: any[];
-}
+	isDeleted: boolean;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 const BLOCK_ID_OBJECT = 'dataview';
 const BLOCK_ID_TEMPLATE = 'templates';
 const EDITOR_IDS = [ 'name', 'description' ];
 const NO_TEMPLATES = [ 
-	Constant.typeId.page, 
+	Constant.typeId.note, 
 	Constant.typeId.image, 
 	Constant.typeId.file, 
 	Constant.typeId.video, 
@@ -36,12 +37,13 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	_isMounted: boolean = false;
 	id: string = '';
 	refHeader: any = null;
+	refListPreview: any = null;
 	loading: boolean = false;
 	timeout: number = 0;
 	page: number = 0;
 
 	state = {
-		templates: [],
+		isDeleted: false,
 	};
 
 	constructor (props: any) {
@@ -57,6 +59,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
@@ -70,15 +76,19 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			name: DataUtil.defaultName('type'),
 			description: 'Add a description',
 		};
+
 		const type: any = dbStore.getObjectType(rootId) || {};
-		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
-		const { total } = dbStore.getMeta(rootId, BLOCK_ID_OBJECT);
+		const templates = dbStore.getRecords(this.getSubIdTemplate(), '');
+		const totalTemplate = dbStore.getMeta(this.getSubIdTemplate(), '').total;
+		const objects = dbStore.getRecords(this.getSubIdObject(), '');
+		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = DataUtil.menuGetLayouts().find((it: any) => { return it.id == object.recommendedLayout; }) || {};
 
 		const allowedObject = (type.types || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = allowedObject;
+		const allowCreate = [ Constant.typeId.set ].indexOf(rootId) < 0;
 		const showTemplates = NO_TEMPLATES.indexOf(rootId) < 0;
 
 		if (object.name == DataUtil.defaultName('page')) {
@@ -156,15 +166,17 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 							<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} readonly={true} />
 						</div>
-						<div className="side right">
-							<Button id="button-create" text="Create" onClick={this.onCreate} />
-						</div>
+						{allowCreate ? (
+							<div className="side right">
+								<Button id="button-create" text="Create" onClick={this.onCreate} />
+							</div>
+						) : ''}
 					</div>
 
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{templates.length} {Util.cntWord(templates.length, 'template', 'templates')}
+								{totalTemplate} {Util.cntWord(totalTemplate, 'template', 'templates')}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -172,11 +184,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 									</div>
 								) : ''}
 							</div>
-							{templates.length ? (
+							{totalTemplate ? (
 								<div className="content">
-									<ListTemplate 
+									<ListObjectPreview 
 										key="listTemplate"
-										items={templates}
+										ref={(ref: any) => { this.refListPreview = ref; }}
+										getItems={() => { return templates; }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onClick={(e: any, item: any) => { DataUtil.objectOpenPopup(item); }} 
@@ -226,7 +239,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 					</div>
 
 					<div className="section set">
-						<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
+						<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
 						<div className="content">
 							<ListObject rootId={rootId} blockId={BLOCK_ID_OBJECT} />
 						</div>
@@ -262,22 +275,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	};
 
 	componentWillUnmount () {
-		const rootId = this.getRootId();
-		const templates = dbStore.getData(rootId, BLOCK_ID_TEMPLATE);
-
 		this._isMounted = false;
 		this.close();
 
 		focus.clear(true);
 		window.clearTimeout(this.timeout);
-
-		for (let item of templates) {
-			Action.pageClose(item.id, false);
-		};
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -288,14 +293,20 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					Util.route('/main/index');
+				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
+
+			this.getDataviewData(BLOCK_ID_TEMPLATE, 0);
 
 			this.loading = false;
 			this.forceUpdate();
@@ -304,6 +315,17 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				this.refHeader.forceUpdate();
 			};
 		});
+	};
+
+	getDataviewData (blockId: string, limit: number) {
+		const rootId = this.getRootId();
+		const views = dbStore.getViews(rootId, blockId);
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (views.length) {
+			const view = views[0];
+			C.ObjectSearchSubscribe(this.getSubIdTemplate(), view.filters, view.sorts, [ 'id' ], block.content.sources, '', 0, 0, true, '', '');
+		};
 	};
 
 	close () {
@@ -341,10 +363,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			focus.clear(true);
 			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
 			analytics.event('TemplateCreate', { objectType: rootId });
-			
-			window.setTimeout(() => {
-				DataUtil.objectOpenPopup(message.record);
-			}, 50);
+
+			DataUtil.objectOpenPopup(message.record, {
+				onClose: () => {
+					if (this.refListPreview) {
+						this.refListPreview.updateItem(message.record.id);
+					};
+				}
+			});
 		});
 	};
 
@@ -408,7 +434,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			});
 		};
 
-		DataUtil.checkTemplateCnt([ rootId ], 2, (message: any) => {
+		DataUtil.checkTemplateCnt([ rootId ], (message: any) => {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
@@ -521,18 +547,24 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 	save () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details = [];
-		const object: any = { id: rootId };
+		const type: any = { id: rootId };
 
 		for (let id of EDITOR_IDS) {
 			const value = this.getValue(id);
+			if (value == object[id]) {
+				continue;
+			};
 
 			details.push({ key: id, value: value });
-			object[id] = value;
+			type[id] = value;
 		};
-		dbStore.objectTypeUpdate(object);
 
-		C.BlockSetDetails(rootId, details);
+		if (details.length) {
+			dbStore.objectTypeUpdate(type);
+			C.BlockSetDetails(rootId, details);
+		};
 	};
 
 	getRange (id: string) {
@@ -582,6 +614,14 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	getSubIdTemplate () {
+		return dbStore.getSubId(this.getRootId(), BLOCK_ID_TEMPLATE);
+	};
+
+	getSubIdObject () {
+		return dbStore.getSubId(this.getRootId(), BLOCK_ID_OBJECT);
 	};
 
 });

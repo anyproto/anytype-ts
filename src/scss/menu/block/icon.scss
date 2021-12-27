@@ -64,6 +64,8 @@
 		.icon.template { background-image: url('~img/icon/menu/action/template0.svg'); }
 		.icon.fav { background-image: url('~img/icon/menu/action/fav0.svg'); }
 		.icon.unfav { background-image: url('~img/icon/menu/action/unfav0.svg'); }
+		.icon.highlight { background-image: url('~img/icon/menu/action/highlight0.svg'); }
+		.icon.share { background-image: url('~img/icon/menu/action/share0.svg'); }
 
 		.icon.align.left { background-image: url('~img/icon/menu/align/left.svg'); }
 		.icon.align.center { background-image: url('~img/icon/menu/align/center.svg'); }
@@ -76,7 +78,7 @@
 				width: 16px; height: 16px; position: absolute; left: 50%; top: 50%; margin: -8px 0px 0px -8px; border-radius: 100%;
 				background: $colorBlack; 
 			}
-			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorLightGrey inset; background: #fff; }
+			.inner.bgColor-default { box-shadow: 0px 0px 0px 1px $colorLightGrey inset; background: $colorWhite; }
 			
 			.inner.textColor-black { background: $colorBlack; }
 			.inner.textColor-grey { background: $colorMediumGrey; }

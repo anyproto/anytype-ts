@@ -1,4 +1,20 @@
-import { Account, AccountConfig, Platform, DragItem, CoverType, CrumbsType, NavigationType, Option, HistoryVersion, LinkPreview, ExportFormat, Source, EdgeType, GraphView } from './common';
+import { 
+	Account, 
+	AccountConfig, 
+	Platform, 
+	DragType, 
+	CoverType, 
+	CrumbsType, 
+	NavigationType, 
+	Option, 
+	HistoryVersion, 
+	PreviewLink, 
+	ExportFormat, 
+	Source, 
+	EdgeType, 
+	GraphView, 
+	TabIndex 
+} from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
@@ -30,7 +46,7 @@ import { LayoutStyle, ContentLayout, BlockLayout } from './block/layout';
 import { ContentIcon, BlockIcon } from './block/icon';
 import { LinkStyle, LinkIconSize, LinkCardStyle, ContentLink, BlockLink } from './block/link';
 import { TextStyle, MarkType, TextRange, Mark, ContentText, BlockText } from './block/text';
-import { FileType, FileState, ContentFile, BlockFile } from './block/file';
+import { FileType, FileState, FileStyle, ContentFile, BlockFile } from './block/file';
 import { ContentBookmark, BlockBookmark } from './block/bookmark';
 import { DivStyle, ContentDiv, BlockDiv } from './block/div';
 import { ContentRelation, BlockRelation } from './block/relation';
@@ -40,17 +56,18 @@ export {
 	Account,
 	AccountConfig,
 	Platform,
-	DragItem,
+	DragType,
 	CoverType,
 	CrumbsType,
 	NavigationType,
 	Option,
 	HistoryVersion,
-	LinkPreview,
+	PreviewLink,
 	ExportFormat,
 	Source,
 	EdgeType,
 	GraphView,
+	TabIndex,
 	
 	ThreadStatus,
 	ThreadSummary,
@@ -139,6 +156,7 @@ export {
 
 	FileType,
 	FileState,
+	FileStyle,
 	ContentFile,
 	BlockFile,
 

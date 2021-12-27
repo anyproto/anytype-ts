@@ -3,13 +3,15 @@
 .blocks {
 	.block.blockText { font-size: 16px; line-height: 24px; letter-spacing: 0.08px; font-weight: 400; word-wrap: break-word; }
 	.block.blockText {
-		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; padding-bottom: 1px; }
+		.value { -webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; }
 
-		.placeholder { display: none; overflow: hidden; }
+		.placeholder { display: none; }
 
-		lnk { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
-		
-		kbd { display: inline; font-family: 'Plex'; border-radius: 2px; background: rgba(172,169,150,0.1); }
+		kbd { 
+			display: inline-block; font-family: 'Plex'; border-radius: 4px; background: $colorLightGrey; padding: 0px 4px;
+		}
+
+		.disabled { color: $colorMediumGrey; opacity: 1 !important; }
 
 		smile {
 			img { position: static !important; left: auto !important; top: auto !important; margin: 0px !important; vertical-align: middle; }
@@ -24,6 +26,14 @@
 			name { display: none; }
 		}
 
+		lnk { position: relative; margin-right: 18px; }
+		lnk, obj { cursor: pointer; color: inherit; border-bottom: 1px solid $colorMediumGrey; text-decoration: none; }
+		lnk.disabled, obj.disabled { border-width: 0px; }
+		lnk::after {
+			content: ""; display: inline-block; background-image: url('~img/icon/link.svg'); background-repeat: no-repeat;
+			width: 14px; height: 14px; vertical-align: middle; margin: -7px; position: absolute; right: -10px; top: 50%;
+		}
+
 		mention { cursor: pointer; white-space: nowrap; display: inline; user-select: all; }
 		mention * { user-select: text; }
 		mention {
@@ -31,6 +41,9 @@
 			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
 			name { display: inline; white-space: normal; vertical-align: top; position: relative; border-bottom: 1px solid $colorMediumGrey; }
+		}
+		mention.disabled {
+			name { border-width: 0px; }
 		}
 
 		mention.withImage {
@@ -50,7 +63,7 @@
 		italic { font-style: italic; }
 		strike { text-decoration: line-through; }
 		
-		.markers { white-space: nowrap; }
+		.markers { display: flex; }
 		.markers {
 			.marker { 
 				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
@@ -79,16 +92,16 @@
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .placeholder { display: none; }
 
 	.block.blockText.isReadonly.code > .wrapContent > .selectable > .dropTarget { padding: 16px; }
-	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 44px; }
+	.block.blockText.isReadonly.title > .wrapContent > .selectable > .dropTarget .value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 
-	.block.blockText.title { padding: 22px 0px 6px 0px; @include text-title; }
+	.block.blockText.title { padding: 22px 0px 6px 0px !important; @include text-title; }
 	.block.blockText.title {
 		.placeholder { 
-			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; overflow: hidden; 
+			color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none;
 			width: 100%; height: 100%; cursor: text; 
 		}
 		.value { -webkit-user-modify: read-write-plaintext-only; }
@@ -127,7 +140,10 @@
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 
 	.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex {
 		.value { font-family: 'Plex'; @include text-common; tab-size: 4; }
-		.additional { position: absolute; top: 9px; left: 16px; z-index: 1; display: block; }
+		.value * { background: none; }
+		.additional { 
+			position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%;
+		}
 		.additional {
 			.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
 			.select {
@@ -135,7 +151,18 @@
 			}
 			.select:hover, .select.active { background: none; }
 			
-			.icon.codeWrap { width: 20px; height: 20px; }
+			.buttons { position: absolute; right: 16px; top: 0px; }
+			.buttons {
+				.btn { padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; }
+				.btn {
+					.icon { margin-right: 4px; vertical-align: top; }
+					.txt { line-height: 20px; vertical-align: top; }
+				}
+			}
+
+			.icon.codeWrap { 
+				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/wrap0.svg'); cursor: pointer;
+			}
 		}
 	}
 
@@ -163,6 +190,7 @@
 .editorWrapper.isTask {
 	.blocks .block.blockText.title { @include text-header1; }
 	.blocks .block.blockText.title {
-		.marker { margin: 3px 12px 0px 0px; }
+		.flex { gap: 0px 8px; }
+		.marker { width: 30px; height: 30px; margin: 0px; }
 	}
 }

@@ -4,22 +4,25 @@ REPO="anytypeio/go-anytype-middleware"
 FILE="addon.tar.gz"
 GITHUB="api.github.com"
 
-token=$1;
-platform=$2;
-arch="";
+user=$1
+token=$2;
+platform=$3;
+arch=$4;
+folder="build";
 
 if [ "$platform" = "ubuntu-latest" ]; then
   arch="linux";
 elif [ "$platform" = "macos-latest" ]; then
-  arch="darwin-amd";
-elif [ "$platform" = "macos-10.15" ]; then
-  arch="darwin-amd";
-elif [ "$platform" = "macos-11" ]; then
-  arch="darwin-arm";
+  arch="darwin-$arch";
+  folder="$arch";
 elif [ "$platform" = "windows-latest" ]; then
   arch="windows";
   FILE="addon.zip"
 fi;
+
+echo "Arch: $arch"
+echo "Folder: $folder"
+echo ""
 
 if [ "$token" = "" ]; then
   echo "ERROR: token is empty"
@@ -33,7 +36,7 @@ fi;
 
 mwv=`cat middleware.version`
 
-version=`curl -H "Authorization: token $token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
+version=`curl -u "$user:$token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
 
 tag=`echo $version | jq ".tag_name"`
 asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+(-rc[0-9]+)?_$arch\";\"i\")))[0].id"`
@@ -47,7 +50,6 @@ printf "Version: $tag\n"
 printf "Found asset: $asset_id\n"
 echo -n "Downloading file..."
 curl -sL -H "Authorization: token $token" -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id" > $FILE
-
 printf "Done\n"
 
 if [ "$platform" = "windows-latest" ]; then
@@ -63,9 +65,9 @@ else
   printf "Done\n"
 
   echo "Moving... "
-  rm -rf build
-  mkdir -p build
-  mv -fv addon/* build/
+  rm -rf "$folder"
+  mkdir -p "$folder"
+  mv -fv addon/* $folder
   rm -rf addon
 fi;
 

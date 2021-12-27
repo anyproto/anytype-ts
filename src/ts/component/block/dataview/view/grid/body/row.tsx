@@ -13,7 +13,7 @@ interface Props extends I.ViewComponent {
 	getRecord(index: number): any;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
-}
+};
 
 const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 
@@ -29,13 +29,19 @@ const BodyRow = observer(class BodyRow extends React.Component<Props, {}> {
 		if ((record.layout == I.ObjectLayout.Task) && record.done) {
 			cn.push('isDone');
 		};
+		if (record.isArchived) {
+			cn.push('isArchived');
+		};
+		if (record.isDeleted) {
+			cn.push('isDeleted');
+		};
 		
 		return (
 			<div id={'row-' + index} className={cn.join(' ')} style={style}>
 				{relations.map((relation: any, i: number) => (
 					<Cell 
-						key={'grid-cell-' + relation.relationKey} 
-						{...this.props} 
+						key={'grid-cell-' + relation.relationKey + record.id} 
+						{...this.props}
 						width={relation.width}
 						index={index} 
 						relationKey={relation.relationKey} 

@@ -48,29 +48,16 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const cn = [ 'header', 'headerMainEdit' ];
 
-		if (popupStore.isOpenList([ 'search' ]) || menuStore.isOpen('blockRelationView')) {
-			cn.push('active');
-		};
-
 		return (
 			<div id="header" className={cn.join(' ')}>
-				{isPopup ? (
-					<div className="side left">
-						<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-						<Icon className={[ 'back', 'big', (!historyPopup.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
-						<Icon className={[ 'forward', 'big', (!historyPopup.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-						<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
-					</div>
-				) : (
-					<div className="side left">
-						<Icon className="home big" tooltip="Home" onClick={this.onHome} />
-						<Icon className="back big" tooltip="Back" onClick={this.onBack} />
-						<Icon className="forward big" tooltip="Forward" onClick={this.onForward} />
-						<Icon className="nav big" tooltip="Navigation" onClick={(e: any) => { this.onNavigation(e); }} />
-						<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
-					</div>
-				)}
+				<div className="side left">
+					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="home big" tooltip="Home" onClick={this.onHome} />
+					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={this.onBack} />
+					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={this.onForward} />
+					<Icon className="nav big" tooltip="Navigation" onClick={this.onNavigation} />
+					<Icon className="graph big nm" tooltip="Open as graph" onClick={this.onGraph} />
+				</div>
 
 				<div className="side center">
 					<div className="path" onMouseDown={(e: any) => { this.onSearch(e); }} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
@@ -108,7 +95,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 	};
 
 	onHome (e: any) {
-		this.props.history.push('/main/index');
+		Util.route('/main/index');
 	};
 	
 	onBack (e: any) {
@@ -123,7 +110,8 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		DataUtil.objectOpen(object);
+		keyboard.disableClose(true);
+		popupStore.closeAll(null, () => { DataUtil.objectOpen(object); });
 	};
 	
 	onMore (e: any) {
@@ -140,10 +128,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 			horizontal: I.MenuDirection.Right,
 			subIds: Constant.menuIds.more,
 			data: {
-				rootId: rootId,
+				rootId,
 				blockId: rootId,
 				blockIds: [ rootId ],
-				match: match,
+				match,
+				isPopup,
 			}
 		};
 

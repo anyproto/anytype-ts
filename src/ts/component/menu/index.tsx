@@ -58,8 +58,10 @@ import MenuDataviewOptionEdit from './dataview/option/edit';
 import MenuDataviewOptionValues from './dataview/option/values';
 import MenuDataviewDate from './dataview/date';
 import MenuDataviewText from './dataview/text';
+import MenuDataviewSource from './dataview/source';
 
 interface Props extends I.Menu {
+	dataset?: any;
 	history: any;
 };
 
@@ -126,6 +128,7 @@ const Components: any = {
 	dataviewCalendar:		 MenuDataviewCalendar,
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,
+	dataviewSource:			 MenuDataviewSource,
 };
 
 const Menu = observer(class Menu extends React.Component<Props, State> {
@@ -200,7 +203,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				{item.name}
 			</div>
 		);
-		
+
 		return (
 			<div id={menuId + '-wrap'} className="menuWrap">
 				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
@@ -360,7 +363,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			const width = param.width ? param.width : menu.outerWidth();
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
-			const isFixed = menu.css('position') == 'fixed';
+			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number('function' == typeof(param.offsetX) ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number('function' == typeof(param.offsetY) ? param.offsetY() : param.offsetY) || 0;
 
@@ -369,6 +372,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			let ox = 0;
 			let oy = 0;
 			let minY = Util.sizeHeader();
+
 			if (platform == I.Platform.Windows) {
 				minY += 30;
 			};
@@ -470,13 +474,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				const coords = Util.objectCopy(keyboard.mouse.page);
 				const poly = $('#menu-polygon');
 
-				if (isFixed) {
-					coords.y -= scrollTop;
-				};
-				
-				let px = Math.abs(x - coords.x);
-				let py = Math.abs(y - coords.y) + 4;
-				let w = px - 4;
+				let w = Math.abs(x - coords.x) - 4;
 				let t = '';
 				let l = coords.x + 4;
 
@@ -491,7 +489,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 					height: height,
 					left: l,
 					top: y,
-					clipPath: `polygon(0px ${py}px, 100% 0%, 100% 100%)`,
+					clipPath: `polygon(0px ${oy - y}px, 0px ${oy - y + eh}px, 100% 100%, 100% 0%)`,
 					transform: t,
 					position: (isFixed ? 'fixed' : 'absolute'),
 				});
@@ -500,7 +498,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 				this.timeoutPoly = window.setTimeout(() => { 
 					win.trigger('mousemove');
 					poly.hide(); 
-				}, 1000);
+				}, 500);
 			};
 		});
 	};
@@ -587,7 +585,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			this.close();
 		});
 
-		if (!this.ref.getItems) {
+		if (!this.ref || !this.ref.getItems) {
 			return;
 		};
 
@@ -631,7 +629,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 		});
 
-		if (this.ref.onClick) {	
+		if (this.ref && this.ref.onClick) {	
 			keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
 				e.preventDefault();
 				if (item) {
@@ -640,7 +638,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref.onSortEnd) {
+		if (this.ref && this.ref.onSortEnd) {
 			keyboard.shortcut('shift+arrowup', e, (pressed: string) => {
 				e.preventDefault();
 				this.onSortMove(-1);
@@ -652,7 +650,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			});
 		};
 
-		if (this.ref.onRemove && refInput && !refInput.isFocused) {
+		if (this.ref && this.ref.onRemove && refInput && !refInput.isFocused) {
 			keyboard.shortcut('backspace', e, (pressed: string) => {
 				e.preventDefault();
 
@@ -695,8 +693,6 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			this.ref.n = items.findIndex((it: any) => { return it.id == item.id; });
 		};
 
-		this.setHover(items[this.ref.n], scroll);
-
 		if (this.ref.refList && scroll) {
 			let idx = this.ref.n;
 			if (this.ref.recalcIndex) {
@@ -704,6 +700,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 			this.ref.refList.scrollToRow(Math.max(0, idx));
 		};
+
+		this.setHover(items[this.ref.n], scroll);
 	};
 	
 	setHover (item?: any, scroll?: boolean) {

@@ -63,13 +63,23 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		$(window).unbind('keydown.menu');
 	};
 	
-	getActive () {
+	getActive (): number {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (!block) {
+			return 0;
+		};
+
+		let style = block.content.style;
+
+		if (block.isFile()) {
+			return style != I.FileStyle.Link ? I.FileStyle.Embed : I.FileStyle.Link;
+		};
 		
-		return block ? block.content.style : 0;
+		return style;
 	};
 	
 	getSections () {
@@ -80,10 +90,12 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
 		const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
 		const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+		const turnFile = { id: 'turnFile', icon: '', name: 'Turn into file', color: '', children: DataUtil.menuGetTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;
 		let hasTurnDiv = true;
+		let hasTurnFile = true;
 
 		let sections: any[] = [];
 
@@ -95,12 +107,14 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 			if (!block.canTurnText())		 hasTurnText = false;
 			if (!block.canTurnList())		 hasTurnList = false;
 			if (!block.isDiv())				 hasTurnDiv = false;
+			if (!block.isFile())			 hasTurnFile = false;
 		};
 
 		if (hasTurnText)	 sections.push(turnText);
 		if (hasTurnList)	 sections.push(turnList);
 		if (hasTurnDiv)		 sections.push(turnDiv);
-		
+		if (hasTurnFile)     sections.push(turnFile);
+
 		return DataUtil.menuSectionsMap(sections);
 	};
 	
@@ -121,9 +135,9 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, getId, close } = this.props;
+		const { param, getId, close, dataset } = this.props;
 		const { data } = param;
-		const { onSelect, dataset } = data;
+		const { onSelect } = data;
 		const { selection } = dataset || {};
 		
 		close();

@@ -26,8 +26,8 @@
 	.menu.menuThreadList { width: 272px; }
 	.menu.menuThreadList {
 		.content { padding: 0px; }
-		.item { padding: 11px 16px; border-bottom: 1px solid $colorLightGrey;}
-		.item:hover::before { background: rgba(172, 169, 150, 0.1); }
+		.item { padding: 11px 16px; border-bottom: 1px solid $colorLightGrey; }
+		.item:hover::before { background: $colorHover; }
 		.item:last-child { border: 0px; }
 
 		.item {

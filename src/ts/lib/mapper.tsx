@@ -15,7 +15,9 @@ const Mapper = {
 		},
 
 		AccountConfig: (obj: any): I.AccountConfig => {
-			return {};
+			return {
+				allowSpaces: obj.getEnablespaces(),
+			};
 		},
 		
 		ObjectInfo: (obj: any): I.PageInfo => {
@@ -46,7 +48,7 @@ const Mapper = {
 			};
 		},
 
-		LinkPreview: (obj: any) => {
+		PreviewLink: (obj: any) => {
             return {
                 type: obj.getType(),
                 title: obj.getTitle(),
@@ -143,6 +145,7 @@ const Mapper = {
 					hash: content.getHash(),
 					name: content.getName(),
 					type: content.getType(),
+					style: content.getStyle(),
 					mime: content.getMime(),
 					size: content.getSize(),
 					addedAt: content.getAddedat(),
@@ -152,7 +155,7 @@ const Mapper = {
 	
 			if (type == I.BlockType.Dataview) {
 				item.content = {
-					//sources: content.getSourceList(),
+					sources: content.getSourceList(),
 					views: (content.getViewsList() || []).map(Mapper.From.View),
 					relations: (content.getRelationsList() || []).map(Mapper.From.Relation),
 				};
@@ -342,6 +345,7 @@ const Mapper = {
 				description: obj.getDescription(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
+				isHidden: obj.getHidden(),
             };
         },
 
@@ -352,10 +356,11 @@ const Mapper = {
 				name: obj.getName(),
 				layout: obj.getLayout(),
 				description: obj.getDescription(),
+				snippet: obj.getSnippet(),
 				iconImage: obj.getIconimage(),
 				iconEmoji: obj.getIconemoji(),
-				//done: obj.getDone(),
-				//relationFormat: obj.getRelationformat(),
+				done: obj.getDone(),
+				relationFormat: obj.getRelationformat(),
             };
         },
 
@@ -492,6 +497,14 @@ const Mapper = {
 				content.setText(obj.content.text);
 	
 				block.setLatex(content);
+			};
+
+			if (obj.type == I.BlockType.Dataview) {
+				content = new Model.Block.Content.Dataview();
+	
+				content.setViewsList(obj.content.views.map(Mapper.To.View));
+	
+				block.setDataview(content);
 			};
 
 			return block;

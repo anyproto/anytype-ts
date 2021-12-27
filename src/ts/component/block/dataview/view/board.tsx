@@ -93,11 +93,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, {}> {
 	
 	getColumns (): any[] {
 		const { rootId, block } = this.props;
-		const data = dbStore.getData(rootId, block.id);
+		const records = dbStore.getRecords(rootId, block.id);
 
 		let columns: any[] = [];
-		for (let i in data) {
-			let item = data[i];
+		for (let i in records) {
+			let item = records[i];
 			let value = item[GROUP] || '';
 			let col = columns.find((col) => { return col.value == value; });
 			

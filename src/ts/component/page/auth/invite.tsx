@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Input, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C } from 'ts/lib';
+import { Util, translate } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 interface State {
 	error: string;
-}
+};
 
 const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Props, State> {
 
@@ -30,7 +30,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				
@@ -61,16 +61,16 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<Pro
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { match, history } = this.props;
-		const value = this.ref.getValue();
+		const { match } = this.props;
+		const value = this.ref.getValue().trim();
 
 		if (!value) {
 			this.setState({ error: translate('authInviteEmpty') });
 			return;
 		};
 		
-		authStore.codeSet(this.ref.getValue());
-		history.push('/auth/setup/' + match.params.id);	
+		authStore.codeSet(value);
+		Util.route('/auth/setup/' + match.params.id);	
 	};
 	
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I } from 'ts/lib';
-import { Icon } from 'ts/component';
-import { commonStore, menuStore } from 'ts/store';
+import { Icon, MenuItemVertical } from 'ts/component';
+import { menuStore } from 'ts/store';
 
 interface Props {
 	id: string;
@@ -14,6 +14,7 @@ interface Props {
 	menuWidth?: number;
 	value: string;
 	options: I.Option[];
+	noFilter: boolean;
 	horizontal?: I.MenuDirection;
 	onChange? (id: string): void;
 };
@@ -30,6 +31,7 @@ class Select extends React.Component<Props, State> {
 	public static defaultProps = {
 		initial: '',
 		horizontal: I.MenuDirection.Left,
+		noFilter: true,
 	};
 	
 	_isMounted: boolean = false;
@@ -60,8 +62,7 @@ class Select extends React.Component<Props, State> {
 			<div id={'select-' + id} className={cn.join(' ')} onClick={this.show}>
 				{current ? (
 					<React.Fragment>
-						{current.icon ? <Icon className={current.icon} /> : ''}
-						<div className="name">{current.name}</div>
+						<MenuItemVertical {...current} />
 						<Icon className={acn.join(' ')} />
 					</React.Fragment>
 				) : ''}
@@ -106,7 +107,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	show () {
-		const { id, horizontal, element, menuClassName, menuClassNameWrap, onChange, menuWidth } = this.props;
+		const { id, horizontal, element, menuClassName, menuClassNameWrap, onChange, menuWidth, noFilter } = this.props;
 		const { value, options } = this.state;
 		
 		menuStore.open('select', { 
@@ -124,7 +125,7 @@ class Select extends React.Component<Props, State> {
 				$('#select-' + id).removeClass('active');
 			},
 			data: {
-				noFilter: true,
+				noFilter: noFilter,
 				value: value,
 				options: options,
 				onSelect: (e: any, item: any) => {

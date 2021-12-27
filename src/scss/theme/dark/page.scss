@@ -1,0 +1,183 @@
+@import "~scss/_vars";
+@import "~scss/theme/dark/_vars";
+
+/* PageAuth */
+
+.pageAuth, .pageIndex, .pageObject {
+    .textarea { border: 0px; }
+    .input { border-color: $colorLinePrimary; }
+}
+
+.pageAuthRegister {
+    .iconObject { background-image: url('~img/theme/dark/icon/picture.svg'); }
+}
+
+/* PageMainIndex */
+
+.pageMainIndex {
+
+    .animatedBackground {
+        background-image: linear-gradient(to right, rgba(0,0,0,0) 8%, $colorTertiary 18%, rgba(0,0,0,0) 33%);
+    }
+
+    #documents {
+        .emptySearch { background: rgba(0,0,0,0.5); }
+
+        .item { background: rgba(0,0,0,0.5); transition: background 0.2s ease-in-out; }
+        .item {
+            .type { color: $colorSecondary; }
+            .icon.more { background-image: url('~img/theme/dark/icon/index/more0.svg'); }
+			.icon.more:hover, .icon.more.hover { background-image: url('~img/theme/dark/icon/index/more1.svg'); }
+
+            .empty { color: $colorSecondary; }
+        }
+        .item:hover { background: rgba(0,0,0,0.7); }
+
+        .item.isLoading {
+			.iconObject { background: $colorBgIcon; }
+			.line.lineName { background-color: $colorBgIcon; }
+			.line.lineType { background-color: $colorBgIcon; }
+		}
+    }
+}
+
+/* PageMainGraph */
+
+.pageMainGraph {
+    canvas { background: $colorBlack; }
+
+    .tabs { border-color: $colorLineSecondary; }
+    .tabs {
+        .tab:hover, .tab.active { color: $colorPrimary; }
+
+        .icon.close:hover { background-color: $colorHover; }
+    }
+
+    .wrapper {
+        .side.right { background: $colorBlack; border-color: $colorLineSecondary; }
+        .side.right {
+            .bottom { border-color: $colorLineSecondary; }
+            .filter { background: none; }
+        }
+
+        .section {
+            .item { background: $colorBlack; }
+        }
+    }
+
+    .panelPreview {
+        .heading {
+            .iconObject { background: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+        }
+    }
+
+    .footer {
+        .icon { background-color: $colorBgIcon; }
+    }
+}
+.pageMainGraph > .body > #loader { background: $colorBlack; }
+
+/* PageMainStore */
+
+.pageMainStore {
+    .head { background: $colorBlack; }
+    .head {
+        .tabs { background: $colorBgIcon; color: $colorSecondary; }
+        .tabs {
+            .item.active { background: $colorHover; color: $colorPrimary; }
+        }
+    }
+
+    .body {
+        .items {
+            .item {
+                .info {
+                    .line { background: $colorLineSecondary; }
+                }
+            }
+        }
+    }
+}
+
+/* PageMainType */
+
+.pageMainType {
+    .wrapper {
+        .section.template {
+			.btn { color: $colorSecondary; }
+			.btn {
+				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template0.svg'); }
+			}
+
+			.btn:hover { color: $colorPrimary; }
+			.btn:hover {
+				.icon.plus { background-image: url('~img/theme/dark/icon/plus/template1.svg'); }
+			}
+
+			.listPreviewObject {
+				.icon.arrow.left { left: -32px; }
+				.icon.arrow.right { right: -32px; }
+			}
+		}
+
+        .section.relation {
+            .item {
+                .name { color: $colorSecondary; }
+            }
+            .item.canEdit, .item.add {
+				.clickable:hover { background: $colorHover; }
+			}
+        }
+
+        table { border-color: $colorLineSecondary; }
+        table {
+            .cellHead .name { border-color: $colorLineSecondary; color: $colorSecondary; }
+            .cell { border-color: $colorLineSecondary; }
+            tbody { border-color: $colorLineSecondary; }
+        }
+    }
+}
+
+/* PageMainRelation */
+
+.pageMainRelation {
+    .wrapper {
+        table { border-color: $colorLineSecondary; }
+        table {
+            .cellHead .name { border-color: $colorLineSecondary; color: $colorSecondary; }
+            .cell { border-color: $colorLineSecondary; }
+            tbody { border-color: $colorLineSecondary; }
+        }
+    }
+}
+
+/* PageMainNavigation */
+
+.pageMainNavigation {
+    .selected { border-color: $colorLinePrimary; }
+    .selected {
+        .descr { color: $colorSecondary; }
+    }
+
+    .items {
+        .item { border-color: $colorLinePrimary; }
+        .item {
+            .descr { color: $colorSecondary; }
+        }
+    }
+}
+
+/* PageMainHistory */
+
+.pageMainHistory {
+    .list { background: $colorBlack; border-color: $colorLineSecondary; }
+    .list {
+        .section.fix { background: $colorBlack; }
+
+        .item:hover, .item.active { background: $colorHover; }
+        .item {
+            .name { color: $colorSecondary; }
+            .icon.arrow { background-image: url('~img/theme/dark/arrow/historyList.svg'); }
+        }
+    }
+}

@@ -20,20 +20,22 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, index, getView, getRecord, onRef, style } = this.props;
 		const view = getView();
+		const { cardSize, coverFit, hideIcon } = view;
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
 		});
 		const idPrefix = 'dataviewCell';
 		const record = getRecord(index);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(view.cardSize) ];
+		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
 		//const readonly = this.props.readonly || record.isReadonly;
 		const readonly = true;
+		const subId = dbStore.getSubId(rootId, block.id);
 
-		if (view.coverFit) {
+		if (coverFit) {
 			cn.push('coverFit');
 		};
 
-		let BlankCover = (item: any) => (
+		const BlankCover = (item: any) => (
 			<div className={[ 'cover', 'type0', (!readonly ? 'canEdit' : '') ].join(' ')}>
 				<div className="inner">
 					{!readonly ? (
@@ -48,25 +50,23 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 		let cover = null;
 		if (view.coverRelationKey) {
+			cover = <BlankCover />;
+
 			if (view.coverRelationKey == 'pageCover') {
 				const { coverType, coverId, coverX, coverY, coverScale } = record;
 				if (coverId && coverType) {
 					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
-				} else {
-					cover = <BlankCover />;
 				};
 			} else {
 				const src = this.getPicture();
 				if (src) {
 					cover = <Cover type={I.CoverType.Upload} src={src} />;
-				} else {
-					cover = <BlankCover />;
 				};
 			};
 		};
 
 		return (
-			<div className={cn.join(' ')} style={style} onClick={(e: any) => { DataUtil.objectOpenPopup(record); }}>
+			<div className={cn.join(' ')} style={style} onMouseDown={(e: any) => { DataUtil.objectOpenPopup(record); }}>
 				{cover}
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
@@ -76,6 +76,7 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 								elementId={id}
 								key={'list-cell-' + view.id + relation.relationKey} 
 								{...this.props}
+								subId={subId}
 								ref={(ref: any) => { onRef(ref, id); }} 
 								relationKey={relation.relationKey}
 								viewType={view.type}
@@ -94,7 +95,6 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this._isMounted = true;
-
 		this.resize();
 	};
 
@@ -120,20 +120,24 @@ const Card = observer(class Card extends React.Component<Props, {}> {
 		};
 	};
 
-	getPicture () {
-		const { rootId, index, getView, getRecord } = this.props;
+	getPicture (): string {
+		const { rootId, block, index, getView, getRecord } = this.props;
 		const view = getView();
 
+		if (!view || !view.coverRelationKey) {
+			return '';
+		};
+
+		const subId = dbStore.getSubId(rootId, block.id);
+		const record = getRecord(index);
+		const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
+
 		let picture = '';
-		if (view.coverRelationKey) {
-			const record = getRecord(index);
-			const value = DataUtil.getRelationArrayValue(record[view.coverRelationKey]);
-			for (let id of value) {
-				const f = detailStore.get(rootId, id, []);
-				if (f && (f.type == Constant.typeId.image)) {
-					picture = commonStore.imageUrl(f.id, 600);
-					break;
-				};
+		for (let id of value) {
+			const f = detailStore.get(subId, id, []);
+			if (f && (f.type == Constant.typeId.image)) {
+				picture = commonStore.imageUrl(f.id, 600);
+				break;
 			};
 		};
 		return picture;

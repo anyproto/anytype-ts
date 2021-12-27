@@ -2,10 +2,9 @@ import { I, keyboard } from 'ts/lib';
 import { commonStore, popupStore } from 'ts/store';
 import { v4 as uuidv4 } from 'uuid';
 import { translate } from '.';
+import { menuStore } from '../store';
 
-const escapeStringRegexp = require('escape-string-regexp');
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const raf = require('raf');
 const $ = require('jquery');
 const loadImage = require('blueimp-load-image');
@@ -16,14 +15,21 @@ const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 const os = window.require('os');
 const path = window.require('path');
+const Cover = require('json/cover.json');
 
 class Util {
+
+	history: any = null;
+
+	init (history: any) {
+		this.history = history;
+	};
 	
 	timeoutTooltip: number = 0;
-	timeoutLinkPreviewShow: number = 0;
-	timeoutLinkPreviewHide: number = 0;
-	linkPreviewOpen: boolean = false;
-	
+	timeoutPreviewShow: number = 0;
+	timeoutPreviewHide: number = 0;
+	isPreviewOpen: boolean = false;
+
 	sprintf (...args: any[]) {
 		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 		let a = arguments, i = 0, format = a[i++];
@@ -396,9 +402,17 @@ class Util {
 		return Math.floor(Date.UTC(y, m - 1, d, h, i, s, 0) / 1000);
 	};
 
-	parseDate (value: string): number {
+	parseDate (value: string, format?: I.DateFormat): number {
 		let [ date, time ] = String(value || '').split(' ');
-		let [ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		let d = 0;
+		let m = 0;
+		let y = 0;
+
+		if (format == I.DateFormat.ShortUS) {
+			[ m, d, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		} else {
+			[ d, m, y ] = String(date || '').split('.').map((it: any) => { return Number(it) || 0; });
+		};
 		let [ h, i, s ] = String(time || '').split(':').map((it: any) => { return Number(it) || 0; });
 
 		m = Math.min(12, Math.max(1, m));
@@ -548,6 +562,37 @@ class Util {
 		};
 		return '';
 	};
+
+	duration (t: number): string {
+		if (!t) {
+			return '';
+		};
+
+		let d = Math.floor(t / 86400);
+
+		t -= d * 86400;
+		let h = Math.floor(t / 3600);
+
+		t -= h * 3600;
+		let m = Math.floor(t / 60);
+
+		t -= m * 60;
+		let s = t;
+
+		if (d > 0) {
+			return this.sprintf('%dd', d);
+		};
+		if (h > 0) {
+			return this.sprintf('%dh', h);
+		};
+		if (m > 0) {
+			return this.sprintf('%dmin', m);
+		};
+		if (s > 0) {
+			return this.sprintf('%ds', s);
+		};
+		return '';
+	};
 	
 	round (v: number, l: number) {
 		let d = Math.pow(10, l);
@@ -606,7 +651,14 @@ class Util {
 		if ([ 'ppt', 'pptx' ].indexOf(e) >= 0) {
 			icon = 'presentation';
 		};
-		
+
+		for (let k in Constant.extension) {
+			if (Constant.extension[k].indexOf(e) >= 0) {
+				icon = k;
+				break;
+			};
+		};
+
 		if (!icon && t.length) {
 			if ([ 'image', 'video', 'text', 'audio' ].indexOf(t[0]) >= 0) {
 				icon = t[0];
@@ -643,8 +695,6 @@ class Util {
 			let obj = $('#tooltip');
 			let offset = node.offset();
 			let st = win.scrollTop(); 
-			let ow = obj.outerWidth();
-			let oh = obj.outerHeight();
 			let nw = node.outerWidth();
 			let nh = node.outerHeight();
 
@@ -653,6 +703,8 @@ class Util {
 			obj.find('.txt').html(this.lbBr(text));
 			obj.show().css({ opacity: 0 });
 			
+			let ow = obj.outerWidth();
+			let oh = obj.outerHeight();
 			let x = 0;
 			let y = 0;
 
@@ -699,53 +751,46 @@ class Util {
 		this.timeoutTooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
 	
-	linkPreviewShow (url: string, node: any, param: any) {
+	previewShow (node: any, param: any) {
 		if (!node.length || keyboard.isPreviewDisabled) {
 			return;
 		};
 		
-		const obj = $('#linkPreview');
+		const obj = $('#preview');
 		
 		node.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			window.clearTimeout(this.timeoutLinkPreviewShow);
+			window.clearTimeout(this.timeoutPreviewShow);
 		});
 		
 		obj.unbind('mouseleave.link').on('mouseleave.link', (e: any) => {
-			this.linkPreviewHide(false);
+			this.previewHide(false);
 		});
 		
-		this.linkPreviewHide(false);
+		this.previewHide(false);
 		
-		window.clearTimeout(this.timeoutLinkPreviewShow);
-		this.timeoutLinkPreviewShow = window.setTimeout(() => {
-			this.linkPreviewOpen = true;
-			commonStore.linkPreviewSet({
-				url: url,
-				element: node,
-				...param,
-			});
+		window.clearTimeout(this.timeoutPreviewShow);
+		this.timeoutPreviewShow = window.setTimeout(() => {
+			this.isPreviewOpen = true;
+			commonStore.previewSet({ ...param, element: node });
 		}, 500);
 	};
 	
-	linkPreviewHide (force: boolean) {
-		if (!this.linkPreviewOpen) {
-			return;
-		};
+	previewHide (force: boolean) {
+		this.isPreviewOpen = false;
+		window.clearTimeout(this.timeoutPreviewShow);
 
-		const obj = $('#linkPreview');
-		
-		this.linkPreviewOpen = false;
-		window.clearTimeout(this.timeoutLinkPreviewShow);
-		
+		const obj = $('#preview');
 		if (force) {
 			obj.hide();
 			return;
 		};
 		
 		obj.css({ opacity: 0 });
-		this.timeoutLinkPreviewHide = window.setTimeout(() => { 
+		this.timeoutPreviewHide = window.setTimeout(() => { 
 			obj.hide();
 			obj.removeClass('top bottom withImage'); 
+
+			commonStore.previewClear();
 		}, 250);
 	};
 	
@@ -804,8 +849,12 @@ class Util {
 		return String((Number(s) || 0) || '') === String(s || '');
 	};
 
-	coverSrc (cover: string, preview?: boolean) {
-		return `./img/cover/${preview ? 'preview/' : ''}${cover}.jpg`;
+	coverSrc (id: string, preview?: boolean): string {
+		const item = Cover.find((it: any) => { return it.id == id; });
+		if (item) {
+			return commonStore.imageUrl(item.hash, preview ? 200 : Constant.size.image);
+		};
+		return `./img/cover/${preview ? 'preview/' : ''}${id}.jpg`;
 	};
 
 	selectionRect () {
@@ -882,11 +931,25 @@ class Util {
 		return { page, action };
 	};
 
+	route (route: string, replace?: boolean) {
+		const method = replace ? 'replace' : 'push';
+
+		this.tooltipHide(true);
+		this.previewHide(true);
+
+		menuStore.closeAll();
+		popupStore.closeAll(null, () => { this.history[method](route); });
+	};
+
 	intercept (obj: any, change: any) {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getScrollContainer (type: string) {
+	getScrollContainer (isPopup?: boolean) {
+		return $(isPopup ? '#popupPage #innerWrap' : window);
+	};
+
+	getBodyContainer (type: string) {
 		switch (type) {
 			default:
 			case 'page':
@@ -896,8 +959,10 @@ class Util {
 				return '#popupPage #innerWrap';
 			
 			case 'menuBlockAdd':
-			case 'menuBlockRelationView':
 				return `#${type} .content`;
+
+			case 'menuBlockRelationView':
+				return `#${type} .scrollWrap`;
 		};
 	};
 
@@ -921,20 +986,7 @@ class Util {
 	};
 
 	sizeHeader (): number {
-		const platform = this.getPlatform();
-		const version = process.getSystemVersion();
-		
-		let a = version.split('.');
-		let v = a.length ? a[0] : '';
-
-		let s = 38;
-		if (platform == I.Platform.Windows) {
-			s = 68;
-		};
-		if ((platform == I.Platform.Mac) && (v == '11')) {
-			s = 52;
-		};
-		return s;
+		return this.getPlatform() == I.Platform.Windows ? 68 : 52;
 	};
 
 	deleteFolderRecursive (p: string) {
@@ -951,6 +1003,35 @@ class Util {
 			};
 		});
 		fs.rmdirSync(p);
+	};
+
+	searchParam (url: string): any {
+		var a = url.replace(/^\?/, '').split('&');
+		var param: any = {};
+		
+		a.forEach((s) => {
+			var kv = s.split('=');
+			param[kv[0]] = kv[1];
+		});
+
+		return param;
+	};
+
+	addBodyClass (prefix: string, v: string) {
+		const obj = $('html');
+		const reg = new RegExp(`^${prefix}`);
+		const c = String(obj.attr('class') || '').split(' ').filter((it: string) => { return !it.match(reg); });
+
+		if (v) {
+			c.push(this.toCamelCase(`${prefix}-${v}`));
+		};
+		obj.attr({ class: c.join(' ') });
+	};
+
+	findClosestElement (array: number[], goal: number) {
+		return array.reduce((prev: number, curr: number) => {
+			return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
+		});
 	};
 
 };

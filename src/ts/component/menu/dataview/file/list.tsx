@@ -282,11 +282,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			value = value.slice(value.length - maxCount, value.length);
 		};
 
-		data.value = value;
-
-		menuStore.updateData(MENU_ID, { value: value });
-		onChange(value);
-		position();
+		onChange(value, () => {
+			data.value = value;
+			menuStore.updateData(MENU_ID, { value: value });
+			position();
+		});
 	};
 
 	resize () {

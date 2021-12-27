@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
-import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'ts/store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -27,7 +27,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const object = detailStore.get(rootId, rootId, []);
 		const { config } = commonStore;
 		const sections = this.getSections();
 		const restrictions = blockStore.getRestrictions(rootId, rootId);
@@ -105,106 +104,108 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { config } = commonStore;
 		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const platform = Util.getPlatform();
+		const { config } = commonStore;
 
 		if (!block) {
 			return [];
 		};
 		
 		const object = detailStore.get(rootId, blockId);
-		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const cmd = keyboard.ctrlSymbol();
-
+		const isTemplate = object.type == Constant.typeId.template;
+		
 		let template = null;
 		let archive = null;
 		let fav = null;
+		let highlight = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
 		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
 		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
-		let link = { id: 'link', name: 'Link to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
+		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
+		let removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
+		let removeBlock = { id: 'removeBlock', icon: 'remove', name: 'Delete' };
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
+			fav = { id: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			fav = { id: 'fav', icon: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', name: 'Add to Favorites' };
+		};
+
+		if (isTemplate) {	
+			template = { id: 'createPage', icon: 'template', name: 'Create object' };
+		} else {
+			template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
 		};
 
 		if (object.isArchived) {
-			//archive = { id: 'removePage', icon: 'remove', name: 'Delete' };
-			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from archive' };
-			fav = null;
+			archive = { id: 'unarchivePage', icon: 'restore', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archivePage', icon: 'remove', name: 'Move to archive' };
+			archive = { id: 'archivePage', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (!allowedDetails || object.isReadonly || (object.id == profile)) {
-			archive = null;
+		if (object.isHighlighted) {
+			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
+		} else {
+			highlight = { id: 'highlight', name: 'Highlight' };
 		};
+
+		// Restrictions
+
+		const allowedBlock = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Block ]);
+		const allowedArchive = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Delete ]) && !object.isReadonly;
+		const allowedDelete = allowedArchive && object.isArchived;
+		const allowedShare = block.isObjectSpace() && config.allowSpaces;
+		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
+		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
+		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
+		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
+		const allowedFav = !object.isArchived;
+
+		if (!allowedArchive)	 archive = null;
+		if (!allowedDelete)		 removePage = null;
+		if (!allowedShare)		 share = null;
+		if (!allowedHighlight)	 highlight = null;
+		if (!allowedSearch)		 search = null;
+		if (!allowedHistory)	 history = null;
+		if (!allowedBlock)		 undo = redo = null;
+		if (!allowedTemplate)	 template = null;
+		if (!allowedFav)		 fav = null;
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet()) {
+		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
 			sections = [
-				{ children: [ archive ] },
-				{ children: [ fav, link ] },
-				{ children: [ print ] },
-			];
-
-			if (block.isObjectSet()) {
-				sections.unshift({ children: [ undo, redo ] });
-			} else {
-				sections.splice(1, 0, { children: [ search ] });
-			};
-		} else
-		if (block.isPage()) {
-			if (object.type == Constant.typeId.template) {	
-				template = { id: 'createPage', icon: 'template', name: 'Create object' };
-			} else {
-				template = { id: 'createTemplate', icon: 'template', name: 'Use as a template' };
-			};
-
-			// Restrictions
-
-			if (!block.canHaveHistory() || object.templateIsBundled) {
-				history = null;
-			};
-
-			if (!allowedBlock) {
-				undo = null;
-				redo = null;
-			};
-
-			if (object.type == Constant.typeId.page) {
-				template = null;
-			};
-
-			sections = [
-				{ children: [ undo, redo, history, archive ] },
-				{ children: [ fav, link, template ] },
+				{ children: [ archive, removePage ] },
+				{ children: [ fav, highlight ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
+				{ children: [ share, highlight ] },
 			];
-
-			sections = sections.map((it: any, i: number) => {
-				it.id = 'page' + i;
-				return it;
-			});
+		} else
+		if (block.isPage()) {
+			sections = [
+				{ children: [ undo, redo, history, archive, removePage ] },
+				{ children: [ fav, template ] },
+				{ children: [ search ] },
+				{ children: [ print ] },
+				{ children: [ highlight ] },
+			];
+			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
 		} else {
 			sections.push({ children: [
 				turn,
 				move,
 				align,
 				//{ id: 'copy', name: 'Duplicate' },
-				{ id: 'remove', name: 'Delete' },
+				removeBlock,
 			]});
 		};
 
@@ -243,14 +244,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const { param, getId, getSize, close } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onMenuSelect } = data;
-		const object = detailStore.get(rootId, rootId, []);
-		const { config } = commonStore;
+		const object = detailStore.get(rootId, rootId, [ 'isHightlighted' ]);
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (!block) {
 			return;
 		};
 		
+		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
 		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -268,9 +269,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				blockIds: [ blockId ],
 			},
 		};
-
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		types = types.filter((it: string) => { return it != Constant.typeId.page; });
 
 		switch (item.id) {
 			case 'turnObject':
@@ -306,29 +304,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: filters,
 					type: I.NavigationType.Move, 
-					skipId: rootId,
-					position: I.BlockPosition.Bottom,
-					onSelect: (item: any) => {
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-
-			case 'link':
-				menuId = 'searchObject';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-				];
-
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: filters,
-					type: I.NavigationType.LinkTo,
-					skipId: rootId,
+					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 					onSelect: (item: any) => {
 						close();
@@ -407,7 +383,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 	onClick (e: any, item: any) {
 		const { param, getId, history } = this.props;
 		const { data } = param;
-		const { blockId, rootId, onSelect } = data;
+		const { blockId, rootId, onSelect, isPopup } = data;
 		const { root, breadcrumbs } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
 		
@@ -415,10 +391,10 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			return;
 		};
 		
-		const children = blockStore.getChildren(breadcrumbs, breadcrumbs);
+		const children = blockStore.getChildren(breadcrumbs, breadcrumbs, (it: I.Block) => { return it.isLink(); });
 		const prev = children[children.length - 2];
 		const object = detailStore.get(rootId, rootId);
-		
+
 		let close = true;
 		
 		if (onSelect) {
@@ -453,7 +429,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'history':
-				history.push('/main/history/' + blockId);
+				DataUtil.objectOpenEvent(e, { layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'copy':
@@ -475,11 +451,17 @@ class MenuBlockMore extends React.Component<Props, {}> {
 						dbStore.objectTypeUpdate({ id: object.id, isArchived: true });
 					};
 					
-					if (prev) {
-						const object = detailStore.get(breadcrumbs, prev.content.targetBlockId, []);
-						DataUtil.objectOpen(object);
+					if (!isPopup) {
+						if (prev) {
+							history.entries = [];
+							history.index = -1;
+
+							DataUtil.objectOpen(detailStore.get(breadcrumbs, prev.content.targetBlockId, []));
+						} else {
+							Util.route('/main/index');
+						};
 					} else {
-						history.push('/main/index');
+						popupStore.close('page');
 					};
 				});
 				break;
@@ -504,10 +486,14 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.ObjectSetIsFavorite(rootId, false);
 				break;
 
-			case 'remove':
+			case 'removeBlock':
 				C.BlockUnlink(rootId, [ blockId ], (message: any) => {
-					if (block.isPage()) {
-						history.push('/main/index');
+					if (!isPopup) {
+						if (block.isPage()) {
+							Util.route('/main/index');
+						};
+					} else {
+						popupStore.close('page');
 					};
 				});
 				break;
@@ -533,11 +519,40 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'removePage':
-				C.BlockListDeletePage([ blockId ], (message: any) => {
+				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (block.isPage()) {
-						history.push('/main/index');
+						Util.route('/main/index');
 					};
 				});
+				break;
+
+			case 'sharePage':
+				C.ObjectShareByLink(object.id, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					popupStore.open('prompt', {
+						data: {
+							title: 'Link to share',
+							value: message.link,
+							readonly: true,
+							select: true,
+							textConfirm: 'Copy',
+							onChange: (v: string) => {
+								Util.clipboardCopy({ text: v });
+							}
+						}
+					});
+				});
+				break;
+
+			case 'highlight':
+				C.WorkspaceSetIsHighlighted(object.id, true);
+				break;
+
+			case 'unhighlight':
+				C.WorkspaceSetIsHighlighted(object.id, false);
 				break;
 		};
 		

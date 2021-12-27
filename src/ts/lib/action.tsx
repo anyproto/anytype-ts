@@ -14,11 +14,12 @@ class Action {
 
 		const onClose = () => {
 			const blocks = blockStore.getBlocks(rootId, (it: I.Block) => { return it.isDataview(); });
+
 			for (let block of blocks) {
 				dbStore.relationsClear(rootId, block.id);
 				dbStore.viewsClear(rootId, block.id);
-				dbStore.metaClear(rootId, block.id);
-				dbStore.recordsClear(rootId, block.id);
+
+				this.dbClear(dbStore.getSubId(rootId, block.id));
 			};
 
 			blockStore.clear(rootId);
@@ -32,6 +33,16 @@ class Action {
 		} else {
 			onClose();
 		};
+	};
+
+	dbClear (subId: string) {
+		dbStore.metaClear(subId, '');
+		dbStore.recordsClear(subId, '');
+		dbStore.recordsClear(subId + '/dep', '');
+
+		detailStore.clear(subId);
+
+		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 	
 	download (block: I.Block) {

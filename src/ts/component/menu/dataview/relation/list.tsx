@@ -6,15 +6,22 @@ import { I, C, DataUtil, keyboard } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 interface Props extends I.Menu {}
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+const HEIGHT = 28;
+const LIMIT = 20;
 
 const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, {}> {
 	
 	n: number = 0;
+	top: number = 0;
+	cache: any = {};
+	refList: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -23,6 +30,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		this.onClick = this.onClick.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSwitch = this.onSwitch.bind(this);
+		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
@@ -53,7 +61,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			};
 
 			return (
-				<div id={'item-' + item.relationKey} className={cn.join(' ')} onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}>
+				<div 
+					id={'item-' + item.relationKey} 
+					className={cn.join(' ')} 
+					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
+					style={item.style}
+				>
 					{allowedView ? <Handle /> : ''}
 					<span className="clickable" onClick={(e: any) => { this.onClick(e, item); }}>
 						<Icon className={'relation ' + DataUtil.relationClass(item.relation.format)} />
@@ -69,56 +82,113 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			);
 		});
 		
-		const ItemAdd = (item: any) => (
-			<div id="item-add" className="item add" onClick={this.onAdd}>
-				<Icon className="plus" />
-				<div className="name">New relation</div>
-			</div>
-		);
+		const rowRenderer = (param: any) => {
+			const item: any = items[param.index];
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+					hasFixedWidth={() => {}}
+				>
+					<Item key={item.id} {...item} index={param.index} style={param.style} />
+				</CellMeasurer>
+			);
+		};
 		
 		const List = SortableContainer((item: any) => {
 			return (
 				<div className="items">
-					<div id="scrollWrap" className="scrollWrap">
-						{items.map((item: any, i: number) => {
-							return <Item key={item.relationKey} {...item} index={i} />;
-						})}
-					</div>
-					{!readonly && allowedView ? (
-						<div className="bottom">
-							<div className="line" />
-							<ItemAdd /> 
-						</div>
-					) : ''}
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={() => { return true; }}
+						threshold={LIMIT}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => (
+									<VList
+										ref={(ref: any) => { this.refList = ref; }}
+										width={width}
+										height={height}
+										deferredMeasurmentCache={this.cache}
+										rowCount={items.length}
+										rowHeight={HEIGHT}
+										rowRenderer={rowRenderer}
+										onRowsRendered={onRowsRendered}
+										overscanRowCount={LIMIT}
+										onScroll={this.onScroll}
+									/>
+								)}
+							</AutoSizer>
+						)}
+					</InfiniteLoader>
 				</div>
 			);
 		});
 		
 		return (
-			<List 
-				axis="y" 
-				lockAxis="y"
-				lockToContainerEdges={true}
-				transitionDuration={150}
-				distance={10}
-				onSortEnd={this.onSortEnd}
-				useDragHandle={true}
-				helperClass="isDragging"
-				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
-			/>
+			<div className="wrap">
+				<List 
+					axis="y" 
+					lockAxis="y"
+					lockToContainerEdges={true}
+					transitionDuration={150}
+					distance={10}
+					onSortEnd={this.onSortEnd}
+					useDragHandle={true}
+					helperClass="isDragging"
+					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+				/>
+				{!readonly && allowedView ? (
+					<div className="bottom">
+						<div className="line" />
+						<div 
+							id="item-add" 
+							className="item add" 
+							onClick={this.onAdd} 
+							onMouseEnter={() => { this.props.setHover({ id: 'add' }); }} 
+							onMouseLeave={() => { this.props.setHover(); }}
+						>
+							<Icon className="plus" />
+							<div className="name">New relation</div>
+						</div>
+					</div>
+				) : ''}
+			</div>
 		);
 	};
 
 	componentDidMount() {
+		const items = this.getItems();
+
 		this.rebind();
+		this.resize();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: (i: number) => { return (items[i] || {}).id; },
+		});
 	};
 	
 	componentDidUpdate () {
+		this.resize();
+		this.rebind();
+
 		this.props.setActive(null, true);
 		this.props.position();
+
+		if (this.refList && this.top) {
+			this.refList.scrollToPosition(this.top);
+		};
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		menuStore.closeAll(Constant.menuIds.cell);
 	};
 
@@ -138,6 +208,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		let item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
+			e.preventDefault();
+
 			this.onSwitch(e, item, !item.isVisible);
 			ret = true;
 		});
@@ -152,10 +224,18 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onAdd (e: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, onAdd } = data;
+		const { rootId, blockId, getData, getView } = data;
 		const view = getView();
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		const menuIdEdit = 'dataviewRelationEdit';
+
+		const onAdd = (message: any) => {
+			getData(getView().id, 0);
+
+			if (data.onAdd) {
+				data.onAdd();
+			};
+		};
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add`,
@@ -236,6 +316,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
 	};
 
+	onScroll ({ clientHeight, scrollHeight, scrollTop }) {
+		if (scrollTop) {
+			this.top = scrollTop;
+		};
+	};
+
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
@@ -247,6 +333,16 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			it.relation = dbStore.getRelation(rootId, blockId, it.relationKey) || {};
 			return it;
 		});
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const items = this.getItems();
+		const obj = $('#' + getId() + ' .content');
+		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
+
+		obj.css({ height: height });
+		position();
 	};
 	
 });

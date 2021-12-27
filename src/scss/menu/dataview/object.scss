@@ -14,9 +14,17 @@
 		.label { color: $colorMediumGrey; @include text-common; padding: 0px 16px; }
 	}
 
+	.menu.menuDataviewObjectList.single { width: 256px; }
+	.menu.menuDataviewObjectList.single {
+		.item {
+			.name { margin: 0px; }
+			.caption { display: none; }
+		}
+	}
+
 	.menu.menuDataviewObjectValues { width: 288px; }
 	.menu.menuDataviewObjectValues {
-		.content { max-height: 280px; }
+		.content { padding: 0px; max-height: 280px; }
 
 		.item { padding: 4px 16px 4px 10px; }
 		.item {
@@ -26,7 +34,7 @@
 				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
 				opacity: 0; z-index: 1; transition: none;
 			}
-			.icon.delete:hover { background-color: rgba(172, 169, 150, 0.1); }
+			.icon.delete:hover { background-color: $colorHover; }
 		}
 		.item.hover, .item:hover {
 			.caption { opacity: 0; }

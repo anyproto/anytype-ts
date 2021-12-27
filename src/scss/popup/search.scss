@@ -6,11 +6,11 @@
 
 		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; }
-		.innerWrap { top: 38px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
+		.innerWrap { top: 52px; width: 40%; margin-left: -20%; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
 		.dimmer { transition: none; }
 
 		.head { 
-			height: 28px; position: fixed; top: -33px; left: 50%; background: #fff; width: 100%; border-radius: 6px;
+			height: 28px; position: fixed; top: -40px; left: 50%; background: $colorWhite; width: 100%; border-radius: 6px;
 			transform: translateX(-50%); padding: 4px 8px; -webkit-app-region: no-drag;
 		}
 		.head {
@@ -26,8 +26,8 @@
 			}
 		}
 
-		.empty { height: 100%; width: 100%; line-height: 360px; padding: 16px; text-align: center; }
-		.empty {
+		.emptySearch { height: 100%; width: 100%; line-height: 84px; padding: 8px 16px; text-align: center; }
+		.emptySearch {
 			b { display: block; font-weight: 400; color: $colorBlack; }
 			.label { line-height: 24px; color: $colorMediumGrey; display: inline-block; vertical-align: middle; width: 100%; }
 			span {
@@ -47,36 +47,27 @@
 
 			.item { 
 				cursor: pointer; transition: $transitionFast; position: relative; height: 32px; line-height: 22px; padding: 7px 16px; white-space: nowrap;
-				display: flex;
+				display: flex; gap: 0px 6px; align-items: center;
 			}
 			.item {
-				.iconObject { transition: $transitionFast; vertical-align: top; margin-right: 6px; flex-shrink: 0; }
-				.name { @include text-overflow-nw; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; max-width: 50%; }
-				.type { flex-shrink: 0; max-width: 33%; }
-				.descr { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; display: inline-block; vertical-align: top; }
+				.iconObject { transition: $transitionFast; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+				.name { @include text-overflow-nw; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; max-width: 50%; }
+				.descr { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 1; flex-grow: 1; }
+				.type { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; max-width: 33%; flex-grow: 0; }
 
-				.div { width: 2px; height: 18px; line-height: 18px; margin: 0px 6px; display: inline-block; vertical-align: top; flex-shrink: 0; }
+				.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
 				.div {
 					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
 				}
 			}
 
-			.item.active { background-color: rgba(172, 169, 150, 0.1); }
+			.item.active { background-color: $colorHover; }
 		}
 	}
 }
 
 html.platformWindows {
 	.popups {
-		.popup.popupSearch .innerWrap { top: 68px; }
-	}
-}
-
-html.platformMac.version11 {
-	.popups {
-		.popup.popupSearch {
-			.innerWrap { top: 52px; }
-			.head { top: -40px; }
-		}
+		.popup.popupSearch .innerWrap { top: 74px; }
 	}
 }

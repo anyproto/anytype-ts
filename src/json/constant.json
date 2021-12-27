@@ -16,7 +16,8 @@
 	"default": {
 		"lang": "en",
 		"cover": 12,
-		"codeLang": "javascript"
+		"codeLang": "javascript",
+		"pinTime": 600
 	},
 	
 	"langs": [
@@ -34,7 +35,8 @@
 		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
-		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ]
+		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
+		"pdf": [ "pdf" ]
 	},
 
 	"limit": {
@@ -45,6 +47,12 @@
 		"store": {
 			"records": 50
 		}
+	},
+
+	"subIds": {
+		"index": "index",
+		"search": "search",
+		"profile": "profile"
 	},
 
 	"menuIds": {
@@ -69,7 +77,7 @@
 			"searchObject"
 		],
 		"relationEdit": [
-			"select", "searchObject", "dataviewDate"
+			"select", "searchObject", "dataviewDate", "dataviewObjectValues", "dataviewObjectList"
 		],
 		"layout": [
 			"blockAlign"
@@ -79,8 +87,19 @@
 		],
 		"viewEdit": [ 
 			"select" 
+		],
+		"featuredType": [
+			"searchObject"
 		]
 	},
+
+	"coverRelationKeys": [
+		"coverId",
+		"coverType",
+		"coverX",
+		"coverY",
+		"coverScale"
+	],
 
 	"defaultRelationKeys": [ 
 		"id", 
@@ -95,7 +114,7 @@
 		"isHidden", 
 		"isArchived", 
 		"isReadonly", 
-		"isDraft",
+		"isDeleted",
 		"done", 
 		"fileExt", 
 		"fileMimeType" 
@@ -131,19 +150,25 @@
 		"description": "description",
 		"featured": "featuredRelations",
 		"type": "type",
-		"done": "done"
+		"done": "done",
+		"space": "workspaceId",
+		"creator": "creator",
+		"setOf": "setOf"
 	},
 
 	"typeId": {
 		"page": "_otpage",
 		"set": "_otset",
+		"space": "_otspace",
 		"template": "_ottemplate",
 		"type": "_otobjectType",
 		"image": "_otimage",
 		"file": "_otfile",
 		"video": "_otvideo",
 		"audio": "_otaudio",
-		"relation": "_otrelation"
+		"relation": "_otrelation",
+		"note": "_otnote",
+		"task": "_ottask"
 	},
 
 	"blockId": {

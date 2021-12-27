@@ -2,8 +2,10 @@
 
 .popups {
 	.popup.popupPrompt {
-		.innerWrap { width: 448px; height: 108px; margin: -54px 0px 0px -224px; padding: 16px; border-radius: 4px; z-index: 104; }
-		.input { height: 32px; border: 1px solid #d2d0c2; padding: 0px 12px; @include text-small; width: 100%; margin-bottom: 12px; }
+		.title { @include text-header2; margin-bottom: 10px; }
+
+		.innerWrap { width: 448px; margin: 0px; padding: 16px; border-radius: 4px; z-index: 104; }
+		.input { height: 32px; border: 1px solid $colorBorderDark; padding: 0px 12px; @include text-small; width: 100%; margin-bottom: 12px; }
 		.row { @include text-small; margin-bottom: 12px; }
 		.button { height: 32px; line-height: 32px; margin-right: 10px; }
 	}	

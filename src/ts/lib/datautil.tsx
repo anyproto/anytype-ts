@@ -1,18 +1,12 @@
-import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, dispatcher, analytics } from 'ts/lib';
+import { I, C, M, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore, popupStore } from 'ts/store';
-import children from '../component/list/children';
+import { authStore } from '../store';
 
 const Constant = require('json/constant.json');
 const Errors = require('json/error.json');
 
 class DataUtil {
 
-	history: any = null;
-
-	init (history: any) {
-		this.history = history;
-	};
-	
 	map (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
@@ -65,13 +59,13 @@ class DataUtil {
 		return icon;
 	};
 
-	blockClass (block: any) {
+	blockClass (block: any, isDragging?: boolean) {
 		const { content } = block;
 		const { style, type, state } = content;
 
 		let c = [];
 		switch (block.type) {
-			case I.BlockType.Text:	 c.push('blockText ' + this.textClass(style)); break;
+			case I.BlockType.Text:		 c.push('blockText ' + this.textClass(style)); break;
 			case I.BlockType.Layout:	 c.push('blockLayout c' + style); break;
 			case I.BlockType.IconPage:	 c.push('blockIconPage'); break;
 			case I.BlockType.IconUser:	 c.push('blockIconUser'); break;
@@ -80,12 +74,17 @@ class DataUtil {
 				if (state == I.FileState.Done) {
 					c.push('withFile');
 				};
+
+				if (isDragging || (style == I.FileStyle.Link)) {
+					c.push('blockFile');
+					break;
+				};
+
 				switch (type) {
 					default: 
 					case I.FileType.File: 
 						c.push('blockFile');
 						break;
-						
 					case I.FileType.Image: 
 						c.push('blockMedia isImage');
 						break;
@@ -94,6 +93,9 @@ class DataUtil {
 						break;
 					case I.FileType.Audio: 
 						c.push('blockMedia isAudio');
+						break;
+					case I.FileType.Pdf: 
+						c.push('blockMedia isPdf');
 						break;
 				};
 				break;
@@ -144,6 +146,7 @@ class DataUtil {
 			case I.ObjectLayout.Set:		 c = 'isSet'; break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 			case I.ObjectLayout.File:		 c = 'isFile'; break;
+			case I.ObjectLayout.Note:		 c = 'isNote'; break;
 		};
 		return c;
 	};
@@ -366,7 +369,9 @@ class DataUtil {
 				return;
 			};
 
+			analytics.init();
 			commonStore.gatewaySet(message.gatewayUrl);
+			authStore.deviceSet(message.deviceId);
 			
 			blockStore.rootSet(root);
 			blockStore.storeSetType(message.marketplaceTypeId);
@@ -378,23 +383,25 @@ class DataUtil {
 			});
 			
 			if (profile) {
-				C.BlockOpen(profile, (message: any) => {
-					if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-						Util.onErrorUpdate();
-						return;
-					};
-
+				C.ObjectIdsSubscribe(Constant.subIds.profile, [ profile ], Constant.defaultRelationKeys, true, (message: any) => {
 					blockStore.profileSet(profile);
 				});
 			};
 
 			crumbs.init();
 
-			C.BlockOpen(root, (message: any) => {
+			C.BlockOpen(root, '', (message: any) => {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
 					Util.onErrorUpdate();
 					return;
 				};
+
+				const object = detailStore.get(root, root, Constant.coverRelationKeys);
+
+				if (!object._empty_ && object.coverId && (object.coverType != I.CoverType.None)) {
+					commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+				};
+
 				if (callBack) {
 					callBack();
 				};
@@ -410,16 +417,18 @@ class DataUtil {
 
 		this.pageInit(() => {
 			keyboard.initPinCheck();
-			this.history.push(redirectTo ? redirectTo : '/main/index');
+			Util.route(redirectTo ? redirectTo : '/main/index', true);
 		});
 	};
 
-	objectOpenEvent (e: any, object: any) {
+	objectOpenEvent (e: any, object: any, popupParam?: any) {
+		const { root } = blockStore;
+
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page')) {
-			this.objectOpenPopup(object);
+		if ((e.shiftKey || e.ctrlKey || e.metaKey || popupStore.isOpen('page'))) {
+			this.objectOpenPopup(object, popupParam);
 		} else {
 			this.objectOpen(object);
 		};
@@ -438,27 +447,40 @@ class DataUtil {
 			id = '';
 		};
 
-		if (action) {
-			this.history.push('/main/' + action + (id ? '/' + id : ''));
+		if (!action) {
+			return;
 		};
+
+		let route = [ '', 'main', action ];
+		if (id) {
+			route.push(id);
+		};
+		Util.route(route.join('/'));
 	};
 
-	objectOpenPopup (object: any) {
-		const param: any = { 
-			data: { 
-				matchPopup: { 
-					params: {
-						page: 'main',
-						action: this.actionByLayout(object.layout),
-						id: object.id,
-					},
+	objectOpenPopup (object: any, popupParam?: any) {
+		const { root } = blockStore;
+		const action = this.actionByLayout(object.layout);
+
+		if ((action == 'edit') && (object.id == root)) {
+			this.objectOpen(object);
+			return;
+		};
+		
+		let param: any = Object.assign(popupParam || {}, {});
+		param.data = Object.assign(param.data || {}, { 
+			matchPopup: { 
+				params: {
+					page: 'main',
+					action: action,
+					id: object.id,
 				},
 			},
-		};
+		});
 
 		keyboard.setSource(null);
 		historyPopup.pushMatch(param.data.matchPopup);
-		popupStore.open('page', param);
+		window.setTimeout(() => { popupStore.open('page', param); }, Constant.delay.popup);
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -466,6 +488,7 @@ class DataUtil {
 		switch (v) {
 			default:						 r = 'edit'; break;
 			case I.ObjectLayout.Set:		 r = 'set'; break;
+			case I.ObjectLayout.Space:		 r = 'space'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
 			case I.ObjectLayout.File:
@@ -473,18 +496,18 @@ class DataUtil {
 			case I.ObjectLayout.Navigation:	 r = 'navigation'; break;
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
+			case I.ObjectLayout.History:	 r = 'history'; break;
 		};
 		return r;
 	};
 	
 	pageCreate (rootId: string, targetId: string, details: any, position: I.BlockPosition, templateId: string, fields: any, callBack?: (message: any) => void) {
 		details = details || {};
-		
-		commonStore.progressSet({ status: 'Creating page...', current: 0, total: 1 });
+		if (!templateId) {
+			details.type = details.type || commonStore.type;
+		};
 		
 		C.BlockCreatePage(rootId, targetId, details, position, templateId, fields, (message: any) => {
-			commonStore.progressSet({ status: 'Creating page...', current: 1, total: 1 });
-			
 			if (message.error.code) {
 				return;
 			};
@@ -606,6 +629,7 @@ class DataUtil {
 			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'image', lang: 'Image' },
 			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'video', lang: 'Video' },
 			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'audio', lang: 'Audio' },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'pdf', lang: 'Pdf' },
 			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark' },
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' }
@@ -613,21 +637,54 @@ class DataUtil {
 		return ret.map(this.menuMapperBlock);
 	};
 
-	menuGetBlockObject () {
+	getObjectTypesForNewObject (withSet: boolean) {
 		const { config } = commonStore;
-		
+		const skip = [ 
+			Constant.typeId.note, 
+			Constant.typeId.page, 
+			Constant.typeId.set, 
+			Constant.typeId.task,
+		];
+
+		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
+			return skip.indexOf(it.id) < 0;
+		});
+		if (!config.debug.ho) {
+			items = items.filter((it: I.ObjectType) => { return !it.isHidden; })
+		};
+		let page = dbStore.getObjectType(Constant.typeId.page);
+		let note = dbStore.getObjectType(Constant.typeId.note);
+		let set = dbStore.getObjectType(Constant.typeId.set);
+		let task = dbStore.getObjectType(Constant.typeId.task);
+
+		items.sort(this.sortByName);
+
+		if (task) {
+			items.unshift(task);
+		};
+
+		if (withSet && set) {
+			items.unshift(set);
+		};
+
+		if (page && note) {
+			if (commonStore.type == Constant.typeId.note) {
+				items = [ page, note ].concat(items);
+			} else {
+				items = [ note, page ].concat(items);
+			};
+		};
+		return items;
+	};
+
+	menuGetBlockObject () {
 		let ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
+		let items = this.getObjectTypesForNewObject(true);
 
-		let objectTypes = Util.objectCopy(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page));
-		if (!config.debug.ho) {
-			objectTypes = objectTypes.filter((it: I.ObjectType) => { return !it.isHidden; })
-		};
-		objectTypes.sort(this.sortByName);
-
-		for (let type of objectTypes) {
+		for (let type of items) {
 			ret.push({ 
 				type: I.BlockType.Page, 
 				id: 'object' + i++, 
@@ -648,6 +705,17 @@ class DataUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
+	};
+
+	menuGetBlockDataview () {
+		return [
+			{ id: I.ViewType.Grid, icon: '', lang: 'Table' },
+			{ id: I.ViewType.Gallery, icon: '', lang: 'Gallery' },
+			{ id: I.ViewType.List, icon: '', lang: 'List' },
+		].map((it: any) => {
+			it.type = I.BlockType.Dataview;
+			return this.menuMapperBlock(it);
+		});
 	};
 
 	menuGetTurnPage () {
@@ -683,7 +751,14 @@ class DataUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.menuMapperBlock);
 	};
-	
+
+	menuGetTurnFile () {
+		return [
+			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
+			{ type: I.BlockType.File, id: I.FileStyle.Embed, lang: 'Embed' },
+		].map(this.menuMapperBlock);
+	};
+
 	// Action menu
 	menuGetActions (hasFile: boolean, hasLink: boolean) {
 		let { config } = commonStore;
@@ -697,6 +772,7 @@ class DataUtil {
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
+			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
@@ -757,6 +833,7 @@ class DataUtil {
 			{ id: I.ObjectLayout.Image, icon: 'image' },
 			{ id: I.ObjectLayout.Type, icon: 'type' },
 			{ id: I.ObjectLayout.Relation, icon: 'relation' },
+			{ id: I.ObjectLayout.Note, icon: 'note' },
 		].map((it: any) => {
 			it.icon = 'layout c-' + it.icon;
 			it.name = translate('layout' + it.id);
@@ -766,7 +843,7 @@ class DataUtil {
 
 	menuTurnLayouts () {
 		return this.menuGetLayouts().filter((it: any) => {
-			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task ].indexOf(it.id) >= 0;
+			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ].indexOf(it.id) >= 0;
 		});
 	};
 
@@ -955,6 +1032,10 @@ class DataUtil {
 		let ret: any[] = [];
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelation(rootId, blockId, it.relationKey);
+			if (!relation) {
+				return;
+			};
+
 			ret.push({ 
 				id: relation.relationKey, 
 				icon: 'relation ' + this.relationClass(relation.format),
@@ -965,6 +1046,14 @@ class DataUtil {
 			});
 		});
 		return ret;
+	};
+
+	getRelationStringValue (value: any) {
+		if (('object' == typeof(value)) && value && value.hasOwnProperty('length')) {
+			return String(value.length ? value[0] : '');
+		} else {
+			return String(value || '');
+		};
 	};
 
 	getRelationArrayValue (value: any): string[] {
@@ -1051,9 +1140,12 @@ class DataUtil {
 		});
 	};
 
-	checkDetails (rootId: string) {
-		const object = detailStore.get(rootId, rootId, [ 'coverType', 'coverId', 'creator', 'layoutAlign', 'templateIsBundled' ]);
-		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
+	checkDetails (rootId: string, blockId?: string) {
+		blockId = blockId || rootId;
+
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
+		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
+		const checkType = blockStore.checkBlockType(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
 			object: object,
@@ -1096,7 +1188,7 @@ class DataUtil {
 				break;
 		};
 
-		if (object.isDraft) {
+		if (checkType) {
 			ret.className.push('noSystemBlocks');
 		};
 
@@ -1169,8 +1261,16 @@ class DataUtil {
 				break;
 
 			case I.RelationType.Number:
-				value = String(value || '0').replace(/,\s?/g, '.').replace(/[^\d\.]*/g, '');
-				value = Number(value);
+				value = String(value || '').replace(/,\s?/g, '.').replace(/[^\d\.e+]*/gi, '');
+				if ((value === '') || (value === undefined)) {
+					value = null;
+				};
+				if (value !== null) {
+					value = Number(value);
+				};
+				if (isNaN(value)) {
+					value = null;
+				};
 				break;
 			case I.RelationType.Date:
 				if ((value === '') || (value === undefined)) {
@@ -1193,6 +1293,7 @@ class DataUtil {
 				value = Util.objectCopy(value || []);
 				value = Util.arrayUnique(value);
 				value = value.map((it: any) => { return String(it || ''); });
+				value = value.filter((it: any) => { return it; });
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -1202,18 +1303,10 @@ class DataUtil {
 		return value;
 	};
 
-	convertRelationValueToString (value: any) {
-		if (('object' == typeof(value)) && value.hasOwnProperty('length')) {
-			return String(value.length ? value[0] : '');
-		} else {
-			return String(value || '');
-		};
-	};
-
-	checkTemplateCnt (typeIds: string[], limit: number, callBack?: (message: any) => void) {
+	checkObjectWithRelationCnt (relationKey: string, type: string, ids: string[], limit: number, callBack?: (message: any) => void) {
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: typeIds },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: type },
+			{ operator: I.FilterOperator.And, relationKey: relationKey, condition: I.FilterCondition.In, value: ids },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
 		];
 
@@ -1226,6 +1319,16 @@ class DataUtil {
 				callBack(message);
 			};
 		});
+	};
+
+	// Check if there are at least 2 templates for object types
+	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
+		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 2, callBack);
+	};
+
+	// Check if there is at least 1 set for object types
+	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
+		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 2, callBack);
 	};
 
 	defaultName (key: string) {
@@ -1263,9 +1366,38 @@ class DataUtil {
 			fields.iconSize = I.LinkIconSize.Small;
 		};
 
+		if (layout == I.ObjectLayout.Note) {
+			fields.withIcon = false;
+			fields.withCover = false;
+			fields.withDescription = false;
+			fields.iconSize = I.LinkIconSize.Small;
+		};
+
 		return fields;
 	};
 
+	getDataviewData (rootId: string, blockId: string, id: string, keys: string[], offset: number, limit: number, clear: boolean, callBack?: (message: any) => void) {
+		const view = dbStore.getView(rootId, blockId, id);
+		if (!view) {
+			return;
+		};
+
+		const subId = dbStore.getSubId(rootId, blockId);
+		const { viewId } = dbStore.getMeta(rootId, blockId);
+		const viewChange = id != viewId;
+		const meta: any = { offset: offset };
+		const block = blockStore.getLeaf(rootId, blockId);
+
+		if (viewChange) {
+			meta.viewId = id;
+		};
+		if (viewChange || clear) {
+			dbStore.recordsSet(subId, '', []);
+		};
+
+		dbStore.metaSet(subId, '', meta);
+		C.ObjectSearchSubscribe(subId, view.filters, view.sorts, keys, block.content.sources, '', offset, limit, true, '', '');
+	};
 };
 
 export default new DataUtil();

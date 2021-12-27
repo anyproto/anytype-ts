@@ -92,7 +92,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<Props, {}> 
 								id="volume" 
 								ref={(ref: any) => { this.refVolume = ref; }} 
 								value={1} 
-								onMove={(v: number) => { this.onVolume(v); }} 
+								onMove={(e: any, v: number) => { this.onVolume(v); }} 
 							/>
 						</div>
 					</div>

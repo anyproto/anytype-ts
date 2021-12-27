@@ -1,15 +1,23 @@
 import * as React from 'react';
-import { IconObject } from 'ts/component';
+import { IconObject, Loader } from 'ts/component';
 import { I, C, DataUtil } from 'ts/lib';
 import { menuStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {}
+interface Props extends I.BlockComponent {};
+
+interface State {
+	loading: boolean;
+};
 
 const Constant = require('json/constant.json');
 const { dialog } = window.require('@electron/remote');
 
-const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, {}> {
+const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, State> {
+
+	state = {
+		loading: false
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -18,15 +26,19 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 	};
 
 	render (): any {
+		const { loading } = this.state;
 		const { rootId, readonly } = this.props;
 		
 		return (
-			<IconObject 
-				getObject={() => { return detailStore.get(rootId, rootId, []); }} 
-				className={readonly ? 'isReadonly' : ''}
-				onClick={this.onClick} 
-				size={128} 
-			/>
+			<React.Fragment>
+				{loading ? <Loader/ > : ''}
+				<IconObject 
+					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
+					className={readonly ? 'isReadonly' : ''}
+					onClick={this.onClick} 
+					size={128} 
+				/>
+			</React.Fragment>
 		);
 	};
 	
@@ -48,6 +60,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 		
 		menuStore.open('select', { 
 			element: `#block-${rootId}-icon .iconObject`,
+			horizontal: I.MenuDirection.Center,
 			data: {
 				value: '',
 				options: options,
@@ -69,19 +82,23 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 			properties: [ 'openFile' ], 
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
 		};
-		
+
 		dialog.showOpenDialog(options).then((result: any) => {
 			const files = result.filePaths;
 			if ((files == undefined) || !files.length) {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			this.setState({ loading: true });
+
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 				
-				DataUtil.pageSetIcon(rootId, '', message.hash);
+				DataUtil.pageSetIcon(rootId, '', message.hash, () => {
+					this.setState({ loading: false });
+				});
 			});
 		});
 	};

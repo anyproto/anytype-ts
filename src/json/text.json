@@ -15,6 +15,9 @@
 	"commonSubmit": { "en": "Submit" },
 	"commonValue": { "en": "Value" },
 	"commonProgress": { "en": "Processing..." },
+	"commonArchived": { "en": "Object is in the bin" },
+	"commonDeleted": { "en": "Non-existent object" },
+	"commonEmpty": { "en": "Empty" },
 
 	"month1": { "en": "January" },
 	"month2": { "en": "February" },
@@ -104,6 +107,7 @@
 	"authSetupLogin": { "en": "Logging in..." },
 	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
+	"authSetupShare": { "en": "Adding space" },
 	"authSetupBack": { "en": "Back" },
 
 	"authSuccessTitle": { "en": "Congratulations!" },
@@ -175,6 +179,9 @@
 	"blockNameAudio": { "en": "Audio" },
 	"blockTextAudio": { "en": "Upload playable audio" },
 
+	"blockNamePdf": { "en": "Pdf" },
+	"blockTextPdf": { "en": "Upload a PDF file" },
+
 	"blockNameBookmark": { "en": "Bookmark" },
 	"blockTextBookmark": { "en": "Save your favorite link with summary" },
 
@@ -187,6 +194,12 @@
 	"blockNameDot": { "en": "Dots divider" },
 	"blockTextDot": { "en": "Separate information with three dots" },
 
+	"blockNameLink": { "en": "Show as link" },
+	"blockTextLink": { "en": "Display file as a link" },
+
+	"blockNameEmbed": { "en": "Show as embed" },
+	"blockTextEmbed": { "en": "Embed file into the document" },
+
 	"blockNameRelation": { "en": "Relation" },
 	"blockTextRelation": { "en": "Meaningful connection between objects" },
 
@@ -196,12 +209,21 @@
 	"blockNameLatex": { "en": "LaTex" },
 	"blockTextLatex": { "en": "Display a math equations" },
 
+	"blockNameTable": { "en": "Table" },
+	"blockTextTable": { "en": "" },
+
+	"blockNameGallery": { "en": "Gallery" },
+	"blockTextGallery": { "en": "" },
+
+	"blockNameList": { "en": "List" },
+	"blockTextList": { "en": "" },
+
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },
 
 	"blockLinkSyncing": { "en": "Syncing..." },
-	"blockLinkArchived": { "en": "Archived" },
+	"blockLinkArchived": { "en": "Deleted" },
 
 	"blockDataviewNew": { "en": "New" },
 
@@ -214,7 +236,8 @@
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
 	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
 	"popupSettingsPicture": { "en": "Pictures" },
-	"popupSettingsColor": { "en": "Colours" },
+	"popupSettingsColor": { "en": "Colors" },
+	"popupSettingsGradient": { "en": "Gradients" },
 	"popupSettingsPhraseTitle": { "en": "Keychain phrase" },
 	"popupSettingsMobileQRSubTitle": { "en": "To use Anytype on Android & iOS" },
 	"popupSettingsMobileQRText": { "en": "— Launch Anytype<br/>— Press \"Login\"<br/>— \"Scan QR code\"<br/>— Click on the QR code to display it clearly<br/>— Point your phone to this screen" },
@@ -235,10 +258,12 @@
 	"popupSettingsImportPageTitle": { "en": "Get certain pages:" },
 	"popupSettingsImportZip": { "en": "After that you need to select Zip archive and Anytype will do the rest." },
 	"popupSettingsImportOk": { "en": "Import data" },
+	"popupSettingsImportWarning": { "en": "Please don’t add entire Notion workspace content if it’s too big. Anytype has different data structure and can’t parse Notion databases at the moment." },
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportMarkdownTitle": { "en": "Export to markdown" },
 	"popupSettingsExportMarkdownText": { "en": "All your workspace data except columns and text color styling will be exported to markdown. It’s a free and readable format that can be opened and edited with many free and beautiful applications.<br/><br/>If you want to add all your data back in Anytype, use the <b>Import</b> section." },
 	"popupSettingsExportOk": { "en": "Export data" },
+	"popupSettingsOtherTitle": { "en": "Other settings" },
 	"popupSettingsLogout": { "en": "Log out" },
 
 	"popupFeedbackTitle": { "en": "Feedback" },
@@ -317,9 +342,9 @@
 
 	"menuDataviewViewEditName": { "en": "View name" },
 
-	"linkPreviewCopy": { "en": "Copy link" },
-	"linkPreviewEdit": { "en": "Edit link" },
-	"linkPreviewUnlink": { "en": "Unlink" },
+	"previewCopy": { "en": "Copy link" },
+	"previewEdit": { "en": "Edit link" },
+	"previewUnlink": { "en": "Unlink" },
 
 	"filterConditionNone": { "en": "All" },
 	"filterConditionEqual": { "en": "Is" },
@@ -374,6 +399,7 @@
 	"layout6": { "en": "File" },
 	"layout7": { "en": "Dashboard" },
 	"layout8": { "en": "Image" },
+	"layout9": { "en": "Note" },
 	"layout20": { "en": "Database" },
 
 	"defaultNamePage": { "en": "Untitled" },

@@ -8,7 +8,8 @@ const $ = require('jquery');
 const Constant = require('json/constant.json');
 const findAndReplaceDOMText = require('findandreplacedomtext');
 const SKIP = [ 
-	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'emoji',
+	'span', 'div', 'name', 'mention', 'color', 'bgcolor', 'strike', 'kbd', 'italic', 'bold', 
+	'underline', 'lnk', 'emoji', 'obj',
 ];
 
 class MenuSearchText extends React.Component<Props, {}> {

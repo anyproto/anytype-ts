@@ -22,7 +22,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-		this.onDownload = this.onDownload.bind(this);
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 	};
@@ -30,7 +29,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
-		const { state } = content;
+		const { state, style } = content;
 		
 		let object = detailStore.get(rootId, content.hash, [ 'sizeInBytes' ]);
 		if (object._empty_) {
@@ -75,7 +74,6 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 							<span className="name">{name}</span>
 							<span className="size">{Util.fileSize(sizeInBytes)}</span>
 						</span>
-						<span className="download" onClick={this.onDownload}>{translate('blockFileDownload')}</span>
 					</React.Fragment>
 				);
 				break;
@@ -150,16 +148,7 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 					ipcRenderer.send('pathOpen', message.path);
 				};
 			});
-
-			//ipcRenderer.send('urlOpen', commonStore.fileUrl(hash));
 		};
-	};
-	
-	onDownload (e: any) {
-		const { block } = this.props;
-		const { content } = block;
-		
-		ipcRenderer.send('download', commonStore.fileUrl(content.hash));
 	};
 	
 });

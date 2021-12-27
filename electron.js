@@ -20,6 +20,7 @@ const envPath = path.join(__dirname, 'electron', 'env.json');
 const systemVersion = process.getSystemVersion();
 const protocol = 'anytype';
 const remote = require('@electron/remote/main');
+const isDev = require('electron-is-dev');
 
 const TIMEOUT_UPDATE = 600 * 1000;
 const MIN_WIDTH = 752;
@@ -28,6 +29,17 @@ const KEYTAR_SERVICE = 'Anytype';
 const CONFIG_NAME = 'devconfig';
 
 let env = {};
+let deeplinkingUrl;
+
+if (isDev && (process.platform === 'win32')) {
+	if (!app.isDefaultProtocolClient(protocol)) {
+		app.setAsDefaultProtocolClient(protocol, process.execPath, [ resolve(process.argv[1]) ]);
+	};
+} else {
+	if (!app.isDefaultProtocolClient(protocol)) {
+		app.setAsDefaultProtocolClient(protocol);
+	};
+};
 try { env = JSON.parse(fs.readFileSync(envPath)); } catch (e) {};
 
 app.setAsDefaultProtocolClient(protocol);
@@ -122,7 +134,9 @@ function trayIcon () {
 };
 
 nativeTheme.on('updated', () => {
-	tray.setImage(trayIcon());
+	if (tray) {
+		tray.setImage(trayIcon());
+	};
 });
 
 function initTray () {
@@ -133,18 +147,18 @@ function initTray () {
 
 		{ type: 'separator' },
 
-		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings'); } },
+		{ label: 'Settings', click: () => { win.show(); send('popup', 'settings', {}, true); } },
 		{ label: 'Check for updates', click: () => { win.show(); checkUpdate(false); } },
 
 		{ type: 'separator' },
 
-		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }); } },
-		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }); } },
+		{ label: 'Import', click: () => { win.show(); send('popup', 'settings', { data: { page: 'importIndex' } }, true); } },
+		{ label: 'Export', click: () => { win.show(); send('popup', 'settings', { data: { page: 'exportMarkdown' } }, true); } },
 		
 		{ type: 'separator' },
 
 		{ label: 'New object', click: () => { win.show(); send('command', 'create'); } },
-		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }); } },
+		{ label: 'Search object', click: () => { win.show(); send('popup', 'search', { preventResize: true }, true); } },
 		
 		{ type: 'separator' },
 
@@ -185,7 +199,7 @@ function createWindow () {
 	});
 
 	let param = {
-		backgroundColor: '#fff',
+		backgroundColor: getBgColor(),
 		show: false,
 		x: state.x,
 		y: state.y,
@@ -208,13 +222,7 @@ function createWindow () {
 	if (process.platform == 'darwin') {
 		app.dock.setIcon(image);
 		param.icon = path.join(__dirname, '/electron/icon.icns');
-
-		const a = systemVersion.split('.');
-		if (a.length && (a[0] == 11)) {
-			param.trafficLightPosition = { x: 20, y: 18 };
-		} else {
-			param.trafficLightPosition = { x: 20, y: 10 };
-		};
+		param.trafficLightPosition = { x: 20, y: 18 };
 	};
 
 	if (process.platform == 'win32') {
@@ -233,6 +241,10 @@ function createWindow () {
 
 	win.once('ready-to-show', () => {
 		win.show();
+
+		if (deeplinkingUrl) {
+			send('route', deeplinkingUrl.replace(`${protocol}://`, '/'));
+		};
 	});
 
 	win.on('close', (e) => {
@@ -241,7 +253,7 @@ function createWindow () {
 		};
 		
 		e.preventDefault();
-		if (process.platform == 'darwin') {
+		if (process.platform != 'linux') {
 			if (win.isFullScreen()) {
 				win.setFullScreen(false);
 				win.once('leave-full-screen', () => { win.hide(); });
@@ -312,6 +324,10 @@ function createWindow () {
 		exit(true);
 	});
 
+	ipcMain.on('configSet', (e, config) => {
+		setConfig(config);
+	});
+
 	ipcMain.on('updateCancel', (e) => {
 		isUpdating = false;
 		clearTimeout(timeoutUpdate);
@@ -361,23 +377,27 @@ function createWindow () {
 		};
 	});
 
-	storage.get(CONFIG_NAME, (error, data) => {
-		config = data || {};
-		config.channel = String(config.channel || defaultChannel);
+	autoUpdaterInit();
+	menuInit();
+};
 
-		if (error) {
-			console.error(error);
-		};
+function getBgColor () {
+	let { theme } = config;
+	let bg = '#fff';
 
-		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
+	switch (theme) {
+		case 'dark':
+			bg = '#2c2b27';
+			break;
+	};
 
-		autoUpdaterInit();
-		menuInit();
-	});
+	return bg;
 };
 
 function openAboutWindow () {
+	let { theme } = config;
     let window = new BrowserWindow({
+		backgroundColor: getBgColor(),
         width: 400,
         height: 400,
         useContentSize: true,
@@ -389,7 +409,7 @@ function openAboutWindow () {
 		},
     });
 
-    window.loadURL('file://' + path.join(__dirname, 'electron', 'about.html?version=' + version));
+    window.loadURL('file://' + path.join(__dirname, 'electron', `about.html?version=${version}&theme=${theme}`));
 
 	window.once('closed', () => {
         window = null;
@@ -429,6 +449,10 @@ function menuInit () {
 				{
 					label: 'Check for updates',
 					click: () => { checkUpdate(false); }
+				},
+				{
+					label: 'Settings',
+					click: () => { send('popup', 'settings', {}); }
 				},
 				{ type: 'separator' },
 				{
@@ -528,10 +552,6 @@ function menuInit () {
 					label: 'What\'s new',
 					click: () => { send('popup', 'help', { data: { document: 'whatsNew' } }); }
 				},
-				{
-					label: 'Introduction',
-					click: () => { send('popup', 'help', { data: { document: 'intro' } }); }
-				},
 			]
 		},
 	];
@@ -545,7 +565,6 @@ function menuInit () {
 			mw: 'Middleware', 
 			th: 'Threads', 
 			an: 'Analytics', 
-			dm: 'Dark Mode',
 			js: 'JSON',
 		};
 		const flagMenu = [];
@@ -557,21 +576,12 @@ function menuInit () {
 					config.debug[i] = !config.debug[i];
 					setConfig({ debug: config.debug });
 					
-					if ([ 'ui', 'ho', 'dm' ].indexOf(i) >= 0) {
+					if ([ 'ho' ].includes(i)) {
 						win.reload();
 					};
 				}
 			});
 		};
-
-		/*
-		flagMenu.push({
-			label: 'Dark mode', type: 'checkbox', checked: nativeTheme.shouldUseDarkColors,
-			click: () => {
-				nativeTheme.themeSource = !nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-			}
-		});
-		*/
 
 		menuParam.push({
 			label: 'Debug',
@@ -584,7 +594,7 @@ function menuInit () {
 				{
 					label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I',
 					click: () => { win.webContents.openDevTools(); }
-				}
+				},
 			]
 		});
 	};
@@ -616,7 +626,19 @@ function menuInit () {
 				{
 					label: 'Export templates',
 					click: () => { send('command', 'exportTemplates'); }
-				}
+				},
+				{
+					label: 'Export objects',
+					click: () => { send('command', 'exportObjects'); }
+				},
+				{
+					label: 'Export localstore',
+					click: () => { send('command', 'exportLocalstore'); }
+				},
+				{
+					label: 'Create workspace',
+					click: () => { send('commandGlobal', 'workspace');	}
+				},
 			]
 		});
 	};
@@ -727,10 +749,27 @@ function autoUpdaterInit () {
 	});
 };
 
-app.on('ready', waitForLibraryAndCreateWindows);
+app.on('ready', () => {
+	storage.get(CONFIG_NAME, (error, data) => {
+		config = data || {};
+		config.channel = String(config.channel || defaultChannel);
+
+		if (error) {
+			console.error(error);
+		};
+
+		Util.log('info', 'Config: ' + JSON.stringify(config, null, 3));
+
+		waitForLibraryAndCreateWindows();
+	});
+});
 
 app.on('second-instance', (event, argv, cwd) => {
 	Util.log('info', 'second-instance');
+
+	if (process.platform !== 'darwin') {
+		deeplinkingUrl = argv.find((arg) => arg.startsWith(`${protocol}://`));
+	};
 
 	if (win) {
 		if (win.isMinimized()) {
@@ -765,10 +804,8 @@ app.on('activate', () => {
 });
 
 app.on('open-url', (e, url) => {
-	if (process.platform == 'win32') {
-		url = process.argv.slice(1);
-	};
-	send('route', url.replace(`${protocol}://`, ''));
+	e.preventDefault();
+	send('route', url.replace(`${protocol}://`, '/'));
 });
 
 function send () {

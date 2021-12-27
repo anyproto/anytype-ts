@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, Mapper, Util, translate } from 'ts/lib';
-import { commonStore, dbStore } from 'ts/store';
+import { I, M, C, Mapper, Util, translate, Storage } from 'ts/lib';
+import { authStore, commonStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('@electron/remote');
@@ -8,8 +8,14 @@ const isProduction = app.isPackaged;
 const version = app.getVersion();
 const os = window.require('os');
 
-const KEYS = [ 'cmd', 'id', 'action', 'style', 'code', 'type', 'objectType', 'layout', 'template', 'tab' ];
+const KEYS = [ 
+	'cmd', 'id', 'action', 'style', 'code', 
+	'type', 'objectType', 'layout', 'template', 
+	'tab', 'document', 'page', 'count', 'context', 'originalId'
+];
 const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
+const KEY_CONTEXT = 'analyticsContext';
+const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
 class Analytics {
 	
@@ -22,9 +28,14 @@ class Analytics {
 	};
 	
 	init () {
-		if (!isProduction && !this.debug()) {
+		if (this.isInit) {
 			return;
 		};
+
+		const platform = Util.getPlatform();
+		const { account, device } = authStore;
+
+		C.MetricsSetParameters(platform);
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
@@ -32,37 +43,44 @@ class Analytics {
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
-			platform: Util.getPlatform(),
+			platform: platform,
 		});
 
 		this.instance.setVersionName(version);
-		this.instance.setGlobalUserProperties({ 
-			deviceType: 'Desktop', 
+		this.instance.setUserProperties({ 
+			deviceType: 'Desktop',
 			platform: Util.getPlatform(),
 			osVersion: os.release(),
 		});
-
-		this.isInit = true;
+		this.instance.setDeviceId(device);
 
 		if (this.debug()) {
 			console.log('[Analytics.init]', this.instance);
 		};
+
+		this.profile(account);
+		this.isInit = true;
 	};
 	
-	profile (profile: any) {
-		if (!this.instance) {
-			return;
-		};
-
-		if (!isProduction && !this.debug()) {
+	profile (account: I.Account) {
+		if (!this.instance || (!isProduction && !this.debug())) {
 			return;
 		};
 		if (this.debug()) {
-			console.log('[Analytics.profile]', profile.id);
+			console.log('[Analytics.profile]', account.id);
 		};
-		this.instance.setUserId(profile.id);
+		this.instance.setUserId(account.id);
 	};
-	
+
+	setContext (context: string, id: string) {
+		Storage.set(KEY_CONTEXT, context);
+		Storage.set(KEY_ORIGINAL_ID, id);
+
+		if (this.debug()) {
+			console.log('[Analytics.setContext]', context, id);
+		};
+	};
+
 	event (code: string, data?: any) {
 		if (!this.instance) {
 			return;
@@ -81,6 +99,8 @@ class Analytics {
 		let param: any = { 
 			middleTime: Number(data.middleTime) || 0, 
 			renderTime: Number(data.renderTime) || 0,
+			context: String(Storage.get(KEY_CONTEXT) || ''),
+			originalId: String(Storage.get(KEY_ORIGINAL_ID) || ''),
 		};
 
 		const converted: any = {};
@@ -130,6 +150,19 @@ class Analytics {
 			case 'BlockDataviewViewSet':
 				param.type = translate('viewName' + data.type);
 				break;
+
+			case 'PopupHelp':
+				param.document = data.document;
+				break;
+
+			case 'PopupPage':
+				param.page = data.matchPopup.params.page;
+				param.action = data.matchPopup.params.action;
+				break;
+
+			case 'ObjectListDelete':
+				param.count = data.getObjectidsList().length;
+				break;
 		};
 
 		if (this.debug()) {
@@ -161,6 +194,7 @@ class Analytics {
 		data.file[I.FileType.File]			 = 'File';
 		data.file[I.FileType.Image]			 = 'Image';
 		data.file[I.FileType.Video]			 = 'Video';
+		data.file[I.FileType.Audio]			 = 'Audio';
 		
 		data.div[I.DivStyle.Line]			 = 'Line';
 		data.div[I.DivStyle.Dot]			 = 'Dot';

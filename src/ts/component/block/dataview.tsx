@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
-import { menuStore, dbStore, detailStore } from 'ts/store';
+import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
+import { throttle } from 'lodash';
+import arrayMove from 'array-move';
 
 import Controls from './dataview/controls';
 
@@ -11,16 +13,24 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {}
+interface Props extends I.BlockComponent, RouteComponentProps<any> {};
+interface State {
+	viewId: string;
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
 
-const BlockDataview = observer(class BlockDataview extends React.Component<Props, {}> {
+const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
 	viewRef: any = null;
 	cellRefs: Map<string, any> = new Map();
+	viewId: string = '';
+	state = {
+		viewId: '',
+	};
+	creating: boolean = false;
 
 	constructor (props: any) {
 		super(props);
@@ -42,9 +52,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const view = views.find((it: I.View) => { return it.id == viewId; }) || views[0];
-
+		const view = this.getView();
 		if (!view) {
 			return null;
 		};
@@ -91,7 +99,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						ref={(ref: any) => { this.viewRef = ref; }} 
 						onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
 						{...this.props} 
-						scrollContainer={Util.getScrollContainer(isPopup ? 'popup' : 'page')}
+						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={Util.getPageContainer(isPopup ? 'popup' : 'page')}
 						readonly={false} 
 						getData={this.getData} 
@@ -109,30 +117,77 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	componentDidMount () {
 		const { rootId, block } = this.props;
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const views = dbStore.getViews(rootId, block.id);
+		const view = this.getView();
 
-		if (views.length) {
-			this.getData(viewId || views[0].id, 0);
+		if (view) {
+			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
+			this.getData(view.id, 0);
 		};
-		this.resize();
 
-		$(window).unbind('resize.dataview').on('resize.dataview', () => { this.resize(); });
+		this.resize();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
+		const { rootId, block } = this.props;
+		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
+
+		if (viewId != this.state.viewId) {
+			this.getData(viewId, 0);
+		};
+
 		this.resize();
+		this.rebind();
 
 		$(window).trigger('resize.editor');
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('resize.dataview');
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).unbind('resize.dataview keydown.dataview');
+	};
+
+	rebind () {
+		this.unbind();
+
+		const win = $(window);
+		win.on('resize.dataview', () => { this.resize(); });
+		win.on('keydown.dataview', throttle((e: any) => { this.onKeyDown(e); }, 100));
+	};
+
+	onKeyDown (e: any) {
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const cmd = keyboard.ctrlKey();
+
+		if (root.isObjectSet() && !this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
+				this.onRowAdd(e, -1, true);
+			});
+		};
+	};
+
+	getKeys (id: string) {
+		const view = this.getView(id);
+		const relationKeys = view.relations.map((it: any) => { return it.relationKey; });
+
+		return Util.arrayUnique(Constant.defaultRelationKeys.concat(relationKeys).concat(Constant.coverRelationKeys));
 	};
 
 	getData (newViewId: string, offset: number, callBack?: (message: any) => void) {
+		if (!newViewId) {
+			return;
+		};
+
+		this.state.viewId = newViewId;
+		this.setState({ viewId: newViewId });
+
 		const { rootId, block } = this.props;
-		const { viewId } = dbStore.getMeta(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset: offset };
 		const cb = (message: any) => {
@@ -141,6 +196,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		const view = this.getView(newViewId);
+		const keys = this.getKeys(view.id);
 		
 		let limit = Constant.limit.dataview.records;
 		if ([ I.ViewType.Grid, I.ViewType.Gallery, I.ViewType.List ].indexOf(view.type) >= 0) {
@@ -149,21 +205,45 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (viewChange) {
 			meta.viewId = newViewId;
-			dbStore.recordsSet(rootId, block.id, []);
+			dbStore.recordsSet(subId, '', []);
 		};
 
-		dbStore.metaSet(rootId, block.id, meta);
-		C.BlockDataviewViewSetActive(rootId, block.id, newViewId, offset, limit, cb);
-
-		menuStore.closeAll();
-		$(window).trigger('resize.editor');
+		dbStore.metaSet(subId, '', meta);
+		DataUtil.getDataviewData(rootId, block.id, newViewId, keys, offset, limit, false, cb);
 	};
 
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
-		const data = dbStore.getData(rootId, block.id);
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 
-		return data[index] || {};
+		if (index > records.length - 1) {
+			return {};
+		};
+
+		const record = records[index] || {};
+		const item = detailStore.get(subId, record.id);
+
+		let name = String(item.name || '');
+		let isReadonly = Boolean(item.isReadonly);
+
+		if (name == DataUtil.defaultName('page')) {
+			name = '';
+		};
+
+		if (item.layout == I.ObjectLayout.Note) {
+			name = String(item.snippet || '').replace(/\n/g, ' ');
+		};
+		if (item.isDeleted) {
+			name = translate('commonDeleted');
+			isReadonly = true;
+		};
+
+		return {
+			...item,
+			name,
+			isReadonly,
+		};
 	};
 
 	getView (viewId?: string) {
@@ -174,20 +254,61 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		viewId = viewId || dbStore.getMeta(rootId, block.id).viewId;
+		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, block.id), '').viewId;
 		return views.find((it: I.View) => { return it.id == viewId; }) || views[0];
 	};
 
-	onRowAdd (e: any, dir: number) {
+	onRowAdd (e: any, dir: number, withPopup?: boolean) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
+		const view = this.getView();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const conditions = [
+			I.FilterCondition.Equal,
+			I.FilterCondition.In,
+			I.FilterCondition.AllIn,
+		]; 
+
+		const newRecord: any = {};
+		for (let filter of view.filters) {
+			if (!conditions.includes(filter.condition) || !filter.value) {
+				continue;
+			};
+			
+			const relation = dbStore.getRelation(rootId, block.id, filter.relationKey);
+			if (!relation || relation.isReadonlyValue) {
+				continue;
+			};
+
+			newRecord[filter.relationKey] = DataUtil.formatRelationValue(relation, filter.value, true);
+		};
+
+		this.creating = true;
 
 		const create = (template: any) => {
-			C.BlockDataviewRecordCreate(rootId, block.id, {}, template?.id, (message: any) => {
-				if (!message.error.code) {
-					dbStore.recordAdd(rootId, block.id, message.record, dir);
+			C.BlockDataviewRecordCreate(rootId, block.id, newRecord, template?.id, (message: any) => {
+				this.creating = false;
+				if (message.error.code) {
+					return;
+				};
+
+				const records = dbStore.getRecords(subId, '');
+				const oldIndex = records.findIndex((it: any) => { return it.id == message.record.id; });
+				const newIndex = dir > 0 ? records.length - 1 : 0;
+
+				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+
+				const id = DataUtil.cellId('dataviewCell', 'name', newIndex);
+				const ref = this.cellRefs.get(id);
+
+				if (ref && (view.type == I.ViewType.Grid)) {
+					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
 				if (template) {
@@ -205,45 +326,58 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const showMenu = () => {
-			menuStore.open('searchObject', {
-				element: element,
-				vertical: I.MenuDirection.Top,
-				className: 'single',
-				subIds: [ 'previewObject' ],
-				data: {
-					label: 'Choose a template',
-					noFilter: true,
-					noIcon: true,
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-						{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-					],
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onOver: (e: any, context: any, item: any) => {
-						menuStore.open('previewObject', {
-							element: `#${context.props.getId()} #item-${item.id}`,
-							offsetX: context.props.getSize().width,
-							isSub: true,
-							vertical: I.MenuDirection.Center,
-							data: { rootId: item.id }
-						});
-					},
-					onSelect: (item: any) => {
-						create(item);
+		const menuParam: any = {
+			element: element,
+			className: 'single',
+			subIds: [ 'previewObject' ],
+			data: {
+				label: 'Choose a template',
+				noFilter: true,
+				noIcon: true,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
+					{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				onOver: (e: any, context: any, item: any) => {
+					menuStore.open('previewObject', {
+						element: `#${context.props.getId()} #item-${item.id}`,
+						offsetX: context.props.getSize().width,
+						isSub: true,
+						vertical: I.MenuDirection.Center,
+						data: { rootId: item.id }
+					});
+				},
+				onSelect: (item: any) => {
+					create(item);
 
-						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
-					},
-				}
+					window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
+				},
+			}
+		};
+
+		const showPopup = () => {
+			popupStore.open('template', {
+				data: {
+					typeId: setOf[0],
+					onSelect: create,
+				},
 			});
 		};
 
-		DataUtil.checkTemplateCnt(setOf, 2, (message: any) => {
+		const showMenu = () => {
+			menuStore.open('searchObject', menuParam);
+		};
+
+		menuParam.vertical = dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom;
+		menuParam.horizontal = dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right;
+
+		DataUtil.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
-				showMenu();
+				withPopup ? showPopup() : showMenu();
 			} else {
 				create(message.records.length ? message.records[0] : '');
 			};
@@ -251,6 +385,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellClick (e: any, relationKey: string, index: number) {
+		if (e.button) {
+			return;
+		};
+
 		const { rootId, block } = this.props;
 		const relation = dbStore.getRelation(rootId, block.id, relationKey);
 		const id = DataUtil.cellId('dataviewCell', relationKey, index);
@@ -268,7 +406,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		if ((relationKey == Constant.relationKey.name) && (!ref.ref.state.isEditing)) {
+		if ((relationKey == 'name') && (!ref.ref.state.isEditing)) {
 			DataUtil.objectOpenPopup(record);
 		} else {
 			ref.onClick(e);
@@ -277,14 +415,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
-		const data = dbStore.getData(rootId, block.id);
-		const record = data.find((it: any) => { return it.id == id; });
+		const subId = dbStore.getSubId(rootId, block.id);
+		const record = dbStore.getRecord(subId, '', id);
+		const relation = dbStore.getRelation(rootId, block.id, relationKey);
+
+		if (!record || !relation) {
+			return;
+		};
+
+		value = DataUtil.formatRelationValue(relation, value, true);
 
 		let obj: any = { id: record.id };
 		obj[relationKey] = value;
 
-		dbStore.recordUpdate(rootId, block.id, obj);
-		C.BlockDataviewRecordUpdate(rootId, block.id, record.id, obj, callBack);
+		detailStore.update(subId, record.id, obj);
+		C.BlockSetDetails(record.id, [ { key: relationKey, value: value } ], callBack);
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

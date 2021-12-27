@@ -43,6 +43,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			return null;
 		};
 
+		const subId = dbStore.getSubId(rootId, blockId);
 		const item = view.getFilter(itemId);
 		const relation: any = dbStore.getRelation(rootId, blockId, item.relationKey) || {};
 		const relationOptions = this.getRelationOptions();
@@ -133,9 +134,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					);
 				};
 
-				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { 
-					return detailStore.get(rootId, it, []); 
-				})
+				list = DataUtil.getRelationArrayValue(item.value).map((it: string) => { return detailStore.get(subId, it, []); })
 				list = list.filter((it: any) => { return !it._empty_; });
 
 				value = (
@@ -230,12 +229,17 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;
+
 		const view = getView();
-		const item = view.getFilter(itemId);
-		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		if (!view) {
+			return;
+		};
 
 		this.init();
 		this.props.setActive();
+
+		const item = view.getFilter(itemId);
+		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
 
 		if (relation && this.refValue) {
 			if (this.refValue.setValue) {
@@ -272,9 +276,15 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { param } = this.props;
 		const { data } = param;
 		const { getView, itemId } = data;
-		const item = getView().getFilter(itemId);
+		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		this.checkClear(item.value);
+		const item = view.getFilter(itemId);
+		if (item) {
+			this.checkClear(item.value);
+		};
 	};
 
 	getItems () {
@@ -321,6 +331,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			offsetX: getSize().width,
 			offsetY: -36,
 			isSub: true,
+			noFlipY: true,
 			data: {
 				rebind: this.rebind,
 				value: item[key],
@@ -337,6 +348,10 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { rootId, blockId, getView, itemId, save } = data;
 		const view = getView();
+
+		if (!view) {
+			return;
+		};
 		
 		let item = view.getFilter(itemId);
 		if (!item) {
@@ -344,6 +359,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		};
 
 		const relation = dbStore.getRelation(rootId, blockId, item.relationKey);
+		if (!relation) {
+			return;
+		};
 
 		this.checkClear(v);
 
@@ -359,12 +377,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				item.condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
 				item.value = DataUtil.formatRelationValue(relation, null, false);
-
-				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-					return (i == v) || 
-					(it.relationKey != v) || 
-					((it.relationKey == v) && (it.condition != item.condition)); 
-				});
 			};
 
 			if (k == 'value') {
@@ -375,12 +387,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(v) >= 0) {
 					item.value = DataUtil.formatRelationValue(relation, null, false);
 				};
-
-				view.filters = view.filters.filter((it: I.Filter, i: number) => { 
-					return (i == itemId) || 
-					(it.relationKey != item.relationKey) || 
-					((it.relationKey == item.relationKey) && (it.condition != v)); 
-				});
 			};
 
 			view.setFilter(itemId, item);
@@ -494,9 +500,6 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					blockId: blockId,
 					value: item.value || [], 
 					relation: observable.box(relation),
-					filterMapper: (it: any) => {
-						return [ I.OptionScope.Local ].indexOf(it.scope) >= 0;
-					},
 					onChange: (value: any) => {
 						this.onChange('value', value);
 					},

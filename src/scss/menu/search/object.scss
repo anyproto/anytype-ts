@@ -16,15 +16,15 @@
 
 		.filter { flex-shrink: 0; }
 
-		.empty { height: 100%; line-height: 284px; padding: 16px; text-align: center;  }
-		.empty {
+		.emptySearch { height: 100%; line-height: 284px; padding: 16px; text-align: center;  }
+		.emptySearch {
 			b { display: block; font-weight: 400; color: $colorBlack; }
 			span { @include text-overflow-nw; max-width: 100%; display: block; }
 			.label { width: 100%; line-height: 24px; color: $colorMediumGrey; display: inline-block; vertical-align: middle; }
 		}
 
 		.wrap.withFilter {
-			.empty { height: calc(100% - 44px); line-height: 240px; }
+			.emptySearch { height: calc(100% - 44px); line-height: 240px; }
 			.loaderWrapper { top: 44px; height: calc(100% - 44px); }
 		}
 	}
@@ -41,7 +41,7 @@
 	.menu.menuSearchObject.big {
 		.content { height: 360px !important; }
 		.item {
-			.iconObject { background: #f3f2ec; }
+			.iconObject { background: $colorVeryLightGrey; }
 		}
 	}
 }

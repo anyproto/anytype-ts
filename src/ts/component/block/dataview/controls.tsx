@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
 import { C, I, Util, analytics } from 'ts/lib';
 import { menuStore, dbStore, blockStore } from 'ts/store';
+import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -35,8 +36,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { className, rootId, block, getView, readonly, onRowAdd } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
-		const { viewId } = dbStore.getMeta(rootId, block.id);
-		const { page } = this.state;
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter((it: any) => {
 			return dbStore.getRelation(rootId, block.id, it.relationKey);
@@ -80,12 +79,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					<ViewItem 
 						key={i} 
 						{...item} 
-						active={item.id == viewId} 
+						active={item.id == view.id} 
 						index={i} 
 					/>
 				))}
 
-				{allowedView ? <Icon id="button-view-add" className="plus" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id="button-view-add" className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -171,7 +170,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				blockId: block.id, 
 				getData: getData,
 				getView: getView,
-				view: getView(),
+				view: observable.box(getView()),
 			},
 		});
 	};
@@ -198,16 +197,17 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		menuStore.open('dataviewViewEdit', {
 			element: `#button-view-add`,
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
 				getData: getData,
 				getView: getView,
-				view: { 
+				view: observable.box({ 
 					type: I.ViewType.Grid,
 					relations: relations,
 					filters: filters,
-				},
+				}),
 				onSave: () => {
 					this.forceUpdate();
 				},
@@ -223,18 +223,20 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onViewEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
 			element: $(e.currentTarget),
 			horizontal: I.MenuDirection.Center,
+			noFlipY: true,
 			data: {
 				rootId: rootId,
 				blockId: block.id,
 				readonly: !allowed,
-				view: item,
+				view: observable.box(item),
 				getView: getView,
+				getData: getData,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});
@@ -257,7 +259,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const views = node.find('#views');
 		const sideLeft = node.find('#sideLeft');
 
-		menuStore.closeAll([ 'dataviewViewList', 'dataviewViewEdit' ]);
 		views.width() > sideLeft.outerWidth() ? sideLeft.addClass('small') : sideLeft.removeClass('small');
 	};
 

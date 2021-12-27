@@ -1,27 +1,26 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Icon, Input, Loader, IconObject, Label } from 'ts/component';
+import { Icon, Input, Loader, IconObject, Label, ObjectName, ObjectDescription } from 'ts/component';
 import { I, C, Util, DataUtil, crumbs, keyboard, Key, focus, translate } from 'ts/lib';
 import { commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-interface Props extends I.Popup {
-	history: any;
-}
+interface Props extends I.Popup {};
 
 interface State {
 	pageId: string;
 	loading: boolean;
 	filter: string;
-	pages: any[];
 	n: number;
-}
+};
 
 const $ = require('jquery');
 const Constant = require('json/constant.json');
+
 const HEIGHT = 32;
+const LIMIT = 14;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<Props, State> {
 	
@@ -30,7 +29,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		pageId: '',
 		loading: false,
 		filter: '',
-		pages: [] as any[],
 		n: 0,
 	};
 	ref: any = null;
@@ -40,6 +38,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	cache: any = null;
 	focus: boolean = false;
 	select: boolean = false;
+	records: any[] = [];
 	
 	constructor (props: any) {
 		super (props);
@@ -65,17 +64,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			</div>
 		);
 
-		let iconHome = (
-			<div className="iconObject c20">
-				<div className="iconEmoji c18">
-					<Icon className="home" />
-				</div>
-			</div>
-		);
-
 		const Item = (item: any) => {
-			let type = dbStore.getObjectType(item.type);
-			let description = item.description || item.snippet;
+			const type = dbStore.getObjectType(item.type);
+			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
 				<div 
@@ -84,21 +75,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 					onMouseOver={(e: any) => { this.onOver(e, item); }} 
 					onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					{item.isRoot ? iconHome : <IconObject object={item} size={18} />}
+					<IconObject object={item} size={18} />
 					
-					<div className="name">{item.name}</div>
+					<ObjectName object={item} />
 
 					{type ? (
 						<React.Fragment>
 							{div}
-							<div className="type descr">{type.name || DataUtil.defaultName('page')}</div>
+							<div className="type">{type.name || DataUtil.defaultName('page')}</div>
 						</React.Fragment>
 					) : ''}
 
 					{description ? (
 						<React.Fragment>
 							{div}
-							<div className="descr">{description}</div>
+							<ObjectDescription object={item} />
 						</React.Fragment>
 					) : ''}
 				</div>
@@ -131,7 +122,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		return (
 			<div className="wrap">
-				{loading ? <Loader /> : ''}
+				{loading ? <Loader id="loader" /> : ''}
 				
 				<form id="head" className="head" onSubmit={this.onSubmit}>
 					 <Icon key="icon-search" className="search" />
@@ -146,7 +137,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				</form>
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="empty">
+					<div id="empty" key="empty" className="emptySearch">
 						<Label text={Util.sprintf(translate('popupSearchEmptyFilter'), filter)} />
 					</div>
 				) : ''}
@@ -188,18 +179,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		const { data } = param;
 		const { rootId, disableFirstKey } = data;
 
-		this.disableFirstKey = Boolean(disableFirstKey);
-		this._isMounted = true;
-
 		crumbs.addPage(rootId);
+
+		this._isMounted = true;
+		this.disableFirstKey = Boolean(disableFirstKey);
 		this.focus = true;
 		this.select = true;
 
 		this.setState({ pageId: rootId });
 		this.load();
 		this.rebind();
+		this.resize();
 
 		focus.clear(true);
+
+		$('#header').addClass('active');
 	};
 	
 	componentDidUpdate (prevProps: any, prevState: any) {
@@ -228,12 +222,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			defaultHeight: HEIGHT,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		this.resize();
 	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-		window.clearTimeout(this.timeout);
 		this.unbind();
+
+		window.clearTimeout(this.timeout);
+		$('#header').removeClass('active');
 	};
 
 	rebind () {
@@ -383,12 +381,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 	load () {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		
-		let skipLayouts = [ I.ObjectLayout.File, I.ObjectLayout.Image, I.ObjectLayout.Video ];
+		const skipTypes = [
+			Constant.typeId.file,
+			Constant.typeId.image,
+			Constant.typeId.video,
+			Constant.typeId.audio,
+		];
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -410,33 +412,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				this.ref.focus();
 			};
 			
-			const pages = message.records;
-			this.setState({ pages: pages, loading: false });
+			this.records = message.records;
+			this.setState({ loading: false });
 		});
 	};
 
 	getItems () {
-		const { root } = blockStore;
-		const pages = Util.objectCopy(this.state.pages);
-		const recent = crumbs.get(I.CrumbsType.Recent).ids;
-
-		for (let page of pages) {
-			page.order = recent.findIndex((id: string) => { return id == page.id; });
-		};
-
-		pages.sort((c1: any, c2: any) => {
-			if (c1.order > c2.order) return -1;
-			if (c2.order < c1.order) return 1;
-			return 0;
-		});
-
-		return pages.map((it: any) => {
-			return { 
-				...it, 
-				isRoot: it.id == root, 
-				name: String(it.name || DataUtil.defaultName('page')) 
-			};
-		});
+		return this.records;
 	};
 
 	filterMapper (it: any) {
@@ -511,6 +493,19 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 				C.BlockCreate(newBlock, item.id, '', position);
 				break;
 		};
+	};
+
+	resize () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { getId } = this.props;
+		const items = this.getItems();
+		const obj = $(`#${getId()} .content`);
+		const height = Math.max(110, Math.min(HEIGHT * LIMIT, items.length * HEIGHT + 16));
+
+		obj.css({ height: height });
 	};
 
 });

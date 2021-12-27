@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block } from 'ts/component';
+import { IconObject, HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Deleted } from 'ts/component';
 import { I, M, C, DataUtil, Util, keyboard, focus, crumbs, Action } from 'ts/lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
 import { getRange } from 'selection-ranges';
@@ -14,12 +14,16 @@ interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
 };
 
+interface State {
+	isDeleted: boolean;
+};
+
 const $ = require('jquery');
-const Constant = require('json/constant.json');
+const Errors = require('json/error.json');
 
 const EDITOR_IDS = [ 'name', 'description' ];
 
-const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}> {
+const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
@@ -27,14 +31,23 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 	loading: boolean = false;
 	timeout: number = 0;
 
+	state = {
+		isDeleted: false,
+	};
+
 	constructor (props: any) {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
+		this.resize = this.resize.bind(this);
 	};
 
 	render () {
+		if (this.state.isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		if (this.loading) {
 			return <Loader id="loader" />;
 		};
@@ -43,13 +56,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, []));
-		const block = blockStore.getLeaf(rootId, Constant.blockId.dataview) || {};
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const placeholder = {
 			name: DataUtil.defaultName('set'),
 			description: 'Add a description',
 		};
 
+		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return it.isDataview(); });
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, align: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 
@@ -94,7 +107,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 				<div className="blocks wrapper">
-					<Controls key="editorControls" {...this.props} rootId={rootId} />
+					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
 
 					<div className="head">
 						{check.withIcon ? (
@@ -107,12 +120,14 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 								<Editor className="title" id="name" />
 								<Editor className="descr" id="description" />
 
-								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+								<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} className="small" />
 							</div>
 						</div>
 					</div>
 					
-					<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					{children.map((block: I.Block, i: number) => (
+						<Block {...this.props} key={block.id} rootId={rootId} iconSize={20} block={block} />
+					))}
 				</div>
 
 				<Footer {...this.props} rootId={rootId} />
@@ -153,7 +168,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -164,14 +178,18 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					Util.route('/main/index');
+				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();
@@ -192,7 +210,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		if (isPopup && (match.params.id == rootId)) {
 			close = false;
 		};
-
 		if (close) {
 			Action.pageClose(rootId, true);
 		};
@@ -358,12 +375,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 		
 		const win = $(window);
 		const { isPopup } = this.props;
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
 		const node = $(ReactDOM.findDOMNode(this));
 		const cover = node.find('.block.blockCover');
-		const controls = node.find('.editorControls');
-		const wrapper = node.find('.blocks.wrapper');
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const header = obj.find('#header');
 		const hh = header.height();
@@ -372,17 +385,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, {}
 			cover.css({ top: hh });
 		};
 
-		if (controls.length) {	
-			controls.css({ top: hh, height: 128 - hh });
-			wrapper.css({ paddingTop: 128 - hh + 10 });
-		};
-
-		if (check.withCover) {
-			wrapper.css({ paddingTop: 330 });
-		};
-
 		obj.css({ minHeight: isPopup ? '' : win.height() });
-		node.css({ paddingTop: hh });
+		node.css({ paddingTop: isPopup ? 0 : hh });
 	};
 
 });

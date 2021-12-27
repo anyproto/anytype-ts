@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockType { margin-top: 42px !important; }
 	.block.blockType { 
 		.wrapMenu { visibility: hidden; }
 
@@ -11,11 +12,11 @@
 			.input { @include text-paragraph; height: 24px; background: none !important; }
 		}
 
-		.item { position: relative; padding: 8px 8px 8px 72px; height: 64px; cursor: pointer; }
-		.item.hover { background: rgba(134,125,66, 0.08); }
+		.item { position: relative; padding: 8px 8px 8px 72px; height: 64px; cursor: pointer; border-radius: 2px; }
+		.item.hover { background: $colorHover; }
 
 		.item {
-			.iconObject { position: absolute; left: 8px; top: 8px; background: #f3f2ec; border-radius: 10px; }
+			.iconObject { position: absolute; left: 8px; top: 8px; background: $colorVeryLightGrey; border-radius: 10px; }
 
 			.info { height: 100%; position: relative; line-height: 48px; }
 			.info {

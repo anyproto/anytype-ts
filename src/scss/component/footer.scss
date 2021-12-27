@@ -1,12 +1,11 @@
 @import "~scss/_vars";
 
-.footer { transition: $transitionFast; }
 .footer {
-	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: #fff; }
+	.copy { width: 120px; position: fixed; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; }
 
 	.icon { cursor: pointer; z-index: 10; }
 	.icon.big { 
-		width: 44px; height: 44px; background-color: #fff; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 100%; 
+		width: 44px; height: 44px; background-color: $colorWhite; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 100%; 
 		background-size: 20px 20px;
 	}
 	

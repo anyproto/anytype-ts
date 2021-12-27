@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MenuItemVertical, Filter, Loader, Label } from 'ts/component';
-import { I, C, keyboard, Util, crumbs, DataUtil, translate, Storage } from 'ts/lib';
-import { commonStore, dbStore, blockStore } from 'ts/store';
+import { MenuItemVertical, Filter, Loader, Label, ObjectName } from 'ts/component';
+import { I, C, keyboard, Util, crumbs, DataUtil, translate } from 'ts/lib';
+import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -79,6 +79,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			if (isBig) {
 				props.withDescription = true;
+				props.forceLetter = true;
 				props.iconSize = 40;
 			} else {
 				props.withCaption = true;
@@ -100,6 +101,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				>
 					<MenuItemVertical 
 						{...props}
+						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
@@ -124,7 +126,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{loading ? <Loader /> : ''}
 
 				{!items.length && !loading ? (
-					<div id="empty" key="empty" className="empty">
+					<div id="empty" key="empty" className="emptySearch">
 						<Label text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 					</div>
 				) : ''}
@@ -230,10 +232,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper } = data;
+		const { type, dataMapper, dataSort, skipIds } = data;
 		const { filter } = this.state;
 		const { config } = commonStore;
-		const filterMapper = (it: any) => { return this.filterMapper(it, config); };
 		
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -243,6 +244,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		].concat(data.sorts || []);
 
+		if (skipIds && skipIds.length) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
+		};
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
@@ -271,31 +275,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					name: String(it.name || DataUtil.defaultName('page')),
 				};
 			}));
-			this.items = this.items.filter(filterMapper);
 
 			if (dataMapper) {
 				this.items = this.items.map(dataMapper);
 			};
 
+			if (dataSort) {
+				this.items.sort(dataSort);
+			};
+
 			this.setState({ loading: false });
 		});
-	};
-
-	filterMapper (it: any, config: any) {
-		const { param } = this.props;
-		const { data } = param;
-		const { type, skipId } = data;
-
-		if (it.isArchived) {
-			return false;
-		};
-		if (it.id == skipId) {
-			return false;
-		};
-		if ((type == I.NavigationType.Move) && ([ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Dashboard ].indexOf(it.layout) < 0)) {
-			return false;
-		};
-		return true;
 	};
 
 	onMouseEnter (e: any, item: any) {

@@ -23,6 +23,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 	range: any = null;
 	ref: any = null;
+	value: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -58,8 +59,11 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		let EditorComponent = null;
 		let value = record[relation.relationKey];
 
-		if (relation.format == I.RelationType.Date) {
+		if ([ I.RelationType.Date, I.RelationType.Number ].includes(relation.format)) {
 			value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
+			if (relation.format == I.RelationType.Number) {
+				value = value === null ? null : String(value);
+			};
 		} else {
 			value = String(value || '');
 		};
@@ -76,7 +80,13 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			} else 
 			if (relation.format == I.RelationType.Date) {
 				let mask = [ '99.99.9999' ];
-				let ph = [ 'dd.mm.yyyy' ];
+				let ph = [];
+
+				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
+					ph.push('mm.dd.yyyy');
+				} else {
+					ph.push('dd.mm.yyyy');
+				};
 				
 				if (viewRelation.includeTime) {
 					mask.push('99:99');
@@ -174,6 +184,9 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			};
 
 			value = value || DataUtil.defaultName('page');
+			if (record.layout == I.ObjectLayout.Note) {
+				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
+			};
 
 			content = (
 				<React.Fragment>
@@ -185,7 +198,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 							onCheckbox={this.onCheckbox}
 							size={size} 
 							iconSize={is}
-							canEdit={canEdit} 
+							canEdit={!record.isReadonly} 
 							offsetY={4} 
 							object={record} 
 						/>
@@ -208,32 +221,54 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		this._isMounted = true;
-	};
+		const { relation, index, getRecord } = this.props;
+		const record = getRecord(index);
 
-	componentWillUnmount () {
-		this._isMounted = false;
+		this._isMounted = true;
+		this.value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
 	};
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, index, getRecord, cellPosition } = this.props;
+		const { id, relation, cellPosition, getView } = this.props;
 		const cell = $(`#${id}`);
-		const record = getRecord(index);
+
+		let view = null;
+		let viewRelation: any = {};
+		
+		if (getView) {
+			view = getView();
+			viewRelation = view.getRelation(relation.relationKey);
+		};
 
 		if (isEditing) {
-			let value = DataUtil.formatRelationValue(relation, record[relation.relationKey], true);
-			let length = String(value || '').length;
+			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [ 'd.m.Y', (relation.includeTime ? 'H:i' : '') ];
-				value = value !== null ? Util.date(format.join(' ').trim(), value) : '';
+				let format = [];
+				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
+					format.push('m.d.Y');
+				} else {
+					format.push('d.m.Y');
+				};
+
+				if (viewRelation.includeTime) {
+					format.push('H:i');
+				};
+
+				value = this.value !== null ? Util.date(format.join(' ').trim(), this.value) : '';
+			};
+
+			if (relation.format == I.RelationType.Number) {
+				value = DataUtil.formatRelationValue(relation, this.value, true);
+				value = value === null ? null : String(value);
 			};
 
 			if (this.ref) {
 				this.ref.setValue(value);
 
 				if (this.ref.setRange) {
+					let length = String(value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};
@@ -244,15 +279,17 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 				cellPosition(id);
 			};
 		} else {
-			raf(() => {
-				cell.removeClass('isEditing');
-				cell.find('.cellContent').css({ left: '', right: '' });
-			});
+			cell.removeClass('isEditing');
+			cell.find('.cellContent').css({ left: '', right: '' });
 		};
 
 		if (commonStore.cellId) {
 			$(`#${commonStore.cellId}`).addClass('isEditing');
 		};
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
 	};
 
 	onSelect (e: any) {
@@ -275,6 +312,10 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 		};
 	};
 
+	onChange (v: any) {
+		this.value = v;
+	};
+
 	onKeyUp (e: any, value: string) {
 		const { relation, onChange } = this.props;
 
@@ -286,14 +327,17 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 			menuStore.updateData('button', { disabled: !value });
 		};
 
+		this.value = value;
+
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
 			if (onChange) {
 				onChange(value, () => {
 					menuStore.closeAll(Constant.menuIds.cell);
+
 					this.range = null;
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				});
 			};
 		});
@@ -301,19 +345,17 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	onKeyUpDate (e: any, value: any) {
 		const { onChange } = this.props;
+		this.value = this.fixDateValue(value);
 
-		value = String(value || '').replace(/_/g, '');
-		value = value ? Util.parseDate(value) : null;
-		if (value) {
-			menuStore.updateData(MENU_ID, { value: value });
+		if (this.value) {
+			menuStore.updateData(MENU_ID, { value: this.value });
 		};
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
+
 			if (onChange) {
-				onChange(value, () => {
-					menuStore.close(MENU_ID);
-				});
+				onChange(this.value, () => { menuStore.close(MENU_ID); });
 			};
 		});
 	};
@@ -324,31 +366,47 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 
 	onBlur (e: any) {
 		let { relation, onChange, index, getRecord } = this.props;
+
+		if (!this.ref || keyboard.isBlurDisabled) {
+			return;
+		};
+
 		let value = this.ref.getValue();
 		let record = getRecord(index);
 
 		keyboard.setFocus(false);
 		this.range = null;
 
-		if (keyboard.isBlurDisabled) {
-			return;
-		};
-
 		if (relation.format == I.RelationType.Date) {
-			value = value ? Util.parseDate(value) : null;
+			value = this.fixDateValue(value);
 		} else 
 		if (JSON.stringify(record[relation.relationKey]) === JSON.stringify(value)) {
-			this.setState({ isEditing: false });
+			this.setEditing(false);
 			return;
 		};
 
 		if (onChange) {
 			onChange(value, () => {
 				if (!menuStore.isOpen(MENU_ID)) {
-					this.setState({ isEditing: false });
+					this.setEditing(false);
 				};
 			});
 		};
+	};
+
+	fixDateValue (v: any) {
+		const { relation, getView } = this.props;
+
+		let view = null;
+		let viewRelation: any = {};
+
+		if (getView) {
+			view = getView();
+			viewRelation = view.getRelation(relation.relationKey);
+		};
+
+		v = String(v || '').replace(/_/g, '');
+		return v ? Util.parseDate(v, viewRelation.dateFormat) : null;
 	};
 
 	onIconSelect (icon: string) {

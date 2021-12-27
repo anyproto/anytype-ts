@@ -62,7 +62,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		const { isEditing } = this.state;
 		const { content } = block;
 		const { text } = content;
-		const cn = [ 'wrap', 'focusable', 'c' + block.id, (isEditing ? 'isEditing' : '') ];
+		const cn = [ 'wrap', 'resizable', 'focusable', 'c' + block.id, (isEditing ? 'isEditing' : '') ];
 
 		return (
 			<div 
@@ -101,6 +101,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 	
 	componentDidMount () {
 		const { block } = this.props;
+		const node = $(ReactDOM.findDOMNode(this));
+
 		this.text = String(block.content.text || '');
 
 		const length = this.text.length;
@@ -108,6 +110,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 		this._isMounted = true;
 		this.range = { start: length, end: length };
 		this.setValue(this.text);
+
+		node.unbind('resize').on('resize', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -144,7 +148,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 			window.clearTimeout(this.timeout);
 			
 			this.placeholderCheck(this.getValue());
-			this.save(() => { this.setState({ isEditing: false }); });
+			this.save(() => { 
+				this.setState({ isEditing: false });
+
+				menuStore.close('previewLatex');
+			});
 		});
 	};
 
@@ -466,7 +474,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, Stat
 
 		value.css({ height: 'auto' });
 		value.css({ height: value.height() + 20 });
-	};
+	};в
 	
 });
 

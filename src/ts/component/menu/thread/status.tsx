@@ -12,10 +12,9 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 		const { rootId, isCafe, accountId } = data;
 		const thread = authStore.threadGet(rootId);
 		const cafe = thread.cafe || {};
-
-		const { accounts } = thread;
-		const { status, files } = cafe;
-		const account = (accounts || []).find((it: I.ThreadAccount) => { return it.id == accountId; });
+		const status = cafe.status || {};
+		const files = cafe.files || {};
+		const account = (thread.accounts || []).find((it: I.ThreadAccount) => { return it.id == accountId; });
 
 		const Item = (item: any) => (
 			<div className="item">
@@ -26,11 +25,13 @@ class MenuThreadStatus extends React.Component<Props, {}> {
 					};
 
 					let content = null;
-					if (field.value.toString()) {
+					let value = String(field.value || '');
+
+					if (value) {
 						content = (
 							<React.Fragment>
 								<div className="side left">{field.key}</div>
-								<div className="side right">{field.value}</div>
+								<div className="side right">{value}</div>
 							</React.Fragment>
 						);
 					} else {

@@ -11,7 +11,7 @@ import ListPopup from './list/popup';
 import ListMenu from './list/menu';
 import ListIndex from './list/index';
 import ListChildren from './list/children';
-import ListTemplate from './list/template';
+import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
 
 import HeaderAuth from './header/auth';
@@ -36,6 +36,7 @@ import Label from './util/label';
 import IconEmoji from './util/iconEmoji';
 import Tag from './util/tag';
 import Loader from './util/loader';
+import Deleted from './util/deleted';
 import Progress from './util/progress';
 import SelectionProvider from './util/selection';
 
@@ -59,12 +60,16 @@ import Filter from './util/filter';
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
 
-import LinkPreview from './util/linkPreview';
-import ObjectPreviewBlock from './util/objectPreviewBlock';
+import Preview from './util/preview';
+import PreviewLink from './util/preview/link';
+import PreviewObject from './util/preview/object';
 
 import Graph from './util/graph';
 
 import Cell from './block/dataview/cell';
+
+import ObjectName from './util/object/name';
+import ObjectDescription from './util/object/description';
 
 export {
 	Page,
@@ -77,7 +82,7 @@ export {
 	ListMenu,
 	ListIndex,
 	ListChildren,
-	ListTemplate,
+	ListObjectPreview,
 	ListObject,
 	HeaderAuth,
 	HeaderMainIndex,
@@ -105,6 +110,7 @@ export {
 	Marker,
 	Tag,
 	Loader,
+	Deleted,
 	Progress,
 	Menu,
 	MenuItemVertical,
@@ -118,8 +124,11 @@ export {
 	Error,
 	Icon,
 	IconObject,
-	LinkPreview,
-	ObjectPreviewBlock,
+	Preview,
+	PreviewLink,
+	PreviewObject,
 	Graph,
 	Cell,
+	ObjectName,
+	ObjectDescription,
 };

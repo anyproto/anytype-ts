@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { I, Storage, translate, C } from 'ts/lib';
-import { commonStore, authStore } from 'ts/store';
+import { Frame, Cover, Title, Label, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
+import { Util, translate } from 'ts/lib';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {}
@@ -20,7 +20,7 @@ const PageAuthNotice = observer(class PageAuthNotice extends React.Component<Pro
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				
@@ -37,7 +37,7 @@ const PageAuthNotice = observer(class PageAuthNotice extends React.Component<Pro
 	};
 
 	onClick (e: any) {
-		this.props.history.push('/auth/select');
+		Util.route('/auth/select');
 	};
 	
 });

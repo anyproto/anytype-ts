@@ -14,6 +14,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 
 	_isMounted: boolean = false;
 	div: number = 0;
+	speed: number = 1;
 
 	constructor (props: any) {
 		super(props);
@@ -198,7 +199,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> 
 			node.removeClass('isPlaying');
 		});
 	};
-	
+
 	onResizeInit () {
 		if (!this._isMounted) {
 			return;

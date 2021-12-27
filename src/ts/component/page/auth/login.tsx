@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Error, Textarea, Button, HeaderAuth as Header, FooterAuth as Footer } from 'ts/component';
-import { translate, C, keyboard } from 'ts/lib';
+import { Util, translate, C, keyboard } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -32,7 +32,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 		
         return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header />
 				<Footer />
 				
@@ -64,9 +64,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { history } = this.props;
 		const { path } = authStore;
-		const phrase = this.phraseRef.getValue();
+		const phrase = this.phraseRef.getValue().trim();
 		
 		this.phraseRef.setError(false);
 		
@@ -76,7 +75,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 				this.setState({ error: message.error.description });
 			} else {
 				authStore.phraseSet(phrase);
-				history.push('/auth/account-select');
+				Util.route('/auth/account-select');
 			};
 		});
 	};
@@ -88,7 +87,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<Props
 	};
 	
 	onCancel (e: any) {
-		this.props.history.push('/auth/select');
+		Util.route('/auth/select');
 	};
 	
 });

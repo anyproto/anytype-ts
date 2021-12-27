@@ -23,23 +23,12 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		const relation = data.relation.get();
 		const sections = this.getSections();
 
-		let prefix = '';
-		switch (relation.format) {
-			default:
-				prefix = 'bgColor';
-				break;
-
-			case I.RelationType.Status:
-				prefix = 'textColor';
-				break;
-		};
-
 		const Section = (item: any) => (
 			<div className="section">
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
 						if (action.isBgColor) {
-							action.inner = <div className={`inner ${prefix} ${prefix}-${action.className}`} />;
+							action.inner = <div className={`inner isTag textColor textColor-${action.className}`} />;
 							action.icon = 'color';
 							action.checkbox = action.value == this.color;
 						};
@@ -64,7 +53,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
 					value={option.text}
-					onKeyDown={(e: any, v: string) => { this.onKeyDown(e, v); }}
 					onKeyUp={(e: any, v: string) => { this.onKeyUp(e, v); }}
 				/>
 
@@ -90,6 +78,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		window.clearTimeout(this.timeout);
 	};
 
@@ -103,7 +92,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
 	};
 	
@@ -133,13 +122,23 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Pro
 		return items;
 	};
 
-	onKeyDown (e: any, v: string) {
+	onKeyDown (e: any) {
+		window.clearTimeout(this.timeout);
+
+		let ret = false;
+
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
 
 			this.save();
 			this.props.close();
+
+			ret = true;
 		});
+
+		if (!ret) {
+			this.props.onKeyDown(e);
+		};
 	};
 
 	onKeyUp (e: any, v: string) {

@@ -10,7 +10,7 @@
 	.icon.edit { display: none !important; }
 	.cellContent { 
 		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
-		background: #fff; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
+		background: $colorWhite; z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px #ffcf6f;
 	}
 	.cellContent {
 		.name { display: inline-block; }
@@ -37,7 +37,7 @@
 	.inputWithFile { display: block; }
 }
 
-.cellContent { cursor: default; border-radius: 4px; }
+.cellContent { cursor: default; }
 .cellContent {
 	.iconObject { margin-right: 4px; vertical-align: top; flex-shrink: 0; }
 	.icon.clear { display: none; }
@@ -46,9 +46,14 @@
 	.empty { vertical-align: top; display: none; }
 
 	.more { 
-		background: #f5f5f0; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
+		background: $colorVeryLightGrey; border-radius: 3px; display: inline-block; vertical-align: middle; padding: 0px 4px; 
 		@include text-small; color: $colorDarkGrey; margin-left: 6px;
 	}
+}
+
+.cellContent.c-checkbox {
+	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
+	.icon.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 }
 
 .cellContent.c-file {
@@ -104,9 +109,11 @@
 .cellContent.canEdit.c-phone, 
 .cellContent.canEdit.c-email, 
 .cellContent.canEdit.c-date { cursor: text; }
-.cellContent.canEdit.c-checkbox { cursor: pointer; }
+
+.cellContent.canEdit.c-checkbox,
+.cellContent.canEdit.c-select { cursor: pointer; }
 
 .cellContent.c-url, .cellContent.c-email, .cellContent.c-phone {
-	a { text-decoration: none; border-bottom: 1px solid #d2d0c2; transition: $transitionFast; cursor: pointer; }
+	a { text-decoration: none; border-bottom: 1px solid $colorBorderDark; transition: $transitionFast; cursor: pointer; }
 	a:hover { border-color: $colorBlack; }
 }

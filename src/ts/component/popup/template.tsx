@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Loader, Title, Label, ListTemplate } from 'ts/component';
+import { Loader, Title, Label, ListObjectPreview } from 'ts/component';
 import { I, C, focus, Util, Action } from 'ts/lib';
 import { dbStore } from 'ts/store';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	history: any;
-};
+interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	items: any[];
@@ -43,7 +41,7 @@ class PopupTemplate extends React.Component<Props, State> {
 		const length = items.length;
 
 		if (loading) {
-			return <Loader />;
+			return <Loader id="loader" />;
 		};
 
 		return (
@@ -53,9 +51,9 @@ class PopupTemplate extends React.Component<Props, State> {
 					<Label text={`Type “${Util.shorten(type.name, 32)}” has ${length} ${Util.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
 				</div>
 
-				<ListTemplate 
+				<ListObjectPreview 
 					ref={(ref: any) => { this.ref = ref; }}
-					items={items}
+					getItems={() => { return items; }}
 					offsetX={-128}
 					onClick={this.onClick} 
 				/>
@@ -66,11 +64,9 @@ class PopupTemplate extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 		this.load();
-		focus.clear(true);
 
-		window.setTimeout(() => {
-			this.rebind();
-		}, Constant.delay.popup + 100);
+		focus.clear(true);
+		window.setTimeout(() => { this.rebind(); }, Constant.delay.popup + 100);
 	};
 
 	componentDidUpdate () {
@@ -84,10 +80,6 @@ class PopupTemplate extends React.Component<Props, State> {
 
 		this._isMounted = false;
 		this.unbind();
-
-		for (let item of items) {
-			Action.pageClose(item.id, false);
-		};
 	};
 
 	unbind () {

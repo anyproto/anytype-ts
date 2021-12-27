@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Util, Storage, analytics, keyboard } from 'ts/lib';
-import { ListPopup } from 'ts/component';
-import { authStore, commonStore, menuStore, popupStore } from 'ts/store';
+import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
@@ -15,11 +14,13 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
+import PageAuthShare from './auth/share';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
+import PageMainSpace from './main/space';
 import PageMainType from './main/type';
 import PageMainMedia from './main/media';
 import PageMainRelation from './main/relation';
@@ -28,7 +29,6 @@ import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
-const { process } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 const raf = require('raf');
@@ -44,11 +44,14 @@ const Components: any = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
+	'auth/share':			 PageAuthShare,
+	'object/share':			 PageAuthShare,
 			
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,
+	'main/space':			 PageMainSpace,
 	'main/type':			 PageMainType,
 	'main/media':			 PageMainMedia,
 	'main/relation':		 PageMainRelation,
@@ -58,6 +61,7 @@ const Components: any = {
 };
 
 interface Props extends RouteComponentProps<any> {
+	dataset?: any;
 	isPopup?: boolean;
 	matchPopup?: any;
 	rootId?: string;
@@ -66,12 +70,11 @@ interface Props extends RouteComponentProps<any> {
 class Page extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	childRef: any;
+	refChild: any;
 
 	render () {
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
 
@@ -84,14 +87,11 @@ class Page extends React.Component<Props, {}> {
 		if (!Component) {
 			return <div>Page component "{path}" not found</div>;
 		};
-		
+
 		return (
-			<React.Fragment>
-				{!isPopup ? <ListPopup key="listPopup" {...this.props} /> : ''}
-				<div className={'page ' + this.getClass('page')}>
-					<Component ref={(ref: any) => this.childRef = ref} {...this.props} />
-				</div>
-			</React.Fragment>
+			<div className={'page ' + this.getClass('page')}>
+				<Component ref={(ref: any) => this.refChild = ref} {...this.props} />
+			</div>
 		);
 	};
 	
@@ -115,7 +115,8 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		menuStore.closeAll();
-		Util.linkPreviewHide(true);
+		Util.tooltipHide(true);
+		Util.previewHide(true);
 	};
 
 	getMatch () {
@@ -123,12 +124,16 @@ class Page extends React.Component<Props, {}> {
 		return isPopup ? matchPopup : match;
 	};
 
+	getRootId () {
+		const match = this.getMatch();
+		return match?.params?.id || blockStore.root;
+	};
+
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup, history, dataset } = this.props;
 		const match = this.getMatch();
 		const popupNewBlock = Storage.get('popupNewBlock');
-		const popupIntroBlock = Storage.get('popupIntroBlock');
 		const isIndex = !match.params.page;
 		const isAuth = match.params.page == 'auth';
 		const isMain = match.params.page == 'main';
@@ -140,9 +145,24 @@ class Page extends React.Component<Props, {}> {
 		const askSurvey = Number(Storage.get('askSurvey')) || 0;
 		const days = lastSurveyTime ? 30 : 14;
 		const win = $(window);
+		const path = [ match.params.page, match.params.action ].join('/');
+		const Component = Components[path];
+
+		Util.tooltipHide(true);
+		Util.previewHide(true);
+
+		if (!Component) {
+			Util.route('/main/index');
+			return;
+		};
+
+		if (isMain && !account) {
+			Util.route('/');
+			return;
+		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			history.push('/auth/pin-check');
+			Util.route('/auth/pin-check');
 			return;
 		};
 
@@ -151,7 +171,6 @@ class Page extends React.Component<Props, {}> {
 		this.event();
 		this.unbind();
 
-		Util.linkPreviewHide(true);
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
 		if (isPopup) {
@@ -159,21 +178,13 @@ class Page extends React.Component<Props, {}> {
 		};
 
 		keyboard.setMatch(match);
-		popupStore.closeAll();
-		menuStore.closeAll();
 
 		window.setTimeout(() => {
 			if (isMain && account) {
-				if (!popupIntroBlock) {
-					popupStore.open('help', { data: { document: 'intro' } });
-					Storage.set('popupIntroBlock', 1);
-					Storage.set('popupNewBlock', 1);
-				} else
 				if (!popupNewBlock) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', 1);
 				};
-
 				Storage.set('redirect', history.location.pathname);
 			};
 
@@ -198,12 +209,34 @@ class Page extends React.Component<Props, {}> {
 					});
 				};
 
+				this.shareCheck();
+
 				Storage.delete('redirect');
 			};
 		}, Constant.delay.popup);
-		
 	};
-	
+
+	shareCheck () {
+		const shareSuccess = Storage.get('shareSuccess');
+		if (!shareSuccess) {
+			return;
+		};
+
+		Storage.delete('shareSuccess');
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'You\'ve got shared objects!',
+				text: 'They will be accessible in the "Shared" tab in Home within a minute',
+				textConfirm: 'Ok',
+				canCancel: false,
+				onConfirm: () => {
+					this.refChild.onTab(I.TabIndex.Shared);
+				}
+			},
+		});
+	};
+
 	unbind () {
 		const { isPopup } = this.props;
 		$(window).unbind('resize.page' + (isPopup ? 'Popup' : ''));
@@ -232,28 +265,21 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	setBodyClass () {
-		const { isPopup } = this.props;
-		const { config } = commonStore;
+		const { config, theme } = commonStore;
 		const platform = Util.getPlatform();
-		const version = process.getSystemVersion();
 		const cn = [ 
 			this.getClass('body'), 
 			Util.toCamelCase([ 'platform', platform ].join('-')),
 		];
-		const obj = $(isPopup ? '#popupPage #wrap' : 'html');
-		const a = version.split('.');
+		const obj = $('html');
 
-		if (a.length) {
-			cn.push('version' + a[0]);
+		if (theme) {
+			cn.push(Util.toCamelCase(`theme-${theme}`));
 		};
 
 		if (config.debug.ui) {
 			cn.push('debug');
 		};
-		if (config.debug.dm) {
-			cn.push('dark');
-		};
-
 		obj.attr({ class: cn.join(' ') });
 	};
 	
@@ -263,8 +289,8 @@ class Page extends React.Component<Props, {}> {
 				return;
 			};
 
-			if (this.childRef && this.childRef.resize) {
-				this.childRef.resize();			
+			if (this.refChild && this.refChild.resize) {
+				this.refChild.resize();			
 			};			
 		});
 	};

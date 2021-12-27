@@ -10,7 +10,7 @@
 ## Install node addon library and protobuf bindings
 ### Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
 
-	./update.sh <GITHUB_TOKEN> <macos-latest|ubuntu-latest|windows-latest>
+	./update.sh <GITHUB_USER> <GITHUB_TOKEN> <macos-latest|ubuntu-latest|windows-latest>
 	
 ### Or compile from the source code
 

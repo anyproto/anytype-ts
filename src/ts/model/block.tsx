@@ -77,7 +77,7 @@ class Block implements I.Block {
 	};
 
 	canHaveBackground (): boolean {
-		return !this.isSystem();
+		return !this.isSystem() && !this.isFilePdf();
 	};
 
 	canHaveMarks () {
@@ -85,7 +85,7 @@ class Block implements I.Block {
 	};
 
 	canHaveHistory (): boolean {
-		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask();
+		return this.isObjectPage() || this.isObjectHuman() || this.isObjectTask() || this.isObjectNote();
 	};
 
 	canTurn (): boolean {
@@ -148,12 +148,20 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Task);
 	};
 
+	isObjectNote (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Note);
+	};
+
 	isObjectSet (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
+	isObjectSpace (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Space);
+	};
+
 	isObjectFileKind (): boolean { 
-		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo());
+		return this.isPage() && (this.isObjectFile() || this.isObjectImage() || this.isObjectVideo() || this.isObjectAudio());
 	};
 
 	isObjectFile (): boolean { 
@@ -166,6 +174,10 @@ class Block implements I.Block {
 
 	isObjectVideo (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Video);
+	};
+
+	isObjectAudio (): boolean { 
+		return this.isPage() && (this.layout == I.ObjectLayout.Audio);
 	};
 
 	isObjectType (): boolean { 
@@ -241,19 +253,31 @@ class Block implements I.Block {
 	};
 
 	isFileFile (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.File);
+		return this.isFile() && (this.content.type == I.FileType.File) && this.isFileStyleLink();
 	};
 
 	isFileImage (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.Image);
+		return this.isFile() && (this.content.type == I.FileType.Image) && this.isFileStyleEmbed();
 	};
 	
 	isFileVideo (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.Video);
+		return this.isFile() && (this.content.type == I.FileType.Video) && this.isFileStyleEmbed();
 	};
 
 	isFileAudio (): boolean {
-		return this.isFile() && (this.content.type == I.FileType.Audio);
+		return this.isFile() && (this.content.type == I.FileType.Audio) && this.isFileStyleEmbed();
+	};
+	
+	isFilePdf (): boolean {
+		return this.isFile() && (this.content.type == I.FileType.Pdf) && this.isFileStyleEmbed();
+	};
+
+	isFileStyleLink (): boolean {
+		return this.isFile() && (this.content.style == I.FileStyle.Link);
+	};
+
+	isFileStyleEmbed (): boolean {
+		return this.isFile() && (this.content.style != I.FileStyle.Link);
 	};
 
 	isBookmark (): boolean {

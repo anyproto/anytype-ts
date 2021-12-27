@@ -1,7 +1,19 @@
 import { I, Util, SmileUtil, Storage } from 'ts/lib';
 
 const $ = require('jquery');
-const Tags = [ 'strike', 'kbd', 'italic', 'bold', 'underline', 'lnk', 'color', 'bgcolor', 'mention', 'emoji' ];
+const Tags = [ 
+	'strike', 
+	'kbd', 
+	'italic', 
+	'bold', 
+	'underline', 
+	'lnk', 
+	'color', 
+	'bgcolor', 
+	'mention', 
+	'emoji', 
+	'obj',
+];
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -230,7 +242,7 @@ class Mark {
 		let parts: I.Mark[] = [];
 		let borders: any[] = [];
 		let ranges: any[] = [];
-		let hasParam = [ I.MarkType.Link, I.MarkType.Color, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
+		let hasParam = [ I.MarkType.Link, I.MarkType.Object, I.MarkType.Color, I.MarkType.BgColor, I.MarkType.Mention, I.MarkType.Emoji ];
 		
 		for (let mark of marks) {
 			borders.push(Number(mark.range.from));
@@ -333,13 +345,13 @@ class Mark {
 		obj.find('font').removeAttr('face').each((i: number, item: any) => {
 			item = $(item);
 			item.html(item.find('span').html());
-		})
+		});
 
 		obj.find('emoji').removeAttr('class').html(' ');
 		return obj;
 	};
 	
-	fromHtml (html: string): { marks: I.Mark[], text: string } {
+	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string } {
 		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
@@ -350,6 +362,16 @@ class Mark {
 
 		let text = html;
 		let marks: any[] = [];
+
+		// TODO: find classes by color or background
+		html.replace(/<font color="([^"]+)">([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
+			text = text.replace(s, p2);
+			return '';
+		});
+		html.replace(/<span style="background-color: ([^;]+);">([^<]*)<\/span>/g, (s: string, p1: string, p2: string) => {
+			text = text.replace(s, p2);
+			return '';
+		});
 
 		// Fix browser markup bug
 		html.replace(/<\/?(i|b|font|search)>/g, (s: string, p: string) => {
@@ -417,10 +439,10 @@ class Mark {
 			return '';
 		});
 
-		return this.fromMarkdown(text, marks);
+		return this.fromMarkdown(text, marks, restricted);
 	};
 
-	fromMarkdown (html: string, marks: I.Mark[]) {
+	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
 		let test = /[`\*_~\[]{1}/.test(text);
 
@@ -430,6 +452,10 @@ class Mark {
 
 		// Markdown
 		for (let item of this.regexpMarkdown) {
+			if (restricted.includes(item.type)) {
+				continue;
+			};
+
 			html = text;
 			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
 				p1 = String(p1 || '');
@@ -464,7 +490,7 @@ class Mark {
 			for (let i = 0; i < marks.length; ++i) {
 				let mark = marks[i];
 				if ((mark.range.from >= from) && (mark.range.to <= from + p1.length + p2.length + 4)) {
-					if (mark.type == I.MarkType.Link) {
+					if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type)) {
 						marks.splice(i, 1);
 						i--;
 					} else {
@@ -519,6 +545,18 @@ class Mark {
 		};
 		
 		return attr;
+	};
+
+	toggleLink (newMark: I.Mark, marks: I.Mark[]) {
+		for (let i = 0; i < marks.length; ++i) {
+			let mark = marks[i];
+			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && (mark.range.from >= newMark.range.from) && (mark.range.to <= newMark.range.to)) {
+				marks.splice(i, 1);
+				i--;
+			};
+		};
+
+		return this.toggle(marks, newMark);
 	};
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {

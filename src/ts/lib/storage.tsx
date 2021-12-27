@@ -78,8 +78,10 @@ class Storage {
 			'tabIndex', 
 			'tabStore', 
 			'linkSettings', 
-			'popupIntroBlock',
 			'graph',
+			'blockCnt',
+			'gateway',
+			'dataPath',
 		];
 
 		for (let key of keys) {

@@ -1,0 +1,56 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuDataviewSource { width: 360px; }
+	.menu.menuDataviewSource {
+		.content { overflow: visible; max-height: unset; padding: 0px; }
+		.scrollWrap { padding: 8px 0px; overflow-x: hidden; overflow-y: overlay; max-height: 350px; }
+
+		.item { padding: 4px 10px; position: relative; white-space: nowrap; display: flex; }
+		.item {
+			.grey { color: $colorMediumGrey; }
+			.iconObject { margin-right: 10px; }
+
+			.buttons { line-height: 44px; opacity: 0; transition: $transitionFast; }
+			.buttons {
+				.icon { vertical-align: middle; opacity: 1; }
+			}
+
+			.name { @include text-overflow-nw; width: 100%; vertical-align: middle; }
+
+			.select { overflow: hidden; border: 0px; padding: 0px; display: block; }
+			.select:hover, .select.active { background: none; }
+			.select {
+				.icon.relation { display: none; }
+				.icon.arrow { display: none; }
+			}
+
+			.condition { color: $colorDarkGrey; margin-right: 4px; }
+			.value { color: $colorDarkGrey; white-space: nowrap; overflow: hidden; line-height: 22px; }
+
+			.tagItem { margin: 2px 4px 0px 0px; vertical-align: top; }
+
+			.element { display: inline-block; vertical-align: top; margin-right: 4px; line-height: 22px; }
+			.element {
+				.iconObject { margin-right: 2px; }
+			}
+
+			.txt { width: calc(100% - 74px); line-height: 20px; height: 40px; }
+		}
+		.item.empty { padding: 13px 16px; }
+
+		.item:hover, .item.hover {
+			.buttons { opacity: 1; }
+		}
+
+		.item.add { display: block; }
+		.item.add {
+			.icon.dnd { margin-top: 0px; }
+		}
+
+		.bottom { padding: 0px 0px 8px 0px; }
+		.bottom {
+			.line { margin-top: 0px; }
+		}
+	}
+}

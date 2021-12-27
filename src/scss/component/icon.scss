@@ -12,7 +12,6 @@
 
 .icon.back, .icon.forward { background-image: url('~img/icon/back0.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
-.icon.back:hover, .icon.forward:hover { background-image: url('~img/icon/back1.svg'); }
 
 .icon.help { width: 28px; height: 28px; background-image: url('~img/icon/help.svg'); }
 
@@ -20,6 +19,7 @@
 .icon.checkbox.active { background-image: url('~img/icon/checkbox1.svg'); }
 
 .icon.tex { width: 32px; height: 16px; background-image: url('~img/icon/tex.svg'); }
+.icon.ghost { background-image: url('~img/icon/ghost.svg'); }
 
 .icon.relation.default { background-image: url('~img/icon/menu/action/block/relation0.svg'); }
 .icon.relation.c-longText { background-image: url('~img/icon/relation/small/longText.svg'); }
@@ -43,6 +43,7 @@
 .icon.layout.c-image { background-image: url('~img/icon/object/image.svg'); }
 .icon.layout.c-type { background-image: url('~img/icon/object/type.svg'); }
 .icon.layout.c-relation { background-image: url('~img/icon/object/relation.svg'); }
+.icon.layout.c-note { background-image: url('~img/icon/object/note.svg'); }
 
 .icon.iconFile.other { background-image: url('~img/icon/file/other.svg') !important; }
 .icon.iconFile.image { background-image: url('~img/icon/file/image.svg') !important; }

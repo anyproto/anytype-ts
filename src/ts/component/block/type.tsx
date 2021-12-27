@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics } from 'ts/lib';
-import { dbStore, popupStore } from 'ts/store';
+import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
+import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { crumbs } from '../../lib';
 
 interface Props extends I.BlockComponent {}
 interface State {
@@ -33,9 +32,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	render (): any {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const items = this.getItems();
 		const { filter } = this.state;
+		const object = detailStore.get(rootId, rootId, []);
+		const type: any = dbStore.getObjectType(object.type) || {};
 
 		const Item = (item: any) => {
 			return (
@@ -61,7 +62,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 		return (
 			<div tabIndex={0} onFocus={this.onFocus}>
 				<div className="placeholder">
-					Choose object type (↓↑ to select) or press ENTER to continue with Draft type
+					Choose object type (↓↑ to select) or press ENTER to continue with "{type.name}" type
 				</div>
 
 				<Filter 
@@ -94,17 +95,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	getItems () {
+		const { rootId } = this.props;
 		const { filter } = this.state;
-
-		let items = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page);
-		let set = dbStore.getObjectType(Constant.typeId.set);
-
-		items.sort(DataUtil.sortByName);
-
-		if (set) {
-			//items.unshift(set);
-		};
-
+		const object = detailStore.get(rootId, rootId, []);
+		
+		let items = DataUtil.getObjectTypesForNewObject(true).filter((it: any) => { return it.id != object.type; });
 		if (filter) {
 			const reg = new RegExp(Util.filterFix(filter), 'gi');
 
@@ -227,26 +222,47 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			} else {
 				y = el.offset().top;
 			};
-
-			if (y >= h - o) {
-				container.scrollTop(y - h + o);
-			};
+			
+			container.scrollTop(Math.max(0, y - h + o));
 		};
 	};
 
 	onClick (e: any, item: any) {
-		const { rootId } = this.props;
+		e.persist();
+
+		const { rootId, isPopup } = this.props;
 		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
+		const root = blockStore.getLeaf(rootId, rootId);
+		const namespace = isPopup ? '.popup' : '';
+
+		Util.getScrollContainer(isPopup).scrollTop(0);
+		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, 0);
+
+		let first = null;
 
 		const create = (template: any) => {
-			const onTemplate = () => {
-				C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => {
-					focus.set(message.blockId, { from: 0, to: 0 });
+
+			const onBlock = (id: string) => {
+				if (first) {
+					const l = first.getLength();
+					
+					focus.set(first.id, { from: l, to: l });
 					focus.apply();
-				});
+
+					$(window).trigger('resize.editor' + namespace);
+				};
+			};
+
+			const onTemplate = () => {
+				first = blockStore.getFirstBlock(rootId, 1, (it: any) => { return it.isText(); });
+				if (!first) {
+					C.BlockCreate(param, rootId, '', I.BlockPosition.Bottom, (message: any) => { onBlock(message.blockId); });
+				} else {
+					onBlock(first.id);
+				};
 			};
 
 			if (template) {
@@ -273,10 +289,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 
 		if (item.id == Constant.typeId.set) {
 			C.ObjectToSet(rootId, [], (message: any) => {
+				if (isPopup) {
+					historyPopup.clear();
+				};
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
 			});
 		} else {
-			DataUtil.checkTemplateCnt([ item.id ], 2, (message: any) => {
+			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
 					showMenu();
 				} else {
@@ -296,7 +315,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	onFilterChange (e: any) {
 		this.setState({ filter: this.ref.getValue() });
 	};
-	
+
 });
 
 export default BlockType;

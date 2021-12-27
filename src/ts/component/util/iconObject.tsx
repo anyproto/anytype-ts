@@ -23,6 +23,7 @@ interface Props {
 	tooltipY?: I.MenuDirection;
 	color?: string;
 	getObject?(): any;
+	forceLetter?: boolean;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -37,6 +38,7 @@ const IDS40 = [
 	I.ObjectLayout.File, 
 	I.ObjectLayout.Image, 
 	I.ObjectLayout.Type,
+	I.ObjectLayout.Space,
 ];
 
 const IconSize = {
@@ -62,7 +64,7 @@ const FontSize = {
 	24: 14,
 	26: 16,
 	32: 18,	
-	40: 28,
+	40: 24,
 	48: 28,
 	56: 34,
 	64: 44,
@@ -112,9 +114,10 @@ Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg'
 const Home = 'img/icon/home.svg';
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg');
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg');
+const Ghost = require('img/icon/ghost.svg');
 
-const Color = {
-	grey:	 '#dfddd0',
+const BgColor = {
+	grey:	 '#f3f2ec',
 	black:	 '#2c2b27',
 	brown:	 '#aca996',
 	orange:	 '#ffb522',
@@ -124,6 +127,17 @@ const Color = {
 	teal:	 '#0fc8ba',
 	lime:	 '#5dd400',
 	green:	 '#57c600',
+};
+
+const Color = {
+	'':		 '#aca996',
+	dark:	 '#cbc9bd'
+};
+
+const Theme = {
+	dark: {
+		grey: '#484843',
+	}
 };
 
 const $ = require('jquery');
@@ -147,10 +161,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	render () {
-		const { className, size, canEdit } = this.props;
+		const { className, size, canEdit, forceLetter } = this.props;
+		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat } = object || {};
+		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
 		
 		if (className) {
@@ -173,6 +188,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
+				} else 
+				if (forceLetter) {
+					cn.push('withLetter');
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -190,13 +210,16 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 
+			case I.ObjectLayout.Note:
+				break;
+
 			case I.ObjectLayout.Type:
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else {
 					cn.push('withLetter');
 					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.typeSvg()} className={icn.join(' ')} />;
+					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 				};
 				break;
 
@@ -207,7 +230,12 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 
 				if (iconEmoji || iconImage) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-				};
+				} else 
+				if (forceLetter) {
+					cn.push('withLetter');
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+				};;
 				break;
 
 			case I.ObjectLayout.Relation:
@@ -238,6 +266,11 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 				icon = <img src={Home} className={icn.join(' ')} />;
 				break;
+		};
+
+		if (isDeleted) {
+			icn = [ 'iconCommon', 'c' + iconSize ];
+			icon = <img src={Ghost} className={icn.join(' ')} />;
 		};
 
 		if (!icon) {
@@ -317,11 +350,15 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 	};
 
 	iconSize () {
-		const { size, iconSize } = this.props;
+		const { size, iconSize, forceLetter } = this.props;
 		const object = this.getObject();
-		const { layout, iconImage, iconEmoji } = object;
+		const { layout, iconImage, iconEmoji, isDeleted } = object;
 
 		let s = IconSize[size];
+
+		if (isDeleted) {
+			return s;
+		};
 
 		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
 			s = 16;
@@ -345,6 +382,10 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 			s = size;
 		};
 
+		if (([ I.ObjectLayout.Task, I.ObjectLayout.Relation ].indexOf(layout) < 0) && forceLetter && !iconImage && !iconEmoji && (size >= 40)) {
+			s = size;
+		};
+
 		if (iconSize) {
 			s = iconSize;
 		};
@@ -361,27 +402,41 @@ const IconObject = observer(class IconObject extends React.Component<Props, {}> 
 		return s;
 	};
 
-	userSvg (): string {
+	svgBgColor () {
 		const { color } = this.props;
+		const { theme } = commonStore;
+
+		if (Theme[theme] && Theme[theme][color]) {
+			return Theme[theme][color];
+		};
+		return BgColor[color];
+	};
+
+	svgColor () {
+		const { theme } = commonStore;
+		return Color[theme];
+	};
+
+	userSvg (): string {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
-
-		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${Color[color]}" />`;
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#fff" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		
+		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgBgColor()}" />`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${circle}${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
-	typeSvg (): string {
+	commonSvg (): string {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
 
-		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#CBC9BD" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
+		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${text}</svg>`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));

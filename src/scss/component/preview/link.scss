@@ -1,0 +1,18 @@
+@import "~scss/_vars";
+
+.previewLink {
+	.name { @include text-common; height: 22px; color: $colorBlack; @include text-overflow-nw; margin-bottom: 3px; }
+	.descr { 
+		@include text-small; @include clamp2; height: 36px; color: $colorVeryDarkGrey; margin: 2px 0px 7px 0px;
+	}
+	.link { @include text-small; height: 18px; color: $colorBlack; @include text-overflow-nw;  }
+		
+	.img {
+		width: 100%; height: 112px; background-repeat: no-repeat; background-size: cover; background-position: center center; 
+		border-bottom: 1px solid $colorLightGrey;
+	}
+		
+	.icon.fav { width: 16px; height: 16px; margin: -4px 6px 0px 0px; }
+	
+	.info { padding: 15px 15px 12px 15px; }
+}

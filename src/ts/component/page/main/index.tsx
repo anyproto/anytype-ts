@@ -2,47 +2,34 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon, IconObject, ListIndex, Cover, HeaderMainIndex as Header, FooterMainIndex as Footer, Filter } from 'ts/component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore } from 'ts/store';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
-import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {};
 
 interface State {
-	tab: Tab;
+	tab: I.TabIndex;
 	filter: string;
-	pages: any[];
+	loading: boolean;
 };
 
 const $ = require('jquery');
 const Constant: any = require('json/constant.json');
 
-enum Tab {
-	None		 = '',
-	Favorite	 = 'favorite',
-	Recent		 = 'recent',
-	Set			 = 'set',
-	Archive		 = 'archive',
-};
-
-const Tabs = [
-	{ id: Tab.Favorite, name: 'Favorites' },
-	{ id: Tab.Recent, name: 'History' },
-	{ id: Tab.Set, name: 'Sets' },
-	{ id: Tab.Archive, name: 'Archive' },
-];
-
 const PageMainIndex = observer(class PageMainIndex extends React.Component<Props, State> {
 	
+	_isMounted: boolean = false;
 	refFilter: any = null;
 	id: string = '';
 	timeoutFilter: number = 0;
+	selected: string[] = [];
 
 	state = {
-		tab: Tab.Favorite,
+		tab: I.TabIndex.Favorite,
 		filter: '',
-		pages: [],
+		loading: false,
 	};
 
 	constructor (props: any) {
@@ -52,6 +39,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onClick = this.onClick.bind(this);
 		this.onStore = this.onStore.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
@@ -59,41 +47,106 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onSelectionDelete = this.onSelectionDelete.bind(this);
+		this.onSelectionArchive = this.onSelectionArchive.bind(this);
+		this.onSelectionFavorite = this.onSelectionFavorite.bind(this);
+		this.onSelectionAll = this.onSelectionAll.bind(this);
+		this.onSelectionNone = this.onSelectionNone.bind(this);
+		this.onSelectionClose = this.onSelectionClose.bind(this);
 	};
 	
 	render () {
-		const { cover } = commonStore;
-		const { config } = commonStore;
+		const { cover, config } = commonStore;
 		const { root, profile, recent } = blockStore;
 		const element = blockStore.getLeaf(root, root);
-		const { tab, filter } = this.state;
-		const canDrag = [ Tab.Favorite ].indexOf(tab) >= 0
+		const { filter, loading } = this.state;
+		const tabs = this.getTabs();
+		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
+		const canDrag = [ I.TabIndex.Favorite ].indexOf(tab.id) >= 0;
+		const { allowSpaces } = config;
 
 		if (!element) {
 			return null;
 		};
 
-		const object = detailStore.get(profile, profile, []);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 		const { name } = object;
 		const list = this.getList();
+		const length = list.length;
+
+		// Subscriptions
+		list.forEach((it: any) => {
+			const { name, iconEmoji, iconImage, type, layout, relationFormat } = it;
+		});
+	
+		let selectionButtons = [
+			{ id: 'selectAll', icon: 'all', name: 'Select all' },
+			{ id: 'selectNone', icon: 'all', name: 'Deselect all' },
+		];
+
+		if (tab.id == I.TabIndex.Favorite) {
+			selectionButtons = [
+				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'unfav', icon: 'unfav', name: 'Remove from favorites' },
+			].concat(selectionButtons);
+		} else
+		if (tab.id == I.TabIndex.Archive) {
+			selectionButtons = [
+				{ id: 'delete', icon: 'delete', name: 'Delete' },
+				{ id: 'restore', icon: 'restore', name: 'Restore' },
+			].concat(selectionButtons);
+		} else {
+			selectionButtons = [
+				{ id: 'archive', icon: 'delete', name: 'Move to bin' },
+				{ id: 'fav', icon: 'fav', name: 'Add to favorites' },
+			].concat(selectionButtons);
+		};
 
 		const TabItem = (item: any) => (
-			<div className={[ 'tab', (tab == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
+			<div className={[ 'tab', (tab.id == item.id ? 'active' : '') ].join(' ')} onClick={(e: any) => { this.onTab(item.id); }}>
 				{item.name}
 			</div>
 		);
 
+		let content = null;
+		if (!loading) {
+			if (!list.length) {
+				content = (
+					<div className="emptySearch">
+						There are no objects in {tab.name} tab
+					</div>
+				);
+			} else {
+				content = (
+					<ListIndex 
+						onClick={this.onClick} 
+						onSelect={this.onSelect} 
+						onAdd={this.onAdd}
+						onMore={this.onMore}
+						onSortStart={this.onSortStart}
+						onSortEnd={this.onSortEnd}
+						getList={this.getList}
+						helperContainer={() => { return $('#documents .list').get(0); }} 
+						canDrag={canDrag}
+					/>
+				);
+			};
+		};
+
 		return (
 			<div>
-				<Cover {...cover} />
+				<Cover {...cover} className="main" />
 				<Header {...this.props} />
 				<Footer {...this.props} />
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
-						{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						<div className="side left">
+							{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+						</div>
 						
-						<div className="rightMenu">
+						<div className="side right">
 							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
@@ -101,10 +154,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						</div>
 					</div>
 					
-					<div id="documents" className={Util.toCamelCase('tab-' + tab)}> 
-						<div className="tabWrap">
+					<div id="documents" className={Util.toCamelCase('tab-' + tab.id)}> 
+						<div id="tabWrap" className="tabWrap">
 							<div className="tabs">
-								{Tabs.map((item: any, i: number) => (
+								{tabs.map((item: any, i: number) => (
 									<TabItem key={i} {...item} />
 								))}
 							</div>
@@ -117,21 +170,26 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 										placeholderFocus="" 
 										value={filter}
 										onChange={this.onFilterChange}
+										onClear={this.onFilterClear}
 									/>
 								</div>
-								{(tab == Tab.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
+								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
-						<ListIndex 
-							onSelect={this.onSelect} 
-							onAdd={this.onAdd}
-							onMore={this.onMore}
-							onSortStart={this.onSortStart}
-							onSortEnd={this.onSortEnd}
-							getList={this.getList}
-							helperContainer={() => { return $('#documents').get(0); }} 
-							canDrag={canDrag}
-						/>
+						<div id="selectWrap" className="tabWrap">
+							<div className="tabs">
+								<div id="selectCnt" className="side left" />
+								<div className="side right">
+									{selectionButtons.map((item: any, i: number) => (
+										<div id={'button-' + item.id} key={i} className="element" onClick={(e: any) => { this.onSelection(e, item); }}>
+											<Icon className={item.icon} />
+											<div className="name">{item.name}</div>
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
+						{content}
 					</div>
 				</div>
 			</div>
@@ -139,14 +197,17 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 	
 	componentDidMount () {
-		const win = $(window);
+		this._isMounted = true;
+
+		const tabs = this.getTabs();
+
+		this.onTab(Storage.get('tabIndex') || tabs[0].id);
+		this.onScroll();
+		this.selectionRender();
+		this.rebind();
 
 		crumbs.delete(I.CrumbsType.Page);
-
-		this.onScroll();
-		this.onTab(Storage.get('tabIndex') || Tabs[0].id);
-
-		win.unbind('scroll.page').on('scroll.page', (e: any) => { this.onScroll(); });
+		analytics.setContext('', '');
 	};
 	
 	componentDidUpdate () {
@@ -158,79 +219,169 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			item.addClass('hover');
 		};
+
+		this.selectionRender();
 	};
 
 	componentWillUnmount () {
-		$(window).unbind('scroll.page');
+		this._isMounted = false;
+		this.unbind();
+
 		menuStore.closeAll(Constant.menuIds.index);
+		Action.dbClear(Constant.subIds.index);
+	};
+
+	rebind () {
+		const win = $(window);
+
+		this.unbind();
+		win.on('keyup.page', (e: any) => { this.onKeyUp(e); });
+		win.on('scroll.page', (e: any) => { this.onScroll(); });
+	};
+
+	unbind () {
+		$(window).unbind('scroll.page keyup.page');
+	};
+
+	onKeyUp (e: any) {
+		keyboard.shortcut('escape', e, (pressed: string) => {
+			this.selected = [];
+			this.selectionRender();
+		});
 	};
 
 	onScroll () {
 		const win = $(window);
 		const top = win.scrollTop();
 		const node = $(ReactDOM.findDOMNode(this));
-		const title = node.find('#title');
 		const list = node.find('#documents');
+
 		if (!list.length) {
 			return;
 		};
 
-		const oy = list.offset().top;
+		const title = node.find('#title');
+		const selectWrap = node.find('#selectWrap');
+		const header = node.find('#header');
+		const hh = Util.sizeHeader();
 		const menu = $('#menuSelect.add');
-		const offset = 256;
+		const offsetTitle = 256;
 
-		let y = 0;
-		if (oy - top <= offset) {
-			y = oy - top - offset;
+		let oy = list.offset().top;
+		let yt = 0;
+		if (oy - top <= offsetTitle) {
+			yt = oy - top - offsetTitle;
 		};
 
-		title.css({ transform: `translate3d(0px,${y}px,0px)` });
-		menu.css({ transform: `translate3d(0px,${y}px,0px)`, transition: 'none' });
+		if (list.hasClass('isSelecting')) {
+			if (oy - top <= hh) {
+				header.addClass('selectFixed');
+				list.addClass('selectFixed');
+				selectWrap.css({ top: hh });
+			} else {
+				header.removeClass('selectFixed');
+				list.removeClass('selectFixed');
+				selectWrap.css({ top: '' });
+			};
+		} else {
+			header.removeClass('selectFixed');
+			list.removeClass('selectFixed');
+		};
+
+		title.css({ transform: `translate3d(0px,${yt}px,0px)` });
+		menu.css({ transform: `translate3d(0px,${yt}px,0px)`, transition: 'none' });
 	};
 
-	onTab (id: Tab) {
-		let tab = Tabs.find((it: any) => { return it.id == id; });
+	getTabs () {
+		const { config } = commonStore;
+
+		let tabs: any[] = [
+			{ id: I.TabIndex.Favorite, name: 'Favorites' },
+			{ id: I.TabIndex.Recent, name: 'History' },
+			{ id: I.TabIndex.Set, name: 'Sets', load: true },
+		];
+
+		if (config.experimental) {
+			tabs.push({ id: I.TabIndex.Space, name: 'Spaces', load: true });
+		};
+
+		if (config.allowSpaces) {
+			tabs.push({ id: I.TabIndex.Shared, name: 'Shared', load: true });
+		};
+
+		tabs.push({ id: I.TabIndex.Archive, name: 'Bin', load: true });
+		return tabs;
+	};
+
+	onTab (id: I.TabIndex) {
+		let tabs = this.getTabs();
+		let tab = tabs.find((it: any) => { return it.id == id; });
 		if (!tab) {
-			tab = Tabs[0];
+			tab = tabs[0];
 			id = tab.id;
 		};
 
+		this.selected = [];
 		this.state.tab = id;	
-		this.setState({ tab: id, pages: [] });
+		this.setState({ tab: id });
 
 		Storage.set('tabIndex', id);
 		analytics.event('TabHome', { tab: tab.name });
 
-		if ([ Tab.Archive, Tab.Set ].indexOf(id) >= 0) {
-			this.load();
-		};
+		this.load();
 	};
 
 	load () {
-		const { tab, filter } = this.state;
+		if (!this._isMounted) {
+			return;
+		};
+
+		const { filter } = this.state;
 		const { config } = commonStore;
+		const tabs = this.getTabs();
+		const tab = tabs.find((it: any) => { return it.id == this.state.tab; });
+
+		if (!tab.load) {
+			return;
+		};
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab == Tab.Archive },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: tab.id == I.TabIndex.Archive },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc }
 		];
 
-		if (tab == Tab.Set) {
+		if (tab.id == I.TabIndex.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
+		};
+
+		if (tab.id == I.TabIndex.Space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space });
+		};
+
+		if (tab.id == I.TabIndex.Shared) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: Constant.typeId.space });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.NotEmpty, value: null });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHighlighted', condition: I.FilterCondition.Equal, value: true });
 		};
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false });
 		};
 
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 100, (message: any) => {
-			if (message.error.code) {
+		if (filter) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+		};
+
+		this.setState({ loading: true });
+
+		C.ObjectSearchSubscribe(Constant.subIds.index, filters, sorts, Constant.defaultRelationKeys, [], '', 0, 100, true, '', '', (message: any) => {
+			if (!this._isMounted || message.error.code) {
 				return;
 			};
 
-			this.setState({ pages: message.records });
+			this.setState({ loading: false });
 		});
 	};
 
@@ -239,7 +390,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		const node = $(ReactDOM.findDOMNode(this));
 		const searchWrap = node.find('#searchWrap');
-		const page = $('.page');
 
 		if (searchWrap.hasClass('active')) {
 			return;
@@ -247,19 +397,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		searchWrap.addClass('active');
 		this.refFilter.focus();
-
-		window.setTimeout(() => {
-			page.unbind('click').on('click', (e: any) => {
-				if ($.contains(searchWrap.get(0), e.target)) {
-					return;
-				};
-
-				searchWrap.removeClass('active');
-				page.unbind('click');
-
-				window.setTimeout(() => { this.setFilter(''); }, 210);
-			});
-		}, 210);
 	};
 
 	onFilterChange (v: string) {
@@ -267,10 +404,26 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.timeoutFilter = window.setTimeout(() => { this.setFilter(v); }, 500);
 	};
 
+	onFilterClear () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const searchWrap = node.find('#searchWrap');
+
+		searchWrap.removeClass('active');
+
+		this.refFilter.blur();
+		this.setFilter('');
+	};
+
 	setFilter (v: string) {
+		if (this.state.filter == v) {
+			return;
+		};
+
 		if (this.refFilter) {
 			this.refFilter.setValue(v);
 		};
+		
+		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
 	};
@@ -284,25 +437,193 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onProfile (e: any) {
 		const { profile } = blockStore;
-		const object = detailStore.get(profile, profile, []);
+		const object = detailStore.get(Constant.subIds.profile, profile);
 
 		DataUtil.objectOpenEvent(e, object);
 	};
 	
-	onSelect (e: any, item: any) {
+	onClick (e: any, item: any) {
 		e.stopPropagation();
 		e.persist();
 
 		const { tab } = this.state;
 		const object = item.isBlock ? item._object_ : item;
 
-		if (tab == Tab.Archive) {
-			return;
+		if (tab == I.TabIndex.Archive) {
+			this.onSelect(e, item);
+		} else {
+			crumbs.cut(I.CrumbsType.Page, 0, () => {
+				DataUtil.objectOpenEvent(e, object);
+			});
+		};
+	};
+
+	getObject (item: any) {
+		return item.isBlock ? item._object_ : item;
+	};
+
+	onSelect (e: any, item: any) {
+		e.stopPropagation();
+		e.persist();
+
+		if (e.shiftKey) {
+			const list = this.getList();
+			const idx = list.findIndex(it => it.id == item.id);
+			
+			if ((idx >= 0) && (this.selected.length > 0)) {
+				const selectedIndexes = this.getSelectedIndexes().filter(i => i != idx);
+				const closest = Util.findClosestElement(selectedIndexes, idx);
+				
+				if (isFinite(closest)) {
+					const [ start, end ] = this.getSelectionRange(closest, idx);
+					const ids = list.slice(start, end).map(item => item.id);
+
+					this.selected = this.selected.concat(ids);
+				};
+			};
+		} else {
+			let idx = this.selected.indexOf(item.id);
+			if (idx >= 0) {
+				this.selected.splice(idx, 1);
+			} else {
+				this.selected.push(item.id);
+			};	
 		};
 
-		crumbs.cut(I.CrumbsType.Page, 0, () => {
-			DataUtil.objectOpenEvent(e, object);
+		this.selected = Util.arrayUnique(this.selected);
+		this.selectionRender();
+	};
+
+	selectionRender () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrapper = node.find('#documents');
+		const cnt = node.find('#selectCnt');
+		const selectAll = node.find('#button-selectAll');
+		const selectNone = node.find('#button-selectNone');
+		const items = this.getList();
+		const l = this.selected.length;
+
+		if (l == items.length) {
+			selectAll.hide();
+			selectNone.show();
+		} else {
+			selectAll.show();
+			selectNone.hide();
+		};
+
+		l ? wrapper.addClass('isSelecting') : wrapper.removeClass('isSelecting');
+		cnt.text(`Selected ${l} ${Util.cntWord(l, 'object', 'objects')}`);
+
+		node.find('.item.isSelected').removeClass('isSelected');
+		this.selected.forEach((id: string) => {
+			node.find(`#item-${id}`).addClass('isSelected');
 		});
+
+		this.onScroll();
+	};
+
+	onSelection (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		switch (item.id) {
+			case 'delete':
+				this.onSelectionDelete();
+				break;
+
+			case 'archive':
+				this.onSelectionArchive(true);
+				break;
+
+			case 'restore':
+				this.onSelectionArchive(false);
+				break;
+
+			case 'fav':
+				this.onSelectionFavorite(true);
+				break;
+
+			case 'unfav':
+				this.onSelectionFavorite(false);
+				break;
+
+			case 'selectAll':
+				this.onSelectionAll();
+				break;
+
+			case 'selectNone':
+				this.onSelectionNone();
+				break;
+		};
+	};
+
+	getSelectedObjectIds () {
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		return items.map((it: any) => { return this.getObject(it).id; });
+	};
+
+	onSelectionDelete () {
+		const l = this.selected.length;
+		const ids = this.getSelectedObjectIds();
+
+		const cb = () => {
+			this.selected = [];
+			this.selectionRender();
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
+				text: 'These objects will be deleted irrevocably. You can’t undo this action.',
+				textConfirm: 'Delete',
+				onConfirm: () => { 
+					C.ObjectListDelete(ids); 
+					cb();
+				},
+				onCancel: () => { cb(); }
+			},
+		});
+	};
+	
+	onSelectionArchive (v: boolean) {
+		const items = this.getList().filter((it: any) => { return this.selected.includes(it.id); });
+		const ids = this.getSelectedObjectIds();
+
+		this.selected = [];
+		this.selectionRender();
+
+		C.ObjectListSetIsArchived(ids, v, () => {
+			items.forEach((it: any) => {
+				const object = this.getObject(it);
+				if (object.type == Constant.typeId.type) {
+					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
+				};
+			});
+		});
+	};
+
+	onSelectionFavorite (v: boolean) {
+		const ids = this.getSelectedObjectIds();
+
+		this.selected = [];
+		this.selectionRender();
+
+		C.ObjectListSetIsFavorite(ids, v);
+	};
+
+	onSelectionAll () {
+		this.selected = this.getList().map((it: any) => { return it.id; });
+		this.selectionRender();
+	};
+
+	onSelectionNone () {
+		this.selected = [];
+		this.selectionRender();
+	};
+
+	onSelectionClose (e: any) {
+		this.selected = [];
+		this.selectionRender();
 	};
 
 	onStore (e: any) {
@@ -311,8 +632,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	
 	onAdd (e: any) {
 		DataUtil.pageCreate('', '', { isDraft: true }, I.BlockPosition.Bottom, '', {}, (message: any) => {
-			this.load();
-
 			DataUtil.objectOpenPopup({ id: message.targetId });
 		});
 	};
@@ -324,7 +643,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const { tab } = this.state;
 		const { root, recent, profile } = blockStore;
 		const object = item.isBlock ? item._object_ : item;
-		const rootId = tab == Tab.Recent ? recent : root;
+		const rootId = tab == I.TabIndex.Recent ? recent : root;
 		const subIds = [ 'searchObject' ];
 		const favorites = blockStore.getChildren(blockStore.root, blockStore.root, (it: I.Block) => {
 			return it.isLink() && (it.content.targetBlockId == object.id);
@@ -333,10 +652,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		let menuContext = null;
 		let archive = null;
 		let link = null;
+		let remove = null;
 		let move = { id: 'move', icon: 'move', name: 'Move to', arrow: true };
 		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; });
-		types = types.filter((it: string) => { return it != Constant.typeId.page; });
-
+		
 		if (favorites.length) {
 			link = { id: 'unfav', icon: 'unfav', name: 'Remove from Favorites' };
 		} else {
@@ -345,46 +664,31 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		if (object.isArchived) {
 			link = null;
-			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from archive' };
+			remove = { id: 'remove', icon: 'remove', name: 'Delete' };
+			archive = { id: 'unarchive', icon: 'undo', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to archive' };
+			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (object.isReadonly || object.templateIsBundled || (object.id == profile)) {
+		if (object.isReadonly || object.templateIsBundled || (object.id == profile) || ([ Constant.typeId.relation ].indexOf(object.type) >= 0)) {
 			archive = null;
 		};
 
-		if ([ Tab.Favorite ].indexOf(tab) < 0) {
+		if ([ I.TabIndex.Favorite ].indexOf(tab) < 0) {
 			move = null;
 		};
 
 		const options = [
 			archive,
+			remove,
 			move,
 			link,
 		];
-
-		const onArchive = (v: boolean) => {
-			const cb = (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				if (object.type == Constant.typeId.type) {
-					dbStore.objectTypeUpdate({ id: object.id, isArchived: v });
-				};
-
-				this.load();
-			};
-
-			C.ObjectSetIsArchived(object.id, v, cb);
-		};
 
 		menuStore.open('select', { 
 			element: `#button-${item.id}-more`,
 			offsetY: 8,
 			horizontal: I.MenuDirection.Center,
-			className: 'fromIndex',
 			subIds: subIds,
 			onOpen: (context: any) => {
 				menuContext = context;
@@ -403,14 +707,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 								offsetX: menuContext.getSize().width,
 								vertical: I.MenuDirection.Center,
 								isSub: true,
-
 								data: {
 									rebind: menuContext.ref.rebind,
 									rootId: rootId,
 									blockId: item.id,
 									blockIds: [ item.id ],
 									type: I.NavigationType.Move, 
-									skipId: rootId,
+									skipIds: [ rootId ],
+									filters: filters,
 									position: I.BlockPosition.Bottom,
 									onSelect: (el: any) => { menuContext.close(); }
 								}
@@ -424,21 +728,27 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 						return;
 					};
 
+					this.selected = [ item.id ];
+
 					switch (el.id) {
 						case 'archive':
-							onArchive(true);
+							this.onSelectionArchive(true);
 							break;
 
 						case 'unarchive':
-							onArchive(false);
+							this.onSelectionArchive(false);
 							break;
 
 						case 'fav':
-							C.ObjectSetIsFavorite(object.id, true);
+							this.onSelectionFavorite(true);
 							break;
 
 						case 'unfav':
-							C.ObjectSetIsFavorite(object.id, false);
+							this.onSelectionFavorite(false);
+							break;
+
+						case 'remove':
+							this.onSelectionDelete();
 							break;
 					};
 				},
@@ -468,7 +778,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		if (!current || !target || !element) {
 			return;
 		};
-
 		
 		const position = newIndex < oldIndex ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		const oidx = element.childrenIds.indexOf(current.id);
@@ -496,21 +805,22 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		const width = Math.floor((maxWidth - size.margin * (cnt - 1)) / cnt);
 		const height = this.getListHeight();
 
-		items.css({ width: width }).removeClass('last');
+		items.css({ width: width });
 		title.css({ width: maxWidth });
 		body.css({ width: maxWidth });
 		documents.css({ marginTop: wh - size.titleY - height - hh });
 
 		items.each((i: number, item: any) => {
 			item = $(item);
+
+			const n = i + 1;
 			const icon = item.find('.iconObject');
 
-			if ((i + 1) >= cnt && ((i + 1) % cnt === 0) && (list.length + 1 > cnt)) {
-				item.addClass('last');
-			};
 			if (icon.length) {
 				item.addClass('withIcon');
 			};
+
+			item.css({ marginRight: (n % cnt == 0) ? 0 : '' });
 		});
 
 		this.onScroll();
@@ -524,8 +834,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	getList () {
 		const { root, recent } = blockStore;
 		const { config } = commonStore;
-		const { tab, filter, pages } = this.state;
-		
+		const { tab, filter } = this.state;
+		const records = dbStore.getRecords(Constant.subIds.index, '');
+
 		let reg = null;
 		let list: any[] = [];
 		let rootId = root;
@@ -536,10 +847,9 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		};
 
 		switch (tab) {
-			default:
-			case Tab.Favorite:
-			case Tab.Recent:
-				if (tab == Tab.Recent) {
+			case I.TabIndex.Favorite:
+			case I.TabIndex.Recent:
+				if (tab == I.TabIndex.Recent) {
 					rootId = recent;
 					recentIds = crumbs.get(I.CrumbsType.Recent).ids;
 				};
@@ -550,14 +860,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					};
 
 					const object = detailStore.get(rootId, it.content.targetBlockId, []);
-					const { name, isArchived } = object;
+					const { name, isArchived, isDeleted } = object;
 
 					if (reg && name && !name.match(reg)) {
 						return false;
 					};
-					return !isArchived;
+					return !isArchived && !isDeleted;
 				}).map((it: any) => {
-					if (tab == Tab.Recent) {
+					if (tab == I.TabIndex.Recent) {
 						it._order = recentIds.findIndex((id: string) => { return id == it.content.targetBlockId; });
 					};
 
@@ -566,7 +876,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					return it;
 				});
 
-				if (tab == Tab.Recent) {
+				if (tab == I.TabIndex.Recent) {
 					list.sort((c1: any, c2: any) => {
 						if (c1._order > c2._order) return -1;
 						if (c2._order < c1._order) return 1;
@@ -576,16 +886,30 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 				break;
 
-			case Tab.Archive:
-			case Tab.Set:
-				list = pages;
+			default:
+				list = records.map((it: any) => {
+					return detailStore.get(Constant.subIds.index, it.id);
+				});
 				break;
 		};
 
 		return list;
 	};
 
-	onClear () {
+	getSelectedIndexes () {
+		const list = this.getList();
+		const indexes = this.selected.map(id => {
+			return list.findIndex(it => it.id === id);
+		});
+		return indexes.filter(idx => idx >= 0);
+	};
+
+	getSelectionRange (index1: number, index2: number) {
+		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
+		return [ start, end ];
+	};
+
+	onClear () { 
 		const recent = crumbs.get(I.CrumbsType.Recent);
 		recent.ids = [];
 		crumbs.save(I.CrumbsType.Recent, recent);

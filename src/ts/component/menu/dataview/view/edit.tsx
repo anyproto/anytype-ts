@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { I, C, keyboard, Key, translate, DataUtil } from 'ts/lib';
-import { Input, MenuItemVertical, Switch, Icon } from 'ts/component';
+import { I, C, Util, keyboard, Key, translate, DataUtil } from 'ts/lib';
+import { Input, MenuItemVertical } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
+import { observer } from 'mobx-react';
 
 interface Props extends I.Menu {};
 
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-class MenuViewEdit extends React.Component<Props, {}> {
+const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> {
 	
 	n: number = -1;
 	ref: any = null;
@@ -17,15 +18,19 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	constructor(props: any) {
 		super(props);
 		
+		this.rebind = this.rebind.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onNameFocus = this.onNameFocus.bind(this);
 		this.onNameBlur = this.onNameBlur.bind(this);
+		this.onNameEnter = this.onNameEnter.bind(this);
 	};
 
 	render () {
-		const { param, setHover } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view } = data;
+		const { rootId, blockId } = data;
+		const view = data.view.get();
+		const { cardSize, coverFit, hideIcon } = view;
 		const sections = this.getSections();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
@@ -41,6 +46,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							readonly={!allowedView}
 							checkbox={(view.type == action.id) && (item.id == 'type')}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
+							onMouseLeave={(e: any) => { this.onMouseLeave(e, action); }}
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -61,6 +67,7 @@ class MenuViewEdit extends React.Component<Props, {}> {
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
 							onBlur={this.onNameBlur}
+							onMouseEnter={this.onNameEnter}
 						/>
 					</div>
 					<div className="line" />
@@ -75,15 +82,17 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 	componentDidMount () {
 		this.rebind();
+		this.resize();
 		this.focus();
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 		this.props.setActive();
 	};
 
 	componentWillUnmount () {
+		this.unbind();
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 
@@ -106,19 +115,25 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 	
 	onKeyDown (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const view = data.view.get();
 		const item = this.getItems()[this.n];
 		const k = e.key.toLowerCase();
 
 		let ret = false;
+
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.save();
+			close();
+			ret = true;
+		});
+
+		if (ret) {
+			return;
+		};
+
 		if (this.isFocused) {
-			if (k == Key.enter) {
-				this.save();
-				this.props.close();
-				return;
-			} else
 			if (k != Key.down) {
 				return;
 			} else {
@@ -150,18 +165,29 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	onNameFocus (e: any) {
+		this.n = -1;
 		this.isFocused = true;
 		this.props.setActive();
+
+		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 	
 	onNameBlur (e: any) {
 		this.isFocused = false;
 	};
 
+	onNameEnter (e: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.n = -1;
+			this.props.setHover(null, false);
+			menuStore.closeAll(Constant.menuIds.viewEdit);
+		};
+	};
+
 	onKeyUp (e: any, v: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const view = data.view.get();
 
 		if (!this.isFocused) {
 			return;
@@ -171,9 +197,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	};
 
 	save () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, onSave } = data;
+		const { rootId, blockId, onSave, getData } = data;
+		const view = data.view.get();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		if (!allowedView) {
@@ -184,7 +211,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			if (onSave) {
 				onSave();
 			};
-			this.forceUpdate();
 		};
 
 		if (view.id) {
@@ -193,8 +219,9 @@ class MenuViewEdit extends React.Component<Props, {}> {
 		if (view.name) {
 			C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
 				view.id = message.viewId;
+				getData(view.id, 0);
+
 				cb();
-				close();
 			});
 		};
 	};
@@ -202,7 +229,8 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view, readonly } = data;
+		const { rootId, blockId, readonly } = data;
+		const view = data.view.get();
 		const views = dbStore.getViews(rootId, blockId);
 		const fileOption = this.getFileOptions().find((it: any) => { return it.id == view.coverRelationKey; });
 		const sizeOption = this.getSizeOptions().find((it: any) => { return it.id == view.cardSize; });
@@ -277,11 +305,18 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			this.props.setActive(item, false);
 		};
 	};
+
+	onMouseLeave (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.props.setHover(null, false);
+		};
+	};
 	
 	onOver (e: any, item: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, view } = data;
+		const { rootId, blockId } = data;
+		const view = data.view.get();
 		const allowedView = blockStore.isAllowed(rootId, blockId, [ I.RestrictionDataview.View ]);
 
 		menuStore.closeAll(Constant.menuIds.viewEdit);
@@ -297,12 +332,14 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			data: {
+				rebind: this.rebind,
 				value: view[item.id],
 				onSelect: (e: any, el: any) => {
 					view[item.id] = el.id;
-
-					this.forceUpdate();
-					this.save();
+					
+					if (view.id) {
+						this.save();
+					};
 				},
 			}
 		};
@@ -331,18 +368,20 @@ class MenuViewEdit extends React.Component<Props, {}> {
 	onSwitch (e: any, key: string, v: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { view } = data;
+		const view = data.view.get();
 
 		view[key] = v;
 
-		this.save();
-		this.forceUpdate();
+		if (view.id) {
+			this.save();
+		};
 	};
 
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, view, onSelect, onSave, readonly } = data;
+		const { rootId, blockId, getData, getView, onSelect, onSave, readonly } = data;
+		const view = data.view.get();
 		const current = getView();
 
 		if (readonly || item.arrow) {
@@ -351,8 +390,10 @@ class MenuViewEdit extends React.Component<Props, {}> {
 
 		if (item.sectionId == 'type') {
 			view.type = item.id;
-			this.forceUpdate();
-			this.save();
+
+			if (view.id) {
+				this.save();
+			};
 		} else 
 		if (view.id) {
 			switch (item.id) {
@@ -370,8 +411,13 @@ class MenuViewEdit extends React.Component<Props, {}> {
 					close();
 
 					const views = dbStore.getViews(rootId, blockId);
+					const idx = views.findIndex((it: I.View) => { return it.id == view.id; });
 					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
-					const next = filtered[filtered.length - 1];
+					
+					let next = idx >= 0 ? filtered[idx] : filtered[0];
+					if (!next) {
+						next = filtered[filtered.length - 1];
+					};
 
 					if (next) {
 						C.BlockDataviewViewDelete(rootId, blockId, view.id, () => {
@@ -388,52 +434,6 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			onSelect();
 		};
 	};
-
-	onCoverRelation (e: any) {
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const { view } = data;
-
-		menuStore.open('select', { 
-			element: `#${getId()} #item-coverRelationKey`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {
-				value: view.coverRelationKey,
-				options: this.getFileOptions(),
-				onSelect: (e, item) => {
-					view.coverRelationKey = item.id;
-
-					this.forceUpdate();
-					this.save();
-				},
-			}
-		});
-	};
-
-	onCardSize (e: any) {
-		const { param, getId, getSize } = this.props;
-		const { data } = param;
-		const { view } = data;
-
-		menuStore.open('select', { 
-			element: `#${getId()} #item-cardSize`,
-			offsetX: getSize().width,
-			vertical: I.MenuDirection.Center,
-			noAnimation: true,
-			data: {
-				value: view.cardSize,
-				options: this.getSizeOptions(),
-				onSelect: (e, item) => {
-					view.cardSize = item.id;
-
-					this.forceUpdate();
-					this.save();
-				},
-			}
-		});
-};
 
 	getSizeOptions () {
 		return [
@@ -457,11 +457,20 @@ class MenuViewEdit extends React.Component<Props, {}> {
 			};
 		});
 
-		options.unshift({ id: 'pageCover', icon: 'image', name: 'Page cover' });
-		options.unshift({ id: '', icon: '', name: 'None' });
-		return options;
+		return [
+			{ id: '', icon: '', name: 'None' },
+			{ id: 'pageCover', icon: 'image', name: 'Page cover' }
+		].concat(options);
+	};
+
+	resize () {
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()} .content`);
+
+		obj.css({ height: 'auto' });
+		position();
 	};
 	
-};
+});
 
 export default MenuViewEdit;

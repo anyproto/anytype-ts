@@ -1,10 +1,8 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'ts/lib';
-import { commonStore } from 'ts/store';
+import { dbStore, detailStore } from 'ts/store';
 
-const Errors = require('json/error.json');
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const { ipcRenderer } = window.require('electron');
 const Rpc = Commands.Rpc;
 
 const VersionGet = (callBack?: (message: any) => void) => {
@@ -29,13 +27,12 @@ const DebugTree = (blockId: string, path: string, callBack?: (message: any) => v
 	dispatcher.request('debugTree', request, callBack);
 };
 
-const ImageGetBlob = (hash: string, size: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Ipfs.Image.Get.Blob.Request();
-	
-	request.setHash(hash);
-    request.setSize(size);
+const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
+	const request = new Rpc.Metrics.SetParameters.Request();
 
-	dispatcher.request('imageGetBlob', request, callBack);
+	request.setPlatform(platform);
+
+	dispatcher.request('metricsSetParameters', request, callBack);
 };
 
 const ConfigGet = (callBack?: (message: any) => void) => {
@@ -48,6 +45,15 @@ const Shutdown = (callBack?: (message: any) => void) => {
 	dispatcher.request('shutdown', request, callBack);
 };
 
+const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.FileList.Offload.Request();
+
+	request.setOnlyidsList(ids);
+	request.setIncludenotpinned(notPinned);
+
+	dispatcher.request('fileListOffload', request, callBack);
+};
+
 const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.LinkPreview.Request();
 
@@ -56,13 +62,14 @@ const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('linkPreview', request, callBack);
 };
 
-const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, callBack?: (message: any) => void) => {
+const Export = (path: string, ids: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Export.Request();
 
 	request.setPath(path);
 	request.setDocidsList(ids);
 	request.setFormat(format);
 	request.setZip(zip);
+	request.setIncludenested(includeNested);
 
 	dispatcher.request('export', request, callBack);
 };
@@ -75,7 +82,16 @@ const ExportTemplates = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request('exportTemplates', request, callBack);
 };
 
-const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, callBack?: (message: any) => void) => {
+const ExportLocalstore = (path: string, ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ExportLocalstore.Request();
+
+	request.setPath(path);
+	request.setDocidsList(ids);
+
+	dispatcher.request('exportLocalstore', request, callBack);
+};
+
+const UploadFile = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
 	};
@@ -85,7 +101,6 @@ const UploadFile = (url: string, path: string, type: I.FileType, enc: boolean, c
 	request.setUrl(url);
 	request.setLocalpath(path);
 	request.setType(type);
-	request.setDisableencryption(enc);
 
 	dispatcher.request('uploadFile', request, callBack);
 };
@@ -201,18 +216,20 @@ const BlockGetPublicWebURL = (contextId: string, callBack?: (message: any) => vo
 	dispatcher.request('blockGetPublicWebURL', request, callBack);
 };
 
-const BlockOpen = (blockId: string, callBack?: (message: any) => void) => {
+const BlockOpen = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
+	request.setTraceid(traceId);
 
 	dispatcher.request('blockOpen', request, callBack);
 };
 
-const BlockShow = (blockId: string, callBack?: (message: any) => void) => {
+const BlockShow = (blockId: string, traceId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Open.Request();
 	
 	request.setBlockid(blockId);
+	request.setTraceid(traceId);
 
 	dispatcher.request('blockShow', request, callBack);
 };
@@ -564,6 +581,16 @@ const BlockListSetDivStyle = (contextId: string, blockIds: string[], style: I.Te
 	dispatcher.request('blockListSetDivStyle', request, callBack);
 };
 
+const BlockListSetFileStyle = (contextId: string, blockIds: string[], style: I.FileStyle, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockList.Set.File.Style.Request();
+
+	request.setContextid(contextId);
+    request.setBlockidsList(blockIds);
+    request.setStyle(style);
+
+	dispatcher.request('blockListSetFileStyle', request, callBack);
+};
+
 const BlockListSetTextColor = (contextId: string, blockIds: string[], color: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockList.Set.Text.Color.Request();
 	
@@ -613,15 +640,6 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
     request.setAlign(align);
 
 	dispatcher.request('blockListSetAlign', request, callBack);
-};
-
-
-const BlockListDeletePage = (blockIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockList.Delete.Page.Request();
-	
-	request.setBlockidsList(blockIds);
-
-	dispatcher.request('blockListDeletePage', request, callBack);
 };
 
 const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
@@ -689,27 +707,6 @@ const BlockDataviewRecordCreate = (contextId: string, blockId: string, record: a
 	dispatcher.request('blockDataviewRecordCreate', request, callBack);
 };
 
-const BlockDataviewRecordUpdate = (contextId: string, blockId: string, recordId: string, record: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordUpdate.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecordid(recordId);
-	request.setRecord(Encode.encodeStruct(record));
-
-	dispatcher.request('blockDataviewRecordUpdate', request, callBack);
-};
-
-const BlockDataviewRecordDelete = (contextId: string, blockId: string, recordId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Dataview.RecordDelete.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRecordid(recordId);
-
-	dispatcher.request('blockDataviewRecordDelete', request, callBack);
-};
-
 const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Dataview.RelationListAvailable.Request();
 	
@@ -737,15 +734,6 @@ const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: st
 	dispatcher.request('blockRelationSetKey', request, callBack);
 };
 
-const BlockRelationAdd = (contextId: string, blockId: string, relation: any, callBack?: (message: any) => void) => {
-	const request = new Rpc.Block.Relation.Add.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setRelation(Mapper.To.Relation(relation));
-
-	dispatcher.request('blockRelationAdd', request, callBack);
-};
 
 const BlockRelationRemove = (contextId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.Relation.Remove.Request();
@@ -842,6 +830,16 @@ const BlockDataviewRecordRelationOptionDelete = (contextId: string, blockId: str
 	dispatcher.request('blockDataviewRecordRelationOptionDelete', request, callBack);
 };
 
+const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.Dataview.SetSource.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setSourceList(sources);
+
+	dispatcher.request('blockDataviewSetSource', request, callBack);
+};
+
 const BlockObjectTypeSet = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.ObjectType.Set.Request();
 	
@@ -931,6 +929,10 @@ const SetCreate = (sources: string[], details: any, templateId: string, callBack
 
 const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Search.Request();
+
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
 	
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSortsList(sorts.map(Mapper.To.Sort));
@@ -940,6 +942,78 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	request.setKeysList(keys);
 
 	dispatcher.request('objectSearch', request, callBack);
+};
+
+const OnSubscribe = (subId: string, keys: string[], message: any) => {
+	if (message.counters) {
+		dbStore.metaSet(subId, '', { total: message.counters.total });
+	};
+
+	let details = [];
+	details = details.concat(message.dependencies.map((it: any) => { return { id: it.id, details: it }; }));
+	details = details.concat(message.records.map((it: any) => { 
+		keys.forEach((k: string) => { it[k] = it[k] || ''; });
+		return { id: it.id, details: it }; 
+	}));
+	detailStore.set(subId, details);
+	dbStore.recordsSet(subId, '', message.records.map((it: any) => { return { id: it.id }; }));
+};
+
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], fullText: string, offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchSubscribe.Request();
+
+	filters = filters.concat([
+		{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+	]);
+
+	request.setSubid(subId);
+	request.setFiltersList(filters.map(Mapper.To.Filter));
+	request.setSortsList(sorts.map(Mapper.To.Sort));
+	request.setFulltext(fullText);
+	request.setOffset(offset);
+	request.setLimit(limit);
+	request.setKeysList(keys);
+	request.setSourceList(sources);
+	request.setIgnoreworkspace(ignoreWorkspace);
+	request.setAfterid(afterId);
+	request.setBeforeid(beforeId);
+
+	const cb = (message: any) => {
+		OnSubscribe(subId, keys, message);
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectSearchSubscribe', request, cb);
+};
+
+const ObjectIdsSubscribe = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.IdsSubscribe.Request();
+
+	request.setSubid(subId);
+	request.setIdsList(ids);
+	request.setKeysList(keys);
+	request.setIgnoreworkspace(ignoreWorkspace);
+
+	const cb = (message: any) => {
+		OnSubscribe(subId, keys, message);
+
+		if (callBack) {
+			callBack(message);
+		};
+	};
+
+	dispatcher.request('objectIdsSubscribe', request, cb);
+};
+
+const ObjectSearchUnsubscribe = (subIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SearchUnsubscribe.Request();
+
+	request.setSubidsList(subIds);
+	
+	dispatcher.request('objectSearchUnsubscribe', request, callBack);
 };
 
 const ObjectRelationOptionAdd = (contextId: string, relationKey: string, option: any, callBack?: (message: any) => void) => {
@@ -1072,6 +1146,49 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request('objectToSet', request, callBack);
 };
 
+const ObjectListDelete = (ids: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Delete.Request();
+	
+	request.setObjectidsList(ids);
+
+	dispatcher.request('objectListDelete', request, callBack);
+};
+
+const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Set.IsArchived.Request();
+	
+	request.setObjectidsList(ids);
+	request.setIsarchived(isArchived);
+
+	dispatcher.request('objectListSetIsArchived', request, callBack);
+};
+
+const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectList.Set.IsFavorite.Request();
+	
+	request.setObjectidsList(ids);
+	request.setIsfavorite(isFavorite);
+
+	dispatcher.request('objectListSetIsFavorite', request, callBack);
+};
+
+const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.AddWithObjectId.Request();
+
+	request.setObjectid(objectId);
+	request.setPayload(payload);
+
+	dispatcher.request('objectAddWithObjectId', request, callBack);
+};
+
+const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ShareByLink.Request();
+
+	request.setObjectid(objectId);
+
+	dispatcher.request('objectShareByLink', request, callBack);
+};
+
 const MakeTemplate = (contextId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.MakeTemplate.Request();
 	
@@ -1105,12 +1222,37 @@ const CloneTemplate = (contextId: string, callBack?: (message: any) => void) => 
 	dispatcher.request('cloneTemplate', request, callBack);
 };
 
+const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Create.Request();
+
+	request.setName(name);
+
+	dispatcher.request('workspaceCreate', request, callBack);
+};
+
+const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.Select.Request();
+	
+	request.setWorkspaceid(workspaceId);
+
+	dispatcher.request('workspaceSelect', request, callBack);
+};
+
+const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, callBack?: (message: any) => void) => {
+	const request = new Rpc.Workspace.SetIsHighlighted.Request();
+	
+	request.setObjectid(objectId);
+	request.setIshighlighted(isHightlighted);
+
+	dispatcher.request('workspaceSetIsHighlighted', request, callBack);
+};
+
 export {
 	VersionGet,
 	DebugSync,
 	DebugTree,
+	MetricsSetParameters,
 
-	ImageGetBlob,
 	ConfigGet,
 	Shutdown,
 	LinkPreview,
@@ -1119,6 +1261,8 @@ export {
 	ProcessCancel,
 	Export,
 	ExportTemplates,
+	ExportLocalstore,
+	FileListOffload,
 
 	WalletCreate,
 	WalletRecover,
@@ -1176,9 +1320,9 @@ export {
 	BlockListTurnInto,
 	BlockListSetTextMark,
 	BlockListSetDivStyle,
+	BlockListSetFileStyle,
 	BlockListSetFields,
 	BlockListSetAlign,
-	BlockListDeletePage,
 
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
@@ -1196,12 +1340,10 @@ export {
 	BlockDataviewRecordRelationOptionDelete,
 
 	BlockDataviewRecordCreate,
-	BlockDataviewRecordUpdate,
-	BlockDataviewRecordDelete,
+	BlockDataviewSetSource,
 
 	BlockRelationSetKey,
 	BlockRelationList,
-	BlockRelationAdd,
 	BlockRelationUpdate,
 	BlockRelationRemove,
 
@@ -1219,7 +1361,6 @@ export {
 	ObjectTypeRelationRemove,
 
 	SetCreate,
-	ObjectSearch,
 	ObjectRelationOptionAdd,
     ObjectRelationOptionUpdate,
     ObjectRelationOptionDelete,
@@ -1234,9 +1375,24 @@ export {
 	ObjectFeaturedRelationAdd,
 	ObjectFeaturedRelationRemove,
 	ObjectToSet,
+	ObjectAddWithObjectId,
+	ObjectShareByLink,
+
+	ObjectSearch,
+	ObjectSearchSubscribe,
+	ObjectIdsSubscribe,
+	ObjectSearchUnsubscribe,
+	
+	ObjectListDelete,
+	ObjectListSetIsArchived,
+	ObjectListSetIsFavorite,
 
 	MakeTemplate,
 	MakeTemplateByObjectType,
 	ApplyTemplate,
 	CloneTemplate,
+
+	WorkspaceCreate,
+	WorkspaceSelect,
+	WorkspaceSetIsHighlighted,
 };

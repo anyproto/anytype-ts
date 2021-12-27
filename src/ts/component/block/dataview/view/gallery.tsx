@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I } from 'ts/lib';
+import { I, DataUtil} from 'ts/lib';
 import { observer } from 'mobx-react';
-import { dbStore } from 'ts/store';
+import { dbStore, detailStore } from 'ts/store';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
 
 import Card from './gallery/card';
@@ -36,13 +36,27 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 	render () {
 		const { rootId, block, getData, getView, isPopup } = this.props;
 		const view = getView();
-		const relations = view.relations.filter((it: any) => { return it.isVisible; });
-		const data = dbStore.getData(rootId, block.id);
-		const { offset, total } = dbStore.getMeta(rootId, block.id);
+		const viewRelations = view.relations.filter((it: any) => { 
+			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
+		});
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize } = view;
 
-		for (let item of data) {
+		// Subscriptions on dependent objects
+		for (let item of records) {
 			for (let k in item) {
+				const relation = dbStore.getRelation(rootId, block.id, k);
+				if (!relation) {
+					continue;
+				};
+
+				const v = DataUtil.getRelationArrayValue(item[k]);
+				if ([ I.RelationType.Object, I.RelationType.File ].includes(relation.format) && v && v.length) {
+					v.forEach((it: string) => {
+						const object = detailStore.get(rootId, it, []);
+					});
+				};
 			};
 		};
 
@@ -71,19 +85,21 @@ const ViewGallery = observer(class ViewGallery extends React.Component<Props, {}
 														height={Number(height) || 0}
 														width={Number(width) || 0}
 														isScrolling={isScrolling}
-														cellCount={data.length}
+														cellCount={records.length}
 														cellMeasurerCache={this.cache}
 														cellPositioner={this.cellPositioner}
-														cellRenderer={({ key, index, parent, style }) => (
-															<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-																<Card 
-																	key={'gallery-card-' + view.id + index} 
-																	{...this.props} 
-																	index={index} 
-																	style={{ ...style, width: this.columnWidth }}
-																/>
-															</CellMeasurer>
-														)}
+														cellRenderer={({ key, index, parent, style }) => {
+															return (
+																<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+																	<Card 
+																		key={'gallery-card-' + view.id + index} 
+																		{...this.props} 
+																		index={index} 
+																		style={{ ...style, width: this.columnWidth }}
+																	/>
+																</CellMeasurer>
+															);
+														}}
 														scrollTop={scrollTop}
 													/>
 												</div>

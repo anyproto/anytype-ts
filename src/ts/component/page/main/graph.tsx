@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { I, C, crumbs, Util } from 'ts/lib';
 import { RouteComponentProps } from 'react-router';
-import { HeaderMainGraph as Header, Graph, Icon } from 'ts/component';
+import { HeaderMainGraph as Header, Graph, Icon, Loader } from 'ts/component';
 import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -13,11 +13,18 @@ interface Props extends RouteComponentProps<any> {
 	matchPopup?: any;
 };
 
+interface State {
+	loading: boolean;
+};
+
 const Constant = require('json/constant.json');
 const $ = require('jquery');
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, {}> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, State> {
 
+	state = {
+		loading: false,
+	};
 	data: any = {
 		nodes: [],
 		edges: [],
@@ -36,13 +43,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	render () {
+		const { loading } = this.state;
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const ref = this.refGraph;
 
 		return (
-			<div>
+			<div className="body">
 				<Header ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} isPopup={isPopup} />
+
+				{loading ? <Loader id="loader" /> : ''}
 
 				<div className="wrapper">
 					<div className="side left">
@@ -107,12 +117,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
 			{ 
 				operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, 
 				value: [ 
 					Constant.typeId.relation,
 					Constant.typeId.type,
 					Constant.typeId.template,
+					Constant.typeId.space,
+					
 					Constant.typeId.file,
 					Constant.typeId.image,
 					Constant.typeId.video,
@@ -128,16 +141,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 			},
 		];
 
+		this.setState({ loading: true });
+
 		C.ObjectGraph(filters, 0, [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			this.data.edges = message.edges.filter(d => { return d.source !== d.target; });
+			this.data.edges = message.edges.filter(d => { return !d.isHidden && (d.source !== d.target); });
 			this.data.nodes = message.nodes;
-			
-			this.forceUpdate();
 			this.refGraph.init();
+
+			window.setTimeout(() => { this.setState({ loading: false }); }, 250);
 		});
 	};
 
@@ -146,14 +161,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const win = $(window);
 		const obj = $(isPopup ? '#popupPage #innerWrap' : '.page.isFull');
 		const wrapper = obj.find('.wrapper');
+		const header = obj.find('#header');
+		const hh = header.height();
+		const height = isPopup && !obj.hasClass('full') ? obj.height() : win.height();
 
-		let height = 0;
-		if (isPopup) {
-			height = obj.height();
-		} else {
-			height = win.height();
-		};
-
+		wrapper.css({ height: height })
 		wrapper.find('.side').css({ height: height });
 		
 		if (isPopup) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I, keyboard } from 'ts/lib';
+import { I, Util, keyboard, translate } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { setRange } from 'selection-ranges';
 
@@ -25,19 +25,26 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const { value, placeholder } = data;
+		const relation = data.relation.get();
 
 		return (
-			<div 
-				id="input"
-				ref={(ref: any) => { this.ref = ref; }} 
-				contentEditable={true}
-				suppressContentEditableWarning={true}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				onInput={this.onInput}
-			>
-				{value}
+			<div>
+				<div 
+					id="input"
+					ref={(ref: any) => { this.ref = ref; }} 
+					contentEditable={true}
+					suppressContentEditableWarning={true}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onInput={this.onInput}
+					onPaste={this.onInput}
+				>
+					{value}
+				</div>
+				<div id="placeholder" className="placeholder">
+					{placeholder || translate(`placeholderCell${relation.format}`)}
+				</div>
 			</div>
 		);
 	};
@@ -49,20 +56,24 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		const { data } = param;
 		const { value } = data;
 		const node = $(ReactDOM.findDOMNode(this));
+		const input = node.find('#input').get(0);
 		const length = value.length;
 
-		node.get(0).focus({ preventScroll: true });
-		setRange(node.get(0), { start: length, end: length });
+		input.focus({ preventScroll: true });
+		setRange(input, { start: length, end: length });
 
 		this.resize();
+		this.placeholderCheck();
 	};
 
 	componentWillUnmount () {
+		this.save();
 		this._isMounted = false;
 	};
 
 	onInput (e: any) {
 		this.resize();
+		this.placeholderCheck();
 	};
 
 	onFocus () {
@@ -70,13 +81,17 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 	};
 
 	onBlur (e: any) {
-		const { param, close } = this.props;
+		this.save();
+		this.props.close();
+	};
+
+	save () {
+		const { param } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 
 		keyboard.setFocus(false);
-		onChange(this.getValue());
-		close();
+		onChange(this.getValue().trim());
 	};
 
 	getValue (): string {
@@ -85,27 +100,54 @@ const MenuText = observer(class MenuText extends React.Component<Props, {}> {
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		return String(node.get(0).innerText || '');
+		const input = node.find('#input');
+
+		return String(input.get(0).innerText || '');
+	};
+
+	placeholderCheck () {
+		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
+	};
+
+	placeholderHide () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#placeholder').hide();
+	};
+	
+	placeholderShow () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const node = $(ReactDOM.findDOMNode(this));
+		node.find('#placeholder').show();
 	};
 
 	resize () {
-		raf(() => {
-			if (!this._isMounted) {
-				return;
-			};
+		if (!this._isMounted) {
+			return;
+		};
 
-			const { position, getId } = this.props;
+		const { position, getId } = this.props;
+
+		raf(() => {
 			const obj = $(`#${getId()}`);
-			const node = $(ReactDOM.findDOMNode(this));
+			const input = obj.find('#input');
 			const win = $(window);
 			const wh = win.height();
-
+			const hh = Util.sizeHeader();
+			const o = obj.offset();
+	
 			obj.css({ height: 'auto' });
-			node.css({ height: 'auto' });
-			const sh = node.get(0).scrollHeight;
-
-			node.css({ height: Math.min(wh - 100, sh) });
-			node.scrollTop(sh);
+			input.css({ height: 'auto' });
+	
+			const sh = input.get(0).scrollHeight;
+			input.css({ height: Math.min(wh - hh - o.top - 20, sh) });
+			input.scrollTop(sh);
 
 			position();
 		});

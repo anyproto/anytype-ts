@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
-import { I, C, DataUtil, Util, Storage, keyboard } from 'ts/lib';
+import { I, C, DataUtil, Util, Storage, keyboard, Action } from 'ts/lib';
 import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -49,6 +49,7 @@ const Tabs = [
 ];
 
 const BLOCK_ID = 'dataview';
+const Constant = require('json/constant.json');
 
 const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
 
@@ -71,6 +72,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	render () {
 		const { tab, loading } = this.state;
 		const rootId = this.getRootId();
+		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const block = blockStore.getLeaf(rootId, BLOCK_ID) || {};
 		const meta = dbStore.getMeta(rootId, block.id);
 		const views = block.content?.views || [];
@@ -106,7 +108,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			default:
 			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(rootId, item.creator, []);
+					const author = detailStore.get(subId, item.creator, []);
 
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
@@ -136,8 +138,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 			case Tab.Template:
 				Item = (item: any) => {
-					let { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(rootId, item.creator, []);
+					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
+					const author = detailStore.get(subId, item.creator, []);
+
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<div className="img">
@@ -165,7 +168,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case Tab.Relation:
 				Item = (item: any) => {
 					const { name, description } = item;
-					const author = detailStore.get(rootId, item.creator, []);
+					const author = detailStore.get(subId, item.creator, []);
+					
 					return (
 						<div className={[ 'item', tab, meta.viewId ].join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
 							<IconObject size={48} iconSize={28} object={item} />
@@ -233,7 +237,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					{tabs}
 
 					{loading ? 
-						<Loader />
+						<Loader id="loader" />
 					: (
 						<div className="items">
 							<InfiniteLoader
@@ -282,7 +286,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	componentWillUnmount () {
+		const { storeType, storeRelation, storeTemplate } = blockStore;
+
 		this._isMounted = false;
+
+		Action.pageClose(storeType, true);
+		Action.pageClose(storeRelation, true);
+		Action.pageClose(storeTemplate, true);
 	};
 
 	getRootId () {
@@ -333,14 +343,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.state.tab = id;
 		this.setState({ tab: id, loading: true });
 
-		C.BlockOpen(this.getRootId(), (message: any) => {
-			this.getData('library', true);
+		C.BlockOpen(this.getRootId(), '', (message: any) => {
+			this.getDataviewData('library', true);
 			this.setState({ loading: false });
 		});
 	};
 
 	onView (e: any, item: any) {
-		this.getData(item.id, true);
+		this.getDataviewData(item.id, true);
 	};
 
 	onClick (e: any, item: any) {
@@ -375,26 +385,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	onCreateTemplate () {
 	};
 
-	getData (id: string, clear: boolean, callBack?: (message: any) => void) {
-		const rootId = this.getRootId();
-		const { viewId } = dbStore.getMeta(rootId, BLOCK_ID);
-		const viewChange = id != viewId;
-		const meta: any = { offset: this.offset };
-		const cb = (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-		};
-
-		if (viewChange) {
-			meta.viewId = id;
-		};
-		if (viewChange || clear) {
-			dbStore.recordsSet(rootId, BLOCK_ID, []);
-		};
-
-		dbStore.metaSet(rootId, BLOCK_ID, meta);
-		C.BlockDataviewViewSetActive(rootId, BLOCK_ID, id, this.offset, 0, cb);
+	getDataviewData (id: string, clear: boolean, callBack?: (message: any) => void) {
+		DataUtil.getDataviewData(this.getRootId(), BLOCK_ID, id, [ 'creator' ].concat(Constant.defaultRelationKeys), 0, 0, clear, callBack);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -403,16 +395,24 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
         return new Promise((resolve, reject) => {
 			this.offset += 25 * this.getRowLimit();
-			this.getData(viewId, false, resolve);
+			this.getDataviewData(viewId, false, resolve);
 		});
 	};
 
 	getItems () {
+		const { profile } = blockStore;
 		const limit = this.getRowLimit();
 		const rootId = this.getRootId();
-		const data = Util.objectCopy(dbStore.getData(rootId, BLOCK_ID)).map((it: any) => {
-			it.name = String(it.name || DataUtil.defaultName('page'));
-			return it;
+		const subId = dbStore.getSubId(rootId, BLOCK_ID);
+		const records = dbStore.getRecords(subId, '').map((it: any) => { return detailStore.get(subId, it.id); });
+
+		records.sort((c1: any, c2: any) => {
+			const cr1 = c1.creator;
+			const cr2 = c2.creator;
+
+			if ((cr1 == profile) && (cr2 != profile)) return -1;
+			if ((cr1 != profile) && (cr2 == profile)) return 1;
+			return 0;
 		});
 
 		let ret: any[] = [
@@ -420,9 +420,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		];
 		let n = 0;
 		let row = { children: [] };
-		for (let i = 0; i < data.length; ++i) {
-			const item = data[i];
 
+		for (let item of records) {
 			row.children.push(item);
 
 			n++;

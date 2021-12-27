@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Filter, MenuItemVertical } from 'ts/component';
-import { I, C, keyboard, Key, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
-import { commonStore, blockStore, menuStore, dbStore } from 'ts/store';
+import { I, C, keyboard, DataUtil, Util, focus, Action, translate, analytics } from 'ts/lib';
+import { commonStore, blockStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
 interface State {
@@ -163,10 +163,11 @@ class MenuBlockAction extends React.Component<Props, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Turn into text', color: '', children: DataUtil.menuGetBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'Turn into list', color: '', children: DataUtil.menuGetBlockList() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', color: '', children: DataUtil.menuGetBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', color: '', children: DataUtil.menuGetBlockList() };
 			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', color: '', children: DataUtil.menuGetTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Turn into divider', color: '', children: DataUtil.menuGetTurnDiv() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', color: '', children: DataUtil.menuGetTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', color: '', children: DataUtil.menuGetTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', color: '', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', color: '', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', color: '', children: DataUtil.menuGetBgColors() };
@@ -175,8 +176,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 			let hasTurnText = true;
 			let hasTurnPage = true;
 			let hasTurnList = true;
-			let hasTurnObject = true;
 			let hasTurnDiv = true;
+			let hasTurnFile = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasQuote = false;
@@ -187,10 +188,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
+				if (!block) {
+					continue;
+				};
+
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnPage = false;
 				if (!block.canTurnList())		 hasTurnList = false;
 				if (!block.isDiv())				 hasTurnDiv = false;
+				if (!block.isFile())			 hasTurnFile = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -207,6 +213,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 			if (hasTurnPage)	 sections.push(turnPage);
 			if (hasTurnList)	 sections.push(turnList);
 			if (hasTurnDiv)		 sections.push(turnDiv);
+			if (hasTurnFile)	 sections.push(turnFile);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
 
@@ -222,20 +229,18 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			sections = DataUtil.menuSectionsFilter(sections, filter);
 		} else {
-			sections = [
-				{ 
-					children: [
-						{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-						{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-						{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-					] 
-				},
-				{ 
-					children: [
-						//{ id: 'comment', icon: 'comment', name: 'Comment' },
-					]
-				},
-			];
+			const section1: any = { 
+				children: [
+					{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
+					{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+					{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
+				] 
+			};
+			const section2: any = { 
+				children: [
+					//{ id: 'comment', icon: 'comment', name: 'Comment' },
+				]
+			};
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -249,6 +254,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
+				if (!block) {
+					continue;
+				};
+
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
 				};
@@ -268,42 +277,48 @@ class MenuBlockAction extends React.Component<Props, State> {
 			};
 
 			if (hasTurnObject) {
-				sections[0].children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+				section1.children.splice(2, 0, { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
 			};
 
 			if (hasFile) {
-				sections[0].children.push({ id: 'download', icon: 'download', name: 'Download' });
-				//sections[0].children.push({ id: 'rename', icon: 'rename', name: 'Rename' })
-				//sections[0].children.push({ id: 'replace', icon: 'replace', name: 'Replace' })
+				section1.children = section1.children.concat([
+					{ id: 'download', icon: 'download', name: 'Download' },
+					{ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' },
+					//{ id: 'rename', icon: 'rename', name: 'Rename' },
+					//{ id: 'replace', icon: 'replace', name: 'Replace' }
+				]);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
 			};
 
 			if (hasLink) {
-				sections[0].children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
+				section1.children.push({ id: 'linkSettings', icon: 'customize', name: 'Appearance', arrow: true });
 			};
 
 			if (hasTitle) {
-				sections[0].children = [];
+				section1.children = [];
 			};
 
 			if (hasTurnText) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				sections[1].children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
-				sections[1].children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
 			};
 
 			if (hasColor) {
-				sections[1].children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'black') });
+				section2.children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
 			};
 
 			if (hasBg) {
-				sections[1].children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
+				section2.children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
 			};
+
+			sections = [ section1, section2 ];
 		};
 
 		return DataUtil.menuSectionsMap(sections);
@@ -331,9 +346,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { param, close, getId, setActive } = this.props;
+		const { param, close, getId, setActive, dataset } = this.props;
 		const { data } = param;
-		const { blockId, blockIds, rootId, dataset } = data;
+		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { config } = commonStore;
 		
@@ -343,7 +358,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		
 		const { content, align } = block;
 		const { color, bgColor } = content;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map((it: I.ObjectType) => { return it.id; }); 
+		const types = DataUtil.getObjectTypesForNewObject(false).map((it: I.ObjectType) => { return it.id; }); 
 
 		setActive(item, false);
 
@@ -369,13 +384,17 @@ class MenuBlockAction extends React.Component<Props, State> {
 				blockId: blockId,
 				blockIds: blockIds,
 				rebind: this.rebind,
-				dataset: dataset,
 			},
 		};
 
 		switch (item.itemId) {
 			case 'turnStyle':
 				menuId = 'blockStyle';
+
+				if (item.isDiv || item.isFile) {
+					menuParam.offsetY = 0;
+					menuParam.vertical = I.MenuDirection.Center;
+				};
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
@@ -384,9 +403,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 								this.setFocus(blockIds[0]);
 							});
 						};
-							
+
 						if (item.type == I.BlockType.Div) {
 							C.BlockListSetDivStyle(rootId, blockIds, item.itemId, (message: any) => {
+								this.setFocus(blockIds[0]);
+							});
+						};
+
+						if (item.type == I.BlockType.File) {
+							C.BlockListSetFileStyle(rootId, blockIds, item.itemId, (message: any) => {
 								this.setFocus(blockIds[0]);
 							});
 						};
@@ -402,7 +427,6 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				filters = [
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.page ] }
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -412,6 +436,14 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onSelect: (item: any) => {
 						this.moveToPage(item.id);
 						close();
+					},
+					dataSort: (c1: any, c2: any) => {
+						let i1 = types.indexOf(c1.id);
+						let i2 = types.indexOf(c2.id);
+
+						if (i1 > i2) return 1;
+						if (i1 < i2) return -1;
+						return 0;
 					}
 				});
 				break;
@@ -425,7 +457,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					skipId: rootId,
+					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
 					filters: filters,
 					onSelect: () => { close(); }
@@ -512,6 +544,10 @@ class MenuBlockAction extends React.Component<Props, State> {
 			case 'download':
 				Action.download(block);
 				break;
+
+			case 'openFileAsObject':
+				DataUtil.objectOpenPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+				break;
 					
 			case 'copy':
 				Action.duplicate(rootId, ids[ids.length - 1], ids);
@@ -541,6 +577,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (item.isBlock) {
 					if (item.type == I.BlockType.Div) {
 						C.BlockListSetDivStyle(rootId, blockIds, item.itemId);
+					} else 
+					if (item.type == I.BlockType.File) {
+						C.BlockListSetFileStyle(rootId, blockIds, item.itemId);
 					} else {
 						C.BlockListTurnInto(rootId, blockIds, item.itemId, () => {
 							this.setFocus(blockIds[0]);
@@ -559,9 +598,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 	};
 
 	moveToPage (type: string) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId, dataset } = data;
+		const { blockId, rootId } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

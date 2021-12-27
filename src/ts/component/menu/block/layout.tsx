@@ -37,7 +37,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 							{...action} 
 							icon={action.icon || action.id}
 							checkbox={action.id == value}
-							onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
 							onClick={(e: any) => { this.onClick(e, action); }} 
 						/>
 					))}
@@ -116,12 +116,15 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 		
 		return items;
 	};
-	
-	onOver (e: any, item: any) {
+
+	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
+			this.onOver(e, item);
 		};
-
+	};
+	
+	onOver (e: any, item: any) {
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.layout);
 			return;
@@ -162,7 +165,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll(Constant.menuIds.more, () => {
+			menuStore.closeAll(Constant.menuIds.layout, () => {
 				menuStore.open(menuId, menuParam);
 			});
 		};

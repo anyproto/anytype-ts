@@ -10,8 +10,8 @@
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
-		.cellContent { display: inline; vertical-align: middle; padding: 5.5px 6px; transition: background 0.2s ease-in-out; cursor: pointer; }
-		.cellContent:hover, .cellContent.hover { background: rgba(172,169,150,0.1); }
+		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background 0.2s ease-in-out; cursor: pointer; }
+		.cellContent:hover, .cellContent.hover { background: $colorHover; }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
@@ -26,6 +26,8 @@
 
 			.empty { vertical-align: top; }
 			.flex { display: inline; }
+
+			.more { vertical-align: top; margin-top: 5px; }
 		}
 
 		.cell.canEdit {
@@ -48,6 +50,12 @@
 
 	.block.blockFeatured.align0 {
 		.cellContent.type { margin-left: -6px; }
+	}
+
+	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }
+	.block.blockFeatured.small {
+		.cellContent { padding: 2.5px 6px; }
+		.more { margin-top: 1px; }
 	}
 }
 

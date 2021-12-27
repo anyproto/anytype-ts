@@ -1,4 +1,4 @@
-import { I, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
@@ -7,11 +7,8 @@ const $ = require('jquery');
 const KeyCode = require('json/key.json');
 const Constant = require('json/constant.json');
 
-const TIMEOUT_PIN = 5 * 60 * 1000;
-
 class Keyboard {
 	
-	history: any = null;
 	mouse: any = { 
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
@@ -30,9 +27,9 @@ class Keyboard {
 	isPinChecked: boolean = false;
 	isContextDisabled: boolean = false;
 	isBlurDisabled: boolean = false;
+	isCloseDisabled: boolean = false;
 	
-	init (history: any) {
-		this.history = history;
+	init () {
 		this.unbind();
 		
 		let win = $(window); 
@@ -75,7 +72,6 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const platform = Util.getPlatform();
 		const key = e.key.toLowerCase();
@@ -105,7 +101,7 @@ class Keyboard {
 			e.preventDefault();
 			popupStore.closeLast();
 			menuStore.closeAll();
-			Util.linkPreviewHide(false);
+			Util.previewHide(false);
 		});
 
 		// Shortcuts
@@ -157,7 +153,7 @@ class Keyboard {
 					return;
 				};
 
-				this.history.push('/main/index');
+				Util.route('/main/index');
 			});
 
 			// Create new page
@@ -208,8 +204,12 @@ class Keyboard {
 		});
 	};
 
+	isPopup () {
+		return popupStore.isOpen('page');
+	};
+
 	getRootId (): string {
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
 	};
@@ -222,19 +222,23 @@ class Keyboard {
 
 	back () {
 		const { account } = authStore;
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
 		
 		if (isPopup) {
-			historyPopup.goBack((match: any) => { 
-				popupStore.updateData('page', { matchPopup: match }); 
-			});
+			if (!historyPopup.checkBack()) {
+				popupStore.close('page');
+			} else {
+				historyPopup.goBack((match: any) => { 
+					popupStore.updateData('page', { matchPopup: match }); 
+				});
+			};
 		} else {
-			const prev = this.history.entries[this.history.index - 1];
+			const prev = Util.history.entries[Util.history.index - 1];
 			if (prev) {
 				let route = Util.getRoute(prev.pathname);
-				if ((route.page == 'auth') && account) {
+				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return;
 				};
 				if ((route.page == 'main') && !account) {
@@ -242,7 +246,7 @@ class Keyboard {
 				};
 			};
 
-			this.history.goBack();
+			Util.history.goBack();
 		};
 
 		this.restoreSource();
@@ -251,7 +255,7 @@ class Keyboard {
 	};
 
 	forward () {
-		const isPopup = popupStore.isOpen('page');
+		const isPopup = this.isPopup();
 
 		crumbs.restore(I.CrumbsType.Page);
 
@@ -260,10 +264,34 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			this.history.goForward();
+			Util.history.goForward();
 		};
 
 		analytics.event('HistoryForward');
+	};
+
+	checkBack (): boolean {
+		const isPopup = this.isPopup();
+		const history = Util.history;
+
+		let ret = true;
+		if (!isPopup) {
+			ret = history.index - 1 >= 0;
+		};
+		return ret;
+	};
+
+	checkForward (): boolean {
+		const isPopup = this.isPopup();
+		const history = Util.history;
+
+		let ret = true;
+		if (isPopup) {
+			ret = historyPopup.checkForward();
+		} else {
+			ret = history.index + 1 <= history.entries.length - 1;
+		};
+		return ret;
 	};
 
 	onCommand (cmd: string, arg: any) {
@@ -300,21 +328,36 @@ class Keyboard {
 					}
 				});
 				break;
+
+			case 'workspace':
+				popupStore.open('prompt', {
+					data: {
+						title: 'Create Space',
+						onChange: (v: string) => {
+							C.WorkspaceCreate(v);
+						},
+					}
+				});
+				break;
 		};
 	};
 
 	onPrint () {
-		const isPopup = popupStore.isOpen('page');
+		const { theme } = commonStore;
+		const isPopup = this.isPopup();
 		const html = $('html');
 
 		if (isPopup) {
 			html.addClass('withPopup');
 		};
 
+		Util.addBodyClass('theme', '');
+
 		focus.clearRange(true);
 		window.print();
 
 		html.removeClass('withPopup');
+		Util.addBodyClass('theme', theme);
 	};
 
 	onSearch () {
@@ -391,8 +434,9 @@ class Keyboard {
 
 	initPinCheck () {
 		const { account } = authStore;
+		const { pinTime } = commonStore;
 		const pin = Storage.get('pin');
-		
+
 		if (!pin) {
 			this.setPinChecked(true);
 		};
@@ -406,9 +450,12 @@ class Keyboard {
 			const pin = Storage.get('pin');
 			if (pin) {
 				this.setPinChecked(false);
-				this.history.push('/auth/pin-check');
+				
+				popupStore.closeAll(null, () => {
+					Util.route('/auth/pin-check');
+				});
 			};
-		}, TIMEOUT_PIN);
+		}, pinTime);
 	};
 
 	setMatch (match: any) {
@@ -453,6 +500,11 @@ class Keyboard {
 	
 	disablePreview (v: boolean) {
 		this.isPreviewDisabled = v;
+	};
+
+	// Flag to prevent document from sending close, to prevent deletion of drafts
+	disableClose (v: boolean) {
+		this.isCloseDisabled = v;
 	};
 	
 	setCoords (e: any) {

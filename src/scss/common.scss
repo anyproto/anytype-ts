@@ -5,7 +5,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; font-size: 14px; line-height: 22px; letter-spacing: 0.2px; color: $colorBlack;
-	overflow-x: hidden; overflow-y: overlay;
+	overflow-x: hidden; overflow-y: overlay; background: #fff;
 	-webkit-font-smoothing: antialiased;
 	backface-visibility: hidden;
 	transform-style: flat;
@@ -33,7 +33,7 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0s; }
 input, textarea, select { font-family: 'Inter'; }
 
-#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 38px; z-index: -1; user-select: none; pointer-events: all; }
+#drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
 #drag {
 	.sides { display: none; }
 }
@@ -43,10 +43,6 @@ input, textarea, select { font-family: 'Inter'; }
 		width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100% 100%; 
 		position: absolute; left: 50%; top: 50%; margin: -12px 0px 0px -60px; transition: opacity 0.5s ease-in-out;
 	}
-}
-
-html.platformMac.version11 {
-	#drag { height: 52px; }
 }
 
 html.platformWindows {
@@ -61,10 +57,10 @@ html.platformWindows {
 			.icon:last-child { margin-right: 16px; }
 		}
 
-		.name { color: #fff; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
+		.name { color: $colorWhite; display: inline-block; vertical-align: middle; line-height: 1; margin-top: -2px; }
 
 		.icon { cursor: pointer; -webkit-app-region: none; }
-		.icon.menu { width: 20px; height: 20px; margin-right: 16px; background-image: url('~img/icon/header/windows/menu0.svg'); }
+		.icon.menu { width: 20px; height: 20px; margin: -2px 16px 0px 0px; background-image: url('~img/icon/header/windows/menu0.svg'); }
 		.icon.min { background-image: url('~img/icon/header/windows/min0.svg'); }
 		.icon.max { background-image: url('~img/icon/header/windows/max0.svg'); }
 		.icon.close { background-image: url('~img/icon/header/windows/close0.svg'); }
@@ -91,6 +87,12 @@ html.platformWindows {
 	}
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
+
+	.blocks {
+		.block.blockDataview {
+			.content .scroll::-webkit-scrollbar-thumb { border-width: 5px; border-radius: 10px; }
+		}
+	}
 }
 
 .dn { display: none !important; }
@@ -106,13 +108,14 @@ html.platformWindows {
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over, .overMenu, .overPopup { overflow: hidden !important; }
-.empty { color: #cbc9bd; }
+.empty, .emptyText { color: $colorSecondary; }
 .isDone { color: $colorMediumGrey; }
 .placeholder { 
-	pointer-events: none; color: #cbc9bd; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
+	pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
 	overflow: hidden; white-space: nowrap;
 }
-::-webkit-input-placeholder { color: #cbc9bd !important; }
+::-webkit-input-placeholder { color: $colorSecondary !important; }
+.isBlurred { filter: blur(3px); }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 
@@ -146,7 +149,7 @@ search.active { background: orange !important; }
 .textColor-teal { color: $colorTeal !important; }
 .textColor-lime { color: $colorLime !important; }
 
-.bgColor-grey { background: #f3f2ec !important; }
+.bgColor-grey { background: $colorVeryLightGrey !important; }
 .bgColor-yellow { background: #fef9cc !important; }
 .bgColor-orange { background: #fef3c5 !important; }
 .bgColor-red { background: #ffebe5 !important; }
@@ -156,3 +159,28 @@ search.active { background: orange !important; }
 .bgColor-ice { background: #d6effd !important; }
 .bgColor-teal { background: #d6f5f3 !important; }
 .bgColor-lime { background: #e3f7d0 !important; }
+
+.isTag.tagColor-default { color: $colorBlack !important; background: #fff !important; box-shadow: 0px 0px 0px 1px $colorLightGrey inset; }
+.isTag.tagColor-grey { color: #8c9ea5 !important; background: #ebeff1 !important; }
+.isTag.tagColor-yellow { color: #b2a616 !important; background: #fbf5b8 !important; }
+.isTag.tagColor-orange { color: #d3720d !important; background: #ffEcc8 !important; }
+.isTag.tagColor-red { color: #e2400c !important; background: #ffe5de !important; }
+.isTag.tagColor-pink { color: #ca1b8e !important; background: #fddcf2 !important; }
+.isTag.tagColor-purple { color: #9e30c4 !important; background: #f1dbf8 !important; }
+.isTag.tagColor-blue { color: $colorBlue !important; background: #dce1fb !important; }
+.isTag.tagColor-ice { color: #1c8bca !important; background: #cfedfe !important; }
+.isTag.tagColor-teal { color: #0caaa3 !important; background: #d4f5f3 !important; }
+.isTag.tagColor-lime { color: #64b90f !important; background: #e3f7d0 !important; }
+
+.isStatus.tagColor-default { color: $colorBlack !important; }
+.isStatus.tagColor-black { color: $colorBlack !important; }
+.isStatus.tagColor-grey { color: $colorMediumGrey !important; }
+.isStatus.tagColor-yellow { color: $colorYellow !important; }
+.isStatus.tagColor-orange { color: $colorOrange !important; }
+.isStatus.tagColor-red { color: $colorRed !important; }
+.isStatus.tagColor-pink { color: $colorPink !important; }
+.isStatus.tagColor-purple { color: $colorPurple !important; }
+.isStatus.tagColor-blue { color: $colorBlue !important; }
+.isStatus.tagColor-ice { color: $colorIce !important; }
+.isStatus.tagColor-teal { color: $colorTeal !important; }
+.isStatus.tagColor-lime { color: $colorLime !important; }

@@ -3,16 +3,16 @@
 .pageMainHistory * { user-select: none; }
 .pageMainHistory {
 	#body { overflow: hidden; }
-	.wrapper { padding: 38px 0px 80px 0px; width: calc(100% - 254px); overflow: auto; position: relative; }
+	.wrapper { padding: 52px 0px 80px 0px; width: calc(100% - 254px); overflow: overlay; position: relative; }
 	.loaderWrapper { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; }
 
-	.list { width: 254px; border-left: 1px solid $colorLightGrey; z-index: 10; position: relative; background: #fff; overflow: auto; }
+	.list { width: 254px; border-left: 1px solid $colorLightGrey; z-index: 10; position: relative; background: $colorWhite; overflow: overlay; }
 	.list {
 		.section { padding: 11px 16px; }
 		.section {
 			.date { text-transform: uppercase; @include text-very-small; }
 		}
-		.section.fix { position: fixed; right: 0px; top: 0px; background: #fff; width: 253px; }
+		.section.fix { position: fixed; right: 0px; top: 0px; background: $colorWhite; width: 253px; }
 
 		.wrap { position: relative; }
 
@@ -34,12 +34,10 @@
 			.item { padding-left: 48px; }
 		}
 
-		.item:hover, .item.active { background: #f3f2ec; }
+		.item:hover, .item.active { background: $colorVeryLightGrey; }
 	}
 
-	.blockLast { height: 100px; }
-}
+	.editorWrapper.withIcon { padding-top: 136px; }
 
-html.platformMac.version11 {
-	.pageMainHistory .wrapper { padding-top: 52px; }
+	.blockLast { height: 100px; }
 }

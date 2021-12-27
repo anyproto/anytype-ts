@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Title, Icon, Label, Button } from 'ts/component';
 import { I, keyboard } from 'ts/lib';
 import { observer } from 'mobx-react';
+import { translate } from '../../lib';
 
 interface Props extends I.Popup {}
 
@@ -17,9 +18,12 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, 
 	render() {
 		const { param } = this.props;
 		const { data } = param;
-		const { title, text, textConfirm, textCancel, icon } = data;
+		const { title, text, icon } = data;
+		
 		const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
 		const canCancel = undefined === data.canCancel ? true : data.canCancel;
+		const textConfirm = data.textConfirm || translate('commonOk');
+		const textCancel = data.textCancel || translate('commonCancel');
 		
 		return (
 			<React.Fragment>

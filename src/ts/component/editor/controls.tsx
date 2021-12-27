@@ -10,7 +10,8 @@ interface Props extends RouteComponentProps<any> {
 	rootId: string;
 	isPopup?: boolean;
 	dataset?: any;
-}
+	resize?: () => void;
+};
 
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
@@ -34,15 +35,19 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	};
 
 	render (): any {
-		const { config } = commonStore;
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
 
-		if (!root || !allowedDetails) {
+		if (!root) {
 			return null;
 		};
+
+		const checkType = blockStore.checkBlockType(rootId);
+		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedRelation = !checkType && allowedDetails;
+		const allowIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote();
+		const allowCover = !checkType && allowedDetails && !root.isObjectNote();
 
 		return (
 			<div 
@@ -52,29 +57,33 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				onDrop={this.onDrop}
 			>
 				<div className="controlButtons">
-					{!root.isObjectTask() ? (
+					{allowIcon ? (
 						<div id="button-icon" className="btn" onClick={this.onIcon}>
 							<Icon className="icon" />
 							<div className="txt">{translate('editorControlIcon')}</div>
 						</div>
 					) : ''}
 
-					<div id="button-cover" className="btn" onClick={this.onCover}>
-						<Icon className="addCover" />
-						<div className="txt">{translate('editorControlCover')}</div>
-					</div>
+					{allowCover ? (
+						<div id="button-cover" className="btn" onClick={this.onCover}>
+							<Icon className="addCover" />
+							<div className="txt">{translate('editorControlCover')}</div>
+						</div>
+					) : ''}
 
-					{!root.isObjectSet() && allowedLayout ? (
+					{allowedLayout ? (
 						<div id="button-layout" className="btn" onClick={this.onLayout}>
 							<Icon className="layout" />
 							<div className="txt">{translate('editorControlLayout')}</div>
 						</div>
 					) : ''}
 
-					<div id="button-relation" className="btn" onClick={this.onRelation}>
-						<Icon className="relation" />
-						<div className="txt">{translate('editorControlRelation')}</div>
-					</div>
+					{allowedRelation ? (
+						<div id="button-relation" className="btn" onClick={this.onRelation}>
+							<Icon className="relation" />
+							<div className="txt">{translate('editorControlRelation')}</div>
+						</div>
+					) : ''}
 				</div>
 			</div>
 		);
@@ -83,11 +92,15 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 	componentDidMount () {
 		this._isMounted = true;
 	};
-	
+
+	componentDidUpdate () {
+		this.props.resize();
+	};
+
 	componentWillUnmount () {
 		this._isMounted = false;
 	};
-	
+
 	onIcon (e: any) {
 		const { rootId } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
@@ -132,7 +145,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				return;
 			};
 			
-			C.UploadFile('', files[0], I.FileType.Image, true, (message: any) => {
+			C.UploadFile('', files[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -181,11 +194,14 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		const container = $(isPopup ? '#popupPage #innerWrap' : window);
 		const st = container.scrollTop();
 		const rect = { x: container.width() / 2 , y: Util.sizeHeader() + st, width: 1, height: 1 };
+		const cnw = [ 'fixed' ];
 
 		if (isPopup) {
 			const offset = container.offset();
 			rect.x += offset.left;
 			rect.y += offset.top;
+		} else {
+			cnw.push('fromHeader');
 		};
 
 		const param: any = {
@@ -194,6 +210,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			noFlipX: true,
 			noFlipY: true,
 			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -205,10 +222,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 				isPopup: isPopup,
 				rootId: rootId,
 			},
-		};
-
-		if (!isPopup) {
-			param.classNameWrap = 'fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
@@ -246,7 +259,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.UploadFile('', file, I.FileType.Image, true, (message: any) => {
+		C.UploadFile('', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			

@@ -3,6 +3,8 @@
 .blocks {
 	.block.blockBookmark { padding: 6px 0px; }
 	.block.blockBookmark {
+		.focusable { border-radius: 6px; }
+
 		.inner { 
 			display: flex; border-radius: inherit; border: 1px solid $colorLightGrey; transition: border-color 0.2s ease-in-out; 
 			cursor: pointer; position: relative; border-radius: 6px;
@@ -24,8 +26,8 @@
 		}
 
 		.inner.withImage {
-			.side.left { width: 66.68%; }
-			.side.right { width: 33.33%; display: block; }
+			.side.left { width: calc(100% - 250px); }
+			.side.right { width: 250px; display: block; }
 		}
 
 		.inner.withImage.vertical { padding-top: 112px; }

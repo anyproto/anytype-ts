@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IconObject } from 'ts/component';
+import { Util } from 'ts/lib';
 
 interface Props extends RouteComponentProps<any> {
 	icon?: string;
@@ -28,9 +29,9 @@ class ContentLink extends React.Component<Props, {}> {
 	};
 	
 	onClick (e: any) {
-		const { history, contentId } = this.props;
+		const { contentId } = this.props;
 		
-		history.push('/help/' + contentId);
+		Util.route('/help/' + contentId);
 	};
 	
 };

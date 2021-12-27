@@ -11,9 +11,11 @@ export enum Platform {
 	Linux = 'Linux',
 };
 
-export enum DragItem {
-	Block = 'block',
-	Menu = 'menu',
+export enum DragType {
+	None	 = '',
+	Block	 = 'block',
+	Menu	 = 'menu',
+	Relation = 'relation',
 };
 
 export enum CoverType {
@@ -53,7 +55,7 @@ export interface HistoryVersion {
 	time: number;
 };
 
-export interface LinkPreview {
+export interface PreviewLink {
 	type: string;
 	title: string;
 	description: string;
@@ -83,4 +85,14 @@ export enum GraphView {
     Controls = 1,
     Preview	 = 2,
     Filter	 = 3,
+};
+
+export enum TabIndex {
+	None		 = '',
+	Favorite	 = 'favorite',
+	Recent		 = 'recent',
+	Set			 = 'set',
+	Space		 = 'space',
+	Shared		 = 'shared',
+	Archive		 = 'archive',
 };

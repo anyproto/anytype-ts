@@ -2,13 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Pager } from 'ts/component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'ts/lib';
+import { HeaderMainEdit as Header, FooterMainEdit as Footer, Loader, Block, Button, IconObject, Deleted } from 'ts/component';
+import { I, M, C, DataUtil, Util, crumbs, Action, keyboard } from 'ts/lib';
 import { commonStore, blockStore, detailStore } from 'ts/store';
-import { Document, Page } from 'react-pdf';
-import { pdfjs } from 'react-pdf';
-
-pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.js';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -16,8 +12,7 @@ interface Props extends RouteComponentProps<any> {
 };
 
 interface State {
-	pages: number;
-	page: number;
+	isDeleted: boolean;
 };
 
 const $ = require('jquery');
@@ -25,6 +20,7 @@ const { ipcRenderer } = window.require('electron');
 const { app } = window.require('@electron/remote')
 const path = window.require('path');
 const userPath = app.getPath('userData');
+const Errors = require('json/error.json');
 
 const MAX_HEIGHT = 396;
 
@@ -36,8 +32,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	loading: boolean = false;
 
 	state = {
-		pages: 0,
-		page: 1,
+		isDeleted: false,
 	};
 
 	constructor (props: any) {
@@ -48,7 +43,12 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	render () {
-		const { page, pages } = this.state;
+		const { isDeleted } = this.state;
+
+		if (isDeleted) {
+			return <Deleted {...this.props} />;
+		};
+
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 		const object = Util.objectCopy(detailStore.get(rootId, rootId, [ 'heightInPixels' ]));
@@ -65,7 +65,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
 		const isAudio = file?.isFileAudio();
-		const isPdf = file?.content.mime == 'application/pdf';
+		const isPdf = file?.isFilePdf();
 		const cn = [ 'blocks' ];
 
 		if (isVideo || isImage || isAudio) {
@@ -92,34 +92,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		};
 
 		let content = null;
-		let pager = null;
 
 		if (file) {
-			if (isVideo || isImage || isAudio) {
+			if (isVideo || isImage || isAudio || isPdf) {
 				content = <Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} />;
-			} else 
-			if (isPdf) {
-				content = (
-					<div className="pdfWrapper">
-						<Document
-							file={commonStore.fileUrl(file.content.hash)}
-							onLoadSuccess={({ numPages }) => { this.setState({ pages: numPages }); }}
-							renderMode="svg"
-						>
-							<Page pageNumber={page} />
-						</Document>
-					</div>
-				);
-
-				pager = (
-					<Pager 
-						offset={page - 1} 
-						limit={1} 
-						total={pages} 
-						pageLimit={5}
-						onChange={(page: number) => { this.setState({ page }); }} 
-					/>
-				);
 			} else {
 				content = <IconObject object={object} size={96} />;
 			};
@@ -134,7 +110,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 						<React.Fragment>
 							<div className="side left">
 								{content}
-								{pager}
 							</div>
 
 							<div className="side right">
@@ -187,7 +162,6 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	open () {
-		const { history } = this.props;
 		const rootId = this.getRootId();
 
 		if (this.id == rootId) {
@@ -198,14 +172,18 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		this.loading = true;
 		this.forceUpdate();
 
-		crumbs.addPage(rootId);
-		crumbs.addRecent(rootId);
-
-		C.BlockOpen(rootId, (message: any) => {
+		C.BlockOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
-				history.push('/main/index');
+				if (message.error.code == Errors.Code.NOT_FOUND) {
+					this.setState({ isDeleted: true });
+				} else {
+					Util.route('/main/index');
+				};
 				return;
 			};
+
+			crumbs.addPage(rootId);
+			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();
@@ -252,9 +230,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 						left: '50%',
 						top: '50%',
 						width: w, 
-						height: h, 
-						marginTop: -h / 2, 
-						marginLeft: -w / 2,
+						height: h,
+						transform: 'translate3d(-50%, -50%, 0px)',
 					});
 				};
 			});
@@ -297,7 +274,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		const wh = container.height();
 
 		if (blocks.hasClass('vertical')) {
-			blocks.css({ height: wh });
+			blocks.css({ minHeight: wh });
 		};
 
 		if (empty.length) {

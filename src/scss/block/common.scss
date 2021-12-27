@@ -1,12 +1,15 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block { @include text-paragraph; word-break: break-word; display: flex; flex: auto; position: relative; margin: 0px 0px 2px 0px; }
+	.block { 
+		@include text-paragraph; word-break: break-word; display: flex; flex-direction: row; flex: auto; 
+		position: relative; margin: 0px 0px 2px 0px; align-items: stretch;
+	}
 	.block {
-		.wrapMenu { width: 48px; text-align: right; position: relative; }
-		.wrapContent { width: calc(100% - 48px); position: relative; }
+		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
+		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
 		
-		.flex { position: relative; z-index: 2; }
+		.flex { position: relative; z-index: 2; align-items: center; }
 		.icon.dnd { 
 			width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; right: 6px; top: 0px;
 			background-image: url('~img/icon/block/menu0.svg'); border: 1px solid $colorLightGrey; border-radius: 12px; 
@@ -17,7 +20,7 @@
 
 		.inputWithFile { position: relative; }
 		
-		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; }
+		.colResize { width: 0px; position: relative; opacity: 0; z-index: 10; flex: 0; }
 		.colResize.active { opacity: 1; }
 		.colResize {
 			.inner { 
@@ -38,7 +41,7 @@
 		
 		.emptyToggle { 
 			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2; cursor: pointer;
-			transition: $transitionFast; @include text-overflow-nw;
+			@include text-overflow-nw;
 		}
 		.emptyToggle:hover { color: $colorBlack; }
 	}
@@ -79,19 +82,19 @@
 	.block.isToggled > .wrapContent > .emptyToggle { display: block; }
 	.block.isToggled > .wrapContent > .selectable > .dropTarget > .flex > .markers > .marker.toggle { transform: rotateZ(90deg); }
 	
-	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; }
+	.block.isDragging > .wrapContent > .selectable > .dropTarget { opacity: 0.3; min-height: 20px; }
 
-	.block > .wrapContent > .selectable.isSelected > .selectionOver { display: block; }
+	.block > .wrapContent > .selectable.isSelectionSelected > .selectionOver { display: block; }
 	
 	.block.blockIconPage > .wrapMenu { visibility: hidden; }
 	.block.blockIconUser > .wrapMenu { visibility: hidden; }
 
 	// Remove padding for first block after title
-	.block.index-1 { padding-top: 0px !important; }
+	.block.index-0 { padding-top: 0px !important; }
 	#block-div-1 > .wrapContent > .children > .block.first { padding-top: 0px !important; }
 }
 
-.dragProvider.isDragging {
+#dragProvider.isDragging {
 	.block > .wrapContent > .selectable > .menuOver { opacity: 1; }
 	.block > .wrapContent > .selectable > .selectionOver { display: none; }
 	.block > .wrapMenu > .icon.dnd { opacity: 1; }

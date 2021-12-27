@@ -35,6 +35,7 @@ export enum BlockPosition {
 	Right	 = 4,
 	Inner	 = 5,
 	Replace	 = 6,
+	InnerFirst = 7,
 };
 
 export enum BlockSplitMode {
@@ -52,6 +53,7 @@ export enum BlockAlign {
 export interface BlockComponent {
 	dataset?: any;
 	rootId: string;
+	traceId?: string;
 	block: I.Block;
 	readonly?: boolean;
 	isPopup?: boolean;
@@ -104,11 +106,14 @@ export interface Block {
 	isObjectPage?(): boolean;
 	isObjectHuman?(): boolean;
 	isObjectTask?(): boolean;
+	isObjectNote?(): boolean;
 	isObjectSet?(): boolean;
+	isObjectSpace?(): boolean;
 	isObjectFileKind?(): boolean;
 	isObjectFile?(): boolean;
 	isObjectImage?(): boolean;
 	isObjectVideo?(): boolean;
+	isObjectAudio?(): boolean;
 	isObjectType?(): boolean;
 	isObjectRelation?(): boolean;
 
@@ -140,6 +145,9 @@ export interface Block {
 	isFileImage?(): boolean;
 	isFileVideo?(): boolean;
 	isFileAudio?(): boolean;
+	isFilePdf?(): boolean;
+	isFileStyleLink?(): boolean;
+	isFileStyleEmbed?(): boolean;
 
 	isLatex?(): boolean;
 
