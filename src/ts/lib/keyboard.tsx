@@ -213,7 +213,7 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
-		return isPopup ? popupMatch.id : (this.match?.params?.id || blockStore.root);
+		return isPopup ? popupMatch.params.id : (this.match?.params?.id || blockStore.root);
 	};
 
 	onKeyUp (e: any) {
@@ -363,11 +363,11 @@ class Keyboard {
 	};
 
 	onSearch () {
-		const popup = popupStore.get('page');
+		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
 		// Do not allow in set or store
-		if (!popup && (this.isMainSet() || this.isMainStore()) || (popup && ([ 'set', 'store' ].indexOf(popupMatch.action) >= 0))) {
+		if (!isPopup && (this.isMainSet() || this.isMainStore()) || (isPopup && ([ 'set', 'store' ].indexOf(popupMatch.params.action) >= 0))) {
 			return;
 		};
 
@@ -386,7 +386,11 @@ class Keyboard {
 
 	getPopupMatch () {
 		const popup = popupStore.get('page');
-		return popup && popup?.param.data.matchPopup.params || {};
+		return popup && popup?.param.data.matchPopup || {};
+	};
+
+	getMatch () {
+		return (this.isPopup() ? this.getPopupMatch() : this.match) || { params: {} };
 	};
 
 	ctrlByPlatform (e: any) {

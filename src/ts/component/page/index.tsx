@@ -121,7 +121,7 @@ class Page extends React.Component<Props, {}> {
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return isPopup ? matchPopup : match;
+		return (isPopup ? matchPopup : match) || { params: {} };
 	};
 
 	getRootId () {

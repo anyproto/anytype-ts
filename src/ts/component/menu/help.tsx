@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
-import { I, Util } from 'ts/lib';
-import { authStore, popupStore, blockStore, detailStore } from 'ts/store';
+import { I, Util, Onboarding, keyboard } from 'ts/lib';
+import { popupStore, detailStore, blockStore } from 'ts/store';
 
-interface Props extends I.Menu {
-	history?: any;
-};
+interface Props extends I.Menu {};
 
 const { ipcRenderer } = window.require('electron');
 const Url = require('json/url.json');
+const Constant = require('json/constant.json');
 
 class MenuHelp extends React.Component<Props, {}> {
 
@@ -25,6 +24,7 @@ class MenuHelp extends React.Component<Props, {}> {
 			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
 			{ id: 'community', name: 'Join our Community' },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts' },
+			{ id: 'hints', name: 'Show hints' },
 		];
 
 		return (
@@ -60,6 +60,35 @@ class MenuHelp extends React.Component<Props, {}> {
 
 			case 'docs':
 				ipcRenderer.send('urlOpen', Url.docs);
+				break;
+
+			case 'hints':
+				const isPopup = keyboard.isPopup();
+				const rootId = keyboard.getRootId();
+				const object = detailStore.get(rootId, rootId, []);
+				const match = keyboard.getMatch();
+				const isEditor = (match.params.page == 'main') && (match.params.action == 'edit');
+
+				let key = '';
+
+				if (object.type == Constant.typeId.set) {
+					key = 'set';
+				} else 
+				if (object.type == Constant.typeId.template) {
+					key = 'template';
+				} else
+				if (isEditor && blockStore.checkBlockType(rootId)) {
+					key = 'typeSelect';
+				} else 
+				if (isEditor && !blockStore.checkBlockType(rootId)) {
+					key = 'editor';
+				} else {
+					key = Util.toCamelCase([ match.params.page, match.params.action ].join('-'));
+				};
+
+				if (key) {
+					Onboarding.start(key, isPopup, true);
+				};
 				break;
 
 		};
