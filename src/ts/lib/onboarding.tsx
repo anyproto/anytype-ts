@@ -84,7 +84,11 @@ class Onboarding {
 						break;
 				};
 
-				return { ...rect, y: rect.y + scrollTop };
+				if (!isPopup) {
+					rect.y += scrollTop;
+				};
+
+				return { ...rect };
 			};
 			
 			param.recalcRect = recalcRect;

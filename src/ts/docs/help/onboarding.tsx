@@ -119,12 +119,13 @@ export default {
             param: {
                 common: {
                     container: true,
+                    classNameWrap: 'fixed',
                     horizontal: I.MenuDirection.Left,
                     offsetX: 8,
                     offsetY: 8,
                 },
                 popup: {
-                    classNameWrap: 'fromPopup',
+                    classNameWrap: 'fixed fromPopup',
                 }
             }
         }
@@ -137,12 +138,13 @@ export default {
             param: {
                 common: {
                     container: true,
+                    classNameWrap: 'fixed',
                     horizontal: I.MenuDirection.Left,
                     offsetX: 8,
                     offsetY: 8,
                 },
                 popup: {
-                    classNameWrap: 'fromPopup',
+                    classNameWrap: 'fixed fromPopup',
                 }
             }
         }
@@ -156,11 +158,12 @@ export default {
                 common: {
                     container: true,
                     containerVertical: I.MenuDirection.Top,
+                    classNameWrap: 'fixed',
                     horizontal: I.MenuDirection.Center,
                     offsetY: 8,
                 },
                 popup: {
-                    classNameWrap: 'fromPopup',
+                    classNameWrap: 'fixed fromPopup',
                 }
             }
         }
