@@ -232,7 +232,6 @@ export default {
             description: 'You can change Type and feature any other relations here. Click “Relations” above for management',
             param: {
                 element: '#block-featuredRelations #blockFeatured-type-0',
-                offsetX: Constant.size.blockMenu,
                 offsetY: 10,
             }
         },
