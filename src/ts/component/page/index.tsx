@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Docs, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -170,16 +170,19 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 		this.event();
 		this.unbind();
-		this.onboarding();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+
+		if (!isPopup) {
+			keyboard.setMatch(match);
+		};
+
+		Onboarding.start([ match.params?.page, match.params?.action ].join('/'), isPopup);
 		
 		if (isPopup) {
 			return;
 		};
-
-		keyboard.setMatch(match);
-
+		
 		window.setTimeout(() => {
 			if (isMain && account) {
 				if (!popupNewBlock) {
@@ -296,30 +299,6 @@ class Page extends React.Component<Props, {}> {
 		});
 	};
 
-	onboarding () {
-		const match = this.getMatch();
-		const key = [ match.params.page, match.params.action ].join('/');
-		const items = Docs.Help.Onboarding[key];
-
-		if (!items || !items.length) {
-			return;
-		};
-
-		const item = items[0];
-		menuStore.open('onboarding', {
-			...item,
-			withArrow: true,
-			noAnimation: true,
-			noFlipY: true,
-			noFlipX: true,
-			data: {
-				key,
-				item,
-				current: 0,
-			},
-		});
-	};
-	
 };
 
 export default Page;

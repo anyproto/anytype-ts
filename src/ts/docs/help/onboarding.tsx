@@ -3,56 +3,128 @@ import { I } from 'ts/lib';
 export default {
     'main/index': [
         {
-            element: '#title .side.left span',
             name: 'Welcome onboard!',
             description: 'Here is a few tips to understand the basics of Anytype',
-            offsetY: 10,
+            param: {
+                element: '#title .side.left span',
+                offsetY: 10,
+            }
         },
         {
-            element: '#tabWrap .tabs',
             name: 'Tabs',
             description: 'Contains your favorite objects and others matching some criteria',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Center,
-            offsetY: -10,
+            param: {
+                element: '#tabWrap .tabs',
+                vertical: I.MenuDirection.Top,
+                horizontal: I.MenuDirection.Center,
+                offsetY: -10,
+            }
         },
         {
-            element: '#button-help',
             name: 'Need help?',
             description: 'Docs, Feedback, Shortcuts are here',
-            vertical: I.MenuDirection.Top,
-            horizontal: I.MenuDirection.Right,
-            offsetY: -14,
+            param: {
+                element: '#button-help',
+                vertical: I.MenuDirection.Top,
+                horizontal: I.MenuDirection.Right,
+                offsetY: -14,
+            }
         },
         {
-            element: '#header .icon.settings',
             name: 'Settings',
             description: 'Keychain phrase, themes, import and export are here',
-            horizontal: I.MenuDirection.Right,
-            offsetY: 14,
-            classNameWrap: 'fromHeader',
+            param: {
+                element: '#header .icon.settings',
+                classNameWrap: 'fromHeader',
+                horizontal: I.MenuDirection.Right,
+                offsetY: 14,
+            }
         },
         {
-            element: '#header .side.center',
             name: 'Search',
             description: 'Works with all objects and content available in Anytype',
-            horizontal: I.MenuDirection.Center,
-            offsetY: 16,
-            classNameWrap: 'fromHeader',
+            param: {
+                element: '#header .side.center',
+                classNameWrap: 'fromHeader',
+                horizontal: I.MenuDirection.Center,
+                offsetY: 16,
+            }
         },
         {
-            element: '#button-store',
             name: 'Library',
             description: 'Use it to create and manage Types, Templates and Relations',
-            horizontal: I.MenuDirection.Center,
-            offsetY: 18,
+            param: {
+                horizontal: I.MenuDirection.Center,
+                offsetY: 18,
+                element: '#button-store',
+            }
         },
         {
-            element: '#button-add',
             name: 'Create an object',
             description: 'Note, Task and other Types available. Capture thoughts and ideas when inspiration hits',
-            horizontal: I.MenuDirection.Center,
-            offsetY: 18,
+            param: {
+                element: '#button-add',
+                horizontal: I.MenuDirection.Center,
+                offsetY: 18,
+            }
         }
-    ]
+    ],
+
+    'set': [
+
+    ],
+
+    'storeType': [
+        {
+            name: 'Library',
+            description: 'Use it to create and manage Types, Templates and Relations. Click for more information',
+            param: {
+                common: {
+                    container: true,
+                    horizontal: I.MenuDirection.Left,
+                    offsetX: 8,
+                    offsetY: 8,
+                },
+                popup: {
+                    classNameWrap: 'fromPopup',
+                }
+            }
+        }
+    ],
+
+    'storeRelation': [
+        {
+            name: 'Relations',
+            description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object. Click for more information',
+            param: {
+                common: {
+                    container: true,
+                    horizontal: I.MenuDirection.Left,
+                    offsetX: 8,
+                    offsetY: 8,
+                },
+                popup: {
+                    classNameWrap: 'fromPopup',
+                }
+            }
+        }
+    ],
+
+    'typeSelect': [
+        {
+            name: 'Choose a Type to start from',
+            description: 'Types bring meaning to your objects. They manage relations and define the look provided by templates',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Top,
+                    horizontal: I.MenuDirection.Center,
+                    offsetY: 8,
+                },
+                popup: {
+                    classNameWrap: 'fromPopup',
+                }
+            }
+        }
+    ],
 }

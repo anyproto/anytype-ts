@@ -69,6 +69,20 @@ class Storage {
 		return Number((obj[key] || {})[rootId]) || 0;
 	};
 
+	setOnboarding (key: string) {
+		const obj = this.get('onboarding') || {};
+		
+		obj[key] = true;
+
+		this.set('onboarding', obj, true);
+		return obj;
+	};
+
+	getOnboarding (key: string) {
+		const obj = this.get('onboarding') || {};
+		return obj[key];
+	};
+
 	logout () {
 		const keys = [ 
 			'accountId', 

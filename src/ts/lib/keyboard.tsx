@@ -1,4 +1,4 @@
-import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics } from 'ts/lib';
+import { I, C, Util, DataUtil, crumbs, Storage, focus, history as historyPopup, analytics, Docs } from 'ts/lib';
 import { commonStore, authStore, blockStore, menuStore, popupStore } from 'ts/store';
 
 const { ipcRenderer } = window.require('electron');
@@ -49,9 +49,7 @@ class Keyboard {
 	onScroll (e: any) {
 		Util.tooltipHide(false);
 
-		const win = $(window); 
-
-		win.trigger('resize.menuOnboarding');
+		$(window).trigger('resize.menuOnboarding');
 	};
 
 	onMouseDown (e: any) {
@@ -436,6 +434,14 @@ class Keyboard {
 		this.isPinChecked = v;
 	};
 
+	setMatch (match: any) {
+		this.match = match;
+	};
+
+	setSource (source: any) {
+		this.source = Util.objectCopy(source);
+	};
+
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;
@@ -460,14 +466,6 @@ class Keyboard {
 				});
 			};
 		}, pinTime);
-	};
-
-	setMatch (match: any) {
-		this.match = match;
-	};
-
-	setSource (source: any) {
-		this.source = Util.objectCopy(source);
 	};
 
 	restoreSource () {
@@ -586,7 +584,7 @@ class Keyboard {
 		const platform = Util.getPlatform();
 		return platform == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};
-	
+
 };
 
 export enum Key {

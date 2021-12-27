@@ -19,6 +19,7 @@ import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
 import * as Docs from 'ts/docs';
+import Onboarding from './onboarding';
 
 const Constant = require('json/constant.json');
 const Text = require('json/text.json');
@@ -58,4 +59,5 @@ export {
 	Decode,
 	Mapper,
 	Action,
+	Onboarding,
 };

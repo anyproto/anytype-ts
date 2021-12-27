@@ -210,6 +210,7 @@ declare global {
 		I: any;
 		Go: any;
 		Graph: any;
+		$: any;
 	}
 };
 
@@ -219,6 +220,7 @@ window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
 window.Go = (route: string) => { Util.route(route); };
+window.$ = $;
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, IconObject, Loader, Cover } from 'ts/component';
-import { I, C, DataUtil, Util, Storage, keyboard, Action } from 'ts/lib';
+import { I, C, DataUtil, Util, Storage, keyboard, Action, Onboarding } from 'ts/lib';
 import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -276,6 +276,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	componentDidUpdate () {
+		const { tab } = this.state;
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -283,6 +284,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			defaultHeight: 64,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		Onboarding.start(Util.toCamelCase('store-' + tab), this.props.isPopup);
 	};
 
 	componentWillUnmount () {
