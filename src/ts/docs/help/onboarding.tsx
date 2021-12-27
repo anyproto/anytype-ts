@@ -92,7 +92,26 @@ export default {
     'main/navigation': [
         {
             name: 'Navigation Panel',
-            description: 'Use a bi-directional connections to navigate up and down from the current opened object.',
+            description: 'Use a bi-directional connections to navigate up and down from the current opened object',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Center,
+                    classNameWrap: 'fixed',
+                    horizontal: I.MenuDirection.Center,
+                    vertical: I.MenuDirection.Center,
+                },
+                popup: {
+                    classNameWrap: 'fixed fromPopup',
+                }
+            }
+        }
+    ],
+
+    'main/graph': [
+        {
+            name: 'Graph view',
+            description: 'Displays a graph representation of Links and Relations between your objects',
             param: {
                 common: {
                     container: true,
