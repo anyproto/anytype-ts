@@ -1,7 +1,7 @@
 import { I } from 'ts/lib';
 
 export default {
-    'main/index': [
+    mainIndex: [
         {
             name: 'Welcome onboard!',
             description: 'Here is a few tips to understand the basics of Anytype',
@@ -70,7 +70,7 @@ export default {
         }
     ],
 
-    'main/type': [
+    mainType: [
         {
             name: 'Meet the Type',
             description: 'Types bring definition to your objects. Here you can manage layout, templates, and relations.<br/><a href="#">Click for more information</a>',
@@ -89,7 +89,7 @@ export default {
         }
     ],
 
-    'main/navigation': [
+    mainNavigation: [
         {
             name: 'Navigation Panel',
             description: 'Use a bi-directional connections to navigate up and down from the current opened object',
@@ -108,7 +108,7 @@ export default {
         }
     ],
 
-    'main/graph': [
+    mainGraph: [
         {
             name: 'Graph view',
             description: 'Displays a graph representation of Links and Relations between your objects',
@@ -127,11 +127,11 @@ export default {
         }
     ],
 
-    'set': [
+    set: [
 
     ],
 
-    'storeType': [
+    storeType: [
         {
             name: 'Library',
             description: 'Use it to create and manage Types, Templates and Relations.<br/><a href="#">Click for more information</a>',
@@ -150,7 +150,7 @@ export default {
         }
     ],
 
-    'storeRelation': [
+    storeRelation: [
         {
             name: 'Relations',
             description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object.<br/><a href="#">Click for more information</a>',
@@ -169,7 +169,7 @@ export default {
         }
     ],
 
-    'typeSelect': [
+    typeSelect: [
         {
             name: 'Choose a Type to start from',
             description: 'Types bring meaning to your objects. They manage relations and define the look provided by templates',

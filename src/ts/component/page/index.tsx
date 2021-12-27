@@ -177,7 +177,7 @@ class Page extends React.Component<Props, {}> {
 			keyboard.setMatch(match);
 		};
 
-		Onboarding.start([ match.params?.page, match.params?.action ].join('/'), isPopup);
+		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
 		
 		if (isPopup) {
 			return;
