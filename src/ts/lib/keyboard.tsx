@@ -32,7 +32,7 @@ class Keyboard {
 	init () {
 		this.unbind();
 		
-		let win = $(window); 
+		const win = $(window); 
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
@@ -48,6 +48,10 @@ class Keyboard {
 
 	onScroll (e: any) {
 		Util.tooltipHide(false);
+
+		const win = $(window); 
+
+		win.trigger('resize.menuOnboarding');
 	};
 
 	onMouseDown (e: any) {
