@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Docs, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -170,6 +170,7 @@ class Page extends React.Component<Props, {}> {
 		this.resize();
 		this.event();
 		this.unbind();
+		this.onboarding();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
 		
@@ -292,6 +293,30 @@ class Page extends React.Component<Props, {}> {
 			if (this.refChild && this.refChild.resize) {
 				this.refChild.resize();			
 			};			
+		});
+	};
+
+	onboarding () {
+		const match = this.getMatch();
+		const key = [ match.params.page, match.params.action ].join('/');
+		const items = Docs.Help.Onboarding[key];
+
+		if (!items || !items.length) {
+			return;
+		};
+
+		const item = items[0];
+		menuStore.open('onboarding', {
+			...item,
+			withArrow: true,
+			noAnimation: true,
+			noFlipY: true,
+			noFlipX: true,
+			data: {
+				key,
+				item,
+				current: 0,
+			},
 		});
 	};
 	

@@ -143,7 +143,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
 						<div className="side left">
-							{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+							<span>{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}</span>
 						</div>
 						
 						<div className="side right">
