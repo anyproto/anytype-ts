@@ -70,17 +70,18 @@ class Storage {
 	};
 
 	setOnboarding (key: string) {
-		const obj = this.get('onboarding') || {};
+		const keys = this.get('onboarding') || [];
 		
-		obj[key] = true;
+		if (!this.getOnboarding(key)) {
+			keys.push(key);
+		};
 
-		this.set('onboarding', obj, true);
-		return obj;
+		this.set('onboarding', keys, true);
+		return keys;
 	};
 
 	getOnboarding (key: string) {
-		const obj = this.get('onboarding') || {};
-		return obj[key];
+		return (this.get('onboarding') || []).includes(key);
 	};
 
 	logout () {

@@ -8,7 +8,7 @@ class Onboarding {
 	
 	start (key: string, isPopup: boolean, force?: boolean) {
 		const items = Docs.Help.Onboarding[key];
-		if (!items || !items.length/* || (!force && Storage.getOnboarding(key))*/) {
+		if (!items || !items.length || (!force && Storage.getOnboarding(key))) {
 			return;
 		};
 
@@ -23,7 +23,7 @@ class Onboarding {
 					noAnimation: true,
 					noFlipY: true,
 					noFlipX: true,
-					//onClose: () => { Storage.setOnboarding(key); },
+					onClose: () => { Storage.setOnboarding(key); },
 					data: {
 						...param.data,
 						key,
