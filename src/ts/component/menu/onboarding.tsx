@@ -1,6 +1,7 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Docs, Onboarding } from 'ts/lib';
+import { I, Docs, Onboarding, Util } from 'ts/lib';
 import { menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -25,8 +26,9 @@ class MenuOnboarding extends React.Component<Props, {}> {
 
 		return (
 			<div className="wrap">
-				<div className="name">{item.name}</div>
-				<div className="descr">{item.description}</div>
+				<div className="name"  dangerouslySetInnerHTML={{ __html: item.name }} />
+				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
+
 				<Icon className="close" onClick={this.onClose} />
 
 				{l > 1 ? (
@@ -38,6 +40,14 @@ class MenuOnboarding extends React.Component<Props, {}> {
 				) : ''}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
+	};
+
+	componentDidUpdate () {
+		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 
 	onClose () {

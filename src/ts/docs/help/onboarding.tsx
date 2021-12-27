@@ -77,7 +77,7 @@ export default {
     'storeType': [
         {
             name: 'Library',
-            description: 'Use it to create and manage Types, Templates and Relations. Click for more information',
+            description: 'Use it to create and manage Types, Templates and Relations.<br/><a href="#">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -95,7 +95,7 @@ export default {
     'storeRelation': [
         {
             name: 'Relations',
-            description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object. Click for more information',
+            description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object.<br/><a href="#">Click for more information</a>',
             param: {
                 common: {
                     container: true,

@@ -9,8 +9,10 @@
 		.name { @include text-paragraph; font-weight: 600; margin-bottom: 6px; width: calc(100% - 20px); }
 		.descr { line-height: 18px; }
 
+		a { color: #fff; text-decoration: underline; }
+
 		.icon.close { 
-			width: 16px; height: 16px; position: absolute; right: 16px; top: 16px; background-image: url('~img/icon/menu/onboarding/close0.svg'); 
+			width: 16px; height: 16px; position: absolute; right: 14px; top: 16px; background-image: url('~img/icon/menu/onboarding/close0.svg'); 
 			cursor: pointer;
 		}
 		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
