@@ -322,9 +322,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			{ id: 'list', name: 'List', children: DataUtil.menuGetBlockList() },
 			{ id: 'media', name: 'Media', children: DataUtil.menuGetBlockMedia() },
 			{ id: 'other', name: 'Other', children: DataUtil.menuGetBlockOther() },
-			{ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() },
 			{ id: 'object', name: 'Objects', children: DataUtil.menuGetBlockObject() },
 		];
+
+		if (config.experimental) {
+			sections.push({ id: 'dataview', name: 'Set', children: DataUtil.menuGetBlockDataview() });
+		};
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((c: any) => {
