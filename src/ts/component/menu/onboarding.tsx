@@ -47,6 +47,13 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	};
 
 	componentDidUpdate () {
+		const { param } = this.props;
+		const { data } = param;
+
+		if (data.onShow) {
+			data.onShow();
+		};
+
 		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 
@@ -55,8 +62,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	};
 
 	onArrow (e: any, dir: number) {
-		const { param } = this.props;
-		const { data } = param;
+		const { data } = this.props.param;
 		const { key, current, isPopup } = data;
 		const items = Docs.Help.Onboarding[key];
 
@@ -71,10 +77,13 @@ class MenuOnboarding extends React.Component<Props, {}> {
 			return;
 		};
 
+		const param = Onboarding.getParam(item, isPopup);
+
 		menuStore.open('onboarding', {
-			...Onboarding.getParam(item, isPopup),
+			...param,
 			data: {
 				...data,
+				...param.data,
 				current: next,
 			},
 		});

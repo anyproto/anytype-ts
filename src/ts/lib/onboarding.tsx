@@ -16,13 +16,16 @@ class Onboarding {
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {
+				const param = this.getParam(items[0], isPopup);
+
 				menuStore.open('onboarding', {
-					...this.getParam(items[0], isPopup),
+					...param,
 					noAnimation: true,
 					noFlipY: true,
 					noFlipX: true,
 					//onClose: () => { Storage.setOnboarding(key); },
 					data: {
+						...param.data,
 						key,
 						current: 0,
 						isPopup: isPopup,
@@ -46,12 +49,16 @@ class Onboarding {
 			param = item.param;
 		};
 
-		param.element = param.element || '';
+		param.element = String(param.element || '');
 		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
 		param.offsetY = Number(param.offsetY) || 0;
 		param.offsetX = Number(param.offsetX) || 0;
 		param.withArrow = param.element ? true : false;
+		param.className = String(param.className || '');
+		param.classNameWrap = String(param.classNameWrap || '');
+		param.rect = null;
+		param.recalcRect = null;
 		
 		if (param.container) {
 			param.containerVertical = Number(param.containerVertical) || I.MenuDirection.Top;

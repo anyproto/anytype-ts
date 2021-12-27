@@ -1,5 +1,7 @@
 import { I } from 'ts/lib';
 
+const Constant = require('json/constant.json');
+
 export default {
     mainIndex: [
         {
@@ -35,7 +37,7 @@ export default {
             description: 'Keychain phrase, themes, import and export are here',
             param: {
                 element: '#header .icon.settings',
-                classNameWrap: 'fromHeader',
+                classNameWrap: 'fixed fromHeader',
                 horizontal: I.MenuDirection.Right,
                 offsetY: 14,
             }
@@ -128,7 +130,112 @@ export default {
     ],
 
     set: [
+        {
+            name: 'Manage multiple objects in Set',
+            description: 'Here are all objects which meet a specific criteria: same type and relation. Sets don\'t store objects.<br/><a href="#">Click for more information</a>',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Center,
+                    classNameWrap: 'fixed',
+                    horizontal: I.MenuDirection.Center,
+                    vertical: I.MenuDirection.Center,
+                },
+                popup: {
+                    classNameWrap: 'fixed fromPopup',
+                }
+            }
+        },
+        {
+            name: 'Add View',
+            description: 'Show objects in Grid, List and Gallery views. Use separate filters and sorts for different workflows',
+            param: {
+                element: '.dataviewControls #sideLeft span',
+                offsetY: 10,
+            }
+        },
+        {
+            name: 'Set it up',
+            description: 'Manage Filters, Sorts, Relations and columns here',
+            param: {
+                element: '.dataviewControls #button-manager',
+                vertical: I.MenuDirection.Top,
+                horizontal: I.MenuDirection.Right,
+                offsetY: -18,
+            }
+        }
+    ],
 
+    template: [
+        {
+            name: 'Template',
+            description: 'Set up blocks, their styles and structure on canvas, save relations with values.<br/><a href="#">Click for more information</a>',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Center,
+                    classNameWrap: 'fixed',
+                    horizontal: I.MenuDirection.Center,
+                    vertical: I.MenuDirection.Center,
+                },
+                popup: {
+                    classNameWrap: 'fixed fromPopup',
+                }
+            }
+        }
+    ],
+
+    editor: [
+        {
+            name: 'This is object',
+            description: 'You can write text, use blocks to create media, change Type, and manage objects specific relations',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Center,
+                    classNameWrap: 'fixed',
+                    horizontal: I.MenuDirection.Center,
+                    vertical: I.MenuDirection.Center,
+                },
+                popup: {
+                    classNameWrap: 'fixed fromPopup',
+                }
+            }
+        },
+        {
+            name: 'Navigation bar',
+            description: 'You can open Home, go back and forward in “browsing” history. Use navigation, graph and search',
+            param: {
+                element: '#header .side.left .icon.home.big',
+                offsetY: 10,
+                classNameWrap: 'fixed fromHeader',
+            }
+        },
+        {
+            name: 'Object’s Relations',
+            description: 'Here you can find the list of all relations coming from this object and some suggested from Type and Sets',
+            param: {
+                element: '.editorControls #button-relation',
+                offsetY: 10,
+                onClose: () => {
+                    $('.editorControls').removeClass('active');
+                },
+                data: {
+                    onShow: () => {
+                        $('.editorControls').addClass('active');
+                    }
+                },
+            }
+        },
+        {
+            name: 'Featured relations',
+            description: 'You can change Type and feature any other relations here. Click “Relations” above for management',
+            param: {
+                element: '#block-featuredRelations #blockFeatured-type-0',
+                offsetX: Constant.size.blockMenu,
+                offsetY: 10,
+            }
+        },
     ],
 
     storeType: [
