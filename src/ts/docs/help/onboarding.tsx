@@ -70,6 +70,44 @@ export default {
         }
     ],
 
+    'main/type': [
+        {
+            name: 'Meet the Type',
+            description: 'Types bring definition to your objects. Here you can manage layout, templates, and relations.<br/><a href="#">Click for more information</a>',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Center,
+                    classNameWrap: 'fixed',
+                    horizontal: I.MenuDirection.Center,
+                    vertical: I.MenuDirection.Center,
+                },
+                popup: {
+                    classNameWrap: 'fixed fromPopup',
+                }
+            }
+        }
+    ],
+
+    'main/navigation': [
+        {
+            name: 'Navigation Panel',
+            description: 'Use a bi-directional connections to navigate up and down from the current opened object.',
+            param: {
+                common: {
+                    container: true,
+                    containerVertical: I.MenuDirection.Center,
+                    classNameWrap: 'fixed',
+                    horizontal: I.MenuDirection.Center,
+                    vertical: I.MenuDirection.Center,
+                },
+                popup: {
+                    classNameWrap: 'fixed fromPopup',
+                }
+            }
+        }
+    ],
+
     'set': [
 
     ],

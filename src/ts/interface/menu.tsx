@@ -11,6 +11,7 @@ export interface MenuParam {
 	menuKey?: string;
 	element?: any;
 	rect?: any;
+	recalcRect?(): { width: number, height: number, x: number, y: number };
 	type?: MenuType;
 	vertical?: MenuDirection;
 	horizontal?: MenuDirection;

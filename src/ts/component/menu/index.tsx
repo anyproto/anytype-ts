@@ -373,7 +373,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	
 	position () {
 		const { id, param } = this.props;
-		const { element, rect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
+		const { element, recalcRect, type, vertical, horizontal, fixedX, fixedY, isSub, noFlipX, noFlipY, withArrow } = param;
 		const platform = Util.getPlatform();
 
 		raf(() => {
@@ -393,6 +393,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
 			const offsetX = Number('function' == typeof(param.offsetX) ? param.offsetX() : param.offsetX) || 0;
 			const offsetY = Number('function' == typeof(param.offsetY) ? param.offsetY() : param.offsetY) || 0;
+			const rect = recalcRect ? recalcRect() : param.rect;
 
 			let ew = 0;
 			let eh = 0;

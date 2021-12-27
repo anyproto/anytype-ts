@@ -57,28 +57,37 @@ class Onboarding {
 			param.containerVertical = Number(param.containerVertical) || I.MenuDirection.Top;
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
-			const container = Util.getScrollContainer(isPopup);
-			const height = container.height();
-			const width = container.width();
+			const recalcRect = () => {
+				const container = Util.getScrollContainer(isPopup);
+				const height = container.height();
+				const width = container.width();
+				const scrollTop = $(window).scrollTop();
+
+				let offset = { left: 0, top: 0 };
+				let rect: any = { x: 0, y: 0, width: 0, height: 0 };
+	
+				if (isPopup) {
+					offset = container.offset();
+				};
+	
+				switch (param.containerVertical) {
+					case I.MenuDirection.Top:
+						rect = { x: offset.left, y: offset.top, width: width, height: 0 };
+						break;
+	
+					case I.MenuDirection.Center:
+						rect = { x: offset.left, y: offset.top + height / 2, width: width, height: 0 };
+						break;
+	
+					case I.MenuDirection.Bottom:
+						rect = { x: offset.left, y: offset.top + height, width: width, height: 0 };
+						break;
+				};
+
+				return { ...rect, y: rect.y + scrollTop };
+			};
 			
-			let offset = { left: 0, top: 0 };
-			let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-
-			if (isPopup) {
-				offset = container.offset();
-			};
-
-			switch (param.containerVertical) {
-				case I.MenuDirection.Top:
-					rect = { x: offset.left, y: offset.top, width: width, height: 0 };
-					break;
-
-				case I.MenuDirection.Bottom:
-					rect = { x: offset.left, y: offset.top + height, width: width, height: 0 };
-					break;
-			};
-
-			param.rect = rect;
+			param.recalcRect = recalcRect;
 			param.element = null;
 		};
 

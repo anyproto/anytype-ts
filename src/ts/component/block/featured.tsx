@@ -516,8 +516,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (!isPopup) {
 			param.fixedY = Util.sizeHeader();
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
+			param.classNameWrap = 'fixed fromHeader';
 		};
 
 		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });

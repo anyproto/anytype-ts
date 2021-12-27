@@ -140,8 +140,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 			const element = $(elementId);
 
 			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
+			param.classNameWrap = 'fixed fromHeader';
 		} else {
 			param.offsetY = 4;
 		};
@@ -169,8 +168,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Pro
 		if (!isPopup) {
 			const element = $(elementId);
 			param.fixedY = element.offset().top + element.height() + 4 - st;
-			param.className = 'fixed';
-			param.classNameWrap = 'fromHeader';
+			param.classNameWrap = 'fixed fromHeader';
 		} else {
 			param.offsetY = 4;
 		};
