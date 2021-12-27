@@ -1,6 +1,6 @@
 {
 	"name": "anytype2",
-	"version": "0.22.4-alpha",
+	"version": "0.22.6-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -16,13 +16,13 @@
 		"start:dev-addon": "ANYTYPE_USE_ADDON=1 npm-run-all start:dev",
 		"build": "webpack --mode=production --env.NODE_ENV=production  -p --config webpack.config.js",
 		"build:deps": "webpack --config webpack.node.config.js --display-modules --display-cached | grep \"node_modules\" | sed 's/.*\\(node_modules\\/[^\\/]*\\).*/\\1/' | uniq | node save-node-deps.js",
-		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos",
-		"dist:arm": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --arm64",
+		"dist:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --windows",
 		"dist:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux",
 		"publish:mac": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
 		"publish:linux": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
-		"publish:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always"
+		"publish:win": "webpack --mode=production --env.NODE_ENV=production -p && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
+		"postinstall": "npx patch-package && electron-builder install-app-deps"
 	},
 	"repository": {
 		"type": "git",
@@ -57,7 +57,7 @@
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
 		"electron": "^16.0.4",
-		"electron-builder": "^22.9.1",
+		"electron-builder": "^22.14.5",
 		"electron-notarize": "^0.2.1",
 		"git-revision-webpack-plugin": "^3.0.6",
 		"ifdef-loader": "^2.1.5",
@@ -96,7 +96,7 @@
 		"electron-is-dev": "^2.0.0",
 		"electron-json-storage": "^4.3.0",
 		"electron-log": "^3.0.9",
-		"electron-updater": "^4.3.7",
+		"electron-updater": "^4.6.1",
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^2.11.2",
@@ -117,7 +117,7 @@
 		"is": "^3.3.0",
 		"jquery": "^3.5.1",
 		"katex": "^0.13.13",
-		"keytar": "^7.0.0",
+		"keytar": "^7.7.0",
 		"latex.js": "^0.12.4",
 		"lazy-val": "^1.0.4",
 		"linebyline": "^1.3.0",
@@ -138,6 +138,7 @@
 		"npm-run-all": "^4.1.5",
 		"object-assign": "^4.1.1",
 		"os": "^0.1.1",
+		"patch-package": "^6.4.7",
 		"pdfjs-dist": "^2.10.377",
 		"portfinder-sync": "0.0.2",
 		"prismjs": "^1.21.0",
@@ -174,8 +175,12 @@
 		"xtend": "^4.0.2"
 	},
 	"build": {
+		"npmRebuild": true,
+		"buildDependenciesFromSource": true,
 		"generateUpdatesFilesForAllChannels": true,
+		"beforeBuild": "./electron/beforebuild.js",
 		"afterSign": "./electron/notarize.js",
+		"afterPack": "./electron/afterpack.js",
 		"appId": "com.anytype.anytype2",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -513,15 +518,13 @@
 			"gatekeeperAssess": false,
 			"entitlements": "electron/entitlements.mac.plist",
 			"entitlementsInherit": "electron/entitlements.mac.plist",
-			"target": [
-				{
-					"target": "default",
-					"arch": [
-						"x64",
-						"arm64"
-					]
-				}
-			],
+			"target": {
+				"target": "default",
+				"arch": [
+					"x64",
+					"arm64"
+				]
+			},
 			"identity": "6SFR4648FW",
 			"category": "public.app-category.productivity",
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
