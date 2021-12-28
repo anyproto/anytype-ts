@@ -80,7 +80,6 @@ class Page extends React.Component<Props, {}> {
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
-			Storage.set('firstRun', 1);
 		};
 
 		const Component = Components[path];
@@ -243,12 +242,18 @@ class Page extends React.Component<Props, {}> {
 	};
 	
 	event () {
-		const match = this.getMatch();
-		const page = String(match.params.page || 'index');
-		const action = String(match.params.action || 'index');
-		const path = [ 'page', page, action ].join('-');
-		
-		analytics.event(Util.toUpperCamelCase(path));
+		let match = this.getMatch();
+		let page = String(match.params.page || 'index');
+		let action = String(match.params.action || 'index');
+		let showNotice = !Boolean(Storage.get('firstRun'));
+
+		if (showNotice) {
+			page = 'auth';
+			action = 'notice';
+			Storage.set('firstRun', 1);
+		};
+
+		analytics.event('page', { params: { page, action } });
 	};
 	
 	getClass (prefix: string) {

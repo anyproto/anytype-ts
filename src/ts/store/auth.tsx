@@ -15,7 +15,6 @@ class AuthStore {
 	public name: string = '';
 	public phrase: string = '';
 	public code: string = '';
-	public deviceId: string = '';
 	public threadMap: Map<string, any> = new Map();
 
 	constructor () {
@@ -61,10 +60,6 @@ class AuthStore {
 		return String(this.dataPath || '');
     };
 
-	get device (): string {
-		return String(this.deviceId || '');
-    };
-
 	pathSet (v: string) {
 		this.dataPath = v;
     };
@@ -92,10 +87,6 @@ class AuthStore {
 	nameSet (v: string) {
 		this.name = v;
     };
-
-	deviceSet (v: string) {
-		this.deviceId = v;
-	};
 
 	accountAdd (account: I.Account) {
 		this.accountList.push(account);
@@ -141,6 +132,8 @@ class AuthStore {
 	};
 
 	logout () {
+		analytics.event('LogOut');
+
 		Storage.logout();
 
 		keyboard.setPinChecked(false);

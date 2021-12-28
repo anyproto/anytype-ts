@@ -326,7 +326,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.setState({ tab: id });
 
 		Storage.set('tabIndex', id);
-		analytics.event('TabHome', { tab: tab.name });
+		analytics.event('SelectHomeTab', { tab: tab.name });
 
 		this.load();
 	};
@@ -426,6 +426,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
+
+		analytics.event('SearchinTab');
 	};
 
 	onAccount () {

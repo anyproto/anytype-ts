@@ -538,7 +538,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		const ids = DataUtil.selectionGet(blockId, false, data);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: item.itemId });
 
 		switch (item.itemId) {
 			case 'download':

@@ -37,7 +37,6 @@ class PopupStore {
 			this.popupList.push({ id: id, param: param });
 		};
 
-		analytics.event(Util.toCamelCase('Popup-' + id), param.data);
 		menuStore.closeAll();
 	};
 

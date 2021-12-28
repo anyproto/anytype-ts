@@ -9,11 +9,11 @@ const version = app.getVersion();
 const os = window.require('os');
 
 const KEYS = [ 
-	'cmd', 'id', 'action', 'style', 'code', 
+	'method', 'id', 'action', 'style', 'code', 
 	'type', 'objectType', 'layout', 'template', 
 	'tab', 'document', 'page', 'count', 'context', 'originalId'
 ];
-const SKIP_IDS = [ 'BlockOpenBreadcrumbs', 'BlockSetBreadcrumbs' ];
+const SKIP_IDS = [];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
@@ -33,7 +33,7 @@ class Analytics {
 		};
 
 		const platform = Util.getPlatform();
-		const { account, device } = authStore;
+		const { account } = authStore;
 
 		C.MetricsSetParameters(platform);
 
@@ -52,7 +52,6 @@ class Analytics {
 			platform: Util.getPlatform(),
 			osVersion: os.release(),
 		});
-		this.instance.setDeviceId(device);
 
 		if (this.debug()) {
 			console.log('[Analytics.init]', this.instance);
@@ -72,6 +71,14 @@ class Analytics {
 		this.instance.setUserId(account.id);
 	};
 
+	device (id: string) {
+		if (!this.instance || (!isProduction && !this.debug())) {
+			return;
+		};
+
+		this.instance.setDeviceId(id);
+	};
+
 	setContext (context: string, id: string) {
 		Storage.set(KEY_CONTEXT, context);
 		Storage.set(KEY_ORIGINAL_ID, id);
@@ -82,29 +89,19 @@ class Analytics {
 	};
 
 	event (code: string, data?: any) {
-		if (!this.instance) {
+		if (!this.instance || (!isProduction && !this.debug()) || !code) {
 			return;
 		};
 
-		if ((!isProduction && !this.debug()) || !code) {
-			return;
-		};
-
-		if (SKIP_IDS.indexOf(code) >= 0) {
-			return;
-		};
-		
+		const converted: any = {};
 		data = data || {};
 
 		let param: any = { 
 			middleTime: Number(data.middleTime) || 0, 
-			renderTime: Number(data.renderTime) || 0,
 			context: String(Storage.get(KEY_CONTEXT) || ''),
 			originalId: String(Storage.get(KEY_ORIGINAL_ID) || ''),
 		};
 
-		const converted: any = {};
-		
 		for (let k of KEYS) {
 			if (undefined !== data[k]) {
 				converted[k] = data[k];
@@ -121,6 +118,18 @@ class Analytics {
 		switch (code) {
 			default:
 				param = Object.assign(param, converted);
+				break;
+
+			case 'page':
+				code = this.pageMapper(data.params);
+				break;
+
+			case 'popup':
+				code = this.popupMapper(data.params);
+				break;
+
+			case 'settings':
+				code = this.settingsMapper(data.params);
 				break;
 
 			case 'BlockCreate':
@@ -165,6 +174,10 @@ class Analytics {
 				break;
 		};
 
+		if (!code) {
+			return;
+		};
+
 		if (this.debug()) {
 			console.log('[Analytics.event]', code, param);
 		};
@@ -200,6 +213,48 @@ class Analytics {
 		data.div[I.DivStyle.Dot]			 = 'Dot';
 
 		return data[type][style];
+	};
+
+	pageMapper (params: any): string {
+		const { page, action } = params;
+		const key = [ page, action ].join('/');
+		const map = {
+			'index/index':	 'ScreenIndex',
+			'auth/notice':	 'ScreenDisclaimer',
+			'auth/login':	 'ScreenLogin',
+			'auth/register': 'ScreenAuthRegistration',
+			'auth/invite':	 'ScreenAuthInvitation',
+
+			'main/index':	 'ScreenHome',
+		};
+
+		return map[key] || '';
+	};
+
+	popupMapper (params: any): string {
+		const { id } = params;
+		const map = {
+			settings: 'ScreenSettings',
+		};
+
+		return map[id] || '';
+	};
+
+	settingsMapper (params: any): string {
+		const { id } = params;
+		const prefix = 'ScreenSettings';
+
+		const map = {
+			index: '',
+			phrase: 'Keychain',
+			pinIndex: 'PinCode',
+			importIndex: 'Import',
+			importNotion: 'ImportNotion',
+			exportMarkdown: 'Export',
+		};
+
+		const code = (undefined !== map[id]) ? map[id] : id;
+		return code ? Util.toCamelCase([ prefix, code ].join('-')) : '';
 	};
 	
 };

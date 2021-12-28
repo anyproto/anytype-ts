@@ -315,6 +315,7 @@ class App extends React.Component<Props, State> {
 	init () {
 		Util.init(history);
 		keyboard.init();
+		analytics.init();
 		
 		Storage.delete('lastSurveyCanceled');
 

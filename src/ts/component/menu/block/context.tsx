@@ -117,7 +117,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 
 		keyboard.disableContext(true);
 		focus.set(blockId, range);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: type });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { id: type });
 
 		if (type != 'style') {
 			focus.apply();

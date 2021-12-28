@@ -251,7 +251,7 @@ class Keyboard {
 
 		this.restoreSource();
 
-		analytics.event('HistoryBack');
+		//analytics.event('HistoryBack');
 	};
 
 	forward () {
@@ -267,7 +267,7 @@ class Keyboard {
 			Util.history.goForward();
 		};
 
-		analytics.event('HistoryForward');
+		//analytics.event('HistoryForward');
 	};
 
 	checkBack (): boolean {

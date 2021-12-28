@@ -5,6 +5,7 @@ import { Frame, Cover, Title, Label, Error, Button, IconObject, HeaderAuth as He
 import { Storage, translate, C, DataUtil, Util } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
+import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {}
 interface State {
@@ -144,6 +145,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 
 						authStore.accountSet(message.account);
 						DataUtil.onAuth();
+
+						analytics.event('OpenAccount');
 					};
 				});
 			} else {
@@ -174,6 +177,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 				authStore.previewSet('');
 
 				ipcRenderer.send('keytarSet', accountId, phrase);
+				analytics.event('CreateAccount');
 				
 				if (match.params.id == 'register') {
 					Util.route('/auth/success');

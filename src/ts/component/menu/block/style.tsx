@@ -143,7 +143,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		close();
 		onSelect(item);
 
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { style: item.itemId });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { style: item.itemId });
 		
 		if (selection) {
 			selection.clear();

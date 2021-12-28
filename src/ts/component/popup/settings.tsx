@@ -573,6 +573,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		this.prevPage = page;
 		popupStore.updateData(this.props.id, { page: id });
+
+		analytics.event('settings', { params: { id } });
 	};
 
 	onCover (item: any) {
@@ -702,7 +704,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onTypeChange (id: string) {
 		commonStore.defaultTypeSet(id);
-		analytics.event('DefaultTypeChanged', { objectType: id });
+		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 
 	init () {

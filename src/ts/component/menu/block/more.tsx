@@ -402,7 +402,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		focus.clear(false);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { action: item.id });
+		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { action: item.id });
 		
 		switch (item.id) {
 
