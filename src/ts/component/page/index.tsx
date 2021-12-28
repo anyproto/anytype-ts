@@ -189,6 +189,8 @@ class Page extends React.Component<Props, {}> {
 
 			if (isMainIndex) {
 				if (account && askSurvey && !popupStore.isOpen() && !lastSurveyCanceled && (lastSurveyTime <= Util.time() - 86400 * days)) {
+					analytics.event('SurveyShow');
+
 					popupStore.open('confirm', {
 						data: {
 							title: 'We need your opinion',
@@ -199,6 +201,8 @@ class Page extends React.Component<Props, {}> {
 							onConfirm: () => {
 								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
+
+								analytics.event('SurveyOpen');
 							},
 							onCancel: () => {
 								Storage.set('lastSurveyCanceled', 1);

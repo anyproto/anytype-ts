@@ -5,6 +5,7 @@ import { I, C, DataUtil, Util, Storage, keyboard, Action } from 'ts/lib';
 import { dbStore, blockStore, detailStore, popupStore, } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	isPopup?: boolean;
@@ -339,6 +340,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		Storage.set('tabStore', id);
+		analytics.event(Util.toCamelCase([ 'ScreenLibrary', id ].join('-')));
 
 		this.state.tab = id;
 		this.setState({ tab: id, loading: true });

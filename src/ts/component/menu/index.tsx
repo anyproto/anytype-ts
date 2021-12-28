@@ -59,6 +59,7 @@ import MenuDataviewOptionValues from './dataview/option/values';
 import MenuDataviewDate from './dataview/date';
 import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
+import { analytics } from '../../lib';
 
 interface Props extends I.Menu {
 	dataset?: any;
@@ -236,7 +237,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	};
 	
 	componentDidMount () {
-		const { param } = this.props;
+		const { id, param } = this.props;
 		const { onOpen, classNameWrap } = param;
 
 		this._isMounted = true;
@@ -271,6 +272,8 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		if (classNameWrap) {
 			node.addClass(classNameWrap);
 		};
+
+		analytics.event('menu', { params: { id } });
 	};
 
 	componentDidUpdate () {

@@ -6,6 +6,7 @@ import { commonStore, blockStore, detailStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import { analytics } from '../../lib';
 
 interface Props extends I.Popup {};
 
@@ -374,7 +375,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
-			this.setState({ filter: Util.filterFix(this.ref.getValue()) });
+			const value = Util.filterFix(this.ref.getValue());
+			this.setState({ filter: value });
+
+			analytics.event('SearchQuery', { type: 'ScreenSearch', length: value.length });
 		}, force ? 0 : 50);
 	};
 
@@ -455,44 +459,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		};
 		e.stopPropagation();
 
-		const { param, close } = this.props;
-		const { data } = param;
-		const { rootId, type, blockId, blockIds, position } = data;
+		this.props.close();
 
-		close();
+		const filter = Util.filterFix(this.ref.getValue());
+		analytics.event('ScreenSearchResult', { index: item.index + 1, length: filter.length });
 
-		let newBlock: any = {};
-		switch (type) {
-			case I.NavigationType.Go:
-				crumbs.cut(I.CrumbsType.Page, 0, () => {
-					DataUtil.objectOpenEvent(e, { ...item, id: item.id });
-				});
-				break;
-
-			case I.NavigationType.Move:
-				C.BlockListMove(rootId, item.id, blockIds, '', I.BlockPosition.Bottom);
-				break;
-
-			case I.NavigationType.Link:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: String(item.id || ''),
-					}
-				};
-				C.BlockCreate(newBlock, rootId, blockId, position);
-				break;
-
-			case I.NavigationType.LinkTo:
-				newBlock = {
-					type: I.BlockType.Link,
-					content: {
-						targetBlockId: blockId,
-					}
-				};
-				C.BlockCreate(newBlock, item.id, '', position);
-				break;
-		};
+		crumbs.cut(I.CrumbsType.Page, 0, () => {
+			DataUtil.objectOpenEvent(e, { ...item, id: item.id });
+		});
 	};
 
 	resize () {

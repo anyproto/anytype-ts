@@ -124,9 +124,8 @@ class Keyboard {
 				popupStore.open('search', { 
 					preventResize: true,
 					data: { 
-						type: I.NavigationType.Go, 
 						disableFirstKey: true,
-						rootId: rootId,
+						rootId,
 					}, 
 				});
 			});
@@ -251,7 +250,7 @@ class Keyboard {
 
 		this.restoreSource();
 
-		//analytics.event('HistoryBack');
+		analytics.event('HistoryBack');
 	};
 
 	forward () {
@@ -267,7 +266,7 @@ class Keyboard {
 			Util.history.goForward();
 		};
 
-		//analytics.event('HistoryForward');
+		analytics.event('HistoryForward');
 	};
 
 	checkBack (): boolean {

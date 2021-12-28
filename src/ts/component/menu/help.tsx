@@ -2,6 +2,7 @@ import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, Util } from 'ts/lib';
 import { authStore, popupStore, blockStore, detailStore } from 'ts/store';
+import { analytics } from '../../lib';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -21,8 +22,8 @@ class MenuHelp extends React.Component<Props, {}> {
 	render () {
 		const items: any[] = [
 			{ id: 'feedback', name: 'Send Feedback' },
-			{ id: 'docs', name: 'Help & Tutorials' },
-			{ id: 'help', name: 'What\'s new', document: 'whatsNew' },
+			{ id: 'tutorial', name: 'Help & Tutorials' },
+			{ id: 'whatsNew', name: 'What\'s new', document: 'whatsNew' },
 			{ id: 'community', name: 'Join our Community' },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts' },
 		];
@@ -37,10 +38,13 @@ class MenuHelp extends React.Component<Props, {}> {
 	};
 
 	onClick (e: any, item: any) {
-		this.props.close();
+		const { getId, close } = this.props;
+
+		close();
+		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
 
 		switch (item.id) {
-			case 'help':
+			case 'whatsNew':
 				popupStore.open('help', {
 					data: { document: item.document },
 				});
@@ -58,11 +62,12 @@ class MenuHelp extends React.Component<Props, {}> {
 				ipcRenderer.send('urlOpen', Url.community);
 				break;
 
-			case 'docs':
+			case 'tutorial':
 				ipcRenderer.send('urlOpen', Url.docs);
 				break;
 
 		};
+
 	};
 
 };

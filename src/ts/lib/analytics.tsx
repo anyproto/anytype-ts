@@ -10,8 +10,8 @@ const os = window.require('os');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 
-	'type', 'objectType', 'layout', 'template', 
-	'tab', 'document', 'page', 'count', 'context', 'originalId'
+	'type', 'objectType', 'layout', 'template', 'index',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
 const SKIP_IDS = [];
 const KEY_CONTEXT = 'analyticsContext';
@@ -128,6 +128,10 @@ class Analytics {
 				code = this.popupMapper(data.params);
 				break;
 
+			case 'menu':
+				code = this.menuMapper(data.params);
+				break;
+
 			case 'settings':
 				code = this.settingsMapper(data.params);
 				break;
@@ -219,13 +223,17 @@ class Analytics {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
 		const map = {
-			'index/index':	 'ScreenIndex',
-			'auth/notice':	 'ScreenDisclaimer',
-			'auth/login':	 'ScreenLogin',
-			'auth/register': 'ScreenAuthRegistration',
-			'auth/invite':	 'ScreenAuthInvitation',
+			'index/index':		 'ScreenIndex',
+			'auth/notice':		 'ScreenDisclaimer',
+			'auth/login':		 'ScreenLogin',
+			'auth/register':	 'ScreenAuthRegistration',
+			'auth/invite':		 'ScreenAuthInvitation',
 
-			'main/index':	 'ScreenHome',
+			'main/index':		 'ScreenHome',
+			'main/graph':		 'ScreenGraph',
+			'main/navigation':	 'ScreenNavigation',
+			'main/type':		 'ScreenType',
+			'main/relation':	 'ScreenRelation',
 		};
 
 		return map[key] || '';
@@ -235,6 +243,16 @@ class Analytics {
 		const { id } = params;
 		const map = {
 			settings: 'ScreenSettings',
+			search: 'ScreenSearch',
+		};
+
+		return map[id] || '';
+	};
+
+	menuMapper (params: any): string {
+		const { id } = params;
+		const map = {
+			help: 'MenuHelp',
 		};
 
 		return map[id] || '';

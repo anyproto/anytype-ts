@@ -117,10 +117,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 		popupStore.open('search', {
 			preventResize: true, 
-			data: {
-				rootId: rootId,
-				type: I.NavigationType.Go, 
-			},
+			data: { rootId },
 		});
 	};
 
