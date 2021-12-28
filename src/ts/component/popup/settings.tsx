@@ -205,7 +205,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								className="isBlurred"
 								onFocus={this.onFocusPhrase} 
 								onBlur={this.onBlurPhrase} 
-								onCopy={() => { analytics.event('ScreenSettingsKeychainCopy'); }}
+								onCopy={() => { analytics.event('KeychainCopy', { route: 'ScreenSettings' }); }}
 								placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 								readonly={true} 
 							/>
@@ -527,7 +527,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		this.refPhrase.select();
 		this.elementUnblur(e);
 
-		analytics.event('ScreenSettingsKeychainShow');
+		analytics.event('KeychainShow', { route: 'ScreenSettings' });
 	};
 
 	onBlurPhrase (e: any) {
