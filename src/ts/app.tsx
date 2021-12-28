@@ -486,7 +486,6 @@ class App extends React.Component<Props, State> {
 		ipcRenderer.on('download-progress', this.onProgress);
 
 		ipcRenderer.on('update-downloaded', (e: any, text: string) => {
-			Storage.delete('popupNewBlock');
 			commonStore.progressClear(); 
 		});
 
