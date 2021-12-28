@@ -945,6 +945,10 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 };
 
 const OnSubscribe = (subId: string, keys: string[], message: any) => {
+	if (message.error.code) {
+		return;
+	};
+
 	if (message.counters) {
 		dbStore.metaSet(subId, '', { total: message.counters.total });
 	};
