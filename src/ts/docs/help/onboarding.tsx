@@ -215,14 +215,12 @@ export default {
             name: 'Object’s Relations',
             description: 'Here you can find the list of all relations coming from this object and some suggested from Type and Sets',
             param: {
-                element: '.editorControls #button-relation',
+                element: '.editorControlElements #button-relation',
                 offsetY: 10,
-                onClose: () => {
-                    $('.editorControls').removeClass('active');
-                },
+                onClose: () => { $('.editorControlElements').removeClass('active'); },
                 data: {
                     onShow: () => {
-                        $('.editorControls').addClass('active');
+                        $('.editorControlElements').addClass('active');
                     }
                 },
             }
