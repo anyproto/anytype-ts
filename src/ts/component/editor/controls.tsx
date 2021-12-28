@@ -181,9 +181,6 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};

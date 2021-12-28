@@ -10,7 +10,7 @@ const os = window.require('os');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route',
-	'type', 'objectType', 'relationKey', 'layout', 'template', 'index',
+	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
 const KEY_CONTEXT = 'analyticsContext';
@@ -129,10 +129,6 @@ class Analytics {
 				data.relationKey = data.params.id;
 				break;
 
-			case 'ChangeRecommendedLayout':
-				data.layout = translate('layout' + data.layout);
-				break;
-
 			case 'SettingsWallpaperSet':
 				data.type = this.coverTypeMapper(data.type);
 				data.id = data.id.replace(/^c([\d]+)/, '$1');
@@ -159,6 +155,14 @@ class Analytics {
 
 		if (converted.relationKey && !converted.relationKey.match(/^_/)) {
 			converted.relationKey = 'custom';
+		};
+
+		if (undefined !== converted.layout) {
+			converted.layout = I.ObjectLayout[converted.layout].toLowerCase();
+		};
+
+		if (undefined !== converted.align) {
+			converted.align = I.BlockAlign[converted.align].toLowerCase();
 		};
 
 		param = Object.assign(param, converted);

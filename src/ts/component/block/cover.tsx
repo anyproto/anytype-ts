@@ -252,9 +252,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};

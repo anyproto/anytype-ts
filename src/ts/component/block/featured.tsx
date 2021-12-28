@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, DataUtil, Util, focus } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, analytics } from 'ts/lib';
 import { Cell } from 'ts/component';
 import { observer } from 'mobx-react';
 import { blockStore, detailStore, dbStore, menuStore } from 'ts/store';
@@ -385,6 +385,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					onSelect: (item: any) => {
 						C.BlockObjectTypeSet(rootId, item.id);
 						this.menuContext.close();
+
+						analytics.event('ChangeObjectType', { objectType: item.id });
 					},
 					dataSort: (c1: any, c2: any) => {
 						let i1 = types.indexOf(c1.id);

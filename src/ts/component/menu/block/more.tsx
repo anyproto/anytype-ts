@@ -332,45 +332,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'type':
-				menuId = 'searchObject';
-				menuParam.vertical = I.MenuDirection.Bottom;
-				menuParam.className = [ param.className, 'single' ].join(' ');
-				menuParam.offsetY = -36;
-
-				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-					],
-					onSelect: (item: any) => {
-						C.BlockObjectTypeSet(rootId, item.id);
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-
-			case 'layout':
-				menuId = 'select';
-
-				menuParam.data = Object.assign(menuParam.data, {
-					options: DataUtil.menuTurnLayouts(),
-					value: object.layout,
-					onSelect: (e: any, item: any) => {
-						DataUtil.pageSetLayout(rootId, item.id);
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
@@ -402,7 +363,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		focus.clear(false);
-		//analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { action: item.id });
 		
 		switch (item.id) {
 
