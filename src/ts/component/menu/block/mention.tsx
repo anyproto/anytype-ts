@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Loader, ObjectName } from 'ts/component';
-import { I, C, keyboard, Util, DataUtil, Mark } from 'ts/lib';
+import { I, C, keyboard, Util, DataUtil, Mark, analytics } from 'ts/lib';
 import { commonStore, dbStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -153,7 +153,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { filter } = commonStore;
 		const { config } = commonStore;
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
@@ -161,14 +160,14 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 		];
+		const filter = commonStore.filter.text.replace(/\\/g, '');
 
 		if (!config.debug.ho) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		this.setState({ loading: true });
-
-		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter.text.replace(/\\/g, ''), 0, 0, (message: any) => {
+		C.ObjectSearch(filters, sorts, Constant.defaultRelationKeys, filter, 0, 0, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -179,6 +178,8 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 			this.items = this.items.concat(message.records);
 			this.setState({ loading: false });
+
+			analytics.event('SearchQuery', { route: 'MenuMention', length: filter.length });
 		});
 	};
 

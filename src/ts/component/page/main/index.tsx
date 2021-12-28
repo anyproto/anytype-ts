@@ -494,6 +494,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
+
+		analytics.event('MultiSelectHome', { count: this.selected.length });
 	};
 
 	selectionRender () {
@@ -528,6 +530,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
+		const l = this.selected.length;
+
 		switch (item.id) {
 			case 'delete':
 				this.onSelectionDelete();
@@ -535,22 +539,32 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case 'archive':
 				this.onSelectionArchive(true);
+
+				analytics.event('MovetoBin', { count: l });
 				break;
 
 			case 'restore':
 				this.onSelectionArchive(false);
+
+				analytics.event('RestoreFromBin', { count: l });
 				break;
 
 			case 'fav':
 				this.onSelectionFavorite(true);
+
+				analytics.event('AddToFavorites', { count: l });
 				break;
 
 			case 'unfav':
 				this.onSelectionFavorite(false);
+
+				analytics.event('RemoveFromFavorites', { count: l });
 				break;
 
 			case 'selectAll':
 				this.onSelectionAll();
+
+				analytics.event('MultiSelectHome', { count: l });
 				break;
 
 			case 'selectNone':
@@ -573,6 +587,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			this.selectionRender();
 		};
 
+		analytics.event('ShowDeletionWarning');
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
@@ -581,6 +596,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
 					cb();
+
+					analytics.event('RemoveCompletely', { count: l });
 				},
 				onCancel: () => { cb(); }
 			},
@@ -787,6 +804,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
 		C.BlockListMove(root, root, [ current.id ], target.id, position);
+
+		analytics.event('ReorderObjects', { route: 'ScreenHome' });
 	};
 	
 	resize () {

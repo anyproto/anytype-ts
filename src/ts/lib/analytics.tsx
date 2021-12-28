@@ -13,7 +13,6 @@ const KEYS = [
 	'type', 'objectType', 'layout', 'template', 'index',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
-const SKIP_IDS = [];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
@@ -201,6 +200,11 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
+			'main/set':			 'ScreenSet',
+			'main/edit':		 'ScreenObject',
+			'main/space':		 'ScreenSpace',
+			'main/media':		 'ScreenMedia',
+			'main/history':		 'ScreenHistory',
 		};
 
 		return map[key] || '';
