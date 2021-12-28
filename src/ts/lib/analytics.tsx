@@ -108,8 +108,7 @@ class Analytics {
 		};
 
 		if (converted.objectType) {
-			const type = dbStore.getObjectType(converted.objectType);
-			if (!type.id.match(/^_/)) {
+			if (!converted.objectType.match(/^_/)) {
 				converted.objectType = 'custom';
 			};
 		};
