@@ -67,7 +67,8 @@ class MenuHelp extends React.Component<Props, {}> {
 				const rootId = keyboard.getRootId();
 				const object = detailStore.get(rootId, rootId, []);
 				const match = keyboard.getMatch();
-				const isEditor = (match.params.page == 'main') && (match.params.action == 'edit');
+				const { page, action } = match.params;
+				const isEditor = (page == 'main') && (action == 'edit');
 
 				let key = '';
 
@@ -77,13 +78,10 @@ class MenuHelp extends React.Component<Props, {}> {
 				if (object.type == Constant.typeId.template) {
 					key = 'template';
 				} else
-				if (isEditor && blockStore.checkBlockType(rootId)) {
-					key = 'typeSelect';
-				} else 
-				if (isEditor && !blockStore.checkBlockType(rootId)) {
-					key = 'editor';
+				if (isEditor) {
+					key = blockStore.checkBlockType(rootId) ? 'typeSelect' : 'editor';
 				} else {
-					key = Util.toCamelCase([ match.params.page, match.params.action ].join('-'));
+					key = Util.toCamelCase([ page, action ].join('-'));
 				};
 
 				if (key) {
