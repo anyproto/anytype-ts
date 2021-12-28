@@ -357,6 +357,8 @@ class Keyboard {
 
 		html.removeClass('withPopup');
 		Util.addBodyClass('theme', theme);
+
+		analytics.event('Print');
 	};
 
 	onSearch () {

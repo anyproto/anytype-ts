@@ -129,6 +129,21 @@ class Analytics {
 				data.relationKey = data.params.id;
 				break;
 
+			case 'ChangeBlockStyle':
+				data.style = '';
+				data.type = data.params.type;
+
+				if (data.type == I.BlockType.Text) {
+					data.style = I.TextStyle[data.params.id].toLowerCase();
+				};
+				if (data.type == I.BlockType.Div) {
+					data.style = I.DivStyle[data.params.id].toLowerCase();
+				};
+				if (data.type == I.BlockType.File) {
+					data.style = I.FileStyle[data.params.id].toLowerCase();
+				};
+				break;
+
 			case 'SettingsWallpaperSet':
 				data.type = this.coverTypeMapper(data.type);
 				data.id = data.id.replace(/^c([\d]+)/, '$1');
@@ -174,41 +189,12 @@ class Analytics {
 		this.instance.logEvent(code, param);
 	};
 	
-	getDictionary (type: string, style: number) {
-		let data: any = {
-			text: {},
-			file: {},
-			div: {},
-		};
-		
-		data.text[I.TextStyle.Paragraph]	 = 'Paragraph';
-		data.text[I.TextStyle.Header1]		 = 'Header1';
-		data.text[I.TextStyle.Header2]		 = 'Header2';
-		data.text[I.TextStyle.Header3]		 = 'Header3';
-		data.text[I.TextStyle.Quote]		 = 'Quote';
-		data.text[I.TextStyle.Code]			 = 'Code';
-		data.text[I.TextStyle.Bulleted]		 = 'Bulleted';
-		data.text[I.TextStyle.Numbered]		 = 'Numbered';
-		data.text[I.TextStyle.Toggle]		 = 'Toggle';
-		data.text[I.TextStyle.Checkbox]		 = 'Checkbox';
-		
-		data.file[I.FileType.None]			 = 'None';
-		data.file[I.FileType.File]			 = 'File';
-		data.file[I.FileType.Image]			 = 'Image';
-		data.file[I.FileType.Video]			 = 'Video';
-		data.file[I.FileType.Audio]			 = 'Audio';
-		
-		data.div[I.DivStyle.Line]			 = 'Line';
-		data.div[I.DivStyle.Dot]			 = 'Dot';
-
-		return data[type][style];
-	};
-
 	pageMapper (params: any): string {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
 		const map = {
 			'index/index':		 'ScreenIndex',
+
 			'auth/notice':		 'ScreenDisclaimer',
 			'auth/login':		 'ScreenLogin',
 			'auth/register':	 'ScreenAuthRegistration',
