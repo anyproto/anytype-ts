@@ -427,7 +427,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.setState({ filter: v });
 		this.load();
 
-		analytics.event('SearchQuery', { type: 'ScreenHome', length: v.length });
+		analytics.event('SearchQuery', { route: 'ScreenHome', length: v.length });
 	};
 
 	onAccount () {

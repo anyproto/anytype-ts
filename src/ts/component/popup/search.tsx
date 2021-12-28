@@ -376,9 +376,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
 			const value = Util.filterFix(this.ref.getValue());
+			
 			this.setState({ filter: value });
-
-			analytics.event('SearchQuery', { type: 'ScreenSearch', length: value.length });
+			analytics.event('SearchQuery', { route: 'ScreenSearch', length: value.length });
 		}, force ? 0 : 50);
 	};
 

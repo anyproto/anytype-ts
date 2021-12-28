@@ -9,7 +9,7 @@ const version = app.getVersion();
 const os = window.require('os');
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 
+	'method', 'id', 'action', 'style', 'code', 'route',
 	'type', 'objectType', 'layout', 'template', 'index',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
