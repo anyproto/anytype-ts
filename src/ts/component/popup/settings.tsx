@@ -205,6 +205,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								className="isBlurred"
 								onFocus={this.onFocusPhrase} 
 								onBlur={this.onBlurPhrase} 
+								onCopy={() => { analytics.event('ScreenSettingsKeychainCopy'); }}
 								placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 								readonly={true} 
 							/>
@@ -247,6 +248,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onConfirmPin = this.onTurnOffPin;
 										this.onPage('pinConfirm');
+
+										analytics.event('ScrenSettingsPinCodeOff');
 									}} 
 								/>
 
@@ -256,6 +259,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onConfirmPin = () => { this.onPage('pinSelect'); };
 										this.onPage('pinConfirm');
+
+										analytics.event('ScrenSettingsPinCodeChange');
 									}} 
 								/>
 							</div>
@@ -266,6 +271,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									className="blank" 
 									onClick={() => {
 										this.onPage('pinSelect');
+
+										analytics.event('ScrenSettingsPinCodeOn');
 									}} 
 								/>
 							</div>
@@ -510,6 +517,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
+
+				analytics.event('ScreenSettingsWallpaperUpload', { middleTime: message.middleTime });
 			});
 		});
 	};
@@ -517,6 +526,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onFocusPhrase (e: any) {
 		this.refPhrase.select();
 		this.elementUnblur(e);
+
+		analytics.event('ScreenSettingsKeychainShow');
 	};
 
 	onBlurPhrase (e: any) {
@@ -582,6 +593,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		DataUtil.pageSetCover(root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
+
+		analytics.event('ScreenSettingsWallpaperSet', { type: item.type, id: item.id });
 	};
 
 	onLogout (e: any) {
@@ -625,7 +638,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.BlockImportMarkdown(root, files[0]);
+			C.BlockImportMarkdown(root, files[0], (message: any) => {
+				analytics.event('ScreenSettingsImportNotionDone', { middleTime: message.middleTime });
+			});
 		});
 	};
 
@@ -663,6 +678,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							return;
 						};
 						ipcRenderer.send('pathOpen', files[0]);
+
+						analytics.event('ScreenSettingsExportMarkdownDone', { middleTime: message.middleTime });
 					});
 				});
 				break;
@@ -677,7 +694,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				textConfirm: 'Yes',
 				onConfirm: () => {
 					this.setState({ loading: true });
-
 
 					C.FileListOffload([], false, (message: any) => {
 						if (message.error.code) {
@@ -694,6 +710,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								canCancel: false,
 							}
 						});
+
+						analytics.event('ScreenSettingsFileOffloadDone', { middleTime: message.middleTime });
 					});
 				},
 				onCancel: () => {

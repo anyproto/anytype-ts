@@ -867,7 +867,7 @@ class Dispatcher {
 				};
 
 				const middleTime = Math.ceil(t1 - t0);
-				data.middleTime = middleTime;
+				message.middleTime = middleTime;
 
 				if (callBack) {
 					callBack(message);

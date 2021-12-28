@@ -6,6 +6,7 @@ import { blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 import Panel from './graph/panel';
+import { analytics } from '../../../lib';
 
 interface Props extends RouteComponentProps<any> {
 	rootId: string;
@@ -192,6 +193,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	onClickObject (object: any) {
 		this.togglePanel(true);
 		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
+
+		analytics.event('ScreenGraphSelectNode');
 	};
 
 	getRootId () {
@@ -202,11 +205,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	onSwitch (id: string, v: any) {
 		this.refGraph.forceProps[id] = v;
 		this.refGraph.updateProps();
+
+		analytics.event('ScreenGraphSettings', { id });
 	};
 
 	onFilterChange (v: string) {
 		this.refGraph.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
 		this.refGraph.updateProps();
+
+		analytics.event('ScreenGraphSearch', { length: v.length });
 	};
 
 });

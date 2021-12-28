@@ -115,11 +115,9 @@ class Analytics {
 			};
 		};
 
-		switch (code) {
-			default:
-				param = Object.assign(param, converted);
-				break;
+		param = Object.assign(param, converted);
 
+		switch (code) {
 			case 'page':
 				code = this.pageMapper(data.params);
 				break;
@@ -136,46 +134,15 @@ class Analytics {
 				code = this.settingsMapper(data.params);
 				break;
 
-			case 'BlockCreate':
-				let block = new M.Block(Mapper.From.Block(data.getBlock()));
-				
-				param.type = block.type;
-				if (block.isText() || block.isDiv()) {
-					param.style = this.getDictionary(block.type, block.content.style);
-				};
-				if (block.isFile()) {
-					param.style = this.getDictionary(block.type, block.content.type);
+			case 'ScreenSettingsWallpaperSet':
+				param.type = this.coverTypeMapper(data.type);
+				param.id = param.id.replace(/^c([\d]+)/, '$1');
+
+				if (data.type == I.CoverType.Upload) {
+					delete(param.id);
 				};
 				break;
 
-			case 'MenuBlockStyleAction':	
-			case 'BlockListTurnInto':
-			case 'BlockListSetTextStyle':
-			case 'BlockListTurnInto':
-				param.style = this.getDictionary(I.BlockType.Text, converted.style);
-				break;
-
-			case 'BlockDataviewViewCreate':
-			case 'BlockDataviewViewUpdate':
-				param.type = translate('viewName' + data.getView().getType());
-				break;
-
-			case 'BlockDataviewViewSet':
-				param.type = translate('viewName' + data.type);
-				break;
-
-			case 'PopupHelp':
-				param.document = data.document;
-				break;
-
-			case 'PopupPage':
-				param.page = data.matchPopup.params.page;
-				param.action = data.matchPopup.params.action;
-				break;
-
-			case 'ObjectListDelete':
-				param.count = data.getObjectidsList().length;
-				break;
 		};
 
 		if (!code) {
@@ -228,6 +195,7 @@ class Analytics {
 			'auth/login':		 'ScreenLogin',
 			'auth/register':	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',
+			'auth/success':		 'ScreenAuthSuccess',
 
 			'main/index':		 'ScreenHome',
 			'main/graph':		 'ScreenGraph',
@@ -273,6 +241,19 @@ class Analytics {
 
 		const code = (undefined !== map[id]) ? map[id] : id;
 		return code ? Util.toCamelCase([ prefix, code ].join('-')) : '';
+	};
+
+	coverTypeMapper (v: I.CoverType) {
+		let r = '';
+		switch (v) {
+			default:
+			case I.CoverType.None:		 r = 'none'; break;
+			case I.CoverType.Upload:	 r = 'upload'; break;
+			case I.CoverType.Color:		 r = 'color'; break;
+			case I.CoverType.Gradient:	 r = 'gradient'; break;
+			case I.CoverType.Image:		 r = 'image'; break;
+		};
+		return r;
 	};
 	
 };
