@@ -540,7 +540,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			case 'archive':
 				this.onSelectionArchive(true);
 
-				analytics.event('MovetoBin', { count: l });
+				analytics.event('MoveToBin', { count: l });
 				break;
 
 			case 'restore':
@@ -752,18 +752,26 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					switch (el.id) {
 						case 'archive':
 							this.onSelectionArchive(true);
+
+							analytics.event('MoveToBin', { count: 1 });
 							break;
 
 						case 'unarchive':
 							this.onSelectionArchive(false);
+
+							analytics.event('RemoveFromFavorites', { count: 1 });
 							break;
 
 						case 'fav':
 							this.onSelectionFavorite(true);
+
+							analytics.event('AddToFavorites', { count: 1 });
 							break;
 
 						case 'unfav':
 							this.onSelectionFavorite(false);
+
+							analytics.event('RemoveFromFavorites', { count: 1 });
 							break;
 
 						case 'remove':
