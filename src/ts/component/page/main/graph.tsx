@@ -213,7 +213,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
 		this.refGraph.updateProps();
 
-		analytics.event('GraphSearch', { length: v.length });
+		analytics.event('SearchQuery', { route: 'ScreenGraph', length: v.length });
 	};
 
 });
