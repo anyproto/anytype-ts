@@ -190,6 +190,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'phrase':
+				analytics.event('ScreenKeychain', {
+					type: !this.onConfirmPhrase ? 'ScreenSettings' : 'BeforeLogout'
+				});
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
@@ -205,7 +209,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								className="isBlurred"
 								onFocus={this.onFocusPhrase} 
 								onBlur={this.onBlurPhrase} 
-								onCopy={() => { analytics.event('KeychainCopy', { route: 'ScreenSettings' }); }}
+								onCopy={() => { 
+									analytics.event('KeychainCopy', { 
+										type: !this.onConfirmPhrase ? 'ScreenSettings' : 'BeforeLogout'
+									}); 
+								}}
 								placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 								readonly={true} 
 							/>
@@ -249,7 +257,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 										this.onConfirmPin = this.onTurnOffPin;
 										this.onPage('pinConfirm');
 
-										analytics.event('ScrenSettingsPinCodeOff');
+										analytics.event('PinCodeOff');
 									}} 
 								/>
 
@@ -260,7 +268,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 										this.onConfirmPin = () => { this.onPage('pinSelect'); };
 										this.onPage('pinConfirm');
 
-										analytics.event('ScrenSettingsPinCodeChange');
+										analytics.event('PinCodeChange');
 									}} 
 								/>
 							</div>
@@ -272,7 +280,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onPage('pinSelect');
 
-										analytics.event('ScrenSettingsPinCodeOn');
+										analytics.event('PinCodeOn');
 									}} 
 								/>
 							</div>
@@ -518,7 +526,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
 
-				analytics.event('ScreenSettingsWallpaperUpload', { middleTime: message.middleTime });
+				analytics.event('SettingsWallpaperUpload', { middleTime: message.middleTime });
 			});
 		});
 	};
@@ -526,8 +534,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	onFocusPhrase (e: any) {
 		this.refPhrase.select();
 		this.elementUnblur(e);
-
-		analytics.event('KeychainShow', { route: 'ScreenSettings' });
 	};
 
 	onBlurPhrase (e: any) {
@@ -594,7 +600,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		DataUtil.pageSetCover(root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
 
-		analytics.event('ScreenSettingsWallpaperSet', { type: item.type, id: item.id });
+		analytics.event('SettingsWallpaperSet', { type: item.type, id: item.id });
 	};
 
 	onLogout (e: any) {
@@ -639,7 +645,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 			close();
 			C.BlockImportMarkdown(root, files[0], (message: any) => {
-				analytics.event('ScreenSettingsImportNotionDone', { middleTime: message.middleTime });
+				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
 			});
 		});
 	};
@@ -679,7 +685,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 						};
 						ipcRenderer.send('pathOpen', files[0]);
 
-						analytics.event('ScreenSettingsExportMarkdownDone', { middleTime: message.middleTime });
+						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 					});
 				});
 				break;
@@ -711,7 +717,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							}
 						});
 
-						analytics.event('ScreenSettingsFileOffloadDone', { middleTime: message.middleTime });
+						analytics.event('FileOffload', { middleTime: message.middleTime });
 					});
 				},
 				onCancel: () => {

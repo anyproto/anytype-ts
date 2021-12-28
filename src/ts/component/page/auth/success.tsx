@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Frame, Cover, Title, Label, Button, IconObject, HeaderAuth as Header, FooterAuth as Footer, Textarea } from 'ts/component';
-import { translate, DataUtil } from 'ts/lib';
+import { translate, DataUtil, analytics } from 'ts/lib';
 import { commonStore, authStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -20,6 +20,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 		this.onFocusPhrase = this.onFocusPhrase.bind(this);
 		this.onBlurPhrase = this.onBlurPhrase.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onCopyPhrase = this.onCopyPhrase.bind(this);
 	};
 
 	render () {
@@ -45,6 +46,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 						className="isBlurred"
 						onFocus={this.onFocusPhrase} 
 						onBlur={this.onBlurPhrase} 
+						onCopy={this.onCopyPhrase}
 						placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 						readonly={true}
 					/>
@@ -53,6 +55,10 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 				</Frame>
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		analytics.event('ScreenKeychain', { type: 'FirstSession' });
 	};
 
 	onSubmit (e: any) {
@@ -67,6 +73,10 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<P
 	onBlurPhrase (e: any) {
 		this.elementBlur(e);
 		window.getSelection().removeAllRanges();
+	};
+
+	onCopyPhrase () {
+		analytics.event('KeychainCopy', { type: 'FirstSession' });
 	};
 
 	elementBlur (e: any) {

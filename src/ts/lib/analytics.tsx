@@ -134,7 +134,7 @@ class Analytics {
 				code = this.settingsMapper(data.params);
 				break;
 
-			case 'ScreenSettingsWallpaperSet':
+			case 'SettingsWallpaperSet':
 				param.type = this.coverTypeMapper(data.type);
 				param.id = param.id.replace(/^c([\d]+)/, '$1');
 
@@ -195,7 +195,6 @@ class Analytics {
 			'auth/login':		 'ScreenLogin',
 			'auth/register':	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',
-			'auth/success':		 'ScreenAuthSuccess',
 
 			'main/index':		 'ScreenHome',
 			'main/graph':		 'ScreenGraph',
@@ -232,7 +231,7 @@ class Analytics {
 
 		const map = {
 			index: '',
-			phrase: 'Keychain',
+			phrase: '',
 			pinIndex: 'PinCode',
 			importIndex: 'Import',
 			importNotion: 'ImportNotion',

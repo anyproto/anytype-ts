@@ -194,7 +194,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.togglePanel(true);
 		this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
 
-		analytics.event('ScreenGraphSelectNode');
+		analytics.event('GraphSelectNode');
 	};
 
 	getRootId () {
@@ -206,14 +206,14 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.refGraph.forceProps[id] = v;
 		this.refGraph.updateProps();
 
-		analytics.event('ScreenGraphSettings', { id });
+		analytics.event('GraphSettings', { id });
 	};
 
 	onFilterChange (v: string) {
 		this.refGraph.forceProps.filter = v ? new RegExp(Util.filterFix(v), 'gi') : '';
 		this.refGraph.updateProps();
 
-		analytics.event('ScreenGraphSearch', { length: v.length });
+		analytics.event('GraphSearch', { length: v.length });
 	};
 
 });
