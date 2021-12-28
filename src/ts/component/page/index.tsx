@@ -249,7 +249,12 @@ class Page extends React.Component<Props, {}> {
 		let match = this.getMatch();
 		let page = String(match.params.page || 'index');
 		let action = String(match.params.action || 'index');
+		let id = String(match.params.id || '');
 		let showNotice = !Boolean(Storage.get('firstRun'));
+		let params: any = { page, action };
+		let isMain = page == 'main';
+		let isMainType = isMain && (action == 'type');
+		let isMainRelation = isMain && (action == 'relation');
 
 		if (showNotice) {
 			page = 'auth';
@@ -257,7 +262,11 @@ class Page extends React.Component<Props, {}> {
 			Storage.set('firstRun', 1);
 		};
 
-		analytics.event('page', { params: { page, action } });
+		if (isMainType || isMainRelation) {
+			params.id = id;
+		};
+
+		analytics.event('page', { params });
 	};
 	
 	getClass (prefix: string) {

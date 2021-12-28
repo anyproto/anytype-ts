@@ -506,6 +506,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
 		C.BlockSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
+
+		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
 	};
 
 	onFocus (e: any, item: any) {

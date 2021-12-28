@@ -10,7 +10,7 @@ const os = window.require('os');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route',
-	'type', 'objectType', 'layout', 'template', 'index',
+	'type', 'objectType', 'relationKey', 'layout', 'template', 'index',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
 const KEY_CONTEXT = 'analyticsContext';
@@ -88,33 +88,16 @@ class Analytics {
 	};
 
 	event (code: string, data?: any) {
+		data = data || {};
+
 		if (!this.instance || (!isProduction && !this.debug()) || !code) {
 			return;
 		};
 
-		const converted: any = {};
-		data = data || {};
+		let converted: any = {};
+		let param: any = {};
 
-		let param: any = { 
-			middleTime: Number(data.middleTime) || 0, 
-			context: String(Storage.get(KEY_CONTEXT) || ''),
-			originalId: String(Storage.get(KEY_ORIGINAL_ID) || ''),
-		};
-
-		for (let k of KEYS) {
-			if (undefined !== data[k]) {
-				converted[k] = data[k];
-			};
-		};
-
-		if (converted.objectType) {
-			if (!converted.objectType.match(/^_/)) {
-				converted.objectType = 'custom';
-			};
-		};
-
-		param = Object.assign(param, converted);
-
+		// Code mappers for common events
 		switch (code) {
 			case 'page':
 				code = this.pageMapper(data.params);
@@ -131,21 +114,54 @@ class Analytics {
 			case 'settings':
 				code = this.settingsMapper(data.params);
 				break;
-
-			case 'SettingsWallpaperSet':
-				param.type = this.coverTypeMapper(data.type);
-				param.id = param.id.replace(/^c([\d]+)/, '$1');
-
-				if (data.type == I.CoverType.Upload) {
-					delete(param.id);
-				};
-				break;
-
 		};
 
 		if (!code) {
 			return;
 		};
+
+		switch (code) {
+			case 'ScreenType':
+				data.objectType = data.params.id;
+				break;
+
+			case 'ScreenRelation':
+				data.relationKey = data.params.id;
+				break;
+
+			case 'ChangeRecommendedLayout':
+				data.layout = translate('layout' + data.layout);
+				break;
+
+			case 'SettingsWallpaperSet':
+				data.type = this.coverTypeMapper(data.type);
+				data.id = data.id.replace(/^c([\d]+)/, '$1');
+
+				if (data.type == I.CoverType.Upload) {
+					delete(param.id);
+				};
+				break;
+		};
+
+		param.middleTime = Number(data.middleTime) || 0;
+		param.context = String(Storage.get(KEY_CONTEXT) || '');
+		param.originalId = String(Storage.get(KEY_ORIGINAL_ID) || '');
+
+		for (let k of KEYS) {
+			if (undefined !== data[k]) {
+				converted[k] = data[k];
+			};
+		};
+
+		if (converted.objectType && !converted.objectType.match(/^_/)) {
+			converted.objectType = 'custom';
+		};
+
+		if (converted.relationKey && !converted.relationKey.match(/^_/)) {
+			converted.relationKey = 'custom';
+		};
+
+		param = Object.assign(param, converted);
 
 		if (this.debug()) {
 			console.log('[Analytics.event]', code, param);
