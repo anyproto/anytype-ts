@@ -263,5 +263,12 @@
 	.menu.menuOnboarding { width: 288px; background: #fff; color: #000; }
 	.menu.menuOnboarding {
 		a { color: #000; }
+
+        .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
+
+        .bottom {
+			.icon.arrow:hover { background-image: url('#{$themePath}/arrow/onboarding1.svg'); }
+			.icon.arrow.disabled:hover { background-image: url('~img/arrow/onboarding0.svg'); }
+        }
 	}
 }
