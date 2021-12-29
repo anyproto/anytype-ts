@@ -1044,6 +1044,17 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
 		};
+
+		let key = '';
+		if (block.isTextTitle()) {
+			key = 'SetObjectTitle';
+		};
+		if (block.isTextDescription()) {
+			key = 'SetObjectDescription';
+		};
+		if (key) {
+			analytics.event(key);
+		};
 	};
 	
 	onPaste (e: any) {

@@ -574,8 +574,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 				e.preventDefault();
-				focus.clear(true);
-				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
+				Action.duplicate(rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
 			});
 
 			// Open action menu
@@ -754,12 +753,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Duplicate
 		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockListDuplicate(rootId, [ block.id ], block.id, I.BlockPosition.Bottom, (message: any) => {
-				if (message.blockIds.length) {
-					focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-					focus.apply();
-				};
-			});
+			Action.duplicate(rootId, block.id, [ block.id ]);
 		});
 
 		// Open action menu
@@ -1283,8 +1277,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		};
 		
-		Util.clipboardCopy(data, () => {
+		Util.clipboardCopy(data, () => { 
 			C[cmd](rootId, blocks, range, cb);
+
+			analytics.event('CopyBlock');
 		});
 	};
 	
@@ -1440,6 +1436,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 			
 			this.focus(id, from, to, true);
+
+			analytics.event('PasteBlock');
 		});
 	};
 

@@ -1,4 +1,4 @@
-import { I, C, focus } from 'ts/lib';
+import { I, C, focus, analytics } from 'ts/lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
@@ -57,10 +57,16 @@ class Action {
 		ipcRenderer.send('download', url);
 	};
 
-	duplicate (rootId: string, blockId: string, blockIds: string[]) {
+	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
 		C.BlockListDuplicate(rootId, blockIds, blockId, I.BlockPosition.Bottom, (message: any) => {
 			const lastId = message.blockIds && message.blockIds.length ? message.blockIds[message.blockIds.length - 1] : '';
 			this.focusToEnd(rootId, lastId);
+
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event('DuplicateBlock', { count: message.blockIds.length });
 		});
 	};
 

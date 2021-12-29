@@ -168,6 +168,10 @@ class Analytics {
 			case 'ChangeSortValue':
 				data.type = I.SortType[data.type].toLowerCase();
 				break;
+
+			case 'ChangeTextStyle':
+				data.type = I.MarkType[data.type].toLowerCase();
+				break;
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
