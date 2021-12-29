@@ -599,7 +599,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 
 							DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
-							analytics.event('ObjectCreate', {
+							analytics.event('CreateObject', {
 								objectType: item.objectTypeId,
 								layout: template?.layout,
 								template: (template && template.templateIsBundled ? template.id : 'custom'),

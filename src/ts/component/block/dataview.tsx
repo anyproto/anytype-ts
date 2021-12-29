@@ -312,7 +312,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (template) {
-					analytics.event('ObjectCreate', {
+					analytics.event('CreateObject', {
 						objectType: template.targetObjectType,
 						layout: template.layout,
 						template: (template.templateIsBundled ? template.id : 'custom'),

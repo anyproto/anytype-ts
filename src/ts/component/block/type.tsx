@@ -271,7 +271,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
 			};
 
-			analytics.event('ObjectCreate', {
+			analytics.event('CreateObject', {
 				objectType: item.id,
 				layout: template?.layout,
 				template: (template && template.isBundledTemplate ? template.id : 'custom'),
