@@ -229,7 +229,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const relations = DataUtil.viewGetRelations(rootId, blockId, view);
 		const menuIdEdit = 'dataviewRelationEdit';
 
-		const onAdd = (message: any) => {
+		const onAdd = () => {
 			getData(getView().id, 0);
 
 			if (data.onAdd) {
@@ -246,10 +246,17 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				...data,
 				menuIdEdit: menuIdEdit,
 				filter: '',
+				ref: 'dataview',
 				skipIds: relations.map((it: I.ViewRelation) => { return it.relationKey; }),
 				onAdd: onAdd,
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), onAdd);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+					DataUtil.dataviewRelationAdd(rootId, blockId, relation, getView(), () => {
+						onAdd();
+
+						if (onChange) {
+							onChange();
+						};
+					});
 				},
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.BlockDataviewRelationListAvailable(rootId, blockId, callBack);
@@ -267,7 +274,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, getView } = data;
 
 		if (readonly) {
 			return;
@@ -280,6 +287,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			data: {
 				...data,
 				relationKey: item.relationKey,
+				updateCommand: (rootId: string, blockId: string, relation: any) => {
+					DataUtil.dataviewRelationUpdate(rootId, blockId, relation, getView());
+				},
 			}
 		});
 	};

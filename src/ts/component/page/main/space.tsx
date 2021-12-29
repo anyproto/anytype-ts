@@ -271,13 +271,20 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 			data: {
 				filter: '',
 				rootId: rootId,
+				ref: 'space',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation, () => { menuStore.close('relationSuggest'); });
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+					C.ObjectRelationAdd(rootId, relation, () => { 
+						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange();
+						};
+					});
 				},
 			}
 		});

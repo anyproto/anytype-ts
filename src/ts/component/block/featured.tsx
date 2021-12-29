@@ -37,7 +37,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onSource = this.onSource.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
-		this.onCellChange = this.onCellChange.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
@@ -268,15 +267,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (ref) {
 			ref.onClick(e);
 		};
-	};
-
-	onCellChange (id: string, relationKey: string, value: any) {
-		const { rootId } = this.props;
-		const relation = dbStore.getRelation(rootId, rootId, relationKey);
-		const details = [ 
-			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
-		];
-		C.BlockSetDetails(rootId, details);
 	};
 
 	onMouseEnter (e: any, relationKey: string) {

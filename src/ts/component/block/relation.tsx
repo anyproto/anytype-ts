@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell } from 'ts/component';
-import { I, C, DataUtil, Util, focus } from 'ts/lib';
+import { I, C, DataUtil, Util, focus, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'ts/store';
 
@@ -114,10 +114,11 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: [],
+				ref: 'block',
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
 					C.ObjectRelationAdd(rootId, relation, (message: any) => {
 						if (message.error.code) {
 							return;
@@ -126,6 +127,10 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 						C.BlockRelationSetKey(rootId, block.id, message.relation.relationKey, () => { 
 							menuStore.close('relationSuggest'); 
 						});
+
+						if (onChange) {
+							onChange();
+						};
 					});
 				},
 			}
@@ -139,6 +144,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
+
+		analytics.event('ChangeRelationValue', { type: 'block' });
 	};
 
 	onCellClick (e: any) {

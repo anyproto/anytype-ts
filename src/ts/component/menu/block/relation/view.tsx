@@ -233,14 +233,19 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				filter: '',
+				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
 					C.ObjectRelationAdd(rootId, relation, () => { 
 						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange();
+						};
 					});
 				},
 			}
@@ -264,8 +269,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				relationKey: relationKey,
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+					C.ObjectRelationAdd(rootId, relation, () => {
+						if (onChange) {
+							onChange();
+						};
+					});
 				},
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
@@ -319,6 +328,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
+
+		analytics.event('ChangeRelationValue', { type: 'menu' });
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

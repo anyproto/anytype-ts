@@ -44,6 +44,16 @@ class Action {
 
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
+
+	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
+		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
+		});
+	};
 	
 	download (block: I.Block) {
 		const { content } = block;
@@ -95,16 +105,6 @@ class Action {
 		focus.apply();
 	};
 
-	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
-		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
-			if (callBack) {
-				callBack(message);
-			};
-
-			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
-		});
-	};
-		
 };
 
 export default new Action();

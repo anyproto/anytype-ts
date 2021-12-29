@@ -465,13 +465,20 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			data: {
 				filter: '',
 				rootId: rootId,
+				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { menuStore.close('relationSuggest'); });
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { 
+						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange();
+						};
+					});
 				},
 			}
 		});
@@ -491,8 +498,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation ]);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation ], () => {
+						if (onChange) {
+							onChange();
+						};
+					});
 				},
 				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
 					C.ObjectTypeRelationRemove(rootId, relationKey);
