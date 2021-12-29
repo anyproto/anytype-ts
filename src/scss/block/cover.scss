@@ -31,10 +31,10 @@
 	img.cover { background-color: transparent; height: auto; }
 
 	.elements { width: 704px; height: 100%; position: absolute; left: 50%; margin-left: -352px; bottom: 0px; z-index: 1; opacity: 0; }
-	.elements:hover, .elements.hover { opacity: 1; }
+	.elements:hover, .elements.hover, .elements.active { opacity: 1; }
 	
 	.elements {
-		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; transition: opacity 0.2s ease-in-out; }
+		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }
 		
 		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {

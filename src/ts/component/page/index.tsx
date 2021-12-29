@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, Util, Storage, analytics, keyboard } from 'ts/lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard } from 'ts/lib';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'ts/store';
 
 import PageAuthInvite from './auth/invite';
@@ -120,7 +120,7 @@ class Page extends React.Component<Props, {}> {
 
 	getMatch () {
 		const { match, matchPopup, isPopup } = this.props;
-		return isPopup ? matchPopup : match;
+		return (isPopup ? matchPopup : match) || { params: {} };
 	};
 
 	getRootId () {
@@ -171,13 +171,17 @@ class Page extends React.Component<Props, {}> {
 		this.unbind();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+
+		if (!isPopup) {
+			keyboard.setMatch(match);
+		};
+
+		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
 		
 		if (isPopup) {
 			return;
 		};
-
-		keyboard.setMatch(match);
-
+		
 		window.setTimeout(() => {
 			if (isMain && account) {
 				if (!popupNewBlock) {
@@ -312,7 +316,7 @@ class Page extends React.Component<Props, {}> {
 			};			
 		});
 	};
-	
+
 };
 
 export default Page;

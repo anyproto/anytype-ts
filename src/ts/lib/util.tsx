@@ -840,6 +840,29 @@ class Util {
 			ipcRenderer.send('urlOpen', $(this).attr('href'));
 		});
 	};
+
+	renderLinks (obj: any) {
+		const self = this;
+
+		obj.find('a').unbind('click').click(function (e: any) {
+			e.preventDefault();
+			const el = $(this);
+
+			if (el.hasClass('path')) {
+				self.onPath(el.attr('href'));
+			} else {
+				self.onUrl(el.attr('href'));
+			};
+		});
+	};
+	
+	onUrl (url: string) {
+		ipcRenderer.send('urlOpen', url);
+	};
+
+	onPath (path: string) {
+		ipcRenderer.send('pathOpen', path);
+	};
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));

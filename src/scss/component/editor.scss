@@ -57,7 +57,7 @@
 		.icon.relation { background-image: url('~img/icon/add/relation1.svg');  }
 	}
 }
-.editorControls:hover, .editorControls.hover { opacity: 1; }
+.editorControls:hover, .editorControls.hover, .editorControls.active { opacity: 1; }
 
 .editorControls.isDraggingOver { background: rgba(255,187,44,0.3); }
 

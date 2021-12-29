@@ -102,6 +102,7 @@ import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
 import 'scss/menu/help.scss';
+import 'scss/menu/onboarding.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/thread.scss';
@@ -209,6 +210,7 @@ declare global {
 		I: any;
 		Go: any;
 		Graph: any;
+		$: any;
 	}
 };
 
@@ -218,6 +220,7 @@ window.Dispatcher = dispatcher;
 window.Analytics = () => { return analytics.instance; };
 window.I = I;
 window.Go = (route: string) => { Util.route(route); };
+window.$ = $;
 
 class RoutePage extends React.Component<RouteComponentProps, {}> { 
 

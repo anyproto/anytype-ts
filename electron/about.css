@@ -39,6 +39,6 @@ body {
 }
 .buttons button:hover { background: #f1981a; }
 
-html.dark body { color: #929082; }
+html.dark body { color: #a09f92; }
 html.dark .title { color: #cbc9bd; }
 html.dark .copyright { color: #5c5a54; }

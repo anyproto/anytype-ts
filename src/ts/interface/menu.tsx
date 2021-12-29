@@ -1,5 +1,5 @@
 export enum MenuType { Vertical = 1, Horizontal };
-export enum MenuDirection { Top = 1, Bottom, Left, Right, Center };
+export enum MenuDirection { None, Top, Bottom, Left, Right, Center };
 
 export interface MenuTab {
 	id: string;
@@ -11,6 +11,7 @@ export interface MenuParam {
 	menuKey?: string;
 	element?: any;
 	rect?: any;
+	recalcRect?(): { width: number, height: number, x: number, y: number };
 	type?: MenuType;
 	vertical?: MenuDirection;
 	horizontal?: MenuDirection;
@@ -31,6 +32,7 @@ export interface MenuParam {
 	noDimmer?: boolean;
 	noFlipX?: boolean;
 	noFlipY?: boolean;
+	withArrow?: boolean;
 	commonFilter?: boolean;
 	onClose?(): void;
 	onOpen?(component?: any): void;

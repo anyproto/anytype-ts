@@ -42,6 +42,11 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 			return null;
 		};
 
+		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys);
+		if ((object.coverType != I.CoverType.None) && object.coverId) {
+			return null;
+		};
+
 		const checkType = blockStore.checkBlockType(rootId);
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
@@ -51,7 +56,7 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		return (
 			<div 
-				className="editorControls"
+				className="editorControls editorControlElements"
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
 				onDrop={this.onDrop}

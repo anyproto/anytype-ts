@@ -92,6 +92,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			<div className={cn.join(' ')}>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
+						<span />
 						<div className="first">
 							<div 
 								id={'view-item-' + view.id} 
