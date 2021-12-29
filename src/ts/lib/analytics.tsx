@@ -9,7 +9,7 @@ const version = app.getVersion();
 const os = window.require('os');
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 'route',
+	'method', 'id', 'action', 'style', 'code', 'route', 'format',
 	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
@@ -188,6 +188,12 @@ class Analytics {
 			case 'DownloadMedia':
 				data.type = Number(data.type) || 0;
 				data.type = I.FileType[data.type].toLowerCase();
+				break;
+
+			case 'CreateRelation':
+			case 'AddExistingRelation':
+				data.format = Number(data.format) || 0;
+				data.format = I.RelationType[data.format].toLowerCase();
 				break;
 		};
 

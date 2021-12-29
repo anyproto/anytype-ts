@@ -436,7 +436,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		detailStore.update(subId, record.id, obj);
 		C.BlockSetDetails(record.id, [ { key: relationKey, value: value } ], callBack);
 
-		analytics.event('ChangeRelationValue', { type: 'dataview' });
+		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
+		analytics.event(key, { type: 'dataview' });
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

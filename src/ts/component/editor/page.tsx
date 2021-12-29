@@ -1402,7 +1402,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						if (item.id == 'bookmark') {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+								analytics.event('CreateBlock', { 
+									middleTime: message.middleTime, 
+									type: I.BlockType.Bookmark, 
+								});
+							});
 						};
 					},
 				}
@@ -1601,6 +1606,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);
 			};
+
+			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
 		});
 	};
 	

@@ -239,12 +239,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, () => { 
 						menuStore.close('relationSuggest'); 
 
 						if (onChange) {
-							onChange();
+							onChange(relation);
 						};
 					});
 				},
@@ -269,10 +269,10 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				relationKey: relationKey,
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, () => {
 						if (onChange) {
-							onChange();
+							onChange(relation);
 						};
 					});
 				},
@@ -329,7 +329,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 
-		analytics.event('ChangeRelationValue', { type: 'menu' });
+		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		analytics.event(key, { type: 'menu' });
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

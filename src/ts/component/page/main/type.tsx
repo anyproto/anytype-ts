@@ -471,12 +471,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { 
 						menuStore.close('relationSuggest'); 
 
 						if (onChange) {
-							onChange();
+							onChange(relation);
 						};
 					});
 				},
@@ -498,10 +498,10 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation ], () => {
 						if (onChange) {
-							onChange();
+							onChange(relation);
 						};
 					});
 				},

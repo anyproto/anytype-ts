@@ -272,14 +272,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				classNameWrap: classNameWrap,
 				data: {
 					...data,
-					onChange: () => { 
+					onChange: (relation: any) => { 
 						close(); 
 						
 						if (onAdd) {
 							onAdd();
 						};
 
-						analytics.event('CreateRelation', { type: ref });
+						analytics.event('CreateRelation', { format: relation.format, type: ref });
 					},
 					rebind: this.rebind,
 				}
@@ -288,7 +288,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		if (addCommand) {
 			close(); 
 			addCommand(rootId, blockId, item, onChange);
-			analytics.event('AddExistingRelation', { type: ref });
+			analytics.event('AddExistingRelation', { format: item.format, type: ref });
 		};
 	};
 

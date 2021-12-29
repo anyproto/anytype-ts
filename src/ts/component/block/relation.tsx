@@ -118,7 +118,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, (message: any) => {
 						if (message.error.code) {
 							return;
@@ -129,7 +129,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 						});
 
 						if (onChange) {
-							onChange();
+							onChange(relation);
 						};
 					});
 				},
@@ -145,7 +145,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<Props
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 
-		analytics.event('ChangeRelationValue', { type: 'block' });
+		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		analytics.event(key, { type: 'block' });
 	};
 
 	onCellClick (e: any) {

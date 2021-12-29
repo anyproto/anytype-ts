@@ -241,12 +241,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any, onChange?: () => void) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, () => { 
 						menuStore.close('relationSuggest'); 
 
 						if (onChange) {
-							onChange();
+							onChange(relation);
 						};
 					});
 				},
