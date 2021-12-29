@@ -367,12 +367,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		switch (item.id) {
 
 			case 'undo':
-				C.BlockUndo(rootId);
+				keyboard.onUndo(rootId);
 				close = false;
 				break;
 				
 			case 'redo':
-				C.BlockRedo(rootId);
+				keyboard.onRedo(rootId);
 				close = false;
 				break;
 				

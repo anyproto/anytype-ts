@@ -489,13 +489,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
@@ -736,13 +736,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History

@@ -594,11 +594,11 @@ class App extends React.Component<Props, State> {
 
 		switch (key) {
 			case 'undo':
-				C.BlockUndo(rootId);
+				keyboard.onUndo(rootId);
 				break;
 
 			case 'redo':
-				C.BlockRedo(rootId);
+				keyboard.onRedo(rootId);
 				break;
 
 			case 'create':

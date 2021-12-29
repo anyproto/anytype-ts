@@ -341,6 +341,18 @@ class Keyboard {
 		};
 	};
 
+	onUndo (rootId: string, callBack?: (message: any) => void) {
+		C.BlockUndo(rootId, callBack);
+
+		analytics.event('Undo');
+	};
+
+	onRedo (rootId: string, callBack?: (message: any) => void) {
+		C.BlockRedo(rootId, callBack);
+
+		analytics.event('Redo');
+	};
+
 	onPrint () {
 		const { theme } = commonStore;
 		const isPopup = this.isPopup();
