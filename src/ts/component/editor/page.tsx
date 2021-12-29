@@ -1527,6 +1527,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (next) {
 				this.focus(blockId, to, to, false);
 			};
+
+			analytics.event('DeleteBlock');
 		};
 
 		if (next.isText()) {

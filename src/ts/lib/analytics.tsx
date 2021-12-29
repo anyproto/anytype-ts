@@ -129,18 +129,19 @@ class Analytics {
 				data.relationKey = data.params.id;
 				break;
 
+			case 'CreateBlock':
 			case 'ChangeBlockStyle':
 				data.style = '';
 				data.type = data.params.type;
 
 				if (data.type == I.BlockType.Text) {
-					data.style = I.TextStyle[data.params.id].toLowerCase();
+					data.style = I.TextStyle[data.params.style].toLowerCase();
 				};
 				if (data.type == I.BlockType.Div) {
-					data.style = I.DivStyle[data.params.id].toLowerCase();
+					data.style = I.DivStyle[data.params.style].toLowerCase();
 				};
 				if (data.type == I.BlockType.File) {
-					data.style = I.FileStyle[data.params.id].toLowerCase();
+					data.style = I.FileStyle[data.params.style].toLowerCase();
 				};
 				break;
 
