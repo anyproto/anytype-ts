@@ -5,7 +5,7 @@
 
     /* Common */
 
-    .menu { background: $colorBgLight; border: 0.5px solid #393933; }
+    .menu { background: $colorBgLight; border: 1px solid #393933; }
 
     .menu {
         .icon.text { background-image: url('#{$themePath}/icon/menu/action/block/text0.svg'); }
@@ -260,7 +260,7 @@
 
     /* MenuOnboarding */
 
-	.menu.menuOnboarding { width: 288px; background: #fff; color: #000; }
+	.menu.menuOnboarding { width: 288px; background: #fff; color: #000; border: 0px; }
 	.menu.menuOnboarding {
 		a { color: #000; }
 
