@@ -131,6 +131,8 @@ class Analytics {
 
 			case 'CreateBlock':
 			case 'ChangeBlockStyle':
+				data.style = Number(data.style) || 0;
+
 				if (data.type == I.BlockType.Text) {
 					data.style = I.TextStyle[data.style].toLowerCase();
 				} else
@@ -138,6 +140,10 @@ class Analytics {
 					data.style = I.DivStyle[data.style].toLowerCase();
 				} else
 				if (data.type == I.BlockType.File) {
+					if (undefined !== data.params?.fileType) {
+						data.fileType = Number(data.params.fileType) || 0;
+						data.type = I.FileType[data.fileType].toLowerCase();
+					};
 					data.style = I.FileStyle[data.style].toLowerCase();
 				} else {
 					delete(data.style);
@@ -146,6 +152,7 @@ class Analytics {
 
 			case 'SetCover':
 			case 'SettingsWallpaperSet':
+				data.type = Number(data.type) || 0;
 				data.type = I.CoverType[data.type].toLowerCase();
 				data.id = String(data.id || '').replace(/^c([\d]+)/, '$1');
 
@@ -156,21 +163,31 @@ class Analytics {
 
 			case 'AddView':
 			case 'SwitchView':
+				data.type = Number(data.type) || 0;
 				data.type = I.ViewType[data.type].toLowerCase();
 				break;
 
 			case 'AddFilter':
 			case 'ChangeFilterValue':
+				data.condition = Number(data.condition) || 0;
 				data.condition = I.FilterCondition[data.condition].toLowerCase();
 				break;
 
 			case 'AddSort':
 			case 'ChangeSortValue':
+				data.type = Number(data.type) || 0;
 				data.type = I.SortType[data.type].toLowerCase();
 				break;
 
 			case 'ChangeTextStyle':
+				data.type = Number(data.type) || 0;
 				data.type = I.MarkType[data.type].toLowerCase();
+				break;
+
+			case 'UploadMedia':
+			case 'DownloadMedia':
+				data.type = Number(data.type) || 0;
+				data.type = I.FileType[data.type].toLowerCase();
 				break;
 		};
 

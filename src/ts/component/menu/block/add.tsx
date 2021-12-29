@@ -644,7 +644,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 							}, Constant.delay.menu);
 						};
 
-						analytics.event('CreateBlock', { type: item.type, style: param.content.style });
+						analytics.event('CreateBlock', { type: item.type, style: param.content.style, params: { fileType: item.itemId } });
 					});
 				};
 			};

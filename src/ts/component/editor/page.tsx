@@ -637,6 +637,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					if (next && next.isTextToggle()) {
 						blockStore.toggle(rootId, next.id, true);
 					};
+
+					analytics.event('ReorderBlock', { count: ids.length });
 				});
 			};
 		});
@@ -919,6 +921,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
 				focus.apply();
+
+				analytics.event('ReorderBlock', { count: 1 });
 			});
 		});
 
@@ -1039,6 +1043,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
+
+				analytics.event('ReorderBlock', { count: 1 });
 			});
 		});
 

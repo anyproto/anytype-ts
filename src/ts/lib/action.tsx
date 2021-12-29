@@ -47,7 +47,7 @@ class Action {
 	
 	download (block: I.Block) {
 		const { content } = block;
-		const { hash } = content;
+		const { type, hash } = content;
 
 		if (!hash) {
 			return;
@@ -55,6 +55,8 @@ class Action {
 		
 		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
 		ipcRenderer.send('download', url);
+
+		analytics.event('DownloadMedia', { type });
 	};
 
 	duplicate (rootId: string, blockId: string, blockIds: string[], callBack?: (message: any) => void) {
@@ -91,6 +93,16 @@ class Action {
 		const length = block.getLength();
 		focus.set(id, { from: length, to: length });
 		focus.apply();
+	};
+
+	upload (type: I.FileType, rootId: string, blockId: string, url: string, path: string, callBack?: (message: any) => void) {
+		C.BlockUpload(rootId, blockId, url, path, (message: any) => {
+			if (callBack) {
+				callBack(message);
+			};
+
+			analytics.event('UploadMedia', { type: type, middleTime: message.middleTime });
+		});
 	};
 		
 };

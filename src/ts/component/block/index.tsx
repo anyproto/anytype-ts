@@ -10,11 +10,6 @@ import BlockDataview from './dataview';
 import BlockText from './text';
 import BlockIconPage from './iconPage';
 import BlockIconUser from './iconUser';
-import BlockFile from './file';
-import BlockImage from './image';
-import BlockVideo from './video';
-import BlockAudio from './audio';
-import BlockPdf from './pdf'; 
 import BlockBookmark from './bookmark';
 import BlockLink from './link';
 import BlockCover from './cover';
@@ -23,6 +18,12 @@ import BlockRelation from './relation';
 import BlockFeatured from './featured';
 import BlockType from './type';
 import BlockLatex from './latex';
+
+import BlockFile from './media/file';
+import BlockImage from './media/image';
+import BlockVideo from './media/video';
+import BlockAudio from './media/audio';
+import BlockPdf from './media/pdf'; 
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	index?: any;

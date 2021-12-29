@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, IconObject, Error } from 'ts/component';
-import { I, C, Util, focus, translate } from 'ts/lib';
+import { I, C, Util, focus, translate, Action } from 'ts/lib';
 import { commonStore, detailStore, popupStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -117,16 +117,12 @@ const BlockFile = observer(class BlockFile extends React.Component<Props, {}> {
 	
 	onChangeUrl (e: any, url: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		C.BlockUpload(rootId, id, url, '');
+		Action.upload(I.FileType.File, rootId, block.id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { rootId, block } = this.props;
-		const { id } = block;
-		
-		C.BlockUpload(rootId, id, '', path);
+		Action.upload(I.FileType.File, rootId, block.id, '', path);
 	};
 	
 	onOpen (e: any) {
