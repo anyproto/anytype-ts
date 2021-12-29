@@ -6,6 +6,7 @@ import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/sto
 import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
+import { analytics } from '../../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -208,10 +209,16 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
+		const ro = detailStore.get(rootId, relationKey);
+
 		if (idx < 0) {
-			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ]);
+			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ], () => {
+				analytics.event('FeatureRelation');
+			});
 		} else {
-			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ]);
+			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ], () => {
+				analytics.event('UnfeatureRelation');
+			});
 		};
 	};
 

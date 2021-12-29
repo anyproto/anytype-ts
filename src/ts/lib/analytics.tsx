@@ -229,7 +229,8 @@ class Analytics {
 	menuMapper (params: any): string {
 		const { id } = params;
 		const map = {
-			help: 'MenuHelp',
+			help:				 'MenuHelp',
+			blockRelationView:	 'ScreenObjectRelation',
 		};
 
 		return map[id] || '';
@@ -252,19 +253,6 @@ class Analytics {
 		return code ? Util.toCamelCase([ prefix, code ].join('-')) : '';
 	};
 
-	coverTypeMapper (v: I.CoverType) {
-		let r = '';
-		switch (v) {
-			default:
-			case I.CoverType.None:		 r = 'none'; break;
-			case I.CoverType.Upload:	 r = 'upload'; break;
-			case I.CoverType.Color:		 r = 'color'; break;
-			case I.CoverType.Gradient:	 r = 'gradient'; break;
-			case I.CoverType.Image:		 r = 'image'; break;
-		};
-		return r;
-	};
-	
 };
 
 export let analytics: Analytics = new Analytics();

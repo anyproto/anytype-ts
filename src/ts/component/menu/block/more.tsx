@@ -423,6 +423,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					} else {
 						popupStore.close('page');
 					};
+
+					analytics.event('MoveToBin', { count: 1 });
 				});
 				break;
 
@@ -435,15 +437,21 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
 						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
 					};
+
+					analytics.event('RestoreFromBin', { count: 1 });
 				});
 				break;
 
 			case 'fav':
-				C.ObjectSetIsFavorite(rootId, true);
+				C.ObjectSetIsFavorite(rootId, true, () => {
+					analytics.event('AddToFavorites', { count: 1 });
+				});
 				break;
 
 			case 'unfav':
-				C.ObjectSetIsFavorite(rootId, false);
+				C.ObjectSetIsFavorite(rootId, false, () => {
+					analytics.event('RemoveFromFavorites', { count: 1 });
+				});
 				break;
 
 			case 'removeBlock':
@@ -483,6 +491,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if (block.isPage()) {
 						Util.route('/main/index');
 					};
+
+					analytics.event('RemoveCompletely', { count: 1 });
 				});
 				break;
 
@@ -508,11 +518,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'highlight':
-				C.WorkspaceSetIsHighlighted(object.id, true);
+				C.WorkspaceSetIsHighlighted(object.id, true, () => {
+					analytics.event('Highlight', { count: 1 });
+				});
 				break;
 
 			case 'unhighlight':
-				C.WorkspaceSetIsHighlighted(object.id, false);
+				C.WorkspaceSetIsHighlighted(object.id, false, () => {
+					analytics.event('Unhighlight', { count: 1 });
+				});
 				break;
 		};
 		
