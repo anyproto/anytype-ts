@@ -1,10 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Icon } from 'ts/component';
-import { I, Docs, Onboarding, Util, analytics } from 'ts/lib';
+import { I, Docs, Onboarding, Util, analytics, keyboard } from 'ts/lib';
 import { menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
+
+const $ = require('jquery');
 
 class MenuOnboarding extends React.Component<Props, {}> {
 
@@ -43,6 +45,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
+		this.rebind();
 		Util.renderLink($(ReactDOM.findDOMNode(this)));
 	};
 
@@ -55,6 +58,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 			position();
 		};
 
+		this.rebind();
 		Util.renderLink($(ReactDOM.findDOMNode(this)));
 
 		analytics.event('ScreenOnboarding');
@@ -62,6 +66,20 @@ class MenuOnboarding extends React.Component<Props, {}> {
 
 	onClose () {
 		this.props.close();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+	
+	unbind () {
+		$(window).unbind('keydown.menu');
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('arrowleft', e, () => { this.onArrow(e, -1); });
+		keyboard.shortcut('arrowright', e, () => { this.onArrow(e, 1); });
 	};
 
 	onArrow (e: any, dir: number) {
