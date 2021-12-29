@@ -209,8 +209,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const featured = Util.objectCopy(object[Constant.relationKey.featured] || []);
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
-		const ro = detailStore.get(rootId, relationKey);
-
 		if (idx < 0) {
 			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ], () => {
 				analytics.event('FeatureRelation');
