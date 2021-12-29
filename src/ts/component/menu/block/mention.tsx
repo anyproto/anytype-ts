@@ -219,8 +219,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 	
 			onChange(name + ' ', marks, from, to);
-
-			analytics.event('CreateMention');
 		};
 
 		if (item.id == 'add') {
