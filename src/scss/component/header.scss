@@ -123,14 +123,17 @@
 	}
 }
 
-.header.headerMainHistory { height: 38px; line-height: 22px; padding: 8px 16px; width: calc(100% - 254px); background: $colorWhite; }
+.header.headerMainHistory { height: 38px; padding: 8px 16px; width: calc(100% - 254px); background: $colorWhite; }
 .header.headerMainHistory {
-	.side { height: 20px; top: 8px; }
+	.side { height: 100%; top: 0px; line-height: 38px; }
 	.side.center { text-align: center; }
 	.side.right { right: 16px; }
 
 	.side {
-		.item { color: $colorVeryDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; }
+		.item { 
+			color: $colorVeryDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 
+			display: inline-block; vertical-align: middle;
+		}
 		.item {
 			.icon.arrow { background-image: url('~img/arrow/history0.svg'); margin: 0px; }
 		}
@@ -151,6 +154,10 @@ html.platformMac {
 		.side { top: 12px; }
 		.side.left { left: 88px; }
 		.side .item { vertical-align: middle; display: inline-block; }
+	}
+
+	.header.headerMainHistory {
+		.side { top: 0px; line-height: 52px; }
 	}
 }
 

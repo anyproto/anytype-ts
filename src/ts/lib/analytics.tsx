@@ -144,9 +144,10 @@ class Analytics {
 				};
 				break;
 
+			case 'SetCover':
 			case 'SettingsWallpaperSet':
-				data.type = this.coverTypeMapper(data.type);
-				data.id = data.id.replace(/^c([\d]+)/, '$1');
+				data.type = I.CoverType[data.type].toLowerCase();
+				data.id = String(data.id || '').replace(/^c([\d]+)/, '$1');
 
 				if (data.type == I.CoverType.Upload) {
 					delete(param.id);
