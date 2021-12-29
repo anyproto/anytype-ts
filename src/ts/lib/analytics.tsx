@@ -10,7 +10,7 @@ const os = window.require('os');
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route',
-	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index',
+	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
 const KEY_CONTEXT = 'analyticsContext';
@@ -131,17 +131,16 @@ class Analytics {
 
 			case 'CreateBlock':
 			case 'ChangeBlockStyle':
-				data.style = '';
-				data.type = data.params.type;
-
 				if (data.type == I.BlockType.Text) {
-					data.style = I.TextStyle[data.params.style].toLowerCase();
-				};
+					data.style = I.TextStyle[data.style].toLowerCase();
+				} else
 				if (data.type == I.BlockType.Div) {
-					data.style = I.DivStyle[data.params.style].toLowerCase();
-				};
+					data.style = I.DivStyle[data.style].toLowerCase();
+				} else
 				if (data.type == I.BlockType.File) {
-					data.style = I.FileStyle[data.params.style].toLowerCase();
+					data.style = I.FileStyle[data.style].toLowerCase();
+				} else {
+					delete(data.style);
 				};
 				break;
 
@@ -153,6 +152,21 @@ class Analytics {
 				if (data.type == I.CoverType.Upload) {
 					delete(param.id);
 				};
+				break;
+
+			case 'AddView':
+			case 'SwitchView':
+				data.type = I.ViewType[data.type].toLowerCase();
+				break;
+
+			case 'AddFilter':
+			case 'ChangeFilterValue':
+				data.condition = I.FilterCondition[data.condition].toLowerCase();
+				break;
+
+			case 'AddSort':
+			case 'ChangeSortValue':
+				data.type = I.SortType[data.type].toLowerCase();
 				break;
 		};
 

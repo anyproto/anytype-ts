@@ -5,7 +5,7 @@ import { Icon, IconObject, Tag } from 'ts/component';
 import { detailStore, dbStore, menuStore, blockStore } from 'ts/store';
 import { I, C, DataUtil } from 'ts/lib';
 import arrayMove from 'array-move';
-import { translate, Util, keyboard } from 'ts/lib';
+import { translate, Util, keyboard, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import 'react-virtualized/styles.css';
@@ -311,15 +311,17 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		const first = relationOptions[0];
 		const conditions = DataUtil.filterConditionsByType(first.format);
 		const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-
-		view.filters.push({ 
+		const newItem = { 
 			relationKey: first.id, 
 			operator: I.FilterOperator.And, 
 			condition: condition as I.FilterCondition,
 			value: DataUtil.formatRelationValue(first, null, false),
-		});
+		};
 
+		view.filters.push(newItem);
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
+
+		analytics.event('AddFilter', { condition: newItem.condition });
 		this.save();
 	};
 
@@ -333,6 +335,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 		this.save();
 
 		menuStore.close('select');
+		analytics.event('RemoveFilter');
 	};
 
 	onOver (e: any, item: any) {
@@ -366,6 +369,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<Pro
 
 		view.filters = arrayMove(view.filters, oldIndex, newIndex);
 		this.save();
+
+		analytics.event('RepositionFilter');
 	};
 
 	save () {

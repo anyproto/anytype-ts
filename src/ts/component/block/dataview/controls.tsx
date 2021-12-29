@@ -217,7 +217,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onViewSet (item: any) {
 		this.props.getData(item.id, 0);
-		analytics.event('BlockDataviewViewSet', { type: item.type });
+
+		analytics.event('SwitchView', { type: item.type });
 	};
 
 	onViewEdit (e: any, item: any) {
@@ -251,7 +252,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, block.id, ids);
-		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex);
+		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
+			analytics.event('RepositionView');
+		});
 	};
 
 	resize () {
