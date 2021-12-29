@@ -540,7 +540,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		this.placeholderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => { 
+			this.save(); 
+
+			analytics.event(Util.toCamelCase([ 'SetType', item.id ].join('-')));
+		}, 500);
 	};
 
 	onSelectText (e: any, item: any) {
