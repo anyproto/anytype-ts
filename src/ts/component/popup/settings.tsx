@@ -693,6 +693,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onFileOffload (e: any) {
+		analytics.event('ScreenFileOffloadWarning');
+
 		popupStore.open('confirm',{
 			data: {
 				title: 'Are you sure?',
