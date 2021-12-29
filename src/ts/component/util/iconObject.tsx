@@ -131,7 +131,7 @@ const BgColor = {
 
 const Color = {
 	'':		 '#aca996',
-	dark:	 '#cbc9bd'
+	dark:	 '#dfddd3'
 };
 
 const Theme = {

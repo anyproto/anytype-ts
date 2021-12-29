@@ -40,5 +40,5 @@ body {
 .buttons button:hover { background: #f1981a; }
 
 html.dark body { color: #a09f92; }
-html.dark .title { color: #cbc9bd; }
-html.dark .copyright { color: #5c5a54; }
+html.dark .title { color: #dfddd3; }
+html.dark .copyright { color: #5b5a51; }

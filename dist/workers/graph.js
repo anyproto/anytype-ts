@@ -115,8 +115,8 @@ initColor = () => {
 		case 'dark':
 			Color = {
 				bg: '#2c2b27',
-				text: '#cbc9bd',
-				iconText: '#cbc9bd',
+				text: '#dfddd3',
+				iconText: '#dfddd3',
 				link: {
 					0: '#525148',
 					1: '#8c9ea5',
