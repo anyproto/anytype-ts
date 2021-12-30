@@ -56,7 +56,6 @@ class Analytics {
 			console.log('[Analytics.init]', this.instance);
 		};
 
-		this.profile(account);
 		this.isInit = true;
 	};
 	
