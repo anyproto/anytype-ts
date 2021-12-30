@@ -521,11 +521,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 			};
 
 			if (item.isBgColor) {
-				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, onCommand);
+				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, (message: any) => {
+					onCommand(message);
+
+					analytics.event('ChangeBlockBackground', { color: item.value, count: 1 });
+				});
 			};
 
 			if (item.isAlign) {
-				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, onCommand);
+				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
+					onCommand(message);
+
+					analytics.event('ChangeBlockAlign', { align: item.itemId, count: 1 });
+				});
 			};
 
 			if (item.isAction) {

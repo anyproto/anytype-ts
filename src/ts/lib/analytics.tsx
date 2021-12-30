@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
-import { I, M, C, Mapper, Util, translate, Storage } from 'ts/lib';
-import { authStore, commonStore, dbStore } from 'ts/store';
+import { I, C, Util, Storage } from 'ts/lib';
+import { authStore, commonStore } from 'ts/store';
 
 const Constant = require('json/constant.json');
 const { app } = window.require('@electron/remote');
@@ -9,7 +9,7 @@ const version = app.getVersion();
 const os = window.require('os');
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 'route', 'format',
+	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
 	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length'
 ];
