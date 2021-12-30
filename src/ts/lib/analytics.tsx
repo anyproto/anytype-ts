@@ -60,7 +60,7 @@ class Analytics {
 	};
 	
 	profile (account: I.Account) {
-		if (!this.instance || (!isProduction && !this.debug())) {
+		if (!this.instance || (!isProduction && !this.debug()) || !account) {
 			return;
 		};
 		if (this.debug()) {
