@@ -184,7 +184,11 @@ class Page extends React.Component<Props, {}> {
 		
 		window.setTimeout(() => {
 			if (isMain && account) {
-				if (!popupNewBlock) {
+				if (!Storage.get('onboarding')) {
+					Storage.set('popupNewBlock', 1);
+				};
+
+				if (!popupNewBlock && Storage.get('onboarding')) {
 					popupStore.open('help', { data: { document: 'whatsNew' } });
 					Storage.set('popupNewBlock', 1);
 				};

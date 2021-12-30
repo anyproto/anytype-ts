@@ -83,7 +83,7 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	};
 
 	onArrow (e: any, dir: number) {
-		const { data } = this.props.param;
+		const { data, onOpen, onClose } = this.props.param;
 		const { key, current, isPopup } = data;
 		const items = Docs.Help.Onboarding[key];
 
@@ -102,6 +102,22 @@ class MenuOnboarding extends React.Component<Props, {}> {
 
 		menuStore.open('onboarding', {
 			...param,
+			onOpen: () => {
+				if (onOpen) {
+					onOpen();
+				};
+				if (param.onOpen) {
+					param.onOpen();
+				};
+			},
+			onClose: () => {
+				if (onClose) {
+					onClose();
+				};
+				if (param.onClose) {
+					param.onClose();
+				};
+			},
 			data: {
 				...data,
 				...param.data,
