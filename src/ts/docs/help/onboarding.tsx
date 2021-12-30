@@ -6,7 +6,7 @@ export default {
     mainIndex: [
         {
             name: 'Welcome onboard!',
-            description: 'Here is a few tips to understand the basics of Anytype',
+            description: 'A few tips to understand the basics of Anytype. Use ← → keybord arrows to switch faster',
             param: {
                 element: '#title .side.left span',
                 offsetY: 10,
@@ -14,7 +14,7 @@ export default {
         },
         {
             name: 'Tabs',
-            description: 'Contains your favorite objects and others matching some criteria',
+            description: 'Contains your favorite objects, browsing history, all Sets and items in the Bin',
             param: {
                 element: '#tabWrap .tabs',
                 vertical: I.MenuDirection.Top,
@@ -24,7 +24,7 @@ export default {
         },
         {
             name: 'Need help?',
-            description: 'Docs, Feedback, Shortcuts are here',
+            description: 'Docs, Feedback, Shortcuts and other useful information',
             param: {
                 element: '#button-help',
                 vertical: I.MenuDirection.Top,
@@ -34,7 +34,7 @@ export default {
         },
         {
             name: 'Settings',
-            description: 'Keychain phrase, themes, import and export are here',
+            description: 'Keychain phrase, Dark theme, import / export and many more',
             param: {
                 element: '#header .icon.settings',
                 classNameWrap: 'fixed fromHeader',
@@ -44,7 +44,7 @@ export default {
         },
         {
             name: 'Search',
-            description: 'Works with all objects and content available in Anytype',
+            description: 'Works within all objects and content in Anytype',
             param: {
                 element: '#header .side.center',
                 classNameWrap: 'fromHeader',
@@ -54,7 +54,7 @@ export default {
         },
         {
             name: 'Library',
-            description: 'Use it to create and manage Types, Templates and Relations',
+            description: 'A place to manage your Types, Templates and Relations',
             param: {
                 horizontal: I.MenuDirection.Center,
                 offsetY: 18,
@@ -75,7 +75,7 @@ export default {
     mainType: [
         {
             name: 'Meet the Type',
-            description: 'Types bring definition to your objects. Here you can manage layout, templates, and relations.<br/><a href="https://doc.anytype.io/d/fundamentals/type">Click for more information</a>',
+            description: 'Types bring definition to your objects. Choose Layout, Template, and Relations for each object of this Type. <br/><a href="https://doc.anytype.io/d/fundamentals/type">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -94,7 +94,7 @@ export default {
     mainNavigation: [
         {
             name: 'Navigation Panel',
-            description: 'Use a bi-directional connections to navigate up and down from the current opened object',
+            description: 'Navigate using bi-directional connections to or from the current object',
             param: {
                 common: {
                     container: true,
@@ -132,7 +132,7 @@ export default {
     set: [
         {
             name: 'Manage multiple objects in Set',
-            description: 'Collect all objects by specific criteria: same type and relation. Sets don\'t store objects.<br/><a href="https://doc.anytype.io/d/fundamentals/set">Click for more information</a>',
+            description: 'Collect all objects by specific criteria: same type and relation. Sets don\'t store objects. <br/><a href="https://doc.anytype.io/d/fundamentals/set">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -148,7 +148,7 @@ export default {
         },
         {
             name: 'Add View',
-            description: 'Show objects in Grid, List and Gallery views. Use separate filters and sorts for different workflows',
+            description: 'Save specific filters and sorts for your workflow. Display them in the most suitable view',
             param: {
                 element: '.dataviewControls #sideLeft span',
                 offsetY: 10,
@@ -156,7 +156,7 @@ export default {
         },
         {
             name: 'Source',
-              description: 'Sets collect all objects by given criteria. Source contains these criteria. You can click on it and change at anytime',
+              description: 'Source contains criteria for collection. You can click on it and change result at anytime',
             param: {
                 element: '#blockFeatured-setOf-0',
                 offsetY: 10,
@@ -177,7 +177,7 @@ export default {
     template: [
         {
             name: 'Template',
-            description: 'Set up blocks, their styles and structure on canvas, save relations with values.<br/><a href="https://doc.anytype.io/d/fundamentals/type/template">Click for more information</a>',
+            description: 'Sample object that has blocks, styles, relation values in place. <br/><a href="https://doc.anytype.io/d/fundamentals/type/template">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -196,7 +196,7 @@ export default {
     editor: [
         {
             name: 'This is object',
-            description: 'You can write text, use blocks to create media, change Type, and manage objects specific relations',
+            description: 'Write text, add media blocks, and manage object’s relations',
             param: {
                 common: {
                     container: true,
@@ -246,7 +246,7 @@ export default {
     storeType: [
         {
             name: 'Library',
-            description: 'Use it to create and manage Types, Templates and Relations.<br/><a href="https://doc.anytype.io/d/features/library">Click for more information</a>',
+            description: 'Use it to create and manage Types, Templates and Relations. <br/><a href="https://doc.anytype.io/d/features/library">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -265,7 +265,7 @@ export default {
     storeRelation: [
         {
             name: 'Relations',
-            description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object.<br/><a href="https://doc.anytype.io/d/fundamentals/relation">Click for more information</a>',
+            description: 'Use Relations and add significance for connections between objects. They provide name, direction and format of values. They can be applied to every object. <br/><a href="https://doc.anytype.io/d/fundamentals/relation">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -284,7 +284,7 @@ export default {
     typeSelect: [
         {
             name: 'Choose a Type to start from',
-            description: 'Types bring meaning to your objects. They manage relations and define the look provided by templates',
+            description: 'Types bring meaning to your objects. They manage Relations and define the look provided by Templates',
             param: {
                 common: {
                     container: true,
