@@ -75,7 +75,7 @@ export default {
     mainType: [
         {
             name: 'Meet the Type',
-            description: 'Types bring definition to your objects. Here you can manage layout, templates, and relations.<br/><a href="#">Click for more information</a>',
+            description: 'Types bring definition to your objects. Here you can manage layout, templates, and relations.<br/><a href="https://doc.anytype.io/d/fundamentals/type">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -132,7 +132,7 @@ export default {
     set: [
         {
             name: 'Manage multiple objects in Set',
-            description: 'Here are all objects which meet a specific criteria: same type and relation. Sets don\'t store objects.<br/><a href="#">Click for more information</a>',
+            description: 'Collect all objects by specific criteria: same type and relation. Sets don\'t store objects.<br/><a href="https://doc.anytype.io/d/fundamentals/set">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -155,8 +155,16 @@ export default {
             }
         },
         {
+            name: 'Source',
+              description: 'Sets collect all objects by given criteria. Source contains these criteria. You can click on it and change at anytime',
+            param: {
+                element: '#blockFeatured-setOf-0',
+                offsetY: 10,
+            }
+        },
+        {
             name: 'Set it up',
-            description: 'Manage Filters, Sorts, Relations and columns here',
+            description: 'Manage Filters, Sorts, Relations with columns',
             param: {
                 element: '.dataviewControls #button-manager',
                 vertical: I.MenuDirection.Top,
@@ -169,7 +177,7 @@ export default {
     template: [
         {
             name: 'Template',
-            description: 'Set up blocks, their styles and structure on canvas, save relations with values.<br/><a href="#">Click for more information</a>',
+            description: 'Set up blocks, their styles and structure on canvas, save relations with values.<br/><a href="https://doc.anytype.io/d/fundamentals/type/template">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -238,7 +246,7 @@ export default {
     storeType: [
         {
             name: 'Library',
-            description: 'Use it to create and manage Types, Templates and Relations.<br/><a href="#">Click for more information</a>',
+            description: 'Use it to create and manage Types, Templates and Relations.<br/><a href="https://doc.anytype.io/d/features/library">Click for more information</a>',
             param: {
                 common: {
                     container: true,
@@ -257,7 +265,7 @@ export default {
     storeRelation: [
         {
             name: 'Relations',
-            description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object.<br/><a href="#">Click for more information</a>',
+            description: 'Use Relations to add significance to connections between objects. They provide name, direction and type of values. They can be applied to every object.<br/><a href="https://doc.anytype.io/d/fundamentals/relation">Click for more information</a>',
             param: {
                 common: {
                     container: true,
