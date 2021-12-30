@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InputWithFile, Loader, Error, Pager } from 'ts/component';
-import { I, C, translate, focus, Util } from 'ts/lib';
+import { I, C, translate, focus, Action, Util } from 'ts/lib';
 import { commonStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
@@ -156,14 +156,14 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		
-		C.BlockUpload(rootId, id, url, '');
+		Action.upload(I.FileType.Pdf, rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		
-		C.BlockUpload(rootId, id, '', path);
+		Action.upload(I.FileType.Pdf, rootId, id, '', path);
 	};
 
 	onOpen (e: any) {

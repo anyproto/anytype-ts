@@ -5,7 +5,7 @@
     /* Common */
 
     .popup {
-        .innerWrap { background: $colorBlack; }
+        .innerWrap { background: $colorBlack; border: 0.5px solid #4C4B43; }
 
         #loader { background: $colorBlack; }
     }
@@ -33,12 +33,12 @@
         .head {
             .element { color: $colorSecondary; }
             .element {
-                .icon.back { background-image: url('~img/theme/dark/icon/popup/settings/back0.svg'); } 
+                .icon.back { background-image: url('#{$themePath}/icon/popup/settings/back0.svg'); } 
             }
 
             .element:hover { color: $colorPrimary; }
             .element:hover {
-				.icon.back { background-image: url('~img/theme/dark/icon/popup/settings/back1.svg'); } 
+				.icon.back { background-image: url('#{$themePath}/icon/popup/settings/back1.svg'); } 
 			}
         }
 
@@ -65,8 +65,8 @@
         .tabImportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }
-            .item.notion .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/notion.svg'); }
-            .item.roam .icon { background-image: url('~img/theme/dark/icon/popup/settings/import/roam.svg'); }
+            .item.notion .icon { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
+            .item.roam .icon { background-image: url('#{$themePath}/icon/popup/settings/import/roam.svg'); }
         }
     }
     
@@ -99,11 +99,11 @@
     .popup.popupHelp {
 		.head { color: $colorSecondary; }
 		.head {
-			.icon.telegram { background-image: url('~img/theme/dark/icon/telegram0.svg'); }
-			.icon.telegram:hover { background-image: url('~img/theme/dark/icon/telegram1.svg'); }
+			.icon.telegram { background-image: url('#{$themePath}/icon/telegram0.svg'); }
+			.icon.telegram:hover { background-image: url('#{$themePath}/icon/telegram1.svg'); }
 
-			.icon.twitter { background-image: url('~img/theme/dark/icon/twitter0.svg'); }
-			.icon.twitter:hover { background-image: url('~img/theme/dark/icon/twitter1.svg'); }
+			.icon.twitter { background-image: url('#{$themePath}/icon/twitter0.svg'); }
+			.icon.twitter:hover { background-image: url('#{$themePath}/icon/twitter1.svg'); }
 		}
 
         .highlight { color: $colorOrange; background: $colorHover; }

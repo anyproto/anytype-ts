@@ -78,7 +78,8 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		};
 
 		const allowedDetails = blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const allowedLayout = allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]);
+		const allowedLayout = !root.isObjectSet() && (allowedDetails || blockStore.isAllowed(rootId, rootId, [ I.RestrictionObject.Layout ]));
+		const allowedIcon = !object.iconEmoji && !object.iconImage && !root.isObjectTask();
 
 		let elements = null;
 		if (isEditing) {
@@ -109,7 +110,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			elements = (
 				<React.Fragment>
 					<div className="controlButtons">
-						{!object.iconEmoji && !object.iconImage && !root.isObjectTask() ? (
+						{allowedIcon ? (
 							<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 								<Icon className="icon" />
 								<div className="txt">{translate('editorControlIcon')}</div>
@@ -121,7 +122,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 							<div className="txt">{translate('editorControlCover')}</div>
 						</div>
 
-						{!root.isObjectSet() && allowedLayout ? (
+						{allowedLayout ? (
 							<div id="button-layout" className="btn white withIcon" onClick={this.onLayout}>
 								<Icon className="layout" />
 								<div className="txt">{translate('editorControlLayout')}</div>
@@ -154,7 +155,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 				)}
 
 				{!readonly ? (
-					<div id="elements" className="elements">
+					<div id="elements" className="elements editorControlElements">
 						{elements}
 					</div>
 				) : ''}
@@ -252,9 +253,6 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			data: {
 				rootId: rootId,
 				value: object.layout,
-				onChange: (layout: I.ObjectLayout) => {
-					DataUtil.pageSetLayout(rootId, layout);
-				},
 			}
 		});
 	};

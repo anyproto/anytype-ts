@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { InputWithFile, Loader, Icon, Error } from 'ts/component';
-import { I, C, translate, focus } from 'ts/lib';
-import { commonStore, popupStore } from 'ts/store';
+import { InputWithFile, Icon, Loader, Error } from 'ts/component';
+import { I, C, translate, focus, Action } from 'ts/lib';
+import { commonStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends I.BlockComponent {}
@@ -10,50 +10,53 @@ interface Props extends I.BlockComponent {}
 const $ = require('jquery');
 const Constant = require('json/constant.json');
 
-const BlockImage = observer(class BlockImage extends React.Component<Props, {}> {
+const BlockVideo = observer(class BlockVideo extends React.Component<Props, {}> {
 
 	_isMounted: boolean = false;
-	
+	div: number = 0;
+	speed: number = 1;
+
 	constructor (props: any) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onChangeUrl = this.onChangeUrl.bind(this);
+		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
-		this.onChangeUrl = this.onChangeUrl.bind(this);
-		this.onChangeFile = this.onChangeFile.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onLoad = this.onLoad.bind(this);
-		this.onError = this.onError.bind(this);
+		this.onResizeInit = this.onResizeInit.bind(this);
+		this.onPlay = this.onPlay.bind(this);
 	};
 
 	render () {
 		const { block, readonly } = this.props;
 		const { id, fields, content } = block;
-		const { width } = fields;
-		const { state } = content;
+		const { state, hash, type, mime } = content;
 		
+		let { width } = fields;
 		let element = null;
 		let css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';
+			css.height = this.getHeight(width);
 		};
 		
 		switch (state) {
 			default:
+			case I.FileState.Error:
 			case I.FileState.Empty:
 				element = (
 					<React.Fragment>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
 						<InputWithFile 
 							block={block} 
-							icon="image" 
-							textFile="Upload a picture" 
-							accept={Constant.extension.image} 
+							icon="video" 
+							textFile="Upload a video" 
+							accept={Constant.extension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 
@@ -70,9 +73,12 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 				
 			case I.FileState.Done:
 				element = (
-					<div id="wrap" className="wrap resizable" style={css}>
-						<img className="media" src={this.getUrl()} onDragStart={(e: any) => { e.preventDefault(); }} onClick={this.onClick} onLoad={this.onLoad} onError={this.onError} />
-						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+					<div className="wrap resizable" style={css}>
+						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
+						<div className="videoControls">
+							<Icon className="play" onClick={this.onPlay} />
+							<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
+						</div>
 					</div>
 				);
 				break;
@@ -90,6 +96,10 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		this.rebind();
 	};
 	
+	componentDidUpdate () {
+		this.rebind();
+	};
+	
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
@@ -101,11 +111,25 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
+		const video = node.find('video');
+		const el = video.get(0);
 		
-		node.unbind('resizeStart resize resizeEnd');
+		this.unbind();
+		
 		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
 		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
 		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
+		node.on('resizeInit', (e: any, oe: any) => { this.onResizeInit(); });
+		
+		if (video.length) {
+			this.div = 16 / 9;
+			this.onResizeInit();
+
+			video.on('canplay', (e: any) => {
+				this.div = el.videoWidth / el.videoHeight;
+				this.onResizeInit();
+			});
+		};
 	};
 	
 	unbind () {
@@ -114,7 +138,10 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		node.unbind('resize');
+		const video = node.find('video');
+		
+		node.unbind('resizeInit resizeStart resize resizeEnd');
+		video.unbind('canplay');
 	};
 	
 	onKeyDown (e: any) {
@@ -142,14 +169,55 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		const { rootId, block } = this.props;
 		const { id } = block;
 		
-		C.BlockUpload(rootId, id, url, '');
+		Action.upload(I.FileType.Video, rootId, id, url, '');
 	};
 	
 	onChangeFile (e: any, path: string) {
 		const { rootId, block } = this.props;
 		const { id } = block;
 		
-		C.BlockUpload(rootId, id, '', path);
+		Action.upload(I.FileType.Video, rootId, id, '', path);
+	};
+	
+	onPlay () {
+		const node = $(ReactDOM.findDOMNode(this));
+		const video = node.find('video');
+		const el = video.get(0);
+
+		$('audio, video').each((i: number, item: any) => { item.pause(); });
+		
+		video.unbind('ended pause play');
+		el.play();
+		
+		video.on('play', () => {
+			el.controls = true;
+			node.addClass('isPlaying');
+		});
+		
+		video.on('ended', () => {
+			el.controls = false;
+			node.removeClass('isPlaying');
+		});
+	};
+
+	onResizeInit () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		const win = $(window);
+		const node = $(ReactDOM.findDOMNode(this));
+		const wrap = node.find('.wrap');
+		
+		if (!wrap.length) {
+			return;
+		};
+		
+		const w = this.getWidth(true, 0);
+		const h = this.getHeight(w);
+		
+		wrap.css({ width: (w * 100) + '%', height: h });
+		win.trigger('resize.editor');
 	};
 	
 	onResizeStart (e: any, checkMax: boolean) {
@@ -187,7 +255,7 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		};
 		
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#wrap');
+		const wrap = node.find('.wrap');
 		
 		if (!wrap.length) {
 			return;
@@ -195,8 +263,9 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		
 		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
+		const h = this.getHeight(w);
 		
-		wrap.css({ width: (w * 100) + '%' });
+		wrap.css({ width: (w * 100) + '%', height: h });
 	};
 	
 	onResizeEnd (e: any, checkMax: boolean) {
@@ -208,15 +277,15 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 		const { id } = block;
 		const { selection } = dataset || {};
 		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#wrap');
+		const wrap = node.find('.wrap');
 		
 		if (!wrap.length) {
 			return;
 		};
 		
 		const win = $(window);
-		const ox = wrap.offset().left;
-		const w = this.getWidth(checkMax, e.pageX - ox + 20);
+		const rect = (wrap.get(0) as Element).getBoundingClientRect() as DOMRect;
+		const w = this.getWidth(checkMax, e.pageX - rect.x + 20);
 		
 		win.unbind('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
@@ -229,56 +298,38 @@ const BlockImage = observer(class BlockImage extends React.Component<Props, {}> 
 			{ blockId: id, fields: { width: w } },
 		]);
 	};
-
-	onLoad () {
-		$(window).trigger('resize');
-	};
-
-	onError () {
-		const node = $(ReactDOM.findDOMNode(this));
-		const wrap = node.find('#wrap');
-
-		wrap.addClass('broken');
-	};
-	
-	onClick (e: any) {
-		if (e.shiftKey || e.ctrlKey || e.metaKey) {
-			return;
-		};
-		
-		popupStore.open('preview', {
-			data: {
-				type: I.FileType.Image,
-				url: this.getUrl(),
-			}
-		});
-	};
-	
-	getUrl () {
-		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
-		
-		return commonStore.imageUrl(hash, Constant.size.image);
-	};
 	
 	getWidth (checkMax: boolean, v: number): number {
 		const { block } = this.props;
 		const { id, fields } = block;
+		
+		let { width } = fields;
+		width = Number(width) || 1;
+		
 		const el = $('#selectable-' + id);
-		
-		let width = Number(fields.width) || 1;
-		
 		if (!el.length) {
 			return width;
 		};
 		
-		const ew = el.width();
-		const w = Math.min(ew, Math.max(60, checkMax ? width * ew : v));
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		const w = Math.min(rect.width, Math.max(160, checkMax ? width * rect.width : v));
 		
-		return Math.min(1, Math.max(0, w / ew));
+		return Math.min(1, Math.max(0, w / rect.width));
+	};
+	
+	getHeight (p: number) {
+		const { block } = this.props;
+		const { id } = block;
+		const el = $('#selectable-' + id);
+		
+		if (!el.length) {
+			return 0;
+		};
+		
+		const rect = el.get(0).getBoundingClientRect() as DOMRect;
+		return Math.floor(p * rect.width / (this.div || 1));
 	};
 	
 });
 
-export default BlockImage;
+export default BlockVideo;

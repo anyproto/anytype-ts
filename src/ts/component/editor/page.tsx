@@ -489,13 +489,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
@@ -574,8 +574,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			// Duplicate
 			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 				e.preventDefault();
-				focus.clear(true);
-				C.BlockListDuplicate(rootId, ids, ids[ids.length - 1], I.BlockPosition.Bottom, (message: any) => {});
+				Action.duplicate(rootId, ids[ids.length - 1], ids, () => { focus.clear(true); });
 			});
 
 			// Open action menu
@@ -638,6 +637,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					if (next && next.isTextToggle()) {
 						blockStore.toggle(rootId, next.id, true);
 					};
+
+					analytics.event('ReorderBlock', { count: ids.length });
 				});
 			};
 		});
@@ -736,13 +737,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Undo
 		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockUndo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// Redo
 		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockRedo(rootId, (message: any) => { focus.clear(true); });
+			keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 		});
 
 		// History
@@ -754,12 +755,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		// Duplicate
 		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
 			e.preventDefault();
-			C.BlockListDuplicate(rootId, [ block.id ], block.id, I.BlockPosition.Bottom, (message: any) => {
-				if (message.blockIds.length) {
-					focus.set(message.blockIds[message.blockIds.length - 1], { from: length, to: length });
-					focus.apply();
-				};
-			});
+			Action.duplicate(rootId, block.id, [ block.id ]);
 		});
 
 		// Open action menu
@@ -925,6 +921,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			C.BlockListMove(rootId, rootId, [ block.id ], next.id, position, (message: any) => {
 				focus.apply();
+
+				analytics.event('ReorderBlock', { count: 1 });
 			});
 		});
 
@@ -1045,6 +1043,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				if (next && next.isTextToggle()) {
 					blockStore.toggle(rootId, next.id, true);
 				};
+
+				analytics.event('ReorderBlock', { count: 1 });
 			});
 		});
 
@@ -1283,8 +1283,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 		};
 		
-		Util.clipboardCopy(data, () => {
+		Util.clipboardCopy(data, () => { 
 			C[cmd](rootId, blocks, range, cb);
+
+			analytics.event('CopyBlock');
 		});
 	};
 	
@@ -1400,7 +1402,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						};
 
 						if (item.id == 'bookmark') {
-							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url);
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+								analytics.event('CreateBlock', { 
+									middleTime: message.middleTime, 
+									type: I.BlockType.Bookmark, 
+								});
+							});
 						};
 					},
 				}
@@ -1440,6 +1447,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 			
 			this.focus(id, from, to, true);
+
+			analytics.event('PasteBlock');
 		});
 	};
 
@@ -1527,6 +1536,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (next) {
 				this.focus(blockId, to, to, false);
 			};
+
+			analytics.event('DeleteBlock');
 		};
 
 		if (next.isText()) {
@@ -1595,6 +1606,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (isToggle && isOpen) {
 				blockStore.toggle(rootId, message.blockId, true);
 			};
+
+			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
 		});
 	};
 	

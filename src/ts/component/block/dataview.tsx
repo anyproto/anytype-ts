@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { I, C, Util, DataUtil, analytics, translate, keyboard } from 'ts/lib';
+import { I, C, Util, DataUtil, analytics, translate, keyboard, Onboarding } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { blockStore, menuStore, dbStore, detailStore, popupStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -116,12 +116,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup } = this.props;
 		const view = this.getView();
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (view) {
 			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
 			this.getData(view.id, 0);
+		};
+
+		if (root.isObjectSet()) {
+			Onboarding.start('set', isPopup);
 		};
 
 		this.resize();
@@ -312,7 +317,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (template) {
-					analytics.event('ObjectCreate', {
+					analytics.event('CreateObject', {
 						objectType: template.targetObjectType,
 						layout: template.layout,
 						template: (template.templateIsBundled ? template.id : 'custom'),
@@ -430,6 +435,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		detailStore.update(subId, record.id, obj);
 		C.BlockSetDetails(record.id, [ { key: relationKey, value: value } ], callBack);
+
+		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
+		analytics.event(key, { type: 'dataview' });
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

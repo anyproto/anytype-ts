@@ -190,6 +190,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				break;
 
 			case 'phrase':
+				analytics.event('ScreenKeychain', {
+					type: !this.onConfirmPhrase ? 'ScreenSettings' : 'BeforeLogout'
+				});
+
 				content = (
 					<div>
 						<Head id="index" name={translate('popupSettingsTitle')} />
@@ -205,6 +209,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								className="isBlurred"
 								onFocus={this.onFocusPhrase} 
 								onBlur={this.onBlurPhrase} 
+								onCopy={() => { 
+									analytics.event('KeychainCopy', { 
+										type: !this.onConfirmPhrase ? 'ScreenSettings' : 'BeforeLogout'
+									}); 
+								}}
 								placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
 								readonly={true} 
 							/>
@@ -247,6 +256,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onConfirmPin = this.onTurnOffPin;
 										this.onPage('pinConfirm');
+
+										analytics.event('PinCodeOff');
 									}} 
 								/>
 
@@ -256,6 +267,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									onClick={() => {
 										this.onConfirmPin = () => { this.onPage('pinSelect'); };
 										this.onPage('pinConfirm');
+
+										analytics.event('PinCodeChange');
 									}} 
 								/>
 							</div>
@@ -266,6 +279,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 									className="blank" 
 									onClick={() => {
 										this.onPage('pinSelect');
+
+										analytics.event('PinCodeOn');
 									}} 
 								/>
 							</div>
@@ -510,6 +525,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 				commonStore.coverSet('', message.hash, I.CoverType.Upload);
 				DataUtil.pageSetCover(root, I.CoverType.Upload, message.hash);
+
+				analytics.event('SettingsWallpaperUpload', { middleTime: message.middleTime });
 			});
 		});
 	};
@@ -573,6 +590,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		this.prevPage = page;
 		popupStore.updateData(this.props.id, { page: id });
+
+		analytics.event('settings', { params: { id } });
 	};
 
 	onCover (item: any) {
@@ -580,6 +599,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 		DataUtil.pageSetCover(root, item.type, item.image || item.id);
 		commonStore.coverSet(item.id, item.image, item.type);
+
+		analytics.event('SettingsWallpaperSet', { type: item.type, id: item.id });
 	};
 
 	onLogout (e: any) {
@@ -623,7 +644,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 			};
 
 			close();
-			C.BlockImportMarkdown(root, files[0]);
+			C.BlockImportMarkdown(root, files[0], (message: any) => {
+				analytics.event('ImportFromNotion', { middleTime: message.middleTime });
+			});
 		});
 	};
 
@@ -661,6 +684,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 							return;
 						};
 						ipcRenderer.send('pathOpen', files[0]);
+
+						analytics.event('ExportMarkdown', { middleTime: message.middleTime });
 					});
 				});
 				break;
@@ -668,6 +693,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	};
 
 	onFileOffload (e: any) {
+		analytics.event('ScreenFileOffloadWarning');
+
 		popupStore.open('confirm',{
 			data: {
 				title: 'Are you sure?',
@@ -675,7 +702,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 				textConfirm: 'Yes',
 				onConfirm: () => {
 					this.setState({ loading: true });
-
 
 					C.FileListOffload([], false, (message: any) => {
 						if (message.error.code) {
@@ -692,6 +718,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 								canCancel: false,
 							}
 						});
+
+						analytics.event('FileOffload', { middleTime: message.middleTime });
 					});
 				},
 				onCancel: () => {
@@ -702,7 +730,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 
 	onTypeChange (id: string) {
 		commonStore.defaultTypeSet(id);
-		analytics.event('DefaultTypeChanged', { objectType: id });
+		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 
 	init () {

@@ -369,9 +369,8 @@ class DataUtil {
 				return;
 			};
 
-			analytics.init();
 			commonStore.gatewaySet(message.gatewayUrl);
-			authStore.deviceSet(message.deviceId);
+			analytics.device(message.deviceId);
 			
 			blockStore.rootSet(root);
 			blockStore.storeSetType(message.marketplaceTypeId);
@@ -547,7 +546,7 @@ class DataUtil {
 		];
 		C.BlockSetDetails(rootId, details, callBack);
 
-		analytics.event('PageSetCover', { type: type, id: id });
+		//analytics.event('PageSetCover', { type: type, id: id });
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {

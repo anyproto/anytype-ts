@@ -48,8 +48,6 @@ class MenuStore {
 		} else {
 			this.menuList.push({ id: id, param: param });
 		};
-
-		analytics.event(Util.toCamelCase('Menu-' + id));
 	};
 
     update (id: string, param: any) {

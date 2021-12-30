@@ -332,45 +332,6 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				});
 				break;
 
-			case 'type':
-				menuId = 'searchObject';
-				menuParam.vertical = I.MenuDirection.Bottom;
-				menuParam.className = [ param.className, 'single' ].join(' ');
-				menuParam.offsetY = -36;
-
-				menuParam.data = Object.assign(menuParam.data, {
-					placeholder: 'Find a type of object...',
-					label: 'Your object type library',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: types },
-					],
-					onSelect: (item: any) => {
-						C.BlockObjectTypeSet(rootId, item.id);
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
-
-			case 'layout':
-				menuId = 'select';
-
-				menuParam.data = Object.assign(menuParam.data, {
-					options: DataUtil.menuTurnLayouts(),
-					value: object.layout,
-					onSelect: (e: any, item: any) => {
-						DataUtil.pageSetLayout(rootId, item.id);
-						close();
-
-						if (onMenuSelect) {
-							onMenuSelect(item);
-						};
-					}
-				});
-				break;
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
@@ -402,17 +363,16 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		};
 
 		focus.clear(false);
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { action: item.id });
 		
 		switch (item.id) {
 
 			case 'undo':
-				C.BlockUndo(rootId);
+				keyboard.onUndo(rootId);
 				close = false;
 				break;
 				
 			case 'redo':
-				C.BlockRedo(rootId);
+				keyboard.onRedo(rootId);
 				close = false;
 				break;
 				
@@ -463,6 +423,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					} else {
 						popupStore.close('page');
 					};
+
+					analytics.event('MoveToBin', { count: 1 });
 				});
 				break;
 
@@ -475,15 +437,21 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if ((blockId == rootId) && (object.type == Constant.typeId.type)) {
 						dbStore.objectTypeUpdate({ id: object.id, isArchived: false });
 					};
+
+					analytics.event('RestoreFromBin', { count: 1 });
 				});
 				break;
 
 			case 'fav':
-				C.ObjectSetIsFavorite(rootId, true);
+				C.ObjectSetIsFavorite(rootId, true, () => {
+					analytics.event('AddToFavorites', { count: 1 });
+				});
 				break;
 
 			case 'unfav':
-				C.ObjectSetIsFavorite(rootId, false);
+				C.ObjectSetIsFavorite(rootId, false, () => {
+					analytics.event('RemoveFromFavorites', { count: 1 });
+				});
 				break;
 
 			case 'removeBlock':
@@ -502,7 +470,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				DataUtil.pageCreate('', '', {}, I.BlockPosition.Bottom, rootId, {}, (message: any) => {
 					DataUtil.objectOpen({ id: message.targetId });
 
-					analytics.event('ObjectCreate', {
+					analytics.event('CreateObject', {
 						objectType: object.targetObjectType,
 						layout: object.layout,
 						template: (object.templateIsBundled ? object.id : 'custom'),
@@ -514,7 +482,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.MakeTemplate(rootId, (message: any) => {
 					DataUtil.objectOpenPopup({ id: message.id, layout: object.layout });
 
-					analytics.event('TemplateCreate', { objectType: object.type });
+					analytics.event('CreateTemplate', { objectType: object.type });
 				});
 				break;
 
@@ -523,6 +491,8 @@ class MenuBlockMore extends React.Component<Props, {}> {
 					if (block.isPage()) {
 						Util.route('/main/index');
 					};
+
+					analytics.event('RemoveCompletely', { count: 1 });
 				});
 				break;
 
@@ -548,11 +518,15 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 
 			case 'highlight':
-				C.WorkspaceSetIsHighlighted(object.id, true);
+				C.WorkspaceSetIsHighlighted(object.id, true, () => {
+					analytics.event('Highlight', { count: 1 });
+				});
 				break;
 
 			case 'unhighlight':
-				C.WorkspaceSetIsHighlighted(object.id, false);
+				C.WorkspaceSetIsHighlighted(object.id, false, () => {
+					analytics.event('Unhighlight', { count: 1 });
+				});
 				break;
 		};
 		

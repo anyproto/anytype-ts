@@ -1,4 +1,4 @@
-import { I, Util, SmileUtil, Storage } from 'ts/lib';
+import { I, Util, analytics } from 'ts/lib';
 
 const $ = require('jquery');
 const Tags = [ 
@@ -140,6 +140,8 @@ class Mark {
 		if (add) {
 			map[type].push(mark);
 		};
+
+		analytics.event('ChangeTextStyle', { type });
 		return Util.unmap(map).sort(this.sort);
 	};
 	

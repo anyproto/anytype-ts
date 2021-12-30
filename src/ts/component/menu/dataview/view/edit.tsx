@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, Util, keyboard, Key, translate, DataUtil } from 'ts/lib';
+import { I, C, analytics, keyboard, Key, translate, DataUtil } from 'ts/lib';
 import { Input, MenuItemVertical } from 'ts/component';
 import { blockStore, dbStore, menuStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -222,6 +222,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 				getData(view.id, 0);
 
 				cb();
+
+				analytics.event('AddView', { type: view.type });
 			});
 		};
 	};
@@ -404,6 +406,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 						if (onSave) {
 							onSave();
 						};
+
+						analytics.event('AddView', { type: view.type });
 					});
 					break;
 
@@ -424,6 +428,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 							if (current.id == view.id) {
 								getData(next.id, 0);
 							};
+
+							analytics.event('RemoveView');
 						});
 					};
 					break;

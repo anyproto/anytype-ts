@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { getRange } from 'selection-ranges';
-import { I, M, C, Key, focus, keyboard, scrollOnMove, Util } from 'ts/lib';
+import { I, M, C, Key, focus, keyboard, scrollOnMove, Util, analytics } from 'ts/lib';
 import { observer } from 'mobx-react';
 import { commonStore, blockStore, menuStore } from 'ts/store';
 import { throttle } from 'lodash';
@@ -104,7 +104,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			};
 
 			if (next && ids.indexOf(next.id) < 0) {
-				C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom));
+				C.BlockListMove(rootId, rootId, ids, next.id, (dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom), () => {
+					analytics.event('ReorderBlock', { count: ids.length });
+				});
 			};
 		});
 

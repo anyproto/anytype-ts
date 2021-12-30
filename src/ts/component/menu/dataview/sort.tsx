@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'ts/component';
-import { I, C, DataUtil, Util, keyboard } from 'ts/lib';
+import { I, C, DataUtil, Util, keyboard, analytics } from 'ts/lib';
 import arrayMove from 'array-move';
 import { menuStore, dbStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -271,13 +271,15 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 
 		const obj = $(`#${getId()}`);
 		const content = obj.find('.content');
-
-		view.sorts.push({ 
+		const newItem = { 
 			relationKey: relationOptions[0].id, 
 			type: I.SortType.Asc,
-		});
+		};
 
+		view.sorts.push(newItem);
 		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+
+		analytics.event('AddSort', { type: newItem.type });
 		this.save();
 	};
 
@@ -293,6 +295,9 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		};
 		
 		item[k] = v;
+
+		analytics.event('ChangeSortValue', { type: item.type });
+
 		this.save();
 		this.forceUpdate();
 	};
@@ -307,6 +312,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		this.save();
 
 		menuStore.close('select');
+		analytics.event('RemoveSort');
 	};
 	
 	onSortEnd (result: any) {
@@ -318,6 +324,8 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		this.save();
+		
+		analytics.event('RepositionSort');
 	};
 
 	save () {

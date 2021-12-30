@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { blockStore } from 'ts/store';
-import { I, keyboard, Key, DataUtil } from 'ts/lib';
+import { I, keyboard, analytics, DataUtil } from 'ts/lib';
 import { detailStore, menuStore } from 'ts/store';
 
 interface Props extends I.Menu {};
@@ -158,6 +158,8 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 					value: object.layoutAlign,
 					onSelect: (align: I.BlockAlign) => {
 						DataUtil.pageSetAlign(rootId, align);
+
+						analytics.event('SetLayoutAlign', { align });
 						close();
 					}
 				});
@@ -175,6 +177,7 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const object = detailStore.get(rootId, rootId, []);
 
 		if (item.arrow) {
 			return;
@@ -184,8 +187,12 @@ class MenuBlockLayout extends React.Component<Props, {}> {
 
 		if (item.id == 'resize') {
 			this.onResize(e);
+
+			analytics.event('SetLayoutWidth');
 		} else {
 			DataUtil.pageSetLayout(rootId, item.id);
+
+			analytics.event('ChangeLayout', { objectType: object.type, layout: item.id });
 		};
 	};
 

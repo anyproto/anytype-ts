@@ -14,6 +14,7 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupTemplate from './template';
+import { analytics } from '../../lib';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -75,11 +76,14 @@ class Popup extends React.Component<Props, {}> {
 	};
 	
 	componentDidMount () {
+		const { id } = this.props;
+
 		this._isMounted = true;
 		this.position();
 		this.unbind();
 		this.animate();
 		
+		analytics.event('popup', { params: { id } });
 		$(window).on('resize.popup', () => { this.position(); });
 	};
 	

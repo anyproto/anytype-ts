@@ -362,7 +362,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 			focus.clear(true);
 			dbStore.recordAdd(rootId, BLOCK_ID_TEMPLATE, message.record, 1);
-			analytics.event('TemplateCreate', { objectType: rootId });
+			analytics.event('CreateTemplate', { objectType: rootId });
 
 			DataUtil.objectOpenPopup(message.record, {
 				onClose: () => {
@@ -417,7 +417,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			DataUtil.pageCreate('', '', details, I.BlockPosition.Bottom, template?.id, {}, (message: any) => {
 				DataUtil.objectOpenPopup({ ...details, id: message.targetId });
 
-				analytics.event('ObjectCreate', {
+				analytics.event('CreateObject', {
 					objectType: rootId,
 					layout: template?.layout,
 					template: (template && template.templateIsBundled ? template.id : 'custom'),
@@ -465,13 +465,20 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 			data: {
 				filter: '',
 				rootId: rootId,
+				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { menuStore.close('relationSuggest'); });
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation ], () => { 
+						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange(relation);
+						};
+					});
 				},
 			}
 		});
@@ -491,8 +498,12 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectTypeRelationAdd(rootId, [ relation ]);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectTypeRelationAdd(rootId, [ relation ], () => {
+						if (onChange) {
+							onChange(relation);
+						};
+					});
 				},
 				deleteCommand: (rootId: string, blockId: string, relationKey: string) => {
 					C.ObjectTypeRelationRemove(rootId, relationKey);
@@ -506,6 +517,8 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 
 		dbStore.objectTypeUpdate({ id: rootId, recommendedLayout: layout });
 		C.BlockSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
+
+		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
 	};
 
 	onFocus (e: any, item: any) {
@@ -538,7 +551,11 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		this.placeholderCheck(item.id);
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => { 
+			this.save(); 
+
+			analytics.event(Util.toCamelCase([ 'SetType', item.id ].join('-')));
+		}, 500);
 	};
 
 	onSelectText (e: any, item: any) {

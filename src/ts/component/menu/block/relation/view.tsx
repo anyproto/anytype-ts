@@ -6,6 +6,7 @@ import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'ts/sto
 import { observer } from 'mobx-react';
 
 import Item from 'ts/component/menu/item/relationView';
+import { analytics } from '../../../../lib';
 
 interface Props extends I.Menu {};
 
@@ -209,9 +210,13 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const idx = featured.findIndex((it: string) => { return it == relationKey; });
 
 		if (idx < 0) {
-			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ]);
+			C.ObjectFeaturedRelationAdd(rootId, [ relationKey ], () => {
+				analytics.event('FeatureRelation');
+			});
 		} else {
-			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ]);
+			C.ObjectFeaturedRelationRemove(rootId, [ relationKey ], () => {
+				analytics.event('UnfeatureRelation');
+			});
 		};
 	};
 
@@ -228,14 +233,19 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				filter: '',
+				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
 				skipIds: relations.map((it: I.Relation) => { return it.relationKey; }),
 				listCommand: (rootId: string, blockId: string, callBack?: (message: any) => void) => {
 					C.ObjectRelationListAvailable(rootId, callBack);
 				},
-				addCommand: (rootId: string, blockId: string, relation: any) => {
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
 					C.ObjectRelationAdd(rootId, relation, () => { 
 						menuStore.close('relationSuggest'); 
+
+						if (onChange) {
+							onChange(relation);
+						};
 					});
 				},
 			}
@@ -259,8 +269,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			data: {
 				...data,
 				relationKey: relationKey,
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					C.ObjectRelationAdd(rootId, relation);
+				addCommand: (rootId: string, blockId: string, relation: any, onChange?: (relation: any) => void) => {
+					C.ObjectRelationAdd(rootId, relation, () => {
+						if (onChange) {
+							onChange(relation);
+						};
+					});
 				},
 				updateCommand: (rootId: string, blockId: string, relation: any) => {
 					C.ObjectRelationUpdate(rootId, relation);
@@ -314,6 +328,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			{ key: relationKey, value: DataUtil.formatRelationValue(relation, value, true) },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
+
+		const key = DataUtil.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		analytics.event(key, { type: 'menu' });
 	};
 
 	optionCommand (code: string, rootId: string, blockId: string, relationKey: string, recordId: string, option: I.SelectOption, callBack?: (message: any) => void) {

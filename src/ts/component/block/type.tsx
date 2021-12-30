@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { IconObject, Filter } from 'ts/component';
-import { I, C, DataUtil, Util, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
+import { I, C, DataUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup, Storage } from 'ts/lib';
 import { dbStore, popupStore, detailStore, blockStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
@@ -79,6 +79,10 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				))}
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		Onboarding.start('typeSelect', this.props.isPopup);
 	};
 
 	componentWillUnmount() {
@@ -271,7 +275,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 				C.BlockObjectTypeSet(rootId, item.id, onTemplate);
 			};
 
-			analytics.event('ObjectCreate', {
+			analytics.event('CreateObject', {
 				objectType: item.id,
 				layout: template?.layout,
 				template: (template && template.isBundledTemplate ? template.id : 'custom'),

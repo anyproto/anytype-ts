@@ -20,6 +20,7 @@ interface Props {
 	onInput?(e: any, value: string): void;
 	onFocus?(e: any, value: string): void;
 	onBlur?(e: any, value: string): void;
+	onCopy?(e: any, value: string): void;
 };
 
 interface State {
@@ -46,6 +47,7 @@ class Textarea extends React.Component<Props, State> {
 		this.onInput = this.onInput.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 	};
 	
 	render () {
@@ -73,6 +75,7 @@ class Textarea extends React.Component<Props, State> {
 				onInput={this.onInput}
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
+				onCopy={this.onCopy}
 				maxLength={maxLength ? maxLength : undefined}
 			/>
 		);
@@ -128,6 +131,12 @@ class Textarea extends React.Component<Props, State> {
 		};
 		
 		keyboard.setFocus(false);
+	};
+
+	onCopy (e: any) {
+		if (this.props.onCopy) {
+			this.props.onCopy(e, this.state.value);
+		};
 	};
 	
 	focus () {

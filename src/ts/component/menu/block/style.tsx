@@ -135,7 +135,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 	};
 	
 	onClick (e: any, item: any) {
-		const { param, getId, close, dataset } = this.props;
+		const { param, close, dataset } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 		const { selection } = dataset || {};
@@ -143,11 +143,11 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Pro
 		close();
 		onSelect(item);
 
-		analytics.event(Util.toUpperCamelCase(`${getId()}-action`), { style: item.itemId });
-		
 		if (selection) {
 			selection.clear();
 		};
+
+		analytics.event('ChangeBlockStyle', { type: item.type, style: item.itemId });
 	};
 
 });

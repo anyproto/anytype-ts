@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, C, DataUtil, translate } from 'ts/lib';
+import { I, C, DataUtil, translate, analytics } from 'ts/lib';
 import { Cover } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
@@ -88,6 +88,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				if (onUpload) {
 					onUpload(message.hash);
 				};
+
+				analytics.event('SetCover', { type: I.CoverType.Upload });
 			});
 		});
 	};
@@ -105,27 +107,31 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	};
 
 	onRemove (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId } = data;
 
 		DataUtil.pageSetCover(rootId, I.CoverType.None, '');
-		this.props.close();
+		close();
+
+		analytics.event('RemoveCover');
 	};
 
 	onSelect (e: any, item: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { rootId, onSelect } = data;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		if (!object.coverId) {
-			this.props.close();
+			close();
 		};
 
 		if (onSelect) {
 			onSelect(item);
 		};
+
+		analytics.event('SetCover', { type: item.type, id: item.id });
 	};
 
 	getSections () {

@@ -419,20 +419,22 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	add (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, onChange } = data;
-		const view = getView();
+		const { rootId, blockId, addCommand, onChange } = data;
 
-		DataUtil.dataviewRelationAdd(rootId, blockId, newRelation, view, onChange);
+		if (addCommand) {
+			addCommand(rootId, blockId, newRelation, onChange);
+		};
 	};
 
 	update (newRelation: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, onChange } = data;
-		const view = getView();
+		const { rootId, blockId, updateCommand } = data;
 		const relation = this.getViewRelation();
-		
-		DataUtil.dataviewRelationUpdate(rootId, blockId, Object.assign(relation, newRelation), view, onChange);
+
+		if (updateCommand) {
+			updateCommand(rootId, blockId, Object.assign(relation, newRelation));
+		};
 	};
 
 	getRelation (): I.Relation {

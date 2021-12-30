@@ -853,7 +853,7 @@ class Dispatcher {
 				if (message.error.code) {
 					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 					Sentry.captureMessage(type + ': ' + message.error.description);
-					analytics.event('Error', { cmd: type, code: message.error.code });
+					analytics.event('Exception', { method: type, code: message.error.code });
 				};
 
 				if (debug && !SKIP_IDS.includes(type)) {
@@ -866,18 +866,17 @@ class Dispatcher {
 					this.event(message.event, true);
 				};
 
+				const middleTime = Math.ceil(t1 - t0);
+				message.middleTime = middleTime;
+
 				if (callBack) {
 					callBack(message);
 				};
 
 				t2 = performance.now();
-				const middleTime = Math.ceil(t1 - t0);
+				
 				const renderTime = Math.ceil(t2 - t1);
 				const totalTime = middleTime + renderTime;
-
-				data.middleTime = middleTime;
-				data.renderTime = renderTime;
-				analytics.event(upper, data);
 
 				if (debug && !SKIP_IDS.includes(type)) {
 					const times = [

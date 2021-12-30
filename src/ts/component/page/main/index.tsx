@@ -143,7 +143,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
 						<div className="side left">
-							{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}
+							<span>{name ? Util.sprintf(translate('indexHi'), Util.shorten(name, 24)) : ''}</span>
 						</div>
 						
 						<div className="side right">
@@ -326,7 +326,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.setState({ tab: id });
 
 		Storage.set('tabIndex', id);
-		analytics.event('TabHome', { tab: tab.name });
+		analytics.event('SelectHomeTab', { tab: tab.name });
 
 		this.load();
 	};
@@ -426,6 +426,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
+
+		analytics.event('SearchQuery', { route: 'ScreenHome', length: v.length });
 	};
 
 	onAccount () {
@@ -492,6 +494,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		this.selected = Util.arrayUnique(this.selected);
 		this.selectionRender();
+
+		analytics.event('MultiSelectHome', { count: this.selected.length });
 	};
 
 	selectionRender () {
@@ -526,6 +530,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
+		const l = this.selected.length;
+
 		switch (item.id) {
 			case 'delete':
 				this.onSelectionDelete();
@@ -533,22 +539,32 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 			case 'archive':
 				this.onSelectionArchive(true);
+
+				analytics.event('MoveToBin', { count: l });
 				break;
 
 			case 'restore':
 				this.onSelectionArchive(false);
+
+				analytics.event('RestoreFromBin', { count: l });
 				break;
 
 			case 'fav':
 				this.onSelectionFavorite(true);
+
+				analytics.event('AddToFavorites', { count: l });
 				break;
 
 			case 'unfav':
 				this.onSelectionFavorite(false);
+
+				analytics.event('RemoveFromFavorites', { count: l });
 				break;
 
 			case 'selectAll':
 				this.onSelectionAll();
+
+				analytics.event('MultiSelectHome', { count: l });
 				break;
 
 			case 'selectNone':
@@ -571,6 +587,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 			this.selectionRender();
 		};
 
+		analytics.event('ShowDeletionWarning');
 		popupStore.open('confirm', {
 			data: {
 				title: `Are you sure you want to delete ${l} ${Util.cntWord(l, 'object', 'objects')}?`,
@@ -579,6 +596,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
 					cb();
+
+					analytics.event('RemoveCompletely', { count: l });
 				},
 				onCancel: () => { cb(); }
 			},
@@ -733,18 +752,26 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 					switch (el.id) {
 						case 'archive':
 							this.onSelectionArchive(true);
+
+							analytics.event('MoveToBin', { count: 1 });
 							break;
 
 						case 'unarchive':
 							this.onSelectionArchive(false);
+
+							analytics.event('RemoveFromFavorites', { count: 1 });
 							break;
 
 						case 'fav':
 							this.onSelectionFavorite(true);
+
+							analytics.event('AddToFavorites', { count: 1 });
 							break;
 
 						case 'unfav':
 							this.onSelectionFavorite(false);
+
+							analytics.event('RemoveFromFavorites', { count: 1 });
 							break;
 
 						case 'remove':
@@ -785,6 +812,8 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 
 		blockStore.updateStructure(root, root, arrayMove(element.childrenIds, oidx, nidx));
 		C.BlockListMove(root, root, [ current.id ], target.id, position);
+
+		analytics.event('ReorderObjects', { route: 'ScreenHome' });
 	};
 	
 	resize () {
