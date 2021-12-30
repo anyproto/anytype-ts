@@ -34,7 +34,7 @@ export default {
         },
         {
             name: 'Settings',
-            description: 'Keychain phrase, Dark theme, import / export and many more',
+            description: 'Keychain phrase, Dark theme, import, export and many more',
             param: {
                 element: '#header .icon.settings',
                 classNameWrap: 'fixed fromHeader',
