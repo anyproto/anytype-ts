@@ -292,9 +292,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					const type = dbStore.getObjectType(it.id);
 					return { ...type, layout: I.ObjectLayout.Type };
 				},
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
+					this.save();
 					this.forceUpdate();
+
+					if (callBack) {
+						callBack();
+					};
 				},
 			}
 		});

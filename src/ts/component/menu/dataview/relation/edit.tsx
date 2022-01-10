@@ -269,9 +269,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					const type = dbStore.getObjectType(it.id);
 					return { ...type, layout: I.ObjectLayout.Type };
 				},
-				onChange: (value: any) => {
+				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
+					this.save();
 					this.forceUpdate();
+
+					if (callBack) {
+						callBack();
+					};
 				},
 			}
 		});
@@ -363,6 +368,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		this.save();
+		this.menuClose();
+		this.props.close();
 	};
 
 	onChange () {
@@ -411,9 +418,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		relation ? this.update(newRelation) : this.add(newRelation);
-
-		this.menuClose();
-		close();
 	};
 
 	add (newRelation: any) {
