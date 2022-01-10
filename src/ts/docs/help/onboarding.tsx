@@ -26,7 +26,7 @@ export default {
             name: 'Need help?',
             description: 'Docs, Feedback, Shortcuts and other useful information',
             param: {
-                element: '#button-help',
+                element: '#footer #button-help',
                 vertical: I.MenuDirection.Top,
                 horizontal: I.MenuDirection.Right,
                 offsetY: -14,
@@ -70,6 +70,19 @@ export default {
                 offsetY: 18,
             }
         }
+    ],
+
+    mainIndexReminder: [
+        {
+            name: 'You can restart hints later',
+            description: 'Click <img class="icon" src="./img/icon/help.svg" /> → "Show Hints" to go through onboarding at any time',
+            param: {
+                element: '#footer #button-help',
+                horizontal: I.MenuDirection.Right,
+                vertical: I.MenuDirection.Top,
+                offsetY: -10,
+            }
+        },
     ],
 
     mainType: [

@@ -30,7 +30,7 @@ class FooterMainEdit extends React.Component<Props, {}> {
 		const canAdd = allowed && !root.isObjectRelation() && !root.isObjectType() && !root.isObjectSet() && !root.isObjectFileKind();
 
 		return (
-			<div className="footer footerMainEdit">
+			<div id="footer" className="footer footerMainEdit">
 				{canAdd ? <Icon id="button-add" className="big add" tooltip="Create new object" tooltipY={I.MenuDirection.Top} onClick={this.onAdd} /> : ''}
 				<Icon id="button-help" className="big help" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={this.onHelp} />
 			</div>

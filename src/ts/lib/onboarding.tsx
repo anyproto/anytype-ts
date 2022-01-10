@@ -22,7 +22,11 @@ class Onboarding {
 					noAnimation: true,
 					noFlipY: true,
 					noFlipX: true,
-					onClose: () => { Storage.setOnboarding(key); },
+					onClose: () => { 
+						this.start(this.getReminderKey(key), isPopup, false);
+
+						Storage.setOnboarding(key); 
+					},
 					data: {
 						...param.data,
 						key,
@@ -32,6 +36,10 @@ class Onboarding {
 				});
 			}, t);
 		});
+	};
+
+	getReminderKey (key: string) {
+		return Util.toCamelCase([ key, 'reminder' ].join('-'));
 	};
 
 	getParam (item: any, isPopup: boolean): any {

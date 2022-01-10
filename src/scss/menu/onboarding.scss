@@ -8,6 +8,9 @@
 
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 600; margin-bottom: 6px; width: calc(100% - 20px); }
 		.descr { line-height: 18px; }
+		.descr {
+			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
+		}
 
 		a { color: #fff; text-decoration: underline; }
 
