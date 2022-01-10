@@ -34,7 +34,6 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<P
 		popupStore.open('search', { 
 			preventResize: true,
 			data: { 
-				disableFirstKey: true,
 				rootId: root,
 			}, 
 		});

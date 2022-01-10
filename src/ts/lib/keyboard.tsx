@@ -126,7 +126,6 @@ class Keyboard {
 				popupStore.open('search', { 
 					preventResize: true,
 					data: { 
-						disableFirstKey: true,
 						rootId,
 					}, 
 				});

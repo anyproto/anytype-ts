@@ -649,7 +649,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			if (menuStore.isOpen()) {
+			if (menuStore.isOpen() || popupStore.isOpen('search')) {
 				return;
 			};
 
@@ -660,7 +660,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (menuStore.isOpen()) {
+			if (menuStore.isOpen() || popupStore.isOpen('search')) {
 				return;
 			};
 
