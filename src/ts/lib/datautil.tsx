@@ -371,6 +371,8 @@ class DataUtil {
 
 			commonStore.gatewaySet(message.gatewayUrl);
 			analytics.device(message.deviceId);
+			analytics.profile(authStore.account);
+			analytics.event('OpenAccount');
 			
 			blockStore.rootSet(root);
 			blockStore.storeSetType(message.marketplaceTypeId);

@@ -145,8 +145,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<Props
 
 						authStore.accountSet(message.account);
 						DataUtil.onAuth();
-
-						analytics.event('OpenAccount');
 					};
 				});
 			} else {
