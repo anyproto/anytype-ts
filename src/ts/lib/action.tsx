@@ -3,6 +3,7 @@ import { commonStore, authStore, blockStore, detailStore, dbStore } from 'ts/sto
 
 const Constant = require('json/constant.json');
 const { ipcRenderer } = window.require('electron');
+const { dialog } = window.require('@electron/remote');
 
 class Action {
 
@@ -103,6 +104,27 @@ class Action {
 		const length = block.getLength();
 		focus.set(id, { from: length, to: length });
 		focus.apply();
+	};
+
+	export (ids: string[], format: I.ExportFormat) {
+		const options = { 
+			properties: [ 'openDirectory' ],
+		};
+
+		dialog.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			C.Export(files[0], ids, format, true, true, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				ipcRenderer.send('pathOpen', files[0]);
+			});
+		});
 	};
 
 };

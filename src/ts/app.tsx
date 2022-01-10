@@ -139,6 +139,7 @@ import 'scss/menu/dataview/source.scss';
 import 'scss/media/print.scss';
 
 import 'scss/theme/dark/common.scss';
+import { Action } from './lib';
 
 interface RouteElement { path: string; };
 interface Props {};
@@ -609,24 +610,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				options = { 
-					properties: [ 'openDirectory' ],
-				};
-
-				dialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					C.Export(files[0], [ rootId ], I.ExportFormat.Protobuf, true, true, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						ipcRenderer.send('pathOpen', files[0]);
-					});
-				});
+				Action.export([ rootId ], I.ExportFormat.Protobuf);
 				break;
 
 			case 'exportTemplates':

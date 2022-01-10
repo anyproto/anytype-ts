@@ -2,6 +2,7 @@ import * as React from 'react';
 import { MenuItemVertical } from 'ts/component';
 import { I, C, keyboard, Key, analytics, DataUtil, Util, focus, crumbs } from 'ts/lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'ts/store';
+import { Action } from '../../../lib';
 
 interface Props extends I.Menu {
 	history?: any;
@@ -133,6 +134,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
 		let removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
 		let removeBlock = { id: 'removeBlock', icon: 'remove', name: 'Delete' };
+		let exportPage = { id: 'exportPage', icon: 'export', name: 'Export' };
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
@@ -195,7 +197,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				{ children: [ undo, redo, history, archive, removePage ] },
 				{ children: [ fav, template ] },
 				{ children: [ search ] },
-				{ children: [ print ] },
+				{ children: [ print, exportPage ] },
 				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
@@ -382,13 +384,19 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			case 'print':
 				keyboard.onPrint();
 				break;
-				
-			case 'export':
+
+			case 'exportWeb':
+				/*
 				C.BlockGetPublicWebURL(rootId, (message: any) => {
 					if (message.url) {
 						ipcRenderer.send('urlOpen', message.url);
 					};
 				});
+				*/
+				break;
+				
+			case 'exportPage':
+				Action.export([ rootId ], I.ExportFormat.Markdown);
 				break;
 
 			case 'history':
