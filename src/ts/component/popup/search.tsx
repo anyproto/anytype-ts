@@ -338,12 +338,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		node.find('.active').removeClass('active');
 	};
 
-	onOver (e: any, item: any) {
-		if (!keyboard.isMouseDisabled && (item.index != this.n)) {
-			this.n = item.index;
-		};
-	};
-
 	onKeyUpSearch (e: any, force: boolean) {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {
@@ -420,6 +414,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 			return false;
 		};
 		return true;
+	};
+
+	onOver (e: any, item: any) {
+		if (!keyboard.isMouseDisabled) {
+			this.n = item.index;
+			this.setActive();
+		};
 	};
 
 	onClick (e: any, item: any) {
