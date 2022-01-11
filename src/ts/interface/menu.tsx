@@ -47,7 +47,7 @@ export interface Menu {
 	onKeyDown?(e: any): void;
 	getId?(): string;
 	getSize?(): { width: number; height: number; };
-	getPosition?(): { left: number; top: number; };
+	getPosition?(): DOMRect;
 	position? (): void;
 	close? (): void;
 };

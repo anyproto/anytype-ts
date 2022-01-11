@@ -864,20 +864,14 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		return $(element);
 	};
 
-	getSize () {
+	getSize (): { width: number; height: number; } {
 		const obj = $('#' + this.getId());
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
 	};
 
-	getPosition () {
+	getPosition (): DOMRect {
 		const obj = $('#' + this.getId());
-		const o = obj.offset();
-		const win = $(window);
-		
-		return { 
-			left: Math.max(0, o.left - win.scrollLeft()), 
-			top: Math.max(0, o.top - win.scrollTop()),
-		};
+		return obj.get(0).getBoundingClientRect() as DOMRect;
 	};
 
 	getArrowDirection (): I.MenuDirection {

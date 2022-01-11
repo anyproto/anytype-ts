@@ -4,7 +4,7 @@
 	.popup.popupConfirm {
 		.innerWrap { width: 672px; padding: 32px 48px 40px 48px; }
 		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.48px; margin-bottom: 16px; }
-		.label { margin-bottom: 26px; user-select: text; }
+		.label { margin-bottom: 26px; user-select: text !important; }
 		.button { margin-right: 16px; }
 		.button.last-child { margin: 0px; }
 

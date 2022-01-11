@@ -60,8 +60,9 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		};
 
 		this.rebind();
-		Util.renderLink(node);
+		this.scroll();
 
+		Util.renderLink(node);
 		analytics.event('ScreenOnboarding');
 	};
 
@@ -76,6 +77,32 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	
 	unbind () {
 		$(window).unbind('keydown.menu');
+	};
+
+	scroll () {
+		const { param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
+
+		if (!param.element) {
+			return;
+		};
+
+		const container = Util.getScrollContainer(isPopup);
+		const top = container.scrollTop();
+		const element = $(param.element);
+		const rect = element.get(0).getBoundingClientRect() as DOMRect;
+		const hh = Util.sizeHeader();
+
+		let containerOffset = { top: 0, left: 0 };
+		if (isPopup) {
+			containerOffset = container.offset();
+		};
+
+		if (rect.y < 0) {
+			rect.y -= rect.height + hh + containerOffset.top;
+			container.scrollTop(top + rect.y);
+		};
 	};
 
 	onKeyDown (e: any) {

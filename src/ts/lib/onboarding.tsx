@@ -24,7 +24,7 @@ class Onboarding {
 					noFlipX: true,
 					onClose: () => { 
 						this.start(this.getReminderKey(key), isPopup, false);
-
+						
 						Storage.setOnboarding(key); 
 					},
 					data: {
@@ -66,6 +66,15 @@ class Onboarding {
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = null;
 		param.recalcRect = null;
+
+		const cnw = [];
+		if (param.classNameWrap) {
+			cnw.push(param.classNameWrap);
+		};
+		if (isPopup) {
+			cnw.push('fromPopup');
+		};
+		param.classNameWrap = cnw.join(' ');
 		
 		if (param.container) {
 			param.containerVertical = Number(param.containerVertical) || I.MenuDirection.Top;

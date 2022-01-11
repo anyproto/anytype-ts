@@ -227,7 +227,7 @@ export default {
             name: 'Navigation bar',
             description: 'You can open Home, go back and forward in “browsing” history. Use navigation, graph and search',
             param: {
-                element: '#header .side.left .icon.home.big',
+                element: '#header .side.left',
                 offsetY: 10,
                 classNameWrap: 'fixed fromHeader',
             }
