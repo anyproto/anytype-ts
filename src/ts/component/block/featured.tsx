@@ -404,14 +404,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (menuId) {
-			if (menuStore.isOpen(menuId)) {
-				menuStore.update(menuId, menuParam);
-				menuStore.updateData(menuId, menuParam.data);
-			} else {
-				menuStore.closeAll(Constant.menuIds.featuredType, () => {
-					menuStore.open(menuId, menuParam);
-				});
-			};
+			menuStore.closeAll(Constant.menuIds.featuredType, () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
 	};
 
