@@ -1390,7 +1390,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					onSelect: (event: any, item: any) => {
 						if (item.id == 'cancel') {
 							const to = range.from + url.length;
-							const value = Util.stringInsert(block.content.text, url, range.from, range.from);
+							const value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
 							const marks = Util.objectCopy(block.content.marks || []);
 
 							marks.push({
@@ -1400,7 +1400,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 							});
 
 							DataUtil.blockSetText(rootId, block, value, marks, true, () => {
-								focus.set(block.id, { from: to, to: to });
+								focus.set(block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});
 						};
