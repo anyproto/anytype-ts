@@ -65,7 +65,7 @@ export default {
             name: 'Create an object',
             description: 'Note, Task and other Types available. Capture thoughts and ideas when inspiration hits',
             param: {
-                element: '#button-add',
+                element: '#title #button-add',
                 horizontal: I.MenuDirection.Center,
                 offsetY: 18,
             }

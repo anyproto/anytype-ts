@@ -96,7 +96,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				
 				<div id={'editor-' + rootId} className="editor">
 					<div className="blocks">
-						<Icon id="button-add" className="buttonAdd" onClick={this.onAdd} />
+						<Icon id="button-block-add" className="buttonAdd" onClick={this.onAdd} />
 
 						<EditorHeaderPage 
 							{...this.props} 
@@ -384,7 +384,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
-		const add = node.find('#button-add');
+		const add = node.find('#button-block-add');
 		const { pageX, pageY } = e;
 
 		let offset = 140;

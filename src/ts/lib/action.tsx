@@ -117,7 +117,7 @@ class Action {
 				return;
 			};
 
-			C.Export(files[0], ids, format, true, true, (message: any) => {
+			C.Export(files[0], ids, format, true, true, true, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

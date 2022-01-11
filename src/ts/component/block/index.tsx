@@ -394,7 +394,7 @@ const Block = observer(class Block extends React.Component<Props, {}> {
 		const node = $(ReactDOM.findDOMNode(this));
 		const prevBlockId = childrenIds[index - 1];
 		const offset = (prevBlockId ? node.find('#block-' + prevBlockId).offset().left : 0) + Constant.size.blockMenu ;
-		const add = $('#button-add');
+		const add = $('#button-block-add');
 		
 		if (selection) {
 			selection.preventSelect(true);

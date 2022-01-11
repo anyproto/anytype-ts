@@ -974,7 +974,7 @@ class Util {
 		return JSON.stringify(change.newValue) === JSON.stringify(obj[change.name]) ? null : change;
 	};
 
-	getScrollContainer (isPopup?: boolean) {
+	getScrollContainer (isPopup: boolean) {
 		return $(isPopup ? '#popupPage #innerWrap' : window);
 	};
 

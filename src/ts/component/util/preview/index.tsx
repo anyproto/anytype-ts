@@ -142,6 +142,11 @@ const Preview = observer(class Preview extends React.Component<Props, State> {
 	position () {
 		const { preview } = commonStore;
 		const { element } = preview;
+
+		if (!element || !element.length) {
+			return;
+		};
+
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');

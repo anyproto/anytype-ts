@@ -157,6 +157,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.getId = this.getId.bind(this);
 		this.getSize = this.getSize.bind(this);
+		this.getPosition = this.getPosition.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
@@ -232,6 +233,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 							onKeyDown={this.onKeyDown}
 							getId={this.getId} 
 							getSize={this.getSize}
+							getPosition={this.getPosition}
 							position={this.position} 
 							close={this.close} 
 						/>
@@ -865,6 +867,17 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	getSize () {
 		const obj = $('#' + this.getId());
 		return { width: obj.outerWidth(), height: obj.outerHeight() };
+	};
+
+	getPosition () {
+		const obj = $('#' + this.getId());
+		const o = obj.offset();
+		const win = $(window);
+		
+		return { 
+			left: Math.max(0, o.left - win.scrollLeft()), 
+			top: Math.max(0, o.top - win.scrollTop()),
+		};
 	};
 
 	getArrowDirection (): I.MenuDirection {

@@ -52,14 +52,15 @@ class MenuOnboarding extends React.Component<Props, {}> {
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
-
+		const node = $(ReactDOM.findDOMNode(this));
+		
 		if (data.onShow) {
 			data.onShow();
 			position();
 		};
 
 		this.rebind();
-		Util.renderLink($(ReactDOM.findDOMNode(this)));
+		Util.renderLink(node);
 
 		analytics.event('ScreenOnboarding');
 	};

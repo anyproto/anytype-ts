@@ -46,7 +46,8 @@ export interface Menu {
 	setHover?(item?: any, scroll?: boolean): void;
 	onKeyDown?(e: any): void;
 	getId?(): string;
-	getSize?(): any;
+	getSize?(): { width: number; height: number; };
+	getPosition?(): { left: number; top: number; };
 	position? (): void;
 	close? (): void;
 };
