@@ -751,6 +751,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			'```':			 I.TextStyle.Code,
 		};
 		const Length: any = {};
+
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
 		Length[I.TextStyle.Numbered] = 2;
@@ -896,7 +897,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		};
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
 			menuStore.close('blockContext');
 
 			this.marks = Mark.checkRanges(value, this.marks);
