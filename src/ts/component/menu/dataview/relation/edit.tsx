@@ -252,7 +252,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { getId } = this.props;
 		const relation = this.getRelation();
-		const vr = this.getViewRelation();
 
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
@@ -271,11 +270,14 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					return { ...type, layout: I.ObjectLayout.Type };
 				},
 				onChange: (value: any, callBack?: () => void) => {
+					const vr = this.getViewRelation();
+
 					this.objectTypes = value;
+					this.forceUpdate();
+
 					if (vr) {
 						this.save();
 					};
-					this.forceUpdate();
 
 					if (callBack) {
 						callBack();
