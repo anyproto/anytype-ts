@@ -606,17 +606,21 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenSmile = menuStore.isOpen('smile');
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
-			if (block.isTextCode() && (pressed == 'enter')) {
-				return;
-			};
-			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				return;
-			};
 			if (menuOpen) {
 				return;
 			};
 
-			e.preventDefault();
+			let pd = true;
+			if (block.isTextCode() && (pressed == 'enter')) {
+				pd = false;
+			};
+			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
+				pd = false;
+			};
+			if (pd) {
+				e.preventDefault();
+			};
+			
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range);
 			});
