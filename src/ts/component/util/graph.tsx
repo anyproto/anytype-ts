@@ -52,13 +52,13 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			iterations: 3
 		},
 		forceX: {
-			enabled: false,
-			strength: 0.1,
+			enabled: true,
+			strength: 0.5,
 			x: 0.5
 		},
 		forceY: {
-			enabled: false,
-			strength: 0.1,
+			enabled: true,
+			strength: 0.5,
 			y: 0.5
 		},
 
@@ -126,6 +126,8 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.isRoot = d.id == rootId;
 			d.isOrphan = !targetCnt && !sourceCnt;
 			d.src = this.imageSrc(d);
+			d.sourceCnt = sourceCnt;
+			d.targetCnt = targetCnt;
 
 			if (d.layout == I.ObjectLayout.Note) {
 				d.name = d.snippet || translate('commonEmpty');
