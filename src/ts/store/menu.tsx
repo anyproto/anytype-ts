@@ -150,6 +150,12 @@ class MenuStore {
 		};
 	};
 
+	closeLast () {
+		if (this.menuList.length) {
+			this.close(this.menuList[this.menuList.length - 1].id);
+		};
+	};
+
     clearTimeout () {
 		window.clearTimeout(this.timeout);
 	};

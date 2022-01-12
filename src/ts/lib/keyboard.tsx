@@ -101,8 +101,11 @@ class Keyboard {
 		// Close popups
 		this.shortcut('escape', e, (pressed: string) => {
 			e.preventDefault();
-			popupStore.closeLast();
-			menuStore.closeAll();
+			if (menuStore.isOpen()) {
+				menuStore.closeLast();
+			} else {
+				popupStore.closeLast();
+			};
 			Util.previewHide(false);
 		});
 
@@ -383,7 +386,7 @@ class Keyboard {
 			return;
 		};
 
-		window.setTimeout(() => {
+		menuStore.closeAll([ 'blockContext' ], () => {
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
@@ -393,7 +396,7 @@ class Keyboard {
 					isPopup: popupStore.isOpen(),
 				},
 			});
-		}, Constant.delay.menu);
+		});
 	};
 
 	getPopupMatch () {

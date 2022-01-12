@@ -42,7 +42,7 @@ class PopupStore {
 
     get (id: string): I.Popup {
 		return this.popupList.find((item: I.Popup) => { return item.id == id; });
-	}
+	};
 
     update (id: string, param: any) {
 		const item = this.get(id);
