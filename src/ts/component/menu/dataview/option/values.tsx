@@ -27,6 +27,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -138,6 +139,7 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 				transitionDuration={150}
 				distance={10}
 				useDragHandle={true}
+				onSortStart={this.onSortStart}
 				onSortEnd={this.onSortEnd}
 				helperClass="isDragging"
 				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
@@ -278,10 +280,18 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 		onChange(value);
 	};
+
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
+		const { param, dataset } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		const { onChange } = data;
 
@@ -291,6 +301,8 @@ const MenuOptionValues = observer(class MenuOptionValues extends React.Component
 
 		this.props.param.data.value = value;
 		onChange(value);
+
+		selection.preventSelect(false);
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

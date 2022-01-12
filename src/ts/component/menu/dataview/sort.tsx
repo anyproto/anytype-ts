@@ -28,6 +28,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
@@ -144,6 +145,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 					lockToContainerEdges={true}
 					transitionDuration={150}
 					distance={10}
+					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
@@ -314,17 +316,26 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		menuStore.close('select');
 		analytics.event('RemoveSort');
 	};
+
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
 	
 	onSortEnd (result: any) {
-		const { oldIndex, newIndex } = result;
-		const { param } = this.props;
+		const { oldIndex, newIndex,  } = result;
+		const { param, dataset } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		const { getView } = data;
 		const view = getView();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		this.save();
-		
+
+		selection.preventSelect(false);
 		analytics.event('RepositionSort');
 	};
 
@@ -352,7 +363,8 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, {}> {
 		const { getId, position } = this.props;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = Math.max(HEIGHT + 58, Math.min(360, items.length * HEIGHT + 58));
+		const offset = 62;
+		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

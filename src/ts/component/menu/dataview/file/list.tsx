@@ -202,7 +202,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { param } = this.props;
 		const { data } = param;
 		const value = DataUtil.getRelationArrayValue(data.value);
-		
+
 		let ret = Util.objectCopy(this.items);
 		ret = ret.filter((it: I.SelectOption) => { return value.indexOf(it.id) < 0; });
 		return ret;
@@ -283,7 +283,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		};
 
 		onChange(value, () => {
-			data.value = value;
+			menuStore.updateData(this.props.id, { value: value });
 			menuStore.updateData(MENU_ID, { value: value });
 			position();
 		});

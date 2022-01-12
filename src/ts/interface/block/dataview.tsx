@@ -81,6 +81,7 @@ export interface ViewComponent {
 	readonly: boolean;
 	bodyContainer?: string;
 	pageContainer?: string;
+	dataset?: any;
 	isPopup?: boolean;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number): void;
