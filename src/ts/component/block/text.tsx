@@ -607,6 +607,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (menuOpen) {
+				e.preventDefault();
 				return;
 			};
 

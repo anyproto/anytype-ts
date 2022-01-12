@@ -461,6 +461,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused } = focus.state;
+		const menuOpen = menuStore.isOpen();
 
 		if (keyboard.isFocused || !selection) {
 			return;
@@ -649,7 +650,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Restore focus
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			if (menuStore.isOpen() || popupStore.isOpen('search')) {
+			if (menuOpen || popupStore.isOpen('search')) {
 				return;
 			};
 
@@ -660,7 +661,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		// Enter
 		keyboard.shortcut('enter', e, (pressed: string) => {
-			if (menuStore.isOpen() || popupStore.isOpen('search')) {
+			if (menuOpen || popupStore.isOpen('search')) {
 				return;
 			};
 
@@ -1085,6 +1086,15 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				});
 			} else {
 				this.blockSplit(block, range);
+			};
+
+			if (blockStore.checkBlockType(rootId)) {
+				const object = detailStore.get(rootId, rootId, []);
+
+				analytics.event('CreateObject', {
+					objectType: object.type,
+					layout: object.layout,
+				});
 			};
 		});
 	};
