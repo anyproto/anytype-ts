@@ -547,8 +547,6 @@ class DataUtil {
 			{ key: 'coverScale', value: scale },
 		];
 		C.BlockSetDetails(rootId, details, callBack);
-
-		//analytics.event('PageSetCover', { type: type, id: id });
 	};
 
 	pageSetDone (rootId: string, done: boolean, callBack?: (message: any) => void) {

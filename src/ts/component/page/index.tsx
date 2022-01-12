@@ -73,7 +73,6 @@ class Page extends React.Component<Props, {}> {
 	refChild: any;
 
 	render () {
-		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const path = [ match.params.page, match.params.action ].join('/');
 		const showNotice = !Boolean(Storage.get('firstRun'));
@@ -265,8 +264,8 @@ class Page extends React.Component<Props, {}> {
 		let isMainRelation = isMain && (action == 'relation');
 
 		if (showNotice) {
-			page = 'auth';
-			action = 'notice';
+			params.page = 'auth';
+			params.action = 'notice';
 			Storage.set('firstRun', 1);
 		};
 

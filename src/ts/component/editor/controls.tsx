@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Icon } from 'ts/component';
-import { I, C, focus, DataUtil, Util, translate } from 'ts/lib';
-import { commonStore, menuStore, blockStore, detailStore } from 'ts/store';
+import { I, C, focus, DataUtil, Util, translate, analytics } from 'ts/lib';
+import { menuStore, blockStore, detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
 interface Props extends RouteComponentProps<any> {
@@ -167,6 +167,8 @@ const Controls = observer(class Controls extends React.Component<Props, {}> {
 
 		focus.clear(true);
 		DataUtil.pageSetCover(rootId, I.CoverType.Color, color.id, 0, 0, 0);
+
+		analytics.event('SetCover', { type: I.CoverType.Color, id: color.id });
 	};
 
 	onLayout (e: any) {

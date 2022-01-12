@@ -432,7 +432,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<Props, St
 		this.props.close();
 
 		const filter = Util.filterFix(this.refFilter.getValue());
-		analytics.event('ScreenSearchResult', { index: item.index + 1, length: filter.length });
+		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 
 		crumbs.cut(I.CrumbsType.Page, 0, () => {
 			DataUtil.objectOpenEvent(e, { ...item, id: item.id });
