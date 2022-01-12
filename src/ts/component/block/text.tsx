@@ -210,13 +210,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 	
 	componentDidUpdate () {
 		const { block } = this.props;
-		const { content } = block
+		const { content } = block;
+		const { focused } = focus.state;
 
 		this.marks = Util.objectCopy(content.marks || []);
 		this.setValue(content.text);
 
 		if (content.text) {
 			this.placeholderHide();
+		};
+
+		if (focused == block.id) {
+			focus.apply();
 		};
 	};
 	
