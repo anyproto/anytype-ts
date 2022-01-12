@@ -604,6 +604,14 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
+		const saveKeys: string[] = [
+			`${cmd}+shift+arrowup`, 
+			`${cmd}+shift+arrowdown`, 
+			`${cmd}+c`, 
+			`${cmd}+x`, 
+			`${cmd}+d`, 
+			`${cmd}+a`,
+		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (menuOpen) {
@@ -633,7 +641,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			keyboard.disableContext(false);
 		});
 
-		keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown, ${cmd}+c, ${cmd}+x, ${cmd}+d, ${cmd}+a`, e, (pressed: string) => {
+		keyboard.shortcut(saveKeys.join(' '), e, (pressed: string) => {
 			e.preventDefault();
 
 			DataUtil.blockSetText(rootId, block, value, this.marks, true, () => {
@@ -744,6 +752,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			'```':			 I.TextStyle.Code,
 		};
 		const Length: any = {};
+
 		Length[I.TextStyle.Bulleted] = 1;
 		Length[I.TextStyle.Checkbox] = 2;
 		Length[I.TextStyle.Numbered] = 2;
@@ -757,6 +766,7 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		
+		let ret = false;
 		let value = this.getValue();
 		let cmdParsed = false;
 		let newBlock: any = {};
@@ -873,10 +883,6 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			return;
 		};
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
-			menuStore.close('blockContext');
-		});
-
 		this.placeholderCheck();
 
 		if (block.canHaveMarks()) {
@@ -892,7 +898,18 @@ const BlockText = observer(class BlockText extends React.Component<Props, {}> {
 			};
 		};
 
-		this.setText(this.marks, false);
+		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			menuStore.close('blockContext');
+
+			this.marks = Mark.checkRanges(value, this.marks);
+			DataUtil.blockSetText(rootId, block, value, this.marks, true);
+
+			ret = true;
+		});
+
+		if (!ret) {
+			this.setText(this.marks, false);
+		};
 	};
 
 	onMention () {

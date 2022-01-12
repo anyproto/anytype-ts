@@ -141,6 +141,7 @@
 
     .menu.menuDataviewFileValues {
 		.item { color: $colorPrimary; }
+        .item:hover::before { background: $colorHover; }
 		.item {
             .icon.more { background-color: $colorHover; }
         }

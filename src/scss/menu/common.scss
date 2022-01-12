@@ -102,7 +102,7 @@
 			.icon.arrow { position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 
-			.buttons { flex-shrink: 0; }
+			.buttons { flex-shrink: 0; margin-top: -2px; }
 			.buttons {
 				.icon { position: static; margin: 0px; }
 			}

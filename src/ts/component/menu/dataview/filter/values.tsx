@@ -449,7 +449,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 		menuStore.closeAll([ 'select' ], () => {
 			if (menuStore.isOpen('dataviewCalendar')) {
-				menuStore.updateData('dataviewCalendar', { value: value });
+				menuStore.updateData('dataviewCalendar', { value });
 			} else {
 				this.onCalendar(value);
 			};

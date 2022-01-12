@@ -236,8 +236,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 			};
 		};
 
-		data.value = value;
-		menuStore.updateData(MENU_ID, { value: value });
+		menuStore.updateData(this.props.id, { value });
+		menuStore.updateData(MENU_ID, { value });
 
 		onChange(value);
 	};

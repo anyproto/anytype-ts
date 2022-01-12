@@ -283,8 +283,8 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		};
 
 		onChange(value, () => {
-			menuStore.updateData(this.props.id, { value: value });
-			menuStore.updateData(MENU_ID, { value: value });
+			menuStore.updateData(this.props.id, { value });
+			menuStore.updateData(MENU_ID, { value });
 			position();
 		});
 	};

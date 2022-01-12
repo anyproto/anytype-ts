@@ -142,7 +142,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			default:
 				marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
-				menuStore.updateData(this.props.id, { marks: marks });
+				menuStore.updateData(this.props.id, { marks });
 				onChange(marks);
 				break;
 				
@@ -199,7 +199,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
 						marks = Mark.toggleLink({ type: newType, param: param, range: { from: from, to: to } }, marks);
-						menuStore.updateData(this.props.id, { marks: marks });
+						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 
 						window.setTimeout(() => { focus.apply(); }, 15);
@@ -221,7 +221,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						Storage.set('color', param);
 
 						marks = Mark.toggle(marks, { type: I.MarkType.Color, param: param, range: { from: from, to: to } });
-						menuStore.updateData(this.props.id, { marks: marks });
+						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});
@@ -241,7 +241,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 						Storage.set('bgColor', param);
 
 						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
-						menuStore.updateData(this.props.id, { marks: marks });
+						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});
