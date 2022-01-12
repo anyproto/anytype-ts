@@ -61,7 +61,6 @@ class MenuStore {
     updateData (id: string, data: any) {
 		const item = this.get(id);
 		if (item) {
-			item.param.data = Object.assign(item.param.data, data);
 			set(item.param.data, data);
 		};
 	};

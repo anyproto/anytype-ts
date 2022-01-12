@@ -573,16 +573,12 @@ class DataUtil {
 		if (!block) {
 			return;
 		};
+
+		text = String(text || '');
+		marks = marks || [];
 		
 		if (update) {
-			blockStore.update(rootId, { 
-				...block, 
-				content: { 
-					...block.content, 
-					text: String(text || ''), 
-					marks: marks || [],
-				},
-			});
+			blockStore.updateContent(rootId, block.id, { text, marks });
 		};
 
 		C.BlockSetTextText(rootId, block.id, text, marks, (message: any) => {
