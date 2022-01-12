@@ -274,7 +274,11 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		};
 
 		const { getId } = this.props;
-		const relation = this.getRelation();
+		
+		let relation: any = this.getRelation();
+		if (!relation) {
+			relation = { format: this.format };
+		};
 
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
