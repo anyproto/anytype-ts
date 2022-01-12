@@ -216,7 +216,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const { onChange } = data;
 
 		onChange(value, () => {
-			menuStore.updateData(id, { value: value });
+			menuStore.updateData(id, { value });
 		});
 	};
 
@@ -266,8 +266,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							value = Util.arrayUnique(value);
 
 							onChange(value, () => {
-								menuStore.updateData(id, { value: value });
-								menuStore.updateData(MENU_ID, { value: value });
+								menuStore.updateData(id, { value });
+								menuStore.updateData(MENU_ID, { value });
 								position();
 							});
 							break;

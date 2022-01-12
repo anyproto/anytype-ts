@@ -250,8 +250,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		this.n = -1;
 
 		onChange(value, () => {
-			menuStore.updateData(id, { value: value });
-			menuStore.updateData('dataviewObjectList', { value: value });
+			menuStore.updateData(id, { value });
+			menuStore.updateData('dataviewObjectList', { value });
 		});
 	};
 
@@ -264,7 +264,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset } = this.props;
+		const { param, dataset, id } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
 		const { onChange } = data;
@@ -275,7 +275,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		value = DataUtil.formatRelationValue(relation, value, true);
 
 		onChange(value, () => {
-			this.props.param.data.value = value;
+			menuStore.updateData(id, { value });
 		});
 
 		selection.preventSelect(false);
