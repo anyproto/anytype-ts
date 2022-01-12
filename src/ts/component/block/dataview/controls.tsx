@@ -28,6 +28,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onViewAdd = this.onViewAdd.bind(this);
 	};
@@ -111,6 +112,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 							lockToContainerEdges={true}
 							transitionDuration={150}
 							distance={10}
+							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							helperClass="isDragging"
 							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
@@ -244,9 +246,17 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
+
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block } = this.props;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset;
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
@@ -256,6 +266,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
 			analytics.event('RepositionView');
 		});
+
+		selection.preventSelect(false);
 	};
 
 	resize () {

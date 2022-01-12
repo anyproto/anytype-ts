@@ -62,7 +62,7 @@ class MenuStore {
 		const item = this.get(id);
 		if (item) {
 			item.param.data = Object.assign(item.param.data, data);
-			this.update(id, item.param);
+			set(item.param.data, data);
 		};
 	};
 
@@ -147,6 +147,12 @@ class MenuStore {
 		
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+		};
+	};
+
+	closeLast () {
+		if (this.menuList.length) {
+			this.close(this.menuList[this.menuList.length - 1].id);
 		};
 	};
 

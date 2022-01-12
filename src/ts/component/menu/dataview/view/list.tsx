@@ -29,6 +29,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
+		this.onSortStart = this.onSortStart.bind(this);
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onScroll = this.onScroll.bind(this);
@@ -135,6 +136,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 					transitionDuration={150}
 					distance={10}
 					useDragHandle={true}
+					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					helperClass="isDragging"
 					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
@@ -169,6 +171,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			defaultHeight: HEIGHT_ITEM,
 			keyMapper: (i: number) => { return (items[i] || {}).id; },
 		});
+
+		this.resize();
 	};
 
 	componentDidUpdate () {
@@ -288,8 +292,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		close();
 	};
 
+	onSortStart () {
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(true);
+	};
+
 	onSortEnd (result: any) {
-		const { param } = this.props;
+		const { param, dataset } = this.props;
+		const { selection } = dataset;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { oldIndex, newIndex } = result;
@@ -300,6 +312,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 
 		dbStore.viewsSort(rootId, blockId, ids);
 		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
+
+		selection.preventSelect(false);
 	};
 
 	onScroll ({ clientHeight, scrollHeight, scrollTop }) {

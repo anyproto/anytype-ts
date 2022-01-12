@@ -9,6 +9,7 @@ import Cell from './cell';
 
 interface Props extends I.ViewComponent {
 	onCellAdd(e: any): void;
+	onSortStart(): void;
 	onSortEnd(result: any): void;
 	onResizeStart(e: any, key: string): void;
 }
@@ -18,7 +19,7 @@ const $ = require('jquery');
 const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 
 	render () {
-		const { rootId, block, readonly, getView, onCellAdd, onSortEnd, onResizeStart } = this.props;
+		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart } = this.props;
 		const view = getView();
 		const relations = view.relations.filter((it: any) => { 
 			return it.isVisible && dbStore.getRelation(rootId, block.id, it.relationKey); 
@@ -55,6 +56,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props, {}> {
 				transitionDuration={150}
 				distance={10}
 				useDragHandle={true}
+				onSortStart={onSortStart}
 				onSortEnd={onSortEnd}
 				helperClass="isDragging"
 				helperContainer={() => { return $('#block-' + block.id + ' .wrap').get(0); }}

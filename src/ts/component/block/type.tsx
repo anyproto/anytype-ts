@@ -239,7 +239,6 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};
-		const root = blockStore.getLeaf(rootId, rootId);
 		const namespace = isPopup ? '.popup' : '';
 
 		Util.getScrollContainer(isPopup).scrollTop(0);
@@ -297,6 +296,11 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 					historyPopup.clear();
 				};
 				DataUtil.objectOpenEvent(e, { id: message.id, layout: I.ObjectLayout.Set });
+
+				analytics.event('CreateObject', {
+					objectType: Constant.typeId.set,
+					layout: I.ObjectLayout.Set,
+				});
 			});
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {

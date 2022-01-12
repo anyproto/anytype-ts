@@ -7,7 +7,9 @@ import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'ts/lib';
 import arrayMove from 'array-move';
 
-interface Props extends RouteComponentProps<any> {};
+interface Props extends RouteComponentProps<any> {
+	dataset?: any;
+};
 
 interface State {
 	tab: I.TabIndex;
@@ -784,13 +786,21 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<Props
 	};
 
 	onSortStart (param: any) {
+		const { dataset } = this.props;
 		const { node } = param;
+		const { selection } = dataset;
 
 		this.id = $(node).data('id');
+
+		selection.preventSelect(true);
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
+		const { dataset } = this.props;
+		const { selection } = dataset;
+
+		selection.preventSelect(false);
 		
 		if (oldIndex == newIndex) {
 			return;
