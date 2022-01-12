@@ -2,7 +2,7 @@
 	"server": "http://127.0.0.1:31008",
 	"pinSize": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
-	"amplitude": "3179e6ef7411b69b79745856c3a4bb33",
+	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"smile": "https://unpkg.com/emoji-datasource-apple@4.0.4/img/apple/sheets-256/64.png",
 	"survey": "https://anytype.typeform.com/to/kpqcOT47#anytypeid=%s",
 

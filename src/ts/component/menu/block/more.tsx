@@ -171,6 +171,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile);
 		const allowedFav = !object.isArchived;
+		const allowedExport = config.experimental;
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 removePage = null;
@@ -181,6 +182,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (!allowedBlock)		 undo = redo = null;
 		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
+		if (!allowedExport)		 exportPage = null;
 
 		let sections = [];
 		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
