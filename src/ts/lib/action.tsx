@@ -92,6 +92,8 @@ class Action {
 			if (next) {
 				this.focusToEnd(rootId, next.id);
 			};
+
+			analytics.event('DeleteBlock', { count: blockIds.length });
 		});
 	};
 

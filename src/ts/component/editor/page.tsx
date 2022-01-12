@@ -1173,11 +1173,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		
 		commonStore.filterSet(0, '');
 		focus.clear(true);
-		
-		this.blockCreate(block.id, this.hoverPosition, {
+
+		const newBlock = {
 			type: I.BlockType.Text,
-			style: I.TextStyle.Paragraph,
-		}, (blockId: string) => {
+			//style: I.TextStyle.Paragraph,
+		};
+		
+		this.blockCreate(block.id, this.hoverPosition, newBlock, (blockId: string) => {
 			$('.placeholder.c' + blockId).text(translate('placeholderFilter'));
 			this.onMenuAdd(blockId, '', { from: 0, to: 0 });
 		});
@@ -1514,6 +1516,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			if (callBack) {
 				callBack(message.blockId);
 			};
+
+			analytics.event('CreateBlock', { 
+				middleTime: message.middleTime, 
+				type: param.type, 
+				style: param.content?.style,
+			});
 		});
 	};
 	
@@ -1551,7 +1559,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				this.focus(blockId, to, to, false);
 			};
 
-			analytics.event('DeleteBlock');
+			analytics.event('DeleteBlock', { count: 1 });
 		};
 
 		if (next.isText()) {
