@@ -5,7 +5,7 @@
 
     /* Common */
 
-    .menu { background: $colorBgLight; border: 1px solid #393933; }
+    .menu { background: $colorBgLight; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     .menu {
         .icon.text { background-image: url('#{$themePath}/icon/menu/action/block/text0.svg'); }

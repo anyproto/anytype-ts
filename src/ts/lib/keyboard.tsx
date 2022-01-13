@@ -386,17 +386,18 @@ class Keyboard {
 			return;
 		};
 
-		menuStore.closeAll([ 'blockContext' ], () => {
+		menuStore.closeAll([ 'blockContext' ]);
+		window.setTimeout(() => {
 			menuStore.open('searchText', {
 				element: '#header',
 				type: I.MenuType.Horizontal,
 				horizontal: I.MenuDirection.Right,
 				classNameWrap: 'fromHeader',
 				data: {
-					isPopup: popupStore.isOpen(),
+					isPopup,
 				},
 			});
-		});
+		}, Constant.delay.menu);
 	};
 
 	getPopupMatch () {
