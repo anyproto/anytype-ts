@@ -74,6 +74,7 @@ const Mapper = {
 			if (v == V.RELATION)			 t = I.BlockType.Relation;
 			if (v == V.FEATUREDRELATIONS)	 t = I.BlockType.Featured;
 			if (v == V.LATEX)				 t = I.BlockType.Latex;
+			if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
 			return t;
 		},
 
@@ -505,6 +506,12 @@ const Mapper = {
 				content.setViewsList(obj.content.views.map(Mapper.To.View));
 	
 				block.setDataview(content);
+			};
+
+			if (obj.type == I.BlockType.TableOfContents) {
+				content = new Model.Block.Content.TableOfContents();
+				
+				block.setTableofcontents(content);
 			};
 
 			return block;
