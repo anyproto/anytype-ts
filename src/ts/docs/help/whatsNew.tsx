@@ -6,17 +6,18 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Image, id: 'c4', y: -0.2, withScale: true } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	{ style: I.TextStyle.Title, text: `Happy New Year!` },
-	{ text: `2022 will mark the release of the first public beta of Anytype, allowing anyone to experience our new metaphor for computing. This huge milestone is, in no small part, thanks to your incredible feedback during the alpha. Thank you for a tremendous 2021, and we look forward to building Anytype with you in 2022.` },
+	{ style: I.TextStyle.Title, text: `Updates for 13 January, 2022` },
+	{ style: I.TextStyle.Header2, text: `Happy New Year` },
+	{ text: `In 2022 we will open Anytype to even more users, allowing everyone to experience our new metaphor for computing. This milestone is, in no small part, thanks to your incredible feedback. Thank you for a tremendous 2021, and we look forward to building Anytype with you in 2022.` },
 
 	{ style: I.TextStyle.Header2, text: `Tooltips` },
-	{ text: `We've added some simple tooltips in the UI to help new users get started with Anytype, allowing for a more effortless onboarding experience.` },
+	{ text: `We've added some simple tooltips in the UI to help new users get started with Anytype, allowing for a more effortless onboarding experience. Click <img class="icon" src="./img/icon/help.svg" /> → "Show Hints" to go through onboarding at any time.` },
 
 	{ style: I.TextStyle.Header2, text: `Features` },
+	{ style: I.TextStyle.Bulleted, text: `You can limit relation Object to certain object types. Create new relation from scratch -> Choose “Object” -> Select types from the list. Thanks, <a href="https://community.anytype.io/t/specify-which-objects-to-display-and-make-selectable-for-a-given-relation/1622">@daanl, @qualquertipo</a> and <a href="https://community.anytype.io/t/ability-to-limit-the-scope-of-a-relation/1553">@lynxlove</a>` },
+	{ style: I.TextStyle.Bulleted, text: `Anytype now runs natively on Apple Silicon, providing better performance to our users with M1 processors. You'll need to download and install the app from scratch from <a href="https://download.anytype.io/">download.anytype.io</a> to start your 🔥🔥🔥Anytype experience.` },
+	{ style: I.TextStyle.Bulleted, text: `You can now embed PDF files and see their content right on the canvas. You can write /PDF or open file block menu -> Appearance -> “Show as embed."` },
 	{ style: I.TextStyle.Bulleted, text: `The new "Get Started" object appears for new users in Favourites by default.` },
-	{ style: I.TextStyle.Bulleted, text: `Now you can set a certain object type of relationship that you created. Create new relation -> Choose relation type “Object” -> Select type from the list. Thanks, <a href="https://community.anytype.io/d/1057-when-adding-relation-to-an-object-have-option-to-add-it-to-its-type-as-well/1">@qualquertipo</a>` },
-	{ style: I.TextStyle.Bulleted, text: `Anytype now runs natively on Apple Silicon, providing better performance to our users with M1 processors. You'll need to download and install from scratch from <a href="https://download.anytype.io/">download.anytype.io</a> to start your 🔥🔥🔥 Anytype experience.` },
-	{ style: I.TextStyle.Bulleted, text: `You can now embed PDF files and see their content right on the canvas. You can write /PDF or open block menu -> Appearance -> “Show as embed."` },
 
 	{ style: I.TextStyle.Header2, text: `Bugs` },
 	{ style: I.TextStyle.Bulleted, text: `Sometimes clicking from one view to another, the UI was cycling between the two views forever.` },
@@ -29,6 +30,7 @@ export default [
 	{ style: I.TextStyle.Bulleted, text: `When a page is open, and the cursor is in-line, opening the search modal and pressing enter to select a search result, a line break is inserted on the canvas. Thanks, <a href="https://community.anytype.io/t/selecting-search-result-inserts-new-line-in-currently-open-object/4051">@kEbZeCK</a>` },
 	{ style: I.TextStyle.Bulleted, text: `While you open the object as a modal, the object's content behind the modal is selectable and removable. Thanks, <a href="https://community.anytype.io/t/typed-text-after-pasted-link-non-bookmark-becomes-part-of-link/4078">@sebro</a>` },
 	{ style: I.TextStyle.Bulleted, text: `The text typed after pasted a link became part of the link. Thanks, <a href="https://community.anytype.io/t/typed-text-after-pasted-link-non-bookmark-becomes-part-of-link/4078">@Corbin</a>` },
+	{ style: I.TextStyle.Bulleted, text: `If there is no navigation history inside the modal view, you can close it by pressing "back"` },
 
 	{ type: I.BlockType.Div, style: I.DivStyle.Dot },
 
