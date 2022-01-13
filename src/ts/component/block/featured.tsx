@@ -534,7 +534,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 	getStoreId (): string {
 		const { rootId, traceId } = this.props;
-		return rootId.replace('-' + traceId, '');
+		return String(rootId || '').replace('-' + traceId, '');
 	};
 	
 });
