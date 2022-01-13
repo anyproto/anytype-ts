@@ -42,7 +42,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 				const text = block.content.text;
 				if (text) {
 					content = (
-						<div className="text">
+						<div className="text" onClick={(e: any) => { this.onClick(e, block.id); }}>
 							{text}
 						</div>
 					);
@@ -106,6 +106,12 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 	onFocus () {
 		const { block } = this.props;
 		focus.set(block.id, { from: 0, to: 0 });
+	};
+
+	onClick (e: any, id: string) {
+		const { isPopup } = this.props;
+
+		focus.scroll(isPopup, id);
 	};
 	
 });
