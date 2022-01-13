@@ -91,6 +91,11 @@ class MenuOnboarding extends React.Component<Props, {}> {
 		const container = Util.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const element = $(param.element);
+
+		if (!element.length) {
+			return;
+		};
+
 		const rect = element.get(0).getBoundingClientRect() as DOMRect;
 		const hh = Util.sizeHeader();
 
