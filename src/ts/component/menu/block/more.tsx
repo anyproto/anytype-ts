@@ -134,7 +134,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let share = { id: 'sharePage', icon: 'share', name: 'Share' };
 		let removePage = { id: 'removePage', icon: 'remove', name: 'Delete' };
 		let removeBlock = { id: 'removeBlock', icon: 'remove', name: 'Delete' };
-		let exportPage = { id: 'exportPage', icon: 'export', name: 'Export to Markdown' };
+		let exportPage = { id: 'exportPage', icon: 'export', name: 'Export' };
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
@@ -398,7 +398,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				break;
 				
 			case 'exportPage':
-				Action.export([ rootId ], I.ExportFormat.Markdown);
+				popupStore.open('export', { data: { rootId } });
 				break;
 
 			case 'history':
