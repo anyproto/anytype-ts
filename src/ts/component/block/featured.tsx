@@ -315,7 +315,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					noClose: true,
 					onOver: this.onTypeOver,
 					onSelect: (e: any, item: any) => {
-						item.arrow ? this.onTypeOver(e, item) : this.onTypeSelect(e, item);
+						this.onTypeSelect(e, item);
 					},
 				},
 			});
@@ -411,6 +411,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onTypeSelect (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ Constant.relationKey.setOf ]);
 		const type: any = dbStore.getObjectType(object.type);
