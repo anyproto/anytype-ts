@@ -520,7 +520,7 @@ const isIconCircle = (d) => {
 
 const nameCircleIcon = (d) => {
 	ctx.save();
-	ctx.font = d.radius / 2 + ' ' + fontFamily;  
+	ctx.font = d.font;  
 	ctx.fillStyle = Color.iconText;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';

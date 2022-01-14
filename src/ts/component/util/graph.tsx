@@ -100,6 +100,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
+		const fontFamily = 'Helvetica';
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -128,6 +129,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.src = this.imageSrc(d);
 			d.sourceCnt = sourceCnt;
 			d.targetCnt = targetCnt;
+			d.font = d.radius / 2 + ' ' + fontFamily;  
 
 			if (d.layout == I.ObjectLayout.Note) {
 				d.name = d.snippet || translate('commonEmpty');
