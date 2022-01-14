@@ -129,7 +129,6 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.src = this.imageSrc(d);
 			d.sourceCnt = sourceCnt;
 			d.targetCnt = targetCnt;
-			d.font = d.radius / 2 + ' ' + fontFamily;  
 
 			if (d.layout == I.ObjectLayout.Note) {
 				d.name = d.snippet || translate('commonEmpty');
@@ -140,6 +139,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.name = SmileUtil.strip(d.name);
 			d.shortName = Util.shorten(d.name, 16);
 			d.letter = d.name.trim().substr(0, 1).toUpperCase();
+			d.font = `${d.radius}px ${fontFamily}`;
 
 			// Clear icon props to fix image size
 			if (d.layout == I.ObjectLayout.Task) {
