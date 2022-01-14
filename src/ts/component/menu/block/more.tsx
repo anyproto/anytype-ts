@@ -122,6 +122,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		let archive = null;
 		let fav = null;
 		let highlight = null;
+		let lockPage = null;
 
 		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
 		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
@@ -158,6 +159,12 @@ class MenuBlockMore extends React.Component<Props, {}> {
 			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
 		} else {
 			highlight = { id: 'highlight', name: 'Highlight' };
+		};
+
+		if (block.fields.isLocked) {
+			lockPage = { id: 'unlockPage', icon: 'unlock', name: 'Unlock page' };
+		} else {
+			lockPage = { id: 'lockPage', icon: 'lock', name: 'Lock page' };
 		};
 
 		// Restrictions
@@ -197,7 +204,7 @@ class MenuBlockMore extends React.Component<Props, {}> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ undo, redo, history, archive, removePage ] },
-				{ children: [ fav, template ] },
+				{ children: [ fav, template, lockPage ] },
 				{ children: [ search ] },
 				{ children: [ print, exportPage ] },
 				{ children: [ highlight ] },
@@ -465,6 +472,18 @@ class MenuBlockMore extends React.Component<Props, {}> {
 				C.ObjectSetIsFavorite(rootId, false, () => {
 					analytics.event('RemoveFromFavorites', { count: 1 });
 				});
+				break;
+
+			case 'lockPage':
+				C.BlockListSetFields(rootId, [
+					{ blockId: blockId, fields: { ...block.fields, isLocked: true } },
+				]);
+				break;
+
+			case 'unlockPage':
+				C.BlockListSetFields(rootId, [
+					{ blockId: blockId, fields: { ...block.fields, isLocked: false } },
+				]);
 				break;
 
 			case 'removeBlock':
