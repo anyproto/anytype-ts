@@ -168,7 +168,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.ctrlKey();
 
-		if (root.isObjectSet() && !this.creating) {
+		if (root && root.isObjectSet() && !this.creating) {
 			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => {
 				this.onRowAdd(e, -1, true);
 			});

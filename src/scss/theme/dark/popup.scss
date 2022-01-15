@@ -114,4 +114,10 @@
     .popup.popupPrompt {
         .input { background: $colorBlack; border-color: $colorLinePrimary; }
     }
+
+    /* PopupExport */
+
+    .popup.popupExport {
+        .row { border-color: $colorLinePrimary; }
+    }
 }

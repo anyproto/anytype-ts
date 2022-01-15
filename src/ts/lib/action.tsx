@@ -108,7 +108,7 @@ class Action {
 		focus.apply();
 	};
 
-	export (ids: string[], format: I.ExportFormat) {
+	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean) {
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
@@ -119,7 +119,7 @@ class Action {
 				return;
 			};
 
-			C.Export(files[0], ids, format, true, true, true, (message: any) => {
+			C.Export(files[0], ids, format, zip, nested, files, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

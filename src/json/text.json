@@ -179,7 +179,7 @@
 	"blockNameAudio": { "en": "Audio" },
 	"blockTextAudio": { "en": "Upload playable audio" },
 
-	"blockNamePdf": { "en": "Pdf" },
+	"blockNamePdf": { "en": "PDF" },
 	"blockTextPdf": { "en": "Upload a PDF file" },
 
 	"blockNameBookmark": { "en": "Bookmark" },

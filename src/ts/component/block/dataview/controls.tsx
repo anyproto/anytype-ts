@@ -68,7 +68,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				id={'view-item-' + item.id} 
 				className={'viewItem ' + (item.active ? 'active' : '')} 
 				onClick={(e: any) => { this.onViewSet(item); }} 
-				onContextMenu={(e: any) => { this.onViewEdit(e, item); }}
+				onContextMenu={(e: any) => { this.onViewEdit(e, '#views #view-item-' + item.id, item); }}
 			>
 				{item.name}
 			</div>
@@ -99,7 +99,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 								id={'view-item-' + view.id} 
 								className="viewItem active" 
 								onClick={(e: any) => { this.onButton(e, `view-item-${view.id}`, 'dataviewViewList'); }} 
-								onContextMenu={(e: any) => { this.onViewEdit(e, view); }}
+								onContextMenu={(e: any) => { this.onViewEdit(e, '.first #view-item-' + view.id, view); }}
 							>
 								{view.name}
 								<Icon className="arrow" />
@@ -224,14 +224,14 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		analytics.event('SwitchView', { type: item.type });
 	};
 
-	onViewEdit (e: any, item: any) {
+	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
 		const { rootId, block, getView, getData } = this.props;
 		const allowed = blockStore.isAllowed(rootId, block.id, [ I.RestrictionDataview.View ]);
 
 		menuStore.open('dataviewViewEdit', { 
-			element: $(e.currentTarget),
+			element: element,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			data: {

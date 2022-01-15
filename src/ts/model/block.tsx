@@ -232,10 +232,6 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Link;
 	};
 
-	isLinkPage (): boolean {
-		return this.isLink() && (this.content.style == I.LinkStyle.Page);
-	};
-	
 	isIcon (): boolean {
 		return this.isIconPage() || this.isIconUser();
 	};

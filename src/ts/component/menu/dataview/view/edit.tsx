@@ -197,7 +197,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> 
 	};
 
 	save () {
-		const { param } = this.props;
+		const { param, position } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSave, getData } = data;
 		const view = data.view.get();

@@ -100,6 +100,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
+		const fontFamily = 'Helvetica';
 		
 		this.width = node.width();
 		this.height = node.height();
@@ -138,6 +139,7 @@ const Graph = observer(class Graph extends React.Component<Props, {}> {
 			d.name = SmileUtil.strip(d.name);
 			d.shortName = Util.shorten(d.name, 16);
 			d.letter = d.name.trim().substr(0, 1).toUpperCase();
+			d.font = `${d.radius}px ${fontFamily}`;
 
 			// Clear icon props to fix image size
 			if (d.layout == I.ObjectLayout.Task) {

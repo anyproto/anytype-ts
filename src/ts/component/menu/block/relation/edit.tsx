@@ -64,10 +64,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 			opts = (
 				<div className="section noLine">
-					<div className="name">Type of target object</div>
-					<MenuItemVertical 
-						id="object-type" 
-						onMouseEnter={this.onObjectType} 
+					<div className="name">Limit object Types</div>
+					<MenuItemVertical
+						id="object-type"
+						onMouseEnter={this.onObjectType}
 						arrow={!isReadonly}
 						{...typeProps}
 					/>

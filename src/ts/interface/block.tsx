@@ -131,7 +131,6 @@ export interface Block {
 	isLayoutFooter?(): boolean;
 
 	isLink?(): boolean;
-	isLinkPage?(): boolean;
 
 	isIcon?(): boolean;
 	isIconPage?(): boolean;

@@ -143,7 +143,7 @@ class MenuStore {
 		for (let item of items) {
 			this.close(item.id);
 		};
-		
+
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};

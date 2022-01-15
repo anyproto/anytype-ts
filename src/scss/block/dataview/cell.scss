@@ -85,7 +85,7 @@
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
 }
 .cellContent.isName.withIcon {
-	.name { width: calc(100% - 24px); }
+	.name { width: calc(100% - 24px) !important; }
 }
 
 .cellContent.c-link {
