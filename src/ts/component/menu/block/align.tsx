@@ -60,7 +60,7 @@ class MenuBlockAlign extends React.Component<Props, {}> {
 		let hasQuote = false;
 		for (let id of blockIds) {
 			let block = blockStore.getLeaf(rootId, id);
-			if (block.isTextQuote())	{
+			if (block && block.isTextQuote()) {
 				hasQuote = true;
 			};
 		};
