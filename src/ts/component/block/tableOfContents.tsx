@@ -26,7 +26,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		// Subscriptions
 		for (let block of blocks) {
 			const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-			const { style } = block.content;
+			const { style, text } = block.content;
 		};
 
 		const Item = (item: any) => {

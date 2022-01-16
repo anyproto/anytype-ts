@@ -9,9 +9,9 @@
 
 		.item > .text { cursor: pointer; }
 		.item > .text:hover { text-decoration: underline; }
-		.item.blockText.header1 > .text { @include text-header1; }
-		.item.blockText.header2 > .text { @include text-header2; }
-		.item.blockText.header3 > .text { @include text-header3; }
+		.item.blockText.header1 > .text { @include text-header3; }
+		.item.blockText.header2 > .text { @include text-paragraph; }
+		.item.blockText.header3 > .text { @include text-common; }
 		
 	}
 }
