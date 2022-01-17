@@ -46,7 +46,7 @@ class DetailStore {
 	};
 
     update (rootId: string, item: any, clear: boolean) {
-		if (!item.id || !item.details) {
+		if (!item || !item.id || !item.details) {
 			return;
 		};
 

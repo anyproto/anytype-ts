@@ -232,7 +232,9 @@ const BlockType = observer(class BlockType extends React.Component<Props, State>
 	};
 
 	onClick (e: any, item: any) {
-		e.persist();
+		if (e.persist) {
+			e.persist();
+		};
 
 		const { rootId, isPopup } = this.props;
 		const param = {

@@ -96,6 +96,7 @@ import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
+import 'scss/popup/export.scss';
 
 import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
@@ -610,7 +611,7 @@ class App extends React.Component<Props, State> {
 				break;
 
 			case 'save':
-				Action.export([ rootId ], I.ExportFormat.Protobuf);
+				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
 				break;
 
 			case 'exportTemplates':
