@@ -30,6 +30,7 @@ import PageMainNavigation from './main/navigation';
 
 const { ipcRenderer } = window.require('electron');
 const Constant = require('json/constant.json');
+const Url = require('json/url.json');
 const $ = require('jquery');
 const raf = require('raf');
 const Components: any = {
@@ -212,7 +213,7 @@ class Page extends React.Component<Props, {}> {
 							textCancel: 'Skip',
 							canCancel: true,
 							onConfirm: () => {
-								ipcRenderer.send('urlOpen', Util.sprintf(Constant.survey, account.id));
+								ipcRenderer.send('urlOpen', Util.sprintf(Url.survey, account.id));
 								Storage.set('lastSurveyTime', Util.time());
 
 								analytics.event('SurveyOpen');

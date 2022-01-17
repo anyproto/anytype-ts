@@ -4,6 +4,7 @@
 	"telegram": "https://t.me/anytype",
 	"twitter": "https://twitter.com/AnytypeLabs",
 	"feedback": "https://community.anytype.io/composer",
+	"survey": "https://anytype.typeform.com/to/kpqcOT47#anytypeid=%s",
 	"unsplash": {
 		"site": "https://unsplash.com/",
 		"utm": "?utm_source=Anytype&utm_medium=referral"
