@@ -204,6 +204,7 @@ class Page extends React.Component<Props, {}> {
 					};
 
 					popupStore.open('confirm', {
+						onClose: onClose,
 						data: {
 							title: 'We need your opinion',
 							text: 'Please, tell us what you think about Anytype. Participate in 1 min survey',
@@ -216,7 +217,6 @@ class Page extends React.Component<Props, {}> {
 
 								analytics.event('SurveyOpen');
 							},
-							onClose: onClose,
 							onCancel: onClose,
 						},
 					});
