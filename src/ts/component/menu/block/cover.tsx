@@ -4,12 +4,10 @@ import { Cover } from 'ts/component';
 import { detailStore } from 'ts/store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {}
+interface Props extends I.Menu {};
 
-const $ = require('jquery');
 const { dialog } = window.require('@electron/remote');
 const Constant = require('json/constant.json');
-const Url = require('json/url.json');
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, {}> {
 
@@ -77,7 +75,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 				this.items.push({
 					id: item.id,
 					type: I.CoverType.Source,
-					src: item.url + '&q=80&w=200',
+					src: item.url + '&w=200',
 				});
 			});
 
@@ -88,7 +86,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 	onUpload (e: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, onUpload, onUploadStart } = data;
+		const { onUpload, onUploadStart } = data;
 		const options: any = {
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions: Constant.extension.cover } ]
